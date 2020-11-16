@@ -1,7 +1,7 @@
-﻿using EntityApp.Domain.Classes;
+﻿using CustomerVehicleManagement.Core.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityApp.Data
+namespace CustomerVehicleManagement.Data
 {
     public class AppDbContext : DbContext
     {
@@ -9,6 +9,8 @@ namespace EntityApp.Data
         public DbSet<Person> Persons { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -19,7 +21,12 @@ namespace EntityApp.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<DriversLicence>().OwnsOne(p => p.ValidFromThru);
-            modelBuilder.Entity<DateTimeRange>(d => d.HasNoKey());
+            // Preference for singular table names in SQL Server
+            modelBuilder.Entity<Person>().ToTable("Person");
+            modelBuilder.Entity<Organization>().ToTable("Organization");
+            modelBuilder.Entity<Employee>().ToTable("Employee");
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<Vehicle>().ToTable("Vehicle");
         }
     }
 }

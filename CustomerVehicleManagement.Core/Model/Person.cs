@@ -1,9 +1,10 @@
-﻿using EntityApp.Domain.Enums;
+﻿using CustomerVehicleManagement.Core.Enums;
+using CustomerVehicleManagement.Core.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EntityApp.Domain.Classes
+namespace CustomerVehicleManagement.Core.Model
 {
     public class Person : IEntity
     {

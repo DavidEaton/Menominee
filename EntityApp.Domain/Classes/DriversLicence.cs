@@ -3,15 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EntityApp.Domain.Classes
 {
-    public class Organization : IEntity
+    public class DriversLicence : IEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
-
-        public Person Contact { get; set; }
+        public string Number { get; set; }
+        [Required]
+        public DateTimeRange ValidFromThru { get; set; }
+        [Required]
+        public string State { get; set; }
     }
 }

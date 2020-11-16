@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CustomerVehicleManagement.Core.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EntityApp.Domain.Classes
+namespace CustomerVehicleManagement.Core.Model
 {
     public class Organization : IEntity
     {
