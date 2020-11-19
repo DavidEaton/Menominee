@@ -1,6 +1,6 @@
 ﻿namespace CustomerVehicleManagement.Core.Enums
 {
-    public enum EmployeeRole
+    public enum EmploymentRole
     {
         Sales = 0,
         Technician = 1,

@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Core.Enums;
-using CustomerVehicleManagement.Core.Interfaces;
+using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,23 +16,24 @@ namespace CustomerVehicleManagement.Core.Model
 
         public Customer(IEntity entity)
         {
-            if (EntityType == EntityType.Organization)
-                Organization = (Organization)entity;
+            if (entity.GetType().ToString() == EntityType.Organization.ToString())
+                Entity = (Organization)entity;
 
-            if (EntityType == EntityType.Person)
-                Person = (Person)entity;
+            if (entity.GetType().ToString() == EntityType.Person.ToString())
+                Entity = (Person)entity;
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public Person Person { get; set; }
-        public Organization Organization { get; set; }
-        public EntityType EntityType
-        {
-            get => (Organization != null) ? EntityType.Organization : EntityType.Person;
 
-        }
+        public IEntity Entity { get; set; }
+        //public EntityType EntityType
+        //{
+        //    //get => Entity.GetType();
+        //    //get => (Organization != null) ? EntityType.Organization : EntityType.Person;
+
+        //}
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
         public bool AllowEmail { get; set; }

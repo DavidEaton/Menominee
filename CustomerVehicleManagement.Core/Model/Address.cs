@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Core.Interfaces;
+﻿using SharedKernel.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

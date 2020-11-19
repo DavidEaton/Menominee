@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Core.Interfaces
+﻿namespace SharedKernel.Interfaces
 {
     public interface IEntity
     {
