@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Core.Enums;
 using CustomerVehicleManagement.Core.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,8 +17,9 @@ namespace CustomerVehicleManagement.Core.Model
         public string MiddleName { get; set; }
         public DateTime Birthday { get; set; }
         public Gender Gender { get; set; }
-
         public DriversLicence DriversLicence { get; set; }
         public int? DriversLicenceId { get; set; }
+        public ICollection<Address> Addresses { get; set; }
+        //public ICollection<PersonAddress> PersonAddresses { get; set; }
     }
 }

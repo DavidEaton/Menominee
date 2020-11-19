@@ -14,13 +14,25 @@ namespace CustomerVehicleManagement.Core.Model
             Vehicles = new List<Vehicle>();
         }
 
+        public Customer(IEntity entity)
+        {
+            if (EntityType == EntityType.Organization)
+                Organization = (Organization)entity;
+
+            if (EntityType == EntityType.Person)
+                Person = (Person)entity;
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public Person Person { get; set; }
         public Organization Organization { get; set; }
-        public bool IsPerson { get => Person != null; }
-        public bool IsOrganization { get => Organization != null; }
+        public EntityType EntityType
+        {
+            get => (Organization != null) ? EntityType.Organization : EntityType.Person;
+
+        }
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
         public bool AllowEmail { get; set; }

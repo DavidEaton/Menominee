@@ -11,6 +11,8 @@ namespace CustomerVehicleManagement.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<PersonAddress> PersonAddresses { get; set; }
+        public DbSet<OrganizationAddress> OrganizationAddresses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -27,6 +29,19 @@ namespace CustomerVehicleManagement.Data
             modelBuilder.Entity<Employee>().ToTable("Employee");
             modelBuilder.Entity<Customer>().ToTable("Customer");
             modelBuilder.Entity<Vehicle>().ToTable("Vehicle");
+            modelBuilder.Entity<PersonAddress>().ToTable("PersonAddress");
+            modelBuilder.Entity<OrganizationAddress>().ToTable("OrganizationAddress");
+
+            //modelBuilder.Entity<PersonAddress>()
+            //            .HasKey(pa => new { pa.PersonId, pa.AddressId });
+            //modelBuilder.Entity<PersonAddress>()
+            //            .HasOne(pa => pa.Person)
+            //            .WithMany(a => a.PersonAddresses)
+            //            .HasForeignKey(pa => pa.PersonId);
+            //modelBuilder.Entity<PersonAddress>()
+            //            .HasOne(bc => bc.Address)
+            //            .WithMany(c => c.PersonAddresses)
+            //            .HasForeignKey(bc => bc.AddressId);
         }
     }
 }
