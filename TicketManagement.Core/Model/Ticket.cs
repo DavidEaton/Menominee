@@ -1,4 +1,5 @@
-﻿using SharedKernel.Interfaces;
+﻿using CustomerVehicleManagement.Core.Model;
+using SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,8 +13,10 @@ namespace TicketManagement.Core.Model
         public int Id { get; set; }
         public Vehicle Vehicle { get; set; }
         public Customer Customer { get; set; }
-        //public TicketStatus Status { get; set; }
+        public TicketStatus Status { get; set; }
         public Employee SalesPerson { get; set; }
+        public ICollection<ServiceRequest> ServiceRequests { get; set; }
+
         //public ICollection<Item> Items { get; set; }
         //public ICollection<Job> Jobs { get; set; }
 

@@ -9,17 +9,31 @@ namespace CustomerVehicleManagement.Core.Model
 {
     public class Person : IEntity
     {
+        public Person()
+        {
+            Addresses = new List<PersonAddress>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
         public Gender Gender { get; set; }
         public DriversLicence DriversLicence { get; set; }
         public int? DriversLicenceId { get; set; }
-        public ICollection<Address> Addresses { get; set; }
-        //public ICollection<PersonAddress> PersonAddresses { get; set; }
+
+        public string NameLastFirst
+        {
+            get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";
+        }
+        public string NameFirstLast
+        {
+            get => string.IsNullOrWhiteSpace(MiddleName) ? $"{FirstName} {LastName}" : $"{FirstName} {MiddleName} {LastName}";
+        }
+
+        public ICollection<PersonAddress> Addresses { get; set; }
     }
 }

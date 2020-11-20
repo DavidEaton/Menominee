@@ -15,6 +15,8 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Core\CustomerVehicleManagement.Core.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj" />
+    <ProjectReference Include="..\TicketManagement.Core\TicketManagement.Core.csproj" />
+    <ProjectReference Include="..\TicketManagement.Data\TicketManagement.Data.csproj" />
   </ItemGroup>
 
 </Project>

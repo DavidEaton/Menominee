@@ -16,24 +16,25 @@ namespace CustomerVehicleManagement.Core.Model
 
         public Customer(IEntity entity)
         {
-            if (entity.GetType().ToString() == EntityType.Organization.ToString())
-                Entity = (Organization)entity;
+            if (entity is Organization organization)
+                Entity = organization;
 
-            if (entity.GetType().ToString() == EntityType.Person.ToString())
-                Entity = (Person)entity;
+            if (entity is Person person)
+                Entity = person;
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [NotMapped]
         public IEntity Entity { get; set; }
-        //public EntityType EntityType
-        //{
-        //    //get => Entity.GetType();
-        //    //get => (Organization != null) ? EntityType.Organization : EntityType.Person;
 
-        //}
+        public EntityType EntityType
+        {
+            get => (Entity.GetType().ToString() == EntityType.Organization.ToString()) ? EntityType.Organization : EntityType.Person;
+        }
+
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
         public bool AllowEmail { get; set; }
@@ -44,6 +45,6 @@ namespace CustomerVehicleManagement.Core.Model
         public bool OverrideCustomerTaxProfile { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidThru { get; set; }
-        public IList<Vehicle> Vehicles { get; private set; }
+        public ICollection<Vehicle> Vehicles { get; private set; }
     }
 }
