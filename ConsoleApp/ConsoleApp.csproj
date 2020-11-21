@@ -13,10 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CustomerVehicleManagement.Core\CustomerVehicleManagement.Core.csproj" />
-    <ProjectReference Include="..\CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj" />
-    <ProjectReference Include="..\TicketManagement.Core\TicketManagement.Core.csproj" />
-    <ProjectReference Include="..\TicketManagement.Data\TicketManagement.Data.csproj" />
+    <ProjectReference Include="..\Migrations.Core\Migrations.Core.csproj" />
+    <ProjectReference Include="..\Migrations.Data\Migrations.Data.csproj" />
   </ItemGroup>
 
 </Project>
