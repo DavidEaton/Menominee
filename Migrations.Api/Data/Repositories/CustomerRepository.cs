@@ -31,18 +31,29 @@ namespace Migrations.Api.Data.Repositories
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            var customer = await context.Customers.FirstOrDefaultAsync(p => p.Id == id);
+            var customer = await context.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
             if (customer.EntityType == EntityType.Organization)
-            {
-                customer.Entity = await context.Organizations.Include(p => p.Address).FirstOrDefaultAsync(o => o.Id == customer.EntityId);
-            }
+                await GetOrganizationAddress(customer);
 
             if (customer.EntityType == EntityType.Person)
-            {
-                customer.Entity = await context.Persons.Include(p => p.Address).FirstOrDefaultAsync(o => o.Id == customer.EntityId);
-            }
-                return customer;
+                await GetPersonAddress(customer);
+
+            return customer;
+        }
+
+        private async Task GetOrganizationAddress(Customer customer)
+        {
+            customer.Entity = await context.Organizations.AsNoTracking().Include(o => o.Address).FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+            Organization entity = (Organization)customer.Entity;
+            customer.Address = entity.Address;
+        }
+
+        private async Task GetPersonAddress(Customer customer)
+        {
+            customer.Entity = await context.Persons.AsNoTracking().Include(p => p.Address).FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+            Person entity = (Person)customer.Entity;
+            customer.Address = entity.Address;
         }
 
         public async Task<Customer[]> GetCustomersAsync()
@@ -62,7 +73,7 @@ namespace Migrations.Api.Data.Repositories
 
         public async Task<bool> SaveChangesAsync(Customer customer)
         {
-            // Mark customer EF object state = modified via dbContext:
+            // Mark customer EF tracking state = modified via dbContext:
             context.Customers
                 .Update(customer);
 

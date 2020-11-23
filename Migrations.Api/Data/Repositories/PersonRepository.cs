@@ -52,7 +52,7 @@ namespace Migrations.Api.Data.Repositories
 
         public async Task<bool> SaveChangesAsync(Person person)
         {
-            // Mark person EF object state = modified via dbContext:
+            // Mark person EF tracking state = modified via dbContext:
             context.Persons
                 .Update(person);
 
