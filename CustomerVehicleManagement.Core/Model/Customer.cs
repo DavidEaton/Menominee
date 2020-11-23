@@ -21,6 +21,8 @@ namespace CustomerVehicleManagement.Core.Model
 
             if (entity is Person person)
                 Entity = person;
+
+            EntityId = entity.Id;
         }
 
         [Key]
@@ -29,7 +31,9 @@ namespace CustomerVehicleManagement.Core.Model
 
         [NotMapped]
         public IEntity Entity { get; set; }
+        public int EntityId { get; set; }
 
+        [NotMapped]
         public EntityType EntityType
         {
             get => (Entity.GetType().ToString() == EntityType.Organization.ToString()) ? EntityType.Organization : EntityType.Person;

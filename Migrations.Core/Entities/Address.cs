@@ -9,8 +9,10 @@ namespace Migrations.Core.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public IEntity Entity { get; set; }
+
+        [Required]
         public int EntityId { get; set; }
+
         [Required]
         public string AddressLine { get; set; }
 

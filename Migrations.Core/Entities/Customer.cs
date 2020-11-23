@@ -22,6 +22,8 @@ namespace Migrations.Core.Entities
 
             if (entity is Person person)
                 Entity = person;
+
+            EntityId = entity.Id;
         }
 
         [Key]
@@ -31,10 +33,11 @@ namespace Migrations.Core.Entities
         [NotMapped]
         public IEntity Entity { get; set; }
 
-        public EntityType EntityType
-        {
-            get => (Entity.GetType().ToString() == EntityType.Organization.ToString()) ? EntityType.Organization : EntityType.Person;
-        }
+        public EntityType EntityType { get; set; }
+        public int EntityId { get; set; }
+
+        [NotMapped]
+        public Address Address { get; set; }
 
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
@@ -47,5 +50,12 @@ namespace Migrations.Core.Entities
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidThru { get; set; }
         public ICollection<Vehicle> Vehicles { get; private set; }
+        
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
     }
 }
