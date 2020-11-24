@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Client.Models;
 using Client.Services;
-using System;
 using System.Threading.Tasks;
+using Migrations.Core.Entities;
 
 namespace Client.Components
 {

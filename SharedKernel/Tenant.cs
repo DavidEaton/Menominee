@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Client.Models
+namespace SharedKernel
 {
     public class Tenant
     {

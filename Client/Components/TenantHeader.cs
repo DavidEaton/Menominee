@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Client.Models;
 using Client.Services;
-using System;
 using System.Threading.Tasks;
+using SharedKernel;
 
 namespace Client.Components
 {

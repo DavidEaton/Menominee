@@ -1,4 +1,4 @@
-﻿using Client.Models;
+﻿using SharedKernel;
 using System;
 using System.Threading.Tasks;
 

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Client.Components;
-using Client.Models;
 using Client.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Migrations.Core.Entities;
 
 namespace Client.Pages
 {
@@ -21,7 +20,7 @@ namespace Client.Pages
         public ILogger<Persons> Logger { get; set; }
 
         public int SelectedId { get; set; }
-        public Tenant Tenant { get; set; }
+        //public Tenant Tenant { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -37,10 +36,10 @@ namespace Client.Pages
         {
             foreach (var person in persons)
             {
-                if (person.PhonePrimary != null)
-                    person.PhonePrimary = Regex.Replace(person.PhonePrimary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
-                if (person.PhoneSecondary != null)
-                    person.PhoneSecondary = Regex.Replace(person.PhoneSecondary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
+                //if (person.PhonePrimary != null)
+                //    person.PhonePrimary = Regex.Replace(person.PhonePrimary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
+                //if (person.PhoneSecondary != null)
+                //    person.PhoneSecondary = Regex.Replace(person.PhoneSecondary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
             }
 
             return persons;

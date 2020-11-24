@@ -13,8 +13,8 @@ else
                     <tr>
                         <th>Name</th>
                         <th>Birthday</th>
-                        <th>Phone</th>
-                        <th>Email Primary</th>
+                        @*<th>Phone</th>
+                        <th>Email Primary</th>*@
                     </tr>
                 </thead>
                 <tbody>
@@ -23,8 +23,8 @@ else
                         <tr @onclick="@(e => SetSelectedId(person.Id))">
                             <td>@person.NameLastFirst</td>
                             <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
-                            <td>@person.PhonePrimary</td>
-                            <td>@person.EmailPrimary</td>
+                            @*<td>@person.PhonePrimary</td>
+                            <td>@person.EmailPrimary</td>*@
                         </tr>
                     }
                 </tbody>
