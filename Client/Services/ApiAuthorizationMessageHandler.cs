@@ -1,0 +1,20 @@
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.Extensions.Configuration;
+
+namespace Client.Services
+{
+    public class ApiAuthorizationMessageHandler : AuthorizationMessageHandler
+    {
+        public IConfiguration configuration;
+
+        public ApiAuthorizationMessageHandler(IAccessTokenProvider provider,
+                                                       NavigationManager navigation,
+                                                       IConfiguration configuration)
+            : base(provider, navigation)
+        {
+            this.configuration = configuration;
+            ConfigureHandler(authorizedUrls: new[] { configuration["ApiBaseUrl"] });
+        }
+    }
+}

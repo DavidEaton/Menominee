@@ -29,7 +29,8 @@ namespace Migrations.Api.Controllers
         {
             try
             {
-                return await data.GetPersonsAsync();
+                var results = await data.GetPersonsAsync();
+                return Ok(results);
             }
             catch (Exception ex)
             {
@@ -48,7 +49,7 @@ namespace Migrations.Api.Controllers
                 if (result == null)
                     return NotFound();
 
-                return result;
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -76,7 +77,7 @@ namespace Migrations.Api.Controllers
                 data.FixState();
 
                 if (await data.SaveChangesAsync())
-                    return fetchedPerson;
+                    return Ok(fetchedPerson);
             }
             catch (Exception ex)
             {
@@ -99,7 +100,7 @@ namespace Migrations.Api.Controllers
                 {
                     //var location = linkGenerator.GetPathByAction("Get", "Persons", new { id = person.Id });
                     string location = $"/api/persons/{model.Id}";
-                    //return Created(location, mapper.Map<PersonModel>(person));
+                    return Created(location, model);
                 }
             }
             catch (Exception ex)

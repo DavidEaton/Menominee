@@ -1,0 +1,43 @@
+﻿@page "/persons"
+
+@if (PersonsList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="d-flex flex-row">
+        <div class="d-flex flex-row">
+            <table class="table table-responsive table-striped small">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Birthday</th>
+                        <th>Phone</th>
+                        <th>Email Primary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var person in PersonsList)
+                    {
+                        <tr @onclick="@(e => SetSelectedId(person.Id))">
+                            <td>@person.NameLastFirst</td>
+                            <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
+                            <td>@person.PhonePrimary</td>
+                            <td>@person.EmailPrimary</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-fill">
+            <PersonDetail Id="@SelectedId"></PersonDetail>
+        </div>
+    </div>
+    <div class="d-flex flex-row w-25">
+        <button @onclick="QuickAddPerson" class="btn btn-primary">
+            <span class="oi oi-plus" aria-hidden="true"></span>
+        </button>
+    </div>
+    <AddPersonDialog @ref="AddPersonDialog" CloseEventCallback="@AddPersonDialog_OnDialogClose"></AddPersonDialog>
+}
