@@ -25,11 +25,11 @@ namespace Migrations.Api.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<Customer[]>> GetCustomers()
+        public async Task<ActionResult<Customer[]>> GetCustomers(bool includePhones)
         {
             try
             {
-                return await data.GetCustomersAsync();
+                return await data.GetCustomersAsync(includePhones);
             }
             catch (Exception ex)
             {

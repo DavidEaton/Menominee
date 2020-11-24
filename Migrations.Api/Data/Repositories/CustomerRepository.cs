@@ -31,6 +31,7 @@ namespace Migrations.Api.Data.Repositories
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
+            // Tracking is not needed (and expensive) for disconnected data collections
             var customer = await context.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
             if (customer.EntityType == EntityType.Organization)
@@ -56,13 +57,34 @@ namespace Migrations.Api.Data.Repositories
             customer.Address = entity.Address;
         }
 
-        public async Task<Customer[]> GetCustomersAsync()
+        public async Task<Customer[]> GetCustomersAsync(bool includePhones = false)
         {
-            return await context.Customers
-                // Tracking is not needed (and expensive) for this disconnected data collection
-                .AsNoTracking()
-                //.Include(p => p.Address)
-                .ToArrayAsync();
+            var customers = await context.Customers.AsNoTracking().ToArrayAsync();
+
+            foreach (var customer in customers)
+            {
+                if (customer.EntityType == EntityType.Organization)
+                    await GetOrganizationAddress(customer);
+                if (includePhones)
+                    await GetOrganizationPhones(customer);
+
+                if (customer.EntityType == EntityType.Person)
+                    await GetPersonAddress(customer);
+                if (includePhones)
+                    await GetPersonPhones(customer);
+            }
+
+            return customers;
+        }
+
+        private Task GetPersonPhones(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task GetOrganizationPhones(Customer customer)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> CustomerExistsAsync(int id)

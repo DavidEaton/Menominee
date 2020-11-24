@@ -10,7 +10,7 @@ namespace Migrations.Api.Data.Interfaces
         void FixState();
         Task<bool> CustomerExistsAsync(int id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
-        Task<Customer[]> GetCustomersAsync();
+        Task<Customer[]> GetCustomersAsync(bool includePhones);
         Task<Customer> GetCustomerAsync(int id);
         Task<bool> SaveChangesAsync(Customer customer);
         Task<bool> SaveChangesAsync();
