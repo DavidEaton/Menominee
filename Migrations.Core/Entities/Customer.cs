@@ -39,6 +39,9 @@ namespace Migrations.Core.Entities
         [NotMapped]
         public Address Address { get; set; }
 
+        [NotMapped]
+        public ICollection<Phone> Phones { get; private set; }
+
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
         public bool AllowEmail { get; set; }

@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Core.Enums;
-using CustomerVehicleManagement.Core.Model;
+using Migrations.Core.Entities;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;

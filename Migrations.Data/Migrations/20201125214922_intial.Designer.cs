@@ -10,8 +10,8 @@ using Migrations.Data;
 namespace Migrations.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201123201622_UpdateCustomer")]
-    partial class UpdateCustomer
+    [Migration("20201125214922_intial")]
+    partial class intial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,9 +39,6 @@ namespace Migrations.Data.Migrations
                     b.Property<string>("CountryCode")
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -102,26 +99,6 @@ namespace Migrations.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customer");
-                });
-
-            modelBuilder.Entity("Migrations.Core.Entities.DriversLicence", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DriversLicence");
                 });
 
             modelBuilder.Entity("Migrations.Core.Entities.Employee", b =>
@@ -213,9 +190,6 @@ namespace Migrations.Data.Migrations
                     b.Property<DateTime?>("Birthday")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DriversLicenceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -237,8 +211,6 @@ namespace Migrations.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
-
-                    b.HasIndex("DriversLicenceId");
 
                     b.ToTable("Person");
                 });
@@ -472,9 +444,30 @@ namespace Migrations.Data.Migrations
                         .WithMany()
                         .HasForeignKey("AddressId");
 
-                    b.HasOne("Migrations.Core.Entities.DriversLicence", "DriversLicence")
-                        .WithMany()
-                        .HasForeignKey("DriversLicenceId");
+                    b.OwnsOne("Migrations.Core.ValueObjects.DriversLicence", "DriversLicence", b1 =>
+                        {
+                            b1.Property<int>("PersonId")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .UseIdentityColumn();
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Number");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("State");
+
+                            b1.HasKey("PersonId");
+
+                            b1.ToTable("Person");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PersonId");
+                        });
 
                     b.Navigation("Address");
 

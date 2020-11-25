@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Migrations.Data.Migrations
 {
-    public partial class Initital : Migration
+    public partial class intial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,6 @@ namespace Migrations.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
                     AddressLine = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -31,6 +30,8 @@ namespace Migrations.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
+                    EntityId = table.Column<int>(type: "int", nullable: false),
                     CustomerType = table.Column<int>(type: "int", nullable: false),
                     AllowMail = table.Column<bool>(type: "bit", nullable: false),
                     AllowEmail = table.Column<bool>(type: "bit", nullable: false),
@@ -45,20 +46,6 @@ namespace Migrations.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DriversLicence",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DriversLicence", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,6 +80,32 @@ namespace Migrations.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Person",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Gender = table.Column<int>(type: "int", maxLength: 1, nullable: false),
+                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Person", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Person_Address_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Address",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vehicle",
                 columns: table => new
                 {
@@ -113,37 +126,6 @@ namespace Migrations.Data.Migrations
                         principalTable: "Customer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Person",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    DriversLicenceId = table.Column<int>(type: "int", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Person", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Person_Address_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Address",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Person_DriversLicence_DriversLicenceId",
-                        column: x => x.DriversLicenceId,
-                        principalTable: "DriversLicence",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,7 +176,7 @@ namespace Migrations.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ContactId = table.Column<int>(type: "int", nullable: true),
                     AddressId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -360,11 +342,6 @@ namespace Migrations.Data.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Person_DriversLicenceId",
-                table: "Person",
-                column: "DriversLicenceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Phone_OrganizationId",
                 table: "Phone",
                 column: "OrganizationId");
@@ -455,9 +432,6 @@ namespace Migrations.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Address");
-
-            migrationBuilder.DropTable(
-                name: "DriversLicence");
         }
     }
 }

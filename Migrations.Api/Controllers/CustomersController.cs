@@ -73,7 +73,7 @@ namespace Migrations.Api.Controllers
 
                 // Update the objects ObjectState and sych the EF Change Tracker
                 fetchedCustomer.UpdateState(TrackingState.Modified);
-                data.FixState();
+                data.FixTrackingState();
 
                 if (await data.SaveChangesAsync())
                     return fetchedCustomer;

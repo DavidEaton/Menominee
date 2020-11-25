@@ -11,9 +11,6 @@ namespace Migrations.Core.Entities
         public int Id { get; set; }
 
         [Required]
-        public int EntityId { get; set; }
-
-        [Required]
         public string AddressLine { get; set; }
 
         [Required]

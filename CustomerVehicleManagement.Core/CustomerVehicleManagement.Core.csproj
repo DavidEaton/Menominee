@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\OrganizationAddress.cs" />
+    <Compile Remove="Model\PersonAddress.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 

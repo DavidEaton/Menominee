@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Core.Model;
+﻿using Migrations.Core.Entities;
 using System;
 
 namespace TicketManagement.Core.Model

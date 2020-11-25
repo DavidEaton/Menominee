@@ -45,14 +45,18 @@ namespace Migrations.Api.Data.Repositories
 
         private async Task GetOrganizationAddress(Customer customer)
         {
-            customer.Entity = await context.Organizations.AsNoTracking().Include(o => o.Address).FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+            customer.Entity = await context.Organizations.AsNoTracking()
+                                                         .Include(o => o.Address)
+                                                         .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
             Organization entity = (Organization)customer.Entity;
             customer.Address = entity.Address;
         }
 
         private async Task GetPersonAddress(Customer customer)
         {
-            customer.Entity = await context.Persons.AsNoTracking().Include(p => p.Address).FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+            customer.Entity = await context.Persons.AsNoTracking()
+                                                   .Include(p => p.Address)
+                                                   .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
             Person entity = (Person)customer.Entity;
             customer.Address = entity.Address;
         }
@@ -107,7 +111,7 @@ namespace Migrations.Api.Data.Repositories
             return (await context.SaveChangesAsync()) > 0;
         }
 
-        public void FixState()
+        public void FixTrackingState()
         {
             context.FixState();
         }

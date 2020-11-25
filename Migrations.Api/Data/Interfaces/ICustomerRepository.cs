@@ -7,7 +7,7 @@ namespace Migrations.Api.Data.Interfaces
     {
         void AddCustomer(Customer entity);
         void DeleteCustomer(Customer entity);
-        void FixState();
+        void FixTrackingState();
         Task<bool> CustomerExistsAsync(int id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
         Task<Customer[]> GetCustomersAsync(bool includePhones);

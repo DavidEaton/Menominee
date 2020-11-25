@@ -1,4 +1,5 @@
 ﻿using Migrations.Core.Enums;
+using Migrations.Core.ValueObjects;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
@@ -13,11 +14,12 @@ namespace Migrations.Core.Entities
         public Person()
         {
         }
-        public Person(string lastName, string firstName, string middleName = null)
+        public Person(string lastName, string firstName, string middleName = null, DriversLicence driversLicence = null)
         {
             LastName = lastName;
             FirstName = firstName;
             MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;
+            DriversLicence = driversLicence;
             // Keep EF informed of object state in disconnected api
             TrackingState = TrackingState.Added;
         }
@@ -44,7 +46,7 @@ namespace Migrations.Core.Entities
         [StringLength(1)]
         public Gender Gender { get; set; }
         public DriversLicence DriversLicence { get; set; }
-        public int? DriversLicenceId { get; set; }
+        //public int? DriversLicenceId { get; set; }
         public string NameLastFirst
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";
