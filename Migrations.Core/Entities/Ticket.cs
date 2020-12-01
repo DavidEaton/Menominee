@@ -1,4 +1,5 @@
-﻿using SharedKernel.Interfaces;
+﻿using SharedKernel.Enums;
+using SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,6 +20,14 @@ namespace Migrations.Core.Entities
         //public ICollection<Item> Items { get; set; }
         //public ICollection<Job> Jobs { get; set; }
 
+        // EF State management for disconnected data
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
+
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
 
     }
 }

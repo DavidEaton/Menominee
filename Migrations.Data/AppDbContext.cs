@@ -49,10 +49,10 @@ namespace Migrations.Data
 
             modelBuilder.Entity<Person>().ToTable("Person")
                  .OwnsOne(p => p.DriversLicence)
-                 .Property(p => p.Number).HasColumnName("Number");
+                 .Property(p => p.Number).HasColumnName("DriversLicenseNumber");
             modelBuilder.Entity<Person>().ToTable("Person")
                  .OwnsOne(p => p.DriversLicence)
-                 .Property(p => p.State).HasColumnName("State");
+                 .Property(p => p.State).HasColumnName("DriversLicenseState");
 
 
 

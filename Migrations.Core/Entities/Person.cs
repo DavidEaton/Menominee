@@ -57,12 +57,15 @@ namespace Migrations.Core.Entities
         }
         public Address Address { get; set; }
         public ICollection<Phone> Phones { get; set; }
-        
-        [NotMapped]
-        public TrackingState TrackingState { get; private set; }
+
+        // EF State management for disconnected data
         public void UpdateState(TrackingState state)
         {
             TrackingState = state;
         }
+
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
+
     }
 }

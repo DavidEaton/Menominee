@@ -1,4 +1,5 @@
-﻿using SharedKernel.Interfaces;
+﻿using SharedKernel.Enums;
+using SharedKernel.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,5 +26,11 @@ namespace Migrations.Core.Entities
         [StringLength(2)]
         public string CountryCode { get; set; }
 
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
     }
 }

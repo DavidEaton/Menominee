@@ -1,4 +1,5 @@
 ﻿using Migrations.Core.Enums;
+using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +16,15 @@ namespace Migrations.Core.Entities
         public EmploymentRole EmploymentRole { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidThru { get; set; }
+
+        // EF State management for disconnected data
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
+
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
 
     }
 }

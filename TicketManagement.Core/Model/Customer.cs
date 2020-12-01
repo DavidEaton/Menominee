@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Core.Enums;
 using Migrations.Core.Entities;
+using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,15 @@ namespace TicketManagement.Core.Model
         public CustomerType CustomerType { get; }
         public DateTime ValidFrom { get; }
         public IList<Vehicle> Vehicles { get; }
+
+        // EF State management for disconnected data
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
+
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
+
     }
 }

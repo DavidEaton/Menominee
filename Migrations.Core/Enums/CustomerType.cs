@@ -1,8 +1,16 @@
-﻿namespace Migrations.Core.Enums
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Migrations.Core.Enums
 {
     public enum CustomerType
     {
         Retail,
-        Commercial
+        Business,
+        Fleet,
+        [Display(Name = "Billing Center")]
+        BillingCenter,
+        [Display(Name = "Billing Center Prepaid")]
+        BillingCenterPrepaid,
+        Employee
     }
 }

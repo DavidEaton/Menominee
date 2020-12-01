@@ -1,4 +1,5 @@
-﻿using SharedKernel.Interfaces;
+﻿using SharedKernel.Enums;
+using SharedKernel.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TicketManagement.Core.Enums;
@@ -12,5 +13,15 @@ namespace TicketManagement.Core.Model
         public int Id { get; set; }
         public StatusRequirementType StatusRequirementType { get; set; }
         public StatusRequiredItem StatusRequiredItem { get; set; }
+
+        // EF State management for disconnected data
+        public void UpdateState(TrackingState state)
+        {
+            TrackingState = state;
+        }
+
+        [NotMapped]
+        public TrackingState TrackingState { get; private set; }
+
     }
 }
