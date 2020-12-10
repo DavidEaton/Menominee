@@ -1,5 +1,6 @@
 using Migrations.Core.Entities;
 using NUnit.Framework;
+using System;
 
 namespace Migrations.Tests
 {
@@ -11,55 +12,143 @@ namespace Migrations.Tests
         }
 
         [Test]
+        public void CreateNewCustomerWithPersonEntity()
+        {
+            string firstName = "Jane";
+            string lastName = "Doe";
+
+            var person = new Person(lastName, firstName);
+
+            var customer = new Customer(person);
+            Assert.That(customer.Entity is Person);
+        }
+
+        [Test]
+        public void CreateNewCustomerWithOrganizationEntity()
+        {
+            string name = "Jane's";
+            var organization = new Organization(name);
+
+            var customer = new Customer(organization);
+            Assert.That(customer.Entity is Organization);
+        }
+
+        [Test]
         public void CreateNewPersonCustomerWithAddress()
         {
+            string addressLine = "1234 Five Street";
+            string city = "Gaylord";
+            string countryCode = "1";
+            string state = "MI";
+            string postalCode = "49735";
+            string firstName = "Jane";
+            string lastName = "Doe";
+
             var address = new Address
             {
-                AddressLine = "1234 Five Street",
-                City = "Gaylord",
-                CountryCode = "1",
-                State = "MI",
-                PostalCode = "49735"
+                AddressLine = addressLine,
+                City = city,
+                CountryCode = countryCode,
+                State = state,
+                PostalCode = postalCode
             };
 
-            var person = new Person
+            var person = new Person(lastName, firstName)
             {
-                FirstName = "Jane",
-                LastName = "Doe",
                 Address = address
             };
+
 
             var customer = new Customer(person);
             Person jane = (Person)customer.Entity;
 
-            Assert.That("Doe, Jane", Is.EqualTo(jane.NameLastFirst));
-            Assert.That("Gaylord", Is.EqualTo(jane.Address.City));
+            Assert.That($"{lastName}, {firstName}", Is.EqualTo(jane.NameLastFirst));
+            Assert.That(addressLine, Is.EqualTo(jane.Address.AddressLine));
+            Assert.That(city, Is.EqualTo(jane.Address.City));
+            Assert.That(countryCode, Is.EqualTo(jane.Address.CountryCode));
+            Assert.That(state, Is.EqualTo(jane.Address.State));
+            Assert.That(postalCode, Is.EqualTo(jane.Address.PostalCode));
+            Assert.That(postalCode, Is.EqualTo(jane.Address.PostalCode));
         }
 
         [Test]
         public void CreateNewOrganizationCustomerWithAddress()
         {
+            string janesAuto = "Jane's Auto";
+
+            string addressLine = "5432 One Street";
+            string city = "Petoskey";
+            string countryCode = "1";
+            string state = "MI";
+            string postalCode = "49770";
+
             var address = new Address
             {
-                AddressLine = "5432 One Street",
-                City = "Petoskey",
-                CountryCode = "1",
-                State = "MI",
-                PostalCode = "49770"
+                AddressLine = addressLine,
+                City = city,
+                CountryCode = countryCode,
+                State = state,
+                PostalCode = postalCode
             };
 
-            var organization = new Organization
+            var organization = new Organization(janesAuto)
             {
-                Name = "Jane's Auto",
                 Address = address
             };
 
             var customer = new Customer(organization);
             Organization janes = (Organization)customer.Entity;
 
-            Assert.That("Jane's Auto", Is.EqualTo(janes.Name));
-            Assert.That("49770", Is.EqualTo(janes.Address.PostalCode));
+            Assert.That(janesAuto, Is.EqualTo(janes.Name));
+            Assert.That(addressLine, Is.EqualTo(janes.Address.AddressLine));
+            Assert.That(city, Is.EqualTo(janes.Address.City));
+            Assert.That(countryCode, Is.EqualTo(janes.Address.CountryCode));
+            Assert.That(state, Is.EqualTo(janes.Address.State));
+            Assert.That(postalCode, Is.EqualTo(janes.Address.PostalCode));
+            Assert.That(address, Is.EqualTo(janes.Address));
+        }
+        [Test]
+        public void CreateNewOrganizationCustomerWithPersonContact()
+        {
+            string janesAuto = "Jane's Auto";
+            string firstName = "Jane";
+            string lastName = "Doe";
+
+            var person = new Person(lastName, firstName);
+
+            var organization = new Organization(janesAuto)
+            {
+                Contact = person
+            };
+
+            var customer = new Customer(organization);
+            Organization janes = (Organization)customer.Entity;
+
+            Assert.That(janes.Contact is Person);
+            Assert.That(janes.Contact.NameLastFirst == $"{lastName}, {firstName}");
         }
 
+        [Test]
+        public void NotCreateCustomerWithEmptyPersonName()
+        {
+            string firstName = "";
+            string lastName = "";
+
+            ArgumentException exception = Assert.Throws<ArgumentException>(
+                () => { new Person(lastName, firstName); });
+
+            Assert.That(exception.Message, Is.EqualTo("First and Last Names cannot be empty"));
+        }
+
+        [Test]
+        public void NotCreateCustomerWithEmptyOrganizationName()
+        {
+            string name = "";
+
+            ArgumentException exception = Assert.Throws<ArgumentException>(
+                () => { new Organization(name); });
+
+            Assert.That(exception.Message, Is.EqualTo("Name cannot be empty"));
+        }
     }
 }

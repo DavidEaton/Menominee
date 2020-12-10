@@ -8,6 +8,11 @@ namespace Migrations.Core.Entities
 {
     public class Ticket : IEntity
     {
+        // EF reuires an empty constructor
+        protected Ticket()
+        {
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

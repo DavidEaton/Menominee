@@ -7,7 +7,7 @@ namespace ClientApp.Components
 {
     public partial class AddPersonDialog
     {
-        public Person Person { get; set; } = new Person();
+        public Person Person { get; set; }// = new Person();
 
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
@@ -31,7 +31,7 @@ namespace ClientApp.Components
 
         private void ResetDialog()
         {
-            Person = new Person ();
+            //Person = new Person ();
         }
 
         protected async Task HandleValidSubmit()

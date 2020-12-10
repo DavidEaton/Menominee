@@ -12,7 +12,7 @@ namespace ClientApp.Components
 
         [Parameter]
         public int Id { get; set; }
-        public Person Person { get; set; } = new Person();
+        public Person Person { get; set; } = new Person("", "");
 
         // Screen state
         protected string Message = string.Empty;
@@ -24,7 +24,7 @@ namespace ClientApp.Components
             Saved = false;
 
             if (Id == 0)
-                Person = new Person { };
+                Person = new Person("", "");
             else
                 Person = await PersonDataService.GetPerson(Id);
         }

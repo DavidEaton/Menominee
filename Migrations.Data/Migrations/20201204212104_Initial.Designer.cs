@@ -10,8 +10,8 @@ using Migrations.Data;
 namespace Migrations.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201125214922_intial")]
-    partial class intial
+    [Migration("20201204212104_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -454,12 +454,12 @@ namespace Migrations.Data.Migrations
                             b1.Property<string>("Number")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Number");
+                                .HasColumnName("DriversLicenseNumber");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)")
-                                .HasColumnName("State");
+                                .HasColumnName("DriversLicenseState");
 
                             b1.HasKey("PersonId");
 

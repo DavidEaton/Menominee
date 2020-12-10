@@ -8,11 +8,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Migrations.Core.Entities
 {
-    public class Customer : IEntity
+    public class Customer : IEntity, ICustomer
     {
+        // EF reuires an empty constructor
         protected Customer()
         {
-            Vehicles = new List<Vehicle>();
         }
 
         public Customer(IEntity entity)
@@ -24,6 +24,7 @@ namespace Migrations.Core.Entities
                 Entity = person;
 
             EntityId = entity.Id;
+            Vehicles = new List<Vehicle>();
         }
 
         [Key]
@@ -53,7 +54,7 @@ namespace Migrations.Core.Entities
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidThru { get; set; }
         public ICollection<Vehicle> Vehicles { get; private set; }
-        
+
         [NotMapped]
         public TrackingState TrackingState { get; private set; }
         public void UpdateState(TrackingState state)

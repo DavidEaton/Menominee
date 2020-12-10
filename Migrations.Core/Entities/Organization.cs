@@ -1,5 +1,6 @@
 ﻿using SharedKernel.Enums;
 using SharedKernel.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,15 +9,27 @@ namespace Migrations.Core.Entities
 {
     public class Organization : IEntity
     {
-        public Organization()
+        // EF reuires an empty constructor
+        protected Organization()
         {
         }
 
         public Organization(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name cannot be empty");
+            }
+            
             Name = name;
+            Phones = new List<Phone>();
             // Keep EF informed of object state in disconnected api
             TrackingState = TrackingState.Added;
+        }
+
+        public Organization(string name, Person contact) : this (name)
+        {
+            Contact = contact;
         }
 
         [Key]

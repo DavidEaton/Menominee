@@ -11,14 +11,22 @@ namespace Migrations.Core.Entities
 {
     public class Person : IEntity
     {
-        public Person()
+        // EF reuires an empty constructor
+        protected Person()
         {
         }
+
         public Person(string lastName, string firstName, string middleName = null, DriversLicence driversLicence = null)
         {
+            if (string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new ArgumentException("First and Last Names cannot be empty");
+            }
+
             LastName = lastName;
             FirstName = firstName;
             MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;
+            Phones = new List<Phone>();
             DriversLicence = driversLicence;
             // Keep EF informed of object state in disconnected api
             TrackingState = TrackingState.Added;
@@ -46,7 +54,6 @@ namespace Migrations.Core.Entities
         [StringLength(1)]
         public Gender Gender { get; set; }
         public DriversLicence DriversLicence { get; set; }
-        //public int? DriversLicenceId { get; set; }
         public string NameLastFirst
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";

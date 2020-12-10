@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Migrations.Data.Migrations
 {
-    public partial class intial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -90,8 +90,8 @@ namespace Migrations.Data.Migrations
                     MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Gender = table.Column<int>(type: "int", maxLength: 1, nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DriversLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DriversLicenseState = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AddressId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

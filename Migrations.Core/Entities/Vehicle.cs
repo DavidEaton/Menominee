@@ -7,6 +7,11 @@ namespace Migrations.Core.Entities
 {
     public class Vehicle : IEntity
     {
+        // EF reuires an empty constructor
+        protected Vehicle()
+        {
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

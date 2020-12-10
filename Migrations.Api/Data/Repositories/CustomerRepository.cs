@@ -35,30 +35,12 @@ namespace Migrations.Api.Data.Repositories
             var customer = await context.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
             if (customer.EntityType == EntityType.Organization)
-                await GetOrganizationAddress(customer);
+                customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
 
             if (customer.EntityType == EntityType.Person)
-                await GetPersonAddress(customer);
+                customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
 
             return customer;
-        }
-
-        private async Task GetOrganizationAddress(Customer customer)
-        {
-            customer.Entity = await context.Organizations.AsNoTracking()
-                                                         .Include(o => o.Address)
-                                                         .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
-            Organization entity = (Organization)customer.Entity;
-            customer.Address = entity.Address;
-        }
-
-        private async Task GetPersonAddress(Customer customer)
-        {
-            customer.Entity = await context.Persons.AsNoTracking()
-                                                   .Include(p => p.Address)
-                                                   .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
-            Person entity = (Person)customer.Entity;
-            customer.Address = entity.Address;
         }
 
         public async Task<Customer[]> GetCustomersAsync(bool includePhones = false)
@@ -68,12 +50,12 @@ namespace Migrations.Api.Data.Repositories
             foreach (var customer in customers)
             {
                 if (customer.EntityType == EntityType.Organization)
-                    await GetOrganizationAddress(customer);
+                    customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
                 if (includePhones)
                     await GetOrganizationPhones(customer);
 
                 if (customer.EntityType == EntityType.Person)
-                    await GetPersonAddress(customer);
+                    customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
                 if (includePhones)
                     await GetPersonPhones(customer);
             }
@@ -119,7 +101,7 @@ namespace Migrations.Api.Data.Repositories
         public async Task<Customer> UpdateCustomerAsync(Customer customer)
         {
             if (customer == null)
-                throw new NullReferenceException("Customer Id missing.");
+                throw new NullReferenceException("Customer is missing.");
 
             context.Entry(customer).State = EntityState.Modified;
 
