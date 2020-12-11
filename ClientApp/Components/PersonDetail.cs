@@ -69,8 +69,9 @@ namespace ClientApp.Components
             Saved = true;
             Message = string.Empty;
             StatusClass = string.Empty;
-            Id = -1;
-            Person.Id = 0;
+            //Id = -1;
+            //Person.Id = 0;
+            Person = null;
             StateHasChanged();
         }
     }

@@ -1,17 +1,18 @@
 ﻿using Migrations.Core.Enums;
+using Migrations.Core.Interfaces;
 using Migrations.Core.ValueObjects;
-using SharedKernel.Enums;
-using SharedKernel.Interfaces;
+using SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Migrations.Core.Entities
 {
-    public class Person : IEntity
+    public class Person : Entity, IPerson
     {
-        // EF reuires an empty constructor
+        public static readonly string PersonNameEmptyMessage = "First and Last Names cannot be empty";
+
+        // EF requires an empty constructor
         protected Person()
         {
         }
@@ -20,7 +21,7 @@ namespace Migrations.Core.Entities
         {
             if (string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(firstName))
             {
-                throw new ArgumentException("First and Last Names cannot be empty");
+                throw new ArgumentException(PersonNameEmptyMessage);
             }
 
             LastName = lastName;
@@ -28,13 +29,7 @@ namespace Migrations.Core.Entities
             MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;
             Phones = new List<Phone>();
             DriversLicence = driversLicence;
-            // Keep EF informed of object state in disconnected api
-            TrackingState = TrackingState.Added;
         }
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         [Required]
         [MaxLength(255)]
@@ -64,15 +59,5 @@ namespace Migrations.Core.Entities
         }
         public Address Address { get; set; }
         public ICollection<Phone> Phones { get; set; }
-
-        // EF State management for disconnected data
-        public void UpdateState(TrackingState state)
-        {
-            TrackingState = state;
-        }
-
-        [NotMapped]
-        public TrackingState TrackingState { get; private set; }
-
     }
 }

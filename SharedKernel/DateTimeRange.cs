@@ -19,6 +19,22 @@ namespace SharedKernel
         }
         protected DateTimeRange() { }
 
+        protected override bool EqualsCore(DateTimeRange other)
+        {
+            return Start == other.Start
+                && End == other.End;
+        }
+
+        protected override int GetHashCodeCore()
+        {
+            unchecked
+            {
+                int hashcode = Start.GetHashCode();
+                hashcode = (hashcode * 397) ^ End.GetHashCode();
+                return hashcode;
+            }
+        }
+
         public int DurationInMinutes()
         {
             return (End - Start).Minutes;
@@ -51,7 +67,7 @@ namespace SharedKernel
         {
             return Start < dateTimeRange.End
                    &&
-                   End   > dateTimeRange.Start;
+                   End > dateTimeRange.Start;
         }
     }
 }

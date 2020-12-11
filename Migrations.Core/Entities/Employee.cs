@@ -1,4 +1,5 @@
-﻿using SharedKernel.Enums;
+﻿using Migrations.Core.Interfaces;
+using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ namespace Migrations.Core.Entities
     {
         private DateTime? terminated;
 
-        // EF reuires an empty constructor
+        // EF requires an empty constructor
         protected Employee()
         {
         }

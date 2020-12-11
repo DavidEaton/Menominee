@@ -30,7 +30,7 @@ namespace Migrations.Api.Data
             foreach (var entry in context.ChangeTracker.Entries<IStateObject>())
             {
                 IStateObject stateInfo = entry.Entity;
-                entry.State = ConvertState(stateInfo.ObjectState);
+                entry.State = ConvertState(stateInfo.TrackingState);
             }
         }
 

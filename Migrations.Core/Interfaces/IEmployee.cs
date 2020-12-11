@@ -1,7 +1,8 @@
-﻿using SharedKernel.Enums;
+﻿using Migrations.Core.Entities;
+using SharedKernel.Enums;
 using System;
 
-namespace Migrations.Core.Entities
+namespace Migrations.Core.Interfaces
 {
     public interface IEmployee
     {

@@ -12,6 +12,30 @@ namespace Migrations.Tests
         }
 
         [Test]
+        public void CreateNewPerson()
+        {
+            string firstName = "Jane";
+            string lastName = "Doe";
+
+            var person = new Person(lastName, firstName);
+
+            Assert.That($"{lastName}, {firstName}", Is.EqualTo(person.NameLastFirst));
+            Assert.That($"{firstName} {lastName}", Is.EqualTo(person.NameFirstLast));
+        }
+
+        public void CreateNewPersonWithMiddleName()
+        {
+            string firstName = "Jane";
+            string lastName = "Doe";
+            string middleName = "Zebra";
+
+            var person = new Person(lastName, firstName, middleName);
+
+            Assert.That($"{lastName}, {firstName} {middleName}", Is.EqualTo(person.NameLastFirst));
+            Assert.That($"{firstName} {middleName} {lastName}", Is.EqualTo(person.NameFirstLast));
+        }
+
+        [Test]
         public void CreateNewCustomerWithPersonEntity()
         {
             string firstName = "Jane";
@@ -129,15 +153,53 @@ namespace Migrations.Tests
         }
 
         [Test]
+        public void NotCreatePersonWithEmptyName()
+        {
+            string firstName = "";
+            string lastName = "";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { new Person(lastName, firstName); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.PersonNameEmptyMessage));
+        }
+
+        [Test]
+        public void NotCreateOrganizationWithEmptyName()
+        {
+            string name = "";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => new Organization(name));
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.OrganizationNameEmptyMessage));
+        }
+
+        [Test]
+        public void NotCreateOrganizationWithEmptyContact()
+        {
+            string janesAuto = "Jane's Auto";
+            Person person = null;
+
+            var exception = Assert.Throws<ArgumentException>(
+                () =>
+                {
+                    new Organization(janesAuto, person);
+                });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.OrganizationContactNullMessage));
+        }
+
+        [Test]
         public void NotCreateCustomerWithEmptyPersonName()
         {
             string firstName = "";
             string lastName = "";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(
+            var exception = Assert.Throws<ArgumentException>(
                 () => { new Person(lastName, firstName); });
 
-            Assert.That(exception.Message, Is.EqualTo("First and Last Names cannot be empty"));
+            Assert.That(exception.Message, Is.EqualTo(Person.PersonNameEmptyMessage));
         }
 
         [Test]
@@ -145,10 +207,10 @@ namespace Migrations.Tests
         {
             string name = "";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(
+            var exception = Assert.Throws<ArgumentException>(
                 () => { new Organization(name); });
 
-            Assert.That(exception.Message, Is.EqualTo("Name cannot be empty"));
+            Assert.That(exception.Message, Is.EqualTo(Organization.OrganizationNameEmptyMessage));
         }
     }
 }

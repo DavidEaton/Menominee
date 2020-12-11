@@ -8,7 +8,7 @@ namespace Migrations.Core.Entities
 {
     public class Ticket : IEntity
     {
-        // EF reuires an empty constructor
+        // EF requires an empty constructor
         protected Ticket()
         {
         }

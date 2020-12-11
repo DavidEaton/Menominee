@@ -1,10 +1,11 @@
-﻿using Migrations.Core.Enums;
+﻿using Migrations.Core.Entities;
+using Migrations.Core.Enums;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace Migrations.Core.Entities
+namespace Migrations.Core.Interfaces
 {
     public interface ICustomer
     {

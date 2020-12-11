@@ -1,4 +1,5 @@
 ﻿using Migrations.Core.Enums;
+using Migrations.Core.Interfaces;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
@@ -10,7 +11,7 @@ namespace Migrations.Core.Entities
 {
     public class Customer : IEntity, ICustomer
     {
-        // EF reuires an empty constructor
+        // EF requires an empty constructor
         protected Customer()
         {
         }

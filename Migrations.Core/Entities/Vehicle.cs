@@ -7,7 +7,7 @@ namespace Migrations.Core.Entities
 {
     public class Vehicle : IEntity
     {
-        // EF reuires an empty constructor
+        // EF requires an empty constructor
         protected Vehicle()
         {
         }

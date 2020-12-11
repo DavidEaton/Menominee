@@ -1,15 +1,16 @@
-﻿using SharedKernel.Enums;
-using SharedKernel.Interfaces;
+﻿using SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Migrations.Core.Entities
 {
-    public class Organization : IEntity
+    public class Organization : Entity
     {
-        // EF reuires an empty constructor
+        public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
+        public static readonly string OrganizationContactNullMessage = "Contact Person cannot be empty";
+
+        // EF requires an empty constructor
         protected Organization()
         {
         }
@@ -18,23 +19,20 @@ namespace Migrations.Core.Entities
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException("Name cannot be empty");
+                throw new ArgumentException(OrganizationNameEmptyMessage);
             }
             
             Name = name;
             Phones = new List<Phone>();
-            // Keep EF informed of object state in disconnected api
-            TrackingState = TrackingState.Added;
         }
 
         public Organization(string name, Person contact) : this (name)
         {
-            Contact = contact;
+            if (contact == null)
+            {
+                throw new ArgumentException(OrganizationContactNullMessage);
+            }
         }
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         [Required]
         [MaxLength(255)]
@@ -43,13 +41,5 @@ namespace Migrations.Core.Entities
         public Person Contact { get; set; }
         public Address Address { get; set; }
         public ICollection<Phone> Phones { get; set; }
-
-        [NotMapped]
-        public TrackingState TrackingState { get; private set; }
-        public void UpdateState(TrackingState state)
-        {
-            TrackingState = state;
-        }
-
     }
 }

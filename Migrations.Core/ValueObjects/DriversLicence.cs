@@ -29,5 +29,21 @@ namespace Migrations.Core.ValueObjects
         {
             return new DriversLicence(Number, newState);
         }
+
+        protected override bool EqualsCore(DriversLicence other)
+        {
+            return Number == other.Number
+                && State == other.State;
+        }
+
+        protected override int GetHashCodeCore()
+        {
+            unchecked
+            {
+                int hashCode = Number.GetHashCode();
+                hashCode = (hashCode * 397) ^ State.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

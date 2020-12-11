@@ -5,8 +5,9 @@ namespace SharedKernel.Interfaces
     public interface IEntity
     {
         int Id { get; }
-        public TrackingState TrackingState { get; }
-        public void UpdateState(TrackingState state);
-
+        TrackingState TrackingState { get; }
+        void UpdateState(TrackingState state);
+        bool Equals(object obj);
+        int GetHashCode();
     }
 }
