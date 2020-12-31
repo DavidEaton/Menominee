@@ -18,14 +18,14 @@
 
                         <div class="form-group">
                             <label for="lastName">Last name: </label>
-                            <InputText id="lastName" class="form-control" @bind-Value="@Person.LastName" placeholder="Enter last name"></InputText>
-                            <ValidationMessage For="@(() => Person.LastName)" />
+                            <InputText id="lastName" class="form-control" @bind-Value="@Person.Name.LastName" placeholder="Enter last name"></InputText>
+                            <ValidationMessage For="@(() => Person.Name.LastName)" />
                         </div>
 
                         <div class="form-group">
                             <label for="firstName">First name: </label>
-                            <InputText id="firstName" class="form-control" @bind-Value="@Person.FirstName" placeholder="Enter first name"></InputText>
-                            <ValidationMessage For="@(() => Person.FirstName)" />
+                            <InputText id="firstName" class="form-control" @bind-Value="@Person.Name.FirstName" placeholder="Enter first name"></InputText>
+                            <ValidationMessage For="@(() => Person.Name.FirstName)" />
                         </div>
 
                         <div class="form-group">

@@ -26,7 +26,7 @@ namespace ClientApp.Pages
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
-        protected AddPersonDialog AddPersonDialog { get; set; }
+        //protected AddPersonDialog AddPersonDialog { get; set; }
         protected override async Task OnInitializedAsync()
         {
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
@@ -49,7 +49,7 @@ namespace ClientApp.Pages
 
         protected void QuickAddPerson()
         {
-            AddPersonDialog.Show();
+            //AddPersonDialog.Show();
         }
 
         public async void AddPersonDialog_OnDialogClose()

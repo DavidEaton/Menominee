@@ -1,16 +1,11 @@
 ﻿using SharedKernel.Enums;
 using SharedKernel.Interfaces;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SharedKernel
 {
     public abstract class Entity : IEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual int Id { get; protected set; }
-
         public override bool Equals(object obj)
         {
             var other = obj as Entity;
@@ -45,7 +40,6 @@ namespace SharedKernel
         {
             return !(a == b);
         }
-
         public override int GetHashCode()
         {
             return (GetType().ToString() + Id).GetHashCode();
@@ -65,7 +59,6 @@ namespace SharedKernel
             TrackingState = state;
         }
 
-        [NotMapped]
         public TrackingState TrackingState { get; private set; }
 
         #endregion

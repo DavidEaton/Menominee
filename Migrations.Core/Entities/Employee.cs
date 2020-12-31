@@ -1,32 +1,22 @@
 ﻿using Migrations.Core.Interfaces;
-using SharedKernel.Enums;
-using SharedKernel.Interfaces;
+using SharedKernel;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Migrations.Core.Entities
 {
-    public class Employee : IEntity, IEmployee
+    public class Employee : Entity, IEmployee
     {
-        private DateTime? terminated;
+        private DateTime? Terminated;
 
         // EF requires an empty constructor
-        protected Employee()
-        {
-        }
+        protected Employee() { }
 
         public Employee(Person person, DateTime hired)
         {
             Person = person;
             Hired = hired;
-            // Keep EF informed of object state in disconnected api
-            TrackingState = TrackingState.Added;
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public Person Person { get; set; }
 
         // Enitity Framework convenience property
@@ -40,25 +30,14 @@ namespace Migrations.Core.Entities
 
         public DateTime? GetTerminated()
         {
-            return terminated;
+            return Terminated;
         }
 
-        private void SetTerminated(DateTime? value)
+        private void SetTerminated(DateTime? terminated)
         {
-            terminated = value;
+            Terminated = terminated;
         }
 
-        [NotMapped]
         public bool Active { get => !GetTerminated().HasValue; }
-
-        // EF State management for disconnected data
-        public void UpdateState(TrackingState state)
-        {
-            TrackingState = state;
-        }
-
-        [NotMapped]
-        public TrackingState TrackingState { get; private set; }
-
     }
 }

@@ -4,7 +4,7 @@ namespace SharedKernel
 {
     public class Guard
     {
-        public static void ForLessEqualZero(int value, string parameterName)
+        public static void ForLessThanOrEqualToZero(int value, string parameterName)
         {
             if (value <= 0)
             {

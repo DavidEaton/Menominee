@@ -1,49 +1,47 @@
-﻿using SharedKernel;
-using System.ComponentModel.DataAnnotations;
+﻿using SharedKernel.ValueObjects;
+using System;
+using System.Collections.Generic;
 
 namespace Migrations.Core.ValueObjects
 {
-    public class DriversLicence : ValueObject<DriversLicence>
+    public class DriversLicence : ValueObject
     {
-        [Required]
-        public string Number { get; private set; }
-        //[Required]
-        //public DateTimeRange ValidFromThru { get; set; }
+        public static readonly string DriversLicenceInvalidMessage = "Drivers Licence details cannot be empty";
+        public string Number { get; }
+        public DateTimeRange ValidRange { get; }
+        public string State { get; }
 
-        [Required]
-        public string State { get; private set; }
-
-        public DriversLicence(string number, string state)
+        public DriversLicence(string number, string state, DateTimeRange validRange)
         {
+            if (string.IsNullOrWhiteSpace(number) | string.IsNullOrWhiteSpace(state) | validRange == null)
+            {
+                throw new ArgumentException(DriversLicenceInvalidMessage);
+            }
+
             Number = number;
             State = state;
+            ValidRange = validRange;
         }
-
-        protected DriversLicence() { }
 
         public DriversLicence NewNumber(string newNumber)
         {
-            return new DriversLicence(newNumber, State);
+            return new DriversLicence(newNumber, State, ValidRange);
         }
         public DriversLicence NewState(string newState)
         {
-            return new DriversLicence(Number, newState);
+            return new DriversLicence(Number, newState, ValidRange);
         }
 
-        protected override bool EqualsCore(DriversLicence other)
+        public DriversLicence NewValidRange(DateTime start, DateTime end)
         {
-            return Number == other.Number
-                && State == other.State;
+            return new DriversLicence(Number, State, new DateTimeRange(start, end));
         }
 
-        protected override int GetHashCodeCore()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            unchecked
-            {
-                int hashCode = Number.GetHashCode();
-                hashCode = (hashCode * 397) ^ State.GetHashCode();
-                return hashCode;
-            }
+            yield return Number;
+            yield return State;
+            yield return ValidRange;
         }
     }
 }

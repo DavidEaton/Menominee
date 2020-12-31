@@ -1,5 +1,4 @@
 ﻿using Migrations.Core.Entities;
-using SharedKernel.Enums;
 using System;
 
 namespace Migrations.Core.Interfaces
@@ -8,13 +7,9 @@ namespace Migrations.Core.Interfaces
     {
         bool Active { get; }
         DateTime Hired { get; set; }
-        int Id { get; set; }
         Person Person { get; set; }
         int PersonId { get; set; }
-        TrackingState TrackingState { get; }
-
         DateTime? GetTerminated();
         void Terminate(DateTime terminated);
-        void UpdateState(TrackingState state);
     }
 }

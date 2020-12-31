@@ -2,6 +2,7 @@
 using ClientApp.Services;
 using System.Threading.Tasks;
 using Migrations.Core.Entities;
+using Migrations.Core.ValueObjects;
 
 namespace ClientApp.Components
 {
@@ -12,7 +13,7 @@ namespace ClientApp.Components
 
         [Parameter]
         public int Id { get; set; }
-        public Person Person { get; set; } = new Person("", "");
+        public Person Person { get; set; }
 
         // Screen state
         protected string Message = string.Empty;
@@ -24,7 +25,7 @@ namespace ClientApp.Components
             Saved = false;
 
             if (Id == 0)
-                Person = new Person("", "");
+                Person = new Person(new PersonName("", ""));
             else
                 Person = await PersonDataService.GetPerson(Id);
         }

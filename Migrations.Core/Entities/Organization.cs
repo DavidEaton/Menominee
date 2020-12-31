@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿using Migrations.Core.ValueObjects;
+using SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

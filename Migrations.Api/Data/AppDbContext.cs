@@ -51,9 +51,9 @@ namespace Migrations.Api.Data
             modelBuilder.Entity<TicketStatus>().ToTable("TicketStatus");
             modelBuilder.Entity<Vehicle>().ToTable("Vehicle");
 
-            modelBuilder.Entity<Person>()
-                        .HasMany(b => b.Phones)
-                        .WithOne();
+            //modelBuilder.Entity<Person>()
+            //            .HasMany(b => b.Phones)
+            //            .WithOne();
             modelBuilder.Entity<Organization>()
                         .HasMany(b => b.Phones)
                         .WithOne();

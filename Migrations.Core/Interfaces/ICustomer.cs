@@ -1,5 +1,6 @@
 ﻿using Migrations.Core.Entities;
 using Migrations.Core.Enums;
+using Migrations.Core.ValueObjects;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
@@ -9,7 +10,6 @@ namespace Migrations.Core.Interfaces
 {
     public interface ICustomer
     {
-        int Id { get; set; }
         IEntity Entity { get; set; }
         int EntityId { get; set; }
         EntityType EntityType { get; set; }

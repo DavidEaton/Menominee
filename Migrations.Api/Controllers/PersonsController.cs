@@ -68,7 +68,7 @@ namespace Migrations.Api.Controllers
             {
                 var fetchedPerson = await data.GetPersonAsync(id);
                 if (fetchedPerson == null)
-                    return NotFound($"Could not find Person in the database to updte: {model.NameFirstLast}");
+                    return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
                 //mapper.Map(model, fetchedPerson);
 
@@ -84,7 +84,7 @@ namespace Migrations.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
-            return BadRequest($"Failed to update {model.NameFirstLast}.");
+            return BadRequest($"Failed to update {model.Name.FirstMiddleLast}.");
         }
 
         // POST: api/Person/
@@ -108,7 +108,7 @@ namespace Migrations.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
-            return BadRequest($"Failed to add {model.NameFirstLast}.");
+            return BadRequest($"Failed to add {model.Name.FirstMiddleLast}.");
         }
 
         [HttpDelete("{id:int}")]

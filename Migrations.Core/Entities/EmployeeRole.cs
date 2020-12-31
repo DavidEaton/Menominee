@@ -1,30 +1,30 @@
 ﻿using Migrations.Core.Enums;
-using SharedKernel.Enums;
-using SharedKernel.Interfaces;
+using SharedKernel;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Migrations.Core.Entities
 {
-    public class EmployeeRole : IEntity
+    public class EmployeeRole : Entity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
         public Employee Employee { get; set; }
         public EmploymentRole EmploymentRole { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime? ValidThru { get; set; }
-
-        // EF State management for disconnected data
-        public void UpdateState(TrackingState state)
+        public void EndRole(DateTime roleEnded)
         {
-            TrackingState = state;
+            SetEndRole(roleEnded);
         }
 
-        [NotMapped]
-        public TrackingState TrackingState { get; private set; }
+        public DateTime? GetRoleEnded()
+        {
+            return ValidThru;
+        }
 
+        private void SetEndRole(DateTime? roleEnded)
+        {
+            ValidThru = roleEnded;
+        }
+
+        public bool Active { get => !GetRoleEnded().HasValue; }
     }
 }

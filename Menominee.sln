@@ -33,7 +33,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Api", "Migration
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientApp", "ClientApp\ClientApp.csproj", "{5AE24265-CED8-4B6D-93B8-C8416638B391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations.Tests", "Migrations.Tests\Migrations.Tests.csproj", "{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Tests", "Migrations.Tests\Migrations.Tests.csproj", "{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9D1DC6FF-FF06-45BA-8AF8-2A6C87B2145C}"
+	ProjectSection(SolutionItems) = preProject
+		DevelopmentProcess.md = DevelopmentProcess.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
