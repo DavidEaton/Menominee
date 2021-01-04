@@ -21,4 +21,11 @@ The benefits of versioned policies are:
 
 Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn’t be able to instantiate a value object in an invalid state.
 
-In practice it means that public constructors are not used. We instead use static factory methods.
+In practice it means that value objects are immutable, and public setters are not used. For example, methods like NewNumber on the Phone class return a NEW Phone object, rather than mutating the existing Phone object:
+
+        public class Phone : ValueObject
+        public Phone NewNumber(string newNumber)
+        {
+            return new Phone(newNumber, PhoneType);
+        }
+See?
