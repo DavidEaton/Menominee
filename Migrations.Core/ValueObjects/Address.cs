@@ -60,5 +60,12 @@ namespace Migrations.Core.ValueObjects
             yield return PostalCode;
             yield return CountryCode;
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected Address() { }
+
+        #endregion
     }
 }

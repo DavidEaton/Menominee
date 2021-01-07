@@ -10,7 +10,7 @@ namespace Migrations.Core.ValueObjects
         public string Number { get; }
         public DateTimeRange ValidRange { get; }
         public string State { get; }
-
+        
         public DriversLicence(string number, string state, DateTimeRange validRange)
         {
             if (string.IsNullOrWhiteSpace(number) | string.IsNullOrWhiteSpace(state) | validRange == null)
@@ -43,5 +43,12 @@ namespace Migrations.Core.ValueObjects
             yield return State;
             yield return ValidRange;
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected DriversLicence() { }
+
+        #endregion
     }
 }

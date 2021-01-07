@@ -10,11 +10,6 @@ namespace Migrations.Tests.EntityTests
 {
     public class PersonShould
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         public void CreateNewPerson()
         {
@@ -24,21 +19,119 @@ namespace Migrations.Tests.EntityTests
 
             // Act
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name);
+            var person = new Person(name, Gender.Female);
 
             // Assert
             Assert.That(person, Is.Not.Null);
         }
 
         [Test]
-        public void NotCreateNewPersonWithEmptyName()
+        public void NotCreateNewPersonWithNullName()
         {
             string firstName = null;
             string lastName = null;
 
             var exception = Assert.Throws<ArgumentException>(
-                () => { new Person(new PersonName(lastName, firstName)); });
+                () => { new Person(new PersonName(lastName, firstName), Gender.Female); });
+
             Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+        }
+
+        [Test]
+        public void NotCreateNewPersonWithEmptyName()
+        {
+            string firstName = "";
+            string lastName = "";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { new Person(new PersonName(lastName, firstName), Gender.Female); });
+
+            Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+        }
+
+        [Test]
+        public void CreateNewPersonWithEmptyLastName()
+        {
+            string firstName = "Molly";
+            string lastName = "";
+
+            var person = new Person(new PersonName(lastName, firstName), Gender.Female);
+
+            Assert.That(person, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonWithEmptyFirstName()
+        {
+            string firstName = "";
+            string lastName = "Moops";
+
+            var person = new Person(new PersonName(lastName, firstName), Gender.Female);
+
+            Assert.That(person, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonWithNullLastName()
+        {
+            string firstName = "Molly";
+            string lastName = null;
+
+            var person = new Person(new PersonName(lastName, firstName), Gender.Female);
+
+            Assert.That(person, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonWithNullFirstName()
+        {
+            string firstName = null;
+            string lastName = "Moops";
+
+            var person = new Person(new PersonName(lastName, firstName), Gender.Female);
+
+            Assert.That(person, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonWithPhones()
+        {
+            string firstName = "Molly";
+            string lastName = "Moops";
+
+            string number0 = "(989) 627-9206";
+            Phone phone0 = new Phone(number0, PhoneType.Mobile);
+
+            string number1 = "(231) 675-1922";
+            Phone phone1 = new Phone(number1, PhoneType.Mobile);
+
+            var phones = new List<Phone>
+            {
+                phone0,
+                phone1
+            };
+
+            var person = new Person(new PersonName(lastName, firstName), Gender.Female, phones);
+
+            Assert.That(person, Is.Not.Null);
+            Assert.That(person.Phones, Is.Not.Null);
+            Assert.That(person.Phones[0].Number, Is.EqualTo(number0));
+            Assert.That(person.Phones[1].Number, Is.EqualTo(number1));
+
+        }
+
+        [Test]
+        public void CreateNewPersonWithBirthday()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var birthday = DateTime.Today.AddYears(-40);
+
+            var person = new Person(name, Gender.Female, null, birthday);
+
+            Assert.That(person, Is.Not.Null);
+            Assert.That(person.Birthday, Is.EqualTo(birthday));
         }
 
         [Test]
@@ -54,7 +147,7 @@ namespace Migrations.Tests.EntityTests
 
             var driversLicense = new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, driversLicense);
+            var person = new Person(name, Gender.Female, null, null, null, driversLicense);
 
             Assert.That(person, Is.Not.Null);
             Assert.That(person.DriversLicence, Is.Not.Null);
@@ -78,7 +171,7 @@ namespace Migrations.Tests.EntityTests
             var address = new Address(addressLine, city, state, postalCode, countryCode);
 
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, null, address);
+            var person = new Person(name, Gender.Female, null, null, address);
 
             Assert.That(person, Is.Not.Null);
             Assert.That(person.Address, Is.Not.Null);
@@ -89,30 +182,5 @@ namespace Migrations.Tests.EntityTests
             Assert.That(person.Address.CountryCode, Is.EqualTo(countryCode));
         }
 
-        [Test]
-        public void CreateNewPersonWithPhones()
-        {
-            var number1 = "989.627.9206";
-            var number2 = "555-555-5555";
-            var phone1 = new Phone(number1, PhoneType.Home);
-            var phone2 = new Phone(number2, PhoneType.Mobile);
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var phones = new List<Phone>
-            {
-                phone1,
-                phone2
-            };
-
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, null, null, phones);
-
-            Assert.That(person, Is.Not.Null);
-            Assert.That(person.Phones, Is.Not.Null);
-            Assert.That(person.Phones[0].Number, Is.EqualTo(number1));
-            Assert.That(person.Phones[0].PhoneType, Is.EqualTo(PhoneType.Home));
-            Assert.That(person.Phones[1].Number, Is.EqualTo(number2));
-            Assert.That(person.Phones[1].PhoneType, Is.EqualTo(PhoneType.Mobile));
-        }
     }
 }

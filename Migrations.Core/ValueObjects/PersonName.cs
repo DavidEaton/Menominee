@@ -1,4 +1,5 @@
-﻿using SharedKernel.ValueObjects;
+﻿using SharedKernel;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,12 @@ namespace Migrations.Core.ValueObjects
         public static readonly string PersonNameEmptyMessage = "First Last and Middle Names cannot be empty";
         public PersonName(string lastName, string firstName, string middleName = null)
         {
-            if (string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(middleName))
+            try
+            {
+                // First name can be null or empty OR last name can be, but not both
+                Guard.ForNullOrEmpty(lastName + firstName, "Name");
+            }
+            catch (Exception)
             {
                 throw new ArgumentException(PersonNameEmptyMessage);
             }
@@ -42,5 +48,12 @@ namespace Migrations.Core.ValueObjects
             yield return FirstName;
             yield return MiddleName;
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected PersonName() { }
+
+        #endregion
     }
 }

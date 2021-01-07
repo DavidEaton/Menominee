@@ -1,8 +1,6 @@
 ﻿using Migrations.Core.ValueObjects;
 using SharedKernel;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Migrations.Core.Entities
 {
@@ -10,11 +8,6 @@ namespace Migrations.Core.Entities
     {
         public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
         public static readonly string OrganizationContactNullMessage = "Contact Person cannot be empty";
-
-        // EF requires an empty constructor
-        protected Organization()
-        {
-        }
 
         public Organization(string name)
         {
@@ -24,7 +17,6 @@ namespace Migrations.Core.Entities
             }
             
             Name = name;
-            Phones = new List<Phone>();
         }
 
         public Organization(string name, Person contact) : this (name)
@@ -35,12 +27,15 @@ namespace Migrations.Core.Entities
             }
         }
 
-        [Required]
-        [MaxLength(255)]
-        [MinLength(1)]
         public string Name { get; set; }
         public Person Contact { get; set; }
         public Address Address { get; set; }
-        public ICollection<Phone> Phones { get; set; }
+ 
+        #region ORM
+
+        // EF requires an empty constructor
+        protected Organization() { }
+
+        #endregion
     }
 }

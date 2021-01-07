@@ -34,10 +34,10 @@ namespace Migrations.Api.Data.Repositories
             // Tracking is not needed (and expensive) for disconnected data collections
             var customer = await context.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
-            if (customer.EntityType == EntityType.Organization)
+            if (customer.Entity is Organization)
                 customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
 
-            if (customer.EntityType == EntityType.Person)
+            if (customer.Entity is Person)
                 customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
 
             return customer;
@@ -49,12 +49,12 @@ namespace Migrations.Api.Data.Repositories
 
             foreach (var customer in customers)
             {
-                if (customer.EntityType == EntityType.Organization)
+                if (customer.Entity is Organization)
                     customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
                 if (includePhones)
                     await GetOrganizationPhones(customer);
 
-                if (customer.EntityType == EntityType.Person)
+                if (customer.Entity is Person)
                     customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
                 if (includePhones)
                     await GetPersonPhones(customer);

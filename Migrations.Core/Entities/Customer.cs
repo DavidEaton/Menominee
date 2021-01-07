@@ -2,7 +2,6 @@
 using Migrations.Core.Interfaces;
 using Migrations.Core.ValueObjects;
 using SharedKernel;
-using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,6 @@ namespace Migrations.Core.Entities
 {
     public class Customer : Entity, ICustomer
     {
-        // EF requires an empty constructor
-        protected Customer() { }
-
         public Customer(IEntity entity)
         {
             if (entity is Organization organization)
@@ -26,8 +22,8 @@ namespace Migrations.Core.Entities
             Vehicles = new List<Vehicle>();
         }
 
+        // Person or Organization
         public IEntity Entity { get; set; }
-        public EntityType EntityType { get; set; }
         public int EntityId { get; set; }
         public Address Address { get; set; }
         public CustomerType CustomerType { get; set; }
@@ -38,9 +34,15 @@ namespace Migrations.Core.Entities
         public int TaxIds { get; set; }
         public bool RewardsMember { get; set; }
         public bool OverrideCustomerTaxProfile { get; set; }
-        public DateTime ValidFrom { get; set; }
+        public DateTime Created { get; set; }
         public DateTime? ValidThru { get; set; }
-        public ICollection<Phone> Phones { get; private set; }
         public ICollection<Vehicle> Vehicles { get; private set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected Customer() { }
+
+        #endregion
     }
 }

@@ -37,5 +37,12 @@ namespace Migrations.Core.ValueObjects
             yield return Number;
             yield return PhoneType;
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected Phone() { }
+
+        #endregion
     }
 }

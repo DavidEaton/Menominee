@@ -54,9 +54,9 @@ namespace Migrations.Api.Data
             //modelBuilder.Entity<Person>()
             //            .HasMany(b => b.Phones)
             //            .WithOne();
-            modelBuilder.Entity<Organization>()
-                        .HasMany(b => b.Phones)
-                        .WithOne();
+            //modelBuilder.Entity<Organization>()
+            //            .HasMany(b => b.Phones)
+            //            .WithOne();
         }
 
     }

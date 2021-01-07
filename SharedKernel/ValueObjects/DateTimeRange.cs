@@ -27,7 +27,6 @@ namespace SharedKernel.ValueObjects
         public DateTimeRange(DateTime start, TimeSpan duration) : this(start, start.Add(duration))
         {
         }
-        protected DateTimeRange() { }
 
         public int DurationInMinutes()
         {
@@ -62,5 +61,12 @@ namespace SharedKernel.ValueObjects
             yield return End;
             yield return Start;
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        protected DateTimeRange() { }
+
+        #endregion
     }
 }

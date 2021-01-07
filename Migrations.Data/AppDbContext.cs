@@ -42,9 +42,9 @@ namespace Migrations.Data
             //modelBuilder.Entity<Person>()
             //            .HasMany(b => b.Phones)
             //            .WithOne();
-            modelBuilder.Entity<Organization>()
-                        .HasMany(b => b.Phones)
-                        .WithOne();
+            //modelBuilder.Entity<Organization>()
+            //            .HasMany(b => b.Phones)
+            //            .WithOne();
 
             IgnoreColumns(modelBuilder);
         }
@@ -87,7 +87,6 @@ namespace Migrations.Data
 
             modelBuilder.Entity<Customer>().Ignore(p => p.Entity);
             modelBuilder.Entity<Customer>().Ignore(p => p.Address);
-            modelBuilder.Entity<Customer>().Ignore(p => p.Phones);
 
             modelBuilder.Entity<Employee>().Ignore(p => p.Active);
 

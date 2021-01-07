@@ -23,6 +23,18 @@ namespace Migrations.Tests.ValueObjectTests
         [Test]
         public void NotCreateNewPersonNameWithEmptyName()
         {
+            string firstName = "";
+            string lastName = "";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { new PersonName(firstName, lastName); });
+
+            Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+        }
+
+        [Test]
+        public void NotCreateNewPersonNameWithNullName()
+        {
             string firstName = null;
             string lastName = null;
 
@@ -30,6 +42,51 @@ namespace Migrations.Tests.ValueObjectTests
                 () => { new PersonName(firstName, lastName); });
 
             Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+        }
+
+
+        [Test]
+        public void CreateNewPersonNameWithEmptyLastName()
+        {
+            string firstName = "Molly";
+            string lastName = "";
+
+            var name = new PersonName(lastName, firstName);
+
+            Assert.That(name, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonNameWithEmptyFirstName()
+        {
+            string firstName = "";
+            string lastName = "Moops";
+
+            var name = new PersonName(lastName, firstName);
+
+            Assert.That(name, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonNameWithNullLastName()
+        {
+            string firstName = "Molly";
+            string lastName = null;
+
+            var name = new PersonName(lastName, firstName);
+
+            Assert.That(name, Is.Not.Null);
+        }
+
+        [Test]
+        public void CreateNewPersonWithNameNullFirstName()
+        {
+            string firstName = null;
+            string lastName = "Moops";
+
+            var name = new PersonName(lastName, firstName);
+
+            Assert.That(name, Is.Not.Null);
         }
 
         [Test]
