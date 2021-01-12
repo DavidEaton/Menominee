@@ -1,11 +1,11 @@
-﻿using CustomerVehicleManagement.Core.Enums;
-using Migrations.Core.Entities;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TicketManagement.Core.Entities;
+using TicketManagement.Core.Enums;
 
 namespace TicketManagement.Core.Model
 {

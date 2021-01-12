@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using ClientApp.Components;
 using ClientApp.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Migrations.Core.Entities;
 using SharedKernel;
+using CustomerVehicleManagement.Domain.Entities;
 
 namespace ClientApp.Pages
 {

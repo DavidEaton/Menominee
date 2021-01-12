@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Core.Enums
+﻿namespace CustomerVehicleManagement.Domain.Enums
 {
     public enum PhoneType
     {

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerVehicleManagement", "CustomerVehicleManagement", "{3D28A673-921E-4D25-BDAC-7619F93B4151}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Core", "CustomerVehicleManagement.Core\CustomerVehicleManagement.Core.csproj", "{EACCA922-3516-439B-BCE9-24ACC8DE914F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Domain", "CustomerVehicleManagement.Core\CustomerVehicleManagement.Domain.csproj", "{EACCA922-3516-439B-BCE9-24ACC8DE914F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Data", "CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj", "{5CDD6DF2-2522-4875-BA7E-664384EE46F1}"
 EndProject
@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketManagement.Tests", "T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{02718534-DCC7-428B-A223-3B8EB8D25856}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Core", "Migrations.Core\Migrations.Core.csproj", "{62DBE191-0E04-403F-8CCE-39FE0E7C5651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Domain", "Migrations.Core\Migrations.Domain.csproj", "{62DBE191-0E04-403F-8CCE-39FE0E7C5651}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Data", "Migrations.Data\Migrations.Data.csproj", "{207BCFBD-6D9B-4349-92AD-E0A00DFF3E3F}"
 EndProject
@@ -33,12 +33,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Api", "Migration
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientApp", "ClientApp\ClientApp.csproj", "{5AE24265-CED8-4B6D-93B8-C8416638B391}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrations.Tests", "Migrations.Tests\Migrations.Tests.csproj", "{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9D1DC6FF-FF06-45BA-8AF8-2A6C87B2145C}"
 	ProjectSection(SolutionItems) = preProject
 		DevelopmentProcess.md = DevelopmentProcess.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerVehicleManagement.Api", "CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj", "{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,10 +94,10 @@ Global
 		{5AE24265-CED8-4B6D-93B8-C8416638B391}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AE24265-CED8-4B6D-93B8-C8416638B391}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AE24265-CED8-4B6D-93B8-C8416638B391}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,7 +112,7 @@ Global
 		{62DBE191-0E04-403F-8CCE-39FE0E7C5651} = {02718534-DCC7-428B-A223-3B8EB8D25856}
 		{207BCFBD-6D9B-4349-92AD-E0A00DFF3E3F} = {02718534-DCC7-428B-A223-3B8EB8D25856}
 		{44F5E7AF-9714-4980-8690-C9ADC9D3C081} = {02718534-DCC7-428B-A223-3B8EB8D25856}
-		{FBF430B9-FF38-4BF4-B652-BBC4A6EE7180} = {02718534-DCC7-428B-A223-3B8EB8D25856}
+		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {645DCBDD-74CB-49E1-8FD9-EDF9F1A97E36}

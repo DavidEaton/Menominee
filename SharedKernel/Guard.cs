@@ -27,5 +27,13 @@ namespace SharedKernel
                 throw new ArgumentOutOfRangeException(parameterName);
             }
         }
+
+        public static void ForNull(object value, string parameterName)
+        {
+            if (value == null)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
     }
 }

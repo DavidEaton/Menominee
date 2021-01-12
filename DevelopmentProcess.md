@@ -28,4 +28,9 @@ In practice it means that value objects are immutable, and public setters are no
         {
             return new Phone(newNumber, PhoneType);
         }
-See?
+#### Collections of Value Objects
+        /// This entity will act as a thin wrapper on top of Phone value object
+        /// with just an identifier and a reference to the owning Organization.
+        /// Necessary to enable searchable value object collection of phones.
+        /// Although we do now have an additional entity in our domain model,
+        /// we don’t ever have to expose it outside of the aggregate (Organization).

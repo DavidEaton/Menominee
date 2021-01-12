@@ -23,7 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Migrations.Core\Migrations.Core.csproj" />
+    <ProjectReference Include="..\CustomerVehicleManagement.Core\CustomerVehicleManagement.Domain.csproj" />
+    <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Core.Model;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

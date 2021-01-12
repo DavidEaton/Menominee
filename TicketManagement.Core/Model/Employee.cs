@@ -1,5 +1,5 @@
-﻿using Migrations.Core.Entities;
-using System;
+﻿using System;
+using TicketManagement.Core.Entities;
 
 namespace TicketManagement.Core.Model
 {
