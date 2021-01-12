@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Enums;
 using CustomerVehicleManagement.Domain.Interfaces;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using SharedKernel;
+using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,10 +13,16 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Customer(IEntity entity)
         {
             if (entity is Organization organization)
+            {
                 Entity = organization;
+                EntityType = EntityType.Organization;
+            }
 
             if (entity is Person person)
+            {
                 Entity = person;
+                EntityType = EntityType.Person;
+            }
 
             EntityId = entity.Id;
             Vehicles = new List<Vehicle>();
@@ -25,8 +31,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         // Person or Organization
         public IEntity Entity { get; set; }
+        public EntityType EntityType { get; set; }
         public int EntityId { get; set; }
-        public Address Address { get; set; }
         public CustomerType CustomerType { get; set; }
         public bool AllowMail { get; set; }
         public bool AllowEmail { get; set; }
@@ -36,7 +42,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public bool RewardsMember { get; set; }
         public bool OverrideCustomerTaxProfile { get; set; }
         public DateTime Created { get; set; }
-        public DateTime? ValidThru { get; set; }
         public IList<Phone> Phones { get; set; }
         public IList<Vehicle> Vehicles { get; private set; }
 

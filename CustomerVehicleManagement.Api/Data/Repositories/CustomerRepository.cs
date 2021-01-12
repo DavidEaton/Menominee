@@ -3,15 +3,13 @@ using CustomerVehicleManagement.Api.Data.Interfaces;
 using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
         private readonly AppDbContext context;
-        public CustomerRepository()
-        {
-        }
 
         public CustomerRepository(AppDbContext context)
         {
@@ -30,29 +28,53 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            // Tracking is not needed (and expensive) for disconnected data collections
-            var customer = await context.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            // Tracking is not needed (and expensive) for queries of disconnected data collections
+            var customer = await context.Customers
+                                        .AsNoTracking()
+                                        .Include(c => c.Phones)
+                                        .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (customer.Entity is Organization)
-                customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+            if (customer.EntityType == EntityType.Organization)
+            {
+                customer.Entity = await context.Organizations
+                                               .AsNoTracking()
+                                               .Include(o => o.Contact)
+                                               .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+            }
 
-            if (customer.Entity is Person)
-                customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+            if (customer.EntityType == EntityType.Person)
+            {
+                customer.Entity = await context.Persons
+                                               .AsNoTracking()
+                                               .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+            }
 
             return customer;
         }
 
         public async Task<Customer[]> GetCustomersAsync()
         {
-            var customers = await context.Customers.AsNoTracking().ToArrayAsync();
+            var customers = await context.Customers
+                                         .AsNoTracking()
+                                         .Include(c => c.Phones)
+                                         .ToArrayAsync();
 
             foreach (var customer in customers)
             {
-                if (customer.Entity is Organization)
-                    customer.Entity = await context.Organizations.AsNoTracking().FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+                if (customer.EntityType == EntityType.Organization)
+                {
+                    customer.Entity = await context.Organizations
+                                                   .AsNoTracking()
+                                                   .Include(o => o.Contact)
+                                                   .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+                }
 
-                if (customer.Entity is Person)
-                    customer.Entity = await context.Persons.AsNoTracking().FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+                if (customer.EntityType == EntityType.Person)
+                {
+                    customer.Entity = await context.Persons
+                                                   .AsNoTracking()
+                                                   .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+                }
             }
 
             return customers;
@@ -66,6 +88,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<bool> SaveChangesAsync(Customer customer)
         {
+            // Tracking IS needed for commands for disconnected data collections
             // Mark customer EF tracking state = modified via dbContext:
             context.Customers
                 .Update(customer);
@@ -88,6 +111,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             if (customer == null)
                 throw new NullReferenceException("Customer is missing.");
 
+            // Tracking IS needed for commands for disconnected data collections
             context.Entry(customer).State = EntityState.Modified;
 
             try

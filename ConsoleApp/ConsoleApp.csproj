@@ -12,4 +12,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -16,12 +16,6 @@ namespace CustomerVehicleManagement.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Phone> Phones { get; set; }
-        //public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-        //public DbSet<SaleCode> SaleCodes { get; set; }
-        //public DbSet<ServiceRequest> ServiceRequests { get; set; }
-        //public DbSet<StatusRequirement> StatusRequirements { get; set; }
-        //public DbSet<Ticket> Tickets { get; set; }
-        //public DbSet<TicketStatus> TicketStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -40,7 +34,7 @@ namespace CustomerVehicleManagement.Data
             modelBuilder.ApplyConfiguration(new PersonConfiguration());
             modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-
+            modelBuilder.ApplyConfiguration(new PhoneConfiguration());
         }
     }
 }

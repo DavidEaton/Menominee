@@ -41,6 +41,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 // Tracking is not needed (and expensive) for this disconnected data collection
                 .AsNoTracking()
                 .Include(o => o.Address)
+                .Include(o => o.Contact)
                 .ToArrayAsync();
         }
 
