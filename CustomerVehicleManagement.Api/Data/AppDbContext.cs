@@ -8,11 +8,19 @@ using SharedKernel;
 
 namespace CustomerVehicleManagement.Api.Data
 {
+    /// <summary>
+    /// This DbContext is used by the api, injected into the services Inversion of Control (IoC) container during Startup
+    /// </summary>
     public class AppDbContext : DbContext
     {
         //const string connection = "Server=tcp:janco.database.windows.net,1433;Initial Catalog=StockTracDomain;Persist Security Info=False;User ID=jancoAdmin;Password=sd5hF4Z4zcpoc!842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         //const string CONNECTION = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+
+        public IHostEnvironment environment;
+        public IConfiguration configuration;
+        private readonly ILogger<AppDbContext> logger;
+        //private readonly UserContext userContext;
 
         public AppDbContext(DbContextOptions<AppDbContext> options,
             //UserContext userContext,
@@ -26,11 +34,6 @@ namespace CustomerVehicleManagement.Api.Data
             this.configuration = configuration;
             this.logger = logger;
         }
-
-        public IHostEnvironment environment;
-        public IConfiguration configuration;
-        private readonly ILogger<AppDbContext> logger;
-        //private readonly UserContext userContext;
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Organization> Organizations { get; set; }

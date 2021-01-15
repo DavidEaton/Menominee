@@ -17,6 +17,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
                     EntityId = table.Column<int>(type: "int", nullable: false),
                     CustomerType = table.Column<int>(type: "int", nullable: false),
                     AllowMail = table.Column<bool>(type: "bit", nullable: false),

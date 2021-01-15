@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Enums;
 using SharedKernel;
 using System;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
@@ -8,6 +9,8 @@ namespace CustomerVehicleManagement.Domain.Entities
     {
         public static readonly string PhoneEmptyMessage = "Phone number cannot be empty";
 
+        // Blazor 5 requires public JsonConstructor-attributed contructor, 
+        [JsonConstructor]
         public Phone(string number, PhoneType phoneType)
         {
             try

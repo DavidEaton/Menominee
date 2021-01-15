@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using Client.Components;
 using Client.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Migrations.Core.Entities;
+using SharedKernel;
+using CustomerVehicleManagement.Domain.Entities;
 
 namespace Client.Pages
 {
@@ -20,16 +20,19 @@ namespace Client.Pages
         public ILogger<Persons> Logger { get; set; }
 
         public int SelectedId { get; set; }
-        //public Tenant Tenant { get; set; }
+        public Tenant Tenant { get; set; }
 
-        [Parameter]
-        public RenderFragment ChildContent { get; set; }
-        protected AddPersonDialog AddPersonDialog { get; set; }
+        //[Parameter]
+        //public RenderFragment ChildContent { get; set; }
+        //protected AddPersonDialog AddPersonDialog { get; set; }
         protected override async Task OnInitializedAsync()
         {
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             PersonsList = FormatPersonData(PersonsList);
             Logger.LogInformation("Persons.OnInitializedAsync()");
+
+
+
         }
 
         private IEnumerable<Person> FormatPersonData(IEnumerable<Person> persons)
@@ -47,7 +50,7 @@ namespace Client.Pages
 
         protected void QuickAddPerson()
         {
-            AddPersonDialog.Show();
+            //AddPersonDialog.Show();
         }
 
         public async void AddPersonDialog_OnDialogClose()

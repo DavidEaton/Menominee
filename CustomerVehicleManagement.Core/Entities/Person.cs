@@ -2,11 +2,14 @@
 using CustomerVehicleManagement.Domain.ValueObjects;
 using SharedKernel;
 using System;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Entity
     {
+        // Blazor 5 requires public JsonConstructor-attributed contructor, 
+        [JsonConstructor]
         public Person(PersonName name, Gender gender)
             : this(name, gender, null) { }
 

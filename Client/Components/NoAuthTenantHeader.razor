@@ -1,0 +1,18 @@
+﻿@if (Tenant == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        <div>
+            <img src="@Tenant?.LogoUrl"
+                 asp-append-version="true"
+                 alt="Tenant Logo"
+                 title="@Tenant?.CompanyName">
+        </div>
+        <div>
+            @Tenant.Name
+        </div>
+    </div>
+}

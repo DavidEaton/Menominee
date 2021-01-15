@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -13,8 +12,8 @@ namespace Client.Shared
         [Inject]
         public NavigationManager Navigation { get; set; }
 
-        [Inject]
-        public SignOutSessionStateManager SignOutManager { get; set; }
+        //[Inject]
+        //public SignOutSessionStateManager SignOutManager { get; set; }
 
         [Inject]
         public IConfiguration Configuration { get; set; }
@@ -26,7 +25,7 @@ namespace Client.Shared
 
         private async Task BeginSignOut(MouseEventArgs args)
         {
-            await SignOutManager.SetSignOutState();
+            //await SignOutManager.SetSignOutState();
             Navigation.NavigateTo("authentication/logout");
         }
     }

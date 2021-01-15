@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerVehicleManagement.Data.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20210112182812_initial")]
+    [DbContext(typeof(DataDbContext))]
+    [Migration("20210113141608_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,9 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EntityType")
                         .HasColumnType("int");
 
                     b.Property<bool>("OverrideCustomerTaxProfile")

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SharedKernel.ValueObjects
 {
@@ -9,6 +10,7 @@ namespace SharedKernel.ValueObjects
         public DateTime Start { get; }
         public DateTime End { get; }
 
+        [JsonConstructor]
         public DateTimeRange(DateTime start, DateTime end)
         {
             try

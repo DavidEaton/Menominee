@@ -1,7 +1,8 @@
-﻿using Client.Models;
-using Migrations.Core.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -35,8 +36,17 @@ namespace Client.Services
 
         public async Task<IEnumerable<Person>> GetAllPersons()
         {
-            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            return await JsonSerializer.DeserializeAsync<IEnumerable<Person>>(await httpClient.GetStreamAsync(URISEGMENT), options);
+            try
+            {
+                var persons = await httpClient.GetFromJsonAsync<Person[]>("https://localhost:54382/api/persons");
+                return persons;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Message :{0} ", ex.Message);
+            }
+
+            return null;
         }
 
         public async Task<Person> GetPerson(int id)

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ClientApp.Services;
 using System.Threading.Tasks;
-using SharedKernel;
+using ClientApp.Models;
 
 namespace ClientApp.Components
 {

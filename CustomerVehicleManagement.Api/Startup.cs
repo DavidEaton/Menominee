@@ -85,8 +85,8 @@ namespace CustomerVehicleManagement.Api
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection("Clients:Origins").Get<List<string>>()).AllowAnyMethod().AllowAnyHeader());
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
             //                        .AllowAnyMethod().AllowAnyHeader());
-            //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
-            //                        .AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+                                    .AllowAnyMethod().AllowAnyHeader());
 
             if (HostEnvironment.IsDevelopment())
                 app.UseDeveloperExceptionPage();

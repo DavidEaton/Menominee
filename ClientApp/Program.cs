@@ -1,8 +1,10 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ClientApp.Services;
 
 namespace ClientApp
@@ -27,8 +29,6 @@ namespace ClientApp
                     builder.Configuration.GetValue<string>("ApiBaseUrl")))
                 .AddHttpMessageHandler<ApiAuthorizationMessageHandler>();
 
-            builder.Services.AddAuthorizationCore();
-            
             await builder.Build().RunAsync();
         }
     }

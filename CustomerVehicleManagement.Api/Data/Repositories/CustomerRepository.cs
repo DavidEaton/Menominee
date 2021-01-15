@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<bool> SaveChangesAsync(Customer customer)
         {
-            // Tracking IS needed for commands for disconnected data collections
+            // Tracking IS needed for commands on disconnected data collections
             // Mark customer EF tracking state = modified via dbContext:
             context.Customers
                 .Update(customer);

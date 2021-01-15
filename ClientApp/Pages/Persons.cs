@@ -22,14 +22,17 @@ namespace ClientApp.Pages
         public int SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
-        [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        //[Parameter]
+        //public RenderFragment ChildContent { get; set; }
         //protected AddPersonDialog AddPersonDialog { get; set; }
         protected override async Task OnInitializedAsync()
         {
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             PersonsList = FormatPersonData(PersonsList);
             Logger.LogInformation("Persons.OnInitializedAsync()");
+
+
+
         }
 
         private IEnumerable<Person> FormatPersonData(IEnumerable<Person> persons)

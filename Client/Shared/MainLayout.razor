@@ -1,13 +1,15 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="container-fluid app">
-    <NavMenu />
-    <div class="d-flex flex-row">
-        <div class="d-flex justify-content-start">
-            <SideNav />
-        </div>
-        <div class="pt-5 pl-5 pr-5 flex-fill">
-            @Body
+<div class="page">
+    <div class="container-fluid app">
+        <NavMenu />
+        <div class="d-flex flex-row">
+            <div class="d-flex justify-content-start">
+                <SideNav />
+            </div>
+            <div class="pt-5 pl-5 pr-5 flex-fill">
+                @Body
+            </div>
         </div>
     </div>
 </div>
