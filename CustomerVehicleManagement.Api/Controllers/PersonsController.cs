@@ -38,21 +38,6 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // GET: api/Persons
-        [HttpGet]
-        public async Task<ActionResult<Person[]>> GetPersonsWithPhones()
-        {
-            try
-            {
-                var results = await data.GetPersonsAsync();
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
-        }
-
         // GET: api/Person/1
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Person>> GetPerson(int id)

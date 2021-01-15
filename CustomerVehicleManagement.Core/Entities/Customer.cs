@@ -5,11 +5,14 @@ using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Customer : Entity, ICustomer
     {
+        // Blazor 5 requires public JsonConstructor-attributed contructor, 
+        [JsonConstructor]
         public Customer(IEntity entity)
         {
             if (entity is Organization organization)

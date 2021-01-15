@@ -38,7 +38,7 @@ namespace Client.Services
         {
             try
             {
-                var persons = await httpClient.GetFromJsonAsync<Person[]>("https://localhost:54382/api/persons");
+                var persons = await httpClient.GetFromJsonAsync<Person[]>(httpClient.BaseAddress.ToString() + URISEGMENT);
                 return persons;
             }
             catch (Exception ex)
