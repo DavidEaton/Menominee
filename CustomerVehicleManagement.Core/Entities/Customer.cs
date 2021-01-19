@@ -28,8 +28,6 @@ namespace CustomerVehicleManagement.Domain.Entities
             }
 
             EntityId = entity.Id;
-            Vehicles = new List<Vehicle>();
-            Phones = new List<Phone>();
         }
 
         // Person or Organization
@@ -45,8 +43,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public bool RewardsMember { get; set; }
         public bool OverrideCustomerTaxProfile { get; set; }
         public DateTime Created { get; set; }
-        public IList<Phone> Phones { get; set; }
-        public IList<Vehicle> Vehicles { get; private set; }
+        public IList<Phone> Phones { get; set; } = new List<Phone>();
+        public IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
 
         public void AddPhone(Phone phone)
         {

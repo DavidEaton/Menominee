@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedKernel;
-using CustomerVehicleManagement.Domain.Entities;
+using Client.Components;
+using Client.Models;
 
 namespace Client.Pages
 {
     public partial class Persons : ComponentBase
     {
-        public IEnumerable<Person> PersonsList;
+        public IEnumerable<PersonDto> PersonsList;
 
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
@@ -24,18 +25,18 @@ namespace Client.Pages
 
         //[Parameter]
         //public RenderFragment ChildContent { get; set; }
-        //protected AddPersonDialog AddPersonDialog { get; set; }
+        protected AddPersonDialog AddPersonDialog { get; set; }
         protected override async Task OnInitializedAsync()
         {
+            Logger.LogInformation("Persons.OnInitializedAsync()");
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             PersonsList = FormatPersonData(PersonsList);
-            Logger.LogInformation("Persons.OnInitializedAsync()");
 
 
 
         }
 
-        private IEnumerable<Person> FormatPersonData(IEnumerable<Person> persons)
+        private IEnumerable<PersonDto> FormatPersonData(IEnumerable<PersonDto> persons)
         {
             foreach (var person in persons)
             {
@@ -50,7 +51,7 @@ namespace Client.Pages
 
         protected void QuickAddPerson()
         {
-            //AddPersonDialog.Show();
+            AddPersonDialog.Show();
         }
 
         public async void AddPersonDialog_OnDialogClose()
