@@ -6,10 +6,10 @@ namespace Client.Services
 {
     public interface IPersonDataService
     {
-        Task<IEnumerable<PersonDto>> GetAllPersons();
-        Task<PersonDto> GetPerson(int id);
-        Task<PersonDto> AddPerson(PersonDto person);
-        Task UpdatePerson(PersonDto person);
+        Task<IEnumerable<PersonFlatDto>> GetAllPersons();
+        Task<PersonFlatDto> GetPersonDetails(int id);
+        Task<PersonFlatDto> AddPerson(PersonAddDto person);
+        Task UpdatePerson(PersonFlatDto person);
         Task DeletePerson(int id);
     }
 }

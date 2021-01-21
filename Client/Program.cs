@@ -15,7 +15,7 @@ namespace Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl")) });
+            builder.Services.AddScoped(serviceProvider => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl")) });
             builder.Services.AddScoped<IPersonDataService, PersonDataService>();
 
             await builder.Build().RunAsync();

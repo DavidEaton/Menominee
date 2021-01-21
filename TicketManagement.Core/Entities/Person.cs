@@ -11,7 +11,7 @@ namespace TicketManagement.Core.Entities
         public string Gender { get; set; }
         public DateTime? Birthday { get; set; }
         //Flatten the value objects
-        //public DriversLicence DriversLicence { get; set; }
+        //public DriversLicense DriversLicense { get; set; }
         //public Address Address { get; set; }
 
         #region ORM

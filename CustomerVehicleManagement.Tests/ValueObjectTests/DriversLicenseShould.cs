@@ -26,9 +26,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             DateTimeRange driversLicenseValidRange = new DateTimeRange(issued, expiry);
 
             var exception = Assert.Throws<ArgumentException>(
-                () => { new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
+                () => { new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
 
-            Assert.That(exception.Message, Is.EqualTo(DriversLicence.DriversLicenceInvalidMessage));
+            Assert.That(exception.Message, Is.EqualTo(DriversLicense.DriversLicenseInvalidMessage));
 
             driversLicenseNumber = "123456789POIUYTREWQ";
             driversLicenseState = null;
@@ -38,18 +38,18 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             driversLicenseValidRange = new DateTimeRange(issued, expiry);
 
             exception = Assert.Throws<ArgumentException>(
-                () => { new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
+                () => { new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
 
-            Assert.That(exception.Message, Is.EqualTo(DriversLicence.DriversLicenceInvalidMessage));
+            Assert.That(exception.Message, Is.EqualTo(DriversLicense.DriversLicenseInvalidMessage));
 
             driversLicenseNumber = "123456789POIUYTREWQ";
             driversLicenseState = "MI";
             driversLicenseValidRange = null;
 
             exception = Assert.Throws<ArgumentException>(
-                () => { new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
+                () => { new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
 
-            Assert.That(exception.Message, Is.EqualTo(DriversLicence.DriversLicenceInvalidMessage));
+            Assert.That(exception.Message, Is.EqualTo(DriversLicense.DriversLicenseInvalidMessage));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             Assert.That(driversLicense.ValidRange.End, Is.EqualTo(expiry));
         }
 
-        internal static DriversLicence CreateDriversLicense()
+        internal static DriversLicense CreateDriversLicense()
         {
             var driversLicenseNumber = "123456789POIUYTREWQ";
             var driversLicenseState = "MI";
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
 
-            return new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            return new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
         }
     }
 }

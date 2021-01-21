@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using CustomerVehicleManagement.Domain.ValueObjects;
 using NUnit.Framework;
+using SharedKernel.Enums;
 using System;
 
 namespace CustomerVehicleManagement.Tests.EntityTests
@@ -52,9 +52,8 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var countryCode = "1";
 
-            var address = new Address(addressLine, city, state, postalCode, countryCode);
+            var address = new Address(addressLine, city, state, postalCode);
 
             var organization = new Organization(name, address);
 
@@ -64,7 +63,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(organization.Address.City, Is.EqualTo(city));
             Assert.That(organization.Address.State, Is.EqualTo(state));
             Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
-            Assert.That(organization.Address.CountryCode, Is.EqualTo(countryCode));
         }
 
         [Test]

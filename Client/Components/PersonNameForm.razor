@@ -1,0 +1,36 @@
+﻿<EditForm Model="@Name"
+          OnValidSubmit="@HandleValidSubmit"
+          OnInvalidSubmit="@HandleInValidSubmit">
+    <div class="form-group">
+        <label for="firstName">First name: </label>
+        <InputText id="firstName"
+                   class="form-control"
+                   @bind-Value="@Name.FirstName"
+                   @onblur="HandleValidSubmit"
+                   placeholder="Enter first name">
+        </InputText>
+        <ValidationMessage For="@(() => Name.FirstName)" />
+    </div>
+
+    <div class="form-group">
+        <label for="middleName">Middle name: </label>
+        <InputText id="middleName"
+                   class="form-control"
+                   @bind-Value="@Name.MiddleName"
+                   @onblur="HandleValidSubmit"
+                   placeholder="Enter middle name">
+        </InputText>
+        <ValidationMessage For="@(() => Name.MiddleName)" />
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Last name: </label>
+        <InputText id="lastName"
+                   class="form-control"
+                   @bind-Value="@Name.LastName"
+                   @onblur="HandleValidSubmit"
+                   placeholder="Enter last name">
+        </InputText>
+        <ValidationMessage For="@(() => Name.LastName)" />
+    </div>
+</EditForm>

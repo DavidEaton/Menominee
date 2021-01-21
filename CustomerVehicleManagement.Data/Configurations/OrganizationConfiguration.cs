@@ -22,10 +22,6 @@ namespace CustomerVehicleManagement.Data.Configurations
                    .HasColumnName("AddressCity")
                    .HasMaxLength(255);
             builder.OwnsOne(p => p.Address)
-                   .Property(p => p.CountryCode)
-                   .HasColumnName("AddressCountryCode")
-                   .HasMaxLength(2);
-            builder.OwnsOne(p => p.Address)
                    .Property(p => p.PostalCode)
                    .HasColumnName("AddressPostalCode")
                    .HasMaxLength(15);

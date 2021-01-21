@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Domain.Enums
+﻿namespace SharedKernel.Enums
 {
     public enum Gender
     {

@@ -10,6 +10,7 @@ else
              class="img-thumbnail img-fluid"
              alt="Tenant Logo"
              title="@Tenant?.CompanyName"
+             @onclick="ImageClick"
              onerror="this.onerror=null;this.src='@errorUrl';">
     </div>
 }

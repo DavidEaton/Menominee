@@ -5,6 +5,7 @@ using CustomerVehicleManagement.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,59 +15,45 @@ namespace Client.Services
     public class PersonDataService : IPersonDataService
     {
         private readonly HttpClient httpClient;
+        private PersonFlatDto moops;
         private const string URISEGMENT = "persons";
 
         public PersonDataService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonDto> AddPerson(PersonDto person)
+        public async Task<PersonFlatDto> AddPerson(PersonAddDto newPerson)
         {
-            PersonName name = PersonUtilities.CreatePersonName(person);
+            PersonName name = PersonUtilities.CreatePersonName(newPerson);
 
             if (name == null)
                 return null;
 
-            var personToAdd = new Person(name, person.Gender)
-            {
-                Birthday = person.Birthday
-            };
+            var personToAdd = new PersonAddDto(name, newPerson.Gender);
 
-            Address address = PersonUtilities.CreateAddress(person);
+            var address = PersonUtilities.CreateAddress(newPerson);
 
             if (address != null)
-                person.AddAddress(address);
-
-            DriversLicence driversLicence = PersonUtilities.CreateDriversLicense(person);
-
-            if (driversLicence != null)
-                person.AddDriversLicense(driversLicence);
+                personToAdd.Address = address;
 
             var content = new StringContent(JsonSerializer.Serialize(personToAdd), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(URISEGMENT, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await PersonUtilities.MapCreatedPersonToDto(person, response);
+                return await JsonSerializer.DeserializeAsync<PersonFlatDto>(await response.Content.ReadAsStreamAsync());
             }
 
             return null;
         }
 
-
-        public async Task DeletePerson(int id)
+        public async Task<IEnumerable<PersonFlatDto>> GetAllPersons()
         {
-            await httpClient.DeleteAsync($"person/{id}");
-        }
-
-        public async Task<IEnumerable<PersonDto>> GetAllPersons()
-        {
-            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }; 
-            var persons = new List<PersonDto>();
+            var persons = new List<PersonFlatDto>();
 
             try
             {
-                PersonLoadDto[] personsFromDatabase = await JsonSerializer.DeserializeAsync<PersonLoadDto[]>(await httpClient.GetStreamAsync(URISEGMENT), options);
+                var personsFromDatabase = await httpClient.GetFromJsonAsync<IEnumerable<PersonReadDto>>(URISEGMENT);
 
                 return PersonUtilities.MapPersonsFromDatabaseToDto(persons, personsFromDatabase);
             }
@@ -78,16 +65,34 @@ namespace Client.Services
             return null;
         }
 
-        public async Task<PersonDto> GetPerson(int id)
+        public async Task<PersonFlatDto> GetPersonDetails(int id)
         {
-            var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            return await JsonSerializer.DeserializeAsync<PersonDto>(await httpClient.GetStreamAsync($"persons/{id}"), options);
+            var person = new PersonFlatDto();
+
+            try
+            {
+                var personFromDatabase = await httpClient.GetFromJsonAsync<PersonReadDto>(URISEGMENT + $"/{id}");
+                person = PersonUtilities.MapPersonFromDatabaseToDto(person, personFromDatabase);
+                return person;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message :{ex.Message}");
+            }
+            return null;
         }
 
-        public async Task UpdatePerson(PersonDto person)
+        public async Task UpdatePerson(PersonFlatDto person)
         {
             var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, "application/json");
             await httpClient.PutAsync("person", content);
+            //await httpClient.PutAsJsonAsync
+        }
+
+        public async Task DeletePerson(int id)
+        {
+            await httpClient.DeleteAsync($"person/{id}");
         }
     }
 }

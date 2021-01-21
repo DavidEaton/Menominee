@@ -1,0 +1,29 @@
+﻿<EditForm Model="@Address"
+          OnValidSubmit="@HandleValidSubmit"
+          OnInvalidSubmit="@HandleInValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary></ValidationSummary>
+    <div class="form-group">
+        <label for="addressLine">Address: </label>
+        <InputText id="addressLine" class="form-control" @bind-Value="@Address.AddressLine" placeholder="Enter street address"></InputText>
+        <ValidationMessage For="@(() => Address.AddressLine)" />
+    </div>
+
+    <div class="form-group">
+        <label for="city">City: </label>
+        <InputText id="city" class="form-control" @bind-Value="@Address.City" placeholder="Enter city"></InputText>
+        <ValidationMessage For="@(() => Address.City)" />
+    </div>
+
+    <div class="form-group">
+        <label for="state">State: </label>
+        <InputText id="state" class="form-control" @bind-Value="@Address.State" placeholder="Enter state"></InputText>
+        <ValidationMessage For="@(() => Address.State)" />
+    </div>
+
+    <div class="form-group">
+        <label for="postalCode">Postal Code: </label>
+        <InputText id="postalCode" class="form-control" @bind-Value="@Address.PostalCode" placeholder="Enter postal code"></InputText>
+        <ValidationMessage For="@(() => Address.PostalCode)" />
+    </div>
+</EditForm>

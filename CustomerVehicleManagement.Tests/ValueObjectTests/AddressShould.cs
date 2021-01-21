@@ -13,9 +13,8 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var countryCode = "1";
 
-            var address = new Address(addressLine, city, state, postalCode, countryCode);
+            var address = new Address(addressLine, city, state, postalCode);
 
             Assert.That(address, Is.Not.Null);
         }
@@ -27,10 +26,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             string city = "Gaylord";
             string state = "MI";
             string postalCode = "49735";
-            string countryCode = "1";
 
             var exception = Assert.Throws<ArgumentException>(
-                () => { new Address(addressLine, city, state, postalCode, countryCode); });
+                () => { new Address(addressLine, city, state, postalCode); });
 
             Assert.That(exception.Message, Is.EqualTo(Address.AddressEmptyMessage));
 
@@ -38,10 +36,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             city = null;
             state = "MI";
             postalCode = "49735";
-            countryCode = "1";
 
             exception = Assert.Throws<ArgumentException>(
-                () => { new Address(addressLine, city, state, postalCode, countryCode); });
+                () => { new Address(addressLine, city, state, postalCode); });
 
             Assert.That(exception.Message, Is.EqualTo(Address.AddressEmptyMessage));
 
@@ -49,10 +46,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             city = "Gaylord";
             state = null;
             postalCode = "49735";
-            countryCode = "1";
 
             exception = Assert.Throws<ArgumentException>(
-                () => { new Address(addressLine, city, state, postalCode, countryCode); });
+                () => { new Address(addressLine, city, state, postalCode); });
 
             Assert.That(exception.Message, Is.EqualTo(Address.AddressEmptyMessage));
 
@@ -60,21 +56,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             city = "Gaylord";
             state = "MI";
             postalCode = null;
-            countryCode = "1";
 
             exception = Assert.Throws<ArgumentException>(
-                () => { new Address(addressLine, city, state, postalCode, countryCode); });
-
-            Assert.That(exception.Message, Is.EqualTo(Address.AddressEmptyMessage));
-
-            addressLine = "1234 Five Street";
-            city = "Gaylord";
-            state = "MI";
-            postalCode = "49735";
-            countryCode = null;
-
-            exception = Assert.Throws<ArgumentException>(
-                () => { new Address(addressLine, city, state, postalCode, countryCode); });
+                () => { new Address(addressLine, city, state, postalCode); });
 
             Assert.That(exception.Message, Is.EqualTo(Address.AddressEmptyMessage));
         }
@@ -140,26 +124,14 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             Assert.That(address.PostalCode, Is.EqualTo("55555"));
         }
 
-        [Test]
-        public void ReturnNewAddressOnNewCountryCode()
-        {
-            var address = CreateAddress();
-
-            address = address.NewCountryCode("9");
-
-            Assert.That(address.CountryCode, Is.EqualTo("9"));
-        }
-
         internal static Address CreateAddress()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var countryCode = "1";
 
-            return new Address(addressLine, city, state, postalCode, countryCode);
-
+            return new Address(addressLine, city, state, postalCode);
         }
     }
 }

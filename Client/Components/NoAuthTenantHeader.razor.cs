@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using SharedKernel;
+using System;
 using System.Threading.Tasks;
 
 namespace Client.Components
@@ -16,9 +18,11 @@ namespace Client.Components
                 Name = "Janco Development",
                 LogoUrl = "https://stocktracstorage.blob.core.windows.net/new-tenant/new-tenant"
             };
-
-            
         }
 
+        protected static void ImageClick(MouseEventArgs e)
+        {
+            Console.WriteLine("Tenant image clicked! ");
+        }
     }
 }

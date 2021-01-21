@@ -9,6 +9,7 @@ else
             <img src="@Tenant?.LogoUrl"
                  asp-append-version="true"
                  alt="Tenant Logo"
+                 @onclick="ImageClick"
                  title="@Tenant?.CompanyName">
         </div>
         <div>

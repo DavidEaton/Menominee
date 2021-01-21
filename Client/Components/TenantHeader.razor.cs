@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Client.Services;
 using System.Threading.Tasks;
 using SharedKernel;
+using Microsoft.AspNetCore.Components.Web;
+using System;
 
 namespace Client.Components
 {
@@ -35,6 +37,11 @@ namespace Client.Components
             string basePath = Configuration.GetValue<string>("Tenant:LogoImage:BaseUrl");
             string path = $"{basePath}{tenant.Name}/{tenant.Name}";
             return path;
+        }
+
+        protected static void ImageClick(MouseEventArgs e)
+        {
+            Console.WriteLine("Tenant image clicked! ");
         }
     }
 }

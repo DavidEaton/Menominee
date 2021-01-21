@@ -1,15 +1,20 @@
 ﻿using Client.Models;
 using Client.Services;
+using CustomerVehicleManagement.Domain.ValueObjects;
 using Microsoft.AspNetCore.Components;
 using SharedKernel.Enums;
+using System;
 using System.Threading.Tasks;
 
 namespace Client.Components
 {
     public partial class AddPersonDialog
     {
-        public PersonDto Person { get; set; } = new PersonDto();
+        private PersonAddProperties PersonAdd { get; set; }
+        private PersonAddDto Person { get; set; }
         public EntityType EntityType { get; set; }
+
+        protected PersonNameForm PersonNameForm { get; set; }
 
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
@@ -33,7 +38,7 @@ namespace Client.Components
 
         private void ResetDialog()
         {
-            Person = new PersonDto();
+            PersonAdd = new PersonAddProperties();
         }
 
         protected async Task HandleValidSubmit()
@@ -43,6 +48,21 @@ namespace Client.Components
 
             await CloseEventCallback.InvokeAsync(true);
             StateHasChanged();
+        }
+
+        public void PersonNameForm_OnPersonNameCreated()
+        {
+            Person = new PersonAddDto(PersonNameForm.PersonName, Gender.Male);
+            var moops = Person;
+            //StateHasChanged();
+        }
+
+        private class PersonAddProperties
+        {
+            internal PersonName Name { get; set; }
+            public Gender Gender { get; set; }
+            public DateTime? Birthday { get; set; }
+            internal Address Address { get; set; }
         }
     }
 }

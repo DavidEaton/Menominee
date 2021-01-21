@@ -8,8 +8,8 @@ namespace CustomerVehicleManagement.Domain.Enums
         Referrel,
         Email,
         Vehicle,
-        [Display(Name = "Licence Plate")]
-        LicencePlate,
+        [Display(Name = "License Plate")]
+        LicensePlate,
         VIN,
         [Display(Name = "Odometer In")]
         OdometerIn,

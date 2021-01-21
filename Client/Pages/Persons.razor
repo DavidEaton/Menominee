@@ -12,26 +12,24 @@ else
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Address</th>
                         <th>Birthday</th>
-                        <th>Phone</th>
-                        <th>Email Primary</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var person in PersonsList)
                     {
-                        <tr @onclick="@(e => SetSelectedId(person.Id))">
-                            <td>@person.LastFirstMiddle</td>
-                            <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
-                            @*<td>@person.PhonePrimary</td>
-                            <td>@person.EmailPrimary</td>*@
-                        </tr>
+                    <tr @onclick="@(e => SetSelectedId(person))">
+                        <td>@person.LastFirstMiddle</td>
+                        <td>@person.AddressFull</td>
+                        <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
         <div class="flex-fill">
-            @*<PersonDetail Id="@SelectedId"></PersonDetail>*@
+            <PersonDetail Id="@SelectedId"></PersonDetail>
         </div>
     </div>
     <div class="d-flex flex-row w-25">

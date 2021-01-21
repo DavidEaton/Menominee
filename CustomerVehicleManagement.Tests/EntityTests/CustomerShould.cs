@@ -2,6 +2,7 @@ using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Enums;
 using CustomerVehicleManagement.Domain.ValueObjects;
 using NUnit.Framework;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Tests.EntityTests
 {
@@ -38,14 +39,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         {
             string addressLine = "1234 Five Street";
             string city = "Gaylord";
-            string countryCode = "1";
             string state = "MI";
             string postalCode = "49735";
             string firstName = "Jane";
             string lastName = "Doe";
 
             var name = new PersonName(lastName, firstName);
-            var address = new Address(addressLine, city, state, postalCode, countryCode);
+            var address = new Address(addressLine, city, state, postalCode);
 
             var person = new Person(name, Gender.Female, null, address);
 
@@ -55,7 +55,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That($"{lastName}, {firstName}", Is.EqualTo(jane.Name.LastFirstMiddle));
             Assert.That(addressLine, Is.EqualTo(jane.Address.AddressLine));
             Assert.That(city, Is.EqualTo(jane.Address.City));
-            Assert.That(countryCode, Is.EqualTo(jane.Address.CountryCode));
             Assert.That(state, Is.EqualTo(jane.Address.State));
             Assert.That(postalCode, Is.EqualTo(jane.Address.PostalCode));
         }
@@ -75,13 +74,11 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var countryCode = "1";
 
-            janes.Address = new Address(addressLine, city, state, postalCode, countryCode);
+            janes.Address = new Address(addressLine, city, state, postalCode);
 
             Assert.That(addressLine, Is.EqualTo(janes.Address.AddressLine));
             Assert.That(city, Is.EqualTo(janes.Address.City));
-            Assert.That(countryCode, Is.EqualTo(janes.Address.CountryCode));
             Assert.That(state, Is.EqualTo(janes.Address.State));
             Assert.That(postalCode, Is.EqualTo(janes.Address.PostalCode));
         }

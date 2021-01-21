@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using CustomerVehicleManagement.Domain.ValueObjects;
 using NUnit.Framework;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 
@@ -117,16 +117,16 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
 
-            var driversLicense = new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female, null, null, driversLicense);
 
             Assert.That(person, Is.Not.Null);
-            Assert.That(person.DriversLicence, Is.Not.Null);
-            Assert.That(person.DriversLicence.Number, Is.EqualTo(driversLicenseNumber));
-            Assert.That(person.DriversLicence.State, Is.EqualTo(driversLicenseState));
-            Assert.That(person.DriversLicence.ValidRange.Start, Is.EqualTo(issued));
-            Assert.That(person.DriversLicence.ValidRange.End, Is.EqualTo(expiry));
+            Assert.That(person.DriversLicense, Is.Not.Null);
+            Assert.That(person.DriversLicense.Number, Is.EqualTo(driversLicenseNumber));
+            Assert.That(person.DriversLicense.State, Is.EqualTo(driversLicenseState));
+            Assert.That(person.DriversLicense.ValidRange.Start, Is.EqualTo(issued));
+            Assert.That(person.DriversLicense.ValidRange.End, Is.EqualTo(expiry));
         }
 
         [Test]
@@ -138,9 +138,8 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var countryCode = "1";
 
-            var address = new Address(addressLine, city, state, postalCode, countryCode);
+            var address = new Address(addressLine, city, state, postalCode);
 
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female, null, address);
@@ -151,7 +150,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(person.Address.City, Is.EqualTo(city));
             Assert.That(person.Address.State, Is.EqualTo(state));
             Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
-            Assert.That(person.Address.CountryCode, Is.EqualTo(countryCode));
         }
 
     }

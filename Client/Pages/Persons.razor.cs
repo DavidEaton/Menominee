@@ -12,7 +12,7 @@ namespace Client.Pages
 {
     public partial class Persons : ComponentBase
     {
-        public IEnumerable<PersonDto> PersonsList;
+        public IEnumerable<PersonFlatDto> PersonsList;
 
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
@@ -30,23 +30,6 @@ namespace Client.Pages
         {
             Logger.LogInformation("Persons.OnInitializedAsync()");
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
-            PersonsList = FormatPersonData(PersonsList);
-
-
-
-        }
-
-        private IEnumerable<PersonDto> FormatPersonData(IEnumerable<PersonDto> persons)
-        {
-            foreach (var person in persons)
-            {
-                //if (person.PhonePrimary != null)
-                //    person.PhonePrimary = Regex.Replace(person.PhonePrimary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
-                //if (person.PhoneSecondary != null)
-                //    person.PhoneSecondary = Regex.Replace(person.PhoneSecondary, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
-            }
-
-            return persons;
         }
 
         protected void QuickAddPerson()
@@ -59,9 +42,9 @@ namespace Client.Pages
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             StateHasChanged();
         }
-        private void SetSelectedId(int Id)
+        private void SetSelectedId(PersonFlatDto selected)
         {
-            SelectedId = Id;
+            SelectedId = selected.Id;
         }
     }
 }

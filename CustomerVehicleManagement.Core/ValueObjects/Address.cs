@@ -7,9 +7,9 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
     public class Address : ValueObject
     {
         public static readonly string AddressEmptyMessage = "Address details cannot be empty";
-        public Address(string addressLine, string city, string state, string postalCode, string countryCode)
+        public Address(string addressLine, string city, string state, string postalCode)
         {
-            if (string.IsNullOrWhiteSpace(addressLine) | string.IsNullOrWhiteSpace(city) | string.IsNullOrWhiteSpace(state) | string.IsNullOrWhiteSpace(postalCode) | string.IsNullOrWhiteSpace(countryCode))
+            if (string.IsNullOrWhiteSpace(addressLine) | string.IsNullOrWhiteSpace(city) | string.IsNullOrWhiteSpace(state) | string.IsNullOrWhiteSpace(postalCode))
             {
                 throw new ArgumentException(AddressEmptyMessage);
             }
@@ -18,38 +18,31 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
             City = city;
             State = state;
             PostalCode = postalCode;
-            CountryCode = countryCode;
         }
 
         public string AddressLine { get; }
         public string City { get; }
         public string State { get; }
         public string PostalCode { get; }
-        public string CountryCode { get; }
 
         public Address NewAddressLine(string newAddressLine)
         {
-            return new Address(newAddressLine, City, State, PostalCode, CountryCode);
+            return new Address(newAddressLine, City, State, PostalCode);
         }
 
         public Address NewCity(string newCity)
         {
-            return new Address(AddressLine, newCity, State, PostalCode, CountryCode);
+            return new Address(AddressLine, newCity, State, PostalCode);
         }
 
         public Address NewState(string newState)
         {
-            return new Address(AddressLine, City, newState, PostalCode, CountryCode);
+            return new Address(AddressLine, City, newState, PostalCode);
         }
 
         public Address NewPostalCode(string newPostalCode)
         {
-            return new Address(AddressLine, City, State, newPostalCode, CountryCode);
-        }
-
-        public Address NewCountryCode(string newCountryCode)
-        {
-            return new Address(AddressLine, City, State, PostalCode, newCountryCode);
+            return new Address(AddressLine, City, State, newPostalCode);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -58,7 +51,6 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
             yield return City;
             yield return State;
             yield return PostalCode;
-            yield return CountryCode;
         }
 
         #region ORM
