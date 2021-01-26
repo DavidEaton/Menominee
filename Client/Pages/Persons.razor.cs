@@ -12,28 +12,27 @@ namespace Client.Pages
 {
     public partial class Persons : ComponentBase
     {
-        public IEnumerable<PersonFlatDto> PersonsList;
-
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
         
         [Inject]
         public ILogger<Persons> Logger { get; set; }
 
+        public IEnumerable<PersonFlatDto> PersonsList;
         public int SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
-        //[Parameter]
-        //public RenderFragment ChildContent { get; set; }
         protected AddPersonDialog AddPersonDialog { get; set; }
+        protected PersonDetail PersonDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Persons.OnInitializedAsync()");
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
         }
 
-        protected void QuickAddPerson()
+        protected void AddPerson()
         {
+            PersonDetail?.Close();
             AddPersonDialog.Show();
         }
 

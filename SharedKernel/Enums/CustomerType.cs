@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TicketManagement.Core.Enums
+namespace SharedKernel.Enums
 {
     public enum CustomerType
     {

@@ -2,6 +2,7 @@
 using Client.Services;
 using CustomerVehicleManagement.Domain.ValueObjects;
 using Microsoft.AspNetCore.Components;
+using SharedKernel;
 using SharedKernel.Enums;
 using System;
 using System.Threading.Tasks;
@@ -12,9 +13,11 @@ namespace Client.Components
     {
         private PersonAddProperties PersonAdd { get; set; }
         private PersonAddDto Person { get; set; }
+        public string Message { get; set; }
         public EntityType EntityType { get; set; }
 
         protected PersonNameForm PersonNameForm { get; set; }
+        protected AddressForm AddressForm { get; set; }
 
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
@@ -43,18 +46,42 @@ namespace Client.Components
 
         protected async Task HandleValidSubmit()
         {
-            await PersonDataService.AddPerson(Person);
-            ShowDialog = false;
+            Message = string.Empty;
 
-            await CloseEventCallback.InvokeAsync(true);
-            StateHasChanged();
+            if (FormIsValid())
+            {
+                Person = new PersonAddDto(PersonAdd.Name, PersonAdd.Gender, PersonAdd.Birthday, PersonAdd.Address);
+                await PersonDataService.AddPerson(Person);
+                ShowDialog = false;
+
+                await CloseEventCallback.InvokeAsync(true);
+                StateHasChanged();
+            }
+
+            else
+            {
+                // TODO: Alert user that form is invalid
+                Message = "Please complete all required items";
+            }
         }
 
-        public void PersonNameForm_OnPersonNameCreated()
+        private bool FormIsValid()
         {
-            Person = new PersonAddDto(PersonNameForm.PersonName, Gender.Male);
-            var moops = Person;
+            if (PersonAdd.Name != null)
+                return true;
+
+            return false;
+        }
+
+        public void PersonNameForm_OnPersonNameChanged()
+        {
+            PersonAdd.Name = PersonNameForm.PersonName;
             //StateHasChanged();
+        }
+
+        public void AddressForm_OnAddressChanged()
+        {
+            PersonAdd.Address = AddressForm.EntityAddress;
         }
 
         private class PersonAddProperties

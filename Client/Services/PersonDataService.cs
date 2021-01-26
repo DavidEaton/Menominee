@@ -1,7 +1,5 @@
 ﻿using Client.Models;
 using Client.Services.Utilities;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -15,7 +13,6 @@ namespace Client.Services
     public class PersonDataService : IPersonDataService
     {
         private readonly HttpClient httpClient;
-        private PersonFlatDto moops;
         private const string URISEGMENT = "persons";
 
         public PersonDataService(HttpClient httpClient)
@@ -24,19 +21,7 @@ namespace Client.Services
         }
         public async Task<PersonFlatDto> AddPerson(PersonAddDto newPerson)
         {
-            PersonName name = PersonUtilities.CreatePersonName(newPerson);
-
-            if (name == null)
-                return null;
-
-            var personToAdd = new PersonAddDto(name, newPerson.Gender);
-
-            var address = PersonUtilities.CreateAddress(newPerson);
-
-            if (address != null)
-                personToAdd.Address = address;
-
-            var content = new StringContent(JsonSerializer.Serialize(personToAdd), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(URISEGMENT, content);
 
             if (response.IsSuccessStatusCode)

@@ -6,7 +6,7 @@
 }
 else
 {
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row pt-5">
         <div class="d-flex flex-row">
             <table class="table table-responsive table-striped small">
                 <thead>
@@ -29,11 +29,11 @@ else
             </table>
         </div>
         <div class="flex-fill">
-            <PersonDetail Id="@SelectedId"></PersonDetail>
+            <PersonDetail @ref="PersonDetail" Id="@SelectedId"></PersonDetail>
         </div>
     </div>
     <div class="d-flex flex-row w-25">
-        <button @onclick="QuickAddPerson" class="btn btn-primary">
+        <button @onclick="AddPerson" class="btn btn-primary">
             <span class="oi oi-plus" aria-hidden="true"></span>
         </button>
     </div>

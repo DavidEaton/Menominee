@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Enums;
-using CustomerVehicleManagement.Domain.Interfaces;
+﻿using CustomerVehicleManagement.Domain.Interfaces;
 using SharedKernel;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;

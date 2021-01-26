@@ -13,7 +13,7 @@ namespace Client.Components
         [Parameter]
         public EventCallback<bool> CloseEventCallback { get; set; }
 
-        protected async Task HandleValidSubmit()
+        protected async Task Validate()
         {
             if (Name.IsValid)
             {
@@ -21,15 +21,15 @@ namespace Client.Components
                 await CloseEventCallback.InvokeAsync(true);
                 StateHasChanged();
             }
+            else
+            {
+                // TODO: display invalid message(s)
+
+            }
         }
 
-        protected async Task HandleInValidSubmit()
-        {
-
-        }
         private class PersonNameProperties
         {
-
             [Required(ErrorMessage = "Last Name is required")]
             [StringLength(100, ErrorMessage = "Please limit Last Name to 100 characters")]
             public string LastName { get; set; }

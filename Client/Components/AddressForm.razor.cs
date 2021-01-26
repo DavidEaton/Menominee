@@ -8,37 +8,44 @@ namespace Client.Components
     public partial class AddressForm : ComponentBase
     {
         AddressProperties Address { get; set; } = new AddressProperties();
+        public Address EntityAddress { get; set; }
 
-        protected async Task HandleValidSubmit()
+        [Parameter]
+        public EventCallback<bool> CloseEventCallback { get; set; }
+
+        protected async Task Validate()
         {
-            var address = new Address(Address.AddressLine, Address.City, Address.State, Address.PostalCode);
+            if (Address.IsValid)
+            {
+                EntityAddress = new Address(Address.AddressLine, Address.City, Address.State, Address.PostalCode);
+                await CloseEventCallback.InvokeAsync(true);
+                StateHasChanged();
+            }
+            else
+            {
+                // TODO: display invalid message(s)
 
-
-            //await CloseEventCallback.InvokeAsync(true);
-            StateHasChanged();
-        }
-
-        protected async Task HandleInValidSubmit()
-        {
-
+            }
         }
 
         private class AddressProperties
         {
-            [Required]
             [StringLength(100, ErrorMessage = "Please limit Address to 100 characters")]
             public string AddressLine { get; set; }
-            
-            [Required]
+
             [StringLength(100, ErrorMessage = "Please limit City to 100 characters")]
             public string City { get; set; }
-            
-            [Required]
+
             public string State { get; set; }
-            
-            [Required]
+
             [StringLength(50, ErrorMessage = "Please limit Postal Code to 50 characters")]
             public string PostalCode { get; set; }
+
+            public bool IsValid =>
+                       AddressLine?.Length < 100
+                    && City?.Length < 100
+                    && State?.Length < 100
+                    && PostalCode?.Length < 50;
         }
     }
 }

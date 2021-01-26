@@ -9,6 +9,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <div>
+                    <label class="font-italic small">*Required</label>
+                </div>
                 <div class="modal-body">
 
                     @if (@PersonAdd != null)
@@ -18,14 +21,15 @@
                             <DataAnnotationsValidator />
                             @*<ValidationSummary />*@
 
-                            <PersonNameForm @ref="PersonNameForm" CloseEventCallback="@PersonNameForm_OnPersonNameCreated"></PersonNameForm>
+                            <PersonNameForm @ref="PersonNameForm" CloseEventCallback="@PersonNameForm_OnPersonNameChanged"></PersonNameForm>
+                            <AddressForm @ref="AddressForm" CloseEventCallback="@AddressForm_OnAddressChanged"></AddressForm>
 
                             <div class="form-group">
                                 <label for="gender">Gender: </label>
                                 <InputSelect id="gender" class="form-control" @bind-Value="@PersonAdd.Gender" placeholder="Enter gender">
                                     @foreach (var gender in Enum.GetValues(typeof(Gender)))
                                             {
-                                                <option value="@gender">@gender</option>
+                                        <option value="@gender">@gender</option>
                                             }
                                 </InputSelect>
                                 <ValidationMessage For="@(() => PersonAdd.Gender)" />
@@ -39,19 +43,20 @@
 
 
                             @*
-                                <div class="form-group">
-                                    <label for="phonePrimary">Phone: </label>
-                                    <InputText id="phonePrimary" class="form-control" @bind-Value="@Person.Name.PhonePrimary" placeholder="Enter primary phone number"></InputText>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email: </label>
-                                    <InputText id="email" class="form-control" @bind-Value="@Person.EmailPrimary" placeholder="Enter email"></InputText>
-                                    <ValidationMessage For="@(() => Person.EmailPrimary)" />
-                                </div>
+                    <div class="form-group">
+                        <label for="phonePrimary">Phone: </label>
+                        <InputText id="phonePrimary" class="form-control" @bind-Value="@Person.Name.PhonePrimary" placeholder="Enter primary phone number"></InputText>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email: </label>
+                        <InputText id="email" class="form-control" @bind-Value="@Person.EmailPrimary" placeholder="Enter email"></InputText>
+                        <ValidationMessage For="@(() => Person.EmailPrimary)" />
+                    </div>
                             *@
 
                             <button type="submit" class="btn btn-primary">Save</button>
                             <a class="btn btn-outline-primary" @onclick="@Close">Close</a>
+                            <label class="float-right alert-danger">@Message</label>
                         </EditForm>
                     }
                 </div>

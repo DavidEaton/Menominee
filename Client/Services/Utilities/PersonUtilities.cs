@@ -5,28 +5,12 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
 using System.Collections.Generic;
-using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
 
 namespace Client.Services.Utilities
 {
     public static class PersonUtilities
     {
-        //public static PersonName CreatePersonName(PersonDto person)
-        //{
-        //    try
-        //    {
-        //        return new PersonName(person.LastName, person.FirstName, person.MiddleName);
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        //log it
-        //    }
-
-        //    return null;
-        //}
-
         internal static Address CreateAddress(PersonFlatDto person)
         {
             try
@@ -36,53 +20,6 @@ namespace Client.Services.Utilities
             catch (Exception)
             {
                 // log it
-            }
-
-            return null;
-        }
-
-        internal static Address CreateAddress(PersonAddDto person)
-        {
-            try
-            {
-                return new Address(person.AddressLine, person.City, person.State, person.PostalCode);
-            }
-            catch (Exception)
-            {
-                // log it
-            }
-
-            return null;
-        }
-
-        //internal static async Task<PersonGetDto> MapCreatedPersonToLoadDto(PersonAddDto personToAdd, HttpResponseMessage response)
-        //{
-        //    PersonGetDto created = await JsonSerializer.DeserializeAsync<PersonGetDto>(await response.Content.ReadAsStreamAsync());
-
-        //    personToAdd.Id = created.Id;
-        //    personToAdd.FirstName = created?.FirstName;
-        //    personToAdd.MiddleName = created?.MiddleName;
-        //    personToAdd.LastName = created?.LastName;
-        //    personToAdd.AddressLine = created?.AddressLine;
-        //    personToAdd.City = created?.AddressCity;
-        //    personToAdd.State = created?.AddressState;
-        //    personToAdd.PostalCode = created?.AddressPostalCode;
-        //    personToAdd.Birthday = created?.Birthday;
-        //    personToAdd.Gender = (Gender)created?.Gender;
-
-        //    return created;
-        //}
-
-        internal static PersonName CreatePersonName(PersonAddDto person)
-        {
-            try
-            {
-                return new PersonName(person.Name.LastName, person.Name.FirstName, person.Name.MiddleName);
-
-            }
-            catch (Exception)
-            {
-                //log it
             }
 
             return null;

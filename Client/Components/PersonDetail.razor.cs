@@ -62,7 +62,7 @@ namespace Client.Components
             Message = "Please resolve validation errors.";
         }
 
-        protected void Close()
+        public void Close()
         {
             Saved = true;
             Message = string.Empty;
