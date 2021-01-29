@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharedKernel
+namespace SharedKernel.Entities
 {
     public class Tenant
     {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
+using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             this.mapper = mapper;
         }
 
-        // GET: api/Persons
+        // GET: api/persons
         [HttpGet]
         public async Task<ActionResult<Person[]>> GetPersons()
         {
@@ -38,7 +39,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // GET: api/Person/1
+        // GET: api/persons/1
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
@@ -57,27 +58,37 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // PUT: api/Person/1
+        // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Person>> UpdatePerson(int id, Person model)
+        public async Task<ActionResult<Person>> UpdatePerson(int id, PersonUpdateDto model)
         {
             if (model == null)
                 return BadRequest();
 
+            if (id != model.Id)
+                return BadRequest();
+
             try
             {
-                var fetchedPerson = await repository.GetPersonAsync(id);
-                if (fetchedPerson == null)
+                var personFromDatabase = await repository.GetPersonAsync(id);
+                if (personFromDatabase == null)
                     return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
-                //mapper.Map(model, fetchedPerson);
+                //mapper.Map(model, personFromDatabase);
+
+                personFromDatabase.Name = model.Name;
+                personFromDatabase.Address = model.Address;
+                personFromDatabase.Birthday = model.Birthday;
+                personFromDatabase.DriversLicense = model.DriversLicense;
+                personFromDatabase.Gender = model.Gender;
+                personFromDatabase.Phones = model.Phones;
 
                 // Update the objects ObjectState and sych the EF Change Tracker
-                fetchedPerson.UpdateState(TrackingState.Modified);
+                personFromDatabase.UpdateState(TrackingState.Modified);
                 repository.FixState();
 
                 if (await repository.SaveChangesAsync())
-                    return Ok(fetchedPerson);
+                    return Ok(personFromDatabase);
             }
             catch (Exception ex)
             {
@@ -87,10 +98,13 @@ namespace CustomerVehicleManagement.Api.Controllers
             return BadRequest($"Failed to update {model.Name.FirstMiddleLast}.");
         }
 
-        // POST: api/Person/
+        // POST: api/persons/
         [HttpPost]
         public async Task<ActionResult<Person>> AddPerson(Person model)
         {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
             try
             {
                 repository.AddPerson(model);

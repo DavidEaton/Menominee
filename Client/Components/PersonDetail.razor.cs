@@ -1,6 +1,9 @@
 ﻿using Client.Models;
 using Client.Services;
 using Microsoft.AspNetCore.Components;
+using SharedKernel.Static;
+using SharedKernel.ValueObjects;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Client.Components
@@ -13,6 +16,7 @@ namespace Client.Components
         [Parameter]
         public int Id { get; set; }
         public PersonFlatDto Person { get; set; } = new PersonFlatDto();
+        public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
         protected string Message = string.Empty;

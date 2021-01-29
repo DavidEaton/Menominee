@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Domain.ValueObjects;
+using SharedKernel.ValueObjects;
 
 namespace Client.Components
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using SharedKernel;
+using SharedKernel.Entities;
 using System;
 using System.Threading.Tasks;
 
@@ -10,7 +10,7 @@ namespace Client.Components
     {
         public Tenant Tenant { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             Tenant = new Tenant
             {
@@ -18,6 +18,7 @@ namespace Client.Components
                 Name = "Janco Development",
                 LogoUrl = "https://stocktracstorage.blob.core.windows.net/new-tenant/new-tenant"
             };
+            return Task.CompletedTask;
         }
 
         protected static void ImageClick(MouseEventArgs e)

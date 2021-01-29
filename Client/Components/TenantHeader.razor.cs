@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Client.Services;
 using System.Threading.Tasks;
-using SharedKernel;
+using SharedKernel.Entities;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 

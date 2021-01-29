@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Api.Data.Interfaces;
 using System;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
@@ -57,12 +56,12 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             context.Persons
                 .Update(person);
 
-            return (await context.SaveChangesAsync()) > 0;
+            return await context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            return await context.SaveChangesAsync() > 0;
         }
 
         public void FixState()

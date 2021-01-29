@@ -1,11 +1,11 @@
 ﻿using Client.Models;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
 using System.Collections.Generic;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 
 namespace Client.Services.Utilities
 {
@@ -57,6 +57,23 @@ namespace Client.Services.Utilities
             person.Gender = (Gender)created?.Gender;
 
             return person;
+        }
+
+        internal static PersonUpdateDto MapUpdatedPersonToDto(PersonFlatDto person)
+        {
+            var address = new Address(person.AddressLine, person.AddressCity, person.AddressState, person.AddressPostalCode);
+            var name = new PersonName(person.LastName, person.FirstName, person.MiddleName);
+
+            var updatedPerson = new PersonUpdateDto
+            {
+                Id = person.Id,
+                Address = address,
+                Birthday = person.Birthday,
+                Name = name,
+                Gender = person.Gender
+            };
+
+            return updatedPerson;
         }
 
         internal static IEnumerable<PersonFlatDto> MapPersonsFromDatabaseToDto(List<PersonFlatDto> persons, IEnumerable<PersonReadDto> personsFromDatabase)

@@ -1,9 +1,8 @@
 ﻿using Client.Models;
 using Client.Services;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using Microsoft.AspNetCore.Components;
-using SharedKernel;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Threading.Tasks;
 
@@ -12,7 +11,7 @@ namespace Client.Components
     public partial class AddPersonDialog
     {
         private PersonAddProperties PersonAdd { get; set; }
-        private PersonAddDto Person { get; set; }
+        private PersonCreateDto Person { get; set; }
         public string Message { get; set; }
         public EntityType EntityType { get; set; }
 
@@ -50,7 +49,7 @@ namespace Client.Components
 
             if (FormIsValid())
             {
-                Person = new PersonAddDto(PersonAdd.Name, PersonAdd.Gender, PersonAdd.Birthday, PersonAdd.Address);
+                Person = new PersonCreateDto(PersonAdd.Name, PersonAdd.Gender, PersonAdd.Birthday, PersonAdd.Address);
                 await PersonDataService.AddPerson(Person);
                 ShowDialog = false;
 

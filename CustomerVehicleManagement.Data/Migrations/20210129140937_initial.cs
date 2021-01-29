@@ -53,35 +53,11 @@ namespace CustomerVehicleManagement.Data.Migrations
                     AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressState = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
-                    AddressCountryCode = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true)
+                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Person", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Phone",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PhoneType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Phone", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Phone_Customer_CustomerId",
-                        column: x => x.CustomerId,
-                        principalSchema: "dbo",
-                        principalTable: "Customer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -121,8 +97,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                     AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressState = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
-                    AddressCountryCode = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true)
+                    AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -136,6 +111,37 @@ namespace CustomerVehicleManagement.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Phone",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Number = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PhoneType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    OrganizationId = table.Column<int>(type: "int", nullable: true),
+                    PersonId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Phone", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Phone_Organization_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalSchema: "dbo",
+                        principalTable: "Organization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Phone_Person_PersonId",
+                        column: x => x.PersonId,
+                        principalSchema: "dbo",
+                        principalTable: "Person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Organization_ContactId",
                 schema: "dbo",
@@ -143,10 +149,16 @@ namespace CustomerVehicleManagement.Data.Migrations
                 column: "ContactId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Phone_CustomerId",
+                name: "IX_Phone_OrganizationId",
                 schema: "dbo",
                 table: "Phone",
-                column: "CustomerId");
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Phone_PersonId",
+                schema: "dbo",
+                table: "Phone",
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicle_CustomerId",
@@ -158,10 +170,6 @@ namespace CustomerVehicleManagement.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Organization",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
                 name: "Phone",
                 schema: "dbo");
 
@@ -170,11 +178,15 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Person",
+                name: "Organization",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "Customer",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "Person",
                 schema: "dbo");
         }
     }

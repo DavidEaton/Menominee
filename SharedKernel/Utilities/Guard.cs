@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharedKernel
+namespace SharedKernel.Utilities
 {
     public class Guard
     {

@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.ValueObjects;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SharedKernel.ValueObjects;
 using System;
 

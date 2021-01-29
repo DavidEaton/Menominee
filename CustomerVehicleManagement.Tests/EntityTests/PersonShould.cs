@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using NUnit.Framework;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;

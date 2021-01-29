@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerVehicleManagement.Data.Migrations
 {
     [DbContext(typeof(DataDbContext))]
-    [Migration("20210113141608_initial")]
-    partial class initial
+    [Migration("20210129141453_OrganizationNotes")]
+    partial class OrganizationNotes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -79,6 +79,9 @@ namespace CustomerVehicleManagement.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContactId");
@@ -112,13 +115,16 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PersonId")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneType")
                         .IsRequired()
@@ -127,7 +133,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Phone", "dbo");
                 });
@@ -184,11 +192,6 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasColumnType("nvarchar(255)")
                                 .HasColumnName("AddressCity");
 
-                            b1.Property<string>("CountryCode")
-                                .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)")
-                                .HasColumnName("AddressCountryCode");
-
                             b1.Property<string>("PostalCode")
                                 .HasMaxLength(15)
                                 .HasColumnType("nvarchar(15)")
@@ -231,11 +234,6 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasColumnType("nvarchar(255)")
                                 .HasColumnName("AddressCity");
 
-                            b1.Property<string>("CountryCode")
-                                .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)")
-                                .HasColumnName("AddressCountryCode");
-
                             b1.Property<string>("PostalCode")
                                 .HasMaxLength(15)
                                 .HasColumnType("nvarchar(15)")
@@ -254,7 +252,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasForeignKey("PersonId");
                         });
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.ValueObjects.DriversLicence", "DriversLicence", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
                             b1.Property<int>("PersonId")
                                 .ValueGeneratedOnAdd()
@@ -280,7 +278,7 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                             b1.OwnsOne("SharedKernel.ValueObjects.DateTimeRange", "ValidRange", b2 =>
                                 {
-                                    b2.Property<int>("DriversLicencePersonId")
+                                    b2.Property<int>("DriversLicensePersonId")
                                         .ValueGeneratedOnAdd()
                                         .HasColumnType("int")
                                         .UseIdentityColumn();
@@ -293,12 +291,12 @@ namespace CustomerVehicleManagement.Data.Migrations
                                         .HasColumnType("datetime2")
                                         .HasColumnName("DriversLicenseIssued");
 
-                                    b2.HasKey("DriversLicencePersonId");
+                                    b2.HasKey("DriversLicensePersonId");
 
                                     b2.ToTable("Person");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("DriversLicencePersonId");
+                                        .HasForeignKey("DriversLicensePersonId");
                                 });
 
                             b1.Navigation("ValidRange");
@@ -338,16 +336,20 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.Navigation("Address");
 
-                    b.Navigation("DriversLicence");
+                    b.Navigation("DriversLicense");
 
                     b.Navigation("Name");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Phone", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Customer", null)
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Organization", null)
                         .WithMany("Phones")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("OrganizationId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Person", null)
+                        .WithMany("Phones")
+                        .HasForeignKey("PersonId");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
@@ -361,9 +363,17 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Customer", b =>
                 {
-                    b.Navigation("Phones");
-
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
+                {
+                    b.Navigation("Phones");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
+                {
+                    b.Navigation("Phones");
                 });
 #pragma warning restore 612, 618
         }

@@ -21,25 +21,42 @@
                 <InputText id="middleName" class="form-control col-sm-8" @bind-Value="@Person.MiddleName" placeholder="Enter middle name"></InputText>
             </div>
 
+            <div class="form-group row">
+                <label for="address" class="col-sm-3">Address: </label>
+                <InputText id="address" class="form-control col-sm-8" @bind-Value="@Person.AddressLine" placeholder="Enter last name"></InputText>
+            </div>
+
+            <div class="form-group row">
+                <label for="city" class="col-sm-3">City: </label>
+                <InputText id="city" class="form-control col-sm-8" @bind-Value="@Person.AddressCity" placeholder="Enter first name"></InputText>
+            </div>
+
+            <div class="form-group row">
+                <label for="state" class="col-sm-3">State: </label>
+                <InputSelect id="state" class="form-control selectpicker col-sm-8" @bind-Value=Person.AddressState>
+                    <option>--select state--</option>
+                    @foreach (var state in StatesList)
+                        {
+                        <option value="@state.Abbreviation">@state.Name</option>
+                        }
+                </InputSelect>
+            </div>
+
+            <div class="form-group row">
+                <label for="postalCode" class="col-sm-3">Postal Code: </label>
+                <InputText id="postalCode" class="form-control col-sm-8" @bind-Value="@Person.AddressPostalCode" placeholder="Enter postal code"></InputText>
+            </div>
+
+
             @*<div class="form-group row">
-                <label for="phonePrimary" class="col-sm-3">Phone Primary: </label>
-                <InputText id="phonePrimary" class="form-control col-sm-8" @bind-Value="@Person.PhonePrimary" placeholder="Enter primary phone number"></InputText>
-            </div>
+            <label for="phonePrimary" class="col-sm-3">Phone Primary: </label>
+            <InputText id="phonePrimary" class="form-control col-sm-8" @bind-Value="@Person.PhonePrimary" placeholder="Enter primary phone number"></InputText>
+        </div>
 
-            <div class="form-group row">
-                <label for="phoneSecondary" class="col-sm-3">Phone Secondary: </label>
-                <InputText id="phoneSecondary" class="form-control col-sm-8" @bind-Value="@Person.PhoneSecondary" placeholder="Enter secondary phone number"></InputText>
-            </div>
-
-            <div class="form-group row">
-                <label for="emailPrimary" class="col-sm-3">Email Primary: </label>
-                <InputText id="emailPrimary" class="form-control col-sm-8" @bind-Value="@Person.EmailPrimary" placeholder="Enter primary email address"></InputText>
-            </div>
-
-            <div class="form-group row">
-                <label for="emailSecondary" class="col-sm-3">Email Secondary: </label>
-                <InputText id="emailSecondary" class="form-control col-sm-8" @bind-Value="@Person.EmailSecondary" placeholder="Enter secondary email address"></InputText>
-            </div>*@
+        <div class="form-group row">
+            <label for="emailSecondary" class="col-sm-3">Email Secondary: </label>
+            <InputText id="emailSecondary" class="form-control col-sm-8" @bind-Value="@Person.EmailSecondary" placeholder="Enter secondary email address"></InputText>
+        </div>*@
 
             <div class="form-group row">
                 <label for="birthday" class="col-sm-3">Date of Birth: </label>

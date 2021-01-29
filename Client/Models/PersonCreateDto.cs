@@ -1,21 +1,23 @@
-﻿using CustomerVehicleManagement.Domain.ValueObjects;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
+using System.Collections.Generic;
 
 namespace Client.Models
 {
-    public class PersonAddDto
+    public class PersonCreateDto
     {
-        public PersonAddDto(PersonName name, Gender gender)
+        public PersonCreateDto(PersonName name, Gender gender)
             : this(name, gender, null) { }
 
-        public PersonAddDto(PersonName name, Gender gender, DateTime? birthday)
+        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday)
             : this(name, gender, birthday, null) { }
 
-        public PersonAddDto(PersonName name, Gender gender, DateTime? birthday, Address address)
+        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address)
             : this(name, gender, birthday, address, null) { }
 
-        public PersonAddDto(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicense driversLicense = null)
+        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicense driversLicense = null)
         {
             Name = name;
             Gender = gender;
@@ -28,6 +30,7 @@ namespace Client.Models
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
+        public IList<Phone> Phones { get; set; } = new List<Phone>();
 
     }
 }

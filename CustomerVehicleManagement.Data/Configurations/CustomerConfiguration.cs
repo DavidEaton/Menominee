@@ -12,6 +12,7 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.ToTable("Customer", "dbo");
             builder.Ignore(p => p.Entity);
             builder.Ignore(p => p.TrackingState);
+            builder.Ignore(p => p.Phones);
         }
     }
 }

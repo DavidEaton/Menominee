@@ -8,7 +8,7 @@ namespace Client.Services
     {
         Task<IEnumerable<PersonFlatDto>> GetAllPersons();
         Task<PersonFlatDto> GetPersonDetails(int id);
-        Task<PersonFlatDto> AddPerson(PersonAddDto person);
+        Task<PersonFlatDto> AddPerson(PersonCreateDto person);
         Task UpdatePerson(PersonFlatDto person);
         Task DeletePerson(int id);
     }

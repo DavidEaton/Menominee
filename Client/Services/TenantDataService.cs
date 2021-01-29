@@ -1,4 +1,4 @@
-﻿using SharedKernel;
+﻿using SharedKernel.Entities;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;

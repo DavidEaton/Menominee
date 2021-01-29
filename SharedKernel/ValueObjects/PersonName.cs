@@ -1,9 +1,8 @@
-﻿using SharedKernel;
-using SharedKernel.ValueObjects;
+﻿using SharedKernel.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Domain.ValueObjects
+namespace SharedKernel.ValueObjects
 {
     public class PersonName : ValueObject
     {

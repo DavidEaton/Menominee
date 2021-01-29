@@ -19,7 +19,7 @@ namespace Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonFlatDto> AddPerson(PersonAddDto newPerson)
+        public async Task<PersonFlatDto> AddPerson(PersonCreateDto newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(URISEGMENT, content);
@@ -70,14 +70,23 @@ namespace Client.Services
 
         public async Task UpdatePerson(PersonFlatDto person)
         {
-            var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, "application/json");
-            await httpClient.PutAsync("person", content);
+            PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
+            var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
+
+            try
+            {
+                await httpClient.PutAsync($"{URISEGMENT}/{personToUpdate.Id}", content);
             //await httpClient.PutAsJsonAsync
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message :{ex.Message}");
+            }
         }
 
         public async Task DeletePerson(int id)
         {
-            await httpClient.DeleteAsync($"person/{id}");
+            await httpClient.DeleteAsync($"{URISEGMENT}/{id}");
         }
     }
 }

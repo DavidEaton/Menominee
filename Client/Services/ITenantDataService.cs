@@ -1,4 +1,4 @@
-﻿using SharedKernel;
+﻿using SharedKernel.Entities;
 using System.Threading.Tasks;
 
 namespace Client.Services

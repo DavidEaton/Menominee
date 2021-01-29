@@ -1,8 +1,7 @@
-﻿using SharedKernel.ValueObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Domain.ValueObjects
+namespace SharedKernel.ValueObjects
 {
     public class Address : ValueObject
     {

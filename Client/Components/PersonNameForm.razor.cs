@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.ValueObjects;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 

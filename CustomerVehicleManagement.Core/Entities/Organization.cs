@@ -1,6 +1,7 @@
-﻿using CustomerVehicleManagement.Domain.ValueObjects;
-using SharedKernel;
+﻿using SharedKernel;
+using SharedKernel.ValueObjects;
 using System;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
@@ -39,6 +40,18 @@ namespace CustomerVehicleManagement.Domain.Entities
         public string Name { get; set; }
         public Person Contact { get; set; }
         public Address Address { get; set; }
+        public string Notes { get; set; }
+        public IList<Phone> Phones { get; set; } = new List<Phone>();
+
+        public void AddPhone(Phone phone)
+        {
+            Phones.Add(phone);
+        }
+
+        public void RemovePhone(Phone phone)
+        {
+            Phones.Remove(phone);
+        }
 
         #region ORM
 

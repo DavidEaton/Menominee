@@ -1,7 +1,8 @@
-﻿using CustomerVehicleManagement.Domain.ValueObjects;
-using SharedKernel;
+﻿using SharedKernel;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -33,7 +34,17 @@ namespace CustomerVehicleManagement.Domain.Entities
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
+        public IList<Phone> Phones { get; set; } = new List<Phone>();
 
+        public void AddPhone(Phone phone)
+        {
+            Phones.Add(phone);
+        }
+
+        public void RemovePhone(Phone phone)
+        {
+            Phones.Remove(phone);
+        }
         #region ORM
 
         // EF requires an empty constructor

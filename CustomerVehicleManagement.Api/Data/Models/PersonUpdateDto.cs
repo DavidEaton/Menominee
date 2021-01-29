@@ -3,23 +3,11 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace Client.Models
+namespace CustomerVehicleManagement.Api.Data.Models
 {
-    public class PersonReadDto
+    public class PersonUpdateDto
     {
-        // Blazor 5 requires public JsonConstructor-attributed contructor, 
-        [JsonConstructor]
-        public PersonReadDto(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicense driversLicense = null)
-        {
-            Name = name;
-            Gender = gender;
-            Birthday = birthday;
-            Address = address;
-            DriversLicense = driversLicense;
-        }
-
         public int Id { get; set; }
         public PersonName Name { get; set; }
         public Gender Gender { get; set; }
@@ -28,4 +16,5 @@ namespace Client.Models
         public Address Address { get; set; }
         public IList<Phone> Phones { get; set; } = new List<Phone>();
     }
+
 }

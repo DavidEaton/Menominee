@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Tests.DatabaseTests
@@ -15,11 +15,31 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
     [Category("Database")]
     public class DatabaseShould
     {
-        const string CONNECTION = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+        const string CONNECTION = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
 
         [SetUp]
         public void Setup()
         {
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlServer(CONNECTION);
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockLogger = new Mock<ILogger<AppDbContext>>();
+            var mockEnvironment = new Mock<IHostEnvironment>();
+            mockEnvironment
+                   .Setup(e => e.EnvironmentName)
+                   .Returns("Hosting:UnitTestEnvironment");
+            var context = new AppDbContext(optionsBuilder.Options,
+                                                             //null,
+                                                             mockEnvironment.Object,
+                                                             mockConfiguration.Object,
+                                                             mockLogger.Object);
+            context.Database.EnsureDeleted();
+
         }
 
         [Test]
@@ -158,6 +178,7 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
                                                              mockEnvironment.Object,
                                                              mockConfiguration.Object,
                                                              mockLogger.Object);
+            // Test database in known state
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             return context;
