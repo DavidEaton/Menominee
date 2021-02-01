@@ -68,6 +68,7 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
+            services.AddHealthChecks();
             services.AddControllers();
             //services.AddControllers(configure =>
             //    configure.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy)));
@@ -120,6 +121,7 @@ namespace CustomerVehicleManagement.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/healthcheck");
             });
         }
     }
