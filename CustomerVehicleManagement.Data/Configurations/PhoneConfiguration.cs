@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Data.Configurations
 {

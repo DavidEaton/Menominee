@@ -118,7 +118,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, null, null, driversLicense);
+            var person = new Person(name, Gender.Female, null, null, null, driversLicense);
 
             Assert.That(person, Is.Not.Null);
             Assert.That(person.DriversLicense, Is.Not.Null);

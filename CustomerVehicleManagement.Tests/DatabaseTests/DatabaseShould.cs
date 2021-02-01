@@ -114,7 +114,7 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             Assert.AreEqual(lastName, person.Name.LastName);
 
             var nameNew = new PersonName("Smith", firstName);
-            person.Name = nameNew;
+            person.SetName(nameNew);
 
             context.Update(person);
             context.SaveChanges();

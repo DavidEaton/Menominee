@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // GET: api/persons/1
+        // GET: api/person/1
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
@@ -70,18 +70,18 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             try
             {
-                var personFromDatabase = await repository.GetPersonAsync(id);
+                Person personFromDatabase = await repository.GetPersonAsync(id);
                 if (personFromDatabase == null)
                     return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
                 //mapper.Map(model, personFromDatabase);
 
-                personFromDatabase.Name = model.Name;
-                personFromDatabase.Address = model.Address;
-                personFromDatabase.Birthday = model.Birthday;
-                personFromDatabase.DriversLicense = model.DriversLicense;
-                personFromDatabase.Gender = model.Gender;
-                personFromDatabase.Phones = model.Phones;
+                personFromDatabase.SetName(model.Name);
+                personFromDatabase.SetAddress(model.Address);
+                personFromDatabase.SetBirthday(model.Birthday);
+                personFromDatabase.SetDriversLicense(model.DriversLicense);
+                personFromDatabase.SetGender(model.Gender);
+                personFromDatabase.SetPhones(model.Phones);
 
                 // Update the objects ObjectState and sych the EF Change Tracker
                 personFromDatabase.UpdateState(TrackingState.Modified);
@@ -107,6 +107,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             try
             {
+                //var person = mapper.Map<Person>(model);
                 repository.AddPerson(model);
 
                 if (await repository.SaveChangesAsync())
