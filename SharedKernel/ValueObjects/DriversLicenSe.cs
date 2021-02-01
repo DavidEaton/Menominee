@@ -1,18 +1,16 @@
-﻿using SharedKernel;
-using SharedKernel.ValueObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Domain.ValueObjects
+namespace SharedKernel.ValueObjects
 {
-    public class DriversLicence : ValueObject
+    public class DriversLicense : ValueObject
     {
-        public static readonly string DriversLicenceInvalidMessage = "Drivers Licence details cannot be empty";
+        public static readonly string DriversLicenseInvalidMessage = "Drivers Licence details cannot be empty";
         public string Number { get; }
         public DateTimeRange ValidRange { get; }
         public string State { get; }
         
-        public DriversLicence(string number, string state, DateTimeRange validRange)
+        public DriversLicense(string number, string state, DateTimeRange validRange)
         {
             try
             {
@@ -22,7 +20,7 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
             }
             catch (Exception)
             {
-                throw new ArgumentException(DriversLicenceInvalidMessage);
+                throw new ArgumentException(DriversLicenseInvalidMessage);
             }
 
             Number = number;
@@ -30,18 +28,18 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
             ValidRange = validRange;
         }
 
-        public DriversLicence NewNumber(string newNumber)
+        public DriversLicense NewNumber(string newNumber)
         {
-            return new DriversLicence(newNumber, State, ValidRange);
+            return new DriversLicense(newNumber, State, ValidRange);
         }
-        public DriversLicence NewState(string newState)
+        public DriversLicense NewState(string newState)
         {
-            return new DriversLicence(Number, newState, ValidRange);
+            return new DriversLicense(Number, newState, ValidRange);
         }
 
-        public DriversLicence NewValidRange(DateTime start, DateTime end)
+        public DriversLicense NewValidRange(DateTime start, DateTime end)
         {
-            return new DriversLicence(Number, State, new DateTimeRange(start, end));
+            return new DriversLicense(Number, State, new DateTimeRange(start, end));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -54,7 +52,7 @@ namespace CustomerVehicleManagement.Domain.ValueObjects
         #region ORM
 
         // EF requires an empty constructor
-        protected DriversLicence() { }
+        protected DriversLicense() { }
 
         #endregion
     }

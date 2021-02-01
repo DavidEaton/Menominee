@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using NUnit.Framework;
+using SharedKernel.Enums;
 using System;
 
 namespace CustomerVehicleManagement.Tests.EntityTests

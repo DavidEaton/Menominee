@@ -254,7 +254,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasForeignKey("PersonId");
                         });
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.ValueObjects.DriversLicence", "DriversLicence", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
                             b1.Property<int>("PersonId")
                                 .ValueGeneratedOnAdd()
@@ -280,7 +280,7 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                             b1.OwnsOne("SharedKernel.ValueObjects.DateTimeRange", "ValidRange", b2 =>
                                 {
-                                    b2.Property<int>("DriversLicencePersonId")
+                                    b2.Property<int>("DriversLicensePersonId")
                                         .ValueGeneratedOnAdd()
                                         .HasColumnType("int")
                                         .UseIdentityColumn();
@@ -293,12 +293,12 @@ namespace CustomerVehicleManagement.Data.Migrations
                                         .HasColumnType("datetime2")
                                         .HasColumnName("DriversLicenseIssued");
 
-                                    b2.HasKey("DriversLicencePersonId");
+                                    b2.HasKey("DriversLicensePersonId");
 
                                     b2.ToTable("Person");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("DriversLicencePersonId");
+                                        .HasForeignKey("DriversLicensePersonId");
                                 });
 
                             b1.Navigation("ValidRange");
@@ -338,7 +338,7 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.Navigation("Address");
 
-                    b.Navigation("DriversLicence");
+                    b.Navigation("DriversLicense");
 
                     b.Navigation("Name");
                 });

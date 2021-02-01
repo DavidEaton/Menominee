@@ -1,7 +1,8 @@
-﻿using CustomerVehicleManagement.Domain.Enums;
-using CustomerVehicleManagement.Domain.ValueObjects;
-using SharedKernel;
+﻿using SharedKernel;
+using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -19,20 +20,66 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address)
             : this(name, gender, birthday, address, null) { }
 
-        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicence driversLicence = null)
+        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones)
+            : this(name, gender, birthday, address, phones, null) { }
+
+        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, DriversLicense driversLicense = null)
         {
             Name = name;
             Gender = gender;
             Birthday = birthday;
             Address = address;
-            DriversLicence = driversLicence;
+            DriversLicense = driversLicense;
+            Phones = phones;
         }
 
-        public PersonName Name { get; set; }
-        public Gender Gender { get; set; }
-        public DateTime? Birthday { get; set; }
-        public DriversLicence DriversLicence { get; set; }
-        public Address Address { get; set; }
+        public PersonName Name { get; private set; }
+        public Gender Gender { get; private set; }
+        public DateTime? Birthday { get; private set; }
+        public DriversLicense DriversLicense { get; private set; }
+        public Address Address { get; private set; }
+        public IList<Phone> Phones { get; private set; } = new List<Phone>();
+
+        public void AddPhone(Phone phone)
+        {
+            Phones.Add(phone);
+        }
+
+        public void RemovePhone(Phone phone)
+        {
+            Phones.Remove(phone);
+        }
+
+        public void SetName(PersonName name)
+        {
+            Name = name;
+        }
+
+        public void SetGender(Gender gender)
+        {
+            Gender = gender;
+        }
+
+        public void SetBirthday(DateTime? birthday)
+        {
+            Birthday = birthday;
+        }
+
+        public void SetDriversLicense(DriversLicense driversLicense)
+        {
+            DriversLicense = driversLicense;
+        }
+
+        public void SetAddress(Address address)
+        {
+            Address = address;
+        }
+
+        public void SetPhones(IList<Phone> phones)
+        {
+            if (phones != null)
+                Phones = phones;
+        }
 
         #region ORM
 

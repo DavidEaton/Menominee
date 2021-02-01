@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TicketManagement.Core.Entities;
-using TicketManagement.Core.Enums;
 
 namespace TicketManagement.Core.Model
 {

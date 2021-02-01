@@ -14,12 +14,12 @@ namespace CustomerVehicleManagement.Api.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
-        private readonly IPersonRepository data;
+        private readonly IPersonRepository repository;
         private readonly IMapper mapper;
 
-        public PersonsController(IPersonRepository data, IMapper mapper)
+        public PersonsController(IPersonRepository repository, IMapper mapper)
         {
-            this.data = data;
+            this.repository = repository;
             this.mapper = mapper;
         }
 
@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var results = await data.GetPersonsAsync();
+                var results = await repository.GetPersonsAsync();
                 return Ok(results);
             }
             catch (Exception ex)
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var results = await data.GetPersonsAsync();
+                var results = await repository.GetPersonsAsync();
                 return Ok(results);
             }
             catch (Exception ex)
@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var result = await data.GetPersonAsync(id);
+                var result = await repository.GetPersonAsync(id);
 
                 if (result == null)
                     return NotFound();
@@ -81,18 +81,25 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             try
             {
-                var fetchedPerson = await data.GetPersonAsync(id);
-                if (fetchedPerson == null)
+                Person personFromDatabase = await repository.GetPersonAsync(id);
+                if (personFromDatabase == null)
                     return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
-                //mapper.Map(model, fetchedPerson);
+                //mapper.Map(model, personFromDatabase);
+
+                personFromDatabase.SetName(model.Name);
+                personFromDatabase.SetAddress(model.Address);
+                personFromDatabase.SetBirthday(model.Birthday);
+                personFromDatabase.SetDriversLicense(model.DriversLicense);
+                personFromDatabase.SetGender(model.Gender);
+                personFromDatabase.SetPhones(model.Phones);
 
                 // Update the objects ObjectState and sych the EF Change Tracker
-                fetchedPerson.UpdateState(TrackingState.Modified);
-                data.FixState();
+                personFromDatabase.UpdateState(TrackingState.Modified);
+                repository.FixState();
 
-                if (await data.SaveChangesAsync())
-                    return Ok(fetchedPerson);
+                if (await repository.SaveChangesAsync())
+                    return Ok(personFromDatabase);
             }
             catch (Exception ex)
             {
@@ -109,9 +116,9 @@ namespace CustomerVehicleManagement.Api.Controllers
             try
             {
                 //var person = mapper.Map<Person>(model);
-                data.AddPerson(model);
+                repository.AddPerson(model);
 
-                if (await data.SaveChangesAsync())
+                if (await repository.SaveChangesAsync())
                 {
                     //var location = linkGenerator.GetPathByAction("Get", "Persons", new { id = person.Id });
                     string location = $"/api/persons/{model.Id}";
@@ -131,12 +138,12 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var fetchedPerson = await data.GetPersonAsync(id);
+                var fetchedPerson = await repository.GetPersonAsync(id);
                 if (fetchedPerson == null)
                     return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
-                data.DeletePerson(fetchedPerson);
-                if (await data.SaveChangesAsync())
+                repository.DeletePerson(fetchedPerson);
+                if (await repository.SaveChangesAsync())
                 {
                     return Ok();
                 }

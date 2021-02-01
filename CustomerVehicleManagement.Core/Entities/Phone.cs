@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Enums;
-using SharedKernel;
+﻿using SharedKernel;
+using SharedKernel.Enums;
 using System;
 using System.Text.Json.Serialization;
 

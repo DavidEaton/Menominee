@@ -36,17 +36,21 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             if (customer.EntityType == EntityType.Organization)
             {
-                customer.Entity = await context.Organizations
+                var entity = await context.Organizations
                                                .AsNoTracking()
                                                .Include(o => o.Contact)
                                                .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+
+                customer.SetEntity(entity);
             }
 
             if (customer.EntityType == EntityType.Person)
             {
-                customer.Entity = await context.Persons
+                var entity = await context.Persons
                                                .AsNoTracking()
                                                .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+
+                customer.SetEntity(entity);
             }
 
             return customer;
@@ -63,20 +67,23 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    customer.Entity = await context.Organizations
+                    var entity = await context.Organizations
                                                    .AsNoTracking()
                                                    .Include(o => o.Contact)
                                                    .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+
+                    customer.SetEntity(entity);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    customer.Entity = await context.Persons
+                    var entity = await context.Persons
                                                    .AsNoTracking()
                                                    .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+
+                    customer.SetEntity(entity);
                 }
             }
-
             return customers;
         }
 

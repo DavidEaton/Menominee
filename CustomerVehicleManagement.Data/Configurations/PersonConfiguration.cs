@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Data.Configurations
 {
@@ -55,20 +55,20 @@ namespace CustomerVehicleManagement.Data.Configurations
                    .HasColumnName("AddressState")
                    .HasMaxLength(255);
 
-            // Value Object: DriversLicence
-            builder.OwnsOne(p => p.DriversLicence)
+            // Value Object: DriversLicense
+            builder.OwnsOne(p => p.DriversLicense)
                 .Property(p => p.Number)
                 .HasColumnName("DriversLicenseNumber")
                 .HasMaxLength(50);
-            builder.OwnsOne(p => p.DriversLicence)
+            builder.OwnsOne(p => p.DriversLicense)
                 .Property(p => p.State)
                 .HasColumnName("DriversLicenseState")
                 .HasMaxLength(2);
-            builder.OwnsOne(p => p.DriversLicence)
+            builder.OwnsOne(p => p.DriversLicense)
                 .OwnsOne(p => p.ValidRange)
                 .Property(p => p.Start)
                 .HasColumnName("DriversLicenseIssued");
-            builder.OwnsOne(p => p.DriversLicence)
+            builder.OwnsOne(p => p.DriversLicense)
                 .OwnsOne(p => p.ValidRange)
                 .Property(p => p.End)
                 .HasColumnName("DriversLicenseExpiry");

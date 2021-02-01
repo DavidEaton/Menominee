@@ -5,7 +5,7 @@ namespace SharedKernel
 {
     public abstract class Entity : IEntity
     {
-        public virtual int Id { get; protected set; }
+        public virtual int Id { get; private set; }
         public override bool Equals(object obj)
         {
             var other = obj as Entity;

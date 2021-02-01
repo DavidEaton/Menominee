@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
+using SharedKernel;
+using SharedKernel.Enums;
 using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,17 +9,19 @@ namespace CustomerVehicleManagement.Domain.Interfaces
 {
     public interface ICustomer
     {
-        IEntity Entity { get; set; }
-        int EntityId { get; set; }
-        CustomerType CustomerType { get; set; }
-        bool AllowEmail { get; set; }
-        bool AllowMail { get; set; }
-        bool AllowSms { get; set; }
-        bool OverrideCustomerTaxProfile { get; set; }
-        int PriceProfileId { get; set; }
-        bool RewardsMember { get; set; }
-        int TaxIds { get; set; }
-        DateTime Created { get; set; }
+        IEntity Entity { get; }
+        int EntityId { get; }
+        CustomerType CustomerType { get; }
+        bool AllowEmail { get; }
+        bool AllowMail { get; }
+        bool AllowSms { get; }
+        bool OverrideCustomerTaxProfile { get; }
+        int PriceProfileId { get; }
+        bool RewardsMember { get; }
+        int TaxIds { get; }
+        DateTime Created { get; }
         IList<Vehicle> Vehicles { get; }
+
+        void SetEntity(Entity entity);
     }
 }

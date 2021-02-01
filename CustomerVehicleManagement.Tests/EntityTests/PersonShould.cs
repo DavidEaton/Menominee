@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
-using CustomerVehicleManagement.Domain.ValueObjects;
 using NUnit.Framework;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 
@@ -117,16 +116,16 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
 
-            var driversLicense = new DriversLicence(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, null, null, driversLicense);
+            var person = new Person(name, Gender.Female, null, null, null, driversLicense);
 
             Assert.That(person, Is.Not.Null);
-            Assert.That(person.DriversLicence, Is.Not.Null);
-            Assert.That(person.DriversLicence.Number, Is.EqualTo(driversLicenseNumber));
-            Assert.That(person.DriversLicence.State, Is.EqualTo(driversLicenseState));
-            Assert.That(person.DriversLicence.ValidRange.Start, Is.EqualTo(issued));
-            Assert.That(person.DriversLicence.ValidRange.End, Is.EqualTo(expiry));
+            Assert.That(person.DriversLicense, Is.Not.Null);
+            Assert.That(person.DriversLicense.Number, Is.EqualTo(driversLicenseNumber));
+            Assert.That(person.DriversLicense.State, Is.EqualTo(driversLicenseState));
+            Assert.That(person.DriversLicense.ValidRange.Start, Is.EqualTo(issued));
+            Assert.That(person.DriversLicense.ValidRange.End, Is.EqualTo(expiry));
         }
 
         [Test]
