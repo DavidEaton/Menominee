@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
 using CustomerVehicleManagement.Api.Data.Models;
-using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.Enums;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
@@ -20,13 +19,32 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         public PersonsController(IPersonRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            this.repository = repository ?? 
+                throw new ArgumentNullException(nameof(repository));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
+        }
+
+        // GET: api/persons/list
+        [Route("list")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PersonListDto>>> GetPersonsList()
+        {
+            try
+            {
+                var results = await repository.GetPersonsListAsync();
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
         }
 
         // GET: api/persons
         [HttpGet]
-        public async Task<ActionResult<Person[]>> GetPersons()
+        public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersons()
         {
             try
             {
@@ -39,9 +57,9 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // GET: api/person/1
+        // GET: api/persons/1
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Person>> GetPerson(int id)
+        public async Task<ActionResult<PersonReadDto>> GetPerson(int id)
         {
             try
             {
@@ -60,7 +78,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Person>> UpdatePerson(int id, PersonUpdateDto model)
+        public async Task<ActionResult<PersonReadDto>> UpdatePerson(int id, PersonUpdateDto model)
         {
             if (model == null)
                 return BadRequest();
@@ -70,22 +88,22 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             try
             {
-                Person personFromDatabase = await repository.GetPersonAsync(id);
+                var personFromDatabase = await repository.GetPersonAsync(id);
                 if (personFromDatabase == null)
                     return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
                 //mapper.Map(model, personFromDatabase);
 
-                personFromDatabase.SetName(model.Name);
-                personFromDatabase.SetAddress(model.Address);
-                personFromDatabase.SetBirthday(model.Birthday);
-                personFromDatabase.SetDriversLicense(model.DriversLicense);
-                personFromDatabase.SetGender(model.Gender);
-                personFromDatabase.SetPhones(model.Phones);
+                personFromDatabase.Name = model.Name.LastFirstMiddle;
+                personFromDatabase.Address = model.Address;
+                personFromDatabase.Birthday = model.Birthday;
+                personFromDatabase.DriversLicense = model.DriversLicense;
+                personFromDatabase.Gender = model.Gender;
+                personFromDatabase.Phones = model.Phones;
 
                 // Update the objects ObjectState and sych the EF Change Tracker
-                personFromDatabase.UpdateState(TrackingState.Modified);
-                repository.FixState();
+                //personFromDatabase.UpdateState(TrackingState.Modified);
+                //repository.FixState();
 
                 if (await repository.SaveChangesAsync())
                     return Ok(personFromDatabase);
@@ -99,22 +117,29 @@ namespace CustomerVehicleManagement.Api.Controllers
         }
 
         // POST: api/persons/
+        //[ValidateModelState]
         [HttpPost]
-        public async Task<ActionResult<Person>> AddPerson(Person model)
+        public async Task<ActionResult<PersonReadDto>> AddPerson(PersonCreateDto model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                //var person = mapper.Map<Person>(model);
                 repository.AddPerson(model);
 
                 if (await repository.SaveChangesAsync())
                 {
+                    PersonReadDto personFromDatabase = await repository.GetPersonAsync(model.Id);
+
                     //var location = linkGenerator.GetPathByAction("Get", "Persons", new { id = person.Id });
-                    string location = $"/api/persons/{model.Id}";
-                    return Created(location, model);
+                    //string location = $"/api/persons/{model.Id}";
+                    //return Created(location, model);
+
+                    return CreatedAtRoute("DefaultApi", new { id = personFromDatabase.Id }, personFromDatabase);
                 }
             }
             catch (Exception ex)

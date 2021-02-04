@@ -6,6 +6,8 @@ namespace SharedKernel.ValueObjects
     public class Address : ValueObject
     {
         public static readonly string AddressEmptyMessage = "Address details cannot be empty";
+        private string addressFull;
+
         public Address(string addressLine, string city, string state, string postalCode)
         {
             if (string.IsNullOrWhiteSpace(addressLine) | string.IsNullOrWhiteSpace(city) | string.IsNullOrWhiteSpace(state) | string.IsNullOrWhiteSpace(postalCode))
@@ -51,6 +53,8 @@ namespace SharedKernel.ValueObjects
             yield return State;
             yield return PostalCode;
         }
+
+        public string AddressFull { get => $"{AddressLine} {City}, {State}  {PostalCode}"; }
 
         #region ORM
 

@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var phoneType = PhoneType.Home;
 
             // Act
-            var phone = new Phone(number, phoneType);
+            var phone = new Phone(number, phoneType, true);
 
             // Assert
             Assert.That(phone, Is.Not.Null);
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var phoneType = PhoneType.Home;
 
             var exception = Assert.Throws<ArgumentException>(
-                () => { new Phone(number, phoneType); });
+                () => { new Phone(number, phoneType, true); });
 
             Assert.That(exception.Message, Is.EqualTo(Phone.PhoneEmptyMessage));
         }
@@ -52,8 +52,8 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         {
             var number = "989.627.9206";
 
-            var phone1 = new Phone(number, PhoneType.Home);
-            var phone2 = new Phone(number, PhoneType.Home);
+            var phone1 = new Phone(number, PhoneType.Home, true);
+            var phone2 = new Phone(number, PhoneType.Home, false);
 
             phone2 = phone2.NewNumber("555.555.5555");
 
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
 
-            var phone = new Phone(number, phoneType);
+            var phone = new Phone(number, phoneType, true);
 
             phone = phone.NewNumber("555-555-5555");
 
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
 
-            var phone = new Phone(number, phoneType);
+            var phone = new Phone(number, phoneType, true);
 
             phone = phone.NewPhoneType(PhoneType.Mobile);
 

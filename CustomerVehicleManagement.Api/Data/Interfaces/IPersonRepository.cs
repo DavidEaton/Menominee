@@ -1,17 +1,20 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Domain.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Data.Interfaces
 {
     public interface IPersonRepository
     {
-        void AddPerson(Person entity);
-        void DeletePerson(Person entity);
+        void AddPerson(PersonCreateDto entity);
+        void DeletePerson(PersonReadDto entity);
         void FixState();
         Task<bool> PersonExistsAsync(int id);
-        Task<Person> UpdatePersonAsync(Person entity);
-        Task<Person[]> GetPersonsAsync();
-        Task<Person> GetPersonAsync(int id);
+        Task<PersonReadDto> UpdatePersonAsync(PersonUpdateDto entity);
+        Task<IEnumerable<PersonReadDto>> GetPersonsAsync();
+        Task<IEnumerable<PersonListDto>> GetPersonsListAsync();
+        Task<PersonReadDto> GetPersonAsync(int id);
         Task<bool> SaveChangesAsync(Person person);
         Task<bool> SaveChangesAsync();
     }

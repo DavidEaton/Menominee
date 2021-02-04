@@ -3,6 +3,9 @@ using CustomerVehicleManagement.Api.Data.Interfaces;
 using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Api.Data.Models;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -18,30 +21,77 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             this.context = context;
         }
 
-        public void AddPerson(Person person)
+        public void AddPerson(PersonCreateDto person)
         {
-            context.Add(person);
+            context.Add(new Person(person.Name, person.Gender, person.Birthday, person.Address, person.Phones, person.DriversLicense));
         }
 
-        public void DeletePerson(Person person)
+        public void DeletePerson(PersonReadDto person)
         {
             context.Remove(person);
         }
 
-        public async Task<Person> GetPersonAsync(int id)
+        public async Task<PersonReadDto> GetPersonAsync(int id)
         {
             return await context.Persons
-                .Include(p => p.Address)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                                .Select(person =>
+                                    new PersonReadDto()
+                                    {
+                                        Id = person.Id,
+                                        Name = person.Name.LastFirstMiddle,
+                                        Gender = person.Gender,
+                                        Birthday = person.Birthday,
+                                        DriversLicense = person.DriversLicense,
+                                        Address = person.Address,
+                                        Phones = person.Phones
+                                    })
+                                .AsNoTracking()
+                                .SingleOrDefaultAsync(person => person.Id == id);
         }
 
-        public async Task<Person[]> GetPersonsAsync()
+        public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
         {
             return await context.Persons
-                // Tracking is not needed (and expensive) for this disconnected data collection
-                .AsNoTracking()
-                .Include(p => p.Address)
-                .ToArrayAsync();
+                                .Include(person => person.Phones)
+                                .Select(person =>
+                                    new PersonReadDto()
+                                    {
+                                        Id = person.Id,
+                                        Name = person.Name.LastFirstMiddle,
+                                        Gender = person.Gender,
+                                        Birthday = person.Birthday,
+                                        DriversLicense = person.DriversLicense,
+                                        Address = person.Address,
+                                        Phones = person.Phones
+                                    })
+                                .AsNoTracking()
+                                .ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
+        {
+            List<PersonListDto> personsList = new List<PersonListDto>();
+            IQueryable<Person> persons = context.Persons
+                                                .Include(person => person.Phones)
+                                                .AsNoTracking();
+
+            foreach (var person in persons)
+            {
+
+                PersonListDto personInList = new PersonListDto()
+                {
+                    Name = person.Name.LastFirstMiddle,
+                    Id = person.Id,
+                    Address = person?.Address?.AddressFull
+                };
+
+                if (person.Phones.Count > 0)
+                    personInList.Phone = person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString();
+
+                personsList.Add(personInList);
+            }
+
+            return await Task.FromResult(personsList);
         }
 
         public async Task<bool> PersonExistsAsync(int id)
@@ -69,7 +119,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             context.FixState();
         }
 
-        public async Task<Person> UpdatePersonAsync(Person person)
+        public async Task<PersonReadDto> UpdatePersonAsync(PersonUpdateDto person)
         {
             if (person == null)
                 throw new NullReferenceException("Person Id missing.");
@@ -83,12 +133,11 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             catch (DbUpdateConcurrencyException)
             {
                 if (!await PersonExistsAsync(person.Id))
-                    return null;// something that tells the controller to return NotFound();
+                    return null;
                 throw;
             }
 
             return null;
         }
-
     }
 }

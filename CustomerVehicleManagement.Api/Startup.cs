@@ -37,11 +37,6 @@ namespace CustomerVehicleManagement.Api
             // An environment variable is setup in Azure.  If it's set then grab the connection string
             // from the Azure slot, otherwise use the appsetting.json connection string.
 
-            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
-            //var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
-            //    .RequireAuthenticatedUser()
-            //    .Build();
-
             // ONLY USE IN DEVELOPMENT
             //IdentityModelEventSource.ShowPII = true;
 
@@ -61,6 +56,7 @@ namespace CustomerVehicleManagement.Api
             //                                             .UseSqlServer(Configuration[$"IDPSettings:Connection:{environment}"]));
             //services.AddScoped<UserContext, UserContext>();
             //services.AddScoped<IdentityUserDbContext, IdentityUserDbContext>();
+
             // IHttpContextAccessor is no longer wired up by default, so register it
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IPersonRepository, PersonRepository>();
@@ -69,9 +65,18 @@ namespace CustomerVehicleManagement.Api
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
             services.AddHealthChecks();
-            services.AddControllers();
-            //services.AddControllers(configure =>
-            //    configure.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy)));
+
+            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
+            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            services.AddControllers(mvcOptions => 
+            {
+                // Return 406 Not Acceptible if request content type is unavailable
+                mvcOptions.ReturnHttpNotAcceptable = true;
+                //mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+        }).AddXmlDataContractSerializerFormatters(); // Provide xml content type
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

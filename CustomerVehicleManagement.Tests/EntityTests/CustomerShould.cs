@@ -114,10 +114,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var customer = new Customer(organization);
 
             string number0 = "(989) 627-9206";
-            Phone phone0 = new Phone(number0, PhoneType.Mobile);
+            Phone phone0 = new Phone(number0, PhoneType.Mobile, true);
 
             string number1 = "(231) 675-1922";
-            Phone phone1 = new Phone(number1, PhoneType.Mobile);
+            Phone phone1 = new Phone(number1, PhoneType.Mobile, false);
 
             customer.AddPhone(phone0);
             customer.AddPhone(phone1);
@@ -137,10 +137,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var customer = new Customer(organization);
 
             string number0 = "(989) 627-9206";
-            Phone phone0 = new Phone(number0, PhoneType.Mobile);
+            Phone phone0 = new Phone(number0, PhoneType.Mobile, true);
 
             string number1 = "(231) 675-1922";
-            Phone phone1 = new Phone(number1, PhoneType.Mobile);
+            Phone phone1 = new Phone(number1, PhoneType.Mobile, false);
 
             customer.AddPhone(phone0);
             customer.AddPhone(phone1);
