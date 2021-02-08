@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Domain.Entities
     public class Organization : Entity
     {
         public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
-        //public static readonly string OrganizationContactNullMessage = "Contact Person cannot be empty";
 
         public Organization(string name)
             : this(name, null)
@@ -38,11 +37,11 @@ namespace CustomerVehicleManagement.Domain.Entities
             Contact = contact;
         }
 
-        public string Name { get; set; }
-        public Person Contact { get; set; }
-        public Address Address { get; set; }
-        public string Notes { get; set; }
-        public IList<Phone> Phones { get; set; } = new List<Phone>();
+        public string Name { get; private set; }
+        public Person Contact { get; private set; }
+        public Address Address { get; private set; }
+        public string Notes { get; private set; }
+        public IList<Phone> Phones { get; private set; } = new List<Phone>();
 
         public void AddPhone(Phone phone)
         {
@@ -52,6 +51,33 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void RemovePhone(Phone phone)
         {
             Phones.Remove(phone);
+        }
+
+        public void SetPhones(IList<Phone> phones)
+        {
+            if (phones != null)
+                Phones = phones;
+        }
+
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
+        public void SetContact(Person contact)
+        {
+            if (contact != null)
+                Contact = contact;
+        }
+
+        public void SetAddress(Address address)
+        {
+            Address = address;
+        }
+
+        public void SetNotes(string notes)
+        {
+            Notes = notes;
         }
 
         #region ORM

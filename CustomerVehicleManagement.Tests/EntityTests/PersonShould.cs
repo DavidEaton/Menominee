@@ -340,7 +340,5 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(person.Address.State, Is.EqualTo(state));
             Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
         }
-
-
     }
 }

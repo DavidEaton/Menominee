@@ -62,20 +62,21 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void CreateNewOrganizationCustomerWithAddress()
         {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = "MI";
+            var postalCode = "49735";
+
+            var address = new Address(addressLine, city, state, postalCode);
+
             string name = "Jane's";
-            var organization = new Organization(name);
+            var organization = new Organization(name, address);
 
             var customer = new Customer(organization);
             Assert.That(customer.Entity is Organization);
 
             Organization janes = (Organization)customer.Entity;
 
-            var addressLine = "1234 Five Street";
-            var city = "Gaylord";
-            var state = "MI";
-            var postalCode = "49735";
-
-            janes.Address = new Address(addressLine, city, state, postalCode);
 
             Assert.That(addressLine, Is.EqualTo(janes.Address.AddressLine));
             Assert.That(city, Is.EqualTo(janes.Address.City));
@@ -93,10 +94,9 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
 
-            var organization = new Organization(janesAuto)
-            {
-                Contact = person
-            };
+            var organization = new Organization(janesAuto);
+
+            organization.SetContact(person);
 
             var customer = new Customer(organization);
             Organization janes = (Organization)customer.Entity;

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.EntityTests
 {
@@ -72,7 +73,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             string firstName = "Jane";
             string lastName = "Doe";
 
-            // Act
             var personName = new PersonName(lastName, firstName);
             var contact = new Person(personName, Gender.Female);
 
@@ -84,5 +84,152 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(organization.Name, Is.EqualTo(organizationName));
             Assert.That(organization.Contact.Name.FirstName, Is.EqualTo(firstName));
         }
+
+        [Test]
+        public void AddPhone()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+
+            organization.AddPhone(phone);
+
+            Assert.That(organization.Phones[0].Number == number);
+        }
+
+        [Test]
+        public void RemovePhone()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Mobile;
+            var phone = new Phone(number, phoneType, true);
+
+            organization.AddPhone(phone);
+
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+
+            organization.AddPhone(phone);
+
+            Assert.That(organization.Phones.Count == 2);
+
+            organization.RemovePhone(phone);
+
+            Assert.That(organization.Phones.Count == 1);
+            Assert.That(organization.Phones[0].Number == "989.627.9206");
+        }
+
+        [Test]
+        public void SetPhones()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            var phones = new List<Phone>();
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Mobile;
+            var phone = new Phone(number, phoneType, true);
+
+            phones.Add(phone);
+
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+
+            phones.Add(phone);
+
+            organization.SetPhones(phones);
+
+            Assert.That(organization.Phones.Count == 2);
+            Assert.That(organization.Phones[0].Number == "989.627.9206");
+        }
+
+        [Test]
+        public void SetName()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            Assert.That(organization.Name == organizationName);
+
+            organizationName = "June's";
+
+            organization.SetName(organizationName);
+
+            Assert.That(organization.Name == organizationName);
+        }
+
+        [Test]
+        public void SetContact()
+        {
+            string organizationName = "Jane's";
+            string firstName = "Jane";
+            string lastName = "Doe";
+
+            var personName = new PersonName(lastName, firstName);
+            var contact = new Person(personName, Gender.Female);
+            var organization = new Organization(organizationName);
+
+            Assert.That(organization, Is.Not.Null);
+            Assert.That(organization.Contact, Is.Null);
+
+            organization.SetContact(contact);
+
+            Assert.That(organization.Contact.Name.FirstName, Is.EqualTo(firstName));
+        }
+
+        [Test]
+        public void SetAddress()
+        {
+            string organizationName = "Jane's";
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = "MI";
+            var postalCode = "49735";
+
+            var address = new Address(addressLine, city, state, postalCode);
+            var organization = new Organization(organizationName, address);
+
+            Assert.That(organization.Address.AddressLine, Is.EqualTo(addressLine));
+            Assert.That(organization.Address.City, Is.EqualTo(city));
+            Assert.That(organization.Address.State, Is.EqualTo(state));
+            Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
+
+            addressLine = "5432 One Street";
+            city = "Petoskey";
+            state = "ME";
+            postalCode = "49770";
+
+            address = new Address(addressLine, city, state, postalCode);
+            organization.SetAddress(address);
+
+            Assert.That(organization.Address.AddressLine, Is.EqualTo(addressLine));
+            Assert.That(organization.Address.City, Is.EqualTo(city));
+            Assert.That(organization.Address.State, Is.EqualTo(state));
+            Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
+        }
+
+        [Test]
+        public void SetNotes()
+        {
+            string organizationName = "Jane's";
+            string notes = "Behold, notes!";
+            var organization = new Organization(organizationName);
+
+            Assert.That(string.IsNullOrWhiteSpace(organization.Notes));
+
+            organization.SetNotes(notes);
+
+            Assert.That(organization.Notes == notes);
+        }
+
     }
 }
