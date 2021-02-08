@@ -33,11 +33,7 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(optionsBuilder.Options,
-                                                             //null,
-                                                             mockEnvironment.Object,
-                                                             mockConfiguration.Object,
-                                                             mockLogger.Object);
+            var context = new AppDbContext(CONNECTION, true);
             context.Database.EnsureDeleted();
 
         }
@@ -173,11 +169,8 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(optionsBuilder.Options,
-                                                             //null,
-                                                             mockEnvironment.Object,
-                                                             mockConfiguration.Object,
-                                                             mockLogger.Object);
+            var context = new AppDbContext(CONNECTION, true);
+
             // Test database in known state
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();

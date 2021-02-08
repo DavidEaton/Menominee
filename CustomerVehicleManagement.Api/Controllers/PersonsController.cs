@@ -15,15 +15,11 @@ namespace CustomerVehicleManagement.Api.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IPersonRepository repository;
-        private readonly IMapper mapper;
 
-        public PersonsController(IPersonRepository repository, IMapper mapper)
+        public PersonsController(IPersonRepository repository)
         {
             this.repository = repository ?? 
                 throw new ArgumentNullException(nameof(repository));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/persons/list

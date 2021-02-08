@@ -48,8 +48,11 @@ namespace CustomerVehicleManagement.Api
             //        options.ApiName = Configuration["ApiName"];
             //    });
 
-            services.AddDbContext<AppDbContext>(
-                options => options.UseSqlServer(CONNECTION));
+            //services.AddDbContext<AppDbContext>(
+            //    options => options.UseSqlServer(CONNECTION));
+
+            services.AddScoped(_ => new AppDbContext(CONNECTION, HostEnvironment.IsDevelopment()));
+
             //services.AddDbContext<IdentityUserDbContext>(options =>
             //                                             options
             //                                             // Connect to our IDP
@@ -62,7 +65,7 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddCors();
             services.AddHealthChecks();
 

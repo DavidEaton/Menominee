@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
@@ -13,26 +11,33 @@ namespace CustomerVehicleManagement.Api.Data
     /// </summary>
     public class AppDbContext : DbContext
     {
-        //const string connection = "Server=tcp:janco.database.windows.net,1433;Initial Catalog=StockTracDomain;Persist Security Info=False;User ID=jancoAdmin;Password=sd5hF4Z4zcpoc!842;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        private readonly bool useConsoleLogger;
+        private readonly string connection;
 
-        //const string CONNECTION = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
-
-        public IHostEnvironment environment;
-        public IConfiguration configuration;
-        private readonly ILogger<AppDbContext> logger;
-        //private readonly UserContext userContext;
-
-        public AppDbContext(DbContextOptions<AppDbContext> options,
-            //UserContext userContext,
-            IHostEnvironment environment,
-            IConfiguration configuration,
-            ILogger<AppDbContext> logger)
-            : base(options)
+        public AppDbContext(string connection, bool useConsoleLogger)
         {
-            //this.userContext = userContext;
-            this.environment = environment;
-            this.configuration = configuration;
-            this.logger = logger;
+            this.connection = connection;
+            this.useConsoleLogger = useConsoleLogger;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                  .AddFilter((category, level) =>
+                    category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
+                  .AddConsole();
+            });
+
+            optionsBuilder.UseSqlServer(connection);
+
+            if (useConsoleLogger)
+            {
+                optionsBuilder
+                    .UseLoggerFactory(loggerFactory)
+                    .EnableSensitiveDataLogging();
+            }
         }
 
         public DbSet<Person> Persons { get; set; }

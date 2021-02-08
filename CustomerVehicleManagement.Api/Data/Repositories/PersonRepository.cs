@@ -6,19 +6,25 @@ using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Api.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
+using AutoMapper;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
     public class PersonRepository : IPersonRepository
     {
         private readonly AppDbContext context;
+        private readonly IMapper mapper;
         public PersonRepository()
         {
         }
 
-        public PersonRepository(AppDbContext context)
+        public PersonRepository(AppDbContext context, IMapper mapper)
         {
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public void AddPerson(PersonCreateDto person)
@@ -33,62 +39,39 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<PersonReadDto> GetPersonAsync(int id)
         {
-            return await context.Persons
-                                .Select(person =>
-                                    new PersonReadDto()
-                                    {
-                                        Id = person.Id,
-                                        Name = person.Name.LastFirstMiddle,
-                                        Gender = person.Gender,
-                                        Birthday = person.Birthday,
-                                        DriversLicense = person.DriversLicense,
-                                        Address = person.Address,
-                                        Phones = person.Phones
-                                    })
+            var personFromContext = await context.Persons
                                 .AsNoTracking()
                                 .SingleOrDefaultAsync(person => person.Id == id);
+
+            return mapper.Map<PersonReadDto>(personFromContext);
+
         }
 
         public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
         {
-            return await context.Persons
+            var personsFromContext = await context.Persons
                                 .Include(person => person.Phones)
-                                .Select(person =>
-                                    new PersonReadDto()
-                                    {
-                                        Id = person.Id,
-                                        Name = person.Name.LastFirstMiddle,
-                                        Gender = person.Gender,
-                                        Birthday = person.Birthday,
-                                        DriversLicense = person.DriversLicense,
-                                        Address = person.Address,
-                                        Phones = person.Phones
-                                    })
                                 .AsNoTracking()
                                 .ToArrayAsync();
+
+            return mapper.Map<IEnumerable<PersonReadDto>>(personsFromContext);
         }
 
         public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
         {
-            List<PersonListDto> personsList = new List<PersonListDto>();
-            IQueryable<Person> persons = context.Persons
+            IQueryable<Person> personsFromContext = context.Persons
                                                 .Include(person => person.Phones)
                                                 .AsNoTracking();
 
-            foreach (var person in persons)
+            var personsList = mapper.Map<IEnumerable<PersonListDto>>(personsFromContext);
+
+            foreach (var person in personsFromContext)
             {
-
-                PersonListDto personInList = new PersonListDto()
-                {
-                    Name = person.Name.LastFirstMiddle,
-                    Id = person.Id,
-                    Address = person?.Address?.AddressFull
-                };
-
                 if (person.Phones.Count > 0)
-                    personInList.Phone = person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString();
-
-                personsList.Add(personInList);
+                {
+                    // Find the corresponding person in the list and set its Phone
+                    personsList.FirstOrDefault(p => p.Id == person.Id).Phone = person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString();
+                }
             }
 
             return await Task.FromResult(personsList);
