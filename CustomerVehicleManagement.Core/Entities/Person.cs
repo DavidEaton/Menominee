@@ -42,7 +42,11 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
-            Phones.Add(phone);
+            if (Phones == null)
+                Phones = new List<Phone>();
+
+            if (Phones != null)
+                Phones.Add(phone);
         }
 
         public void RemovePhone(Phone phone)
@@ -68,7 +72,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetBirthday(DateTime? birthday)
         {
-            Birthday = birthday;
+            if (birthday.HasValue)
+                Birthday = birthday;
         }
 
         public void SetDriversLicense(DriversLicense driversLicense)
