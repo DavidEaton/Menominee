@@ -22,7 +22,8 @@ namespace CustomerVehicleManagement.Api.Profiles
                     destination => destination.Address,
                     configuration => configuration.MapFrom(source => source.Address.AddressFull));
 
-            CreateMap<PersonCreateDto, Person>();
+            CreateMap<Person, PersonCreateDto>().ReverseMap();
+
         }
     }
 }

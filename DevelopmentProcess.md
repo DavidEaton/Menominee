@@ -34,3 +34,13 @@ In practice it means that value objects are immutable, and public setters are no
         /// Necessary to enable searchable value object collection of phones.
         /// Although we do now have an additional entity in our domain model,
         /// we don’t ever have to expose it outside of the aggregate (Organization).
+
+### [ApiController] Attribute
+... makes the next two checks unnecessary :)
+We used to have include these checks in MANY controller methods. No more!
+            
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);

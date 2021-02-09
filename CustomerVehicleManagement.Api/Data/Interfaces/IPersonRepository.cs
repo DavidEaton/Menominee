@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
         Task<IEnumerable<PersonReadDto>> GetPersonsAsync();
         Task<IEnumerable<PersonListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);
-        Task<bool> SaveChangesAsync(PersonCreateDto person);
+        Task<PersonReadDto> SaveChangesAsync(PersonCreateDto person);
         Task<bool> SaveChangesAsync();
     }
 }

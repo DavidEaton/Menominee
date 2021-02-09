@@ -23,10 +23,10 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.Property(p => p.Primary)
                 .IsRequired();
 
-            // Convert enum values to and from strings in the database
-            var converter = new EnumToStringConverter<PhoneType>();
-            builder.Property(p => p.PhoneType)
-                .HasConversion(converter);
+            //// Convert enum values to and from strings in the database
+            //var converter = new EnumToStringConverter<PhoneType>();
+            //builder.Property(p => p.PhoneType)
+            //    .HasConversion(converter);
 
         }
     }

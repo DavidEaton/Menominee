@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         public PersonsController(IPersonRepository repository)
         {
-            this.repository = repository ?? 
+            this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
         }
 
@@ -116,30 +116,14 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePerson(PersonCreateDto model)
         {
-            // [ApiController] attribute makes the next two checks unnecessary :)
-            //if (model == null)
-            //    throw new ArgumentNullException(nameof(model));
+            PersonReadDto personToReturn = await repository.SaveChangesAsync(model);
 
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
-
-            // This code fetches the newly-created person from the database.
-            // Instead, map the model to the return type.
-
-            try
+            if (personToReturn != null)
             {
-                if (await repository.SaveChangesAsync(model))
-                {
-                    PersonReadDto personToReturn = await repository.GetPersonAsync(model.Id);
+                return CreatedAtRoute("GetPerson",
+                    new { id = personToReturn.Id },
+                    personToReturn);
 
-                    return CreatedAtRoute("GetPerson",
-                        new { id = personToReturn.Id },
-                        personToReturn);
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
 
             return BadRequest($"Failed to add {model.Name.FirstMiddleLast}.");
@@ -150,11 +134,11 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var fetchedPerson = await repository.GetPersonAsync(id);
-                if (fetchedPerson == null)
+                var personFromDatabase = await repository.GetPersonAsync(id);
+                if (personFromDatabase == null)
                     return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
-                repository.DeletePerson(fetchedPerson);
+                repository.DeletePerson(personFromDatabase);
                 if (await repository.SaveChangesAsync())
                 {
                     return Ok();

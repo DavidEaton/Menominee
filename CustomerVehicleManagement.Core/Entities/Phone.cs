@@ -30,9 +30,9 @@ namespace CustomerVehicleManagement.Domain.Entities
             Primary = primary;
         }
 
-        public string Number { get; }
-        public PhoneType PhoneType { get; }
-        public bool Primary { get; }
+        public string Number { get; private set; }
+        public PhoneType PhoneType { get; private set;}
+        public bool Primary { get; private set; }
 
         public Phone NewNumber(string newNumber)
         {

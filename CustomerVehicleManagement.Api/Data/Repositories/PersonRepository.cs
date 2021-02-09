@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -42,6 +43,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         {
             var personFromContext = await context.Persons
                                 .AsNoTracking()
+                                .Include(person => person.Phones)
                                 .SingleOrDefaultAsync(person => person.Id == id);
 
             return mapper.Map<PersonReadDto>(personFromContext);
@@ -84,16 +86,53 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 .AnyAsync(person => person.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync(PersonCreateDto personToCreate)
+        //public async Task<bool> SaveChangesAsync(PersonCreateDto personToCreate)
+        //{
+        //    var person = mapper.Map<Person>(personToCreate);
+        //    // Mark person EF tracking state = modified via context:
+        //    context.Persons
+        //        .Update(person);
+
+        //    var result = await context.SaveChangesAsync();
+
+        //    if (person?.Id > 0)
+        //        personToCreate.Id = person.Id;
+
+        //    return result > 0;
+        //}
+
+        public async Task<PersonReadDto> SaveChangesAsync(PersonCreateDto personToCreate)
         {
-            var person = mapper.Map<Person>(personToCreate);
-            // Mark person EF tracking state = modified via context:
-            context.Persons
-                .Update(person);
+            //var person = mapper.Map<Person>(personToCreate);
+
+            var person = new Person(
+                new PersonName(personToCreate.Name.LastName, personToCreate.Name.FirstName, personToCreate.Name.MiddleName)
+                , personToCreate.Gender
+                , personToCreate.Birthday
+                , personToCreate.Address);
+
+            var phones = new List<Phone>();
+            Phone newPhone;
+
+            foreach (var phone in personToCreate.Phones)
+            {
+                newPhone = new Phone(phone.Number, phone.PhoneType, phone.Primary);
+                phones.Add(newPhone);
+            }
+
+            person.SetPhones(phones);
+
+            context.Add(person);
 
             var result = await context.SaveChangesAsync();
-            personToCreate.Id = person.Id;
-            return result > 0;
+
+            if (result > 0)
+            {
+                if (person?.Id > 0)
+                    return mapper.Map<PersonReadDto>(person);
+            }
+
+            return null;
         }
 
         public async Task<bool> SaveChangesAsync()
