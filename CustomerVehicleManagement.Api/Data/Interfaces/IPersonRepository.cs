@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Api.Data.Models;
-using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
         Task<IEnumerable<PersonReadDto>> GetPersonsAsync();
         Task<IEnumerable<PersonListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);
-        Task<bool> SaveChangesAsync(Person person);
+        Task<bool> SaveChangesAsync(PersonCreateDto person);
         Task<bool> SaveChangesAsync();
     }
 }

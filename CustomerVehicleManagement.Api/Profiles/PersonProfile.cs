@@ -20,8 +20,9 @@ namespace CustomerVehicleManagement.Api.Profiles
                     configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
                 .ForMember(
                     destination => destination.Address,
-                    configuration => configuration.MapFrom(source => source.Address.AddressFull))
-                ;
+                    configuration => configuration.MapFrom(source => source.Address.AddressFull));
+
+            CreateMap<PersonCreateDto, Person>();
         }
     }
 }

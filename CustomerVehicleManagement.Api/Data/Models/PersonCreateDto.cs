@@ -3,6 +3,7 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Data.Models
 {
@@ -17,6 +18,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address)
             : this(name, gender, birthday, address, null) { }
 
+        [JsonConstructor]
         public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicense driversLicense = null)
         {
             Name = name;

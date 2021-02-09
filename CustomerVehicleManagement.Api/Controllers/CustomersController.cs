@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<Customer>> AddCustomer(Customer model)
+        public async Task<ActionResult<Customer>> CreateCustomer(Customer model)
         {
             try
             {

@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // POST: api/Organization/
         [HttpPost]
-        public async Task<ActionResult<Organization>> AddOrganization(Organization model)
+        public async Task<ActionResult<Organization>> CreateOrganization(Organization model)
         {
             try
             {

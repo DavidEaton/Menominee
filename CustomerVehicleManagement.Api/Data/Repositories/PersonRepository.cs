@@ -7,6 +7,7 @@ using CustomerVehicleManagement.Api.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -29,7 +30,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public void AddPerson(PersonCreateDto person)
         {
-            context.Add(new Person(person.Name, person.Gender, person.Birthday, person.Address, person.Phones, person.DriversLicense));
+            context.Add(mapper.Map<Person>(person));
         }
 
         public void DeletePerson(PersonReadDto person)
@@ -83,13 +84,16 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 .AnyAsync(person => person.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync(Person person)
+        public async Task<bool> SaveChangesAsync(PersonCreateDto personToCreate)
         {
-            // Mark person EF tracking state = modified via dbContext:
+            var person = mapper.Map<Person>(personToCreate);
+            // Mark person EF tracking state = modified via context:
             context.Persons
                 .Update(person);
 
-            return await context.SaveChangesAsync() > 0;
+            var result = await context.SaveChangesAsync();
+            personToCreate.Id = person.Id;
+            return result > 0;
         }
 
         public async Task<bool> SaveChangesAsync()

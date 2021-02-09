@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Interfaces;
+﻿using CustomerVehicleManagement.Api.Data.Interfaces;
 using CustomerVehicleManagement.Api.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +53,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         }
 
         // GET: api/persons/1
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetPerson")]
         public async Task<ActionResult<PersonReadDto>> GetPerson(int id)
         {
             try
@@ -115,27 +114,27 @@ namespace CustomerVehicleManagement.Api.Controllers
         // POST: api/persons/
         //[ValidateModelState]
         [HttpPost]
-        public async Task<ActionResult<PersonReadDto>> AddPerson(PersonCreateDto model)
+        public async Task<ActionResult<PersonReadDto>> CreatePerson(PersonCreateDto model)
         {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
+            // [ApiController] attribute makes the next two checks unnecessary :)
+            //if (model == null)
+            //    throw new ArgumentNullException(nameof(model));
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            //if (!ModelState.IsValid)
+            //    return BadRequest(ModelState);
+
+            // This code fetches the newly-created person from the database.
+            // Instead, map the model to the return type.
 
             try
             {
-                repository.AddPerson(model);
-
-                if (await repository.SaveChangesAsync())
+                if (await repository.SaveChangesAsync(model))
                 {
-                    PersonReadDto personFromDatabase = await repository.GetPersonAsync(model.Id);
+                    PersonReadDto personToReturn = await repository.GetPersonAsync(model.Id);
 
-                    //var location = linkGenerator.GetPathByAction("Get", "Persons", new { id = person.Id });
-                    //string location = $"/api/persons/{model.Id}";
-                    //return Created(location, model);
-
-                    return CreatedAtRoute("DefaultApi", new { id = personFromDatabase.Id }, personFromDatabase);
+                    return CreatedAtRoute("GetPerson",
+                        new { id = personToReturn.Id },
+                        personToReturn);
                 }
             }
             catch (Exception ex)

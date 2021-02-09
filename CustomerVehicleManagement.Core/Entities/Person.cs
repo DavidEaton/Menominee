@@ -9,8 +9,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Entity
     {
-        // Blazor 5 requires public JsonConstructor-attributed contructor, 
-        [JsonConstructor]
         public Person(PersonName name, Gender gender)
             : this(name, gender, null) { }
 
@@ -23,6 +21,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones)
             : this(name, gender, birthday, address, phones, null) { }
 
+        // Blazor 5 requires public JsonConstructor-attributed contructor, 
+        [JsonConstructor]
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, DriversLicense driversLicense = null)
         {
             Name = name;
