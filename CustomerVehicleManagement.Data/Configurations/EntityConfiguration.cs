@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Data.Configurations
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Ignore(p => p.TrackingState);
+            builder.Ignore(entity => entity.TrackingState);
         }
     }
 }

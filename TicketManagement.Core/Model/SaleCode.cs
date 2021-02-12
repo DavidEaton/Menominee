@@ -14,7 +14,7 @@ namespace TicketManagement.Core.Model
         public string Description { get; set; }
 
         // EF State management for disconnected data
-        public void UpdateState(TrackingState state)
+        public void UpdateTrackingState(TrackingState state)
         {
             TrackingState = state;
         }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
@@ -13,6 +14,7 @@ namespace CustomerVehicleManagement.Api.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
+        private const int MAXAGE = 300;
         private readonly IPersonRepository repository;
 
         public PersonsController(IPersonRepository repository)
@@ -24,51 +26,32 @@ namespace CustomerVehicleManagement.Api.Controllers
         // GET: api/persons/list
         [Route("list")]
         [HttpGet]
+        [ResponseCache(Duration = MAXAGE)]
         public async Task<ActionResult<IEnumerable<PersonListDto>>> GetPersonsList()
         {
-            try
-            {
-                var results = await repository.GetPersonsListAsync();
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            var results = await repository.GetPersonsListAsync();
+            return Ok(results);
+
         }
 
         // GET: api/persons
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersons()
         {
-            try
-            {
-                var results = await repository.GetPersonsAsync();
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            var results = await repository.GetPersonsAsync();
+            return Ok(results);
         }
 
         // GET: api/persons/1
         [HttpGet("{id:int}", Name = "GetPerson")]
         public async Task<ActionResult<PersonReadDto>> GetPerson(int id)
         {
-            try
-            {
-                var result = await repository.GetPersonAsync(id);
+            var result = await repository.GetPersonAsync(id);
 
-                if (result == null)
-                    return NotFound();
+            if (result == null)
+                return NotFound();
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            return Ok(result);
         }
 
         // PUT: api/persons/1
@@ -132,25 +115,25 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePerson(int id)
         {
-            try
-            {
-                var personFromDatabase = await repository.GetPersonAsync(id);
-                if (personFromDatabase == null)
-                    return NotFound($"Could not find Person in the database to delete with Id: {id}.");
+            var personFromDatabase = await repository.GetPersonAsync(id);
 
-                repository.DeletePerson(personFromDatabase);
-                if (await repository.SaveChangesAsync())
-                {
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            if (personFromDatabase == null)
+                return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
+            repository.DeletePerson(personFromDatabase);
+
+            if (await repository.SaveChangesAsync())
+            {
+                return Ok();
+            }
             return BadRequest($"Failed to delete Person with Id: {id}.");
         }
-    }
 
+        [HttpGet("total")]
+        public async Task<IActionResult> GetPersonsTotalAsync()
+        {
+            var results = await repository.GetPersonsAsync();
+            return Ok(new PersonsTotalOutputModel { PersonsTotal = results.Count() });
+        }
+    }
 }

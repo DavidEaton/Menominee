@@ -8,21 +8,36 @@ namespace CustomerVehicleManagement.Api.Profiles
     {
         public PersonProfile()
         {
-            // Map from source type to destination type
+            // Map from source type to destination type, and back.
             CreateMap<Person, PersonReadDto>()
                 .ForMember(
                     destination => destination.Name,
-                    configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle));
+                    configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
+                .ReverseMap();
 
             CreateMap<Person, PersonListDto>()
                 .ForMember(
                     destination => destination.Name,
                     configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
                 .ForMember(
-                    destination => destination.Address,
-                    configuration => configuration.MapFrom(source => source.Address.AddressFull));
+                    destination => destination.AddressLine,
+                    configuration => configuration.MapFrom(source => source.Address.AddressLine))
+                .ForMember(
+                    destination => destination.City,
+                    configuration => configuration.MapFrom(source => source.Address.City))
+                .ForMember(
+                    destination => destination.State,
+                    configuration => configuration.MapFrom(source => source.Address.State))
+                .ForMember(
+                    destination => destination.PostalCode,
+                    configuration => configuration.MapFrom(source => source.Address.PostalCode))
+                //.ForMember(
+                //    destination => destination.Address,
+                //    configuration => configuration.MapFrom(source => source.Address.AddressFull))
+                .ReverseMap();
 
-            CreateMap<Person, PersonCreateDto>().ReverseMap();
+            CreateMap<Person, PersonCreateDto>()
+                .ReverseMap();
 
         }
     }

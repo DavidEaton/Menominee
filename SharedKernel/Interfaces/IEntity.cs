@@ -6,7 +6,7 @@ namespace SharedKernel.Interfaces
     {
         int Id { get; }
         TrackingState TrackingState { get; }
-        void UpdateState(TrackingState state);
+        void UpdateTrackingState(TrackingState state);
         bool Equals(object obj);
         int GetHashCode();
     }

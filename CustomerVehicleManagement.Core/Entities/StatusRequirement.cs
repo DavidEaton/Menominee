@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public StatusRequiredItem StatusRequiredItem { get; set; }
 
         // EF State management for disconnected data
-        public void UpdateState(TrackingState state)
+        public void UpdateTrackingState(TrackingState state)
         {
             TrackingState = state;
         }

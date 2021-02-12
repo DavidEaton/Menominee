@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Vehicle", "dbo");
-            builder.Ignore(p => p.TrackingState);
+            builder.Ignore(vehicle => vehicle.TrackingState);
         }
     }
 }

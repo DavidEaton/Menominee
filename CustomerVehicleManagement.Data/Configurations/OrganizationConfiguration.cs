@@ -10,23 +10,27 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Organization", "dbo");
-            builder.Ignore(p => p.TrackingState);
+            builder.Ignore(organization => organization.TrackingState);
+
+            builder.Property(organization => organization.Name)
+                .HasMaxLength(255)
+                .IsRequired();
 
             // Value Object: Address
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.AddressLine)
+            builder.OwnsOne(organization => organization.Address)
+                   .Property(address => address.AddressLine)
                    .HasColumnName("AddressLine")
                    .HasMaxLength(255);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.City)
+            builder.OwnsOne(organization => organization.Address)
+                   .Property(address => address.City)
                    .HasColumnName("AddressCity")
                    .HasMaxLength(255);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.PostalCode)
+            builder.OwnsOne(organization => organization.Address)
+                   .Property(address => address.PostalCode)
                    .HasColumnName("AddressPostalCode")
                    .HasMaxLength(15);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.State)
+            builder.OwnsOne(organization => organization.Address)
+                   .Property(address => address.State)
                    .HasColumnName("AddressState")
                    .HasMaxLength(255);
         }

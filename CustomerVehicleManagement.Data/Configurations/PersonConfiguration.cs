@@ -14,59 +14,61 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.ToTable("Person", "dbo");
             builder.Ignore(p => p.TrackingState);
 
-            // Converting enum values to and from strings in the database
+            // Convert enum values to and from strings in the database
             var converter = new EnumToStringConverter<Gender>();
-            builder.Property(p => p.Gender)
+            builder.Property(person => person.Gender)
+                .IsRequired()
                 .HasConversion(converter);
 
             // Value Object: Name
-            builder.OwnsOne(p => p.Name)
-                   .Property(p => p.FirstName)
+            builder.OwnsOne(person => person.Name)
+                   .Property(personName => personName.FirstName)
                    .HasColumnName("FirstName")
-                   .IsRequired().HasMaxLength(255);
-            builder.OwnsOne(p => p.Name)
-                   .Property(p => p.LastName)
+                   .IsRequired()
+                   .HasMaxLength(255);
+            builder.OwnsOne(person => person.Name)
+                   .Property(personName => personName.LastName)
                    .HasColumnName("LastName")
                    .IsRequired().HasMaxLength(255);
-            builder.OwnsOne(p => p.Name)
-                   .Property(p => p.MiddleName)
+            builder.OwnsOne(person => person.Name)
+                   .Property(personName => personName.MiddleName)
                    .HasColumnName("MiddleName")
                    .HasMaxLength(255);
 
             // Value Object: Address
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.AddressLine)
+            builder.OwnsOne(person => person.Address)
+                   .Property(address => address.AddressLine)
                    .HasColumnName("AddressLine")
                    .HasMaxLength(255);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.City)
+            builder.OwnsOne(person => person.Address)
+                   .Property(address => address.City)
                    .HasColumnName("AddressCity")
                    .HasMaxLength(255);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.PostalCode)
+            builder.OwnsOne(person => person.Address)
+                   .Property(address => address.PostalCode)
                    .HasColumnName("AddressPostalCode")
                    .HasMaxLength(15);
-            builder.OwnsOne(p => p.Address)
-                   .Property(p => p.State)
+            builder.OwnsOne(person => person.Address)
+                   .Property(address => address.State)
                    .HasColumnName("AddressState")
                    .HasMaxLength(255);
 
             // Value Object: DriversLicense
-            builder.OwnsOne(p => p.DriversLicense)
-                .Property(p => p.Number)
+            builder.OwnsOne(person => person.DriversLicense)
+                .Property(driversLicense => driversLicense.Number)
                 .HasColumnName("DriversLicenseNumber")
                 .HasMaxLength(50);
-            builder.OwnsOne(p => p.DriversLicense)
-                .Property(p => p.State)
+            builder.OwnsOne(person => person.DriversLicense)
+                .Property(driversLicense => driversLicense.State)
                 .HasColumnName("DriversLicenseState")
                 .HasMaxLength(2);
-            builder.OwnsOne(p => p.DriversLicense)
-                .OwnsOne(p => p.ValidRange)
-                .Property(p => p.Start)
+            builder.OwnsOne(person => person.DriversLicense)
+                .OwnsOne(driversLicense => driversLicense.ValidRange)
+                .Property(dateTimeRange => dateTimeRange.Start)
                 .HasColumnName("DriversLicenseIssued");
-            builder.OwnsOne(p => p.DriversLicense)
-                .OwnsOne(p => p.ValidRange)
-                .Property(p => p.End)
+            builder.OwnsOne(person => person.DriversLicense)
+                .OwnsOne(driversLicense => driversLicense.ValidRange)
+                .Property(dateTimeRange => dateTimeRange.End)
                 .HasColumnName("DriversLicenseExpiry");
         }
     }

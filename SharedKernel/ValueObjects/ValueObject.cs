@@ -61,6 +61,11 @@ namespace SharedKernel.ValueObjects
         }
 
         #region ORM
+        public ValueObject()
+        {
+            // Keep EF informed of object state in disconnected api
+            TrackingState = TrackingState.Added;
+        }
 
         // EF State management for disconnected data
         public void UpdateState(TrackingState state)

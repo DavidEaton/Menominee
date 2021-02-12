@@ -10,9 +10,9 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Customer", "dbo");
-            builder.Ignore(p => p.Entity);
-            builder.Ignore(p => p.TrackingState);
-            builder.Ignore(p => p.Phones);
+            builder.Ignore(customer => customer.Entity);
+            builder.Ignore(customer => customer.TrackingState);
+            builder.Ignore(customer => customer.Phones);
         }
     }
 }

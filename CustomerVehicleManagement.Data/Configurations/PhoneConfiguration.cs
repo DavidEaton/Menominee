@@ -12,21 +12,21 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Phone", "dbo");
-            builder.Ignore(p => p.TrackingState);
+            builder.Ignore(phone => phone.TrackingState);
 
-            builder.Property(p => p.Number)
+            builder.Property(phone => phone.Number)
                 .HasMaxLength(50)
                 .IsRequired();
-            builder.Property(p => p.PhoneType)
+            builder.Property(phone => phone.PhoneType)
                 .HasMaxLength(50)
                 .IsRequired();
-            builder.Property(p => p.Primary)
+            builder.Property(phone => phone.Primary)
                 .IsRequired();
 
-            //// Convert enum values to and from strings in the database
-            //var converter = new EnumToStringConverter<PhoneType>();
-            //builder.Property(p => p.PhoneType)
-            //    .HasConversion(converter);
+            // Convert enum values to and from strings in the database
+            var converter = new EnumToStringConverter<PhoneType>();
+            builder.Property(phone => phone.PhoneType)
+                .HasConversion(converter);
 
         }
     }

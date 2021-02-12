@@ -62,63 +62,40 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
         {
-            IQueryable<Person> personsFromContext = context.Persons
+            var personsFromContext = context.Persons
                                                 .Include(person => person.Phones)
-                                                .AsNoTracking();
+                                                .AsNoTracking()
+                                                .ToArray();
 
-            var personsList = mapper.Map<IEnumerable<PersonListDto>>(personsFromContext);
+            var personsList = new List<PersonListDto>();
 
             foreach (var person in personsFromContext)
             {
-                if (person.Phones.Count > 0)
+                personsList.Add(new PersonListDto()
                 {
-                    // Find the corresponding person in the list and set its Phone
-                    personsList.FirstOrDefault(p => p.Id == person.Id).Phone = person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString();
-                }
+                    AddressLine = person?.Address?.AddressLine,
+                    City = person?.Address?.City,
+                    Id = person.Id,
+                    Name = person.Name.LastFirstMiddle,
+                    PostalCode = person?.Address?.PostalCode,
+                    State = person?.Address?.State,
+                    Phone = (person.Phones.Count > 0) ? person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString() : null,
+                    PhoneType = (person.Phones.Count > 0) ? person.Phones.FirstOrDefault(phone => phone.Primary == true).PhoneType.ToString() : null
+                });
             }
 
             return await Task.FromResult(personsList);
         }
 
-        public async Task<bool> PersonExistsAsync(int id)
-        {
-            return await context.Persons
-                .AnyAsync(person => person.Id == id);
-        }
-
-        //public async Task<bool> SaveChangesAsync(PersonCreateDto personToCreate)
-        //{
-        //    var person = mapper.Map<Person>(personToCreate);
-        //    // Mark person EF tracking state = modified via context:
-        //    context.Persons
-        //        .Update(person);
-
-        //    var result = await context.SaveChangesAsync();
-
-        //    if (person?.Id > 0)
-        //        personToCreate.Id = person.Id;
-
-        //    return result > 0;
-        //}
-
         public async Task<PersonReadDto> SaveChangesAsync(PersonCreateDto personToCreate)
         {
-            //var person = mapper.Map<Person>(personToCreate);
-
             var person = new Person(
                 new PersonName(personToCreate.Name.LastName, personToCreate.Name.FirstName, personToCreate.Name.MiddleName)
                 , personToCreate.Gender
                 , personToCreate.Birthday
                 , personToCreate.Address);
 
-            var phones = new List<Phone>();
-            Phone newPhone;
-
-            foreach (var phone in personToCreate.Phones)
-            {
-                newPhone = new Phone(phone.Number, phone.PhoneType, phone.Primary);
-                phones.Add(newPhone);
-            }
+            List<Phone> phones = MapPhones(personToCreate);
 
             person.SetPhones(phones);
 
@@ -164,6 +141,26 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             }
 
             return null;
+        }
+
+        public async Task<bool> PersonExistsAsync(int id)
+        {
+            return await context.Persons
+                .AnyAsync(person => person.Id == id);
+        }
+
+        private static List<Phone> MapPhones(PersonCreateDto personToCreate)
+        {
+            var phones = new List<Phone>();
+            Phone newPhone;
+
+            foreach (var phone in personToCreate.Phones)
+            {
+                newPhone = new Phone(phone.Number, phone.PhoneType, phone.Primary);
+                phones.Add(newPhone);
+            }
+
+            return phones;
         }
     }
 }
