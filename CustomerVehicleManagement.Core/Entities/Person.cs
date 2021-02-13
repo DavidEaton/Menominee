@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿using CustomerVehicleManagement.Domain.Interfaces;
+using SharedKernel;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
@@ -7,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Person : Entity
+    public class Person : Entity, IListOfPhone
     {
         public Person(PersonName name, Gender gender)
             : this(name, gender, null) { }

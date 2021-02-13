@@ -7,8 +7,8 @@ using CustomerVehicleManagement.Api.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
-using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
+using CustomerVehicleManagement.Api.Utilities;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -71,17 +71,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             foreach (var person in personsFromContext)
             {
-                personsList.Add(new PersonListDto()
-                {
-                    AddressLine = person?.Address?.AddressLine,
-                    City = person?.Address?.City,
-                    Id = person.Id,
-                    Name = person.Name.LastFirstMiddle,
-                    PostalCode = person?.Address?.PostalCode,
-                    State = person?.Address?.State,
-                    Phone = (person.Phones.Count > 0) ? person.Phones.FirstOrDefault(phone => phone.Primary == true).ToString() : null,
-                    PhoneType = (person.Phones.Count > 0) ? person.Phones.FirstOrDefault(phone => phone.Primary == true).PhoneType.ToString() : null
-                });
+                personsList.Add(DtoHelpers.CreatePersonsListDtoFromDomain(person));
             }
 
             return await Task.FromResult(personsList);
@@ -90,12 +80,14 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         public async Task<PersonReadDto> SaveChangesAsync(PersonCreateDto personToCreate)
         {
             var person = new Person(
-                new PersonName(personToCreate.Name.LastName, personToCreate.Name.FirstName, personToCreate.Name.MiddleName)
-                , personToCreate.Gender
-                , personToCreate.Birthday
-                , personToCreate.Address);
+                new PersonName(personToCreate.Name.LastName
+                              ,personToCreate.Name.FirstName
+                              ,personToCreate.Name.MiddleName)
+                              ,personToCreate.Gender
+                              ,personToCreate.Birthday
+                              ,personToCreate.Address);
 
-            List<Phone> phones = MapPhones(personToCreate);
+            List<Phone> phones = CreatePhones(personToCreate);
 
             person.SetPhones(phones);
 
@@ -149,7 +141,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 .AnyAsync(person => person.Id == id);
         }
 
-        private static List<Phone> MapPhones(PersonCreateDto personToCreate)
+        private static List<Phone> CreatePhones(PersonCreateDto personToCreate)
         {
             var phones = new List<Phone>();
             Phone newPhone;

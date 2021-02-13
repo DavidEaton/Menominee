@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿using CustomerVehicleManagement.Domain.Interfaces;
+using SharedKernel;
 using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Organization : Entity
+    public class Organization : Entity, IListOfPhone
     {
         public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
 

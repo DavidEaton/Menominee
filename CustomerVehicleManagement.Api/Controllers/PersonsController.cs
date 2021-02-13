@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Controllers
     [ApiController]
     public class PersonsController : ControllerBase
     {
-        private const int MAXAGE = 300;
+        private const int MaxCacheAge = 300;
         private readonly IPersonRepository repository;
 
         public PersonsController(IPersonRepository repository)
@@ -26,12 +26,11 @@ namespace CustomerVehicleManagement.Api.Controllers
         // GET: api/persons/list
         [Route("list")]
         [HttpGet]
-        [ResponseCache(Duration = MAXAGE)]
+        [ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<PersonListDto>>> GetPersonsList()
         {
             var results = await repository.GetPersonsListAsync();
             return Ok(results);
-
         }
 
         // GET: api/persons

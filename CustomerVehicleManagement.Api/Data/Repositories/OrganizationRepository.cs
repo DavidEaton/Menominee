@@ -3,6 +3,10 @@ using CustomerVehicleManagement.Api.Data.Interfaces;
 using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
+using System.Collections.Generic;
+using CustomerVehicleManagement.Api.Data.Models;
+using System.Linq;
+using CustomerVehicleManagement.Api.Utilities;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -15,7 +19,8 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public OrganizationRepository(AppDbContext context)
         {
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public void AddOrganization(Organization person)
@@ -73,7 +78,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         public async Task<Organization> UpdateOrganizationAsync(Organization organization)
         {
             if (organization == null)
-                throw new NullReferenceException("Organization Id missing.");
+                throw new NullReferenceException("Organization is missing.");
 
             context.Entry(organization).State = EntityState.Modified;
 
@@ -90,6 +95,25 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             return null;
         }
+
+        public async Task<IEnumerable<OrganizationsListDto>> GetOrganizationsListAsync()
+        {
+            var organizationsFromContext = context.Organizations
+                                                .Include(organization => organization.Phones)
+                                                .Include(organization => organization.Contact)
+                                                .AsNoTracking()
+                                                .ToArray();
+
+            var organizationsList = new List<OrganizationsListDto>();
+
+            foreach (var organization in organizationsFromContext)
+            {
+                organizationsList.Add(DtoHelpers.CreateOrganizationsListDtoFromDomain(organization));
+            }
+
+            return await Task.FromResult(organizationsList);
+        }
+
 
     }
 }

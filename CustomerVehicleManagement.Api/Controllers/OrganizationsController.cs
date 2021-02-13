@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
+using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Controllers
@@ -13,22 +15,32 @@ namespace CustomerVehicleManagement.Api.Controllers
     [ApiController]
     public class OrganizationsController : ControllerBase
     {
-        private readonly IOrganizationRepository data;
-        private readonly IMapper mapper;
+        private readonly IOrganizationRepository repository;
+        private const int MaxCacheAge = 300;
 
-        public OrganizationsController(IOrganizationRepository data, IMapper mapper)
+        public OrganizationsController(IOrganizationRepository repository, IMapper mapper)
         {
-            this.data = data;
-            this.mapper = mapper;
+            this.repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
         }
 
-        // GET: api/Organizations
+        // api/organizations/list
+        [Route("list")]
+        [HttpGet]
+        [ResponseCache(Duration = MaxCacheAge)]
+        public async Task<ActionResult<IEnumerable<OrganizationsListDto>>> GetPersonsList()
+        {
+            var results = await repository.GetOrganizationsListAsync();
+            return Ok(results);
+        }
+
+        // api/organizations
         [HttpGet]
         public async Task<ActionResult<Organization[]>> GetOrganizations()
         {
             try
             {
-                return await data.GetOrganizationsAsync();
+                return await repository.GetOrganizationsAsync();
             }
             catch (Exception ex)
             {
@@ -36,13 +48,13 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // GET: api/Organization/1
+        // api/organizations/1
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Organization>> GetOrganization(int id)
         {
             try
             {
-                var result = await data.GetOrganizationAsync(id);
+                var result = await repository.GetOrganizationAsync(id);
 
                 if (result == null)
                     return NotFound();
@@ -55,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             }
         }
 
-        // PUT: api/Organization/1
+        // api/organizations/1
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Organization>> UpdateOrganization(int id, Organization model)
         {
@@ -64,7 +76,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             try
             {
-                var fetchedOrganization = await data.GetOrganizationAsync(id);
+                var fetchedOrganization = await repository.GetOrganizationAsync(id);
                 if (fetchedOrganization == null)
                     return NotFound($"Could not find Organization in the database to updte: {model.Name}");
 
@@ -72,9 +84,9 @@ namespace CustomerVehicleManagement.Api.Controllers
 
                 // Update the objects ObjectState and sych the EF Change Tracker
                 fetchedOrganization.UpdateTrackingState(TrackingState.Modified);
-                data.FixState();
+                repository.FixState();
 
-                if (await data.SaveChangesAsync())
+                if (await repository.SaveChangesAsync())
                     return fetchedOrganization;
             }
             catch (Exception ex)
@@ -85,16 +97,15 @@ namespace CustomerVehicleManagement.Api.Controllers
             return BadRequest($"Failed to update {model.Name}.");
         }
 
-        // POST: api/Organization/
         [HttpPost]
         public async Task<ActionResult<Organization>> CreateOrganization(Organization model)
         {
             try
             {
                 //var organization = mapper.Map<Organization>(model);
-                data.AddOrganization(model);
+                repository.AddOrganization(model);
 
-                if (await data.SaveChangesAsync())
+                if (await repository.SaveChangesAsync())
                 {
                     //var location = linkGenerator.GetPathByAction("Get", "Organizations", new { id = organization.Id });
                     string location = $"/api/organizations/{model.Id}";
@@ -114,12 +125,12 @@ namespace CustomerVehicleManagement.Api.Controllers
         {
             try
             {
-                var fetchedOrganization = await data.GetOrganizationAsync(id);
+                var fetchedOrganization = await repository.GetOrganizationAsync(id);
                 if (fetchedOrganization == null)
                     return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
-                data.DeleteOrganization(fetchedOrganization);
-                if (await data.SaveChangesAsync())
+                repository.DeleteOrganization(fetchedOrganization);
+                if (await repository.SaveChangesAsync())
                 {
                     return Ok();
                 }

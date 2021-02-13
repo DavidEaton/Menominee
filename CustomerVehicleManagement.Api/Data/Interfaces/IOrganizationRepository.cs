@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Domain.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Data.Interfaces
@@ -14,5 +16,6 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
         Task<Organization> GetOrganizationAsync(int id);
         Task<bool> SaveChangesAsync(Organization person);
         Task<bool> SaveChangesAsync();
+        Task<IEnumerable<OrganizationsListDto>> GetOrganizationsListAsync();
     }
 }
