@@ -8,14 +8,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     public class OrganizationsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-        const string PATH = "https://localhost/api/organizations/list";
+        private const string Path = "https://localhost/api/organizations/list";
         private const int MaxCacheAge = 300;
-        private const int MINUTE = 60;
+        private const int Minute = 60;
         private readonly HttpClient httpClient;
 
         public OrganizationsControllerTests(WebApplicationFactory<Startup> factory)
         {
-            httpClient = factory.CreateDefaultClient(new Uri(PATH));
+            httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var header = response.Headers.CacheControl;
 
             Assert.True(header.MaxAge.HasValue);
-            Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / MINUTE), header.MaxAge);
+            Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
             Assert.True(header.Public);
         }
 

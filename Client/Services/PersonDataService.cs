@@ -13,7 +13,7 @@ namespace Client.Services
     public class PersonDataService : IPersonDataService
     {
         private readonly HttpClient httpClient;
-        private const string URISEGMENT = "persons";
+        private const string UriSegment = "persons";
 
         public PersonDataService(HttpClient httpClient)
         {
@@ -22,7 +22,7 @@ namespace Client.Services
         public async Task<PersonFlatDto> AddPerson(PersonCreateDto newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(URISEGMENT, content);
+            var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -38,7 +38,7 @@ namespace Client.Services
 
             try
             {
-                var personsFromDatabase = await httpClient.GetFromJsonAsync<IEnumerable<PersonReadDto>>(URISEGMENT);
+                var personsFromDatabase = await httpClient.GetFromJsonAsync<IEnumerable<PersonReadDto>>(UriSegment);
 
                 return PersonUtilities.MapPersonsFromDatabaseToDto(persons, personsFromDatabase);
             }
@@ -56,7 +56,7 @@ namespace Client.Services
 
             try
             {
-                var personFromDatabase = await httpClient.GetFromJsonAsync<PersonReadDto>(URISEGMENT + $"/{id}");
+                var personFromDatabase = await httpClient.GetFromJsonAsync<PersonReadDto>(UriSegment + $"/{id}");
                 person = PersonUtilities.MapPersonFromDatabaseToDto(person, personFromDatabase);
                 return person;
 
@@ -75,7 +75,7 @@ namespace Client.Services
 
             try
             {
-                await httpClient.PutAsync($"{URISEGMENT}/{personToUpdate.Id}", content);
+                await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
             //await httpClient.PutAsJsonAsync
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace Client.Services
 
         public async Task DeletePerson(int id)
         {
-            await httpClient.DeleteAsync($"{URISEGMENT}/{id}");
+            await httpClient.DeleteAsync($"{UriSegment}/{id}");
         }
     }
 }

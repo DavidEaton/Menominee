@@ -28,6 +28,21 @@ namespace SharedKernel.ValueObjects
         public string FirstName { get; }
         public string MiddleName { get; }
 
+        public PersonName NewLastName(string newLastName)
+        {
+            return new PersonName(newLastName, FirstName, MiddleName);
+        }
+
+        public PersonName NewFirstName(string newFirstName)
+        {
+            return new PersonName(LastName, newFirstName, MiddleName);
+        }
+
+        public PersonName NewMiddleName(string newMiddleName)
+        {
+            return new PersonName(LastName, FirstName, newMiddleName);
+        }
+
         public string LastFirstMiddle
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";

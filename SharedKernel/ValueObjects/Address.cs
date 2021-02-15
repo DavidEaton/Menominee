@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedKernel.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace SharedKernel.ValueObjects
@@ -6,11 +7,17 @@ namespace SharedKernel.ValueObjects
     public class Address : ValueObject
     {
         public static readonly string AddressEmptyMessage = "Address details cannot be empty";
-        private string addressFull;
 
         public Address(string addressLine, string city, string state, string postalCode)
         {
-            if (string.IsNullOrWhiteSpace(addressLine) | string.IsNullOrWhiteSpace(city) | string.IsNullOrWhiteSpace(state) | string.IsNullOrWhiteSpace(postalCode))
+            try
+            {
+                Guard.ForNullOrEmpty(addressLine, "addressLine");
+                Guard.ForNullOrEmpty(city, "city");
+                Guard.ForNullOrEmpty(state, "state");
+                Guard.ForNullOrEmpty(postalCode, "postalCode");
+            }
+            catch (Exception)
             {
                 throw new ArgumentException(AddressEmptyMessage);
             }

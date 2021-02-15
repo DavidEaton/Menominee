@@ -17,6 +17,16 @@ The benefits of versioned policies are:
 
 #### This application was designed with Domain Droven Design (DDD) principles in mind.
 
+## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
+In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate.
+### Implement validations in the domain model layer
+Validations are usually implemented in domain entity constructors or in methods that can update the entity. There are multiple ways to implement validations, such as verifying data and raising exceptions if the validation fails. There are also more advanced patterns such as using the Specification pattern for validations, and the Notification pattern to return a collection of errors instead of returning an exception for each validation as it occurs.
+
+The domain model is best kept lean with the use of exceptions in your entity's behavior methods, or by implementing the Specification and Notification patterns to enforce validation rules.
+
+We use field-level validation on our command Data Transfer Objects (DTOs) and domain-level validation inside our entities. We will do this by returning a result object instead of exceptions in order to make it easier to deal with the validation errors.
+
+
 ### Value Objects
 
 Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn’t be able to instantiate a value object in an invalid state.

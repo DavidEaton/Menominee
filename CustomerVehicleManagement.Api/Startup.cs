@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            const string CONNECTION = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+            const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
             string environment = HostEnvironment.IsDevelopment() ? "Development" : "Production";
             string api_env = Environment.GetEnvironmentVariable("API_ENVIRONMENT");
             // An environment variable is setup in Azure.  If it's set then grab the connection string
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api
             //services.AddDbContext<AppDbContext>(
             //    options => options.UseSqlServer(CONNECTION));
 
-            services.AddScoped(_ => new AppDbContext(CONNECTION, HostEnvironment.IsDevelopment()));
+            services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
 
             //services.AddDbContext<IdentityUserDbContext>(options =>
             //                                             options

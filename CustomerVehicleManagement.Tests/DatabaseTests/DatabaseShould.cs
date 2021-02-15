@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
     [Category("Database")]
     public class DatabaseShould
     {
-        const string CONNECTION = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+        private const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
 
         [SetUp]
         public void Setup()
@@ -26,14 +26,14 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
         public void TearDown()
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(CONNECTION);
+            optionsBuilder.UseSqlServer(Connection);
             var mockConfiguration = new Mock<IConfiguration>();
             var mockLogger = new Mock<ILogger<AppDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(CONNECTION, true);
+            var context = new AppDbContext(Connection, true);
             context.Database.EnsureDeleted();
 
         }
@@ -162,14 +162,14 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
         private static AppDbContext CreateTestContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(CONNECTION);
+            optionsBuilder.UseSqlServer(Connection);
             var mockConfiguration = new Mock<IConfiguration>();
             var mockLogger = new Mock<ILogger<AppDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(CONNECTION, true);
+            var context = new AppDbContext(Connection, true);
 
             // Test database in known state
             context.Database.EnsureDeleted();

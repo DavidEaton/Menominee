@@ -10,7 +10,7 @@ namespace Client.Services
     public class CustomerDataService
     {
         private readonly HttpClient httpClient;
-        private const string URISEGMENT = "customers";
+        private const string UriSegment = "customers";
 
         public CustomerDataService(HttpClient httpClient)
         {
@@ -21,7 +21,7 @@ namespace Client.Services
         {
             try
             {
-                var customers = await httpClient.GetFromJsonAsync<Customer[]>(httpClient.BaseAddress.ToString() + URISEGMENT);
+                var customers = await httpClient.GetFromJsonAsync<Customer[]>(httpClient.BaseAddress.ToString() + UriSegment);
                 return customers;
             }
             catch (Exception ex)

@@ -117,6 +117,51 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
         }
 
         [Test]
+        public void ReturnNewPersonNameOnNewLastName()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+
+            var name = new PersonName(lastName, firstName);
+
+            lastName = "Smith";
+            name = name.NewLastName(lastName);
+
+            Assert.That(name.LastName.Equals(lastName));
+        }
+
+        [Test]
+        public void ReturnNewPersonNameOnNewFirstName()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+
+            var name = new PersonName(lastName, firstName);
+
+            firstName = "Smith";
+            name = name.NewFirstName(firstName);
+
+            Assert.That(name.FirstName.Equals(firstName));
+        }
+
+        [Test]
+        public void ReturnNewPersonNameOnNewMiddleName()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var middleName = "Jingleheimer";
+
+            var name = new PersonName(lastName, firstName, middleName);
+
+            middleName = "Allabaster";
+
+            name = name.NewMiddleName(middleName);
+
+            Assert.That(name.MiddleName.Equals(middleName));
+        }
+
+
+        [Test]
         public void ReturnAllPersonNameVariants()
         {
             var firstName = "Jane";
