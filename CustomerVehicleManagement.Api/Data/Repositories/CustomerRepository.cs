@@ -4,16 +4,24 @@ using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
+using CustomerVehicleManagement.Api.Data.Models;
+using AutoMapper;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
         private readonly AppDbContext context;
+        private readonly IMapper mapper;
 
-        public CustomerRepository(AppDbContext context)
+        public CustomerRepository(AppDbContext context, IMapper mapper)
         {
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public void AddCustomer(Customer customer)
@@ -56,35 +64,58 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             return customer;
         }
 
-        public async Task<Customer[]> GetCustomersAsync()
+        public async Task<IEnumerable<CustomerReadDto>> GetCustomersAsync()
         {
-            var customers = await context.Customers
+            var customers = new List<CustomerReadDto>();
+
+            var customersRead = await context.Customers
                                          .AsNoTracking()
-                                         .Include(c => c.Phones)
                                          .ToArrayAsync();
 
-            foreach (var customer in customers)
+            foreach (var customer in customersRead)
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    var entity = await context.Organizations
-                                                   .AsNoTracking()
-                                                   .Include(o => o.Contact)
-                                                   .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
-
-                    customer.SetEntity(entity);
+                    await ResolveOrganizationCustomer(customer);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    var entity = await context.Persons
-                                                   .AsNoTracking()
-                                                   .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
-
-                    customer.SetEntity(entity);
+                    await ResolvePersonCustomer(customer);
                 }
+
+                customers.Add(customer.ToReadDto());
             }
+
             return customers;
+        }
+
+        private async Task ResolvePersonCustomer(Customer customer)
+        {
+            var entity = await context.Persons
+                                           .AsNoTracking()
+                                           .Include(person => person.Phones)
+                                           .FirstOrDefaultAsync(person => person.Id == customer.EntityId);
+
+            foreach (var phone in entity.Phones)
+                customer.AddPhone(phone);
+
+            customer.SetEntity(entity);
+        }
+
+        private async Task ResolveOrganizationCustomer(Customer customer)
+        {
+            var entity = await context.Organizations
+                                      .AsNoTracking()
+                                      .Include(organization => organization.Contact)
+                                          .ThenInclude(contact => contact.Phones)
+                                      .Include(organization => organization.Phones)
+                                      .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+
+            foreach (var phone in entity.Phones)
+                customer.AddPhone(phone);
+            
+            customer.SetEntity(entity);
         }
 
         public async Task<bool> CustomerExistsAsync(int id)

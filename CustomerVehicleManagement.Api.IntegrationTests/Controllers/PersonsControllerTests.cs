@@ -39,6 +39,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var persons = await httpClient.GetFromJsonAsync<List<PersonListDto>>(UriSegment);
 
             // TEST DEPENDS ON A PERSON EXISTING IN THE DATABASE WITH Id == 1 AT ROW ONE (INDEX ZERO)
+            // Add code to use test database instead of production
             Assert.Equal(1, persons[0]?.Id);
         }
 

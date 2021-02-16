@@ -29,66 +29,53 @@ namespace CustomerVehicleManagement.Api.Controllers
         [ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<PersonListDto>>> GetPersonsList()
         {
-            var results = await repository.GetPersonsListAsync();
-            return Ok(results);
+            var persons = await repository.GetPersonsListAsync();
+            return Ok(persons);
         }
 
         // GET: api/persons
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersons()
         {
-            var results = await repository.GetPersonsAsync();
-            return Ok(results);
+            var persons = await repository.GetPersonsAsync();
+            return Ok(persons);
         }
 
         // GET: api/persons/1
         [HttpGet("{id:int}", Name = "GetPerson")]
         public async Task<ActionResult<PersonReadDto>> GetPerson(int id)
         {
-            var result = await repository.GetPersonAsync(id);
+            var person = await repository.GetPersonAsync(id);
 
-            if (result == null)
+            if (person == null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(person);
         }
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
         public async Task<ActionResult<PersonReadDto>> UpdatePerson(int id, PersonUpdateDto model)
         {
-            if (model == null)
-                return BadRequest();
+            var personFromDatabase = await repository.GetPersonAsync(id);
+            if (personFromDatabase == null)
+                return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
 
-            if (id != model.Id)
-                return BadRequest();
+            //mapper.Map(model, personFromDatabase);
 
-            try
-            {
-                var personFromDatabase = await repository.GetPersonAsync(id);
-                if (personFromDatabase == null)
-                    return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
+            personFromDatabase.Name = model.Name.LastFirstMiddle;
+            personFromDatabase.Address = model.Address;
+            personFromDatabase.Birthday = model.Birthday;
+            personFromDatabase.DriversLicense = model.DriversLicense;
+            personFromDatabase.Gender = model.Gender;
+            personFromDatabase.Phones = (IList<PhoneReadDto>)model.Phones;
 
-                //mapper.Map(model, personFromDatabase);
+            // Update the objects ObjectState and sych the EF Change Tracker
+            //personFromDatabase.UpdateState(TrackingState.Modified);
+            //repository.FixState();
 
-                personFromDatabase.Name = model.Name.LastFirstMiddle;
-                personFromDatabase.Address = model.Address;
-                personFromDatabase.Birthday = model.Birthday;
-                personFromDatabase.DriversLicense = model.DriversLicense;
-                personFromDatabase.Gender = model.Gender;
-                personFromDatabase.Phones = model.Phones;
-
-                // Update the objects ObjectState and sych the EF Change Tracker
-                //personFromDatabase.UpdateState(TrackingState.Modified);
-                //repository.FixState();
-
-                if (await repository.SaveChangesAsync())
-                    return Ok(personFromDatabase);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            if (await repository.SaveChangesAsync())
+                return Ok(personFromDatabase);
 
             return BadRequest($"Failed to update {model.Name.FirstMiddleLast}.");
         }

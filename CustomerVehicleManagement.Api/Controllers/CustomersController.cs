@@ -1,10 +1,9 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Interfaces;
+﻿using CustomerVehicleManagement.Api.Data.Interfaces;
+using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
@@ -15,73 +14,52 @@ namespace CustomerVehicleManagement.Api.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerRepository data;
-        private readonly IMapper mapper;
+        private const int MaxCacheAge = 300;
 
-        public CustomersController(ICustomerRepository data, IMapper mapper)
+        public CustomersController(ICustomerRepository data)
         {
             this.data = data;
-            this.mapper = mapper;
         }
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<Customer[]>> GetCustomers()
+        [ResponseCache(Duration = MaxCacheAge)]
+        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomers()
         {
-            try
-            {
-                return await data.GetCustomersAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            var results = await data.GetCustomersAsync();
+            return Ok(results);
         }
 
         // GET: api/Customer/1
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            try
-            {
-                var result = await data.GetCustomerAsync(id);
+            var result = await data.GetCustomerAsync(id);
 
-                if (result == null)
-                    return NotFound();
+            if (result == null)
+                return NotFound();
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            return result;
         }
 
         // PUT: api/Customer/1
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Customer>> UpdateCustomer(int id, Customer model)
         {
-            if (model == null)
-                return BadRequest();
 
-            try
-            {
-                var fetchedCustomer = await data.GetCustomerAsync(id);
-                if (fetchedCustomer == null)
-                    return NotFound($"Could not find Customer in the database to updte: {model.Entity}");
+            var fetchedCustomer = await data.GetCustomerAsync(id);
+            if (fetchedCustomer == null)
+                return NotFound($"Could not find Customer in the database to updte: {model.Entity}");
 
-                //mapper.Map(model, fetchedCustomer);
+            //mapper.Map(model, fetchedCustomer);
 
-                // Update the objects ObjectState and sych the EF Change Tracker
-                fetchedCustomer.UpdateTrackingState(TrackingState.Modified);
-                data.FixTrackingState();
+            // Update the objects ObjectState and sych the EF Change Tracker
+            fetchedCustomer.UpdateTrackingState(TrackingState.Modified);
+            data.FixTrackingState();
 
-                if (await data.SaveChangesAsync())
-                    return fetchedCustomer;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            if (await data.SaveChangesAsync())
+                return fetchedCustomer;
+
 
             return BadRequest($"Failed to update {model.Entity}.");
         }
@@ -90,21 +68,14 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> CreateCustomer(Customer model)
         {
-            try
-            {
-                //var customer = mapper.Map<Customer>(model);
-                data.AddCustomer(model);
+            //var customer = mapper.Map<Customer>(model);
+            data.AddCustomer(model);
 
-                if (await data.SaveChangesAsync())
-                {
-                    //var location = linkGenerator.GetPathByAction("Get", "Customers", new { id = customer.Id });
-                    string location = $"/api/customers/{model.Id}";
-                    //return Created(location, mapper.Map<CustomerModel>(customer));
-                }
-            }
-            catch (Exception ex)
+            if (await data.SaveChangesAsync())
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                //var location = linkGenerator.GetPathByAction("Get", "Customers", new { id = customer.Id });
+                string location = $"/api/customers/{model.Id}";
+                //return Created(location, mapper.Map<CustomerModel>(customer));
             }
 
             return BadRequest($"Failed to add {model.Entity}.");
@@ -113,21 +84,14 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            try
-            {
-                var fetchedCustomer = await data.GetCustomerAsync(id);
-                if (fetchedCustomer == null)
-                    return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
+            var fetchedCustomer = await data.GetCustomerAsync(id);
+            if (fetchedCustomer == null)
+                return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
-                data.DeleteCustomer(fetchedCustomer);
-                if (await data.SaveChangesAsync())
-                {
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
+            data.DeleteCustomer(fetchedCustomer);
+            if (await data.SaveChangesAsync())
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                return Ok();
             }
 
             return BadRequest($"Failed to delete Customer with Id: {id}.");

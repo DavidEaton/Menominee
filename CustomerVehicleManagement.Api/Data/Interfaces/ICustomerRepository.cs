@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Domain.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Data.Interfaces
@@ -10,7 +12,7 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
         void FixTrackingState();
         Task<bool> CustomerExistsAsync(int id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
-        Task<Customer[]> GetCustomersAsync();
+        Task<IEnumerable<CustomerReadDto>> GetCustomersAsync();
         Task<Customer> GetCustomerAsync(int id);
         Task<bool> SaveChangesAsync(Customer customer);
         Task<bool> SaveChangesAsync();
