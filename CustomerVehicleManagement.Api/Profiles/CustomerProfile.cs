@@ -8,16 +8,18 @@ namespace CustomerVehicleManagement.Api.Profiles
     {
         public CustomerProfile()
         {
-            // Map from source type to destination type, and back.
-            CreateMap<Customer, CustomerReadDto>()
-                    .ForMember(
-                        destination => destination.Contact,
-                        configuration =>
-                        {
-                            configuration.PreCondition(customer => customer.Entity as Organization != null);
-                            configuration.MapFrom(source => (source.Entity as Organization).Contact);
-                        });
-                    //.ReverseMap();
+            // TODO: Try replacing AutoMapper PreCondition with Condition:
+
+            //CreateMap<Customer, CustomerReadDto>()
+            //        .ForMember(
+            //            destination => destination.Contact,
+            //            configuration =>
+            //            {
+            //                configuration.PreCondition(customer => customer.Entity as Organization != null);
+            //                configuration.MapFrom(source => (source.Entity as Organization).Contact);
+            //            });
+
+            CreateMap<CustomerUpdateDto, Customer>();
         }
     }
 }

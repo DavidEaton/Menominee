@@ -4,8 +4,24 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Data.Models
 {
-    public static class Extensions
+    /// <summary>
+    /// The static DTO Extensions class.
+    /// Contains static extension methods for converting domain classes to data transfer objects (DTOs).
+    /// </summary>
+    /// <remarks>
+    /// It made more sense to map these manually, rather than trying to implement AutoMapper
+    /// in a static class. Maybe AutoMapper should have been used, but these extension
+    /// methods work well, and are easy enough to read and comprehend.
+    /// </remarks>
+    public static class DtoExtensions
     {
+        /// <summary>
+        /// Converts a domain Customer to a CustomerReadDto and returns it.
+        /// </summary>
+        /// <returns>
+        /// A CustomerReadDto object.
+        /// </returns>
+        /// <param name="customer">A domain Customer object</param>
         public static CustomerReadDto ToReadDto(this Customer customer)
         {
             if (customer != null)
@@ -36,8 +52,8 @@ namespace CustomerVehicleManagement.Api.Data.Models
                             Id = organization.Contact.Id,
                             Address = organization.Contact.Address,
                             Gender = organization.Contact.Gender,
-                            Name = organization.Contact.Name.LastFirstMiddle
-                            //Phones = (IList<PhoneReadDto>)organization.Phones
+                            Name = organization.Contact.Name.LastFirstMiddle,
+                            Phones = MapPhones(organization.Contact.Phones)
                         }
                         : null
                     };
@@ -57,6 +73,26 @@ namespace CustomerVehicleManagement.Api.Data.Models
             }
 
             return null;
+        }
+
+        private static IList<PhoneReadDto> MapPhones(IList<Phone> phones)
+        {
+            var phonesDto = new List<PhoneReadDto>();
+
+            foreach (var phone in phones)
+            {
+                PhoneReadDto phoneReadDto = new PhoneReadDto()
+                {
+                    Id = phone.Id,
+                    Number = phone.Number,
+                    PhoneType = phone.PhoneType,
+                    Primary = phone.Primary
+                };
+
+                phonesDto.Add(phoneReadDto);
+            }
+
+            return phonesDto;
         }
     }
 }

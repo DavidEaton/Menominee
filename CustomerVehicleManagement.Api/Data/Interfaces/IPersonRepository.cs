@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,13 +8,13 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
     public interface IPersonRepository
     {
         void AddPerson(PersonCreateDto entity);
-        void DeletePerson(PersonReadDto entity);
+        void DeletePerson(Person entity);
         void FixState();
         Task<bool> PersonExistsAsync(int id);
-        Task<PersonReadDto> UpdatePersonAsync(PersonUpdateDto entity);
+        void UpdatePersonAsync(Person entity);
         Task<IEnumerable<PersonReadDto>> GetPersonsAsync();
         Task<IEnumerable<PersonListDto>> GetPersonsListAsync();
-        Task<PersonReadDto> GetPersonAsync(int id);
+        Task<Person> GetPersonAsync(int id);
         Task<PersonReadDto> SaveChangesAsync(PersonCreateDto person);
         Task<bool> SaveChangesAsync();
     }

@@ -1,7 +1,10 @@
-﻿using CustomerVehicleManagement.Api.Data.Interfaces;
+﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Data.Interfaces;
 using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +19,15 @@ namespace CustomerVehicleManagement.Api.Controllers
     {
         private const int MaxCacheAge = 300;
         private readonly IPersonRepository repository;
+        private readonly IMapper mapper;
 
-        public PersonsController(IPersonRepository repository)
+        public PersonsController(IPersonRepository repository, IMapper mapper)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/persons/list
@@ -55,37 +62,54 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<PersonReadDto>> UpdatePerson(int id, PersonUpdateDto model)
+        public async Task<ActionResult<PersonReadDto>> UpdatePerson(int id, PersonUpdateDto personUpdateDto)
         {
-            var personFromDatabase = await repository.GetPersonAsync(id);
-            if (personFromDatabase == null)
-                return NotFound($"Could not find Person in the database to update: {model.Name.FirstMiddleLast}");
+            if (!await repository.PersonExistsAsync(id))
+                return NotFound();
 
-            //mapper.Map(model, personFromDatabase);
+            var personFromRepository = await repository.GetPersonAsync(id);
+            if (personFromRepository == null)
+                return NotFound($"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}");
 
-            personFromDatabase.Name = model.Name.LastFirstMiddle;
-            personFromDatabase.Address = model.Address;
-            personFromDatabase.Birthday = model.Birthday;
-            personFromDatabase.DriversLicense = model.DriversLicense;
-            personFromDatabase.Gender = model.Gender;
-            personFromDatabase.Phones = (IList<PhoneReadDto>)model.Phones;
+            // map the PersonUpdateDto back to the domain entity
+            MapUpdateDtoToDomainModel(personUpdateDto, personFromRepository);
 
             // Update the objects ObjectState and sych the EF Change Tracker
-            //personFromDatabase.UpdateState(TrackingState.Modified);
-            //repository.FixState();
+            personFromRepository.UpdateTrackingState(TrackingState.Modified);
+            repository.FixState();
+            repository.UpdatePersonAsync(personFromRepository);
 
             if (await repository.SaveChangesAsync())
-                return Ok(personFromDatabase);
+                return Ok(personFromRepository);
 
-            return BadRequest($"Failed to update {model.Name.FirstMiddleLast}.");
+            /* Returning the updated resource is acceptible (as above),
+               even preferred over returning NoContent if updated resource
+               contains properties that are mutated by the data store.
+
+               Our app will not:
+            return NoContent();
+               ... but rather return the updated resource.
+            */
+
+            return BadRequest($"Failed to update {personUpdateDto.Name.FirstMiddleLast}.");
+        }
+
+        private static void MapUpdateDtoToDomainModel(PersonUpdateDto personUpdateDto, Person personFromRepository)
+        {
+            personFromRepository.SetName(personUpdateDto.Name);
+            personFromRepository.SetGender(personUpdateDto.Gender);
+            personFromRepository.SetAddress(personUpdateDto.Address);
+            personFromRepository.SetBirthday(personUpdateDto.Birthday);
+            personFromRepository.SetDriversLicense(personUpdateDto.DriversLicense);
+            personFromRepository.SetPhones(personUpdateDto.Phones);
         }
 
         // POST: api/persons/
         //[ValidateModelState]
         [HttpPost]
-        public async Task<ActionResult<PersonReadDto>> CreatePerson(PersonCreateDto model)
+        public async Task<ActionResult<PersonReadDto>> CreatePerson(PersonCreateDto personCreateDto)
         {
-            PersonReadDto personToReturn = await repository.SaveChangesAsync(model);
+            PersonReadDto personToReturn = await repository.SaveChangesAsync(personCreateDto);
 
             if (personToReturn != null)
             {
@@ -95,18 +119,18 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             }
 
-            return BadRequest($"Failed to add {model.Name.FirstMiddleLast}.");
+            return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePerson(int id)
         {
-            var personFromDatabase = await repository.GetPersonAsync(id);
+            var personFromRepository = await repository.GetPersonAsync(id);
 
-            if (personFromDatabase == null)
+            if (personFromRepository == null)
                 return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
-            repository.DeletePerson(personFromDatabase);
+            repository.DeletePerson(personFromRepository);
 
             if (await repository.SaveChangesAsync())
             {

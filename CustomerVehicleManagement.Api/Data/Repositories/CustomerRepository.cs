@@ -76,12 +76,12 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    await ResolveOrganizationCustomer(customer);
+                    await MapOrganizationCustomer(customer);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    await ResolvePersonCustomer(customer);
+                    await MapPersonCustomer(customer);
                 }
 
                 customers.Add(customer.ToReadDto());
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             return customers;
         }
 
-        private async Task ResolvePersonCustomer(Customer customer)
+        private async Task MapPersonCustomer(Customer customer)
         {
             var entity = await context.Persons
                                            .AsNoTracking()
@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             customer.SetEntity(entity);
         }
 
-        private async Task ResolveOrganizationCustomer(Customer customer)
+        private async Task MapOrganizationCustomer(Customer customer)
         {
             var entity = await context.Organizations
                                       .AsNoTracking()

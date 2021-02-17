@@ -34,19 +34,19 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             context.Add(mapper.Map<Person>(person));
         }
 
-        public void DeletePerson(PersonReadDto person)
+        public void DeletePerson(Person person)
         {
             context.Remove(person);
         }
 
-        public async Task<PersonReadDto> GetPersonAsync(int id)
+        public async Task<Person> GetPersonAsync(int id)
         {
             var personFromContext = await context.Persons
-                                .AsNoTracking()
+                                //.AsNoTracking()
                                 .Include(person => person.Phones)
                                 .SingleOrDefaultAsync(person => person.Id == id);
 
-            return mapper.Map<PersonReadDto>(personFromContext);
+            return personFromContext;
 
         }
 
@@ -114,25 +114,19 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             context.FixState();
         }
 
-        public async Task<PersonReadDto> UpdatePersonAsync(PersonUpdateDto person)
+        public void UpdatePersonAsync(Person person)
         {
-            if (person == null)
-                throw new NullReferenceException("Person Id missing.");
+            // No code in this implementation.
 
-            context.Entry(person).State = EntityState.Modified;
+            /* We're working on a contract (IPersonRepository), not an implementation.
 
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await PersonExistsAsync(person.Id))
-                    return null;
-                throw;
-            }
-
-            return null;
+               Always code a set complete set of methods for the required funtionality and call them,
+               even of they don't do anything in the current implementation.
+               
+               Controller has changed the entity to a modified state; executing save on the repo from
+               the controller will write the changes to the database; therefore no update action is
+               required in the repository.
+            */
         }
 
         public async Task<bool> PersonExistsAsync(int id)

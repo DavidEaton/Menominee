@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -13,12 +14,13 @@ namespace CustomerVehicleManagement.Api.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ICustomerRepository data;
+        private readonly ICustomerRepository repository;
         private const int MaxCacheAge = 300;
 
-        public CustomersController(ICustomerRepository data)
+        public CustomersController(ICustomerRepository repository)
         {
-            this.data = data;
+            this.repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
         }
 
         // GET: api/Customers
@@ -26,7 +28,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         [ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomers()
         {
-            var results = await data.GetCustomersAsync();
+            var results = await repository.GetCustomersAsync();
             return Ok(results);
         }
 
@@ -34,7 +36,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var result = await data.GetCustomerAsync(id);
+            var result = await repository.GetCustomerAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -47,7 +49,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         public async Task<ActionResult<Customer>> UpdateCustomer(int id, Customer model)
         {
 
-            var fetchedCustomer = await data.GetCustomerAsync(id);
+            var fetchedCustomer = await repository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
                 return NotFound($"Could not find Customer in the database to updte: {model.Entity}");
 
@@ -55,9 +57,9 @@ namespace CustomerVehicleManagement.Api.Controllers
 
             // Update the objects ObjectState and sych the EF Change Tracker
             fetchedCustomer.UpdateTrackingState(TrackingState.Modified);
-            data.FixTrackingState();
+            repository.FixTrackingState();
 
-            if (await data.SaveChangesAsync())
+            if (await repository.SaveChangesAsync())
                 return fetchedCustomer;
 
 
@@ -69,9 +71,9 @@ namespace CustomerVehicleManagement.Api.Controllers
         public async Task<ActionResult<Customer>> CreateCustomer(Customer model)
         {
             //var customer = mapper.Map<Customer>(model);
-            data.AddCustomer(model);
+            repository.AddCustomer(model);
 
-            if (await data.SaveChangesAsync())
+            if (await repository.SaveChangesAsync())
             {
                 //var location = linkGenerator.GetPathByAction("Get", "Customers", new { id = customer.Id });
                 string location = $"/api/customers/{model.Id}";
@@ -84,12 +86,12 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var fetchedCustomer = await data.GetCustomerAsync(id);
+            var fetchedCustomer = await repository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
                 return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
-            data.DeleteCustomer(fetchedCustomer);
-            if (await data.SaveChangesAsync())
+            repository.DeleteCustomer(fetchedCustomer);
+            if (await repository.SaveChangesAsync())
             {
                 return Ok();
             }

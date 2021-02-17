@@ -41,6 +41,12 @@ namespace CustomerVehicleManagement.Api.Profiles
             CreateMap<Person, PersonCreateDto>()
                 .ReverseMap();
 
+            CreateMap<PersonUpdateDto, PersonReadDto>()
+                .ForMember(
+                    destination => destination.Name,
+                    configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
+                .ReverseMap();
+
         }
     }
 }
