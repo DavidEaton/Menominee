@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Controllers
                 return NotFound($"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}");
 
             // map the PersonUpdateDto back to the domain entity
-            MapUpdateDtoToDomainModel(personUpdateDto, personFromRepository);
+            ToDomainModel(personUpdateDto, personFromRepository);
 
             // Update the objects ObjectState and sych the EF Change Tracker
             personFromRepository.UpdateTrackingState(TrackingState.Modified);
@@ -80,28 +80,29 @@ namespace CustomerVehicleManagement.Api.Controllers
             repository.UpdatePersonAsync(personFromRepository);
 
             if (await repository.SaveChangesAsync())
-                return Ok(personFromRepository);
+                return NoContent();
 
-            /* Returning the updated resource is acceptible (as above),
+            /* Returning the updated resource is acceptible like:
+                 return Ok(personFromRepository);
                even preferred over returning NoContent if updated resource
                contains properties that are mutated by the data store.
 
-               Our app will not:
-            return NoContent();
-               ... but rather return the updated resource.
+               However, our app will:
+                 return NoContent();
+               ... and let the caller decide whether to get the updated resource.
             */
 
             return BadRequest($"Failed to update {personUpdateDto.Name.FirstMiddleLast}.");
         }
 
-        private static void MapUpdateDtoToDomainModel(PersonUpdateDto personUpdateDto, Person personFromRepository)
+        private void ToDomainModel(PersonUpdateDto personUpdateDto, Person personFromRepository)
         {
             personFromRepository.SetName(personUpdateDto.Name);
             personFromRepository.SetGender(personUpdateDto.Gender);
             personFromRepository.SetAddress(personUpdateDto.Address);
             personFromRepository.SetBirthday(personUpdateDto.Birthday);
             personFromRepository.SetDriversLicense(personUpdateDto.DriversLicense);
-            personFromRepository.SetPhones(personUpdateDto.Phones);
+            //personFromRepository.SetPhones(mapper.Map<IList<Phone>>(personUpdateDto.Phones));
         }
 
         // POST: api/persons/

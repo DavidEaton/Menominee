@@ -87,6 +87,26 @@ namespace CustomerVehicleManagement.Domain.Entities
             Address = address;
         }
 
+        public void UpdatePhones(IList<Phone> phones)
+        {
+            // Compare existing and update phone lists
+            // for each changed Phone, update(phone)
+
+            foreach (var phone in phones)
+            {
+                //    // Find matching phone in existng Phones
+                //    var found = Phones.SingleOrDefault(p => p.Id = phone.Id);
+                //    // If they are not equal, update existing Phone
+                //    if (found != null)
+                //    {
+                //        found.NewNumber(phone.Number);
+                //        found.NewPhoneType(phone.PhoneType);
+                //        found.NewPrimary(phone.Primary);
+                //    }
+            }
+
+        }
+
         #region ORM
 
         // EF requires an empty constructor

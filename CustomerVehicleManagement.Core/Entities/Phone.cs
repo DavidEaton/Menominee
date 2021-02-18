@@ -2,6 +2,7 @@
 using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -43,23 +44,43 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             return new Phone(Number, newPhoneType, Primary);
         }
-        public Phone NewPrimary(string number)
+        public Phone NewPrimary(bool primary)
         {
-            return new Phone(number, PhoneType, true);
+            return new Phone(Number, PhoneType, primary);
         }
 
         public override string ToString()
         {
+            Number = RemoveNonNumericCharacters(Number);
+
             switch (Number.Length)
             {
                 case 7:
-                    return Regex.Replace(Number, @"(\d{3})(\d{4})", "$2-$3");
+                    return Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2");
 
                 case 10:
                     return Regex.Replace(Number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
                 default:
                     return Number;
             }
+        }
+
+        /// <summary>
+        /// EqualsByProperty compares each member property and returns true of they are all equal between phone1 and phone2.
+        /// </summary>
+        /// <param name="phone1"></param>
+        /// <param name="phone2"></param>
+        /// <returns>True if all properties are equal between phone1 and phone2; False if one or more properties are not equal between phone1 and phone2.</returns>
+        public static bool EqualsByProperty(Phone phone1, Phone phone2)
+        {
+            return phone1.Number == phone2.Number
+                && phone1.PhoneType == phone2.PhoneType
+                && phone1.Primary == phone2.Primary;
+        }
+
+        private static string RemoveNonNumericCharacters(string input)
+        {
+            return new string(input.Where(c => char.IsDigit(c)).ToArray());
         }
 
         #region ORM

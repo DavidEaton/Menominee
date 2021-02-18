@@ -30,16 +30,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task GetReturnsExpectedJson()
         {
-            // Uses case-insensitive deserialization
-            // Confirm that endpoint exists at the expected uri
-            // Confirms that response has success status code
-            // Confirms Content-Type header
-            // Confirms that response includes content (!= null && length > 0)
+            /* Uses case-insensitive deserialization
+               Confirm that endpoint exists at the expected uri
+               Confirms that response has success status code
+               Confirms Content-Type header
+               Confirms that response includes content (!= null && length > 0)
+            */
 
             var persons = await httpClient.GetFromJsonAsync<List<PersonListDto>>(UriSegment);
 
             // TEST DEPENDS ON A PERSON EXISTING IN THE DATABASE WITH Id == 1 AT ROW ONE (INDEX ZERO)
-            // Add code to use test database instead of production
+            // Modify to use test database instead of production
             Assert.Equal(1, persons[0]?.Id);
         }
 

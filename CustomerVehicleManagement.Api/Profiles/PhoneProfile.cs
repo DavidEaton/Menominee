@@ -10,6 +10,9 @@ namespace CustomerVehicleManagement.Api.Profiles
         {
             CreateMap<Phone, PhoneReadDto>()
                 .ReverseMap();
+            CreateMap<Phone, PhoneUpdateDto>()
+                .ReverseMap();
+
         }
     }
 }

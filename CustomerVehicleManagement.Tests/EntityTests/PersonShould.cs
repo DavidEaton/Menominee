@@ -224,6 +224,57 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
+        public void UpdatePhones()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var phones = new List<Phone>();
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Mobile;
+            var phone = new Phone(number, phoneType, true);
+
+            phones.Add(phone);
+
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+
+            phones.Add(phone);
+
+            person.SetPhones(phones);
+
+            Assert.That(person.Phones.Count == 2);
+            Assert.That(person.Phones[0].Number == "989.627.9206");
+
+            var newPhones = new List<Phone>();
+            number = "123.456.7890";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, true);
+
+            newPhones.Add(phone);
+
+            number = "987.654.3210";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+
+            newPhones.Add(phone);
+            
+            person.SetPhones(newPhones);
+
+            Assert.AreEqual(person.Phones.Count, 2);
+            Assert.That(person.Phones[1].Number == "987.654.3210");
+        }
+
+        [Test]
+        public void NotAllowMoreThanOnePrimaryPhone()
+        {
+
+        }
+
+        [Test]
         public void SetName()
         {
             var firstName = "Jane";

@@ -68,6 +68,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
                         Id = customer.Id,
                         Name = person.Name.LastFirstMiddle,
                         Address = person.Address,
+                        Phones = MapPhones(person.Phones)
                     };
                 }
             }

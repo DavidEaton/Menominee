@@ -33,19 +33,27 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(exception.Message, Is.EqualTo(Phone.PhoneEmptyMessage));
         }
 
-        /// <summary>
-        /// This test is for value object phone, not entity type phone
-        /// </summary>
-        //[Test]
-        //public void EquateTwoPhoneInstancesHavingSameValues()
-        //{
-        //    var number = "989.627.9206";
+        [Test]
+        public void EquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
+        {
+            var number = "989.627.9206";
 
-        //    var phone1 = new Phone(number, PhoneType.Home);
-        //    var phone2 = new Phone(number, PhoneType.Home);
+            var phone1 = new Phone(number, PhoneType.Home, true);
+            var phone2 = new Phone(number, PhoneType.Home, true);
 
-        //    Assert.That(phone1.Equals(phone2));
-        //}
+            Assert.That(Phone.EqualsByProperty(phone1, phone2));
+        }
+
+        [Test]
+        public void NotEquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
+        {
+            var number = "989.627.9206";
+
+            var phone1 = new Phone(number, PhoneType.Home, true);
+            var phone2 = new Phone(number, PhoneType.Home, false);
+
+            Assert.That(!Phone.EqualsByProperty(phone1, phone2));
+        }
 
         [Test]
         public void NotEquateTwoPhoneInstancesHavingDifferingValues()
@@ -86,5 +94,91 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(phone.PhoneType, Is.EqualTo(PhoneType.Mobile));
         }
 
+        [Test]
+        public void ReturnNewPhoneOnNewPrimary()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(phone.Primary, Is.EqualTo(true));
+
+            phone = phone.NewPrimary(false);
+
+            Assert.That(phone.Primary, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void ReturnFormattedTenDigitPhoneNumberOnToString()
+        {
+            var number = "9896279206";
+            var phoneType = PhoneType.Home;
+
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(phone.ToString(), Is.EqualTo("(989) 627-9206"));
+        }
+
+        [Test]
+        public void ReturnFormattedSevenDigitPhoneNumberOnToString()
+        {
+            var number = "6279206";
+            var phoneType = PhoneType.Home;
+
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(phone.ToString(), Is.EqualTo("627-9206"));
+        }
+
+        [Test]
+        public void ReturnNonFormattedOtherDigitPhoneNumberOnToString()
+        {
+            var number = "896279206";
+            var phoneType = PhoneType.Home;
+
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(phone.ToString(), Is.EqualTo("896279206"));
+
+            phone = phone.NewNumber("96279206");
+
+            Assert.That(phone.ToString(), Is.EqualTo("96279206"));
+
+            phone = phone.NewNumber("279206");
+
+            Assert.That(phone.ToString(), Is.EqualTo("279206"));
+
+            phone = phone.NewNumber("79206");
+
+            Assert.That(phone.ToString(), Is.EqualTo("79206"));
+
+            phone = phone.NewNumber("9206");
+
+            Assert.That(phone.ToString(), Is.EqualTo("9206"));
+
+            phone = phone.NewNumber("206");
+
+            Assert.That(phone.ToString(), Is.EqualTo("206"));
+
+            phone = phone.NewNumber("06");
+
+            Assert.That(phone.ToString(), Is.EqualTo("06"));
+
+            phone = phone.NewNumber("6");
+
+            Assert.That(phone.ToString(), Is.EqualTo("6"));
+        }
+
+        [Test]
+        public void RemoveNonNumericCharactersAndFormatOnToString()
+        {
+            var number = "989.627.9206?";
+            var phoneType = PhoneType.Home;
+
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(phone.ToString(), Is.EqualTo("(989) 627-9206"));
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
-        public IList<Phone> Phones { get; set; } = new List<Phone>();
+        public IList<PhoneUpdateDto> Phones { get; set; } = new List<PhoneUpdateDto>();
     }
 
 }
