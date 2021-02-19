@@ -42,8 +42,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public bool RewardsMember { get; private set; }
         public bool OverrideCustomerTaxProfile { get; private set; }
         public DateTime Created { get; private set; }
-        public IList<Phone> Phones { get; private set; } = new List<Phone>();
-        public IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
+        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
+        public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
 
         public void AddPhone(Phone phone)
         {

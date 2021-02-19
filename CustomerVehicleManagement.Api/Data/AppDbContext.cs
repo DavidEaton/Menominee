@@ -30,7 +30,8 @@ namespace CustomerVehicleManagement.Api.Data
                   .AddConsole();
             });
 
-            optionsBuilder.UseSqlServer(connection);
+            optionsBuilder.UseSqlServer(connection)
+                          .UseLazyLoadingProxies(true);
 
             if (useConsoleLogger)
             {

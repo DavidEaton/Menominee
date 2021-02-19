@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Data.Models
 {
-    [PersonCanHaveOnlyOnePrimaryPhoneAttribute]
+    [PersonCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Person can have only one Primary phone.")]
     public class PersonCreateDto
     {
         public PersonCreateDto(PersonName name, Gender gender)
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         }
         public int Id { get; set; }
         
-        [Required]
+        [Required(ErrorMessage = "Person Name is required.")]
         public PersonName Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }

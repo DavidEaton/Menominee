@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public int Year { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
-        public Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
 
         #region ORM
 

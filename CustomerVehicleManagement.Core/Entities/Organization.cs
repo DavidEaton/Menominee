@@ -39,10 +39,10 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
 
         public string Name { get; private set; }
-        public Person Contact { get; private set; }
+        public virtual Person Contact { get; private set; }
         public Address Address { get; private set; }
         public string Notes { get; private set; }
-        public IList<Phone> Phones { get; private set; } = new List<Phone>();
+        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
 
         public void AddPhone(Phone phone)
         {

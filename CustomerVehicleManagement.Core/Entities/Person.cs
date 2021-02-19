@@ -22,7 +22,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones)
             : this(name, gender, birthday, address, phones, null) { }
 
-        // Blazor 5 requires public JsonConstructor-attributed contructor, 
+        // Blazor 5 requires public JsonConstructor-attributed contructor
+        // HOW IS THE PRESENTATION LAYER "REQUIRING" ANYTHING OF OUR DOIMAIN MODEL???? FIX THIS! 
         [JsonConstructor]
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, DriversLicense driversLicense = null)
         {
@@ -39,7 +40,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public DateTime? Birthday { get; private set; }
         public DriversLicense DriversLicense { get; private set; }
         public Address Address { get; private set; }
-        public IList<Phone> Phones { get; private set; } = new List<Phone>();
+        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
 
         public void AddPhone(Phone phone)
         {
@@ -108,6 +109,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
 
         #region ORM
+        // Code that pollutes our domain class (very minor impact in this case), but
+        // is necessary for EntityFramework, makes our model <100% persistence ignorant.
 
         // EF requires an empty constructor
         protected Person() { }
