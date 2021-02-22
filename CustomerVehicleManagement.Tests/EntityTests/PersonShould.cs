@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void CreateNewPersonWithEmptyLastName()
         {
-            string firstName = "Molly";
+            string firstName = "Jane";
             string lastName = "";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         public void CreateNewPersonWithEmptyFirstName()
         {
             string firstName = "";
-            string lastName = "Moops";
+            string lastName = "Doe";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void CreateNewPersonWithNullLastName()
         {
-            string firstName = "Molly";
+            string firstName = "Jane";
             string lastName = null;
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
@@ -85,7 +85,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         public void CreateNewPersonWithNullFirstName()
         {
             string firstName = null;
-            string lastName = "Moops";
+            string lastName = "Doe";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
@@ -160,7 +160,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
-            var number = "989.627.9206";
+            var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
 
@@ -176,7 +176,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
-            var number = "989.627.9206";
+            var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
 
@@ -193,7 +193,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             person.RemovePhone(phone);
 
             Assert.That(person.Phones.Count == 1);
-            Assert.That(person.Phones[0].Number == "989.627.9206");
+            Assert.That(person.Phones[0].Number == "555.444.3333");
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var person = new Person(name, Gender.Female);
             var phones = new List<Phone>();
 
-            var number = "989.627.9206";
+            var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
 
@@ -220,7 +220,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             person.SetPhones(phones);
 
             Assert.That(person.Phones.Count == 2);
-            Assert.That(person.Phones[0].Number == "989.627.9206");
+            Assert.That(person.Phones[0].Number == "555.444.3333");
         }
 
         [Test]
@@ -232,7 +232,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var person = new Person(name, Gender.Female);
             var phones = new List<Phone>();
 
-            var number = "989.627.9206";
+            var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
 
@@ -247,7 +247,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             person.SetPhones(phones);
 
             Assert.That(person.Phones.Count == 2);
-            Assert.That(person.Phones[0].Number == "989.627.9206");
+            Assert.That(person.Phones[0].Number == "555.444.3333");
 
             var newPhones = new List<Phone>();
             number = "123.456.7890";
@@ -261,7 +261,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             phone = new Phone(number, phoneType, false);
 
             newPhones.Add(phone);
-            
+
             person.SetPhones(newPhones);
 
             Assert.AreEqual(person.Phones.Count, 2);
@@ -269,8 +269,43 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void NotAllowMoreThanOnePrimaryPhone()
+        public void NotCreateMoreThanOnePrimaryPhone()
         {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var number = "555.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+            person.AddPhone(phone);
+            number = "444.627.9206";
+            phone = new Phone(number, phoneType, true);
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.AddPhone(phone); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryPhoneExistsMessage));
+
+        }
+
+        [Test]
+        public void NotAddDuplicatePhone()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+
+            person.AddPhone(phone);
+            phone = new Phone(number, phoneType, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.AddPhone(phone); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.DuplicatePhoneExistsMessage));
 
         }
 

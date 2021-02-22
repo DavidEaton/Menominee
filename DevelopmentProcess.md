@@ -1,8 +1,8 @@
-Policy files will be maintained in the \DevelopmentProcess folder of this solution repository, where they will act as standards for our development process.
+Policy files will be maintained in the \DevelopmentProcess folder of this solution repository, where they will act as standards for our development process, and application design guidance.
 
 The benefits of versioned policies are:
 
-- All policy changes will go through the change control board, so everyone will be on board with the baseline, and when policy changes
+- All policy changes will go through the change control board (TBD/TBA), so everyone will be on board with the baseline, and when policy changes
   happen, they can be systematically communicated to all affected stakeholders.
 
 - Reduce the waste of making and recalling process decisions over and over again.  We can recall a decision by consulting the
@@ -18,7 +18,7 @@ The benefits of versioned policies are:
 #### This application was designed with Domain Droven Design (DDD) principles in mind.
 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
-In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate.
+In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Person domain aggregate class enforces the business rule, "Person can have only one Primary Phone", via ValidationAttribute named PersonCanHaveOnlyOnePrimaryPhoneAttribute.
 ### Implement validations in the domain model layer
 Validations are usually implemented in domain entity constructors or in methods that can update the entity. There are multiple ways to implement validations, such as verifying data and raising exceptions if the validation fails. There are also more advanced patterns such as using the Specification pattern for validations, and the Notification pattern to return a collection of errors instead of returning an exception for each validation as it occurs.
 
@@ -54,3 +54,34 @@ We used to have include these checks in MANY controller methods. No more!
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+### Lazy Loading of Relationships/Navigation Properties
+Pros:
+Helps avoid partially initialized entities (which can lead to subtle bugs), so that there are no invariant violations of domain entities
+More performant in some scenarios
+Code simplicity (no need to remember to load explicitly via Include statements)
+
+Cons: Possible to introduce the N+1 problemm which is bad for performance. For a given page view, there should be only one database trip, not N+1.
+
+N+1 problem ONLY HAPPENS IN READS.
+
+So, adhere to CQRS Pattern, don't use ORM or domain model in reads. Instead of ORM reads, use plain sql or micro-ORM such as Dapper.
+
+
+            return await context.Organizations
+                // Tracking is not needed (and expensive) for this disconnected data collection
+                // Lazy-loading is not supported for detached entities or entities that are loaded with 'AsNoTracking'.
+                //.AsNoTracking()
+                //.Include(o => o.Address)
+                //.Include(o => o.Contact)
+                .ToArrayAsync();
+
+Refactor to Lazy Loading:
+<ul>
+<li>Add Microsoft.EntityFrameworkCore.Proxies to api project</li>
+<li>Add to AppDbContext.Onconfiguring: optionsBuilder.UseLazyLoadingProxies(true);</li>
+<li>Declare all domain class navigation properties as virtual</li>
+<li>Confirm domain classes are not sealed</li>
+<li>Confirm domain classes have protected parameterless constructor</li>
+</ul>
+

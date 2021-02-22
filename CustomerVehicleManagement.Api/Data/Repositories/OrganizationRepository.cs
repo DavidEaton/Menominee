@@ -35,19 +35,14 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<Organization> GetOrganizationAsync(int id)
         {
-            return await context.Organizations
-                .Include(o => o.Address)
-                .FirstOrDefaultAsync(o => o.Id == id);
+            return await Task.FromResult(context.Organizations.Find(id));
+                //.Include(o => o.Address);
+                //.FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task<Organization[]> GetOrganizationsAsync()
         {
-            return await context.Organizations
-                // Tracking is not needed (and expensive) for this disconnected data collection
-                .AsNoTracking()
-                .Include(o => o.Address)
-                .Include(o => o.Contact)
-                .ToArrayAsync();
+            return await context.Organizations.ToArrayAsync();
         }
 
         public async Task<bool> OrganizationExistsAsync(int id)
@@ -98,11 +93,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<IEnumerable<OrganizationsListDto>> GetOrganizationsListAsync()
         {
-            var organizationsFromContext = context.Organizations
-                                                .Include(organization => organization.Phones)
-                                                .Include(organization => organization.Contact)
-                                                .AsNoTracking()
-                                                .ToArray();
+            var organizationsFromContext = context.Organizations.ToArray();
 
             var organizationsList = new List<OrganizationsListDto>();
 

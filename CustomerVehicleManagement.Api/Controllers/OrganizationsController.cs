@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         [Route("list")]
         [HttpGet]
         [ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<OrganizationsListDto>>> GetPersonsList()
+        public async Task<ActionResult<IEnumerable<OrganizationsListDto>>> GetOrganizationsList()
         {
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);

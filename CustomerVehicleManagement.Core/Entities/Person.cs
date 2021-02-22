@@ -10,6 +10,9 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Entity, IListOfPhone
     {
+        public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
+        public static readonly string PrimaryPhoneExistsMessage = "Person can have only one Primary phone.";
+
         public Person(PersonName name, Gender gender)
             : this(name, gender, null) { }
 
@@ -44,6 +47,12 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
+            if (DuplicatePhoneNumberExists(phone))
+                throw new ArgumentException(DuplicatePhoneExistsMessage);
+
+            if (PrimaryPhoneExists() && phone.Primary)
+                throw new ArgumentException(PrimaryPhoneExistsMessage);
+
             if (Phones == null)
                 Phones = new List<Phone>();
 
@@ -88,24 +97,42 @@ namespace CustomerVehicleManagement.Domain.Entities
             Address = address;
         }
 
-        public void UpdatePhones(IList<Phone> phones)
+        private bool PrimaryPhoneExists()
         {
-            // Compare existing and update phone lists
-            // for each changed Phone, update(phone)
+            if (Phones == null)
+                return false;
 
-            foreach (var phone in phones)
+            bool result = false;
+
+            foreach (var existingPhone in Phones)
             {
-                //    // Find matching phone in existng Phones
-                //    var found = Phones.SingleOrDefault(p => p.Id = phone.Id);
-                //    // If they are not equal, update existing Phone
-                //    if (found != null)
-                //    {
-                //        found.NewNumber(phone.Number);
-                //        found.NewPhoneType(phone.PhoneType);
-                //        found.NewPrimary(phone.Primary);
-                //    }
+                if (existingPhone.Primary)
+                {
+                    result = true;
+                    break;
+                }
             }
 
+            return result;
+        }
+
+        private bool DuplicatePhoneNumberExists(Phone phone)
+        {
+            if (Phones == null)
+                return false;
+
+            bool result = false;
+
+            foreach (var existingPhone in Phones)
+            {
+                if (existingPhone.Number == phone.Number)
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
         }
 
         #region ORM

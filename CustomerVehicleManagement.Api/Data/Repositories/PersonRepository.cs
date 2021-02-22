@@ -41,31 +41,24 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<Person> GetPersonAsync(int id)
         {
-            var personFromContext = await context.Persons
-                                //.AsNoTracking()
-                                .Include(person => person.Phones)
-                                .SingleOrDefaultAsync(person => person.Id == id);
+            // Prefer Find() over Single() or First() for single objects (non-collections);
+            // Find() checks the Identity Map Cache before making a trip to the database.
+            var personFromContext = context.Persons.Find(id);
 
-            return personFromContext;
+            return await Task.FromResult(personFromContext);
 
         }
 
         public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
         {
-            var personsFromContext = await context.Persons
-                                .Include(person => person.Phones)
-                                .AsNoTracking()
-                                .ToArrayAsync();
+            var personsFromContext = await context.Persons.ToArrayAsync();
 
             return mapper.Map<IEnumerable<PersonReadDto>>(personsFromContext);
         }
 
         public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
         {
-            var personsFromContext = context.Persons
-                                                .Include(person => person.Phones)
-                                                .AsNoTracking()
-                                                .ToArray();
+            var personsFromContext = context.Persons.ToArray();
 
             var personsList = new List<PersonListDto>();
 
@@ -120,12 +113,12 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             /* We're working on a contract (IPersonRepository), not an implementation.
 
-               Always code a set complete set of methods for the required funtionality and call them,
+               Always code a complete set of methods for the required funtionality and call them,
                even of they don't do anything in the current implementation.
                
                Controller has changed the entity to a modified state; executing save on the repo from
-               the controller will write the changes to the database; therefore no update action is
-               required in the repository.
+               the controller will write the changes to the database; therefore no update code is
+               required in this Update method.
             */
         }
 

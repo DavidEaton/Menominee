@@ -36,27 +36,18 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            // Tracking is not needed (and expensive) for queries of disconnected data collections
-            var customer = await context.Customers
-                                        .AsNoTracking()
-                                        .Include(c => c.Phones)
-                                        .FirstOrDefaultAsync(p => p.Id == id);
+            var customer = context.Customers.Find(id);
 
             if (customer.EntityType == EntityType.Organization)
             {
-                var entity = await context.Organizations
-                                               .AsNoTracking()
-                                               .Include(o => o.Contact)
-                                               .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+                var entity = await context.Organizations.FindAsync(customer.EntityId);
 
                 customer.SetEntity(entity);
             }
 
             if (customer.EntityType == EntityType.Person)
             {
-                var entity = await context.Persons
-                                               .AsNoTracking()
-                                               .FirstOrDefaultAsync(p => p.Id == customer.EntityId);
+                var entity = await context.Persons.FindAsync(customer.EntityId);
 
                 customer.SetEntity(entity);
             }
@@ -92,10 +83,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         private async Task MapPersonCustomer(Customer customer)
         {
-            var entity = await context.Persons
-                                           .AsNoTracking()
-                                           .Include(person => person.Phones)
-                                           .FirstOrDefaultAsync(person => person.Id == customer.EntityId);
+            var entity = await context.Persons.FindAsync(customer.EntityId);
 
             foreach (var phone in entity.Phones)
                 customer.AddPhone(phone);
@@ -105,12 +93,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         private async Task MapOrganizationCustomer(Customer customer)
         {
-            var entity = await context.Organizations
-                                      .AsNoTracking()
-                                      .Include(organization => organization.Contact)
-                                          .ThenInclude(contact => contact.Phones)
-                                      .Include(organization => organization.Phones)
-                                      .FirstOrDefaultAsync(o => o.Id == customer.EntityId);
+            var entity = await context.Organizations.FindAsync(customer.EntityId);
 
             foreach (var phone in entity.Phones)
                 customer.AddPhone(phone);
