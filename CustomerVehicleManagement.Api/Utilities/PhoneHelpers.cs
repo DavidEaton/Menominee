@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace CustomerVehicleManagement.Api.Utilities
 {
-    public static class IListOfPhoneHelpers
+    public static class PhoneHelpers
     {
 
         public static string GetPrimaryPhone(IListOfPhone entity)
@@ -25,6 +25,5 @@ namespace CustomerVehicleManagement.Api.Utilities
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : null;
         }
-
     }
 }

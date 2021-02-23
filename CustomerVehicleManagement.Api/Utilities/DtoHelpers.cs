@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
-using Helper = CustomerVehicleManagement.Api.Utilities.IListOfPhoneHelpers;
+using Helper = CustomerVehicleManagement.Api.Utilities.PhoneHelpers;
 
 
 namespace CustomerVehicleManagement.Api.Utilities

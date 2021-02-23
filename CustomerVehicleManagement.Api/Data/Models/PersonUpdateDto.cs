@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;

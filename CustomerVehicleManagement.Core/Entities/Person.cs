@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Interfaces;
+using CustomerVehicleManagement.Domain.Utilities;
 using SharedKernel;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -47,10 +48,10 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
-            if (DuplicatePhoneNumberExists(phone))
+            if (PhoneHelpers.DuplicatePhoneNumberExists(phone, Phones))
                 throw new ArgumentException(DuplicatePhoneExistsMessage);
 
-            if (PrimaryPhoneExists() && phone.Primary)
+            if (PhoneHelpers.PrimaryPhoneExists(Phones) && phone.Primary)
                 throw new ArgumentException(PrimaryPhoneExistsMessage);
 
             if (Phones == null)
@@ -95,44 +96,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void SetAddress(Address address)
         {
             Address = address;
-        }
-
-        private bool PrimaryPhoneExists()
-        {
-            if (Phones == null)
-                return false;
-
-            bool result = false;
-
-            foreach (var existingPhone in Phones)
-            {
-                if (existingPhone.Primary)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        private bool DuplicatePhoneNumberExists(Phone phone)
-        {
-            if (Phones == null)
-                return false;
-
-            bool result = false;
-
-            foreach (var existingPhone in Phones)
-            {
-                if (existingPhone.Number == phone.Number)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
         }
 
         #region ORM

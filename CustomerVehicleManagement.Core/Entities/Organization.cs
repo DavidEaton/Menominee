@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Interfaces;
+using CustomerVehicleManagement.Domain.Utilities;
 using SharedKernel;
 using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
@@ -10,6 +11,8 @@ namespace CustomerVehicleManagement.Domain.Entities
     public class Organization : Entity, IListOfPhone
     {
         public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
+        public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
+        public static readonly string PrimaryPhoneExistsMessage = "Organization can have only one Primary phone.";
 
         public Organization(string name)
             : this(name, null)
@@ -22,6 +25,11 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
 
         public Organization(string name, Address address, Person contact)
+            : this(name, address, contact, null)
+        {
+        }
+
+        public Organization(string name, Address address, Person contact, IList<Phone> phones)
         {
             try
             {
@@ -36,6 +44,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             Name = name;
             Address = address;
             Contact = contact;
+            Phones = phones;
         }
 
         public string Name { get; private set; }
@@ -46,7 +55,17 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
-            Phones.Add(phone);
+            if (PhoneHelpers.DuplicatePhoneNumberExists(phone, Phones))
+                throw new ArgumentException(DuplicatePhoneExistsMessage);
+
+            if (PhoneHelpers.PrimaryPhoneExists(Phones) && phone.Primary)
+                throw new ArgumentException(PrimaryPhoneExistsMessage);
+
+            if (Phones == null)
+                Phones = new List<Phone>();
+
+            if (Phones != null)
+                Phones.Add(phone);
         }
 
         public void RemovePhone(Phone phone)

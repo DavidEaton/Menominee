@@ -1,8 +1,8 @@
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
 using NUnit.Framework;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
+using System;
 
 namespace CustomerVehicleManagement.Tests.EntityTests
 {
@@ -25,14 +25,23 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
+        public void HaveCreatedDateOnCreated()
+        {
+            var organization = CreateValidOrganization();
+
+            var customer = new Customer(organization);
+            Assert.That(customer.Created, Is.EqualTo(DateTime.UtcNow).Within(1).Minutes);
+        }
+
+        [Test]
         public void CreateNewCustomerWithOrganizationEntity()
         {
-            string name = "Jane's";
-            var organization = new Organization(name);
+            var organization = CreateValidOrganization();
 
             var customer = new Customer(organization);
             Assert.That(customer.Entity is Organization);
         }
+
 
         [Test]
         public void CreateNewPersonCustomerWithAddress()
@@ -87,15 +96,11 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void CreateNewOrganizationCustomerWithPersonContact()
         {
-            string janesAuto = "Jane's Auto";
             string firstName = "Jane";
             string lastName = "Doe";
-
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
-
-            var organization = new Organization(janesAuto);
-
+            var organization = CreateValidOrganization();
             organization.SetContact(person);
 
             var customer = new Customer(organization);
@@ -108,14 +113,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void AddPhones()
         {
-            string name = "Jane's";
-            var organization = new Organization(name);
-
+            var organization = CreateValidOrganization();
             var customer = new Customer(organization);
-
             string number0 = "(989) 627-9206";
             Phone phone0 = new Phone(number0, PhoneType.Mobile, true);
-
             string number1 = "(231) 675-1922";
             Phone phone1 = new Phone(number1, PhoneType.Mobile, false);
 
@@ -131,8 +132,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void RemovePhones()
         {
-            string name = "Jane's";
-            var organization = new Organization(name);
+            var organization = CreateValidOrganization();
 
             var customer = new Customer(organization);
 
@@ -156,8 +156,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void AddVehicles()
         {
-            string name = "Jane's";
-            var organization = new Organization(name);
+            var organization = CreateValidOrganization();
             var customer = new Customer(organization);
 
             string vin0 = "45kj64k64kjyvrv";
@@ -180,6 +179,39 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(customer.Vehicles[1], Is.EqualTo(vehicle1));
         }
 
+        [Test]
+        public void RemoveVehicle()
+        {
+            var organization = CreateValidOrganization();
+            var customer = new Customer(organization);
 
+            string vin0 = "45kj64k64kjyvrv";
+            int year0 = 2020;
+            string make0 = "Honda";
+            string model0 = "Pilot";
+            Vehicle vehicle0 = new Vehicle(vin0, year0, make0, model0, customer);
+
+            string vin1 = "547hjg54lgg274bg";
+            int year1 = 2010;
+            string make1 = "Jeep";
+            string model1 = "Jeepers";
+            Vehicle vehicle1 = new Vehicle(vin1, year1, make1, model1, customer);
+
+            customer.AddVehicle(vehicle0);
+            customer.AddVehicle(vehicle1);
+
+            Assert.That(customer.Vehicles.Count, Is.EqualTo(2));
+
+            customer.RemoveVehicle(vehicle0);
+
+            Assert.That(customer.Vehicles.Count, Is.EqualTo(1));
+        }
+
+        private static Organization CreateValidOrganization()
+        {
+            string name = "Jane's";
+            var organization = new Organization(name);
+            return organization;
+        }
     }
 }

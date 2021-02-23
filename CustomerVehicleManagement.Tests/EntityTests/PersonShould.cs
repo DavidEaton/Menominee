@@ -152,6 +152,22 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
         }
 
+        [Test]
+        public void AddPhonesWhenPersonHasNoPhonesOnAddPhone()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+
+            Assert.That(person.Phones == null);
+            person.AddPhone(phone);
+
+            Assert.That(person.Phones.Count == 1);
+        }
 
         [Test]
         public void AddPhone()
@@ -221,33 +237,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             Assert.That(person.Phones.Count == 2);
             Assert.That(person.Phones[0].Number == "555.444.3333");
-        }
-
-        [Test]
-        public void UpdatePhones()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
-            var phones = new List<Phone>();
-
-            var number = "555.444.3333";
-            var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
-
-            phones.Add(phone);
-
-            number = "231.546.2102";
-            phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
-
-            phones.Add(phone);
-
-            person.SetPhones(phones);
-
-            Assert.That(person.Phones.Count == 2);
-            Assert.That(person.Phones[0].Number == "555.444.3333");
 
             var newPhones = new List<Phone>();
             number = "123.456.7890";
@@ -281,6 +270,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             person.AddPhone(phone);
             number = "444.627.9206";
             phone = new Phone(number, phoneType, true);
+
             var exception = Assert.Throws<ArgumentException>(
                 () => { person.AddPhone(phone); });
 

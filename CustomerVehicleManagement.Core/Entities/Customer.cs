@@ -27,6 +27,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             }
 
             EntityId = entity.Id;
+            Created = DateTime.UtcNow;
         }
 
         // Person or Organization

@@ -86,6 +86,23 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
+        public void AddPhonesWhenOrganizationHasNoPhonesOnAddPhone()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+
+
+            Assert.That(organization.Phones == null);
+            organization.AddPhone(phone);
+
+            Assert.That(organization.Phones.Count == 1);
+        }
+
+        [Test]
         public void AddPhone()
         {
             string organizationName = "Jane's";
@@ -150,6 +167,43 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             Assert.That(organization.Phones.Count == 2);
             Assert.That(organization.Phones[0].Number == "989.627.9206");
+        }
+
+        [Test]
+        public void NotCreateMoreThanOnePrimaryPhone()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+            var number = "555.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+            organization.AddPhone(phone);
+            number = "444.627.9206";
+            phone = new Phone(number, phoneType, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.AddPhone(phone); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryPhoneExistsMessage));
+
+        }
+
+        [Test]
+        public void NotAddDuplicatePhone()
+        {
+            string organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+            var number = "555.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+            organization.AddPhone(phone);
+            phone = new Phone(number, phoneType, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.AddPhone(phone); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.DuplicatePhoneExistsMessage));
+
         }
 
         [Test]
