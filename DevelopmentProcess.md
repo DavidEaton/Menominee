@@ -1,4 +1,4 @@
-Policy files will be maintained in the \DevelopmentProcess folder of this solution repository, where they will act as standards for our development process, and application design guidance.
+﻿Policy files will be maintained in the \DevelopmentProcess folder of this solution repository, where they will act as standards for our development process, and application design guidance.
 
 The benefits of versioned policies are:
 
@@ -13,9 +13,66 @@ The benefits of versioned policies are:
 - Continual refinement of the policy documents will help us become more conscious of the development process and help us think of ways
   it can be optimized and automated.
 
+## <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines">Naming Standards</a>
+This application follows <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/">Microsoft Framework Design Guidelines for .NET</a>
 
+To differentiate words in an identifier, capitalize the first letter of each word in the identifier. Do not use underscores to differentiate words, or for that matter, anywhere in identifiers. There are two appropriate ways to capitalize identifiers, depending on the use of the identifier:
 
-#### This application was designed with Domain Droven Design (DDD) principles in mind.
+PascalCasing
+
+camelCasing
+
+The PascalCasing convention, used for all identifiers except parameter names, capitalizes the first character of each word (including acronyms over two letters in length), as shown in the following examples:
+
+PropertyDescriptor HtmlTag
+
+A special case is made for two-letter acronyms in which both letters are capitalized, as shown in the following identifier:
+
+IOStream
+
+The camelCasing convention, used only for parameter names, capitalizes the first character of each word except the first word, as shown in the following examples. As the example also shows, two-letter acronyms that begin a camel-cased identifier are both lowercase.
+
+propertyDescriptor ioStream htmlTag
+
+✔️ DO use PascalCasing for all public member, type, and namespace names consisting of multiple words.
+
+✔️ DO use camelCasing for parameter names.
+
+### <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/general-naming-conventions">General Naming Conventions</a>
+#### Word Choice
+✔️ DO choose easily readable identifier names.
+
+For example, a property named `HorizontalAlignment` is more English-readable than `AlignmentHorizontal`.
+
+✔️ DO favor readability over brevity.
+
+The property name `CanScrollHorizontally` is better than `ScrollableX` (an obscure reference to the X-axis).
+
+❌ DO NOT use underscores, hyphens, or any other nonalphanumeric characters.
+
+❌ DO NOT use <a href="https://en.wikipedia.org/wiki/Hungarian_notation">Hungarian notation</a>.
+
+❌ AVOID using identifiers that conflict with keywords of widely used programming languages.
+
+#### Using Abbreviations and Acronyms
+❌ DO NOT use abbreviations or contractions as part of identifier names.
+
+For example, use `GetWindow`` rather than `GetWin`.
+
+❌ DO NOT use any acronyms that are not widely accepted, and even if they are, only when necessary. This application uses the widely accepted abbreviation `Dto` for `Data Transfer Object`.
+
+#### Avoiding Language-Specific Names
+✔️ DO use semantically interesting names rather than language-specific keywords for type names.
+
+For example, `GetLength` is a better name than `GetInt`.
+
+✔️ DO use a generic CLR type name, rather than a language-specific name, in the rare cases when an identifier has no semantic meaning beyond its type.
+
+For example, a method converting to Int64 should be named `ToInt64`, not `ToLong` (because Int64 is a CLR name for the C#-specific alias `long`).
+
+✔️ DO use a common name, such as `value` or `item`, rather than repeating the type name, in the rare cases when an identifier has no semantic meaning and the type of the parameter is not important.
+
+## This application was designed with <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles in mind.
 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
 In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Person domain aggregate class enforces the business rule, "Person can have only one Primary Phone", via ValidationAttribute named PersonCanHaveOnlyOnePrimaryPhoneAttribute.
@@ -29,7 +86,7 @@ We use field-level validation on our command Data Transfer Objects (DTOs) and do
 
 ### Value Objects
 
-Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn�t be able to instantiate a value object in an invalid state.
+Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn’t be able to instantiate a value object in an invalid state.
 
 In practice it means that value objects are immutable, and public setters are not used. For example, methods like NewNumber on the Phone class return a NEW Phone object, rather than mutating the existing Phone object:
 
@@ -43,7 +100,7 @@ In practice it means that value objects are immutable, and public setters are no
         /// with just an identifier and a reference to the owning Organization.
         /// Necessary to enable searchable value object collection of phones.
         /// Although we do now have an additional entity in our domain model,
-        /// we don�t ever have to expose it outside of the aggregate (Organization).
+        /// we don’t ever have to expose it outside of the aggregate (Organization).
 
 ### [ApiController] Attribute
 ... makes the next two checks unnecessary :)

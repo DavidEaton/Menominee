@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task GetReturnsExpectedJson()
         {
             /* Uses case-insensitive deserialization
-               Confirm that endpoint exists at the expected uri
+               Confirms that endpoint exists at the expected uri
                Confirms that response has success status code
                Confirms Content-Type header
                Confirms that response includes content (!= null && length > 0)

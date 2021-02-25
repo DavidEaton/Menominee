@@ -8,12 +8,12 @@ namespace CustomerVehicleManagement.Api.Utilities
 
         public static string GetPrimaryPhone(IListOfPhone entity)
         {
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.Primary == true).ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : null;
         }
 
         public static string GetPrimaryPhoneType(IListOfPhone entity)
         {
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.Primary == true).PhoneType.ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : null;
         }
 
         public static string GetOrdinalPhoneType(IListOfPhone entity, int position)

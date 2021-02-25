@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         // Blazor 5 requires public JsonConstructor-attributed contructor, 
         [JsonConstructor]
-        public Phone(string number, PhoneType phoneType, bool primary)
+        public Phone(string number, PhoneType phoneType, bool isPrimary)
         {
             try
             {
@@ -28,21 +28,21 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             Number = number;
             PhoneType = phoneType;
-            Primary = primary;
+            IsPrimary = isPrimary;
         }
 
         public string Number { get; private set; }
         public PhoneType PhoneType { get; private set;}
-        public bool Primary { get; private set; }
+        public bool IsPrimary { get; private set; }
 
         public Phone NewNumber(string newNumber)
         {
-            return new Phone(newNumber, PhoneType, Primary);
+            return new Phone(newNumber, PhoneType, IsPrimary);
         }
 
         public Phone NewPhoneType(PhoneType newPhoneType)
         {
-            return new Phone(Number, newPhoneType, Primary);
+            return new Phone(Number, newPhoneType, IsPrimary);
         }
         public Phone NewPrimary(bool primary)
         {
@@ -70,12 +70,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         /// </summary>
         /// <param name="phone1"></param>
         /// <param name="phone2"></param>
-        /// <returns>True if all properties are equal between phone1 and phone2; False if one or more properties are not equal between phone1 and phone2.</returns>
+        /// <returns>True if all properties are equal comparing phone1 and phone2; False if one or more properties are not equal.</returns>
         public static bool EqualsByProperty(Phone phone1, Phone phone2)
         {
             return phone1.Number == phone2.Number
                 && phone1.PhoneType == phone2.PhoneType
-                && phone1.Primary == phone2.Primary;
+                && phone1.IsPrimary == phone2.IsPrimary;
         }
 
         private static string RemoveNonNumericCharacters(string input)

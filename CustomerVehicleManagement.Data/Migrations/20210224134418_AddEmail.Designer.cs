@@ -4,14 +4,16 @@ using CustomerVehicleManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerVehicleManagement.Data.Migrations
 {
     [DbContext(typeof(DataDbContext))]
-    partial class DataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210224134418_AddEmail")]
+    partial class AddEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,15 +83,10 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("PersonId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("PersonId");
 
@@ -206,10 +203,6 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Email", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Organization", null)
-                        .WithMany("Emails")
-                        .HasForeignKey("OrganizationId");
-
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Person", null)
                         .WithMany("Emails")
                         .HasForeignKey("PersonId");
@@ -414,8 +407,6 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
                 {
-                    b.Navigation("Emails");
-
                     b.Navigation("Phones");
                 });
 

@@ -207,6 +207,163 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
+        public void AddEmail()
+        {
+            var organization = new Organization("Jane's");
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            organization.AddEmail(email);
+
+            Assert.That(organization.Emails[0].Address == address);
+        }
+
+        [Test]
+        public void RemoveEmail()
+        {
+            var organization = new Organization("Jane's");
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            organization.AddEmail(email);
+
+            address = "june@doe.com";
+            email = new Email(address, false);
+            organization.AddEmail(email);
+
+            Assert.That(organization.Emails.Count == 2);
+
+            organization.RemoveEmail(email);
+
+            Assert.That(organization.Emails.Count == 1);
+            Assert.That(organization.Emails[0].Address == "jane@doe.com");
+        }
+
+        [Test]
+        public void SetEmails()
+        {
+            var organization = new Organization("Jane's");
+            var emails = new List<Email>();
+
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            emails.Add(email);
+
+            address = "june@done.com";
+            email = new Email(address, false);
+
+            emails.Add(email);
+
+            organization.SetEmails(emails);
+
+            Assert.That(organization.Emails.Count == 2);
+            Assert.That(organization.Emails[0].Address == "jane@doe.com");
+
+            var newEmails = new List<Email>();
+            address = "jill@hill.com";
+            email = new Email(address, true);
+
+            newEmails.Add(email);
+
+            address = "jack@hill.com";
+            email = new Email(address, false);
+
+            newEmails.Add(email);
+
+            organization.SetEmails(newEmails);
+
+            Assert.AreEqual(organization.Emails.Count, 2);
+            Assert.That(organization.Emails[1].Address == "jack@hill.com");
+        }
+
+        [Test]
+        public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
+        {
+            var organization = new Organization("Jane's");
+            var emails = new List<Email>();
+
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            emails.Add(email);
+
+            address = "june@done.com";
+            email = new Email(address, true);
+
+            emails.Add(email);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryEmailExistsMessage));
+
+
+        }
+
+        [Test]
+        public void NotSetEmailsWithDuplicateEmails()
+        {
+            var organization = new Organization("Jane's");
+            var emails = new List<Email>();
+            var address = "jane@doe.com";
+            var email = new Email(address, false);
+
+            emails.Add(email);
+            emails.Add(email);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.DuplicateEmailExistsMessage));
+        }
+
+        [Test]
+        public void NotSetEmailsToNull()
+        {
+            var organization = new Organization("Jane's");
+            List<Email> emails = null;
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.EmptyEmailCollectionMessage));
+        }
+
+        [Test]
+        public void NotCreateMoreThanOnePrimaryEmail()
+        {
+            var organization = new Organization("Jane's");
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+            organization.AddEmail(email);
+            address = "june@done.com";
+            email = new Email(address, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.AddEmail(email); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryEmailExistsMessage));
+
+        }
+
+        [Test]
+        public void NotAddDuplicateEmail()
+        {
+            var organization = new Organization("Jane's");
+            var address = "jane@doe.com";
+            var email = new Email(address, false);
+
+            organization.AddEmail(email);
+            email = new Email(address, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { organization.AddEmail(email); });
+
+            Assert.That(exception.Message, Is.EqualTo(Organization.DuplicateEmailExistsMessage));
+        }
+
+        [Test]
         public void SetName()
         {
             string organizationName = "Jane's";

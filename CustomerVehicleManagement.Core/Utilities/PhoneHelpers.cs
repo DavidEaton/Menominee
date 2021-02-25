@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Domain.Utilities
 
             foreach (var existingPhone in phones)
             {
-                if (existingPhone.Primary)
+                if (existingPhone.IsPrimary)
                 {
                     result = true;
                     break;

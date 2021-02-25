@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.Property(phone => phone.PhoneType)
                 .HasMaxLength(50)
                 .IsRequired();
-            builder.Property(phone => phone.Primary)
+            builder.Property(phone => phone.IsPrimary)
                 .IsRequired();
 
             // Convert enum values to and from strings in the database

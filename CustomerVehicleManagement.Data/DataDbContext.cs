@@ -38,6 +38,7 @@ namespace CustomerVehicleManagement.Data
             modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
+            modelBuilder.ApplyConfiguration(new EmailConfiguration());
         }
     }
 }

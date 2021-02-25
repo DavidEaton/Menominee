@@ -102,11 +102,11 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.Primary, Is.EqualTo(true));
+            Assert.That(phone.IsPrimary, Is.EqualTo(true));
 
             phone = phone.NewPrimary(false);
 
-            Assert.That(phone.Primary, Is.EqualTo(false));
+            Assert.That(phone.IsPrimary, Is.EqualTo(false));
         }
 
         [Test]

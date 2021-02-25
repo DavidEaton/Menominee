@@ -153,23 +153,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void AddPhonesWhenPersonHasNoPhonesOnAddPhone()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
-            var number = "555.444.3333";
-            var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
-
-            Assert.That(person.Phones == null);
-            person.AddPhone(phone);
-
-            Assert.That(person.Phones.Count == 1);
-        }
-
-        [Test]
         public void AddPhone()
         {
             var firstName = "Jane";
@@ -275,7 +258,6 @@ namespace CustomerVehicleManagement.Tests.EntityTests
                 () => { person.AddPhone(phone); });
 
             Assert.That(exception.Message, Is.EqualTo(Person.PrimaryPhoneExistsMessage));
-
         }
 
         [Test]
@@ -296,7 +278,187 @@ namespace CustomerVehicleManagement.Tests.EntityTests
                 () => { person.AddPhone(phone); });
 
             Assert.That(exception.Message, Is.EqualTo(Person.DuplicatePhoneExistsMessage));
+        }
 
+        [Test]
+        public void AddEmail()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            person.AddEmail(email);
+
+            Assert.That(person.Emails[0].Address == address);
+        }
+
+        [Test]
+        public void RemoveEmail()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            person.AddEmail(email);
+
+            address = "june@doe.com";
+            email = new Email(address, false);
+            person.AddEmail(email);
+
+            Assert.That(person.Emails.Count == 2);
+
+            person.RemoveEmail(email);
+
+            Assert.That(person.Emails.Count == 1);
+            Assert.That(person.Emails[0].Address == "jane@doe.com");
+        }
+
+        [Test]
+        public void SetEmails()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var emails = new List<Email>();
+
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            emails.Add(email);
+
+            address = "june@done.com";
+            email = new Email(address, false);
+
+            emails.Add(email);
+
+            person.SetEmails(emails);
+
+            Assert.That(person.Emails.Count == 2);
+            Assert.That(person.Emails[0].Address == "jane@doe.com");
+
+            var newEmails = new List<Email>();
+            address = "jill@hill.com";
+            email = new Email(address, true);
+
+            newEmails.Add(email);
+
+            address = "jack@hill.com";
+            email = new Email(address, false);
+
+            newEmails.Add(email);
+
+            person.SetEmails(newEmails);
+
+            Assert.AreEqual(person.Emails.Count, 2);
+            Assert.That(person.Emails[1].Address == "jack@hill.com");
+        }
+
+        [Test]
+        public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var emails = new List<Email>();
+
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+
+            emails.Add(email);
+
+            address = "june@done.com";
+            email = new Email(address, true);
+
+            emails.Add(email);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryEmailExistsMessage));
+
+
+        }
+
+        [Test]
+        public void NotSetEmailsWithDuplicateEmails()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var emails = new List<Email>();
+            var address = "jane@doe.com";
+            var email = new Email(address, false);
+
+            emails.Add(email);
+            emails.Add(email);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.DuplicateEmailExistsMessage));
+        }
+
+        [Test]
+        public void NotSetEmailsToNull()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            List<Email> emails = null;
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.SetEmails(emails); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.EmptyEmailCollectionMessage));
+        }
+
+        [Test]
+        public void NotCreateMoreThanOnePrimaryEmail()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+            person.AddEmail(email);
+            address = "june@done.com";
+            email = new Email(address, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.AddEmail(email); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryEmailExistsMessage));
+
+        }
+
+        [Test]
+        public void NotAddDuplicateEmail()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+            var address = "jane@doe.com";
+            var email = new Email(address, false);
+
+            person.AddEmail(email);
+            email = new Email(address, true);
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => { person.AddEmail(email); });
+
+            Assert.That(exception.Message, Is.EqualTo(Person.DuplicateEmailExistsMessage));
         }
 
         [Test]

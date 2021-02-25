@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using SharedKernel.ValueObjects;
+using CustomerVehicleManagement.Domain.Entities;
 using System;
 
-namespace CustomerVehicleManagement.Tests.ValueObjectTests
+namespace CustomerVehicleManagement.Tests.EntityTests
 {
     public class EmailShould
     {
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             var exception = Assert.Throws<ArgumentException>(
                 () => { new Email(address, primary); });
 
-            Assert.That(exception.Message, Is.EqualTo(Email.EmailInvalidMessage));
+            Assert.That(exception.Message, Is.EqualTo(Email.EmailEmptyMessage));
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             var exception = Assert.Throws<ArgumentException>(
                 () => { new Email(address, primary); });
 
-            Assert.That(exception.Message, Is.EqualTo(Email.EmailInvalidMessage));
+            Assert.That(exception.Message, Is.EqualTo(Email.EmailEmptyMessage));
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
             var address1 = new Email(address, primary);
             var address2 = new Email(address, primary);
 
-            Assert.That(address1.Equals(address2));
+            Assert.That(address1, Is.EqualTo(address2));
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjectTests
 
             email = email.NewPrimary(newPrimary);
 
-            Assert.That(email.Primary.Equals(newPrimary));
+            Assert.That(email.IsPrimary.Equals(newPrimary));
         }
 
         internal static Email CreateEmail()
