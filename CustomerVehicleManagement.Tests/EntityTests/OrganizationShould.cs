@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
     public class OrganizationShould
     {
         [Test]
-        public void CreateNewOrganization()
+        public void CreateOrganization()
         {
             // Arrange
             string name = "Jane's";
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewOrganizationWithAddress()
+        public void CreateOrganizationWithAddress()
         {
             string name = "Jane's";
             var addressLine = "1234 Five Street";
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewOrganizationWithContact()
+        public void CreateOrganizationWithContact()
         {
             string organizationName = "Jane's";
             string firstName = "Jane";
@@ -86,7 +86,45 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void AddPhonesWhenOrganizationHasNoPhonesOnAddPhone()
+        public void CreateOrganizationWithPhones()
+        {
+            string organizationName = "Jane's";
+
+            var phones = new List<Phone>();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Mobile;
+            var phone = new Phone(number, phoneType, true);
+            phones.Add(phone);
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+            phones.Add(phone);
+
+            var organization = new Organization(organizationName, null, null, phones);
+
+            Assert.That(organization.Phones.Count == 2);
+        }
+
+        [Test]
+        public void CreateOrganizationWithEmails()
+        {
+            string organizationName = "Jane's";
+            var emails = new List<Email>();
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+            emails.Add(email);
+            address = "june@done.com";
+            email = new Email(address, false);
+            emails.Add(email);
+
+            var organization = new Organization(organizationName, null, null, null, emails);
+
+            Assert.That(organization.Emails.Count == 2);
+
+        }
+
+        [Test]
+        public void HaveEmptyPhonesOnCreate()
         {
             string organizationName = "Jane's";
             var organization = new Organization(organizationName);
@@ -96,10 +134,11 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var phone = new Phone(number, phoneType, true);
 
 
-            Assert.That(organization.Phones == null);
+            Assert.That(organization.Phones, Is.Not.EqualTo(null));
+            Assert.That(organization.Phones.Count, Is.EqualTo(0));
             organization.AddPhone(phone);
 
-            Assert.That(organization.Phones.Count == 1);
+            Assert.That(organization.Phones.Count, Is.EqualTo(1));
         }
 
         [Test]

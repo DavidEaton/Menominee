@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
     public class PersonShould
     {
         [Test]
-        public void CreateNewPerson()
+        public void CreatePerson()
         {
             // Arrange
             var firstName = "Jane";
@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void NotCreateNewPersonWithNullName()
+        public void NotCreatePersonWithNullName()
         {
             string firstName = null;
             string lastName = null;
@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void NotCreateNewPersonWithEmptyName()
+        public void NotCreatePersonWithEmptyName()
         {
             string firstName = "";
             string lastName = "";
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithEmptyLastName()
+        public void CreatePersonWithEmptyLastName()
         {
             string firstName = "Jane";
             string lastName = "";
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithEmptyFirstName()
+        public void CreatePersonWithEmptyFirstName()
         {
             string firstName = "";
             string lastName = "Doe";
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithNullLastName()
+        public void CreatePersonWithNullLastName()
         {
             string firstName = "Jane";
             string lastName = null;
@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithNullFirstName()
+        public void CreatePersonWithNullFirstName()
         {
             string firstName = null;
             string lastName = "Doe";
@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithBirthday()
+        public void CreatePersonWithBirthday()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithDriversLicense()
+        public void CreatePersonWithDriversLicense()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, null, null, null, driversLicense);
+            var person = new Person(name, Gender.Female, null, null, null, null, driversLicense);
 
             Assert.That(person, Is.Not.Null);
             Assert.That(person.DriversLicense, Is.Not.Null);
@@ -130,7 +130,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void CreateNewPersonWithAddress()
+        public void CreatePersonWithAddress()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -153,12 +153,67 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         }
 
         [Test]
-        public void AddPhone()
+        public void CreatePersonWithPhones()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var phones = new List<Phone>();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Mobile;
+            var phone = new Phone(number, phoneType, true);
+            phones.Add(phone);
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = new Phone(number, phoneType, false);
+            phones.Add(phone);
+
+            var person = new Person(name, Gender.Female, null, null, phones);
+
+            Assert.That(person.Phones.Count == 2);
+        }
+
+        [Test]
+        public void CreatePersonWithEmails()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = new PersonName(lastName, firstName);
+            var emails = new List<Email>();
+            var address = "jane@doe.com";
+            var email = new Email(address, true);
+            emails.Add(email);
+            address = "june@done.com";
+            email = new Email(address, false);
+            emails.Add(email);
+
+            var person = new Person(name, Gender.Female, null, null, null, emails);
+
+            Assert.That(person.Emails.Count == 2);
+
+        }
+
+        [Test]
+        public void HaveEmptyPhonesOnCreate()
+        {
+            var person = CreateValidPerson();
+
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = new Phone(number, phoneType, true);
+
+
+            Assert.That(person.Phones, Is.Not.EqualTo(null));
+            Assert.That(person.Phones.Count, Is.EqualTo(0));
+            person.AddPhone(phone);
+
+            Assert.That(person.Phones.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void AddPhone()
+        {
+            var person = CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -171,24 +226,17 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void RemovePhone()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
-
             person.AddPhone(phone);
-
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = new Phone(number, phoneType, false);
-
             person.AddPhone(phone);
 
             Assert.That(person.Phones.Count == 2);
-
             person.RemovePhone(phone);
 
             Assert.That(person.Phones.Count == 1);
@@ -198,12 +246,8 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetPhones()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var phones = new List<Phone>();
-
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
@@ -243,10 +287,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotCreateMoreThanOnePrimaryPhone()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -263,10 +304,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotAddDuplicatePhone()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -283,10 +321,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void AddEmail()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, true);
 
@@ -298,10 +333,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void RemoveEmail()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, true);
 
@@ -322,10 +354,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetEmails()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var emails = new List<Email>();
 
             var address = "jane@doe.com";
@@ -363,10 +392,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var emails = new List<Email>();
 
             var address = "jane@doe.com";
@@ -390,10 +416,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotSetEmailsWithDuplicateEmails()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = new Email(address, false);
@@ -410,10 +433,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotSetEmailsToNull()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             List<Email> emails = null;
 
             var exception = Assert.Throws<ArgumentException>(
@@ -425,10 +445,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotCreateMoreThanOnePrimaryEmail()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, true);
             person.AddEmail(email);
@@ -445,10 +462,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void NotAddDuplicateEmail()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, false);
 
@@ -486,10 +500,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetGender()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
+            var person = CreateValidPerson();
 
             Assert.That(person.Gender == Gender.Female);
 
@@ -501,14 +512,7 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetBirthday()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            DateTime? birthday = DateTime.Today;
-
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, birthday);
-
-            Assert.That(person.Birthday == DateTime.Today);
+            var person = CreateValidPerson();
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
@@ -518,28 +522,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetDriversLicense()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
             var driversLicenseNumber = "123456789POIUYTREWQ";
             var driversLicenseState = "MI";
             var issued = DateTime.Today;
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
-
             var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, null, null, null, driversLicense);
-
-            Assert.That(person.DriversLicense, Is.Not.Null);
-            Assert.That(person.DriversLicense.Number, Is.EqualTo(driversLicenseNumber));
-
-            driversLicenseNumber = "POIUYTREWQ123456789";
-            driversLicenseState = "ME";
-            issued = DateTime.Today;
-            expiry = DateTime.Today.AddYears(4);
-            driversLicenseValidRange = new DateTimeRange(issued, expiry);
-
-            driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            var person = CreateValidPerson();
 
             person.SetDriversLicense(driversLicense);
 
@@ -549,28 +538,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
         [Test]
         public void SetAddress()
         {
-            var firstName = "Jane";
-            var lastName = "Doe";
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-
+            var person = CreateValidPerson();
             var address = new Address(addressLine, city, state, postalCode);
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female, null, address);
 
-            Assert.That(person.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(person.Address.City, Is.EqualTo(city));
-            Assert.That(person.Address.State, Is.EqualTo(state));
-            Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
-
-            addressLine = "5432 One Street";
-            city = "Petoskey";
-            state = "ME";
-            postalCode = "49770";
-
-            address = new Address(addressLine, city, state, postalCode);
             person.SetAddress(address);
 
             Assert.That(person.Address.AddressLine, Is.EqualTo(addressLine));
@@ -578,5 +552,17 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             Assert.That(person.Address.State, Is.EqualTo(state));
             Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
         }
+
+        private Person CreateValidPerson()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+
+            var name = new PersonName(lastName, firstName);
+            var person = new Person(name, Gender.Female);
+
+            return person;
+        }
+
     }
 }
