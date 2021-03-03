@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             }
             catch (Exception)
             {
-                throw new ArgumentException(OrganizationNameEmptyMessage);
+                throw new ArgumentException(OrganizationNameEmptyMessage, nameof(name));
             }
 
             Name = name;

@@ -2,7 +2,7 @@
   <Settings>
     <IgnoredTests>
       <FixtureTestSelector>
-        <FixtureName>CustomerVehicleManagement.Tests.DatabaseTests.DatabaseShould</FixtureName>
+        <FixtureName>CustomerVehicleManagement.UnitTests.DatabaseTests.DatabaseShould</FixtureName>
       </FixtureTestSelector>
     </IgnoredTests>
   </Settings>

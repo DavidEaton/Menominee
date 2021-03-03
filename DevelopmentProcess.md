@@ -142,3 +142,39 @@ Refactor to Lazy Loading:
 <li>Confirm domain classes have protected parameterless constructor</li>
 </ul>
 
+### Testing
+Framework of choice is <a href="https://xunit.net/">xunit</a>. With it we use <a href="https://fluentassertions.com/">Fluent Assertions</a>, which:
+
+<ul>
+<li>Improves readability of tests</li>
+</ul>
+
+                // The old way:
+                // Assert.That(customer.Entity is Person);
+
+                // The Fluent way:
+                customer.Entity.Should().BeOfType<Person>();
+
+<ul>
+<li>Improves readability of test failure messages</li>
+</ul>
+
+            // If we change the test to force a failure (changed Person type to Email in the test):
+            // standard output
+            Assert.That(customer.Entity is Email);
+            Message: 
+                  Expected: True
+                  But was:  False
+
+            // Fluent output
+            customer.Entity.Should().BeOfType<Email>();
+            Message: 
+                Expected type to be CustomerVehicleManagement.Domain.Entities.Email, but found CustomerVehicleManagement.Domain.Entities.Person.
+
+            // As you may have noticed, the fluent message reveals enough info to quickly determine the cause of the failed test; without fluent assertions the message is vague and may require debugging to determine the cause.
+
+<ul>
+<li>Makes it harder to confuse expected and actual results</li>
+</ul>
+
+Test projects include unit tests, integration tests.

@@ -1,15 +1,18 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using NUnit.Framework;
+using FluentAssertions;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using Xunit;
+using CustomerVehicleManagement.Domain.BaseClasses;
+using FluentAssertions.Execution;
 
-namespace CustomerVehicleManagement.Tests.EntityTests
+namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
     public class PersonShould
     {
-        [Test]
+        [Fact]
         public void CreatePerson()
         {
             // Arrange
@@ -21,78 +24,78 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var person = new Person(name, Gender.Female);
 
             // Assert
-            Assert.That(person, Is.Not.Null);
+            person.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void NotCreatePersonWithNullName()
         {
             string firstName = null;
             string lastName = null;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { new Person(new PersonName(lastName, firstName), Gender.Female); });
+            Action action = () => new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage(PersonName.PersonNameEmptyMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotCreatePersonWithEmptyName()
         {
-            string firstName = "";
-            string lastName = "";
+            var firstName = "";
+            var lastName = "";
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { new Person(new PersonName(lastName, firstName), Gender.Female); });
+            Action action = () => new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(exception.Message, Is.EqualTo(PersonName.PersonNameEmptyMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage(PersonName.PersonNameEmptyMessage);
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithEmptyLastName()
         {
-            string firstName = "Jane";
-            string lastName = "";
+            var firstName = "Jane";
+            var lastName = "";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(person, Is.Not.Null);
+            person.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithEmptyFirstName()
         {
-            string firstName = "";
-            string lastName = "Doe";
+            var firstName = "";
+            var lastName = "Doe";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(person, Is.Not.Null);
+            person.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithNullLastName()
         {
-            string firstName = "Jane";
+            var firstName = "Jane";
             string lastName = null;
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(person, Is.Not.Null);
+            person.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithNullFirstName()
         {
             string firstName = null;
-            string lastName = "Doe";
+            var lastName = "Doe";
 
             var person = new Person(new PersonName(lastName, firstName), Gender.Female);
 
-            Assert.That(person, Is.Not.Null);
+            person.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithBirthday()
         {
             var firstName = "Jane";
@@ -102,11 +105,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var person = new Person(name, Gender.Female, birthday);
 
-            Assert.That(person, Is.Not.Null);
-            Assert.That(person.Birthday, Is.EqualTo(birthday));
+            person.Birthday.Should().BeCloseTo(birthday);
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithDriversLicense()
         {
             var firstName = "Jane";
@@ -116,20 +118,21 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var issued = DateTime.Today;
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
-
             var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
             var name = new PersonName(lastName, firstName);
+
             var person = new Person(name, Gender.Female, null, null, null, null, driversLicense);
 
-            Assert.That(person, Is.Not.Null);
-            Assert.That(person.DriversLicense, Is.Not.Null);
-            Assert.That(person.DriversLicense.Number, Is.EqualTo(driversLicenseNumber));
-            Assert.That(person.DriversLicense.State, Is.EqualTo(driversLicenseState));
-            Assert.That(person.DriversLicense.ValidRange.Start, Is.EqualTo(issued));
-            Assert.That(person.DriversLicense.ValidRange.End, Is.EqualTo(expiry));
+            using (new AssertionScope())
+            {
+                person.DriversLicense.Number.Should().Be(driversLicenseNumber);
+                person.DriversLicense.State.Should().Be(driversLicenseState);
+                person.DriversLicense.ValidRange.Start.Should().Be(issued);
+                person.DriversLicense.ValidRange.End.Should().Be(expiry);
+            }
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithAddress()
         {
             var firstName = "Jane";
@@ -138,21 +141,21 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-
             var address = new Address(addressLine, city, state, postalCode);
-
             var name = new PersonName(lastName, firstName);
+
             var person = new Person(name, Gender.Female, null, address);
 
-            Assert.That(person, Is.Not.Null);
-            Assert.That(person.Address, Is.Not.Null);
-            Assert.That(person.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(person.Address.City, Is.EqualTo(city));
-            Assert.That(person.Address.State, Is.EqualTo(state));
-            Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
+            using (new AssertionScope())
+            {
+                person.Address.AddressLine.Should().Be(addressLine);
+                person.Address.City.Should().Be(city);
+                person.Address.State.Should().Be(state);
+                person.Address.PostalCode.Should().Be(postalCode);
+            }
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithPhones()
         {
             var firstName = "Jane";
@@ -170,10 +173,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var person = new Person(name, Gender.Female, null, null, phones);
 
-            Assert.That(person.Phones.Count == 2);
+            person.Phones.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void CreatePersonWithEmails()
         {
             var firstName = "Jane";
@@ -189,28 +192,18 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var person = new Person(name, Gender.Female, null, null, null, emails);
 
-            Assert.That(person.Emails.Count == 2);
-
+            person.Emails.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void HaveEmptyPhonesOnCreate()
         {
             var person = CreateValidPerson();
 
-            var number = "989.627.9206";
-            var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
-
-
-            Assert.That(person.Phones, Is.Not.EqualTo(null));
-            Assert.That(person.Phones.Count, Is.EqualTo(0));
-            person.AddPhone(phone);
-
-            Assert.That(person.Phones.Count, Is.EqualTo(1));
+            person.Phones.Count.Should().Be(0);
         }
 
-        [Test]
+        [Fact]
         public void AddPhone()
         {
             var person = CreateValidPerson();
@@ -220,71 +213,53 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             person.AddPhone(phone);
 
-            Assert.That(person.Phones[0].Number == number);
+            person.Phones.Should().Contain(phone);
         }
 
-        [Test]
+        [Fact]
         public void RemovePhone()
         {
             var person = CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
-            person.AddPhone(phone);
+            var phone0 = new Phone(number, phoneType, true);
+            person.AddPhone(phone0);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
-            person.AddPhone(phone);
+            var phone1 = new Phone(number, phoneType, false);
+            person.AddPhone(phone1);
 
-            Assert.That(person.Phones.Count == 2);
-            person.RemovePhone(phone);
+            person.Phones.Count.Should().Be(2);
+            person.RemovePhone(phone0);
 
-            Assert.That(person.Phones.Count == 1);
-            Assert.That(person.Phones[0].Number == "555.444.3333");
+            person.Phones.Count.Should().Be(1);
+            person.Phones.Should().Contain(phone1);
         }
 
-        [Test]
+        [Fact]
         public void SetPhones()
         {
             var person = CreateValidPerson();
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
-
-            phones.Add(phone);
-
+            var phone0 = new Phone(number, phoneType, true);
+            phones.Add(phone0);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
-
-            phones.Add(phone);
-
+            var phone1 = new Phone(number, phoneType, false);
+            phones.Add(phone1);
             person.SetPhones(phones);
 
-            Assert.That(person.Phones.Count == 2);
-            Assert.That(person.Phones[0].Number == "555.444.3333");
-
-            var newPhones = new List<Phone>();
-            number = "123.456.7890";
-            phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, true);
-
-            newPhones.Add(phone);
-
-            number = "987.654.3210";
-            phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
-
-            newPhones.Add(phone);
-
-            person.SetPhones(newPhones);
-
-            Assert.AreEqual(person.Phones.Count, 2);
-            Assert.That(person.Phones[1].Number == "987.654.3210");
+            using (new AssertionScope())
+            {
+                person.Phones.Count.Should().Be(2);
+                person.Phones.Should().Contain(phone0);
+                person.Phones.Should().Contain(phone1);
+            }
         }
 
-        [Test]
+        [Fact]
         public void NotCreateMoreThanOnePrimaryPhone()
         {
             var person = CreateValidPerson();
@@ -295,30 +270,29 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             number = "444.627.9206";
             phone = new Phone(number, phoneType, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.AddPhone(phone); });
+            Action action = () => person.AddPhone(phone);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryPhoneExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.PrimaryPhoneExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotAddDuplicatePhone()
         {
             var person = CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
-
             person.AddPhone(phone);
             phone = new Phone(number, phoneType, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.AddPhone(phone); });
+            Action action = () => person.AddPhone(phone);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.DuplicatePhoneExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicatePhoneExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void AddEmail()
         {
             var person = CreateValidPerson();
@@ -327,93 +301,64 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             person.AddEmail(email);
 
-            Assert.That(person.Emails[0].Address == address);
+            person.Emails.Should().Contain(email);
         }
 
-        [Test]
+        [Fact]
         public void RemoveEmail()
         {
             var person = CreateValidPerson();
             var address = "jane@doe.com";
-            var email = new Email(address, true);
-
-            person.AddEmail(email);
-
+            var email0 = new Email(address, true);
+            person.AddEmail(email0);
             address = "june@doe.com";
-            email = new Email(address, false);
-            person.AddEmail(email);
+            var email1 = new Email(address, false);
+            person.AddEmail(email1);
 
-            Assert.That(person.Emails.Count == 2);
+            person.Emails.Count.Should().Be(2);
+            person.RemoveEmail(email0);
 
-            person.RemoveEmail(email);
-
-            Assert.That(person.Emails.Count == 1);
-            Assert.That(person.Emails[0].Address == "jane@doe.com");
+            person.Emails.Count.Should().Be(1);
+            person.Emails.Should().Contain(email1);
         }
 
-        [Test]
+        [Fact]
         public void SetEmails()
         {
             var person = CreateValidPerson();
             var emails = new List<Email>();
-
             var address = "jane@doe.com";
-            var email = new Email(address, true);
-
-            emails.Add(email);
-
+            var email0 = new Email(address, true);
+            emails.Add(email0);
             address = "june@done.com";
-            email = new Email(address, false);
-
-            emails.Add(email);
+            var email1 = new Email(address, false);
+            emails.Add(email1);
 
             person.SetEmails(emails);
 
-            Assert.That(person.Emails.Count == 2);
-            Assert.That(person.Emails[0].Address == "jane@doe.com");
-
-            var newEmails = new List<Email>();
-            address = "jill@hill.com";
-            email = new Email(address, true);
-
-            newEmails.Add(email);
-
-            address = "jack@hill.com";
-            email = new Email(address, false);
-
-            newEmails.Add(email);
-
-            person.SetEmails(newEmails);
-
-            Assert.AreEqual(person.Emails.Count, 2);
-            Assert.That(person.Emails[1].Address == "jack@hill.com");
+            person.Emails.Count.Should().Be(2);
+            person.Emails.Should().Contain(email1);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
         {
             var person = CreateValidPerson();
             var emails = new List<Email>();
-
             var address = "jane@doe.com";
             var email = new Email(address, true);
-
             emails.Add(email);
-
             address = "june@done.com";
             email = new Email(address, true);
-
             emails.Add(email);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.SetEmails(emails); });
+            Action action = () => person.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryEmailExistsMessage));
-
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.PrimaryEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsWithDuplicateEmails()
         {
             var person = CreateValidPerson();
@@ -424,25 +369,25 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             emails.Add(email);
             emails.Add(email);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.SetEmails(emails); });
+            Action action = () => person.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.DuplicateEmailExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsToNull()
         {
             var person = CreateValidPerson();
             List<Email> emails = null;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.SetEmails(emails); });
+            Action action = () => person.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.EmptyEmailCollectionMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage($"{Contactable.EmptyEmailCollectionMessage} (Parameter 'emails')");
         }
 
-        [Test]
+        [Fact]
         public void NotCreateMoreThanOnePrimaryEmail()
         {
             var person = CreateValidPerson();
@@ -452,74 +397,66 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             address = "june@done.com";
             email = new Email(address, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.AddEmail(email); });
+            Action action = () => person.AddEmail(email);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.PrimaryEmailExistsMessage));
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.PrimaryEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotAddDuplicateEmail()
         {
             var person = CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, false);
-
             person.AddEmail(email);
             email = new Email(address, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { person.AddEmail(email); });
+            Action action = () => person.AddEmail(email);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.DuplicateEmailExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void SetName()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
-
-            Assert.That(person.Name.FirstName == firstName);
-            Assert.That(person.Name.LastName == lastName);
-
             firstName = "Jill";
             lastName = "Done";
-
             name = new PersonName(lastName, firstName);
 
             person.SetName(name);
 
-            Assert.That(person.Name.FirstName == firstName);
-            Assert.That(person.Name.LastName == lastName);
+            person.Name.FirstName.Should().Be(firstName);
+            person.Name.LastName.Should().Be(lastName);
         }
 
-        [Test]
+        [Fact]
         public void SetGender()
         {
             var person = CreateValidPerson();
 
-            Assert.That(person.Gender == Gender.Female);
-
+            person.Gender.Should().Be(Gender.Female);
             person.SetGender(Gender.Male);
 
-            Assert.That(person.Gender == Gender.Male);
+            person.Gender.Should().Be(Gender.Male);
         }
 
-        [Test]
+        [Fact]
         public void SetBirthday()
         {
             var person = CreateValidPerson();
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
-            Assert.That(person.Birthday == DateTime.Today.AddDays(10));
+            person.Birthday.Should().BeCloseTo(DateTime.Today.AddDays(10));
         }
 
-        [Test]
+        [Fact]
         public void SetDriversLicense()
         {
             var driversLicenseNumber = "123456789POIUYTREWQ";
@@ -532,10 +469,10 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             person.SetDriversLicense(driversLicense);
 
-            Assert.That(person.DriversLicense.Number, Is.EqualTo(driversLicenseNumber));
+            person.DriversLicense.Number.Should().Be(driversLicenseNumber);
         }
 
-        [Test]
+        [Fact]
         public void SetAddress()
         {
             var addressLine = "1234 Five Street";
@@ -547,10 +484,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             person.SetAddress(address);
 
-            Assert.That(person.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(person.Address.City, Is.EqualTo(city));
-            Assert.That(person.Address.State, Is.EqualTo(state));
-            Assert.That(person.Address.PostalCode, Is.EqualTo(postalCode));
+            using (new AssertionScope())
+            {
+                person.Address.AddressLine.Should().Be(addressLine);
+                person.Address.City.Should().Be(city);
+                person.Address.State.Should().Be(state);
+                person.Address.PostalCode.Should().Be(postalCode);
+            }
         }
 
         private Person CreateValidPerson()
@@ -563,6 +503,5 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             return person;
         }
-
     }
 }

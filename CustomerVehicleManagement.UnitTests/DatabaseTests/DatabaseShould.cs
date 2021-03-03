@@ -1,51 +1,33 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using System.ComponentModel;
+using Xunit;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
-using SharedKernel.Enums;
+using System;
+using CustomerVehicleManagement.Api.Data;
 using SharedKernel.ValueObjects;
+using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Enums;
 using System.Threading.Tasks;
+using Moq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using FluentAssertions;
 
-namespace CustomerVehicleManagement.Tests.DatabaseTests
+namespace CustomerVehicleManagement.UnitTests.DatabaseTests
 {
     [Category("Database")]
-    public class DatabaseShould
+    public class DatabaseShould : IDisposable
     {
         private const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(Connection);
-            var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<AppDbContext>>();
-            var mockEnvironment = new Mock<IHostEnvironment>();
-            mockEnvironment
-                   .Setup(e => e.EnvironmentName)
-                   .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(Connection, true);
-            context.Database.EnsureDeleted();
-
-        }
-
-        [Test]
+        [Fact]
         public void InsertPersonIntoDatabase()
         {
             // Arrange
             AppDbContext context = CreateTestContext();
 
-            var firstName = "Kivas";
-            var lastName = "Fajo";
+            var firstName = "Jane";
+            var lastName = "Doe";
 
             // Act
             var name = new PersonName(lastName, firstName);
@@ -56,15 +38,18 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             context.SaveChanges();
 
             // Assert
-            Assert.AreNotEqual(efDefaultId, person.Id);
-            Assert.AreEqual(lastName, person.Name.LastName);
-            Assert.AreEqual(firstName, person.Name.FirstName);
+            person.Should().NotBe(efDefaultId);
+            person.Name.LastName.Should().Be(lastName);
+            person.Name.FirstName.Should().Be(firstName);
+
+            Dispose();
+            GC.SuppressFinalize(this);
         }
 
-        [Test]
+        [Fact]
         public async Task GetPersonFromDatabase()
         {
-            int id = 0;
+            var id = 0;
             AppDbContext context = CreateTestContext();
             var firstName = "Tasha";
             var lastName = "Yar";
@@ -79,14 +64,17 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             person = await context.Persons
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            Assert.AreEqual(lastName, person.Name.LastName);
-            Assert.AreEqual(firstName, person.Name.FirstName);
+            person.Name.LastName.Should().Be(lastName);
+            person.Name.FirstName.Should().Be(firstName);
+
+            Dispose();
+            GC.SuppressFinalize(this);
         }
 
-        [Test]
+        [Fact]
         public async Task UpdatePersonInDatabase()
         {
-            int id = 0;
+            var id = 0;
             AppDbContext context = CreateTestContext();
 
             var firstName = "Tasha";
@@ -106,8 +94,8 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             person = await context.Persons
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            Assert.AreEqual(firstName, person.Name.FirstName);
-            Assert.AreEqual(lastName, person.Name.LastName);
+            person.Name.LastName.Should().Be(lastName);
+            person.Name.FirstName.Should().Be(firstName);
 
             var nameNew = new PersonName("Smith", firstName);
             person.SetName(nameNew);
@@ -122,13 +110,16 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
             person = await context.Persons
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            Assert.AreEqual("Smith", person.Name.LastName);
+            person.Name.Should().Be(nameNew);
+
+            Dispose();
+            GC.SuppressFinalize(this);
         }
 
-        [Test]
+        [Fact]
         public async Task DeletePersonFromDatabase()
         {
-            int id = 0;
+            var id = 0;
             AppDbContext context = CreateTestContext();
 
             var firstName = "Dianna";
@@ -145,8 +136,8 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             // Confirm that the person was created in the database
-            Assert.AreEqual(firstName, person.Name.FirstName);
-            Assert.AreEqual(lastName, person.Name.LastName);
+            person.Name.LastName.Should().Be(lastName);
+            person.Name.FirstName.Should().Be(firstName);
 
             // Delete person
             context.Persons.Remove(person);
@@ -157,7 +148,10 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             // Confirm that the person was deleted from the database
-            Assert.AreEqual(person, null);
+            person.Should().BeNull();
+
+            Dispose();
+            GC.SuppressFinalize(this);
         }
         private static AppDbContext CreateTestContext()
         {
@@ -171,10 +165,25 @@ namespace CustomerVehicleManagement.Tests.DatabaseTests
                    .Returns("Hosting:UnitTestEnvironment");
             var context = new AppDbContext(Connection, true);
 
-            // Test database in known state
+            // Fact database in known state
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             return context;
+        }
+
+        public void Dispose()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlServer(Connection);
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockLogger = new Mock<ILogger<AppDbContext>>();
+            var mockEnvironment = new Mock<IHostEnvironment>();
+            mockEnvironment
+                   .Setup(e => e.EnvironmentName)
+                   .Returns("Hosting:UnitTestEnvironment");
+            var context = new AppDbContext(Connection, true);
+            context.Database.EnsureDeleted();
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,51 +1,53 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
 using SharedKernel.Static;
+using Xunit;
 
-namespace CustomerVehicleManagement.Tests.OtherTests
+namespace CustomerVehicleManagement.UnitFacts.OtherFacts
 {
     public class StatesCollectionShould
     {
 
-        [Test]
+        [Fact]
         public void ReturnStatesList()
         {
             var statesList = States.ToList();
 
-            Assert.That(statesList, Is.Not.Null);
-            Assert.That(statesList.Count > 10);
+            statesList.Should().NotBeNull();
+            statesList.Count.Should().BeGreaterThan(50);
         }
 
-        [Test]
+        [Fact]
         public void ReturnAbbreviationsList()
         {
             var stateAbbreviationsList = States.Abbreviations();
 
-            Assert.That(stateAbbreviationsList.Contains("MI"));
+            stateAbbreviationsList.Should().Contain("MI");
         }
 
-        [Test]
+        [Fact]
         public void ReturnStatesNamesList()
         {
             var statesNamesList = States.Names();
 
-            Assert.That(statesNamesList.Contains("Michigan"));
+            statesNamesList.Should().Contain("Michigan");
         }
 
-        [Test]
+        [Fact]
         public void GetStateNameOnGetName()
         {
             var stateName = States.GetName("MI");
 
-            Assert.That(stateName.Equals("Michigan"));
+            stateName.Should().Be(stateName);
         }
 
-        [Test]
+        [Fact]
         public void GetStateAbbreviationOnGetAbbreviation()
         {
             var stateAbbreviation = States.GetAbbreviation("Michigan");
 
-            Assert.That(stateAbbreviation.Equals("MI"));
+            stateAbbreviation.Should().Be("MI");
         }
 
     }
+
 }

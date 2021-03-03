@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
-    public class Contactable : Entity, IListOfPhone
+    public abstract class Contactable : Entity, IListOfPhone
     {
         public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
         public static readonly string PrimaryPhoneExistsMessage = "Cannot add more than one Primary phone.";
@@ -21,10 +21,10 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public void AddPhone(Phone phone)
         {
             if (PhoneHelpers.DuplicatePhoneNumberExists(phone, Phones))
-                throw new ArgumentException(DuplicatePhoneExistsMessage);
+                throw new InvalidOperationException(DuplicatePhoneExistsMessage);
 
             if (PhoneHelpers.PrimaryPhoneExists(Phones) && phone.IsPrimary)
-                throw new ArgumentException(PrimaryPhoneExistsMessage);
+                throw new InvalidOperationException(PrimaryPhoneExistsMessage);
 
             if (Phones == null)
                 Phones = new List<Phone>();
@@ -35,7 +35,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void RemovePhone(Phone phone)
         {
-            Phones.Remove(phone);
+            if (Phones != null && phone != null) 
+                Phones.Remove(phone);
         }
 
         public void SetPhones(IList<Phone> phones)
@@ -47,10 +48,10 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public void AddEmail(Email email)
         {
             if (EmailHelpers.DuplicateEmailExists(email, Emails))
-                throw new ArgumentException(DuplicateEmailExistsMessage);
+                throw new InvalidOperationException(DuplicateEmailExistsMessage);
 
             if (EmailHelpers.PrimaryEmailExists(Emails) && email.IsPrimary)
-                throw new ArgumentException(PrimaryEmailExistsMessage);
+                throw new InvalidOperationException(PrimaryEmailExistsMessage);
 
             if (Emails == null)
                 Emails = new List<Email>();
@@ -61,24 +62,28 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void RemoveEmail(Email email)
         {
-            Emails.Remove(email);
+            if (Emails != null && email != null)
+                Emails.Remove(email);
         }
 
         public void SetEmails(IList<Email> emails)
         {
             if (emails == null)
-                throw new ArgumentException(EmptyEmailCollectionMessage);
+                throw new ArgumentException(EmptyEmailCollectionMessage, nameof(emails));
 
 
             if (EmailHelpers.DuplicateEmailExists(emails))
-                throw new ArgumentException(DuplicateEmailExistsMessage);
+                throw new InvalidOperationException(DuplicateEmailExistsMessage);
 
 
             if (EmailHelpers.PrimaryEmailCountExceedsOne(emails))
-                throw new ArgumentException(PrimaryEmailExistsMessage);
+                throw new InvalidOperationException(PrimaryEmailExistsMessage);
 
-            Emails = emails;
+            if (Emails == null)
+                Emails = new List<Email>();
+
+            if (Emails != null)
+                Emails = emails;
         }
-
     }
 }

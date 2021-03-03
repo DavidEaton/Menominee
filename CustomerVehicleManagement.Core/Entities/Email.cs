@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             }
             catch (Exception)
             {
-                throw new ArgumentException(EmailEmptyMessage);
+                throw new ArgumentException(EmailEmptyMessage, nameof(address));
             }
 
             var emailAddressAttribute = new EmailAddressAttribute();

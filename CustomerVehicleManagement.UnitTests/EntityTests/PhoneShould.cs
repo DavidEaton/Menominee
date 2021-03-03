@@ -1,14 +1,15 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using NUnit.Framework;
+using FluentAssertions;
 using SharedKernel.Enums;
 using System;
+using Xunit;
 
-namespace CustomerVehicleManagement.Tests.EntityTests
+namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
     public class PhoneShould
     {
-        [Test]
-        public void CreateNewPhone()
+        [Fact]
+        public void CreatePhone()
         {
             // Arrange
             var number = "989.627.9206";
@@ -18,22 +19,22 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var phone = new Phone(number, phoneType, true);
 
             // Assert
-            Assert.That(phone, Is.Not.Null);
+            phone.Should().NotBeNull();
         }
 
-        [Test]
-        public void NotCreateNewPhoneWithEmptyNumber()
+        [Fact]
+        public void NotCreatePhoneWithEmptyNumber()
         {
             string number = null;
             var phoneType = PhoneType.Home;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { new Phone(number, phoneType, true); });
+            Action action = () => new Phone(number, phoneType, true);
 
-            Assert.That(exception.Message, Is.EqualTo(Phone.PhoneEmptyMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage(Phone.PhoneEmptyMessage);
         }
 
-        [Test]
+        [Fact]
         public void EquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
         {
             var number = "989.627.9206";
@@ -41,144 +42,143 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             var phone1 = new Phone(number, PhoneType.Home, true);
             var phone2 = new Phone(number, PhoneType.Home, true);
 
-            Assert.That(Phone.EqualsByProperty(phone1, phone2));
+            Phone.EqualsByProperty(phone1, phone2).Should().BeTrue();
         }
 
-        [Test]
-        public void NotEquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
+        [Fact]
+        public void NotEquateTwoPhoneInstancesHavingDifferentValuesOnEqualsByProperty()
         {
             var number = "989.627.9206";
-
             var phone1 = new Phone(number, PhoneType.Home, true);
             var phone2 = new Phone(number, PhoneType.Home, false);
 
-            Assert.That(!Phone.EqualsByProperty(phone1, phone2));
+            Phone.EqualsByProperty(phone1, phone2).Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void NotEquateTwoPhoneInstancesHavingDifferingValues()
         {
             var number = "989.627.9206";
-
+            var newNumber = "555-555-5555";
             var phone1 = new Phone(number, PhoneType.Home, true);
             var phone2 = new Phone(number, PhoneType.Home, false);
 
-            phone2 = phone2.NewNumber("555.555.5555");
+            phone2 = phone2.NewNumber(newNumber);
 
-            Assert.That(phone1, Is.Not.EqualTo(phone2));
+            Phone.EqualsByProperty(phone1, phone2).Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ReturnNewPhoneOnNewNumber()
         {
             var number = "989.627.9206";
+            var newNumber = "555-555-5555";
             var phoneType = PhoneType.Home;
-
             var phone = new Phone(number, phoneType, true);
 
-            phone = phone.NewNumber("555-555-5555");
+            phone = phone.NewNumber(newNumber);
 
-            Assert.That(phone.Number, Is.EqualTo("555-555-5555"));
+            phone.Number.Should().Be(newNumber);
         }
 
-        [Test]
+        [Fact]
         public void ReturnNewPhoneOnNewPhoneType()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-
             var phone = new Phone(number, phoneType, true);
 
             phone = phone.NewPhoneType(PhoneType.Mobile);
 
-            Assert.That(phone.PhoneType, Is.EqualTo(PhoneType.Mobile));
+            phone.PhoneType.Should().Be(PhoneType.Mobile);
         }
 
-        [Test]
+        [Fact]
         public void ReturnNewPhoneOnNewPrimary()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.IsPrimary, Is.EqualTo(true));
-
+            phone.IsPrimary.Should().BeTrue();
             phone = phone.NewPrimary(false);
 
-            Assert.That(phone.IsPrimary, Is.EqualTo(false));
+            phone.IsPrimary.Should().BeFalse();
         }
 
-        [Test]
+        [Fact]
         public void ReturnFormattedTenDigitPhoneNumberOnToString()
         {
             var number = "9896279206";
+            var numberFormatted = "(989) 627-9206";
             var phoneType = PhoneType.Home;
 
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.ToString(), Is.EqualTo("(989) 627-9206"));
+            phone.ToString().Should().Be(numberFormatted);
         }
 
-        [Test]
+        [Fact]
         public void ReturnFormattedSevenDigitPhoneNumberOnToString()
         {
             var number = "6279206";
+            var numberFormatted = "627-9206";
             var phoneType = PhoneType.Home;
 
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.ToString(), Is.EqualTo("627-9206"));
+            phone.ToString().Should().Be(numberFormatted);
         }
 
-        [Test]
-        public void ReturnNonFormattedOtherDigitPhoneNumberOnToString()
+        [Fact]
+        public void ReturnNonFormattedPhoneNumberOnToStringForNonStandardLengthNumbers()
         {
             var number = "896279206";
             var phoneType = PhoneType.Home;
 
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.ToString(), Is.EqualTo("896279206"));
+            phone.ToString().Should().Be("896279206");
 
             phone = phone.NewNumber("96279206");
 
-            Assert.That(phone.ToString(), Is.EqualTo("96279206"));
+            phone.ToString().Should().Be("96279206");
 
             phone = phone.NewNumber("279206");
 
-            Assert.That(phone.ToString(), Is.EqualTo("279206"));
+            phone.ToString().Should().Be("279206");
 
             phone = phone.NewNumber("79206");
 
-            Assert.That(phone.ToString(), Is.EqualTo("79206"));
+            phone.ToString().Should().Be("79206");
 
             phone = phone.NewNumber("9206");
 
-            Assert.That(phone.ToString(), Is.EqualTo("9206"));
+            phone.ToString().Should().Be("9206");
 
             phone = phone.NewNumber("206");
 
-            Assert.That(phone.ToString(), Is.EqualTo("206"));
+            phone.ToString().Should().Be("206");
 
             phone = phone.NewNumber("06");
 
-            Assert.That(phone.ToString(), Is.EqualTo("06"));
+            phone.ToString().Should().Be("06");
 
             phone = phone.NewNumber("6");
 
-            Assert.That(phone.ToString(), Is.EqualTo("6"));
+            phone.ToString().Should().Be("6");
         }
 
-        [Test]
+        [Fact]
         public void RemoveNonNumericCharactersAndFormatOnToString()
         {
             var number = "989.627.9206?";
+            var numberFormatted = "(989) 627-9206";
             var phoneType = PhoneType.Home;
 
             var phone = new Phone(number, phoneType, true);
 
-            Assert.That(phone.ToString(), Is.EqualTo("(989) 627-9206"));
+            phone.ToString().Should().Be(numberFormatted);
         }
     }
 }

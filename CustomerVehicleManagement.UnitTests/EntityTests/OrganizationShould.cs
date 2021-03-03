@@ -1,95 +1,93 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using NUnit.Framework;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Entities;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using Xunit;
 
-namespace CustomerVehicleManagement.Tests.EntityTests
+namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
     public class OrganizationShould
     {
-        [Test]
+        [Fact]
         public void CreateOrganization()
         {
             // Arrange
-            string name = "Jane's";
+            var name = "Jane's";
 
             // Act
             var organization = new Organization(name);
 
             // Assert
-            Assert.That(organization, Is.Not.Null);
+            organization.Should().NotBeNull();
         }
 
-        [Test]
+        [Fact]
         public void NotCreateOrganizationWithNullName()
         {
             string name = null;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => new Organization(name));
+            Action action = () => new Organization(name);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.OrganizationNameEmptyMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage($"{Organization.OrganizationNameEmptyMessage} (Parameter 'name')")
+                           .And
+                           .ParamName.Should().Be("name");
         }
 
-        [Test]
+        [Fact]
         public void NotCreateOrganizationWithEmptyName()
         {
-            string name = "";
+            var name = "";
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => new Organization(name));
+            Action action = () => new Organization(name);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.OrganizationNameEmptyMessage));
-
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage($"{Organization.OrganizationNameEmptyMessage} (Parameter 'name')")
+                           .And
+                           .ParamName.Should().Be("name");
         }
 
-        [Test]
+        [Fact]
         public void CreateOrganizationWithAddress()
         {
-            string name = "Jane's";
+            var name = "Jane's";
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-
             var address = new Address(addressLine, city, state, postalCode);
 
             var organization = new Organization(name, address);
 
-            Assert.That(organization, Is.Not.Null);
-            Assert.That(organization.Address, Is.Not.Null);
-            Assert.That(organization.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(organization.Address.City, Is.EqualTo(city));
-            Assert.That(organization.Address.State, Is.EqualTo(state));
-            Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
+            organization.Address.AddressLine.Should().Be(addressLine);
+            organization.Address.City.Should().Be(city);
+            organization.Address.State.Should().Be(state);
+            organization.Address.PostalCode.Should().Be(postalCode);
         }
 
-        [Test]
+        [Fact]
         public void CreateOrganizationWithContact()
         {
-            string organizationName = "Jane's";
-            string firstName = "Jane";
-            string lastName = "Doe";
-
+            var organizationName = "Jane's";
+            var firstName = "Jane";
+            var lastName = "Doe";
             var personName = new PersonName(lastName, firstName);
             var contact = new Person(personName, Gender.Female);
 
-
             var organization = new Organization(organizationName, null, contact);
 
-            Assert.That(organization, Is.Not.Null);
-            Assert.That(organization.Contact, Is.Not.Null);
-            Assert.That(organization.Name, Is.EqualTo(organizationName));
-            Assert.That(organization.Contact.Name.FirstName, Is.EqualTo(firstName));
+            organization.Name.Should().Be(organizationName);
+            organization.Contact.Name.FirstName.Should().Be(firstName);
         }
 
-        [Test]
+        [Fact]
         public void CreateOrganizationWithPhones()
         {
-            string organizationName = "Jane's";
-
+            var organizationName = "Jane's";
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
@@ -102,13 +100,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var organization = new Organization(organizationName, null, null, phones);
 
-            Assert.That(organization.Phones.Count == 2);
+            organization.Phones.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void CreateOrganizationWithEmails()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = new Email(address, true);
@@ -119,99 +117,83 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             var organization = new Organization(organizationName, null, null, null, emails);
 
-            Assert.That(organization.Emails.Count == 2);
-
+            organization.Emails.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void HaveEmptyPhonesOnCreate()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
-
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
 
+            organization.Phones.Count.Should().Be(0);
 
-            Assert.That(organization.Phones, Is.Not.EqualTo(null));
-            Assert.That(organization.Phones.Count, Is.EqualTo(0));
             organization.AddPhone(phone);
-
-            Assert.That(organization.Phones.Count, Is.EqualTo(1));
+            organization.Phones.Count.Should().Be(1);
         }
 
-        [Test]
+        [Fact]
         public void AddPhone()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
-
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
 
             organization.AddPhone(phone);
 
-            Assert.That(organization.Phones[0].Number == number);
+            organization.Phones.Should().Contain(phone);
         }
 
-        [Test]
+        [Fact]
         public void RemovePhone()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
-
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
-
             organization.AddPhone(phone);
-
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = new Phone(number, phoneType, false);
-
             organization.AddPhone(phone);
 
-            Assert.That(organization.Phones.Count == 2);
-
+            organization.Phones.Count.Should().Be(2);
             organization.RemovePhone(phone);
 
-            Assert.That(organization.Phones.Count == 1);
-            Assert.That(organization.Phones[0].Number == "989.627.9206");
+            organization.Phones.Count.Should().Be(1);
+
         }
 
-        [Test]
+        [Fact]
         public void SetPhones()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
-
             var phones = new List<Phone>();
-
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = new Phone(number, phoneType, true);
-
             phones.Add(phone);
-
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = new Phone(number, phoneType, false);
-
             phones.Add(phone);
 
             organization.SetPhones(phones);
 
-            Assert.That(organization.Phones.Count == 2);
-            Assert.That(organization.Phones[0].Number == "989.627.9206");
+            organization.Phones.Count.Should().Be(2);
         }
 
-        [Test]
+        [Fact]
         public void NotCreateMoreThanOnePrimaryPhone()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
@@ -220,17 +202,16 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             number = "444.627.9206";
             phone = new Phone(number, phoneType, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.AddPhone(phone); });
+            Action action = () => organization.AddPhone(phone);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryPhoneExistsMessage));
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.PrimaryPhoneExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotAddDuplicatePhone()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
@@ -238,14 +219,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             organization.AddPhone(phone);
             phone = new Phone(number, phoneType, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.AddPhone(phone); });
+            Action action = () => organization.AddPhone(phone);
 
-            Assert.That(exception.Message, Is.EqualTo(Person.DuplicatePhoneExistsMessage));
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicatePhoneExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void AddEmail()
         {
             var organization = new Organization("Jane's");
@@ -254,122 +234,95 @@ namespace CustomerVehicleManagement.Tests.EntityTests
 
             organization.AddEmail(email);
 
-            Assert.That(organization.Emails[0].Address == address);
+            organization.Emails.Should().Contain(email);
         }
 
-        [Test]
+        [Fact]
         public void RemoveEmail()
         {
             var organization = new Organization("Jane's");
             var address = "jane@doe.com";
-            var email = new Email(address, true);
-
-            organization.AddEmail(email);
-
+            var email0 = new Email(address, true);
+            organization.AddEmail(email0);
             address = "june@doe.com";
-            email = new Email(address, false);
-            organization.AddEmail(email);
+            var email1 = new Email(address, false);
+            organization.AddEmail(email1);
 
-            Assert.That(organization.Emails.Count == 2);
+            organization.Emails.Count.Should().Be(2);
+            organization.RemoveEmail(email0);
 
-            organization.RemoveEmail(email);
-
-            Assert.That(organization.Emails.Count == 1);
-            Assert.That(organization.Emails[0].Address == "jane@doe.com");
+            organization.Emails.Count.Should().Be(1);
+            organization.Emails.Should().Contain(email1);
         }
 
-        [Test]
+        [Fact]
         public void SetEmails()
         {
             var organization = new Organization("Jane's");
             var emails = new List<Email>();
-
             var address = "jane@doe.com";
-            var email = new Email(address, true);
-
-            emails.Add(email);
-
+            var email0 = new Email(address, true);
+            emails.Add(email0);
             address = "june@done.com";
-            email = new Email(address, false);
-
-            emails.Add(email);
+            var email1 = new Email(address, false);
+            emails.Add(email1);
 
             organization.SetEmails(emails);
 
-            Assert.That(organization.Emails.Count == 2);
-            Assert.That(organization.Emails[0].Address == "jane@doe.com");
-
-            var newEmails = new List<Email>();
-            address = "jill@hill.com";
-            email = new Email(address, true);
-
-            newEmails.Add(email);
-
-            address = "jack@hill.com";
-            email = new Email(address, false);
-
-            newEmails.Add(email);
-
-            organization.SetEmails(newEmails);
-
-            Assert.AreEqual(organization.Emails.Count, 2);
-            Assert.That(organization.Emails[1].Address == "jack@hill.com");
+            organization.Emails.Count.Should().Be(2);
+            organization.Emails.Should().Contain(email0);
+            organization.Emails.Should().Contain(email1);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
         {
             var organization = new Organization("Jane's");
             var emails = new List<Email>();
-
             var address = "jane@doe.com";
             var email = new Email(address, true);
-
             emails.Add(email);
-
             address = "june@done.com";
             email = new Email(address, true);
-
             emails.Add(email);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.SetEmails(emails); });
+            Action action = () => organization.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryEmailExistsMessage));
-
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Organization.PrimaryEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsWithDuplicateEmails()
         {
             var organization = new Organization("Jane's");
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = new Email(address, false);
-
             emails.Add(email);
             emails.Add(email);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.SetEmails(emails); });
+            Action action = () => organization.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.DuplicateEmailExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotSetEmailsToNull()
         {
             var organization = new Organization("Jane's");
             List<Email> emails = null;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.SetEmails(emails); });
+            Action action = () => organization.SetEmails(emails);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.EmptyEmailCollectionMessage));
+            action.Should().Throw<ArgumentException>()
+                           .WithMessage($"{Organization.EmptyEmailCollectionMessage} (Parameter 'emails')")
+                           .And
+                           .ParamName.Should().Be("emails");
         }
 
-        [Test]
+        [Fact]
         public void NotCreateMoreThanOnePrimaryEmail()
         {
             var organization = new Organization("Jane's");
@@ -379,14 +332,13 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             address = "june@done.com";
             email = new Email(address, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.AddEmail(email); });
+            Action action = () => organization.AddEmail(email);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.PrimaryEmailExistsMessage));
-
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Organization.PrimaryEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void NotAddDuplicateEmail()
         {
             var organization = new Organization("Jane's");
@@ -396,89 +348,71 @@ namespace CustomerVehicleManagement.Tests.EntityTests
             organization.AddEmail(email);
             email = new Email(address, true);
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { organization.AddEmail(email); });
+            Action action = () => organization.AddEmail(email);
 
-            Assert.That(exception.Message, Is.EqualTo(Organization.DuplicateEmailExistsMessage));
+            action.Should().Throw<InvalidOperationException>()
+                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
         }
 
-        [Test]
+        [Fact]
         public void SetName()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
             var organization = new Organization(organizationName);
-
-            Assert.That(organization.Name == organizationName);
-
             organizationName = "June's";
 
             organization.SetName(organizationName);
 
-            Assert.That(organization.Name == organizationName);
+            organization.Name.Should().Be(organizationName);
         }
 
-        [Test]
+        [Fact]
         public void SetContact()
         {
-            string organizationName = "Jane's";
-            string firstName = "Jane";
-            string lastName = "Doe";
-
+            var organizationName = "Jane's";
+            var firstName = "Jane";
+            var lastName = "Doe";
             var personName = new PersonName(lastName, firstName);
             var contact = new Person(personName, Gender.Female);
             var organization = new Organization(organizationName);
 
-            Assert.That(organization, Is.Not.Null);
-            Assert.That(organization.Contact, Is.Null);
-
             organization.SetContact(contact);
 
-            Assert.That(organization.Contact.Name.FirstName, Is.EqualTo(firstName));
+            organization.Contact.Name.FirstName.Should().Be(firstName);
         }
 
-        [Test]
+        [Fact]
         public void SetAddress()
         {
-            string organizationName = "Jane's";
+            var organizationName = "Jane's";
+            var organization = new Organization(organizationName);
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-
             var address = new Address(addressLine, city, state, postalCode);
-            var organization = new Organization(organizationName, address);
 
-            Assert.That(organization.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(organization.Address.City, Is.EqualTo(city));
-            Assert.That(organization.Address.State, Is.EqualTo(state));
-            Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
-
-            addressLine = "5432 One Street";
-            city = "Petoskey";
-            state = "ME";
-            postalCode = "49770";
-
-            address = new Address(addressLine, city, state, postalCode);
             organization.SetAddress(address);
 
-            Assert.That(organization.Address.AddressLine, Is.EqualTo(addressLine));
-            Assert.That(organization.Address.City, Is.EqualTo(city));
-            Assert.That(organization.Address.State, Is.EqualTo(state));
-            Assert.That(organization.Address.PostalCode, Is.EqualTo(postalCode));
+            using (new AssertionScope())
+            {
+                organization.Address.AddressLine.Should().Be(addressLine);
+                organization.Address.City.Should().Be(city);
+                organization.Address.State.Should().Be(state);
+                organization.Address.PostalCode.Should().Be(postalCode);
+            }
         }
 
-        [Test]
+        [Fact]
         public void SetNotes()
         {
-            string organizationName = "Jane's";
-            string notes = "Behold, notes!";
+            var organizationName = "Jane's";
+            var notes = "Behold, notes!";
             var organization = new Organization(organizationName);
-
-            Assert.That(string.IsNullOrWhiteSpace(organization.Notes));
 
             organization.SetNotes(notes);
 
-            Assert.That(organization.Notes == notes);
+            organization.Notes.Should().Be(notes);
         }
 
     }
