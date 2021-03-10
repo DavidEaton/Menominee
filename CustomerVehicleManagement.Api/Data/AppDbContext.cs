@@ -20,24 +20,31 @@ namespace CustomerVehicleManagement.Api.Data
             this.useConsoleLogger = useConsoleLogger;
         }
 
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options) { }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            if (!optionsBuilder.IsConfigured) // Unit tests will configure context with test provider
             {
-                builder
-                  .AddFilter((category, level) =>
-                    category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
-                  .AddConsole();
-            });
 
-            optionsBuilder.UseSqlServer(connection)
-                          .UseLazyLoadingProxies(true);
+                ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+                {
+                    builder
+                      .AddFilter((category, level) =>
+                        category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
+                      .AddConsole();
+                });
 
-            if (useConsoleLogger)
-            {
-                optionsBuilder
-                    .UseLoggerFactory(loggerFactory)
-                    .EnableSensitiveDataLogging();
+                optionsBuilder.UseSqlServer(connection)
+                              .UseLazyLoadingProxies(true);
+
+                if (useConsoleLogger)
+                {
+                    optionsBuilder
+                        .UseLoggerFactory(loggerFactory)
+                        .EnableSensitiveDataLogging();
+                }
             }
         }
 

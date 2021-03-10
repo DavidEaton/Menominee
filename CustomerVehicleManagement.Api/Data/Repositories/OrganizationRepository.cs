@@ -23,79 +23,104 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public void AddOrganization(Organization person)
+        public void Create(OrganizationCreateDto organizationCreateDto)
         {
-            context.Add(person);
+            Organization organization = null;
+
+            if (organizationCreateDto != null)
+            {
+                organization = new Organization(organizationCreateDto.Name);
+                organization.SetAddress(organizationCreateDto.Address);
+                organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
+                organization.SetPhones(organizationCreateDto.Phones);
+                organization.SetEmails(organizationCreateDto.Emails);
+            }
+
+            if (organization != null)
+                context.Add(organization);
         }
 
-        public void DeleteOrganization(Organization person)
+        public void Delete(Organization organization)
         {
-            context.Remove(person);
+            context.Remove(organization);
         }
 
-        public async Task<Organization> GetOrganizationAsync(int id)
+        public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
         {
-            return await Task.FromResult(context.Organizations.Find(id));
-                //.Include(o => o.Address);
-                //.FirstOrDefaultAsync(o => o.Id == id);
-        }
+            var organization = context.Organizations.Find(id);
 
-        public async Task<Organization[]> GetOrganizationsAsync()
-        {
-            return await context.Organizations.ToArrayAsync();
-        }
-
-        public async Task<bool> OrganizationExistsAsync(int id)
-        {
-            return await context.Organizations
-                .AnyAsync(o => o.Id == id);
-        }
-
-        public async Task<bool> SaveChangesAsync(Organization organization)
-        {
-            // Mark person EF tracking state = modified via dbContext:
-            context.Organizations
-                .Update(organization);
-
-            return (await context.SaveChangesAsync()) > 0;
-        }
-
-        public async Task<bool> SaveChangesAsync()
-        {
-            return (await context.SaveChangesAsync()) > 0;
-        }
-
-        public void FixState()
-        {
-            context.FixState();
-        }
-
-        public async Task<Organization> UpdateOrganizationAsync(Organization organization)
-        {
             if (organization == null)
-                throw new NullReferenceException("Organization is missing.");
+                return null;
 
-            context.Entry(organization).State = EntityState.Modified;
-
-            try
+            var dto = new OrganizationReadDto
             {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await OrganizationExistsAsync(organization.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
+                Id = organization.Id,
+                Name = organization.Name,
+                AddressLine = organization?.Address?.AddressLine,
+                City = organization?.Address?.City,
+                State = organization?.Address?.State,
+                PostalCode = organization?.Address?.PostalCode,
+                Contact = (organization.Contact == null) ? null : new ContactReadDto
+                {
+                    Id = organization.Contact.Id,
+                    Name = organization.Contact.Name.LastFirstMiddle,
+                    Phones = organization.Contact?.Phones.Select(phone => new PhoneReadDto
+                    {
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType.ToString(),
+                        Primary = phone.IsPrimary
+                    })
+                },
+                Notes = organization?.Notes,
+                Phones = ContactableHelpers.MapDomainPhoneToReadDto(organization.Phones)
+            };
 
-            return null;
+            return await Task.FromResult(dto);
         }
 
-        public async Task<IEnumerable<OrganizationsListDto>> GetOrganizationsListAsync()
+        public async Task<IEnumerable<OrganizationReadDto>> GetOrganizationsAsync()
         {
-            var organizationsFromContext = context.Organizations.ToArray();
+            IReadOnlyList<Organization> organizationsFromContext = await context.Organizations.ToListAsync();
 
-            var organizationsList = new List<OrganizationsListDto>();
+            List<OrganizationReadDto> dtos = organizationsFromContext.Select(o => new OrganizationReadDto
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Contact = (o.Contact == null) ? null : new ContactReadDto
+                {
+                    Id = o.Contact.Id,
+                    Name = o.Contact.Name.LastFirstMiddle,
+                    Phones = o.Contact?.Phones.Select(x => new PhoneReadDto
+                    {
+                        Number = x.Number,
+                        PhoneType = x.PhoneType.ToString(),
+                        Primary = x.IsPrimary
+                    })
+                },
+                AddressLine = o?.Address?.AddressLine,
+                City = o?.Address?.City,
+                State = o?.Address?.State,
+                PostalCode = o?.Address?.PostalCode,
+                Notes = o?.Notes
+            }).ToList();
+
+            return dtos;
+        }
+
+        public async Task<Organization> GetOrganizationEntityAsync(int id)
+        {
+            var organizationFromContext = context.Organizations.Find(id);
+
+            return await Task.FromResult(organizationFromContext);
+        }
+
+        public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()
+        {
+            var organizationsFromContext = context.Organizations
+                                                  .Include(x => x.Contact.Phones)
+                                                  .ToArray();
+
+            var organizationsList = new List<OrganizationsInListDto>();
 
             foreach (var organization in organizationsFromContext)
             {
@@ -105,7 +130,26 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             return await Task.FromResult(organizationsList);
         }
 
+        public void UpdateOrganizationAsync(Organization organization)
+        {
+            // No code in this implementation.
+        }
 
+        public async Task<bool> OrganizationExistsAsync(int id)
+        {
+            return await context.Organizations
+                .AnyAsync(o => o.Id == id);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await context.SaveChangesAsync() > 0;
+        }
+
+        public void FixTrackingState()
+        {
+            context.FixState();
+        }
     }
 }
 

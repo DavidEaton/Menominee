@@ -67,7 +67,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetAddress(Address address)
         {
-            Address = address;
+            if (address != null)
+                Address = address;
         }
 
         public void SetNotes(string notes)

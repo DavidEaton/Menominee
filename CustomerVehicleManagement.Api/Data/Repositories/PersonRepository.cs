@@ -7,7 +7,6 @@ using CustomerVehicleManagement.Api.Data.Models;
 using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
-using SharedKernel.ValueObjects;
 using CustomerVehicleManagement.Api.Utilities;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
@@ -16,9 +15,6 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
     {
         private readonly AppDbContext context;
         private readonly IMapper mapper;
-        public PersonRepository()
-        {
-        }
 
         public PersonRepository(AppDbContext context, IMapper mapper)
         {
@@ -29,38 +25,75 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public void AddPerson(PersonCreateDto person)
+        public void Create(PersonCreateDto personCreateDto)
         {
-            context.Add(mapper.Map<Person>(person));
+            Person person = null;
+
+            if (personCreateDto != null)
+            {
+                person = new Person(personCreateDto.Name, personCreateDto.Gender);
+                person.SetBirthday(personCreateDto.Birthday);
+                person.SetDriversLicense(personCreateDto.DriversLicense);
+                person.SetAddress(personCreateDto.Address);
+
+                if (personCreateDto.Phones != null)
+                    person.SetPhones(mapper.Map<IList<Phone>>(personCreateDto.Phones));
+
+                if (personCreateDto.Emails != null)
+                    person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
+            }
+
+            if (person != null)
+                context.Add(person);
         }
 
-        public void DeletePerson(Person person)
+        public void Delete(Person person)
         {
             context.Remove(person);
         }
-
-        public async Task<Person> GetPersonAsync(int id)
+        public async Task<Person> GetPersonEntityAsync(int id)
         {
             // Prefer Find() over Single() or First() for single objects (non-collections);
             // Find() checks the Identity Map Cache before making a trip to the database.
             var personFromContext = context.Persons.Find(id);
 
             return await Task.FromResult(personFromContext);
+        }
 
+        public async Task<PersonReadDto> GetPersonAsync(int id)
+        {
+            var personFromContext = context.Persons.Find(id);
+
+            return await Task.FromResult(mapper.Map<PersonReadDto>(personFromContext));
         }
 
         public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
         {
             var personsFromContext = await context.Persons.ToArrayAsync();
 
-            return mapper.Map<IEnumerable<PersonReadDto>>(personsFromContext);
+            foreach (var person in personsFromContext)
+            {
+                // Automapper may have a bug: mapping Phones works but Emails fail...
+                // mapper.Map<IEnumerable<Email>>(person.Emails);
+                // ...so instead of automapper for the emails, MapDomainEmailToReadDto()
+                mapper.Map<IEnumerable<Phone>>(person.Phones);
+            }
+
+            IEnumerable<PersonReadDto> list = mapper.Map<IEnumerable<PersonReadDto>>(personsFromContext);
+
+            foreach (var personReadDto in list)
+            {
+                personReadDto.Emails = ContactableHelpers.MapDomainEmailToReadDto(personReadDto.Emails);
+            }
+
+            return list;
         }
 
-        public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
+        public async Task<IEnumerable<PersonInListDto>> GetPersonsListAsync()
         {
             var personsFromContext = context.Persons.ToArray();
 
-            var personsList = new List<PersonListDto>();
+            var personsList = new List<PersonInListDto>();
 
             foreach (var person in personsFromContext)
             {
@@ -70,44 +103,17 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             return await Task.FromResult(personsList);
         }
 
-        public async Task<PersonReadDto> SaveChangesAsync(PersonCreateDto personToCreate)
-        {
-            var person = new Person(
-                new PersonName(personToCreate.Name.LastName
-                              ,personToCreate.Name.FirstName
-                              ,personToCreate.Name.MiddleName)
-                              ,personToCreate.Gender
-                              ,personToCreate.Birthday
-                              ,personToCreate.Address);
-
-            List<Phone> phones = CreatePhones(personToCreate);
-
-            person.SetPhones(phones);
-
-            context.Add(person);
-
-            var result = await context.SaveChangesAsync();
-
-            if (result > 0)
-            {
-                if (person?.Id > 0)
-                    return mapper.Map<PersonReadDto>(person);
-            }
-
-            return null;
-        }
-
         public async Task<bool> SaveChangesAsync()
         {
             return await context.SaveChangesAsync() > 0;
         }
 
-        public void FixState()
+        public void FixTrackingState()
         {
             context.FixState();
         }
 
-        public void UpdatePersonAsync(Person person)
+        public void UpdatePersonAsync(PersonUpdateDto person)
         {
             // No code in this implementation.
 
@@ -126,20 +132,6 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         {
             return await context.Persons
                 .AnyAsync(person => person.Id == id);
-        }
-
-        private static List<Phone> CreatePhones(PersonCreateDto personToCreate)
-        {
-            var phones = new List<Phone>();
-            Phone newPhone;
-
-            foreach (var phone in personToCreate.Phones)
-            {
-                newPhone = new Phone(phone.Number, phone.PhoneType, phone.Primary);
-                phones.Add(newPhone);
-            }
-
-            return phones;
         }
     }
 }

@@ -74,6 +74,7 @@ For example, a method converting to Int64 should be named `ToInt64`, not `ToLong
 
 ## This application was designed with <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles in mind.
 
+The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus the most of our effort, keeping it fully encapsulated, covered well by unit tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated.
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
 In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Person domain aggregate class enforces the business rule, "Person can have only one Primary Phone", via ValidationAttribute named PersonCanHaveOnlyOnePrimaryPhoneAttribute.
 ### Implement validations in the domain model layer
@@ -178,3 +179,8 @@ Framework of choice is <a href="https://xunit.net/">xunit</a>. With it we use <a
 </ul>
 
 Test projects include unit tests, integration tests.
+
+### Code Readability and Comments
+
+Code should be as self-documenting as possible, and we strive to write clear, focused code that is human-readable, and attempts to adhere to the Single Responsibility Principle.
+That said, some comments have been included in our source code for further explanation. We've tried to limit those comments to the Person class, its Data Transfer Objects (DTOs), repository, controller, mapping profile, and associated helper methods, which contain comments that are applicable to most other domain types and their related classes.

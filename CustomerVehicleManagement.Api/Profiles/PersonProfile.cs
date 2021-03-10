@@ -13,9 +13,15 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ForMember(
                     destination => destination.Name,
                     configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
+                .ForMember(
+                    destination => destination.Phones,
+                    configuration => configuration.Ignore())
+                .ForMember(
+                    destination => destination.Emails,
+                    configuration => configuration.Ignore())
                 .ReverseMap();
 
-            CreateMap<Person, PersonListDto>()
+            CreateMap<Person, PersonInListDto>()
                 .ForMember(
                     destination => destination.Name,
                     configuration => configuration.MapFrom(

@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 

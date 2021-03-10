@@ -415,5 +415,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             organization.Notes.Should().Be(notes);
         }
 
+        [Fact]
+        public void UpdateOrganizationAsync()
+        {
+            var organizationName = "Jane's";
+            var organization = new Organization(organizationName);
+
+            organization.Name.Should().Be(organizationName);
+
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Api.Data.Services
             return mapper.Map<PersonReadDto>(personFromContext);
         }
 
-        public async Task<IEnumerable<PersonListDto>> GetPersonsListAsync()
+        public async Task<IEnumerable<PersonInListDto>> GetPersonsListAsync()
         {
             return await repository.GetPersonsListAsync();
 

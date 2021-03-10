@@ -2,7 +2,7 @@
 using SharedKernel.Static;
 using Xunit;
 
-namespace CustomerVehicleManagement.UnitFacts.OtherFacts
+namespace CustomerVehicleManagement.Tests.OtherTests
 {
     public class StatesCollectionShould
     {

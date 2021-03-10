@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Api
             // from the Azure slot, otherwise use the appsetting.json connection string.
 
             // ONLY USE IN DEVELOPMENT
-            //IdentityModelEventSource.ShowPII = true;
+            //IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             //    .AddIdentityServerAuthentication(options =>
@@ -74,12 +74,12 @@ namespace CustomerVehicleManagement.Api
                 .RequireAuthenticatedUser()
                 .Build();
 
-            services.AddControllers(mvcOptions => 
+            services.AddControllers(mvcOptions =>
             {
                 // Return 406 Not Acceptible if request content type is unavailable
                 mvcOptions.ReturnHttpNotAcceptable = true;
                 //mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-        }).AddXmlDataContractSerializerFormatters(); // Provide xml content type
+            }).AddXmlDataContractSerializerFormatters(); // Provide xml content type
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,13 +110,17 @@ namespace CustomerVehicleManagement.Api
                     .AddRedirectToHttps();
                 app.UseRewriter(options);
 
-                // Global exception handling - if a production exception gets thrown, middleware configuration will handle sending the correct response:
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
                     {
+                        // Global exception handling. If a production exception gets thrown,
+                        // middleware configuration will handle sending the correct response.
+                        // So each and every controller method can shed their try/catch blocks:
+                        //    try...catch (Exception ex)
+                        //      return StatusCode(StatusCodes.Status500InternalServerError, ex);
                         context.Response.StatusCode = 500;
-
+                        logMessage = context.Response.StatusCode.ToString();
                         await context.Response.WriteAsync("An unexpected fault occurred. Fault logged.");
                     });
                 });

@@ -7,6 +7,7 @@ using SharedKernel.Enums;
 using CustomerVehicleManagement.Api.Data.Models;
 using AutoMapper;
 using System.Collections.Generic;
+using CustomerVehicleManagement.Api.Utilities;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {

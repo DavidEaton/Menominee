@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
-        public IList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IEnumerable<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IEnumerable<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
     }
 }

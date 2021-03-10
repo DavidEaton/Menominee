@@ -47,6 +47,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
+        public async Task GetListReturnsContent()
+        {
+            var response = await httpClient.GetAsync("list");
+
+            // Confirm that endpoint returns content (!= null && length > 0)
+            Assert.NotNull(response.Content);
+            Assert.True(response.Content.Headers.ContentLength > 0);
+        }
+
+        [Fact]
         public async Task GetSetsExpectedCacheControlHeader()
         {
             var response = await httpClient.GetAsync(string.Empty);

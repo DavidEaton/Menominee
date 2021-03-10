@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             //mapper.Map(model, fetchedCustomer);
 
             // Update the objects ObjectState and sych the EF Change Tracker
-            fetchedCustomer.UpdateTrackingState(TrackingState.Modified);
+            fetchedCustomer.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
 
             if (await repository.SaveChangesAsync())

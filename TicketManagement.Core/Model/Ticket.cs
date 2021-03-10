@@ -21,7 +21,7 @@ namespace TicketManagement.Core.Model
         //public ICollection<Job> Jobs { get; set; }
 
         // EF State management for disconnected data
-        public void UpdateTrackingState(TrackingState state)
+        public void SetTrackingState(TrackingState state)
         {
             TrackingState = state;
         }

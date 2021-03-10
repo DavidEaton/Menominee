@@ -23,10 +23,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, IList<Email> emails)
             : this(name, gender, birthday, address, phones, emails, null) { }
 
-        // Blazor 5 requires public JsonConstructor-attributed contructor
-        // HOW IS THE PRESENTATION LAYER "REQUIRING" ANYTHING OF OUR DOIMAIN MODEL???? FIX THIS!
-        // Postman can succesfully request Persons from this endpoint with [JsonConstructor] removed.
-        //[JsonConstructor]
         public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, IList<Email> emails, DriversLicense driversLicense = null)
         {
             Name = name;

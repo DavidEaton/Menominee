@@ -14,6 +14,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
         public IList<PhoneUpdateDto> Phones { get; set; } = new List<PhoneUpdateDto>();
+        public IList<EmailUpdateDto> Emails { get; set; } = new List<EmailUpdateDto>();
     }
 
 }

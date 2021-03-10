@@ -15,7 +15,7 @@ namespace TicketManagement.Core.Model
         public StatusRequiredItem StatusRequiredItem { get; set; }
 
         // EF State management for disconnected data
-        public void UpdateTrackingState(TrackingState state)
+        public void SetTrackingState(TrackingState state)
         {
             TrackingState = state;
         }

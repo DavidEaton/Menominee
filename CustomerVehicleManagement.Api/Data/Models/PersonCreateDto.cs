@@ -38,5 +38,6 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
         public ICollection<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
+        public ICollection<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
     }
 }

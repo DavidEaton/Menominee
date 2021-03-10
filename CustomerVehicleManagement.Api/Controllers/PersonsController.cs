@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
 using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         [Route("list")]
         [HttpGet]
         [ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<PersonListDto>>> GetPersonsList()
+        public async Task<ActionResult<IEnumerable<PersonInListDto>>> GetPersonsListAsync()
         {
             var persons = await repository.GetPersonsListAsync();
             return Ok(persons);
@@ -42,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // GET: api/persons
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersons()
+        public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersonsAsync()
         {
             var persons = await repository.GetPersonsAsync();
             return Ok(persons);
@@ -50,7 +51,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // GET: api/persons/1
         [HttpGet("{id:int}", Name = "GetPerson")]
-        public async Task<ActionResult<PersonReadDto>> GetPerson(int id)
+        public async Task<ActionResult<PersonReadDto>> GetPersonAsync(int id)
         {
             var person = await repository.GetPersonAsync(id);
 
@@ -62,22 +63,30 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<PersonReadDto>> UpdatePerson(int id, PersonUpdateDto personUpdateDto)
+        public async Task<ActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
         {
-            if (!await repository.PersonExistsAsync(id))
-                return NotFound();
+            var notFoundMessage = $"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}";
 
-            var personFromRepository = await repository.GetPersonAsync(id);
+            /* Update Pattern in Controllers:
+                1) Get domain entity from repository
+                2) Update domain entity with data in data transfer object (DTO)
+                3) Set entity's TrackingState to Modified
+                4) FixTrackingState: moves entity state tracking back out of
+                the object and into the context to track entity state in this
+                disconnected applications. In other words, sych the EF Change
+                Tracker with our disconnected entity's TrackingState
+                5) Save changes
+                6) return NoContent()
+            */
+
+            Person personFromRepository = await repository.GetPersonEntityAsync(id);
             if (personFromRepository == null)
-                return NotFound($"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}");
+                return NotFound(notFoundMessage);
 
-            // map the PersonUpdateDto back to the domain entity
-            ToDomainModel(personUpdateDto, personFromRepository);
-
-            // Update the objects ObjectState and sych the EF Change Tracker
-            personFromRepository.UpdateTrackingState(TrackingState.Modified);
-            repository.FixState();
-            repository.UpdatePersonAsync(personFromRepository);
+            DtoHelpers.ConvertUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
+            personFromRepository.SetTrackingState(TrackingState.Modified);
+            repository.FixTrackingState();
+            repository.UpdatePersonAsync(personUpdateDto);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
@@ -85,58 +94,72 @@ namespace CustomerVehicleManagement.Api.Controllers
             /* Returning the updated resource is acceptible like:
                  return Ok(personFromRepository);
                even preferred over returning NoContent if updated resource
-               contains properties that are mutated by the data store.
+               contains properties that are mutated by the data store
+               (which they are not in this case).
 
-               However, our app will:
+               Instead, our app will:
                  return NoContent();
-               ... and let the caller decide whether to get the updated resource.
+               ... and let the caller decide whether to get the updated resource,
+               which is also acceptible. The HTTP specification (RFC 2616) has a
+               number of recommendations that are applicable:
+            HTTP status code 200 OK for a successful PUT of an update to an existing resource. No response body needed.
+            HTTP status code 201 Created for a successful PUT of a new resource
+            HTTP status code 409 Conflict for a PUT that is unsuccessful due to a 3rd-party modification
+            HTTP status code 400 Bad Request for an unsuccessful PUT
             */
 
             return BadRequest($"Failed to update {personUpdateDto.Name.FirstMiddleLast}.");
         }
 
-        private void ToDomainModel(PersonUpdateDto personUpdateDto, Person personFromRepository)
-        {
-            personFromRepository.SetName(personUpdateDto.Name);
-            personFromRepository.SetGender(personUpdateDto.Gender);
-            personFromRepository.SetAddress(personUpdateDto.Address);
-            personFromRepository.SetBirthday(personUpdateDto.Birthday);
-            personFromRepository.SetDriversLicense(personUpdateDto.DriversLicense);
-            //personFromRepository.SetPhones(mapper.Map<IList<Phone>>(personUpdateDto.Phones));
-        }
-
         // POST: api/persons/
-        //[ValidateModelState]
         [HttpPost]
-        public async Task<ActionResult<PersonReadDto>> CreatePerson(PersonCreateDto personCreateDto)
+        public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
-            PersonReadDto personToReturn = await repository.SaveChangesAsync(personCreateDto);
+            repository.Create(personCreateDto);
 
-            if (personToReturn != null)
+            if (await repository.SaveChangesAsync())
             {
-                return CreatedAtRoute("GetPerson",
-                    new { id = personToReturn.Id },
-                    personToReturn);
+                var personReadDto = new PersonReadDto
+                {
+                    Id = personCreateDto.Id,
+                    Name = personCreateDto.Name.LastFirstMiddle,
+                    Gender = personCreateDto.Gender,
+                    Birthday = personCreateDto.Birthday,
+                    DriversLicense = personCreateDto.DriversLicense,
+                    Address = new Address(personCreateDto.Address.AddressLine,
+                                          personCreateDto.Address.City,
+                                          personCreateDto.Address.State,
+                                          personCreateDto.Address.PostalCode),
+                    Phones = mapper.Map<IList<PhoneReadDto>>(personCreateDto.Phones),
+                    Emails = mapper.Map<IList<EmailReadDto>>(personCreateDto.Emails)
+                };
 
+                return CreatedAtRoute("GetPerson",
+                    new { id = personReadDto.Id },
+                    personReadDto);
             }
 
             return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeletePerson(int id)
-        {
-            var personFromRepository = await repository.GetPersonAsync(id);
+        public async Task<IActionResult> DeletePersonAsync(int id)
+        {   /* Delete Pattern in Controllers:
+                1) Get domain entity from repository
+                2) Call repository.DeletePerson(), which removes person from context
+                3) Save changes
+                4) return Ok()
+            */
+            var personFromRepository = await repository.GetPersonEntityAsync(id);
 
             if (personFromRepository == null)
                 return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
-            repository.DeletePerson(personFromRepository);
+            repository.Delete(personFromRepository);
 
             if (await repository.SaveChangesAsync())
-            {
-                return Ok();
-            }
+                return NoContent();
+
             return BadRequest($"Failed to delete Person with Id: {id}.");
         }
 

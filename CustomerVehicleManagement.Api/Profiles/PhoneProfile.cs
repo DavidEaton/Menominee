@@ -8,11 +8,12 @@ namespace CustomerVehicleManagement.Api.Profiles
     {
         public PhoneProfile()
         {
+            CreateMap<Phone, PhoneCreateDto>()
+                .ReverseMap();
             CreateMap<Phone, PhoneReadDto>()
                 .ReverseMap();
             CreateMap<Phone, PhoneUpdateDto>()
                 .ReverseMap();
-
         }
     }
 }
