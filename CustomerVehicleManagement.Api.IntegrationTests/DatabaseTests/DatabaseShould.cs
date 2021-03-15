@@ -1,19 +1,19 @@
-﻿using System.ComponentModel;
-using Xunit;
-using Microsoft.EntityFrameworkCore;
-using System;
-using CustomerVehicleManagement.Api.Data;
-using SharedKernel.ValueObjects;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.Enums;
-using System.Threading.Tasks;
-using Moq;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Hosting;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Moq;
+using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace CustomerVehicleManagement.UnitTests.DatabaseTests
+namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 {
     [Category("Database")]
     public class DatabaseShould : IDisposable
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.UnitTests.DatabaseTests
             context.SaveChanges();
 
             // Assert
-            person.Should().NotBe(efDefaultId);
+            person.Id.Should().NotBe(efDefaultId);
             person.Name.LastName.Should().Be(lastName);
             person.Name.FirstName.Should().Be(firstName);
 
@@ -165,7 +165,7 @@ namespace CustomerVehicleManagement.UnitTests.DatabaseTests
                    .Returns("Hosting:UnitTestEnvironment");
             var context = new AppDbContext(Connection, true);
 
-            // Fact database in known state
+            // Set test database to known state
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             return context;
@@ -185,5 +185,6 @@ namespace CustomerVehicleManagement.UnitTests.DatabaseTests
             context.Database.EnsureDeleted();
             GC.SuppressFinalize(this);
         }
+
     }
 }

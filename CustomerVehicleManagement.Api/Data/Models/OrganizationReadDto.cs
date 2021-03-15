@@ -13,6 +13,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public string PostalCode { get; set; }
         public string AddressFull { get => (AddressLine == null) ? null : $"{AddressLine} {City}, {State}  {PostalCode}"; }
         public string Notes { get; set; }
-        public IList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IEnumerable<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IEnumerable<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
     }
 }

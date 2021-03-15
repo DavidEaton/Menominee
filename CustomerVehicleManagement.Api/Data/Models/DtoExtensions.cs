@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.Data.Models
                     //Id = phone.Id,
                     Number = phone.Number,
                     PhoneType = phone.PhoneType.ToString(),
-                    Primary = phone.IsPrimary
+                    IsPrimary = phone.IsPrimary
                 };
 
                 phonesDto.Add(phoneReadDto);

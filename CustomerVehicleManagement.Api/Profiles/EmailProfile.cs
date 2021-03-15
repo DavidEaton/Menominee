@@ -8,13 +8,18 @@ namespace CustomerVehicleManagement.Api.Profiles
     {
         public EmailProfile()
         {
-            CreateMap<Email, EmailCreateDto>();
+            CreateMap<Email, EmailCreateDto>()
+                .ReverseMap();
+            CreateMap<Email, EmailReadDto>()
+                .ReverseMap();
+            CreateMap<Email, EmailUpdateDto>()
+                .ReverseMap();
+            CreateMap<EmailUpdateDto, EmailReadDto>()
+                .ReverseMap();
             CreateMap<EmailCreateDto, Email>()
                 .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
-            CreateMap<Email, EmailReadDto>();
             CreateMap<EmailReadDto, Email>()
                 .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
-            CreateMap<Email, EmailUpdateDto>();
             CreateMap<EmailUpdateDto, Email>()
                 .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
         }

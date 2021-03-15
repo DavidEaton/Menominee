@@ -47,71 +47,28 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
         {
-            var organization = context.Organizations.Find(id);
+            var organization = await context.Organizations.FindAsync(id);
 
-            if (organization == null)
-                return null;
-
-            var dto = new OrganizationReadDto
-            {
-                Id = organization.Id,
-                Name = organization.Name,
-                AddressLine = organization?.Address?.AddressLine,
-                City = organization?.Address?.City,
-                State = organization?.Address?.State,
-                PostalCode = organization?.Address?.PostalCode,
-                Contact = (organization.Contact == null) ? null : new ContactReadDto
-                {
-                    Id = organization.Contact.Id,
-                    Name = organization.Contact.Name.LastFirstMiddle,
-                    Phones = organization.Contact?.Phones.Select(phone => new PhoneReadDto
-                    {
-                        Number = phone.Number,
-                        PhoneType = phone.PhoneType.ToString(),
-                        Primary = phone.IsPrimary
-                    })
-                },
-                Notes = organization?.Notes,
-                Phones = ContactableHelpers.MapDomainPhoneToReadDto(organization.Phones)
-            };
-
-            return await Task.FromResult(dto);
+            return organization == null ? null : DtoHelpers.ConvertOrganizationDomainToReadDto(organization);
         }
 
         public async Task<IEnumerable<OrganizationReadDto>> GetOrganizationsAsync()
         {
             IReadOnlyList<Organization> organizationsFromContext = await context.Organizations.ToListAsync();
 
-            List<OrganizationReadDto> dtos = organizationsFromContext.Select(o => new OrganizationReadDto
-            {
-                Id = o.Id,
-                Name = o.Name,
-                Contact = (o.Contact == null) ? null : new ContactReadDto
-                {
-                    Id = o.Contact.Id,
-                    Name = o.Contact.Name.LastFirstMiddle,
-                    Phones = o.Contact?.Phones.Select(x => new PhoneReadDto
-                    {
-                        Number = x.Number,
-                        PhoneType = x.PhoneType.ToString(),
-                        Primary = x.IsPrimary
-                    })
-                },
-                AddressLine = o?.Address?.AddressLine,
-                City = o?.Address?.City,
-                State = o?.Address?.State,
-                PostalCode = o?.Address?.PostalCode,
-                Notes = o?.Notes
-            }).ToList();
+            List<OrganizationReadDto> dtos = organizationsFromContext
+                .Select(organization => DtoHelpers.ConvertOrganizationDomainToReadDto(organization))
+                .ToList();
 
             return dtos;
         }
 
+
         public async Task<Organization> GetOrganizationEntityAsync(int id)
         {
-            var organizationFromContext = context.Organizations.Find(id);
+            var organizationFromContext = context.Organizations.FindAsync(id);
 
-            return await Task.FromResult(organizationFromContext);
+            return await (organizationFromContext);
         }
 
         public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()

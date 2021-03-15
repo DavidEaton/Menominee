@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Api.Data.Models;
-using CustomerVehicleManagement.Api.IntegrationTests.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
@@ -54,14 +53,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             Assert.True(header.MaxAge.HasValue);
             Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
             Assert.True(header.Public);
-        }
-
-        [Fact]
-        public async Task GetPersonsTotalReturnsExpectedJson()
-        {
-            var model = await httpClient.GetFromJsonAsync<ExpectedPersonsTotalOutputModel>("total");
-
-            Assert.True(model?.PersonsTotal > 0);
         }
     }
 }

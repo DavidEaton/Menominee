@@ -11,6 +11,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
     {
         public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
         public static readonly string PrimaryPhoneExistsMessage = "Cannot add more than one Primary phone.";
+        public static readonly string EmptyPhoneCollectionMessage = "Cannot add an empty phone list";
         public static readonly string DuplicateEmailExistsMessage = "Cannot add duplicate email.";
         public static readonly string PrimaryEmailExistsMessage = "Cannot add more than one Primary email.";
         public static readonly string EmptyEmailCollectionMessage = "Cannot add an empty email list";
@@ -41,7 +42,19 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void SetPhones(IList<Phone> phones)
         {
-            if (phones != null)
+            if (phones == null)
+                throw new ArgumentException(EmptyPhoneCollectionMessage, nameof(phones));
+
+            if (PhoneHelpers.DuplicatePhoneExists(phones))
+                throw new InvalidOperationException(DuplicatePhoneExistsMessage);
+
+            if (PhoneHelpers.PrimaryPhoneCountExceedsOne(phones))
+                throw new InvalidOperationException(PrimaryPhoneExistsMessage);
+
+            if (Phones == null)
+                Phones = new List<Phone>();
+
+            if (Phones != null)
                 Phones = phones;
         }
 
@@ -71,10 +84,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             if (emails == null)
                 throw new ArgumentException(EmptyEmailCollectionMessage, nameof(emails));
 
-
             if (EmailHelpers.DuplicateEmailExists(emails))
                 throw new InvalidOperationException(DuplicateEmailExistsMessage);
-
 
             if (EmailHelpers.PrimaryEmailCountExceedsOne(emails))
                 throw new InvalidOperationException(PrimaryEmailExistsMessage);

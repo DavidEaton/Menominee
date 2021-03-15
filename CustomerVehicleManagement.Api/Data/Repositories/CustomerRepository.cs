@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            var customer = context.Customers.Find(id);
+            var customer = await context.Customers.FindAsync(id);
 
             if (customer.EntityType == EntityType.Organization)
             {

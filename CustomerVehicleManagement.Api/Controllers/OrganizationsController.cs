@@ -2,8 +2,6 @@
 using CustomerVehicleManagement.Api.Data.Interfaces;
 using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Api.Utilities;
-using CustomerVehicleManagement.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using System;
@@ -72,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (organizationFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.ConvertUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository);
+            DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository);
             organizationFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
             repository.UpdateOrganizationAsync(organizationFromRepository);

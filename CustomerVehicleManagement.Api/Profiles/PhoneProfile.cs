@@ -14,6 +14,17 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ReverseMap();
             CreateMap<Phone, PhoneUpdateDto>()
                 .ReverseMap();
+            CreateMap<PhoneCreateDto, Phone>()
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
+                .ReverseMap();
+            CreateMap<PhoneReadDto, Phone>()
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
+                .ReverseMap();
+            CreateMap<PhoneUpdateDto, Phone>()
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
+                .ReverseMap();
+            CreateMap<PhoneUpdateDto, PhoneReadDto>()
+                .ReverseMap();
         }
     }
 }

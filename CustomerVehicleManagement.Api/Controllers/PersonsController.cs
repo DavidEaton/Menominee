@@ -4,7 +4,6 @@ using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -83,9 +82,9 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.ConvertUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
-            personFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
+            DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
+            //personFromRepository.SetTrackingState(TrackingState.Modified);
+            //repository.FixTrackingState();
             repository.UpdatePersonAsync(personUpdateDto);
 
             if (await repository.SaveChangesAsync())
@@ -115,7 +114,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
-            repository.Create(personCreateDto);
+            await repository.CreatePersonAsync(personCreateDto);
 
             if (await repository.SaveChangesAsync())
             {

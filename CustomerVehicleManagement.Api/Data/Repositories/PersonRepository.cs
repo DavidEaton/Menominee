@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public void Create(PersonCreateDto personCreateDto)
+        public async Task CreatePersonAsync(PersonCreateDto personCreateDto)
         {
             Person person = null;
 
@@ -37,14 +37,16 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 person.SetAddress(personCreateDto.Address);
 
                 if (personCreateDto.Phones != null)
-                    person.SetPhones(mapper.Map<IList<Phone>>(personCreateDto.Phones));
+                    if (personCreateDto.Phones.Count > 0)
+                        person.SetPhones(mapper.Map<IList<Phone>>(personCreateDto.Phones));
 
                 if (personCreateDto.Emails != null)
-                    person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
+                    if (personCreateDto.Emails.Count > 0)
+                        person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
             }
 
             if (person != null)
-                context.Add(person);
+                await context.AddAsync(person);
         }
 
         public void Delete(Person person)
@@ -53,18 +55,26 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         }
         public async Task<Person> GetPersonEntityAsync(int id)
         {
-            // Prefer Find() over Single() or First() for single objects (non-collections);
-            // Find() checks the Identity Map Cache before making a trip to the database.
-            var personFromContext = context.Persons.Find(id);
+            // Prefer FindAsync() over Single() or First() for single objects (non-collections);
+            // FindAsync() checks the Identity Map Cache before making a trip to the database.
+            var personFromContext = await context.Persons
+                .Include(person => person.Phones)
+                .Include(person => person.Emails)
+                .FirstOrDefaultAsync(person => person.Id == id);
 
-            return await Task.FromResult(personFromContext);
+            return personFromContext;
         }
 
         public async Task<PersonReadDto> GetPersonAsync(int id)
         {
-            var personFromContext = context.Persons.Find(id);
+            PersonReadDto person;
+            var personFromContext = await context.Persons
+                .Include(person => person.Phones)
+                .Include(person => person.Emails)
+                .FirstOrDefaultAsync(person => person.Id == id);
+            person = mapper.Map<PersonReadDto>(personFromContext);
 
-            return await Task.FromResult(mapper.Map<PersonReadDto>(personFromContext));
+            return person;
         }
 
         public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
@@ -73,7 +83,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             foreach (var person in personsFromContext)
             {
-                // Automapper may have a bug: mapping Phones works but Emails fail...
+                // Automapper may have a bug: mapping Phones works but Emails fail:
                 // mapper.Map<IEnumerable<Email>>(person.Emails);
                 // ...so instead of automapper for the emails, MapDomainEmailToReadDto()
                 mapper.Map<IEnumerable<Phone>>(person.Phones);
@@ -83,7 +93,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             foreach (var personReadDto in list)
             {
-                personReadDto.Emails = ContactableHelpers.MapDomainEmailToReadDto(personReadDto.Emails);
+                personReadDto.Emails = ContactableHelpers.MapEmailReadDtoToReadDto(personReadDto.Emails);
             }
 
             return list;
@@ -105,7 +115,8 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<bool> SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            bool result = await context.SaveChangesAsync() > 0;
+            return result;
         }
 
         public void FixTrackingState()

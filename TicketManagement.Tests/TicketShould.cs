@@ -1,18 +1,13 @@
-using NUnit.Framework;
+using Xunit;
 
 namespace TicketManagement.Tests
 {
     public class Tests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
-        [Test]
+        [Fact(Skip ="Not implemented")]
         public void CreateTicket()
         {
-            Assert.Pass();
+
         }
     }
 }

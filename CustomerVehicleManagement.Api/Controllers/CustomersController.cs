@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         // GET: api/Customers
         [HttpGet]
         [ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
         {
             var results = await repository.GetCustomersAsync();
             return Ok(results);
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // GET: api/Customer/1
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<Customer>> GetCustomerAsync(int id)
         {
             var result = await repository.GetCustomerAsync(id);
 
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // PUT: api/Customer/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Customer>> UpdateCustomer(int id, Customer model)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, Customer model)
         {
 
             var fetchedCustomer = await repository.GetCustomerAsync(id);
@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomer(Customer model)
+        public async Task<ActionResult<Customer>> CreateCustomerAsync(Customer model)
         {
             //var customer = mapper.Map<Customer>(model);
             repository.AddCustomer(model);
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomerAsync(int id)
         {
             var fetchedCustomer = await repository.GetCustomerAsync(id);
             if (fetchedCustomer == null)

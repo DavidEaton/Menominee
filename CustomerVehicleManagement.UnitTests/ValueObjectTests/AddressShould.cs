@@ -3,7 +3,7 @@ using SharedKernel.ValueObjects;
 using System;
 using FluentAssertions;
 
-namespace CustomerVehicleManagement.Tests.ValueObjectTests
+namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 {
     public class AddressShould
     {

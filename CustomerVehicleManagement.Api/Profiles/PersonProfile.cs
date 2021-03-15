@@ -13,12 +13,6 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ForMember(
                     destination => destination.Name,
                     configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
-                .ForMember(
-                    destination => destination.Phones,
-                    configuration => configuration.Ignore())
-                .ForMember(
-                    destination => destination.Emails,
-                    configuration => configuration.Ignore())
                 .ReverseMap();
 
             CreateMap<Person, PersonInListDto>()
@@ -45,6 +39,9 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ReverseMap();
 
             CreateMap<Person, PersonCreateDto>()
+                .ReverseMap();
+
+            CreateMap<Person, PersonUpdateDto>()
                 .ReverseMap();
 
             CreateMap<PersonUpdateDto, PersonReadDto>()

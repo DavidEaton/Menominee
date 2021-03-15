@@ -7,6 +7,6 @@ namespace CustomerVehicleManagement.Api.Data.Models
         public int Id { get; set; }
         public string Number { get; set; }
         public PhoneType PhoneType { get; set; }
-        public bool Primary { get; set; }
+        public bool IsPrimary { get; set; }
     }
 }

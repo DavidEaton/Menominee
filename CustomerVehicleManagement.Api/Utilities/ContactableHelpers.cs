@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data.Models;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,22 @@ namespace CustomerVehicleManagement.Api.Utilities
             return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : null;
         }
 
-        public static IEnumerable<EmailReadDto> MapDomainEmailToReadDto(IEnumerable<EmailReadDto> emails)
+        public static IEnumerable<EmailReadDto> MapDomainEmailToReadDto(IList<Email> emails)
+        {
+            var emailReadDtos = new List<EmailReadDto>();
+
+            foreach (var email in emails)
+            {
+                emailReadDtos.Add(new EmailReadDto
+                {
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                });
+            }
+
+            return emailReadDtos;
+        }
+        public static IEnumerable<EmailReadDto> MapEmailReadDtoToReadDto(IEnumerable<EmailReadDto> emails)
         {
             var emailReadDtos = new List<EmailReadDto>();
 
@@ -56,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Utilities
                 phoneReadDtos.Add(new PhoneReadDto
                 {
                     Number = phone.Number,
-                    Primary = phone.IsPrimary,
+                    IsPrimary = phone.IsPrimary,
                     PhoneType = phone.PhoneType.ToString()
                 });
             }
@@ -77,5 +93,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 
             return phones;
         }
+
+
     }
 }
