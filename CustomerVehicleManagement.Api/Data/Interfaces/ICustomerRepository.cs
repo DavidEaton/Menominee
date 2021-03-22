@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Models;
+﻿using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;

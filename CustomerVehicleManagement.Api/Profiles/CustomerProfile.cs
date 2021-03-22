@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Profiles

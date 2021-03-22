@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using AutoMapper;
 using System.Collections.Generic;
 using CustomerVehicleManagement.Api.Utilities;

@@ -4,24 +4,28 @@ using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using System.Linq;
 using CustomerVehicleManagement.Api.Utilities;
+using AutoMapper;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
     public class OrganizationRepository : IOrganizationRepository
     {
         private readonly AppDbContext context;
-        public OrganizationRepository()
-        {
-        }
-
-        public OrganizationRepository(AppDbContext context)
+        private readonly IMapper mapper;
+        public OrganizationRepository(
+            AppDbContext context,
+            IMapper mapper)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
+
 
         public void Create(OrganizationCreateDto organizationCreateDto)
         {
@@ -47,20 +51,24 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
         {
-            var organization = await context.Organizations.FindAsync(id);
+            var organizationFromContext = await context.Organizations
+            .Include(organization => organization.Phones)
+            .Include(organization => organization.Emails)
+            .Include(organization => organization.Contact)
+                .ThenInclude(contact => contact.Phones)
+                .Include(contact => contact.Emails)
+            .FirstOrDefaultAsync(organization => organization.Id == id);
 
-            return organization == null ? null : DtoHelpers.ConvertOrganizationDomainToReadDto(organization);
+            return mapper.Map<OrganizationReadDto>(organizationFromContext);
         }
 
         public async Task<IEnumerable<OrganizationReadDto>> GetOrganizationsAsync()
         {
             IReadOnlyList<Organization> organizationsFromContext = await context.Organizations.ToListAsync();
 
-            List<OrganizationReadDto> dtos = organizationsFromContext
+            return organizationsFromContext
                 .Select(organization => DtoHelpers.ConvertOrganizationDomainToReadDto(organization))
                 .ToList();
-
-            return dtos;
         }
 
 

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class OrganizationCreateDto : Contactable
     {

@@ -2,7 +2,7 @@
 using SharedKernel.Enums;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     /// <summary>
     /// The static DTO Extensions class.

@@ -1,6 +1,6 @@
 ﻿using SharedKernel.Enums;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class PhoneUpdateDto
     {

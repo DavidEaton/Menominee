@@ -3,7 +3,7 @@ using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class CustomerReadDto
     {

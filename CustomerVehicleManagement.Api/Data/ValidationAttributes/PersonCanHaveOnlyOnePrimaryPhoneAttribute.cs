@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Models;
+﻿using CustomerVehicleManagement.Api.Data.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Api.Data.ValidationAttributes

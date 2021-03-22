@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
@@ -48,6 +48,8 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, Customer model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var fetchedCustomer = await repository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
@@ -70,6 +72,9 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> CreateCustomerAsync(Customer model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             //var customer = mapper.Map<Customer>(model);
             repository.AddCustomer(model);
 

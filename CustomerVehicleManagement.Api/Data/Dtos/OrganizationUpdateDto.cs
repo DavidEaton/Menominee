@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.ValueObjects;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class OrganizationUpdateDto : Contactable
     {

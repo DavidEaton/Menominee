@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Models;
+﻿using CustomerVehicleManagement.Api.Data.Dtos;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;

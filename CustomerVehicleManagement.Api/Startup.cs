@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using System;
 
 namespace CustomerVehicleManagement.Api
@@ -32,13 +33,14 @@ namespace CustomerVehicleManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
             const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
-            string environment = HostEnvironment.IsDevelopment() ? "Development" : "Production";
+            const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+            const bool useConsoleLoggerInTest = true;
+            string environment = HostEnvironment.EnvironmentName;
             string api_env = Environment.GetEnvironmentVariable("API_ENVIRONMENT");
             // An environment variable is setup in Azure.  If it's set then grab the connection string
             // from the Azure slot, otherwise use the appsetting.json connection string.
 
-            // ONLY USE IN DEVELOPMENT
-            //IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
+            IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             //    .AddIdentityServerAuthentication(options =>
@@ -51,7 +53,11 @@ namespace CustomerVehicleManagement.Api
             //services.AddDbContext<AppDbContext>(
             //    options => options.UseSqlServer(CONNECTION));
 
-            services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
+            if (environment != "Testing")
+                services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
+
+            if (environment == "Testing")
+                services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
 
             //services.AddDbContext<IdentityUserDbContext>(options =>
             //                                             options
@@ -60,7 +66,6 @@ namespace CustomerVehicleManagement.Api
             //services.AddScoped<UserContext, UserContext>();
             //services.AddScoped<IdentityUserDbContext, IdentityUserDbContext>();
 
-            // IHttpContextAccessor is no longer wired up by default, so register it
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
@@ -79,23 +84,34 @@ namespace CustomerVehicleManagement.Api
                 // Return 406 Not Acceptible if request content type is unavailable
                 mvcOptions.ReturnHttpNotAcceptable = true;
                 //mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-            }).AddXmlDataContractSerializerFormatters(); // Provide xml content type
+                // Provide xml content type
+            }).AddXmlDataContractSerializerFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            string environment = HostEnvironment.IsDevelopment() ? "Development" : "Production";
+            string environment = HostEnvironment.EnvironmentName;
+            string testOrigin = "https://localhost:44378";
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            //app.UseAuthorization();
+            app.UseAuthorization();
             //app.UseAuthentication();
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection("Clients:Origins").Get<List<string>>()).AllowAnyMethod().AllowAnyHeader());
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
             //                        .AllowAnyMethod().AllowAnyHeader());
-            app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+
+            if (environment == "Testing")
+            {
+                app.UseCors(cors => cors.WithOrigins(testOrigin)
                                     .AllowAnyMethod().AllowAnyHeader());
+            }
+            else
+            {
+                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+                                        .AllowAnyMethod().AllowAnyHeader());
+            }
 
             if (HostEnvironment.IsDevelopment())
                 app.UseDeveloperExceptionPage();

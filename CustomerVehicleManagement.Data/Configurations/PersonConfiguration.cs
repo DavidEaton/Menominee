@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Person", "dbo");
-            builder.Ignore(p => p.TrackingState);
+            builder.Ignore(person => person.TrackingState);
 
             // Convert enum values to and from strings in the database
             var converter = new EnumToStringConverter<Gender>();

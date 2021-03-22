@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Api.Data.Repositories;
 using CustomerVehicleManagement.Api.Profiles;
 using CustomerVehicleManagement.Api.Utilities;
@@ -41,17 +41,19 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             // Arrange
             // Create an in-memory database
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
 
             // Due to the disconnected nature of ASP.NET Core,
             // our tests create and use unique contexts for each
             // request, like our production code does.
+
             // Add a Person to the in-memory database
             using (var context = new AppDbContext(options))
             {
                 context.Persons.Add(CreateValidPerson());
                 context.SaveChanges();
             }
+            
             // Read all Persons from the in-memory database
             using (var context = new AppDbContext(options))
             {
@@ -66,16 +68,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         }
 
         [Fact]
-        public async Task CreatePersonAsync()
+        public async Task AddPersonAsync()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
 
             using (var context = new AppDbContext(options))
             {
                 var repository = new PersonRepository(context, mapper);
 
                 // Act
-                await repository.CreatePersonAsync(mapper.Map<PersonCreateDto>(CreateValidPerson()));
+                await repository.AddAsync(mapper.Map<PersonCreateDto>(CreateValidPerson()));
                 await repository.SaveChangesAsync();
                 var persons = await repository.GetPersonsAsync();
 
@@ -87,7 +89,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsync()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
@@ -111,7 +113,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsyncIncludesPhones()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
@@ -136,7 +138,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsyncIncludesEmails()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
@@ -161,7 +163,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonsListAsync()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
 
             using (var context = new AppDbContext(options))
             {
@@ -182,21 +184,20 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdatePersonAsync()
         {
-            var options = CreateContextOptions();
-            Person person;
+            var options = CreateDbContextContextOptions();
+            Person person = CreateValidPerson();
             Person personFromRepository;
             var id = 0;
 
             // Create Person and save
             using (var context = new AppDbContext(options))
             {
-                person = CreateValidPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
             }
 
-            // Get the saved Person, set their Birthday and save
+            // Get the saved Person, set their Birthday and save again
             using (var context = new AppDbContext(options))
             {
                 var repository = new PersonRepository(context, mapper);
@@ -230,7 +231,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Trait("Category", "Experimental")]
         public async Task UpdatePersonGraphAsync()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             Person person;
             Person personFromRepository;
             PersonReadDto personFromRepositoryUpdated;
@@ -298,16 +299,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 personFromRepositoryUpdated.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20));
                 personFromRepositoryUpdated.Phones.Should().Contain(number);
             }
-
-
-
         }
 
 
         [Fact]
         public async Task DeletePerson()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
@@ -350,9 +348,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public void ThrowExceptionWhenPassedNullMapper()
         {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase($"testdb{Guid.NewGuid()}")
-                .Options;
+            var options = CreateDbContextContextOptions();
 
             using (var context = new AppDbContext(options))
             {
@@ -364,7 +360,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task ReturnTrueIfPersonExistsAsync()
         {
-            var options = CreateContextOptions();
+            var options = CreateDbContextContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
@@ -409,7 +405,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
         }
 
-        private static DbContextOptions<AppDbContext> CreateContextOptions()
+        private static DbContextOptions<AppDbContext> CreateDbContextContextOptions()
         {
             // Create an in-memory database
             return new DbContextOptionsBuilder<AppDbContext>()

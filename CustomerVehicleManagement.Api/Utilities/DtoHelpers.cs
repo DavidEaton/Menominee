@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,15 +80,20 @@ namespace CustomerVehicleManagement.Api.Utilities
             {
                 Id = organization.Id,
                 Name = organization.Name,
-                Contact = (organization.Contact == null) ? null : new ContactReadDto
+                Contact = (organization.Contact == null) ? null : new PersonReadDto
                 {
                     Id = organization.Contact.Id,
                     Name = organization.Contact.Name.LastFirstMiddle,
-                    Phones = organization.Contact?.Phones.Select(x => new PhoneReadDto
+                    Phones = organization.Contact?.Phones.Select(phone => new PhoneReadDto
                     {
-                        Number = x.Number,
-                        PhoneType = x.PhoneType.ToString(),
-                        IsPrimary = x.IsPrimary
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType.ToString(),
+                        IsPrimary = phone.IsPrimary
+                    }),
+                    Emails = organization.Contact?.Emails.Select(email => new EmailReadDto
+                    { 
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
                     })
                 },
                 AddressLine = organization?.Address?.AddressLine,

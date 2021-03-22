@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Profiles
@@ -14,10 +14,10 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ReverseMap();
             CreateMap<Phone, PhoneUpdateDto>()
                 .ReverseMap();
-            CreateMap<PhoneCreateDto, Phone>()
+            CreateMap<PhoneReadDto, Phone>()
                 .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
                 .ReverseMap();
-            CreateMap<PhoneReadDto, Phone>()
+            CreateMap<PhoneCreateDto, Phone>()
                 .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
                 .ReverseMap();
             CreateMap<PhoneUpdateDto, Phone>()

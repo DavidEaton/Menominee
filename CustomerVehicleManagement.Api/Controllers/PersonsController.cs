@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -62,8 +62,11 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
+        public async Task<IActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var notFoundMessage = $"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}";
 
             /* Update Pattern in Controllers:
@@ -87,9 +90,6 @@ namespace CustomerVehicleManagement.Api.Controllers
             //repository.FixTrackingState();
             repository.UpdatePersonAsync(personUpdateDto);
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
-
             /* Returning the updated resource is acceptible like:
                  return Ok(personFromRepository);
                even preferred over returning NoContent if updated resource
@@ -107,6 +107,9 @@ namespace CustomerVehicleManagement.Api.Controllers
             HTTP status code 400 Bad Request for an unsuccessful PUT
             */
 
+            if (await repository.SaveChangesAsync())
+                return NoContent();
+
             return BadRequest($"Failed to update {personUpdateDto.Name.FirstMiddleLast}.");
         }
 
@@ -114,7 +117,10 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
-            await repository.CreatePersonAsync(personCreateDto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await repository.AddAsync(personCreateDto);
 
             if (await repository.SaveChangesAsync())
             {

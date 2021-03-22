@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class OrganizationReadDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ContactReadDto Contact { get; set; }
+        public PersonReadDto Contact { get; set; }
         public string AddressLine { get; set; }
         public string City { get; set; }
         public string State { get; set; }

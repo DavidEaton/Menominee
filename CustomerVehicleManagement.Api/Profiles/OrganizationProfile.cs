@@ -4,25 +4,12 @@ using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Profiles
 {
-    public class PersonProfile : Profile
+    public class OrganizationProfile : Profile
     {
-        public PersonProfile()
+        public OrganizationProfile()
         {
             // Map from source type to destination type, and back.
-            CreateMap<Person, PersonReadDto>()
-                .ForMember(
-                    destination => destination.Name,
-                    configuration => configuration
-                        .MapFrom(
-                            source => source.Name.LastFirstMiddle))
-                .ReverseMap();
-
-            CreateMap<Person, PersonInListDto>()
-                .ForMember(
-                    destination => destination.Name,
-                    configuration => configuration
-                        .MapFrom(
-                            source => source.Name.LastFirstMiddle))
+            CreateMap<Organization, OrganizationReadDto>()
                 .ForMember(
                     destination => destination.AddressLine,
                     configuration => configuration
@@ -43,18 +30,13 @@ namespace CustomerVehicleManagement.Api.Profiles
                     configuration => configuration
                         .MapFrom(
                             source => source.Address.PostalCode))
-                .ReverseMap();
+                
+                //.ForMember(
+                //    destination => destination.Contact,
+                //    configuration => configuration
+                //        .MapFrom(
+                //            source => source.Contact))
 
-            CreateMap<Person, PersonCreateDto>()
-                .ReverseMap();
-
-            CreateMap<Person, PersonUpdateDto>()
-                .ReverseMap();
-
-            CreateMap<PersonUpdateDto, PersonReadDto>()
-                .ForMember(
-                    destination => destination.Name,
-                    configuration => configuration.MapFrom(source => source.Name.LastFirstMiddle))
                 .ReverseMap();
         }
     }

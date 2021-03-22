@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Api.Data.Models
+﻿namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class EmailUpdateDto
     {

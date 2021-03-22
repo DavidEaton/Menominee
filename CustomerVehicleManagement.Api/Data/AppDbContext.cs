@@ -27,7 +27,6 @@ namespace CustomerVehicleManagement.Api.Data
         {
             if (!optionsBuilder.IsConfigured) // Unit tests will configure context with test provider
             {
-
                 ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
                 {
                     builder
@@ -52,7 +51,7 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<Phone> Phones { get; set; }
+        //public DbSet<Phone> Phones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +66,7 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
+            modelBuilder.ApplyConfiguration(new EmailConfiguration());
         }
     }
 }

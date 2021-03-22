@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

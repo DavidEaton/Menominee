@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     [PersonCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Person can have only one Primary phone.")]
     public class PersonCreateDto

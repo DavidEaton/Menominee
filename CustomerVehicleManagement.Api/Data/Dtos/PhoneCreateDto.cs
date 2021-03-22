@@ -2,7 +2,7 @@
 using SharedKernel.Utilities;
 using System;
 
-namespace CustomerVehicleManagement.Api.Data.Models
+namespace CustomerVehicleManagement.Api.Data.Dtos
 {
     public class PhoneCreateDto
     {

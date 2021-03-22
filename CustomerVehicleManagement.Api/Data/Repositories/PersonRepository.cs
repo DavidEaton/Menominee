@@ -3,7 +3,7 @@ using CustomerVehicleManagement.Api.Data.Interfaces;
 using System;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
@@ -16,7 +16,9 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         private readonly AppDbContext context;
         private readonly IMapper mapper;
 
-        public PersonRepository(AppDbContext context, IMapper mapper)
+        public PersonRepository(
+            AppDbContext context,
+            IMapper mapper)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
@@ -25,7 +27,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task CreatePersonAsync(PersonCreateDto personCreateDto)
+        public async Task AddAsync(PersonCreateDto personCreateDto)
         {
             Person person = null;
 
@@ -67,14 +69,12 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<PersonReadDto> GetPersonAsync(int id)
         {
-            PersonReadDto person;
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
                 .Include(person => person.Emails)
                 .FirstOrDefaultAsync(person => person.Id == id);
-            person = mapper.Map<PersonReadDto>(personFromContext);
 
-            return person;
+            return mapper.Map<PersonReadDto>(personFromContext);
         }
 
         public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()

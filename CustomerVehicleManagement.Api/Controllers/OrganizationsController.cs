@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Api.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
@@ -59,8 +59,11 @@ namespace CustomerVehicleManagement.Api.Controllers
 
         // api/organizations/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateOrganizationAsync(int id, OrganizationUpdateDto organizationUpdateDto)
+        public async Task<IActionResult> UpdateOrganizationAsync(int id, OrganizationUpdateDto organizationUpdateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var notFoundMessage = $"Could not find Organization to update: {organizationUpdateDto.Name}";
 
             if (!await repository.OrganizationExistsAsync(id))
@@ -84,6 +87,9 @@ namespace CustomerVehicleManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<OrganizationReadDto>> CreateOrganizationAsync(OrganizationCreateDto organizationCreateDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             repository.Create(organizationCreateDto);
 
             if (await repository.SaveChangesAsync())
@@ -92,7 +98,7 @@ namespace CustomerVehicleManagement.Api.Controllers
                 {
                     Id = organizationCreateDto.Id,
                     Name = organizationCreateDto.Name,
-                    Contact = new ContactReadDto
+                    Contact = new PersonReadDto
                     {
                         Id = organizationCreateDto.Contact.Id,
                         Name = organizationCreateDto.Contact.Name.LastFirstMiddleInitial,

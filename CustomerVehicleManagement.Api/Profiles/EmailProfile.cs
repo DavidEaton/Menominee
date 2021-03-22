@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Models;
+using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Profiles
@@ -14,14 +14,15 @@ namespace CustomerVehicleManagement.Api.Profiles
                 .ReverseMap();
             CreateMap<Email, EmailUpdateDto>()
                 .ReverseMap();
-            CreateMap<EmailUpdateDto, EmailReadDto>()
+            CreateMap<EmailReadDto, Email>()
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
                 .ReverseMap();
             CreateMap<EmailCreateDto, Email>()
-                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
-            CreateMap<EmailReadDto, Email>()
-                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
+                .ReverseMap();
             CreateMap<EmailUpdateDto, Email>()
-                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore());
+                .ForMember(destination => destination.TrackingState, configuration => configuration.Ignore())
+                .ReverseMap();
         }
     }
 }
