@@ -8,6 +8,7 @@ using CustomerVehicleManagement.Api.Data.Dtos;
 using System.Linq;
 using CustomerVehicleManagement.Api.Utilities;
 using AutoMapper;
+using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -27,24 +28,36 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
         }
 
 
-        public void Create(OrganizationCreateDto organizationCreateDto)
+        public async Task AddOrganizationAsync(OrganizationCreateDto organizationCreateDto)
         {
             Organization organization = null;
 
             if (organizationCreateDto != null)
             {
-                organization = new Organization(organizationCreateDto.Name);
-                organization.SetAddress(organizationCreateDto.Address);
-                organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
-                organization.SetPhones(organizationCreateDto.Phones);
-                organization.SetEmails(organizationCreateDto.Emails);
+                var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
+                if (organizationNameOrError.IsFailure)
+                    return;
+
+                organization = new Organization(organizationNameOrError.Value);
+
+                if (organizationCreateDto.Address != null)
+                    organization.SetAddress(organizationCreateDto.Address);
+
+                if (organizationCreateDto.Contact != null)
+                    organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
+
+                if (organizationCreateDto.Phones != null) 
+                    organization.SetPhones(organizationCreateDto.Phones);
+
+                if (organizationCreateDto.Emails != null)
+                    organization.SetEmails(organizationCreateDto.Emails);
             }
 
             if (organization != null)
-                context.Add(organization);
+                await context.AddAsync(organization);
         }
 
-        public void Delete(Organization organization)
+        public void DeleteOrganization(Organization organization)
         {
             context.Remove(organization);
         }
@@ -56,7 +69,8 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             .Include(organization => organization.Emails)
             .Include(organization => organization.Contact)
                 .ThenInclude(contact => contact.Phones)
-                .Include(contact => contact.Emails)
+            .Include(organization => organization.Contact)
+                .ThenInclude(contact => contact.Emails)
             .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return mapper.Map<OrganizationReadDto>(organizationFromContext);
@@ -81,19 +95,30 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()
         {
-            var organizationsFromContext = context.Organizations
-                                                  .Include(x => x.Contact.Phones)
-                                                  .ToArray();
+            IReadOnlyList<Organization> organizations = context.Organizations
+                                                               .Include(organization => organization.Contact.Phones)
+                                                               .ToList();
 
-            var organizationsList = new List<OrganizationsInListDto>();
-
-            foreach (var organization in organizationsFromContext)
+            List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
             {
-                organizationsList.Add(DtoHelpers.CreateOrganizationsListDtoFromDomain(organization));
-            }
+                Id = organization.Id,
+                Name = organization.Name.Value,
+                ContactName = organization?.Contact?.Name.LastFirstMiddle,
+                ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
+                
+                AddressLine = organization?.Address?.AddressLine,
+                City = organization?.Address?.City,
+                State = organization?.Address?.City,
+                PostalCode = organization?.Address?.PostalCode,
 
-            return await Task.FromResult(organizationsList);
+                Notes = organization.Notes,
+                PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
+                PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
+            }).ToList();
+
+            return await Task.FromResult(dtos);
         }
+
 
         public void UpdateOrganizationAsync(Organization organization)
         {

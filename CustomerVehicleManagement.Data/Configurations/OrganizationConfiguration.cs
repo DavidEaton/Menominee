@@ -11,10 +11,15 @@ namespace CustomerVehicleManagement.Data.Configurations
             base.Configure(builder); // <--
             builder.ToTable("Organization", "dbo");
             builder.Ignore(organization => organization.TrackingState);
+            builder.Property(organization => organization.Notes)
+                   .HasMaxLength(10_000);
 
-            builder.Property(organization => organization.Name)
-                .HasMaxLength(255)
-                .IsRequired();
+            // Value Object: OrganizationName
+            builder.OwnsOne(organization => organization.Name)
+                   .Property(name => name.Value)
+                   .HasColumnName("Name")
+                   .HasMaxLength(255);
+
 
             // Value Object: Address
             builder.OwnsOne(organization => organization.Address)

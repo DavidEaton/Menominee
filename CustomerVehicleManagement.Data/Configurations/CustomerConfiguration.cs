@@ -13,6 +13,21 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.Ignore(customer => customer.Entity);
             builder.Ignore(customer => customer.TrackingState);
             builder.Ignore(customer => customer.Phones);
+            builder.Ignore(customer => customer.Emails);
+
+            // Value Object: ContactPreferences
+            builder.OwnsOne(customer => customer.ContactPreferences)
+                   .Property(contactPreferences => contactPreferences.AllowEmail)
+                   .HasColumnName("AllowEmail")
+                   .IsRequired();
+            builder.OwnsOne(customer => customer.ContactPreferences)
+                   .Property(contactPreferences => contactPreferences.AllowMail)
+                   .HasColumnName("AllowMail")
+                   .IsRequired();
+            builder.OwnsOne(customer => customer.ContactPreferences)
+                   .Property(contactPreferences => contactPreferences.AllowSms)
+                   .HasColumnName("AllowSms")
+                   .IsRequired();
         }
     }
 }

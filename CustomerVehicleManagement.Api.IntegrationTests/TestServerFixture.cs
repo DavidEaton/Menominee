@@ -22,13 +22,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
 
         public TestServerFixture()
         {
+            var path = @"C:\Users\David\source\repos\Menominee\CustomerVehicleManagement.Api";
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
             var builder = new WebHostBuilder()
-                .UseContentRoot(GetContentRootPath())
-                .UseEnvironment("Development")
+                .UseContentRoot(path)
+                .UseEnvironment("Testing")
                 .UseStartup<Startup>()
-                .ConfigureServices(x =>
+                .ConfigureServices(serviceCollection =>
                 {
-                    x.AddAntiforgery(t =>
+                    serviceCollection.AddAntiforgery(t =>
                     {
                         t.Cookie.Name = AntiForgeryCookieName;
                         t.FormFieldName = AntiForgeryFieldName;
@@ -50,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
         {
             string testProjectPath = PlatformServices.Default.Application.ApplicationBasePath;
 
-            var relativePathToWebProject = @"..\..\..\..\..\src\CreditCards";
+            var relativePathToWebProject = @"\\CustomerVehicleManagement\CustomerVehicleManagement.Api";
 
             return Path.Combine(testProjectPath, relativePathToWebProject);
         }

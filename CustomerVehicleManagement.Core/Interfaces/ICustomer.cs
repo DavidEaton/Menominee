@@ -2,6 +2,7 @@
 using SharedKernel;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -12,13 +13,7 @@ namespace CustomerVehicleManagement.Domain.Interfaces
         IEntity Entity { get; }
         int EntityId { get; }
         CustomerType CustomerType { get; }
-        bool AllowEmail { get; }
-        bool AllowMail { get; }
-        bool AllowSms { get; }
-        bool OverrideCustomerTaxProfile { get; }
-        int PriceProfileId { get; }
-        bool RewardsMember { get; }
-        int TaxIds { get; }
+        ContactPreferences ContactPreferences { get; }
         DateTime Created { get; }
         IList<Vehicle> Vehicles { get; }
 

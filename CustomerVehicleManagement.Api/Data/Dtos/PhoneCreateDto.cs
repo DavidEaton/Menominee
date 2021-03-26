@@ -24,9 +24,9 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
             Primary = primary;
         }
 
-        public string Number { get; private set; }
-        public PhoneType PhoneType { get; private set; }
-        public bool Primary { get; private set; }
+        public string Number { get; set; }
+        public PhoneType PhoneType { get; set; }
+        public bool Primary { get; set; }
 
     }
 }

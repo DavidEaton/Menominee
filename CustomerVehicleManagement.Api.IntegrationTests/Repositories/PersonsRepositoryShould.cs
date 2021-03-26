@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +40,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             // Arrange
             // Create an in-memory database
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
 
             // Due to the disconnected nature of ASP.NET Core,
             // our tests create and use unique contexts for each
@@ -50,7 +49,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Add a Person to the in-memory database
             using (var context = new AppDbContext(options))
             {
-                context.Persons.Add(CreateValidPerson());
+                context.Persons.Add(Helpers.CreateValidPerson());
                 context.SaveChanges();
             }
             
@@ -70,14 +69,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task AddPersonAsync()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
                 var repository = new PersonRepository(context, mapper);
 
                 // Act
-                await repository.AddAsync(mapper.Map<PersonCreateDto>(CreateValidPerson()));
+                await repository.AddAsync(mapper.Map<PersonCreateDto>(Helpers.CreateValidPerson()));
                 await repository.SaveChangesAsync();
                 var persons = await repository.GetPersonsAsync();
 
@@ -89,12 +88,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsync()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
             {
-                var person = CreateValidPerson();
+                var person = Helpers.CreateValidPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -113,12 +112,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsyncIncludesPhones()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
             {
-                var person = CreateValidPersonWithPhones();
+                var person = Helpers.CreateValidPersonWithPhones();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -138,12 +137,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonAsyncIncludesEmails()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
             {
-                var person = CreateValidPersonWithEmails();
+                var person = Helpers.CreateValidPersonWithEmails();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -163,11 +162,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetPersonsListAsync()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
-                context.Persons.Add(CreateValidPerson());
+                context.Persons.Add(Helpers.CreateValidPerson());
                 context.SaveChanges();
             }
 
@@ -184,8 +183,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdatePersonAsync()
         {
-            var options = CreateDbContextContextOptions();
-            Person person = CreateValidPerson();
+            var options = Helpers.CreateDbContextOptions();
+            Person person = Helpers.CreateValidPerson();
             Person personFromRepository;
             var id = 0;
 
@@ -231,7 +230,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Trait("Category", "Experimental")]
         public async Task UpdatePersonGraphAsync()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             Person person;
             Person personFromRepository;
             PersonReadDto personFromRepositoryUpdated;
@@ -241,7 +240,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var isPrimary = false;
             var address = "a@b.c";
 
-            CreateAndSavePersonGraph(options, out person, out id);
+            Helpers.CreateAndSavePersonGraph(options, out person, out id);
 
             // Get the Person from the database
             using (var context = new AppDbContext(options))
@@ -278,8 +277,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 personUpdateDto.Emails.Add(email);
 
                 // ACT
-                //DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
-
                 mapper.Map<Person>(personUpdateDto);
 
                 repository.FixTrackingState();
@@ -305,12 +302,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task DeletePerson()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
             {
-                var person = CreateValidPerson();
+                var person = Helpers.CreateValidPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -348,7 +345,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public void ThrowExceptionWhenPassedNullMapper()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
@@ -360,12 +357,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task ReturnTrueIfPersonExistsAsync()
         {
-            var options = CreateDbContextContextOptions();
+            var options = Helpers.CreateDbContextOptions();
             var id = 0;
 
             using (var context = new AppDbContext(options))
             {
-                var person = CreateValidPerson();
+                var person = Helpers.CreateValidPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -391,7 +388,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlite(connection)
                 .Options;
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             using (var context = new AppDbContext(options))
             {
                 context.Database.OpenConnection();
@@ -405,86 +402,5 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
         }
 
-        private static DbContextOptions<AppDbContext> CreateDbContextContextOptions()
-        {
-            // Create an in-memory database
-            return new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase($"testdb{Guid.NewGuid()}")
-                .Options;
-        }
-
-        private static Person CreateValidPerson()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
-
-            return person;
-        }
-
-        private static Person CreateValidPersonWithPhones()
-        {
-            var person = CreateValidPerson();
-            person.SetPhones(CreateValidPhones());
-            return person;
-        }
-
-        private static Person CreateValidPersonWithEmails()
-        {
-            var person = CreateValidPerson();
-            person.SetEmails(CreateValidEmails());
-            return person;
-        }
-
-        private static void CreateAndSavePersonGraph(DbContextOptions<AppDbContext> options, out Person person, out int id)
-        {
-            // Create a new Person with Emails and Phones, and save
-            using (var context = new AppDbContext(options))
-            {
-                person = CreateValidPersonWithEmails();
-                person.SetPhones(CreateValidPhones());
-                context.Persons.Add(person);
-                context.SaveChanges();
-                id = person.Id;
-            }
-        }
-        private static IList<Phone> CreateValidPhones()
-        {
-            IList<Phone> phones = new List<Phone>();
-
-            var number1 = "(555) 987-6543";
-            var phoneType1 = PhoneType.Mobile;
-            var isPrimary1 = true;
-            var phone1 = new Phone(number1, phoneType1, isPrimary1);
-
-            var number2 = "(555) 123-4567";
-            var phoneType2 = PhoneType.Mobile;
-            var isPrimary2 = false;
-            var phone2 = new Phone(number2, phoneType2, isPrimary2);
-
-            phones.Add(phone1);
-            phones.Add(phone2);
-
-            return phones;
-        }
-
-        private static IList<Email> CreateValidEmails()
-        {
-            IList<Email> Emails = new List<Email>();
-
-            var address1 = "a@b.c";
-            var isPrimary1 = true;
-            var Email1 = new Email(address1, isPrimary1);
-
-            var address2 = "d@e.f";
-            var isPrimary2 = false;
-            var Email2 = new Email(address2, isPrimary2);
-
-            Emails.Add(Email1);
-            Emails.Add(Email2);
-
-            return Emails;
-        }
     }
 }

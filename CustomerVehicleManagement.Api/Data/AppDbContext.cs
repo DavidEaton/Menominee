@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Api.Data
                 });
 
                 optionsBuilder.UseSqlServer(connection)
-                              .UseLazyLoadingProxies(true);
+                              .UseLazyLoadingProxies(false);
 
                 if (useConsoleLogger)
                 {

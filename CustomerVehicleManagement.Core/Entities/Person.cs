@@ -9,29 +9,9 @@ namespace CustomerVehicleManagement.Domain.Entities
     public class Person : Contactable
     {
         public Person(PersonName name, Gender gender)
-            : this(name, gender, null) { }
-
-        public Person(PersonName name, Gender gender, DateTime? birthday)
-            : this(name, gender, birthday, null) { }
-
-        public Person(PersonName name, Gender gender, DateTime? birthday, Address address)
-            : this(name, gender, birthday, address, null) { }
-
-        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones)
-            : this(name, gender, birthday, address, phones, null) { }
-
-        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, IList<Email> emails)
-            : this(name, gender, birthday, address, phones, emails, null) { }
-
-        public Person(PersonName name, Gender gender, DateTime? birthday, Address address, IList<Phone> phones, IList<Email> emails, DriversLicense driversLicense = null)
         {
             Name = name;
             Gender = gender;
-            Birthday = birthday;
-            Address = address;
-            DriversLicense = driversLicense;
-            if (phones != null) SetPhones(phones);
-            if (emails != null) SetEmails(emails);
         }
 
         public PersonName Name { get; private set; }

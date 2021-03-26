@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void HaveCreatedDateOnCreated()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
 
             var customer = new Customer(organization);
 
@@ -38,48 +38,24 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void CreateCustomerWithOrganizationEntity()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
 
             var customer = new Customer(organization);
 
             customer.Entity.Should().BeOfType<Organization>();
         }
 
-
         [Fact]
-        public void CreatePersonCustomerWithAddress()
-        {
-            var addressLine = "1234 Five Street";
-            var city = "Gaylord";
-            var state = "MI";
-            var postalCode = "49735";
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var address = new Address(addressLine, city, state, postalCode);
-            var person = new Person(name, Gender.Female, null, address);
-
-            var customer = new Customer(person);
-            var jane = (Person)customer.Entity;
-
-            jane.Name.LastFirstMiddle.Should().Be($"{lastName}, {firstName}");
-            jane.Address.AddressLine.Should().Be(addressLine);
-            jane.Address.City.Should().Be(city);
-            jane.Address.State.Should().Be(state);
-            jane.Address.PostalCode.Should().Be(postalCode);
-        }
-
-        [Fact]
-        public void CreateOrganizationCustomerWithAddress()
+        public void SetAddress()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
             var address = new Address(addressLine, city, state, postalCode);
-            var name = "Jane's";
-            var organization = new Organization(name, address);
-
+            var organization = Helpers.CreateValidOrganization();
+            
+            organization.SetAddress(address);
             var customer = new Customer(organization);
             var janes = (Organization)customer.Entity;
 
@@ -97,7 +73,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
             var person = new Person(name, Gender.Female);
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
             organization.SetContact(person);
 
             var customer = new Customer(organization);
@@ -110,7 +86,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPhones()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -127,7 +103,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePhones()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -147,7 +123,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddVehicles()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
@@ -171,7 +147,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveVehicle()
         {
-            var organization = CreateValidOrganization();
+            var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
@@ -190,14 +166,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             customer.RemoveVehicle(vehicle0);
 
             customer.Vehicles.Count.Should().Be(1);
-        }
-
-        private static Organization CreateValidOrganization()
-        {
-            var name = "Jane's";
-            var organization = new Organization(name);
-
-            return organization;
         }
     }
 }

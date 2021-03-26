@@ -34,9 +34,15 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             if (personCreateDto != null)
             {
                 person = new Person(personCreateDto.Name, personCreateDto.Gender);
-                person.SetBirthday(personCreateDto.Birthday);
-                person.SetDriversLicense(personCreateDto.DriversLicense);
-                person.SetAddress(personCreateDto.Address);
+
+                if (personCreateDto.Birthday != null) 
+                    person.SetBirthday(personCreateDto.Birthday);
+
+                if (personCreateDto.DriversLicense != null)
+                    person.SetDriversLicense(personCreateDto.DriversLicense);
+
+                if (personCreateDto.Address != null)
+                    person.SetAddress(personCreateDto.Address);
 
                 if (personCreateDto.Phones != null)
                     if (personCreateDto.Phones.Count > 0)
@@ -101,7 +107,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<IEnumerable<PersonInListDto>> GetPersonsListAsync()
         {
-            var personsFromContext = context.Persons.ToArray();
+            var personsFromContext = await context.Persons.ToArrayAsync();
 
             var personsList = new List<PersonInListDto>();
 

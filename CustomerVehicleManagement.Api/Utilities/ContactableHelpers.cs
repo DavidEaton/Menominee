@@ -12,24 +12,24 @@ namespace CustomerVehicleManagement.Api.Utilities
         public static string GetPrimaryPhone(IListOfPhone entity)
         {
             if (entity == null)
-                return null;
+                return string.Empty;
 
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : string.Empty;
         }
 
         public static string GetPrimaryPhoneType(IListOfPhone entity)
         {
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : string.Empty;
         }
 
         public static string GetOrdinalPhoneType(IListOfPhone entity, int position)
         {
-            return entity.Phones.Count > 0 ? entity.Phones[position].PhoneType.ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones[position].PhoneType.ToString() : string.Empty;
         }
 
         public static string GetOrdinalPhone(IListOfPhone entity, int position)
         {
-            return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : null;
+            return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : string.Empty;
         }
 
         public static IList<EmailReadDto> MapDomainEmailToReadDto(IEnumerable<Email> emails)

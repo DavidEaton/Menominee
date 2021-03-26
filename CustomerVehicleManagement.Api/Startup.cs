@@ -92,7 +92,7 @@ namespace CustomerVehicleManagement.Api
         public void Configure(IApplicationBuilder app)
         {
             string environment = HostEnvironment.EnvironmentName;
-            string testOrigin = "https://localhost:44378";
+            string[] testOrigin = { "http://localhost:44378, https://localhost:44378" };
 
             app.UseHttpsRedirection();
             app.UseRouting();

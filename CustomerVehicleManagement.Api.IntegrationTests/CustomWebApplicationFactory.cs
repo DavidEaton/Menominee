@@ -32,15 +32,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices.GetRequiredService<AppDbContext>();
+                    var context = scopedServices.GetRequiredService<AppDbContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
-                    db.Database.EnsureCreated();
+                    context.Database.EnsureCreated();
 
                     try
                     {
-                        Utilities.InitializeDbForTests(db);
+                        Helpers.InitializeDbForTests(context);
                     }
                     catch (Exception ex)
                     {

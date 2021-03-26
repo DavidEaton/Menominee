@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            repository.Create(organizationCreateDto);
+            await repository.AddOrganizationAsync(organizationCreateDto);
 
             if (await repository.SaveChangesAsync())
             {
@@ -102,12 +102,15 @@ namespace CustomerVehicleManagement.Api.Controllers
                     {
                         Id = organizationCreateDto.Contact.Id,
                         Name = organizationCreateDto.Contact.Name.LastFirstMiddleInitial,
-                        Phones = mapper.Map<IList<PhoneReadDto>>(organizationCreateDto.Phones)
+                        Phones = mapper.Map<IList<PhoneReadDto>>(organizationCreateDto.Contact.Phones),
+                        Emails = mapper.Map<IList<EmailReadDto>>(organizationCreateDto.Contact.Emails)
                     },
                     AddressLine = organizationCreateDto.Address.AddressLine,
                     City = organizationCreateDto.Address.City,
                     State = organizationCreateDto.Address.State,
-                    PostalCode = organizationCreateDto.Address.PostalCode
+                    PostalCode = organizationCreateDto.Address.PostalCode,
+                    Phones = mapper.Map<IList<PhoneReadDto>>(organizationCreateDto.Phones),
+                    Emails = mapper.Map<IList<EmailReadDto>>(organizationCreateDto.Emails)
                 };
 
                 return CreatedAtRoute("GetOrganization",
@@ -126,7 +129,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (organizationFromRepository == null)
                 return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
-            repository.Delete(organizationFromRepository);
+            repository.DeleteOrganization(organizationFromRepository);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();

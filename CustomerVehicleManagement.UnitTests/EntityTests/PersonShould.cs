@@ -96,109 +96,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void CreatePersonWithBirthday()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var birthday = DateTime.Today.AddYears(-40);
-
-            var person = new Person(name, Gender.Female, birthday);
-
-            person.Birthday.Should().BeCloseTo(birthday);
-        }
-
-        [Fact]
-        public void CreatePersonWithDriversLicense()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var driversLicenseNumber = "123456789POIUYTREWQ";
-            var driversLicenseState = "MI";
-            var issued = DateTime.Today;
-            var expiry = DateTime.Today.AddYears(4);
-            var driversLicenseValidRange = new DateTimeRange(issued, expiry);
-            var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
-            var name = new PersonName(lastName, firstName);
-
-            var person = new Person(name, Gender.Female, null, null, null, null, driversLicense);
-
-            using (new AssertionScope())
-            {
-                person.DriversLicense.Number.Should().Be(driversLicenseNumber);
-                person.DriversLicense.State.Should().Be(driversLicenseState);
-                person.DriversLicense.ValidRange.Start.Should().Be(issued);
-                person.DriversLicense.ValidRange.End.Should().Be(expiry);
-            }
-        }
-
-        [Fact]
-        public void CreatePersonWithAddress()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var addressLine = "1234 Five Street";
-            var city = "Gaylord";
-            var state = "MI";
-            var postalCode = "49735";
-            var address = new Address(addressLine, city, state, postalCode);
-            var name = new PersonName(lastName, firstName);
-
-            var person = new Person(name, Gender.Female, null, address);
-
-            using (new AssertionScope())
-            {
-                person.Address.AddressLine.Should().Be(addressLine);
-                person.Address.City.Should().Be(city);
-                person.Address.State.Should().Be(state);
-                person.Address.PostalCode.Should().Be(postalCode);
-            }
-        }
-
-        [Fact]
-        public void CreatePersonWithPhones()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var phones = new List<Phone>();
-            var number = "555.444.3333";
-            var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
-            phones.Add(phone);
-            number = "231.546.2102";
-            phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
-            phones.Add(phone);
-
-            var person = new Person(name, Gender.Female, null, null, phones);
-
-            person.Phones.Count.Should().Be(2);
-        }
-
-        [Fact]
-        public void CreatePersonWithEmails()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-            var emails = new List<Email>();
-            var address = "jane@doe.com";
-            var email = new Email(address, true);
-            emails.Add(email);
-            address = "june@done.com";
-            email = new Email(address, false);
-            emails.Add(email);
-
-            var person = new Person(name, Gender.Female, null, null, null, emails);
-
-            person.Emails.Count.Should().Be(2);
-        }
-
-        [Fact]
         public void HaveEmptyPhonesOnCreate()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
 
             person.Phones.Count.Should().Be(0);
         }
@@ -206,7 +106,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPhone()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -219,7 +119,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePhone()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone0 = new Phone(number, phoneType, true);
@@ -239,7 +139,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetPhones()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
@@ -262,7 +162,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotCreateMoreThanOnePrimaryPhone()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -279,7 +179,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotAddDuplicatePhone()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -295,7 +195,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddEmail()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, true);
 
@@ -307,7 +207,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveEmail()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var address = "jane@doe.com";
             var email0 = new Email(address, true);
             person.AddEmail(email0);
@@ -325,7 +225,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetEmails()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email0 = new Email(address, true);
@@ -343,7 +243,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = new Email(address, true);
@@ -361,7 +261,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsWithDuplicateEmails()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = new Email(address, false);
@@ -378,7 +278,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsToNull()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             List<Email> emails = null;
 
             Action action = () => person.SetEmails(emails);
@@ -390,7 +290,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotCreateMoreThanOnePrimaryEmail()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, true);
             person.AddEmail(email);
@@ -406,7 +306,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotAddDuplicateEmail()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var address = "jane@doe.com";
             var email = new Email(address, false);
             person.AddEmail(email);
@@ -438,7 +338,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetGender()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
 
             person.Gender.Should().Be(Gender.Female);
             person.SetGender(Gender.Male);
@@ -449,7 +349,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetBirthday()
         {
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
@@ -465,7 +365,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = new DateTimeRange(issued, expiry);
             var driversLicense = new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
 
             person.SetDriversLicense(driversLicense);
 
@@ -479,7 +379,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var city = "Gaylord";
             var state = "MI";
             var postalCode = "49735";
-            var person = CreateValidPerson();
+            var person = Helpers.CreateValidPerson();
             var address = new Address(addressLine, city, state, postalCode);
 
             person.SetAddress(address);
@@ -491,17 +391,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 person.Address.State.Should().Be(state);
                 person.Address.PostalCode.Should().Be(postalCode);
             }
-        }
-
-        private Person CreateValidPerson()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-
-            var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
-
-            return person;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
 using Helper = CustomerVehicleManagement.Api.Utilities.ContactableHelpers;
@@ -10,23 +11,6 @@ namespace CustomerVehicleManagement.Api.Utilities
 {
     public static class DtoHelpers
     {
-        public static OrganizationsInListDto CreateOrganizationsListDtoFromDomain(Organization organization)
-        {
-            return new OrganizationsInListDto()
-            {
-                AddressLine = organization?.Address?.AddressLine,
-                City = organization?.Address?.City,
-                Id = organization.Id,
-                Name = organization.Name,
-                ContactName = organization?.Contact?.Name?.LastFirstMiddle,
-                PostalCode = organization?.Address?.PostalCode,
-                State = organization?.Address?.State,
-                PrimaryPhone = Helper.GetPrimaryPhone(organization) ?? Helper.GetOrdinalPhone(organization, 0),
-                PrimaryPhoneType = Helper.GetPrimaryPhoneType(organization) ?? Helper.GetOrdinalPhoneType(organization, 0),
-                Notes = organization.Notes
-            };
-        }
-
         public static PersonInListDto CreatePersonsListDtoFromDomain(Person person)
         {
             return new PersonInListDto()
@@ -66,7 +50,11 @@ namespace CustomerVehicleManagement.Api.Utilities
             OrganizationUpdateDto organizationUpdateDto,
             Organization organizationFromRepository)
         {
-            organizationFromRepository.SetName(organizationUpdateDto.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
+            if (organizationNameOrError.IsFailure)
+                return;
+
+            organizationFromRepository.SetName(organizationNameOrError.Value);
             //organizationFromRepository.SetContact(organizationUpdateDto.Contact);
             organizationFromRepository.SetAddress(organizationUpdateDto.Address);
             organizationFromRepository.SetNotes(organizationUpdateDto.Notes);
@@ -79,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Utilities
             return new OrganizationReadDto
             {
                 Id = organization.Id,
-                Name = organization.Name,
+                Name = organization.Name.Value,
                 Contact = (organization.Contact == null) ? null : new PersonReadDto
                 {
                     Id = organization.Contact.Id,
@@ -101,8 +89,6 @@ namespace CustomerVehicleManagement.Api.Utilities
                 State = organization?.Address?.State,
                 PostalCode = organization?.Address?.PostalCode,
                 Notes = organization?.Notes,
-                //Phones = (organization.Phones == null) ? null : Helper.MapDomainPhoneToReadDto(organization?.Phones),
-                //Emails = (organization.Emails == null) ? null : Helper.MapDomainEmailToReadDto(organization?.Emails),
                 Phones = Helper.MapDomainPhoneToReadDto(organization?.Phones) ?? null,
                 Emails = Helper.MapDomainEmailToReadDto(organization?.Emails) ?? null
             };

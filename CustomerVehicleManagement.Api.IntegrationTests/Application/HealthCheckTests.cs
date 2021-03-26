@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CustomerVehicleManagement.Api.Application.IntegrationTests
+namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
     public class HealthCheckTests : IClassFixture<WebApplicationFactory<Startup>>
     {

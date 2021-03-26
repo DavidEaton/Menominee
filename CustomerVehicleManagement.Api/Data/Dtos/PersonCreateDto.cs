@@ -11,23 +11,11 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
     [PersonCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Person can have only one Primary phone.")]
     public class PersonCreateDto
     {
-        public PersonCreateDto(PersonName name, Gender gender)
-            : this(name, gender, null) { }
-
-        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday)
-            : this(name, gender, birthday, null) { }
-
-        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address)
-            : this(name, gender, birthday, address, null) { }
-
         [JsonConstructor]
-        public PersonCreateDto(PersonName name, Gender gender, DateTime? birthday, Address address, DriversLicense driversLicense = null)
+        public PersonCreateDto(PersonName name, Gender gender)
         {
             Name = name;
             Gender = gender;
-            Birthday = birthday;
-            Address = address;
-            DriversLicense = driversLicense;
         }
         public int Id { get; set; }
         

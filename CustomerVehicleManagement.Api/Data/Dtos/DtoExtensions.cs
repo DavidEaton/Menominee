@@ -34,18 +34,9 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
                     {
                         Id = customer.Id,
                         EntityType = EntityType.Organization,
-                        Name = organization.Name,
+                        Name = organization.Name.Value,
                         Address = organization.Address,
                         CustomerType = customer.CustomerType,
-                        AllowMail = customer.AllowMail,
-                        AllowEmail = customer.AllowEmail,
-                        AllowSms = customer.AllowSms,
-                        PriceProfileId = customer.PriceProfileId,
-                        TaxIds = customer.TaxIds,
-                        RewardsMember = customer.RewardsMember,
-                        OverrideCustomerTaxProfile = customer.OverrideCustomerTaxProfile,
-
-
                         Contact = (organization.Contact != null)
                         ? new PersonReadDto()
                         {
@@ -84,7 +75,6 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
             {
                 PhoneReadDto phoneReadDto = new PhoneReadDto()
                 {
-                    //Id = phone.Id,
                     Number = phone.Number,
                     PhoneType = phone.PhoneType.ToString(),
                     IsPrimary = phone.IsPrimary

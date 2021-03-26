@@ -10,8 +10,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class BasicTests
-        : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class BasicTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly CustomWebApplicationFactory<Startup> factory;
         private readonly HttpClient client;
@@ -34,27 +33,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
             persons.Should().HaveCountGreaterOrEqualTo(2);
         }
 
-
-
-        //[Theory]
-        //[InlineData("/")]
-        //[InlineData("/Index")]
-        //[InlineData("/About")]
-        //[InlineData("/Privacy")]
-        //[InlineData("/Contact")]
-        //public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
-        //{
-        //    // Arrange
-        //    var client = factory.CreateClient();
-
-        //    // Act
-        //    var response = await client.GetAsync(url);
-
-        //    // Assert
-        //    response.EnsureSuccessStatusCode(); // Status Code 200-299
-        //    Assert.Equal("text/html; charset=utf-8",
-        //        response.Content.Headers.ContentType.ToString());
-        //}
 
 
 

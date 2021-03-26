@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Api.Data.ValidationAttributes
             if (primaryPhoneCount > 1)
             {
                 return new ValidationResult(
-                    "Person can have only one Primary phone.",
+                    "Can have only one Primary phone.",
                     new[] { nameof(PersonCreateDto) });
             }
 

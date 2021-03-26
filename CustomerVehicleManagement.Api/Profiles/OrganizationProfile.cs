@@ -30,13 +30,33 @@ namespace CustomerVehicleManagement.Api.Profiles
                     configuration => configuration
                         .MapFrom(
                             source => source.Address.PostalCode))
-                
-                //.ForMember(
-                //    destination => destination.Contact,
-                //    configuration => configuration
-                //        .MapFrom(
-                //            source => source.Contact))
+                .ForMember(
+                    destination => destination.Name,
+                    configuration => configuration
+                        .MapFrom(
+                            source => source.Name.Value))
+                .ReverseMap();
 
+            CreateMap<Organization, OrganizationUpdateDto>()
+                .ForMember(
+                    destination => destination.Name,
+                    configuration => configuration
+                        .MapFrom(
+                            source => source.Name.Value));
+
+            CreateMap<OrganizationUpdateDto, Organization>()
+                .ForMember(
+                    destination => destination.Name,
+                    configuration => configuration
+                        .MapFrom(
+                            source => source.Name));
+
+            CreateMap<Organization, OrganizationCreateDto>()
+                .ForMember(
+                    destination => destination.Name,
+                    configuration => configuration
+                        .MapFrom(
+                            source => source.Name.Value))
                 .ReverseMap();
         }
     }

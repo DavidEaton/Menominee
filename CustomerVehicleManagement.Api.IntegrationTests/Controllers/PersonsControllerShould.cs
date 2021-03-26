@@ -38,11 +38,23 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             }
         }
 
+        #region ********************************Get***********************************
+
         [Fact]
         public async Task Return_ActionResult_Of_PersonReadDto_On_GetPersonAsync()
         {
             var result = await controller.GetPersonAsync(1);
 
+            result.Result.Should().BeOfType<NotFoundResult>();
+            result.Should().BeOfType<ActionResult<PersonReadDto>>();
+        }
+
+        [Fact]
+        public async Task Return_NotFoundResult_On_GetPersonAsyncWithInvalidId()
+        {
+            var result = await controller.GetPersonAsync(0);
+
+            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
 
@@ -51,6 +63,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonsAsync();
 
+            result.Result.Should().BeOfType<OkObjectResult>();
             result.Should().BeOfType<ActionResult<IEnumerable<PersonReadDto>>>();
         }
 
@@ -62,6 +75,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             result.Should().BeOfType<ActionResult<IEnumerable<PersonInListDto>>>();
         }
 
+        #endregion Get
+
+        #region ********************************Post**********************************
+
         [Fact]
         public async Task Return_ActionResult_Of_PersonReadDto_On_CreatePersonAsync()
         {
@@ -71,7 +88,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
-
 
         [Fact]
         public async Task Return_BadRequestObjectResult_On_CreatePersonAsync_When_ModelState_Invalid()
@@ -125,5 +141,24 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
+
+        #endregion Post
+
+        #region ********************************Put***********************************
+
+        [Fact]
+        public async Task Return_NotFoundObjectResult_On_UpdatePersonAsync_With_Invalid_Id()
+        {
+            var person = new PersonUpdateDto { 
+                Gender = Gender.Female
+            };
+
+            var result = await controller.UpdatePersonAsync(person.Id, person);
+
+            result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+
+        #endregion Put
     }
 }

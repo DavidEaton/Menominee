@@ -45,6 +45,10 @@ namespace CustomerVehicleManagement.Api.Controllers
         public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersonsAsync()
         {
             var persons = await repository.GetPersonsAsync();
+
+            if (persons == null)
+                return NotFound();
+
             return Ok(persons);
         }
 
@@ -67,7 +71,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var notFoundMessage = $"Could not find Person to update: {personUpdateDto.Name.FirstMiddleLast}";
+            var notFoundMessage = $"Could not find Person to update";
 
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository

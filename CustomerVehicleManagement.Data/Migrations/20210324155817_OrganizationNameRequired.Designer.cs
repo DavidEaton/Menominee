@@ -4,14 +4,16 @@ using CustomerVehicleManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerVehicleManagement.Data.Migrations
 {
     [DbContext(typeof(DataDbContext))]
-    partial class DataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210324155817_OrganizationNameRequired")]
+    partial class OrganizationNameRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +28,15 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<bool>("AllowEmail")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AllowMail")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AllowSms")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -36,6 +47,18 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("OverrideCustomerTaxProfile")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PriceProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RewardsMember")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TaxIds")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -177,38 +200,6 @@ namespace CustomerVehicleManagement.Data.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Vehicle", "dbo");
-                });
-
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Customer", b =>
-                {
-                    b.OwnsOne("SharedKernel.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
-                        {
-                            b1.Property<int>("CustomerId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
-                                .UseIdentityColumn();
-
-                            b1.Property<bool>("AllowEmail")
-                                .HasColumnType("bit")
-                                .HasColumnName("AllowEmail");
-
-                            b1.Property<bool>("AllowMail")
-                                .HasColumnType("bit")
-                                .HasColumnName("AllowMail");
-
-                            b1.Property<bool>("AllowSms")
-                                .HasColumnType("bit")
-                                .HasColumnName("AllowSms");
-
-                            b1.HasKey("CustomerId");
-
-                            b1.ToTable("Customer");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CustomerId");
-                        });
-
-                    b.Navigation("ContactPreferences");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Email", b =>
