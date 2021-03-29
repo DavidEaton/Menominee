@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Dtos;
+﻿using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;

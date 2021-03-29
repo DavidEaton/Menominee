@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Controllers;
-using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Dtos;
-using CustomerVehicleManagement.Api.Profiles;
+using CustomerVehicleManagement.Api.Phones;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -11,6 +8,8 @@ using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Emails;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {

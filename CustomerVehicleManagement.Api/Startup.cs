@@ -1,20 +1,17 @@
-using AutoMapper;
-using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Data.Interfaces;
-using CustomerVehicleManagement.Api.Data.Repositories;
+using CustomerVehicleManagement.Api.Phones;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using System;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Organizations;
 
 namespace CustomerVehicleManagement.Api
 {

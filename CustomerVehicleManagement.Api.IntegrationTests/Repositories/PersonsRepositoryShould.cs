@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Data.Dtos;
-using CustomerVehicleManagement.Api.Data.Repositories;
-using CustomerVehicleManagement.Api.Profiles;
+using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 context.Persons.Add(Helpers.CreateValidPerson());
                 context.SaveChanges();
             }
-            
+
             // Read all Persons from the in-memory database
             using (var context = new AppDbContext(options))
             {

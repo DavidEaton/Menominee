@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Dtos;
+using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
-using System.Linq;
 using Helper = CustomerVehicleManagement.Api.Utilities.ContactableHelpers;
 
 
@@ -60,38 +60,6 @@ namespace CustomerVehicleManagement.Api.Utilities
             organizationFromRepository.SetNotes(organizationUpdateDto.Notes);
             organizationFromRepository.SetPhones(organizationUpdateDto.Phones);
             organizationFromRepository.SetEmails(organizationUpdateDto.Emails);
-        }
-
-        public static OrganizationReadDto ConvertOrganizationDomainToReadDto(Organization organization)
-        {
-            return new OrganizationReadDto
-            {
-                Id = organization.Id,
-                Name = organization.Name.Value,
-                Contact = (organization.Contact == null) ? null : new PersonReadDto
-                {
-                    Id = organization.Contact.Id,
-                    Name = organization.Contact.Name.LastFirstMiddle,
-                    Phones = organization.Contact?.Phones.Select(phone => new PhoneReadDto
-                    {
-                        Number = phone.Number,
-                        PhoneType = phone.PhoneType.ToString(),
-                        IsPrimary = phone.IsPrimary
-                    }),
-                    Emails = organization.Contact?.Emails.Select(email => new EmailReadDto
-                    { 
-                        Address = email.Address,
-                        IsPrimary = email.IsPrimary
-                    })
-                },
-                AddressLine = organization?.Address?.AddressLine,
-                City = organization?.Address?.City,
-                State = organization?.Address?.State,
-                PostalCode = organization?.Address?.PostalCode,
-                Notes = organization?.Notes,
-                Phones = Helper.MapDomainPhoneToReadDto(organization?.Phones) ?? null,
-                Emails = Helper.MapDomainEmailToReadDto(organization?.Emails) ?? null
-            };
         }
     }
 }

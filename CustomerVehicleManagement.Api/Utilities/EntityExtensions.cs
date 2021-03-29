@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Interfaces;
+﻿using CustomerVehicleManagement.Api.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 

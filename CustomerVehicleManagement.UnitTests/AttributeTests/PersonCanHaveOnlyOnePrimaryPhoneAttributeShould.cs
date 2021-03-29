@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data.Dtos;
-using CustomerVehicleManagement.Api.Data.ValidationAttributes;
+﻿using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.ValidationAttributes;
 using FluentAssertions;
 using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;

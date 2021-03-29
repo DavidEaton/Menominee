@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Profiles;
+using CustomerVehicleManagement.Api.Phones;
 using Xunit;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Data.Repositories;
 using FluentAssertions;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using CustomerVehicleManagement.Api.Data.Dtos;
 using SharedKernel.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Emails;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {

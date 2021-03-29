@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data.Dtos;
+using CustomerVehicleManagement.Api.Persons;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
