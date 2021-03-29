@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
-    public abstract class Contactable : Entity, IListOfPhone
+    public abstract class Contactable : Entity, IContactLists
     {
         public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
         public static readonly string PrimaryPhoneExistsMessage = "Cannot add more than one Primary phone.";

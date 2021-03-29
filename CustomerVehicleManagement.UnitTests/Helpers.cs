@@ -52,6 +52,79 @@ namespace CustomerVehicleManagement.UnitTests
             return phones;
         }
 
+        public static IList<Phone> CreateValidPhones()
+        {
+            var phones = new List<Phone>();
+
+            var number1 = "(555) 987-6543";
+            var phoneType1 = PhoneType.Mobile;
+            var isPrimary1 = true;
+            var phone1 = new Phone(number1, phoneType1, isPrimary1);
+
+            var number2 = "(555) 123-4567";
+            var phoneType2 = PhoneType.Mobile;
+            var isPrimary2 = false;
+            var phone2 = new Phone(number2, phoneType2, isPrimary2);
+
+            phones.Add(phone1);
+            phones.Add(phone2);
+
+            return phones;
+        }
+
+        public static Phone CreateValidPrimaryPhone()
+        {
+            var number = "(555) 987-6543";
+            var phoneType = PhoneType.Mobile;
+            var isPrimary = true;
+            return new Phone(number, phoneType, isPrimary);
+        }
+
+        public static IList<Phone> CreateInValidPhones()
+        {
+            var phones = new List<Phone>();
+
+            var number1 = "(555) 987-6543";
+            var phoneType1 = PhoneType.Mobile;
+            var isPrimary1 = true;
+            var phone1 = new Phone(number1, phoneType1, isPrimary1);
+
+            var number2 = "(555) 123-4567";
+            var phoneType2 = PhoneType.Mobile;
+            var isPrimary2 = true;
+            var phone2 = new Phone(number2, phoneType2, isPrimary2);
+
+            phones.Add(phone1);
+            phones.Add(phone2);
+
+            return phones;
+        }
+
+        public static IList<Email> CreateValidEmails()
+        {
+            var emails = new List<Email>();
+
+            var address = "e@mail.com";
+            var isPrimary = true;
+
+            emails.Add(new Email(address, isPrimary));
+
+            address = "i@pod.com";
+            isPrimary = false;
+
+            emails.Add(new Email(address, isPrimary));
+
+            return emails;
+        }
+
+        public static Email CreateValidPrimaryEmail()
+        {
+            var address = "e@mail.com";
+            var isPrimary = true;
+
+            return new Email(address, isPrimary);
+        }
+
         public static string LoremIpsum(int characters)
         {
             return new string(Source().Take(characters).ToArray());

@@ -7,15 +7,15 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.AttributeTests
 {
-    public class PersonCanHaveOnlyOnePrimaryPhoneAttributeShould
+    public class ContactableCanHaveOnlyOnePrimaryPhoneAttributeShould
     {
         [Fact]
-        public void Succeed_When_Phones_Contains_More_Than_One_Primary()
+        public void Succeed_When_Phones_Contains_One_Primary()
         {
             PersonCreateDto dto = new(Helpers.CreateValidPerson().Name, Gender.Female);
-            dto.Phones = Helpers.CreatePhoneCreateDtos();
-            var attribute = new PersonCanHaveOnlyOnePrimaryPhoneAttribute();
-            
+            dto.SetPhones(Helpers.CreateValidPhones());
+            var attribute = new ContactableCanHaveOnlyOnePrimaryPhoneAttribute();
+
             var result = attribute.GetValidationResult(dto, new ValidationContext(dto));
 
             result.Should().Be(ValidationResult.Success);
@@ -26,14 +26,12 @@ namespace CustomerVehicleManagement.UnitTests.AttributeTests
         public void Not_Succeed_When_Phones_Contains_More_Than_One_Primary()
         {
             PersonCreateDto dto = new(Helpers.CreateValidPerson().Name, Gender.Female);
-            dto.Phones = Helpers.CreatePhoneCreateDtos();
+            dto.SetPhones(Helpers.CreateValidPhones());
 
-            foreach (var phone in dto.Phones)
-            {
-                phone.Primary = true;
-            }
+            // Should we really be allowed to sneak in a second primary phone? NO!
+            dto.Phones[1] = Helpers.CreateValidPrimaryPhone();
 
-            var attribute = new PersonCanHaveOnlyOnePrimaryPhoneAttribute();
+            var attribute = new ContactableCanHaveOnlyOnePrimaryPhoneAttribute();
 
 
             var result = attribute.GetValidationResult(dto, new ValidationContext(dto));

@@ -1,17 +1,16 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.ValidationAttributes;
+﻿using CustomerVehicleManagement.Api.ValidationAttributes;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
-    [PersonCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Person can have only one Primary phone.")]
-    public class PersonCreateDto
+    [ContactableCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Can have only one Primary phone.")]
+    [ContactableCanHaveOnlyOnePrimaryEmail(ErrorMessage = "Can have only one Primary email.")]
+    public class PersonCreateDto : Contactable
     {
         [JsonConstructor]
         public PersonCreateDto(PersonName name, Gender gender)
@@ -19,15 +18,14 @@ namespace CustomerVehicleManagement.Api.Persons
             Name = name;
             Gender = gender;
         }
-        public int Id { get; set; }
-        
+
         [Required(ErrorMessage = "Person Name is required.")]
         public PersonName Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
-        public ICollection<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
-        public ICollection<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
+        //public ICollection<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
+        //public ICollection<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
     }
 }

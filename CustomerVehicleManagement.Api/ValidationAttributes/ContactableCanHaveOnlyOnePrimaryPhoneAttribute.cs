@@ -1,18 +1,18 @@
-﻿using CustomerVehicleManagement.Api.Persons;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Api.ValidationAttributes
 {
-    public class PersonCanHaveOnlyOnePrimaryPhoneAttribute : ValidationAttribute
+    public class ContactableCanHaveOnlyOnePrimaryPhoneAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var person = (PersonCreateDto)validationContext.ObjectInstance;
+            var contactable = (Contactable)validationContext.ObjectInstance;
             int primaryPhoneCount = 0;
 
-            foreach (var phone in person.Phones)
+            foreach (var phone in contactable.Phones)
             {
-                if (phone.Primary)
+                if (phone.IsPrimary)
                     primaryPhoneCount += 1;
             }
 
@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Api.ValidationAttributes
             {
                 return new ValidationResult(
                     "Can have only one Primary phone.",
-                    new[] { nameof(PersonCreateDto) });
+                    new[] { nameof(Contactable) });
             }
 
             return ValidationResult.Success;

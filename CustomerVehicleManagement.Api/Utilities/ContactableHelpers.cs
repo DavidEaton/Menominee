@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 {
     public static class ContactableHelpers
     {
-        public static string GetPrimaryPhone(IListOfPhone entity)
+        public static string GetPrimaryPhone(IContactLists entity)
         {
             if (entity == null)
                 return string.Empty;
@@ -19,17 +19,17 @@ namespace CustomerVehicleManagement.Api.Utilities
             return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : string.Empty;
         }
 
-        public static string GetPrimaryPhoneType(IListOfPhone entity)
+        public static string GetPrimaryPhoneType(IContactLists entity)
         {
             return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : string.Empty;
         }
 
-        public static string GetOrdinalPhoneType(IListOfPhone entity, int position)
+        public static string GetOrdinalPhoneType(IContactLists entity, int position)
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].PhoneType.ToString() : string.Empty;
         }
 
-        public static string GetOrdinalPhone(IListOfPhone entity, int position)
+        public static string GetOrdinalPhone(IContactLists entity, int position)
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : string.Empty;
         }
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 
             foreach (var phone in personToCreate.Phones)
             {
-                newPhone = new Phone(phone.Number, phone.PhoneType, phone.Primary);
+                newPhone = new Phone(phone.Number, phone.PhoneType, phone.IsPrimary);
                 phones.Add(newPhone);
             }
 
