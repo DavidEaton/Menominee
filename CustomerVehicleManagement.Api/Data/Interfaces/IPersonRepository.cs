@@ -7,8 +7,8 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
 {
     public interface IPersonRepository
     {
-        Task AddAsync(PersonCreateDto entity);
-        void Delete(Person entity);
+        Task AddPersonAsync(PersonCreateDto entity);
+        void DeletePerson(Person entity);
         void FixTrackingState();
         Task<bool> PersonExistsAsync(int id);
         void UpdatePersonAsync(PersonUpdateDto entity);

@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Api.Data.Interfaces
 {
     public interface ICustomerRepository
     {
-        void AddCustomer(Customer entity);
+        Task AddCustomerAsync(Customer entity);
         void DeleteCustomer(Customer entity);
         void FixTrackingState();
         Task<bool> CustomerExistsAsync(int id);

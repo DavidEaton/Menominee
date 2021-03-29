@@ -25,9 +25,9 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public void AddCustomer(Customer customer)
+        public async Task AddCustomerAsync(Customer customer)
         {
-            context.Add(customer);
+            await context.AddAsync(customer);
         }
 
         public void DeleteCustomer(Customer customer)

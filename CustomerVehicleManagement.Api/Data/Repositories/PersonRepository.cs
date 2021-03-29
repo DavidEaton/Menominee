@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task AddAsync(PersonCreateDto personCreateDto)
+        public async Task AddPersonAsync(PersonCreateDto personCreateDto)
         {
             Person person = null;
 
@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 await context.AddAsync(person);
         }
 
-        public void Delete(Person person)
+        public void DeletePerson(Person person)
         {
             context.Remove(person);
         }
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
             foreach (var person in personsFromContext)
             {
-                // Automapper may have a bug: mapping Phones works but Emails fail:
+                // Mapping Phones works but Emails fail:
                 // mapper.Map<IEnumerable<Email>>(person.Emails);
                 // ...so instead of automapper for the emails, MapDomainEmailToReadDto()
                 mapper.Map<IEnumerable<Phone>>(person.Phones);
@@ -116,7 +116,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 personsList.Add(DtoHelpers.CreatePersonsListDtoFromDomain(person));
             }
 
-            return await Task.FromResult(personsList);
+            return personsList;
         }
 
         public async Task<bool> SaveChangesAsync()

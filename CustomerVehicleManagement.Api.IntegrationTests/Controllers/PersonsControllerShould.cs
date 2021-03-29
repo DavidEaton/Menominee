@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var result = await controller.CreatePersonAsync(person);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(x => x.AddAsync(It.IsAny<PersonCreateDto>()), Times.Never);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Never);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(x => x.AddAsync(It.IsAny<PersonCreateDto>()), Times.Never);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Never);
         }
 
         [Fact]
@@ -117,7 +117,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             PersonCreateDto savedPerson = null;
 
-            moqRepository.Setup(x => x.AddAsync(It.IsAny<PersonCreateDto>()))
+            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()))
                           .Returns(Task.CompletedTask)
                           .Callback<PersonCreateDto>(x => savedPerson = x);
 
@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(x => x.AddAsync(It.IsAny<PersonCreateDto>()), Times.Once);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Once);
             person.Name.Should().Be(savedPerson.Name);
             person.Gender.Should().Be(savedPerson.Gender);
             person.Birthday.Should().Be(savedPerson.Birthday);
@@ -134,7 +134,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_PersonReadDto_On_CreatePersonAsync_When_ModelState_Valid()
         {
-            moqRepository.Setup(x => x.AddAsync(It.IsAny<PersonCreateDto>()));
+            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()));
 
             var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
             var result = await controller.CreatePersonAsync(person);

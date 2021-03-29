@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new PersonRepository(context, mapper);
 
                 // Act
-                await repository.AddAsync(mapper.Map<PersonCreateDto>(Helpers.CreateValidPerson()));
+                await repository.AddPersonAsync(mapper.Map<PersonCreateDto>(Helpers.CreateValidPerson()));
                 await repository.SaveChangesAsync();
                 var persons = await repository.GetPersonsAsync();
 
@@ -321,7 +321,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 personFromRepo.Should().NotBeNull();
 
                 // ACT
-                repository.Delete(personFromRepo);
+                repository.DeletePerson(personFromRepo);
                 await repository.SaveChangesAsync();
 
                 context.Persons.Count().Should().Be(0);

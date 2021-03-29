@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 if (organizationCreateDto.Contact != null)
                     organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
 
-                if (organizationCreateDto.Phones != null) 
+                if (organizationCreateDto.Phones != null)
                     organization.SetPhones(organizationCreateDto.Phones);
 
                 if (organizationCreateDto.Emails != null)
@@ -64,14 +64,15 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
         {
-            var organizationFromContext = await context.Organizations
-            .Include(organization => organization.Phones)
-            .Include(organization => organization.Emails)
-            .Include(organization => organization.Contact)
-                .ThenInclude(contact => contact.Phones)
-            .Include(organization => organization.Contact)
-                .ThenInclude(contact => contact.Emails)
-            .FirstOrDefaultAsync(organization => organization.Id == id);
+            var organizationFromContext =
+                await context.Organizations
+                             .Include(organization => organization.Phones)
+                             .Include(organization => organization.Emails)
+                             .Include(organization => organization.Contact)
+                                 .ThenInclude(contact => contact.Phones)
+                             .Include(organization => organization.Contact)
+                                 .ThenInclude(contact => contact.Emails)
+                             .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return mapper.Map<OrganizationReadDto>(organizationFromContext);
         }
@@ -95,9 +96,9 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
 
         public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()
         {
-            IReadOnlyList<Organization> organizations = context.Organizations
+            IReadOnlyList<Organization> organizations = await context.Organizations
                                                                .Include(organization => organization.Contact.Phones)
-                                                               .ToList();
+                                                               .ToListAsync();
 
             List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
             {
@@ -105,7 +106,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 Name = organization.Name.Value,
                 ContactName = organization?.Contact?.Name.LastFirstMiddle,
                 ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
-                
+
                 AddressLine = organization?.Address?.AddressLine,
                 City = organization?.Address?.City,
                 State = organization?.Address?.City,
@@ -116,7 +117,7 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
                 PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
             }).ToList();
 
-            return await Task.FromResult(dtos);
+            return dtos;
         }
 
 

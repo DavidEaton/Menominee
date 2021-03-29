@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Data.Repositories
 {
@@ -19,26 +20,26 @@ namespace CustomerVehicleManagement.Api.Data.Repositories
             dbSet = context.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> All()
+        public async Task<IEnumerable<TEntity>> AllAsync()
         {
-            return dbSet.AsNoTracking().ToList();
+            return await dbSet.AsNoTracking().ToListAsync();
         }
 
-        public IEnumerable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindByAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            IEnumerable<TEntity> results = dbSet.AsNoTracking()
-              .Where(predicate).ToList();
-            return results;
+            return await dbSet.AsNoTracking()
+                              .Where(predicate)
+                              .ToListAsync();
         }
 
-        public TEntity FindByKey(int id)
+        public async Task<TEntity> FindByKeyAsync(int id)
         {
-            return dbSet.AsNoTracking().SingleOrDefault(e => e.Id == id);
+            return await dbSet.AsNoTracking().SingleOrDefaultAsync(e => e.Id == id);
         }
 
-        public void Insert(TEntity entity)
+        public async Task AddAsync(TEntity entity)
         {
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
         }
 
         public void Update(TEntity entity)

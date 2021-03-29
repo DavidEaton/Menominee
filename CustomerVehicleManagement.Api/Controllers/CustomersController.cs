@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.Controllers
                 return BadRequest(ModelState);
 
             //var customer = mapper.Map<Customer>(model);
-            repository.AddCustomer(model);
+            repository.AddCustomerAsync(model);
 
             if (await repository.SaveChangesAsync())
             {

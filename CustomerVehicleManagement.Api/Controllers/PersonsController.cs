@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await repository.AddAsync(personCreateDto);
+            await repository.AddPersonAsync(personCreateDto);
 
             if (await repository.SaveChangesAsync())
             {
@@ -164,7 +164,7 @@ namespace CustomerVehicleManagement.Api.Controllers
             if (personFromRepository == null)
                 return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
-            repository.Delete(personFromRepository);
+            repository.DeletePerson(personFromRepository);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
