@@ -14,6 +14,7 @@ namespace CustomerVehicleManagement.Api
         private readonly bool useConsoleLogger;
         private readonly string connection;
 
+        protected AppDbContext() { }
         public AppDbContext(string connection, bool useConsoleLogger)
         {
             this.connection = connection;

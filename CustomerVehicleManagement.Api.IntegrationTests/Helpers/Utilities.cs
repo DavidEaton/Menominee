@@ -1,14 +1,13 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.IntegrationTests
+namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
-    public static class Helpers
+    public static class Utilities
     {
         public static void InitializeDbForTests(AppDbContext db)
         {

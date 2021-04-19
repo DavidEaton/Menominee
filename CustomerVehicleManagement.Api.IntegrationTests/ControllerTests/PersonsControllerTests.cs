@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetReturnsExpectedJson()
+        public async Task Get_Returns_Expected_Json()
         {
             /* Uses case-insensitive deserialization
                Confirms that endpoint exists at the expected uri
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetSetsExpectedCacheControlHeader()
+        public async Task Get_Sets_Expected_CacheControl_Header()
         {
             var response = await httpClient.GetAsync(string.Empty);
 

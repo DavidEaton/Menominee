@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomersReturnsSuccessStatus()
+        public async Task GetCustomers_Returns_Success_Status()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomersReturnsExpectedMediaType()
+        public async Task GetCustomers_Returns_Expected_MediaType()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomersReturnsContent()
+        public async Task GetCustomers_Returns_Content()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomersSetsExpectedCacheControlHeader()
+        public async Task GetCustomers_Sets_Expected_CacheControl_Header()
         {
             var response = await httpClient.GetAsync(string.Empty);
 

@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Organizations;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -8,6 +13,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     public class OrganizationsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
+        private static IMapper mapper;
         private const string Path = "https://localhost/api/organizations/list";
         private const int MaxCacheAge = 300;
         private const int Minute = 60;
@@ -16,10 +22,20 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public OrganizationsControllerTests(WebApplicationFactory<Startup> factory)
         {
             httpClient = factory.CreateDefaultClient(new Uri(Path));
+
+            if (mapper == null)
+            {
+                var mapperConfiguration = new MapperConfiguration(configuration =>
+                {
+                    configuration.AddProfile(new OrganizationProfile());
+                });
+
+                mapper = mapperConfiguration.CreateMapper();
+            }
         }
 
         [Fact]
-        public async Task GetReturnsSuccessStatusCode()
+        public async Task Get_Returns_Success_StatusCode()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -28,7 +44,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetReturnsExpectedMediaType()
+        public async Task Get_Returns_Expected_MediaType()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -37,7 +53,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetReturnsContent()
+        public async Task Get_Returns_Content()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -47,7 +63,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetListReturnsContent()
+        public async Task GetList_Returns_Content()
         {
             var response = await httpClient.GetAsync("list");
 
@@ -57,7 +73,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetSetsExpectedCacheControlHeader()
+        public async Task Get_Sets_Expected_CacheControl_Header()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -67,6 +83,5 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
             Assert.True(header.Public);
         }
-
     }
 }

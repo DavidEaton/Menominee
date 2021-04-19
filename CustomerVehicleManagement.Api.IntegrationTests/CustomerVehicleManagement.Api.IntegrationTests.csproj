@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Application\TestServerFixtureTests.cs" />
+    <Compile Remove="ApplicationTests\TestServerFixtureTests.cs" />
     <Compile Remove="TestServerFixture.cs" />
   </ItemGroup>
 

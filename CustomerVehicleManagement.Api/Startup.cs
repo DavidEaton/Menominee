@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Logging;
 using System;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Organizations;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace CustomerVehicleManagement.Api
 {
@@ -39,13 +41,13 @@ namespace CustomerVehicleManagement.Api
 
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-            //    .AddIdentityServerAuthentication(options =>
-            //    {
-            //        // Authority: the base-address of our IDP
-            //        options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
-            //        options.ApiName = Configuration["ApiName"];
-            //    });
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    // Authority: the base-address of our IDP
+                    options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                    options.ApiName = Configuration["ApiName"];
+                });
 
             //services.AddDbContext<AppDbContext>(
             //    options => options.UseSqlServer(CONNECTION));
@@ -80,7 +82,8 @@ namespace CustomerVehicleManagement.Api
             {
                 // Return 406 Not Acceptible if request content type is unavailable
                 mvcOptions.ReturnHttpNotAcceptable = true;
-                //mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+                // Only allow authenticated users
+                mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
                 // Provide xml content type
             }).AddXmlDataContractSerializerFormatters();
         }
@@ -94,7 +97,7 @@ namespace CustomerVehicleManagement.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-            //app.UseAuthentication();
+            app.UseAuthentication();
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection("Clients:Origins").Get<List<string>>()).AllowAnyMethod().AllowAnyHeader());
             //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
             //                        .AllowAnyMethod().AllowAnyHeader());

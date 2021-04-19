@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Api.Phones;
 using Xunit;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Api.Data;
 using FluentAssertions;
 using System;
 using System.Linq;
@@ -12,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Emails;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
@@ -38,13 +38,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task AddOrganizationAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
                 // Arrange
                 var repository = new OrganizationRepository(context, mapper);
-                var organization = Helpers.CreateValidOrganization();
+                var organization = CreateValidOrganization();
 
                 // Act
                 await repository.AddOrganizationAsync(mapper.Map<OrganizationCreateDto>(organization));
@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Arrange
 
             // Create an in-memory database
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
 
             // Due to the disconnected nature of web requests/responses,
             // our tests create and use unique contexts for each
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Add a Organization to the in-memory database
             using (var context = new AppDbContext(options))
             {
-                context.Organizations.Add(Helpers.CreateValidOrganization());
+                context.Organizations.Add(CreateValidOrganization());
                 context.SaveChanges();
             }
             // Read all Organizations from the in-memory database
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -106,7 +106,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationEntityAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -120,10 +120,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         }
 
         [Fact]
-        public async Task GetOrganizationAsyncIncludesCollection()
+        public async Task GetOrganizationAsyncIncludesCollections()
         {
             var someNotes = "Some notes";
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -132,10 +132,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepository.SetNotes(someNotes);
-                organizationFromRepository.SetAddress(Helpers.CreateValidAddress());
-                organizationFromRepository.SetContact(Helpers.CreateValidPerson());
-                organizationFromRepository.SetPhones(Helpers.CreateValidPhones());
-                organizationFromRepository.SetEmails(Helpers.CreateValidEmails());
+                organizationFromRepository.SetAddress(CreateValidAddress());
+                organizationFromRepository.SetContact(CreateValidPerson());
+                organizationFromRepository.SetPhones(CreateValidPhones());
+                organizationFromRepository.SetEmails(CreateValidEmails());
 
                 repository.UpdateOrganizationAsync(organizationFromRepository);
 
@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsyncIncludesContact()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -170,7 +170,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(Helpers.CreateValidPerson());
+                organizationFromRepository.SetContact(CreateValidPerson());
 
                 repository.UpdateOrganizationAsync(organizationFromRepository);
 
@@ -189,7 +189,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsyncIncludesContactCollections()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -197,9 +197,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(Helpers.CreateValidPerson());
-                organizationFromRepository.Contact.SetEmails(Helpers.CreateValidEmails());
-                organizationFromRepository.Contact.SetPhones(Helpers.CreateValidPhones());
+                organizationFromRepository.SetContact(CreateValidPerson());
+                organizationFromRepository.Contact.SetEmails(CreateValidEmails());
+                organizationFromRepository.Contact.SetPhones(CreateValidPhones());
 
                 repository.UpdateOrganizationAsync(organizationFromRepository);
 
@@ -220,11 +220,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationsListAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
-                context.Organizations.Add(Helpers.CreateValidOrganization());
+                context.Organizations.Add(CreateValidOrganization());
                 context.SaveChanges();
             }
 
@@ -240,7 +240,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task Return_True_When_OrganizationExistsAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -255,7 +255,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task Return_False_When_OrganizationExistsAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = 99999;
 
             using (var context = new AppDbContext(options))
@@ -270,7 +270,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdateOrganizationNameAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var newName = "New Name";
             var id = CreateAndSaveOrganization(options);
 
@@ -297,14 +297,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdateOrganizationNotesAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = 0;
             var someNotes = "Some notes";
             var newNotes = "New notes";
 
             using (var context = new AppDbContext(options))
             {
-                var organization = Helpers.CreateValidOrganization();
+                var organization = CreateValidOrganization();
                 organization.SetNotes(someNotes);
                 context.Organizations.Add(organization);
                 context.SaveChanges();
@@ -335,7 +335,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdateOrganizationAddressAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -344,7 +344,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Address.Should().BeNull();
 
-                organizationFromRepo.SetAddress(Helpers.CreateValidAddress());
+                organizationFromRepo.SetAddress(CreateValidAddress());
 
                 repository.UpdateOrganizationAsync(organizationFromRepo);
 
@@ -363,7 +363,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task UpdateOrganizationContactAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -372,7 +372,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Contact.Should().BeNull();
 
-                organizationFromRepo.SetContact(Helpers.CreateValidPerson());
+                organizationFromRepo.SetContact(CreateValidPerson());
 
                 repository.UpdateOrganizationAsync(organizationFromRepo);
 
@@ -391,7 +391,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task DeleteOrganizationAsync()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
             var id = CreateAndSaveOrganization(options);
 
             using (var context = new AppDbContext(options))
@@ -419,7 +419,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public void ThrowExceptionWhenPassedNullMapper()
         {
-            var options = Helpers.CreateDbContextOptions();
+            var options = CreateDbContextOptions();
 
             using (var context = new AppDbContext(options))
             {
@@ -434,7 +434,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             int id;
             using (var context = new AppDbContext(options))
             {
-                var organization = Helpers.CreateValidOrganization();
+                var organization = CreateValidOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;

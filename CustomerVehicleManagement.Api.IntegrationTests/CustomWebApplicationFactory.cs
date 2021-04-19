@@ -1,11 +1,11 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests
 {
@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureServices((Action<IServiceCollection>)(services =>
             {
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
 
                     try
                     {
-                        Helpers.InitializeDbForTests(context);
+                        InitializeDbForTests(context);
                     }
                     catch (Exception ex)
                     {
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
                             "database with test messages. Error: {Message}", ex.Message);
                     }
                 }
-            });
+            }));
         }
     }
 }

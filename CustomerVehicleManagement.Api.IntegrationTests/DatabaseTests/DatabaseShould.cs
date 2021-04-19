@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -157,12 +156,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlServer(Connection);
-            var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<AppDbContext>>();
+            //var mockConfiguration = new Mock<IConfiguration>();
+            //var mockLogger = new Mock<ILogger<AppDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
-                   .Returns("Hosting:UnitTestEnvironment");
+                   .Returns("Hosting:Testing");
             var context = new AppDbContext(Connection, true);
 
             // Set test database to known state

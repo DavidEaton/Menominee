@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data.Dtos;
-using CustomerVehicleManagement.Api.Persons;
+﻿using CustomerVehicleManagement.Api.Persons;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
@@ -33,9 +32,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 
             persons.Should().HaveCountGreaterOrEqualTo(2);
         }
-
-
-
 
     }
 }
