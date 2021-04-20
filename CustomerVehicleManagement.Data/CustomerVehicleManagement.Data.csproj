@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CustomerVehicleManagement.Core\CustomerVehicleManagement.Domain.csproj" />
+    <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
   </ItemGroup>
 
 </Project>

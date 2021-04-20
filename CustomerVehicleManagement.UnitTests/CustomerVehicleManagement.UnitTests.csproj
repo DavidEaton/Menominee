@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
-    <ProjectReference Include="..\CustomerVehicleManagement.Core\CustomerVehicleManagement.Domain.csproj" />
+    <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
     <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
   </ItemGroup>
 
