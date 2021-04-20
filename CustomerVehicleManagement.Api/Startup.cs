@@ -14,6 +14,7 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Organizations;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CustomerVehicleManagement.Api
 {
@@ -42,28 +43,26 @@ namespace CustomerVehicleManagement.Api
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(options =>
-                {
-                    // Authority: the base-address of our IDP
-                    options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
-                    options.ApiName = Configuration["ApiName"];
-                });
-
-            //services.AddDbContext<AppDbContext>(
-            //    options => options.UseSqlServer(CONNECTION));
+                .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
+                     options =>
+                     {
+                         // Authority: the base-address of our IDP
+                         options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                         options.Audience = Configuration["ApiName"];
+                         options.RequireHttpsMetadata = false;
+                     
+                         options.TokenValidationParameters = new
+                         TokenValidationParameters()
+                         {
+                             ValidateAudience = false
+                         };
+                     });
 
             if (environment != "Testing")
                 services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
 
             if (environment == "Testing")
                 services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
-
-            //services.AddDbContext<IdentityUserDbContext>(options =>
-            //                                             options
-            //                                             // Connect to our IDP
-            //                                             .UseSqlServer(Configuration[$"IDPSettings:Connection:{environment}"]));
-            //services.AddScoped<UserContext, UserContext>();
-            //services.AddScoped<IdentityUserDbContext, IdentityUserDbContext>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IPersonRepository, PersonRepository>();
