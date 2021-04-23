@@ -3,8 +3,8 @@ using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Menominee.Client
@@ -15,7 +15,7 @@ namespace Menominee.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-
+            builder.Logging.SetMinimumLevel(LogLevel.Debug);
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
@@ -29,6 +29,13 @@ namespace Menominee.Client
 
 
             await builder.Build().RunAsync();
+        }
+
+        private static void ConfigureLogging(
+          WebAssemblyHostBuilder builder,
+          string section = "Logging")
+        {
+            builder.Logging.AddConfiguration(builder.Configuration.GetSection(section));
         }
     }
 }

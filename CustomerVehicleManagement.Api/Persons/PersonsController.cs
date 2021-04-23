@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Persons
         // GET: api/persons/list
         [Route("list")]
         [HttpGet]
-        [ResponseCache(Duration = MaxCacheAge)]
+        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<PersonInListDto>>> GetPersonsListAsync()
         {
             var persons = await repository.GetPersonsListAsync();

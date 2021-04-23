@@ -19,11 +19,11 @@ namespace Menominee.Idp
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                //new ApiResource("menominee-api", "Menominee API")
                 new ApiResource("menominee-api", "Menominee API", new [] { "country", "tenantId" }),
             };
 
-        public static IEnumerable<ApiScope> ApiScopes => new[]
+        public static IEnumerable<ApiScope> ApiScopes =>
+            new ApiScope[]
             {
                 new ApiScope(name: "menominee-api", displayName: "Menominee API")
             };

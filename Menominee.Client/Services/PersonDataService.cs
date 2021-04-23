@@ -34,7 +34,7 @@ namespace Menominee.Client.Services
         public async Task<IEnumerable<PersonFlatDto>> GetAllPersons()
         {
             var persons = new List<PersonFlatDto>();
-
+            Console.WriteLine("GetAllPersons called from PersonDataService.");
             try
             {
                 var personsFromDatabase = await httpClient.GetFromJsonAsync<IEnumerable<PersonReadDto>>(UriSegment);

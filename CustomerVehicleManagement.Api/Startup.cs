@@ -43,6 +43,11 @@ namespace CustomerVehicleManagement.Api
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            //    .AddIdentityServerAuthentication(options =>
+            //    {
+            //        options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+            //        options.ApiName = Configuration["ApiName"];
+            //    });
                 .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
                      options =>
                      {
@@ -50,7 +55,6 @@ namespace CustomerVehicleManagement.Api
                          options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
                          options.Audience = Configuration["ApiName"];
                          options.RequireHttpsMetadata = false;
-                     
                          options.TokenValidationParameters = new
                          TokenValidationParameters()
                          {
@@ -65,9 +69,11 @@ namespace CustomerVehicleManagement.Api
                 services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
             services.AddHealthChecks();
@@ -140,7 +146,7 @@ namespace CustomerVehicleManagement.Api
                     });
                 });
 
-                // Testing 
+                // Testing
                 if (api_env == "Testing")
                     app.UseDeveloperExceptionPage();
 
