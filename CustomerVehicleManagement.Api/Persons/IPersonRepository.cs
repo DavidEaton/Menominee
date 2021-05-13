@@ -15,6 +15,7 @@ namespace CustomerVehicleManagement.Api.Persons
         Task<IEnumerable<PersonInListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);
         Task<Person> GetPersonEntityAsync(int id);
+        Task<int> GetPersonsTotalAsync();
         Task<bool> SaveChangesAsync();
     }
 }

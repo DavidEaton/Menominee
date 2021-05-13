@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using CustomerVehicleManagement.Api.Emails;
@@ -175,8 +174,8 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpGet("total")]
         public async Task<IActionResult> GetPersonsTotalAsync()
         {
-            var results = await repository.GetPersonsAsync();
-            return Ok(new PersonsTotalOutputModel { PersonsTotal = results.Count() });
+            var results = await repository.GetPersonsTotalAsync();
+            return Ok(results);
         }
     }
 }

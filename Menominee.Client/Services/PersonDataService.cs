@@ -49,6 +49,22 @@ namespace Menominee.Client.Services
             return null;
         }
 
+        public async Task<int> GetPersonsTotal()
+        {
+            Console.WriteLine("GetPersonsTotal called from PersonDataService.");
+            try
+            {
+                return await httpClient.GetFromJsonAsync<int>(UriSegment + "/total");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Message :{0} ", ex.Message);
+            }
+
+            return 0;
+        }
+
         public async Task<PersonFlatDto> GetPersonDetails(int id)
         {
             var person = new PersonFlatDto();

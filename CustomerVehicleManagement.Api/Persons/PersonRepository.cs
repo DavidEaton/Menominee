@@ -5,7 +5,6 @@ using CustomerVehicleManagement.Domain.Entities;
 using System.Collections.Generic;
 using AutoMapper;
 using CustomerVehicleManagement.Api.Utilities;
-using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
@@ -33,7 +32,7 @@ namespace CustomerVehicleManagement.Api.Persons
             {
                 person = new Person(personCreateDto.Name, personCreateDto.Gender);
 
-                if (personCreateDto.Birthday != null) 
+                if (personCreateDto.Birthday != null)
                     person.SetBirthday(personCreateDto.Birthday);
 
                 if (personCreateDto.DriversLicense != null)
@@ -136,7 +135,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
                Always code a complete set of methods for the required funtionality and call them,
                even of they don't do anything in the current implementation.
-               
+
                Controller has changed the entity to a modified state; executing save on the repo from
                the controller will write the changes to the database; therefore no update code is
                required in this Update method.
@@ -147,6 +146,11 @@ namespace CustomerVehicleManagement.Api.Persons
         {
             return await context.Persons
                 .AnyAsync(person => person.Id == id);
+        }
+
+        public async Task<int> GetPersonsTotalAsync()
+        {
+            return await context.Persons.CountAsync();
         }
     }
 }
