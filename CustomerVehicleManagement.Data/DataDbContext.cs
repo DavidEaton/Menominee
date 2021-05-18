@@ -6,7 +6,7 @@ using SharedKernel;
 namespace CustomerVehicleManagement.Data
 {
     /// <summary>
-    /// This DbContext is used only to facilitate databaae migrations
+    /// This DbContext is used only to facilitate database migrations
     /// </summary>
     public class DataDbContext : DbContext
     {

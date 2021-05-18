@@ -4,6 +4,7 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
@@ -11,8 +12,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
     {
         public static void InitializeDbForTests(AppDbContext db)
         {
-            db.Persons.AddRange(GetSeedingPersons());
-            db.SaveChanges();
+            Task<bool> personsHasRows = db.Persons.AnyAsync();
+
+            if (!personsHasRows.Result)
+            {
+                db.Persons.AddRange(GetSeedPersons());
+                db.SaveChanges();
+            }
+
         }
 
         public static void ReinitializeDbForTests(AppDbContext db)
@@ -21,7 +28,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             InitializeDbForTests(db);
         }
 
-        public static List<Person> GetSeedingPersons()
+        public static List<Person> GetSeedPersons()
         {
             return new List<Person>()
             {
