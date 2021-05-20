@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Organizations

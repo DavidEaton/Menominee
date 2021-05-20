@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

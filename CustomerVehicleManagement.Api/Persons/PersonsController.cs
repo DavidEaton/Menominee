@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Phones;
 
 namespace CustomerVehicleManagement.Api.Persons
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace CustomerVehicleManagement.Api.Utilities
+﻿namespace CustomerVehicleManagement.Api.Utilities
 {
     public class TenantHelpers
     {

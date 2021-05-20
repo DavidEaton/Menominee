@@ -1,20 +1,20 @@
+using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using System;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Organizations;
-using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace CustomerVehicleManagement.Api
 {

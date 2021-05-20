@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using SharedKernel.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CustomerVehicleManagement.Api.Utilities;
-using AutoMapper;
-using SharedKernel.ValueObjects;
-using CustomerVehicleManagement.Api.Data;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {

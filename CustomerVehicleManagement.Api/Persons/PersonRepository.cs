@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
-using CustomerVehicleManagement.Domain.Entities;
-using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Utilities;
+using CustomerVehicleManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Persons
 {

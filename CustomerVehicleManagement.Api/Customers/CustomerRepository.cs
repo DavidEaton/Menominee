@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
-using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.Enums;
+﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Dtos;
-using AutoMapper;
-using System.Collections.Generic;
 using CustomerVehicleManagement.Api.Utilities;
-using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using SharedKernel.Enums;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Phones
 {
