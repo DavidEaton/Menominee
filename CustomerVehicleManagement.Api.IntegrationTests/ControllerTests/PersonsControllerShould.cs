@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +10,6 @@ using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Emails;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {

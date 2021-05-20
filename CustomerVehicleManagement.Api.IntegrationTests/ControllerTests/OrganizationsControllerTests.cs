@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Organizations;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
