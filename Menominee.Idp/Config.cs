@@ -6,6 +6,10 @@ namespace Menominee.Idp
 {
     public static class Config
     {
+        // Access Tokens issues while running in Development are not refreshed like Production
+        // tokens so they need a longer lifetime than only five minutes.
+        // Six months seems reasonable.
+        private const int AccessTokenLifetime = 15700000;
         public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             {
@@ -56,7 +60,8 @@ namespace Menominee.Idp
                     AllowedCorsOrigins = new List<string>()
                     {
                         "https://localhost:44307"
-                    }
+                    },
+                    AccessTokenLifetime = AccessTokenLifetime
                 }
             };
     }

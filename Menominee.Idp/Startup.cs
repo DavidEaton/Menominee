@@ -23,7 +23,6 @@ namespace Menominee.Idp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddTransient<IEmailSender, DummyEmailSender>();
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -34,11 +33,15 @@ namespace Menominee.Idp
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
+
                 // Configure IdentityServer to use AspNetCore Identity membership
                 .AddAspNetIdentity<ApplicationUser>();
 
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
+            if (Environment.IsDevelopment()) // not recommended for production - you need to store your key material somewhere secure
+            {
+                builder.AddDeveloperSigningCredential();
+                services.AddTransient<IEmailSender, DummyEmailSender>();
+            }
 
             ConfigureCors(services);
         }
@@ -50,24 +53,28 @@ namespace Menominee.Idp
                 options.AddPolicy(CorsPolicyProduction,
                 builder =>
                 {
-                    builder.WithOrigins("https://menominee.net",
-                                       "https://www.menominee.net",
-                                       "https://menominee.azurewebsites.net",
-                                       "https://menominee-testing.net",
-                                       "https://menominee-testing.azurewebsites.net")
-                                       .AllowAnyMethod()
-                                       .AllowAnyHeader()
-                                       .AllowCredentials();
+                    builder.WithOrigins(
+                           "https://menominee.net",
+                           "https://www.menominee.net",
+                           "https://menominee.azurewebsites.net",
+                           "https://menominee-testing.net",
+                           "https://menominee-testing.azurewebsites.net")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
-                options.AddPolicy(CorsPolicyDevelopment,
 
-                builder =>
+                if (Environment.IsDevelopment())
                 {
-                    builder.WithOrigins()
-                                       .AllowAnyOrigin()
-                                       .AllowAnyMethod()
-                                       .AllowAnyHeader();
-                });
+                    options.AddPolicy(CorsPolicyDevelopment,
+                                      builder =>
+                                      {
+                                          builder.WithOrigins()
+                                                 .AllowAnyOrigin()
+                                                 .AllowAnyMethod()
+                                                 .AllowAnyHeader();
+                                      });
+                }
             });
         }
 
