@@ -42,25 +42,26 @@ namespace CustomerVehicleManagement.Api
 
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-            //    .AddIdentityServerAuthentication(options =>
-            //    {
-            //        options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
-            //        options.ApiName = Configuration["ApiName"];
-            //    });
-                .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
-                     options =>
-                     {
-                         // Authority: the base-address of our IDP
-                         options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
-                         options.Audience = Configuration["ApiName"];
-                         options.RequireHttpsMetadata = false;
-                         options.TokenValidationParameters = new
-                         TokenValidationParameters()
+            if (environment == "Production")
+                services
+                    .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                    .AddIdentityServerAuthentication(options =>
+                        {
+                            options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                            options.ApiName = Configuration["ApiName"];
+                        })
+                    .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
+                        options =>
                          {
-                             ValidateAudience = false
-                         };
-                     });
+                             options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                             options.Audience = Configuration["ApiName"];
+                             options.RequireHttpsMetadata = false;
+                             options.TokenValidationParameters = new
+                             TokenValidationParameters()
+                             {
+                                 ValidateAudience = false
+                             };
+                         });
 
             if (environment != "Testing")
                 services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
@@ -79,18 +80,24 @@ namespace CustomerVehicleManagement.Api
             services.AddHealthChecks();
 
             // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
-            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+            if (environment == "Production")
+            {
+                var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
 
-            services.AddControllers(mvcOptions =>
-            {
-                // Return 406 Not Acceptible if request content type is unavailable
-                mvcOptions.ReturnHttpNotAcceptable = true;
-                // Only allow authenticated users
-                mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-                // Provide xml content type
-            }).AddXmlDataContractSerializerFormatters();
+                services.AddControllers(mvcOptions =>
+                {
+                    // Return 406 Not Acceptible if request content type is unavailable
+                    mvcOptions.ReturnHttpNotAcceptable = true;
+                    // Only allow authenticated users
+                    mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+                    // Provide xml content type
+                }).AddXmlDataContractSerializerFormatters();
+            }
+
+            if (HostEnvironment.IsDevelopment())
+                services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,22 +108,23 @@ namespace CustomerVehicleManagement.Api
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
-            app.UseAuthentication();
-            //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection("Clients:Origins").Get<List<string>>()).AllowAnyMethod().AllowAnyHeader());
-            //app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
-            //                        .AllowAnyMethod().AllowAnyHeader());
 
-            if (environment == "Testing")
+            if (!HostEnvironment.IsDevelopment())
             {
-                app.UseCors(cors => cors.WithOrigins(testOrigin)
-                                    .AllowAnyMethod().AllowAnyHeader());
-            }
-            else
-            {
-                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+
+                app.UseAuthorization();
+                app.UseAuthentication();
+                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
                                         .AllowAnyMethod().AllowAnyHeader());
             }
+
+            if (environment != "Prodution")
+                app.UseCors(cors => cors.WithOrigins(testOrigin)
+                                    .AllowAnyMethod().AllowAnyHeader());
+
+            if (environment == "Prodution")
+                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+                                        .AllowAnyMethod().AllowAnyHeader());
 
             if (HostEnvironment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
