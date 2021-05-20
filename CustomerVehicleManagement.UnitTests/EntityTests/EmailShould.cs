@@ -1,7 +1,7 @@
-﻿using Xunit;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using CustomerVehicleManagement.Domain.Entities;
 using System;
+using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {

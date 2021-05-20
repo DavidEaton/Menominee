@@ -1,7 +1,7 @@
-﻿using Xunit;
+﻿using FluentAssertions;
 using SharedKernel.ValueObjects;
 using System;
-using FluentAssertions;
+using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 {

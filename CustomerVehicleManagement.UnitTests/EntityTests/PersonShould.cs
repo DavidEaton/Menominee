@@ -1,12 +1,12 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using Xunit;
-using CustomerVehicleManagement.Domain.BaseClasses;
-using FluentAssertions.Execution;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {

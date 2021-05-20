@@ -1,9 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using FluentAssertions;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using Xunit;
-using FluentAssertions;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
