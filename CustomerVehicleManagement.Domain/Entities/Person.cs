@@ -2,7 +2,6 @@
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
-using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {

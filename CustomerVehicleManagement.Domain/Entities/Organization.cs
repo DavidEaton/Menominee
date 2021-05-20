@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using SharedKernel;
 using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Domain.Entities
