@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Persons
         }
 
         // GET: api/persons/1
-        [HttpGet("{id:int}", Name = "GetPerson")]
+        [HttpGet("{id:int}", Name = "GetPersonAsync")]
         public async Task<ActionResult<PersonReadDto>> GetPersonAsync(int id)
         {
             var person = await repository.GetPersonAsync(id);
@@ -142,7 +142,7 @@ namespace CustomerVehicleManagement.Api.Persons
                     Emails = mapper.Map<IList<EmailReadDto>>(personCreateDto.Emails)
                 };
 
-                return CreatedAtRoute("GetPerson",
+                return CreatedAtRoute("GetPersonAsync",
                     new { id = personReadDto.Id },
                     personReadDto);
             }

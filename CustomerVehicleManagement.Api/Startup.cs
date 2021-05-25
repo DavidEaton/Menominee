@@ -1,3 +1,4 @@
+using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
@@ -157,8 +158,8 @@ namespace CustomerVehicleManagement.Api
                 // Testing
                 if (api_env == "Testing")
                     app.UseDeveloperExceptionPage();
-
             }
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

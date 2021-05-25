@@ -57,14 +57,67 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return organization;
         }
 
+        internal static Customer CreateValidOrganizationCustomer()
+        {
+            var name = "jane's";
+            Organization organization = null;
+            var organizationNameOrError = OrganizationName.Create(name);
+
+            if (organizationNameOrError.IsSuccess)
+                organization = new Organization(organizationNameOrError.Value);
+
+            var customer = new Customer(organization);
+
+            return customer;
+        }
+
+
+        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<AppDbContext> options, out Customer customer, out int id)
+        {
+            // Create a new Person with Emails and Phones, and save
+            using (var context = new AppDbContext(options))
+            {
+                customer = CreateValidOrganizationCustomer();
+                context.Customers.Add(customer);
+                context.SaveChanges();
+                id = customer.Id;
+            }
+        }
+
+        public static int CreateAndSaveValidOrganizationId(DbContextOptions<AppDbContext> options)
+        {
+            int id;
+            using (var context = new AppDbContext(options))
+            {
+                Organization organization = CreateValidOrganization();
+                context.Organizations.Add(organization);
+                context.SaveChanges();
+                id = organization.Id;
+            }
+
+            return id;
+        }
+
+        public static Organization CreateAndSaveValidOrganization(DbContextOptions<AppDbContext> options)
+        {
+            Organization organization;
+            using (var context = new AppDbContext(options))
+            {
+                organization = CreateValidOrganization();
+                context.Organizations.Add(organization);
+                context.SaveChanges();
+            }
+
+            return organization;
+        }
+
         public static Person CreateValidPerson()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = new PersonName(lastName, firstName);
-            var person = new Person(name, Gender.Female);
 
-            return person;
+            return new Person(name, Gender.Female);
         }
 
         public static Person CreateValidPersonWithPhones()
@@ -93,6 +146,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                 id = person.Id;
             }
         }
+
         public static IList<Phone> CreateValidPhones()
         {
             IList<Phone> phones = new List<Phone>();

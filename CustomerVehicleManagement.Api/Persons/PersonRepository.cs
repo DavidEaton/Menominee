@@ -118,8 +118,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         public async Task<bool> SaveChangesAsync()
         {
-            bool result = await context.SaveChangesAsync() > 0;
-            return result;
+            return (await context.SaveChangesAsync()) > 0;
         }
 
         public void FixTrackingState()

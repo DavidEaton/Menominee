@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CustomerVehicleManagement.Api.Phones
+namespace CustomerVehicleManagement.Api.Customers
 {
     public interface ICustomerRepository
     {
-        Task AddCustomerAsync(Customer entity);
+        Task AddCustomerAsync(CustomerCreateDto entity);
         void DeleteCustomer(Customer entity);
         void FixTrackingState();
         Task<bool> CustomerExistsAsync(int id);

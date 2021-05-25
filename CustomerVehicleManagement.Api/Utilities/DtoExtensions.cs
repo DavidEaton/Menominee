@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Persons;
+﻿using CustomerVehicleManagement.Api.Customers;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;

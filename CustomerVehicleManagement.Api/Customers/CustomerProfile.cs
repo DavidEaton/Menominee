@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Domain.Entities;
 
-namespace CustomerVehicleManagement.Api.Phones
+namespace CustomerVehicleManagement.Api.Customers
 {
     public class CustomerProfile : Profile
     {
@@ -18,7 +18,10 @@ namespace CustomerVehicleManagement.Api.Phones
             //                configuration.MapFrom(source => (source.Entity as Organization).Contact);
             //            });
 
-            CreateMap<CustomerUpdateDto, Customer>();
+            CreateMap<CustomerUpdateDto, Customer>().ReverseMap();
+
+            CreateMap<Customer, CustomerCreateDto>()
+                .ReverseMap();
         }
     }
 }

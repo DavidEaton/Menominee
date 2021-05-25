@@ -1,10 +1,11 @@
 ﻿using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Phones;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Phones
+namespace CustomerVehicleManagement.Api.Customers
 {
     public class CustomerReadDto
     {

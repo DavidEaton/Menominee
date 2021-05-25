@@ -3,12 +3,14 @@ using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using SharedKernel;
 using SharedKernel.Enums;
+using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CustomerVehicleManagement.Api.Phones
+namespace CustomerVehicleManagement.Api.Customers
 {
     public class CustomerRepository : ICustomerRepository
     {
@@ -24,9 +26,38 @@ namespace CustomerVehicleManagement.Api.Phones
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task AddCustomerAsync(Customer customer)
+        public async Task AddCustomerAsync(CustomerCreateDto customerCreateDto)
         {
-            await context.AddAsync(customer);
+            Customer customer = new(customerCreateDto.Entity);
+
+            if (customer != null)
+                await context.AddAsync(customer);
+        }
+
+        private async Task<IEntity> GetPersonEntityAsync(int entityId)
+        {
+            Person personFromContext = null;
+
+            personFromContext = await context.Persons
+                                                    .FirstOrDefaultAsync(person => person.Id == entityId);
+
+            if (personFromContext != null)
+                return personFromContext;
+
+            return null;
+        }
+
+        private async Task<IEntity> GetOrganizationEntityAsync(int entityId)
+        {
+            Organization organizationFromContext = null;
+
+            organizationFromContext = await context.Organizations
+                                                                .FirstOrDefaultAsync(person => person.Id == entityId);
+
+            if (organizationFromContext != null)
+                return organizationFromContext;
+
+            return null;
         }
 
         public void DeleteCustomer(Customer customer)
@@ -38,35 +69,44 @@ namespace CustomerVehicleManagement.Api.Phones
         {
             var customer = await context.Customers.FindAsync(id);
 
-            if (customer.EntityType == EntityType.Organization)
+            if (customer != null)
             {
-                var entity = await context.Organizations.FindAsync(customer.EntityId);
+                if (customer.EntityType == EntityType.Organization)
+                {
+                    var entity = await context.Organizations.FindAsync(customer.EntityId);
 
-                customer.SetEntity(entity);
+                    customer.SetEntity(entity);
+                }
+
+                if (customer.EntityType == EntityType.Person)
+                {
+                    var entity = await context.Persons.FindAsync(customer.EntityId);
+
+                    customer.SetEntity(entity);
+                }
+
+                return customer;
             }
 
-            if (customer.EntityType == EntityType.Person)
-            {
-                var entity = await context.Persons.FindAsync(customer.EntityId);
-
-                customer.SetEntity(entity);
-            }
-
-            return customer;
+            return null;
         }
 
         public async Task<IEnumerable<CustomerReadDto>> GetCustomersAsync()
         {
             var customers = new List<CustomerReadDto>();
 
-            var customersRead = await context.Customers
-                                         .AsNoTracking()
-                                         .ToArrayAsync();
+            Customer[] customersRead = await context.Customers
+                                             //.Include(c => c.Entity as Entity)
+                                             .AsNoTracking()
+                                             .ToArrayAsync();
 
             foreach (var customer in customersRead)
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
+
+
+
                     await MapOrganizationCustomer(customer);
                 }
 
@@ -95,9 +135,14 @@ namespace CustomerVehicleManagement.Api.Phones
         {
             var entity = await context.Organizations.FindAsync(customer.EntityId);
 
-            foreach (var phone in entity.Phones)
-                customer.AddPhone(phone);
-            
+            if (entity.Phones != null)
+                foreach (var phone in entity.Phones)
+                    customer.AddPhone(phone);
+
+            //if (entity.Emails != null)
+            //    foreach (var email in entity.Emails)
+            //        customer.AddEmail(email);
+
             customer.SetEntity(entity);
         }
 
@@ -148,7 +193,6 @@ namespace CustomerVehicleManagement.Api.Phones
 
             return null;
         }
-
     }
 
 }

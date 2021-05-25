@@ -1,24 +1,35 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
-namespace CustomerVehicleManagement.Api.Phones
+namespace CustomerVehicleManagement.Api.Customers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ICustomerRepository repository;
+        private readonly ICustomerRepository customerRepository;
+        private readonly IPersonRepository personRepository;
+        private readonly IOrganizationRepository organizationRepository;
         private const int MaxCacheAge = 300;
 
-        public CustomersController(ICustomerRepository repository)
+        public CustomersController(ICustomerRepository customerRepository,
+                                   IPersonRepository personRepository,
+                                   IOrganizationRepository organizationRepository)
         {
-            this.repository = repository ??
-                throw new ArgumentNullException(nameof(repository));
+            this.customerRepository = customerRepository ??
+                throw new ArgumentNullException(nameof(customerRepository));
+            this.personRepository = personRepository ??
+                throw new ArgumentNullException(nameof(personRepository));
+            this.organizationRepository = organizationRepository ??
+                throw new ArgumentNullException(nameof(organizationRepository));
         }
 
         // GET: api/Customers
@@ -26,15 +37,15 @@ namespace CustomerVehicleManagement.Api.Phones
         [ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
         {
-            var results = await repository.GetCustomersAsync();
+            var results = await customerRepository.GetCustomersAsync();
             return Ok(results);
         }
 
         // GET: api/Customer/1
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetCustomerAsync")]
         public async Task<ActionResult<Customer>> GetCustomerAsync(int id)
         {
-            var result = await repository.GetCustomerAsync(id);
+            var result = await customerRepository.GetCustomerAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -49,7 +60,7 @@ namespace CustomerVehicleManagement.Api.Phones
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var fetchedCustomer = await repository.GetCustomerAsync(id);
+            var fetchedCustomer = await customerRepository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
                 return NotFound($"Could not find Customer in the database to updte: {model.Entity}");
 
@@ -57,9 +68,9 @@ namespace CustomerVehicleManagement.Api.Phones
 
             // Update the objects ObjectState and sych the EF Change Tracker
             fetchedCustomer.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
+            customerRepository.FixTrackingState();
 
-            if (await repository.SaveChangesAsync())
+            if (await customerRepository.SaveChangesAsync())
                 return fetchedCustomer;
 
 
@@ -68,33 +79,73 @@ namespace CustomerVehicleManagement.Api.Phones
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomerAsync(Customer model)
+        public async Task<ActionResult<CustomerCreateDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //var customer = mapper.Map<Customer>(model);
-            await repository.AddCustomerAsync(model);
-
-            if (await repository.SaveChangesAsync())
+            if (customerCreateDto.EntityType == EntityType.Organization)
             {
-                //var location = linkGenerator.GetPathByAction("Get", "Customers", new { id = customer.Id });
-                string location = $"/api/customers/{model.Id}";
-                //return Created(location, mapper.Map<CustomerModel>(customer));
+                var fetchedOrganization = await organizationRepository.GetOrganizationEntityAsync(customerCreateDto.EntityId);
+
+                if (fetchedOrganization != null)
+                {
+                    customerCreateDto.Entity = fetchedOrganization;
+                }
+
             }
 
-            return BadRequest($"Failed to add {model.Entity}.");
+            if (customerCreateDto.EntityType == EntityType.Person)
+            {
+                var fetchedPerson = await personRepository.GetPersonEntityAsync(customerCreateDto.EntityId);
+
+                if (fetchedPerson != null)
+                {
+                    customerCreateDto.Entity = fetchedPerson;
+
+                }
+            }
+
+            await customerRepository.AddCustomerAsync(customerCreateDto);
+
+            if (await customerRepository.SaveChangesAsync())
+            {
+                string name = string.Empty;
+
+                if (customerCreateDto.EntityType == EntityType.Organization)
+                {
+                    name = ((Organization)customerCreateDto.Entity).Name.Value;
+                }
+
+                if (customerCreateDto.EntityType == EntityType.Person)
+                {
+                    name = ((Person)customerCreateDto.Entity).Name.LastFirstMiddle;
+                }
+
+                var customerReadDto = new CustomerReadDto
+                {
+                    Id = customerCreateDto.Id,
+                    EntityType = customerCreateDto.EntityType,
+                    Name = name
+                };
+
+                return CreatedAtRoute("GetCustomerAsync",
+                    new { id = customerReadDto.Id },
+                    customerReadDto);
+            };
+
+            return BadRequest($"Failed to add {customerCreateDto}.");
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomerAsync(int id)
         {
-            var fetchedCustomer = await repository.GetCustomerAsync(id);
+            var fetchedCustomer = await customerRepository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
                 return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
-            repository.DeleteCustomer(fetchedCustomer);
-            if (await repository.SaveChangesAsync())
+            customerRepository.DeleteCustomer(fetchedCustomer);
+            if (await customerRepository.SaveChangesAsync())
             {
                 return Ok();
             }
