@@ -31,7 +31,8 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    Organization organization = customer.Entity as Organization;
+                    if (customer.Entity is not Organization organization)
+                        return null;
 
                     return new CustomerReadDto
                     {
@@ -55,7 +56,8 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    Person person = customer.Entity as Person;
+                    if (customer.Entity is not Person person)
+                        return null;
 
                     return new CustomerReadDto
                     {

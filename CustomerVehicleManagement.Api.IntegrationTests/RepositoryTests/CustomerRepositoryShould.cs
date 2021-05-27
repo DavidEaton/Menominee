@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -10,10 +13,12 @@ using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
+    /// <summary>
+    /// Repository Tests UseInMemoryDatabase($"testdb{Guid.NewGuid()}").
+    /// </summary>
     public class CustomerRepositoryShould
     {
         private static IMapper mapper;
-
         public CustomerRepositoryShould()
         {
             if (mapper == null)
@@ -32,7 +37,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         }
 
         [Fact]
-        public async Task AddCustomerAsync()
+        public async Task AddAndSavePersonCustomerAsync()
         {
             var options = CreateDbContextOptions();
 
@@ -40,12 +45,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             {
                 // Arrange
                 var repository = new CustomerRepository(context, mapper);
-                var organization = CreateAndSaveValidOrganization(options);
-                var organizationReadDto = mapper.Map<OrganizationReadDto>(organization);
-                var customerCreateDto = new CustomerCreateDto(null, organizationReadDto, CustomerType.Retail);
+                var personCreateDto = new PersonCreateDto(new PersonName("Moops", "Molly"), Gender.Female);
+                var customerCreateDto = new CustomerCreateDto(personCreateDto, null, CustomerType.Retail);
 
                 // Act
-                await repository.AddCustomerAsync(customerCreateDto);
+                await repository.AddAndSaveCustomerAsync(customerCreateDto);
                 await repository.SaveChangesAsync();
                 var Customers = await repository.GetCustomersAsync();
 
@@ -54,28 +58,77 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
         }
 
-
         [Fact]
-        public async Task GetCustomerAsync()
+        public async Task AddAndSaveOrganizationCustomerAsync()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
-
-            using (var context = new AppDbContext(options))
-            {
-                var customer = CreateValidOrganizationCustomer();
-                context.Customers.Add(customer);
-                context.SaveChanges();
-                id = customer.Id;
-            }
 
             using (var context = new AppDbContext(options))
             {
                 var repository = new CustomerRepository(context, mapper);
+                var organizationNameOrError = OrganizationName.Create("Jane's Automotive");
+                OrganizationCreateDto organizationCreateDto = null;
+                if (organizationNameOrError.IsSuccess)
+                    organizationCreateDto = new OrganizationCreateDto(organizationNameOrError.Value.ToString());
+                var customerCreateDto = new CustomerCreateDto(null, organizationCreateDto, CustomerType.Retail);
 
-                var customerFromRepo = await repository.GetCustomerAsync(id);
+                await repository.AddAndSaveCustomerAsync(customerCreateDto);
+                await repository.SaveChangesAsync();
+                var Customers = await repository.GetCustomersAsync();
 
-                customerFromRepo.Should().NotBeNull();
+                Customers.Count().Should().BeGreaterThan(0);
+            }
+        }
+
+        [Fact]
+        public async Task GetPersonCustomerAsync()
+        {
+            var options = CreateDbContextOptions();
+            using (var context = new AppDbContext(options))
+            {
+                var person = CreateValidPerson();
+                await context.AddAsync(person);
+
+                if ((await context.SaveChangesAsync()) > 0)
+                {
+                    Customer customer = new(person);
+                    if (customer != null)
+                        await context.AddAsync(customer);
+                    await context.SaveChangesAsync();
+                    var repository = new CustomerRepository(context, mapper);
+                    var customerFromRepo = await repository.GetCustomerAsync(customer.Id);
+
+                    customerFromRepo.Should().NotBeNull();
+                    customerFromRepo.Id.Should().BeGreaterThan(0);
+                    customerFromRepo.EntityId.Should().BeGreaterThan(0);
+                    customerFromRepo.Entity.Should().NotBeNull();
+                }
+            }
+        }
+
+        [Fact]
+        public async Task GetOrganizationCustomerAsync()
+        {
+            var options = CreateDbContextOptions();
+            using (var context = new AppDbContext(options))
+            {
+                var organization = CreateValidOrganization();
+                await context.AddAsync(organization);
+
+                if ((await context.SaveChangesAsync()) > 0)
+                {
+                    Customer customer = new(organization);
+                    if (customer != null)
+                        await context.AddAsync(customer);
+                    await context.SaveChangesAsync();
+                    var repository = new CustomerRepository(context, mapper);
+                    var customerFromRepo = await repository.GetCustomerAsync(customer.Id);
+
+                    customerFromRepo.Should().NotBeNull();
+                    customerFromRepo.Id.Should().BeGreaterThan(0);
+                    customerFromRepo.EntityId.Should().BeGreaterThan(0);
+                    customerFromRepo.Entity.Should().NotBeNull();
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 using SharedKernel.Enums;
 using SharedKernel.Interfaces;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,12 +27,57 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task AddCustomerAsync(CustomerCreateDto customerCreateDto)
+        public async Task<Customer> AddAndSaveCustomerAsync(CustomerCreateDto customerCreateDto)
         {
-            Customer customer = new(customerCreateDto.Entity);
+            if (customerCreateDto.PersonCreateDto != null)
+            {
+                var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
+                // TODO: Add Birthday, DriversLicense, Address, Phones, Emails
+                //...
 
-            if (customer != null)
-                await context.AddAsync(customer);
+                if (person != null)
+                {
+                    await context.AddAsync(person);
+                    if (await SaveChangesAsync())
+                    {
+                        Customer customer = new(person);
+
+                        if (customer != null)
+                            await context.AddAsync(customer);
+
+                        if (await SaveChangesAsync())
+                            return customer;
+                    }
+                }
+            }
+
+            if (customerCreateDto.OrganizationCreateDto != null)
+            {
+                var organizationNameOrError = OrganizationName.Create(customerCreateDto.OrganizationCreateDto.Name);
+                if (organizationNameOrError.IsFailure)
+                    return null;
+
+                var organization = new Organization(organizationNameOrError.Value);
+                // TODO: Add Contact, Address, Phones, Emails
+                //...
+
+                if (organization != null)
+                {
+                    await context.AddAsync(organization);
+                    if (await SaveChangesAsync())
+                    {
+                        Customer customer = new(organization);
+
+                        if (customer != null)
+                            await context.AddAsync(customer);
+
+                        if (await SaveChangesAsync())
+                            return customer;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private async Task<IEntity> GetPersonEntityAsync(int entityId)
@@ -67,7 +113,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
         public async Task<Customer> GetCustomerAsync(int id)
         {
-            var customer = await context.Customers.FindAsync(id);
+            var customer = await context.Customers.AsNoTracking()
+                                                  .FirstOrDefaultAsync(customer => customer.Id == customer.Id);
 
             if (customer != null)
             {
@@ -96,17 +143,13 @@ namespace CustomerVehicleManagement.Api.Customers
             var customers = new List<CustomerReadDto>();
 
             Customer[] customersRead = await context.Customers
-                                             //.Include(c => c.Entity as Entity)
-                                             .AsNoTracking()
-                                             .ToArrayAsync();
+                                                    .AsNoTracking()
+                                                    .ToArrayAsync();
 
             foreach (var customer in customersRead)
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-
-
-
                     await MapOrganizationCustomer(customer);
                 }
 
@@ -125,8 +168,9 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var entity = await context.Persons.FindAsync(customer.EntityId);
 
-            foreach (var phone in entity.Phones)
-                customer.AddPhone(phone);
+            if (entity?.Phones != null)
+                foreach (var phone in entity.Phones)
+                    customer.AddPhone(phone);
 
             customer.SetEntity(entity);
         }
@@ -135,7 +179,7 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var entity = await context.Organizations.FindAsync(customer.EntityId);
 
-            if (entity.Phones != null)
+            if (entity?.Phones != null)
                 foreach (var phone in entity.Phones)
                     customer.AddPhone(phone);
 

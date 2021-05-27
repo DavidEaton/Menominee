@@ -1,6 +1,7 @@
 ﻿using SharedKernel.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Emails
 {
@@ -9,9 +10,13 @@ namespace CustomerVehicleManagement.Api.Emails
         public static readonly string EmailEmptyMessage = "Email address cannot be empty";
         public const string EmailErrorMessage = "Email address and/or its format is invalid";
 
+        [JsonInclude]
         public string Address { get; private set; }
+
+        [JsonInclude]
         public bool IsPrimary { get; private set; }
 
+        [JsonConstructor]
         public EmailCreateDto(string address, bool isPrimary)
         {
             try

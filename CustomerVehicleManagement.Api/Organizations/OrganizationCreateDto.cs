@@ -75,9 +75,16 @@ namespace CustomerVehicleManagement.Api.Organizations
             return newPhones;
         }
 
+        [JsonInclude]
         public string Name { get; private set; }
+
+        [JsonInclude]
         public virtual PersonCreateDto Contact { get; private set; }
+
+        [JsonInclude]
         public Address Address { get; private set; }
+
+        [JsonInclude]
         public string Notes { get; private set; }
     }
 }

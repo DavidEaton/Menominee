@@ -71,6 +71,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return customer;
         }
 
+        internal static Customer CreateValidPersonCustomer()
+        {
+            var person = CreateValidPerson();
+
+            var customer = new Customer(person);
+
+            return customer;
+        }
+
 
         public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<AppDbContext> options, out Customer customer, out int id)
         {

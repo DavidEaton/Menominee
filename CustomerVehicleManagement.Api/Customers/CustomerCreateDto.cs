@@ -1,48 +1,35 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
-    public class CustomerCreateDto : Entity
+    public class CustomerCreateDto : Contactable
     {
         [JsonConstructor]
-        public CustomerCreateDto(PersonIdDto personIdDto, OrganizationReadDto organization, CustomerType customerType)
+        public CustomerCreateDto(PersonCreateDto personCreateDto, OrganizationCreateDto organizationCreateDto, CustomerType customerType)
         {
-            if (personIdDto != null)
+            if (personCreateDto != null)
             {
-                EntityId = personIdDto.Id;
+                PersonCreateDto = personCreateDto;
                 EntityType = EntityType.Person;
             }
 
-            if (organization != null)
+            if (organizationCreateDto != null)
             {
-
-                //if (organization.Id == 0)
-                OrganizationReadDto = organization;
-
-                //var organizationNameOrError = OrganizationName.Create(organization.Name);
-                //if (organizationNameOrError.IsFailure)
-                //    return;
-
-                //Entity = new Organization(organizationNameOrError.Value, organization.Id);
-                EntityId = organization.Id;
+                OrganizationCreateDto = organizationCreateDto;
                 EntityType = EntityType.Organization;
             }
 
             CustomerType = customerType;
         }
 
-        public int EntityId { get; set; }
-        public Entity Entity { get; set; }
         public EntityType EntityType { get; set; }
-        public PersonIdDto PersonIdDto { get; set; }
-        public OrganizationIdDto OrganizationIdDto { get; set; }
-        public OrganizationReadDto OrganizationReadDto { get; set; }
+        public OrganizationCreateDto OrganizationCreateDto { get; set; }
+        public PersonCreateDto PersonCreateDto { get; set; }
 
         [Required(ErrorMessage = "Customer Type is required.")]
         public CustomerType CustomerType { get; set; }

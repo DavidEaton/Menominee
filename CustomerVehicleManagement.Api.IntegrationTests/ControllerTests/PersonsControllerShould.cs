@@ -148,7 +148,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_NotFoundObjectResult_On_UpdatePersonAsync_With_Invalid_Id()
         {
-            var person = new PersonUpdateDto { 
+            var person = new PersonUpdateDto
+            {
                 Gender = Gender.Female
             };
 

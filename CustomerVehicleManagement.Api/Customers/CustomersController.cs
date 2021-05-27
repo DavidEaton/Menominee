@@ -79,60 +79,31 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerCreateDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
+        public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            Customer customer = await customerRepository.AddAndSaveCustomerAsync(customerCreateDto);
 
-            if (customerCreateDto.EntityType == EntityType.Organization)
-            {
-                var fetchedOrganization = await organizationRepository.GetOrganizationEntityAsync(customerCreateDto.EntityId);
-
-                if (fetchedOrganization != null)
-                {
-                    customerCreateDto.Entity = fetchedOrganization;
-                }
-
-            }
-
-            if (customerCreateDto.EntityType == EntityType.Person)
-            {
-                var fetchedPerson = await personRepository.GetPersonEntityAsync(customerCreateDto.EntityId);
-
-                if (fetchedPerson != null)
-                {
-                    customerCreateDto.Entity = fetchedPerson;
-
-                }
-            }
-
-            await customerRepository.AddCustomerAsync(customerCreateDto);
-
-            if (await customerRepository.SaveChangesAsync())
+            if (customer != null)
             {
                 string name = string.Empty;
 
-                if (customerCreateDto.EntityType == EntityType.Organization)
-                {
-                    name = ((Organization)customerCreateDto.Entity).Name.Value;
-                }
+                if (customer.EntityType == EntityType.Organization)
+                    name = customerCreateDto.OrganizationCreateDto.Name;
 
-                if (customerCreateDto.EntityType == EntityType.Person)
-                {
-                    name = ((Person)customerCreateDto.Entity).Name.LastFirstMiddle;
-                }
+                if (customer.EntityType == EntityType.Person)
+                    name = customerCreateDto.PersonCreateDto.Name.LastFirstMiddle;
 
                 var customerReadDto = new CustomerReadDto
                 {
-                    Id = customerCreateDto.Id,
-                    EntityType = customerCreateDto.EntityType,
+                    Id = customer.Id,
+                    EntityType = customer.EntityType,
                     Name = name
                 };
 
                 return CreatedAtRoute("GetCustomerAsync",
                     new { id = customerReadDto.Id },
                     customerReadDto);
-            };
+            }
 
             return BadRequest($"Failed to add {customerCreateDto}.");
         }

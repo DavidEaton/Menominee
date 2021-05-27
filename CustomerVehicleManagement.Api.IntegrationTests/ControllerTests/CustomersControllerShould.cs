@@ -1,25 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
-    public class CustomersControllerTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private const string Path = "https://localhost/api/customers";
         private const int MaxCacheAge = 300;
         private const int Minute = 60;
         private readonly HttpClient httpClient;
 
-        public CustomersControllerTests(WebApplicationFactory<Startup> factory)
+        public CustomersControllerShould(WebApplicationFactory<Startup> factory)
         {
             httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task GetCustomers_Returns_Success_Status()
+        public async Task Return_Success_Status_On_GetCustomers()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -28,7 +30,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomers_Returns_Expected_MediaType()
+        public async Task Return_Expected_MediaType_On_GetCustomers()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -37,7 +39,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomers_Returns_Content()
+        public async Task Return_Content_On_GetCustomers()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -47,7 +49,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task GetCustomers_Sets_Expected_CacheControl_Header()
+        public async Task Sets_Expected_CacheControl_Header_On_GetCustomers()
         {
             var response = await httpClient.GetAsync(string.Empty);
 
@@ -58,5 +60,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             Assert.True(header.Public);
         }
 
+        [Fact]
+        public async Task Return_Customer_On_GetCustomer()
+        {
+            HttpContent content = (await httpClient.GetAsync(Path + "/1")).Content;
+            string jsonContent = content.ReadAsStringAsync().Result;
+            Customer customer = JsonSerializer.Deserialize<Customer>(jsonContent);
+
+            Assert.NotNull(customer);
+        }
     }
 }

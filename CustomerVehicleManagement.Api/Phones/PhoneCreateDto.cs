@@ -1,12 +1,15 @@
 ﻿using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Phones
 {
     public class PhoneCreateDto
     {
         public static readonly string PhoneEmptyMessage = "Phone number cannot be empty";
+
+        [JsonConstructor]
         public PhoneCreateDto(string number, PhoneType phoneType, bool primary)
         {
             try
@@ -24,9 +27,12 @@ namespace CustomerVehicleManagement.Api.Phones
             Primary = primary;
         }
 
-        public string Number { get; set; }
-        public PhoneType PhoneType { get; set; }
-        public bool Primary { get; set; }
+        [JsonInclude]
+        public string Number { get; private set; }
+        [JsonInclude]
+        public PhoneType PhoneType { get; private set; }
+        [JsonInclude]
+        public bool Primary { get; private set; }
 
     }
 }

@@ -94,11 +94,18 @@ namespace CustomerVehicleManagement.Api
                     // Only allow authenticated users
                     mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
                     // Provide xml content type
-                }).AddXmlDataContractSerializerFormatters();
+                }).AddXmlDataContractSerializerFormatters()
+                  .AddJsonOptions(options =>
+                  {
+                      options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                  });
             }
 
             if (HostEnvironment.IsDevelopment())
-                services.AddControllers();
+                services.AddControllers().AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var postalCode = "49735";
             var address = new Address(addressLine, city, state, postalCode);
             var organization = Helpers.CreateValidOrganization();
-            
+
             organization.SetAddress(address);
             var customer = new Customer(organization);
             var janes = (Organization)customer.Entity;

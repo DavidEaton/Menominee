@@ -5,11 +5,13 @@ using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Customer : Entity, ICustomer
     {
+        [JsonConstructor]
         public Customer(IEntity entity)
         {
             if (entity is Organization organization)
@@ -24,19 +26,38 @@ namespace CustomerVehicleManagement.Domain.Entities
                 EntityType = EntityType.Person;
             }
 
-            EntityId = entity.Id;
+            if (entity != null)
+                EntityId = entity.Id;
+
             Created = DateTime.UtcNow;
         }
 
         // Person or Organization
+        [JsonInclude]
         public IEntity Entity { get; private set; }
+
+        [JsonInclude]
         public EntityType EntityType { get; private set; }
+
+        [JsonInclude]
         public int EntityId { get; private set; }
+
+        [JsonInclude]
         public CustomerType CustomerType { get; private set; }
+
+        [JsonInclude]
         public ContactPreferences ContactPreferences { get; private set; }
+
+        [JsonInclude]
         public DateTime Created { get; private set; }
+
+        [JsonInclude]
         public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
+
+        [JsonInclude]
         public virtual IList<Email> Emails { get; private set; } = new List<Email>();
+
+        [JsonInclude]
         public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
 
         public void AddPhone(Phone phone)
