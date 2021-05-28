@@ -8,6 +8,9 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
+    /// <summary>
+    /// Uses CustomerVehicleManagement.Api.Startup::const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+    /// </summary>
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private const string Path = "https://localhost/api/customers";

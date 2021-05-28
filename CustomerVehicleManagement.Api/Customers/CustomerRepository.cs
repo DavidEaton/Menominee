@@ -150,12 +150,12 @@ namespace CustomerVehicleManagement.Api.Customers
             {
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    await MapOrganizationCustomer(customer);
+                    await GetCustomerOrganizationEntity(customer);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    await MapPersonCustomer(customer);
+                    await GetCustomerPersonEntity(customer);
                 }
 
                 customers.Add(customer.ToReadDto());
@@ -164,7 +164,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return customers;
         }
 
-        private async Task MapPersonCustomer(Customer customer)
+        public async Task GetCustomerPersonEntity(Customer customer)
         {
             var entity = await context.Persons.FindAsync(customer.EntityId);
 
@@ -175,7 +175,7 @@ namespace CustomerVehicleManagement.Api.Customers
             customer.SetEntity(entity);
         }
 
-        private async Task MapOrganizationCustomer(Customer customer)
+        public async Task GetCustomerOrganizationEntity(Customer customer)
         {
             var entity = await context.Organizations.FindAsync(customer.EntityId);
 

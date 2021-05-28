@@ -43,26 +43,48 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customer/1
         [HttpGet("{id:int}", Name = "GetCustomerAsync")]
-        public async Task<ActionResult<Customer>> GetCustomerAsync(int id)
+        public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(int id)
         {
-            var result = await customerRepository.GetCustomerAsync(id);
+            var customer = await customerRepository.GetCustomerAsync(id);
 
-            if (result == null)
+            if (customer == null)
                 return NotFound();
 
-            return result;
+            CustomerReadDto customerReadDto = new()
+            {
+                Id = customer.Id,
+                CustomerType = customer.CustomerType,
+                EntityType = customer.EntityType
+            };
+
+            if (customer.EntityType == EntityType.Organization)
+            {
+                await customerRepository.GetCustomerOrganizationEntity(customer);
+                customerReadDto.Address = ((Organization)customer.Entity).Address;
+                customerReadDto.Name = ((Organization)customer.Entity).Name.Value;
+                //customerReadDto.Phones = ((Organization)customer.Entity).Phones;
+            }
+
+            if (customer.EntityType == EntityType.Person)
+            {
+                await customerRepository.GetCustomerPersonEntity(customer);
+                customerReadDto.Address = ((Person)customer.Entity).Address;
+                customerReadDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
+            }
+
+            return customerReadDto;
         }
 
         // PUT: api/Customer/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, Customer model)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var fetchedCustomer = await customerRepository.GetCustomerAsync(id);
             if (fetchedCustomer == null)
-                return NotFound($"Could not find Customer in the database to updte: {model.Entity}");
+                return NotFound($"Could not find Customer in the database to updte: ");
 
             //mapper.Map(model, fetchedCustomer);
 
@@ -74,7 +96,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 return fetchedCustomer;
 
 
-            return BadRequest($"Failed to update {model.Entity}.");
+            return BadRequest($"Failed to update .");
         }
 
         // POST: api/Customer/

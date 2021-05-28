@@ -15,5 +15,7 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<Customer> GetCustomerAsync(int id);
         Task<bool> SaveChangesAsync(Customer customer);
         Task<bool> SaveChangesAsync();
+        Task GetCustomerOrganizationEntity(Customer customer);
+        Task GetCustomerPersonEntity(Customer customer);
     }
 }

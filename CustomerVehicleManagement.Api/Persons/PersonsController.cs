@@ -67,9 +67,6 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var notFoundMessage = $"Could not find Person to update";
 
             /* Update Pattern in Controllers:
@@ -93,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Persons
             //repository.FixTrackingState();
             repository.UpdatePersonAsync(personUpdateDto);
 
-            /* Returning the updated resource is acceptible like:
+            /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);
                even preferred over returning NoContent if updated resource
                contains properties that are mutated by the data store

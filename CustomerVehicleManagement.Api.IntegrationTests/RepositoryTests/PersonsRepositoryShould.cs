@@ -252,7 +252,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 // Create an Update Dto with some changes for the Person
                 var personUpdateDto = new PersonUpdateDto
                 {
-                    Id = id,
                     Gender = personFromRepository.Gender,
                     Name = personFromRepository.Name,
                     Birthday = DateTime.Today.AddYears(-20),

@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Api.Persons
 {
     public class PersonUpdateDto
     {
-        public int Id { get; set; }
         public PersonName Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
