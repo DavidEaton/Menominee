@@ -70,6 +70,16 @@ namespace CustomerVehicleManagement.Domain.Entities
             Phones.Remove(phone);
         }
 
+        public void AddEmail(Email email)
+        {
+            Emails.Add(email);
+        }
+
+        public void RemoveEmail(Email email)
+        {
+            Emails.Remove(email);
+        }
+
         public void AddVehicle(Vehicle vehicle)
         {
             Vehicles.Add(vehicle);

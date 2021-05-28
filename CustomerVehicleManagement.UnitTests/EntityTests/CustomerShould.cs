@@ -121,6 +121,39 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
+        public void AddEmails()
+        {
+            var organization = Helpers.CreateValidOrganization();
+            var customer = new Customer(organization);
+            var email0 = new Email("mary@moops.com", true);
+            var email1 = new Email("mikey@yikes.com", false);
+
+            customer.AddEmail(email0);
+            customer.AddEmail(email1);
+
+            customer.Emails.Should().Contain(email0);
+            customer.Emails.Should().Contain(email1);
+        }
+
+        [Fact]
+        public void RemoveEmails()
+        {
+            var organization = Helpers.CreateValidOrganization();
+            var customer = new Customer(organization);
+            var email0 = new Email("mary@moops.com", true);
+            var email1 = new Email("mikey@yikes.com", false);
+
+            customer.AddEmail(email0);
+            customer.AddEmail(email1);
+            customer.Emails.Should().Contain(email0);
+            customer.Emails.Should().Contain(email1);
+            customer.RemoveEmail(email0);
+            customer.RemoveEmail(email1);
+
+            customer.Emails.Count.Should().Be(0);
+        }
+
+        [Fact]
         public void AddVehicles()
         {
             var organization = Helpers.CreateValidOrganization();

@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Api.Persons
         public DateTime? Birthday { get; set; }
         public DriversLicense DriversLicense { get; set; }
         public Address Address { get; set; }
-        public IEnumerable<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
-        public IEnumerable<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
+        public IReadOnlyList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IReadOnlyList<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
     }
 }

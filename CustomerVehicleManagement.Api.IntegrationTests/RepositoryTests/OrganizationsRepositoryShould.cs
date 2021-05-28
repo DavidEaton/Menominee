@@ -148,11 +148,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepository.Notes.Should().Be(someNotes);
-                organizationFromRepository.AddressLine.Should().NotBeNull();
-                organizationFromRepository.City.Should().NotBeNull();
-                organizationFromRepository.State.Should().NotBeNull();
-                organizationFromRepository.PostalCode.Should().NotBeNull();
-                organizationFromRepository.AddressFull.Should().NotBeNull();
+                organizationFromRepository.Address.Should().NotBeNull();
                 organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Emails.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Contact.Should().NotBeNull();
@@ -356,7 +352,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepo.AddressLine.Should().Be("1234 Fifth Ave.");
+                organizationFromRepo.Address.AddressLine.Should().Be("1234 Fifth Ave.");
             };
         }
 

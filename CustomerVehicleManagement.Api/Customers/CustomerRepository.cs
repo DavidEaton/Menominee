@@ -183,9 +183,9 @@ namespace CustomerVehicleManagement.Api.Customers
                 foreach (var phone in entity.Phones)
                     customer.AddPhone(phone);
 
-            //if (entity.Emails != null)
-            //    foreach (var email in entity.Emails)
-            //        customer.AddEmail(email);
+            if (entity?.Emails != null)
+                foreach (var email in entity.Emails)
+                    customer.AddEmail(email);
 
             customer.SetEntity(entity);
         }

@@ -4,7 +4,6 @@ using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,7 +16,7 @@ using Xunit;
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
     /// <summary>
-    /// These tests uses mocks, no database and no data
+    /// These tests use mocks, no database and no data
     /// </summary>
     public class CustomersControllerMockedShould
     {
@@ -45,7 +44,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 });
 
                 mapper = mapperConfiguration.CreateMapper();
-                controller = new CustomersController(moqCustomerRepository.Object, moqPersonRepository.Object, moqOrganizationRepository.Object);
+                controller = new CustomersController(moqCustomerRepository.Object, moqPersonRepository.Object, moqOrganizationRepository.Object, mapper);
             }
         }
 
@@ -120,8 +119,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var result = await controller.CreateCustomerAsync(customerCreateDto);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            //result.Result.EntityType.Should().Be(EntityType.Person);
-            //createdCustomer.CustomerType.Should().Be(CustomerType.Retail);
         }
 
         [Fact]
@@ -137,17 +134,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             result.Should().BeOfType<ActionResult<CustomerReadDto>>();
         }
 
-        //[Fact]
-        //public async Task Return_NotFoundObjectResult_On_UpdateCustomerAsync_With_Invalid_Id()
-        //{
-        //    var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
-        //    CustomerUpdateDto customer = new(person, null, CustomerType.Retail);
+        [Fact]
+        public async Task Return_NotFoundObjectResult_On_UpdateCustomerAsync_With_Invalid_Id()
+        {
+            var invalidId = 0;
 
-        //    var result = await controller.UpdateCustomerAsync(customer.Id, customer);
+            CustomerUpdateDto customer = new();
 
-        //    result.Should().BeOfType<NotFoundObjectResult>();
-        //}
+            var result = await controller.UpdateCustomerAsync(invalidId, customer);
 
-
+            result.Result.Should().BeOfType<NotFoundObjectResult>();
+        }
     }
 }

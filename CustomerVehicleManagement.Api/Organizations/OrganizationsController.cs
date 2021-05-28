@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (organizationFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository);
+            DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository, mapper);
             organizationFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
             repository.UpdateOrganizationAsync(organizationFromRepository);
@@ -103,13 +103,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                     {
                         Id = organizationCreateDto.Contact.Id,
                         Name = organizationCreateDto.Contact.Name.LastFirstMiddleInitial,
-                        Phones = mapper.Map<IList<PhoneReadDto>>(organizationCreateDto.Contact.Phones),
-                        Emails = mapper.Map<IList<EmailReadDto>>(organizationCreateDto.Contact.Emails)
+                        Phones = mapper.Map<IReadOnlyList<PhoneReadDto>>(organizationCreateDto.Contact.Phones),
+                        Emails = mapper.Map<IReadOnlyList<EmailReadDto>>(organizationCreateDto.Contact.Emails)
                     },
-                    AddressLine = organizationCreateDto.Address.AddressLine,
-                    City = organizationCreateDto.Address.City,
-                    State = organizationCreateDto.Address.State,
-                    PostalCode = organizationCreateDto.Address.PostalCode,
+                    Address = organizationCreateDto.Address,
                     Phones = mapper.Map<IList<PhoneReadDto>>(organizationCreateDto.Phones),
                     Emails = mapper.Map<IList<EmailReadDto>>(organizationCreateDto.Emails)
                 };

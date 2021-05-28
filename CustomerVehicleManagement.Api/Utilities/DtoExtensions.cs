@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
                             Address = organization.Contact.Address,
                             Gender = organization.Contact.Gender,
                             Name = organization.Contact.Name.LastFirstMiddle,
-                            Phones = MapPhones(organization.Contact.Phones)
+                            Phones = (IReadOnlyList<PhoneReadDto>)MapPhones(organization.Contact.Phones)
                         }
                         : null
                     };
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
 
         private static IList<PhoneReadDto> MapPhones(IList<Phone> phones)
         {
-            var phonesDto = new List<PhoneReadDto>();
+            IList<PhoneReadDto> phonesDto = new List<PhoneReadDto>();
 
             foreach (var phone in phones)
             {

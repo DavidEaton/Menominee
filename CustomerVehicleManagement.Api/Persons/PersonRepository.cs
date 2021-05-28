@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Api.Persons
             return mapper.Map<PersonReadDto>(personFromContext);
         }
 
-        public async Task<IEnumerable<PersonReadDto>> GetPersonsAsync()
+        public async Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync()
         {
             var personsFromContext = await context.Persons.ToArrayAsync();
 
@@ -89,10 +89,10 @@ namespace CustomerVehicleManagement.Api.Persons
                 // Mapping Phones works but Emails fail:
                 // mapper.Map<IEnumerable<Email>>(person.Emails);
                 // ...so instead of automapper for the emails, MapDomainEmailToReadDto()
-                mapper.Map<IEnumerable<Phone>>(person.Phones);
+                mapper.Map<IReadOnlyList<Phone>>(person.Phones);
             }
 
-            IEnumerable<PersonReadDto> list = mapper.Map<IEnumerable<PersonReadDto>>(personsFromContext);
+            IReadOnlyList<PersonReadDto> list = mapper.Map<IReadOnlyList<PersonReadDto>>(personsFromContext);
 
             foreach (var personReadDto in list)
             {
@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api.Persons
             return list;
         }
 
-        public async Task<IEnumerable<PersonInListDto>> GetPersonsListAsync()
+        public async Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync()
         {
             var personsFromContext = await context.Persons.ToArrayAsync();
 

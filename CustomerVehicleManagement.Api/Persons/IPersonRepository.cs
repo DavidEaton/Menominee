@@ -11,8 +11,8 @@ namespace CustomerVehicleManagement.Api.Persons
         void FixTrackingState();
         Task<bool> PersonExistsAsync(int id);
         void UpdatePersonAsync(PersonUpdateDto entity);
-        Task<IEnumerable<PersonReadDto>> GetPersonsAsync();
-        Task<IEnumerable<PersonInListDto>> GetPersonsListAsync();
+        Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync();
+        Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);
         Task<Person> GetPersonEntityAsync(int id);
         Task<int> GetPersonsTotalAsync();

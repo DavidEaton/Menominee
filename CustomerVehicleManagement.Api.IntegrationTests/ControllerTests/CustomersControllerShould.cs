@@ -10,6 +10,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     /// <summary>
     /// Uses CustomerVehicleManagement.Api.Startup::const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+    /// Tests rely on local database having some rows
+    /// TODO: Add setup and teardown to create and populate database before running tests,
+    /// delete database after tests run
     /// </summary>
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
@@ -35,10 +38,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_Expected_MediaType_On_GetCustomers()
         {
+            var mediaType = "application/json";
             var response = await httpClient.GetAsync(string.Empty);
 
             // Confirm that endpoint returns JSON ContentType
-            Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal(mediaType, response.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
@@ -64,7 +68,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task Return_Customer_On_GetCustomer()
+        public async Task Return_Organization_Customer_On_GetCustomer()
         {
             HttpContent content = (await httpClient.GetAsync(Path + "/1")).Content;
             string jsonContent = content.ReadAsStringAsync().Result;
@@ -72,5 +76,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             Assert.NotNull(customer);
         }
+
+        [Fact]
+        public async Task Return_Person_Customer_On_GetCustomer()
+        {
+            HttpContent content = (await httpClient.GetAsync(Path + "/2")).Content;
+            string jsonContent = content.ReadAsStringAsync().Result;
+            Customer customer = JsonSerializer.Deserialize<Customer>(jsonContent);
+
+            Assert.NotNull(customer);
+        }
+
     }
 }

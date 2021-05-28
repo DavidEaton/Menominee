@@ -53,7 +53,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonAsync(0);
 
-            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
 
@@ -62,8 +61,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonsAsync();
 
-            result.Result.Should().BeOfType<OkObjectResult>();
-            result.Should().BeOfType<ActionResult<IEnumerable<PersonReadDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonReadDto>>>();
         }
 
         [Fact]
@@ -71,7 +69,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonsListAsync();
 
-            result.Should().BeOfType<ActionResult<IEnumerable<PersonInListDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonInListDto>>>();
         }
 
         #endregion Get

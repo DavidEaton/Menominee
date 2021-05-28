@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Persons;
+﻿using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -13,18 +14,19 @@ namespace CustomerVehicleManagement.Api.Customers
         public EntityType EntityType { get; set; }
 
         public string Name { get; set; }
-        public Gender Gender { get; set; }
-        public DateTime? Birthday { get; set; }
+
+        // Missing Person properties
+        //public Gender Gender { get; set; }
+        //public DateTime? Birthday { get; set; }
+        //public DriversLicense DriversLicense { get; set; }
+
+        // Missing Organization properties
+        // Notes
         public Address Address { get; set; }
         public PersonReadDto Contact { get; set; }
         public CustomerType CustomerType { get; set; }
-        public bool AllowMail { get; set; }
-        public bool AllowEmail { get; set; }
-        public bool AllowSms { get; set; }
-        public int PriceProfileId { get; set; }
-        public int TaxIds { get; set; }
-        public bool RewardsMember { get; set; }
-        public bool OverrideCustomerTaxProfile { get; set; }
         public IList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IList<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
+
     }
 }

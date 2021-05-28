@@ -3,11 +3,12 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
-using SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using AutoMapper;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -19,10 +20,12 @@ namespace CustomerVehicleManagement.Api.Customers
         private readonly IPersonRepository personRepository;
         private readonly IOrganizationRepository organizationRepository;
         private const int MaxCacheAge = 300;
+        private readonly IMapper mapper;
 
         public CustomersController(ICustomerRepository customerRepository,
                                    IPersonRepository personRepository,
-                                   IOrganizationRepository organizationRepository)
+                                   IOrganizationRepository organizationRepository,
+                                   IMapper mapper)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
@@ -30,6 +33,8 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(personRepository));
             this.organizationRepository = organizationRepository ??
                 throw new ArgumentNullException(nameof(organizationRepository));
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Customers
@@ -77,24 +82,60 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto model)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto customerUpdateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            /* Update Pattern in Controllers:
+                1) Get domain entity from repository
+                2) Update domain entity with data in data transfer object (DTO)
+                3) Set entity's TrackingState to Modified
+                4) FixTrackingState: moves entity state tracking back out of
+                the object and into the context to track entity state in this
+                disconnected applications. In other words, sych the EF Change
+                Tracker with our disconnected entity's TrackingState
+                5) Save changes
+                6) return NoContent()
+            */
 
+            //1) Get domain entity from repository
             var fetchedCustomer = await customerRepository.GetCustomerAsync(id);
-            if (fetchedCustomer == null)
-                return NotFound($"Could not find Customer in the database to updte: ");
 
-            //mapper.Map(model, fetchedCustomer);
+            if (fetchedCustomer == null || fetchedCustomer?.EntityType == EntityType.Organization)
+                return NotFound($"Could not find Customer in the database to update.");
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            fetchedCustomer.SetTrackingState(TrackingState.Modified);
-            customerRepository.FixTrackingState();
+            // 2) Update domain entity with data in data transfer object(DTO)
+            if (fetchedCustomer.EntityType == EntityType.Organization)
+            {
+                //1.a) Get domain Organization from repository
+                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(fetchedCustomer.EntityId);
 
+                // 2.a) Update domain entity with data in data transfer object(DTO)
+                DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(customerUpdateDto.OrganizationUpdateDto, organizationFromRepository, mapper);
+
+                // Update the objects ObjectState and sych the EF Change Tracker
+                // 3) Set entity's TrackingState to Modified
+                fetchedCustomer.SetTrackingState(TrackingState.Modified);
+                // 4) FixTrackingState: moves entity state tracking into the context
+                customerRepository.FixTrackingState();
+            }
+
+            if (fetchedCustomer.EntityType == EntityType.Person)
+            {
+                //1.a) Get domain Person from repository
+                Person personFromRepository = await personRepository.GetPersonEntityAsync(fetchedCustomer.EntityId);
+                // 2.a) Update domain entity with data in data transfer object(DTO)
+                DtoHelpers.ConvertPersonUpdateDtoToDomainModel(customerUpdateDto.PersonUpdateDto, personFromRepository, mapper);
+
+                // Update the objects ObjectState and sych the EF Change Tracker
+                // 3) Set entity's TrackingState to Modified
+                fetchedCustomer.SetTrackingState(TrackingState.Modified);
+                // 4) FixTrackingState: moves entity state tracking into the context
+                customerRepository.FixTrackingState();
+            }
+
+            //5) Save changes
             if (await customerRepository.SaveChangesAsync())
-                return fetchedCustomer;
-
+                // 6) return NoContent()
+                return NoContent();
 
             return BadRequest($"Failed to update .");
         }

@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 
             return emailReadDtos;
         }
-        public static IEnumerable<EmailReadDto> MapEmailReadDtoToReadDto(IEnumerable<EmailReadDto> emails)
+        public static IReadOnlyList<EmailReadDto> MapEmailReadDtoToReadDto(IReadOnlyList<EmailReadDto> emails)
         {
             var emailReadDtos = new List<EmailReadDto>();
 
@@ -64,7 +64,7 @@ namespace CustomerVehicleManagement.Api.Utilities
             return emailReadDtos;
         }
 
-        public static IList<PhoneReadDto> MapDomainPhoneToReadDto(IEnumerable<Phone> phones)
+        public static IReadOnlyList<PhoneReadDto> MapDomainPhoneToReadDto(IReadOnlyList<Phone> phones)
         {
             var phoneReadDtos = new List<PhoneReadDto>();
 

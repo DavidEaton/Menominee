@@ -28,10 +28,11 @@ namespace CustomerVehicleManagement.Api.Utilities
 
         /// <summary>
         /// Map the PersonUpdateDto back to the domain entity
-        /// REPLACE THIS METHOD WITH AUTOMAPPER
+        /// TODO: REPLACE THIS METHOD WITH AUTOMAPPER
         /// </summary>
         /// <param name="personUpdateDto"></param>
         /// <param name="person"></param>
+        /// <param name="mapper"></param>
         public static void ConvertPersonUpdateDtoToDomainModel(
             PersonUpdateDto personUpdateDto,
             Person person,
@@ -46,20 +47,28 @@ namespace CustomerVehicleManagement.Api.Utilities
             person.SetEmails(mapper.Map<IList<Email>>(personUpdateDto.Emails));
         }
 
+        /// <summary>
+        /// Map the OrganizationUpdateDto back to the domain entity
+        /// TODO: REPLACE THIS METHOD WITH AUTOMAPPER
+        /// </summary>
+        /// <param name="organizationUpdateDto"></param>
+        /// <param name="organization"></param>
+        /// <param name="mapper"></param>
         public static void ConvertOrganizationUpdateDtoToDomainModel(
             OrganizationUpdateDto organizationUpdateDto,
-            Organization organizationFromRepository)
+            Organization organization,
+            IMapper mapper)
         {
             var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
             if (organizationNameOrError.IsFailure)
                 return;
 
-            organizationFromRepository.SetName(organizationNameOrError.Value);
-            //organizationFromRepository.SetContact(organizationUpdateDto.Contact);
-            organizationFromRepository.SetAddress(organizationUpdateDto.Address);
-            organizationFromRepository.SetNotes(organizationUpdateDto.Notes);
-            organizationFromRepository.SetPhones(organizationUpdateDto.Phones);
-            organizationFromRepository.SetEmails(organizationUpdateDto.Emails);
+            organization.SetName(organizationNameOrError.Value);
+            //organization.SetContact(organizationUpdateDto.Contact);
+            organization.SetAddress(organizationUpdateDto.Address);
+            organization.SetNotes(organizationUpdateDto.Notes);
+            organization.SetPhones(mapper.Map<IList<Phone>>(organizationUpdateDto.Phones));
+            organization.SetEmails(mapper.Map<IList<Email>>(organizationUpdateDto.Emails));
         }
     }
 }

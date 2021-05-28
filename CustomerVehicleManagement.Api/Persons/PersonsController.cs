@@ -33,15 +33,19 @@ namespace CustomerVehicleManagement.Api.Persons
         [Route("list")]
         [HttpGet]
         [ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<PersonInListDto>>> GetPersonsListAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonInListDto>>> GetPersonsListAsync()
         {
             var persons = await repository.GetPersonsListAsync();
+
+            if (persons == null)
+                return NotFound();
+
             return Ok(persons);
         }
 
         // GET: api/persons
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonReadDto>>> GetPersonsAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonReadDto>>> GetPersonsAsync()
         {
             var persons = await repository.GetPersonsAsync();
 
@@ -86,8 +90,13 @@ namespace CustomerVehicleManagement.Api.Persons
                 return NotFound(notFoundMessage);
 
             DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
+
+            // TODO: Discover why the next two operations break unit tests
+            // and our Controller update pattern:
+
             //personFromRepository.SetTrackingState(TrackingState.Modified);
             //repository.FixTrackingState();
+
             repository.UpdatePersonAsync(personUpdateDto);
 
             /* Returning the updated resource is acceptible, for example:
@@ -117,6 +126,14 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
+            /*
+            Web API controllers don't have to check ModelState.IsValid if they have the
+            [ApiController] attribute. In that case, an automatic HTTP 400 response containing
+            error details is returned when model state is invalid.
+
+            However, excluding the ModelState check code breaks tests. Comment the ModelState
+            check code (if (!ModelState.IsValid)...) to break tests: */
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -135,8 +152,8 @@ namespace CustomerVehicleManagement.Api.Persons
                                           personCreateDto.Address.City,
                                           personCreateDto.Address.State,
                                           personCreateDto.Address.PostalCode),
-                    Phones = mapper.Map<IList<PhoneReadDto>>(personCreateDto.Phones),
-                    Emails = mapper.Map<IList<EmailReadDto>>(personCreateDto.Emails)
+                    Phones = mapper.Map<IReadOnlyList<PhoneReadDto>>(personCreateDto.Phones),
+                    Emails = mapper.Map<IReadOnlyList<EmailReadDto>>(personCreateDto.Emails)
                 };
 
                 return CreatedAtRoute("GetPersonAsync",
