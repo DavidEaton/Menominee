@@ -9,7 +9,7 @@ using Xunit;
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     /// <summary>
-    /// Uses CustomerVehicleManagement.Api.Startup::const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+    /// Uses CustomerVehicleManagement.Api.Startup.cs: const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
     /// Tests rely on local database having some rows
     /// TODO: Add setup and teardown to create and populate database before running tests,
     /// delete database after tests run

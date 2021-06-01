@@ -81,14 +81,14 @@ namespace CustomerVehicleManagement.Api.Utilities
             return phoneReadDtos;
         }
 
-        public static List<Phone> CreatePhones(PersonCreateDto personToCreate)
+        public static List<PhoneCreateDto> CreatePhoneCreateDtos(PersonCreateDto personToCreate)
         {
-            var phones = new List<Phone>();
-            Phone newPhone;
+            var phones = new List<PhoneCreateDto>();
+            PhoneCreateDto newPhone;
 
             foreach (var phone in personToCreate.Phones)
             {
-                newPhone = new Phone(phone.Number, phone.PhoneType, phone.IsPrimary);
+                newPhone = new PhoneCreateDto(phone.Number, phone.PhoneType, phone.IsPrimary);
                 phones.Add(newPhone);
             }
 

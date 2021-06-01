@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.ValidationAttributes;
+﻿using CustomerVehicleManagement.Api.ValidationAttributes;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;
@@ -12,11 +12,11 @@ namespace CustomerVehicleManagement.UnitTests.AttributeTests
         [Fact]
         public void Succeed_When_Phones_Contains_One_Primary()
         {
-            PersonCreateDto dto = new(Helpers.CreateValidPerson().Name, Gender.Female);
-            dto.SetPhones(Helpers.CreateValidPhones());
+            Person person = new(Helpers.CreateValidPerson().Name, Gender.Female);
+            person.SetPhones(Helpers.CreateValidPhones());
             var attribute = new ContactableCanHaveOnlyOnePrimaryPhoneAttribute();
 
-            var result = attribute.GetValidationResult(dto, new ValidationContext(dto));
+            var result = attribute.GetValidationResult(person, new ValidationContext(person));
 
             result.Should().Be(ValidationResult.Success);
         }
@@ -25,16 +25,15 @@ namespace CustomerVehicleManagement.UnitTests.AttributeTests
         [Fact]
         public void Not_Succeed_When_Phones_Contains_More_Than_One_Primary()
         {
-            PersonCreateDto dto = new(Helpers.CreateValidPerson().Name, Gender.Female);
-            dto.SetPhones(Helpers.CreateValidPhones());
+            Person person = new(Helpers.CreateValidPerson().Name, Gender.Female);
+            person.SetPhones(Helpers.CreateValidPhones());
 
             // Should we really be allowed to sneak in a second primary phone? NO!
-            dto.Phones[1] = Helpers.CreateValidPrimaryPhone();
+            person.Phones.Add(Helpers.CreateValidPrimaryPhone());
 
             var attribute = new ContactableCanHaveOnlyOnePrimaryPhoneAttribute();
 
-
-            var result = attribute.GetValidationResult(dto, new ValidationContext(dto));
+            var result = attribute.GetValidationResult(person, new ValidationContext(person));
             var isSuccess = result == ValidationResult.Success;
 
             isSuccess.Should().BeFalse();

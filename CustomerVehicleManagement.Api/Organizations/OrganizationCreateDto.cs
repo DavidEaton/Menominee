@@ -1,8 +1,10 @@
 ﻿using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Api.ValidationAttributes;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Interfaces;
 using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
@@ -11,7 +13,7 @@ using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
-    public class OrganizationCreateDto : Contactable
+    public class OrganizationCreateDto
     {
         public static readonly string OrganizationNameEmptyMessage = "Name cannot be empty";
 
@@ -51,40 +53,39 @@ namespace CustomerVehicleManagement.Api.Organizations
             Name = name;
             if (address != null) Address = address;
             if (contact != null) Contact = contact;
-            if (phones != null) SetPhones(ConvertCreateDtosToPhones(phones));
-            if (emails != null) SetEmails(ConvertCreateDtosToEmails(emails));
+            if (phones != null) Phones = phones;
+            if (emails != null) Emails = emails;
         }
 
-        private IList<Email> ConvertCreateDtosToEmails(IList<EmailCreateDto> emails)
-        {
-            IList<Email> newPhones = new List<Email>();
+        public IList<PhoneCreateDto> Phones { get; private set; } = new List<PhoneCreateDto>();
+        public IList<EmailCreateDto> Emails { get; private set; } = new List<EmailCreateDto>();
 
-            foreach (var email in emails)
-                newPhones.Add(new Email(email.Address, email.IsPrimary));
+        //private IList<Email> ConvertCreateDtosToEmails(IList<EmailCreateDto> emails)
+        //{
+        //    IList<Email> newPhones = new List<Email>();
 
-            return newPhones;
-        }
+        //    foreach (var email in emails)
+        //        newPhones.Add(new Email(email.Address, email.IsPrimary));
 
-        private IList<Phone> ConvertCreateDtosToPhones(IList<PhoneCreateDto> phones)
-        {
-            IList<Phone> newPhones = new List<Phone>();
+        //    return newPhones;
+        //}
 
-            foreach (var phone in phones)
-                newPhones.Add(new Phone(phone.Number, phone.PhoneType, phone.Primary));
+        //private IList<Phone> ConvertCreateDtosToPhones(IList<PhoneCreateDto> phones)
+        //{
+        //    IList<Phone> newPhones = new List<Phone>();
 
-            return newPhones;
-        }
+        //    foreach (var phone in phones)
+        //        newPhones.Add(new Phone(phone.Number, phone.PhoneType, phone.Primary));
 
-        [JsonInclude]
+        //    return newPhones;
+        //}
+
         public string Name { get; private set; }
 
-        [JsonInclude]
         public virtual PersonCreateDto Contact { get; private set; }
 
-        [JsonInclude]
         public Address Address { get; private set; }
 
-        [JsonInclude]
         public string Notes { get; private set; }
     }
 }

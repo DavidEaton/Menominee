@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Api.Phones
         public static readonly string PhoneEmptyMessage = "Phone number cannot be empty";
 
         [JsonConstructor]
-        public PhoneCreateDto(string number, PhoneType phoneType, bool primary)
+        public PhoneCreateDto(string number, PhoneType phoneType, bool isPrimary)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Api.Phones
 
             Number = number;
             PhoneType = phoneType;
-            Primary = primary;
+            IsPrimary = isPrimary;
         }
 
         [JsonInclude]
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Api.Phones
         [JsonInclude]
         public PhoneType PhoneType { get; private set; }
         [JsonInclude]
-        public bool Primary { get; private set; }
+        public bool IsPrimary { get; private set; }
 
     }
 }

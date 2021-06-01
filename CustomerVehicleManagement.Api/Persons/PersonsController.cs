@@ -137,28 +137,45 @@ namespace CustomerVehicleManagement.Api.Persons
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await repository.AddPersonAsync(personCreateDto);
+            // Pattern:
+            // Map dto to domain entity
+            // Add domain entity to repository
+            // Save changes on repository
+            // Fetch saved domain entity with new Id from database
+            // Map saved domain entity to read dto
+            // Return to consumer
+
+            var person = mapper.Map<Person>(personCreateDto);
+
+            await repository.AddPersonAsync(person);
+
+            //if (personCreateDto != null)
+            //{
+            //    person = new Person(personCreateDto.Name, personCreateDto.Gender);
+
+            //    if (personCreateDto.Birthday != null)
+            //        person.SetBirthday(personCreateDto.Birthday);
+
+            //    if (personCreateDto.DriversLicense != null)
+            //        person.SetDriversLicense(personCreateDto.DriversLicense);
+
+            //    if (personCreateDto.Address != null)
+            //        person.SetAddress(personCreateDto.Address);
+
+            //    if (personCreateDto.Emails != null)
+            //        if (personCreateDto.Emails.Count > 0)
+            //            person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
+            //}
 
             if (await repository.SaveChangesAsync())
             {
-                var personReadDto = new PersonReadDto
-                {
-                    Id = personCreateDto.Id,
-                    Name = personCreateDto.Name.LastFirstMiddle,
-                    Gender = personCreateDto.Gender,
-                    Birthday = personCreateDto.Birthday,
-                    DriversLicense = personCreateDto.DriversLicense,
-                    Address = new Address(personCreateDto.Address.AddressLine,
-                                          personCreateDto.Address.City,
-                                          personCreateDto.Address.State,
-                                          personCreateDto.Address.PostalCode),
-                    Phones = mapper.Map<IReadOnlyList<PhoneReadDto>>(personCreateDto.Phones),
-                    Emails = mapper.Map<IReadOnlyList<EmailReadDto>>(personCreateDto.Emails)
-                };
+                // Fetch saved domain entity with new Id from database
+                var personFromRepository = repository.GetPersonAsync(person.Id).Result;
+
 
                 return CreatedAtRoute("GetPersonAsync",
-                    new { id = personReadDto.Id },
-                    personReadDto);
+                    new { id = person.Id },
+                    personFromRepository);
             }
 
             return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");

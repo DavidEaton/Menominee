@@ -24,32 +24,38 @@ namespace CustomerVehicleManagement.Api.Persons
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task AddPersonAsync(PersonCreateDto personCreateDto)
+        //public async Task AddPersonAsync(PersonCreateDto personCreateDto)
+        //{
+        //    Person person = null;
+
+        //    if (personCreateDto != null)
+        //    {
+        //        person = new Person(personCreateDto.Name, personCreateDto.Gender);
+
+        //        if (personCreateDto.Birthday != null)
+        //            person.SetBirthday(personCreateDto.Birthday);
+
+        //        if (personCreateDto.DriversLicense != null)
+        //            person.SetDriversLicense(personCreateDto.DriversLicense);
+
+        //        if (personCreateDto.Address != null)
+        //            person.SetAddress(personCreateDto.Address);
+
+        //        if (personCreateDto.Phones != null)
+        //            if (personCreateDto.Phones.Count > 0)
+        //                person.SetPhones(mapper.Map<IList<Phone>>(personCreateDto.Phones));
+
+        //        if (personCreateDto.Emails != null)
+        //            if (personCreateDto.Emails.Count > 0)
+        //                person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
+        //    }
+
+        //    if (person != null)
+        //        await context.AddAsync(person);
+        //}
+
+        public async Task AddPersonAsync(Person person)
         {
-            Person person = null;
-
-            if (personCreateDto != null)
-            {
-                person = new Person(personCreateDto.Name, personCreateDto.Gender);
-
-                if (personCreateDto.Birthday != null)
-                    person.SetBirthday(personCreateDto.Birthday);
-
-                if (personCreateDto.DriversLicense != null)
-                    person.SetDriversLicense(personCreateDto.DriversLicense);
-
-                if (personCreateDto.Address != null)
-                    person.SetAddress(personCreateDto.Address);
-
-                if (personCreateDto.Phones != null)
-                    if (personCreateDto.Phones.Count > 0)
-                        person.SetPhones(mapper.Map<IList<Phone>>(personCreateDto.Phones));
-
-                if (personCreateDto.Emails != null)
-                    if (personCreateDto.Emails.Count > 0)
-                        person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
-            }
-
             if (person != null)
                 await context.AddAsync(person);
         }

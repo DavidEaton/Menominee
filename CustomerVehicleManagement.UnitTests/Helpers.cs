@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Phones;
+﻿using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -72,12 +73,40 @@ namespace CustomerVehicleManagement.UnitTests
             return phones;
         }
 
+        public static IList<PhoneCreateDto> CreateValidPhoneCreateDtos()
+        {
+            var phones = new List<PhoneCreateDto>();
+
+            var number1 = "(555) 987-6543";
+            var phoneType1 = PhoneType.Mobile;
+            var isPrimary1 = true;
+            var phone1 = new PhoneCreateDto(number1, phoneType1, isPrimary1);
+
+            var number2 = "(555) 123-4567";
+            var phoneType2 = PhoneType.Mobile;
+            var isPrimary2 = false;
+            var phone2 = new PhoneCreateDto(number2, phoneType2, isPrimary2);
+
+            phones.Add(phone1);
+            phones.Add(phone2);
+
+            return phones;
+        }
+
         public static Phone CreateValidPrimaryPhone()
         {
             var number = "(555) 987-6543";
             var phoneType = PhoneType.Mobile;
             var isPrimary = true;
             return new Phone(number, phoneType, isPrimary);
+        }
+
+        public static PhoneCreateDto CreateValidPrimaryPhoneCreateDto()
+        {
+            var number = "(555) 987-6543";
+            var phoneType = PhoneType.Mobile;
+            var isPrimary = true;
+            return new PhoneCreateDto(number, phoneType, isPrimary);
         }
 
         public static IList<Phone> CreateInValidPhones()
@@ -117,12 +146,37 @@ namespace CustomerVehicleManagement.UnitTests
             return emails;
         }
 
+        public static IList<EmailCreateDto> CreateValidEmailCreateDtos()
+        {
+            var emails = new List<EmailCreateDto>();
+
+            var address = "e@mail.com";
+            var isPrimary = true;
+
+            emails.Add(new EmailCreateDto(address, isPrimary));
+
+            address = "i@pod.com";
+            isPrimary = false;
+
+            emails.Add(new EmailCreateDto(address, isPrimary));
+
+            return emails;
+        }
+
         public static Email CreateValidPrimaryEmail()
         {
             var address = "e@mail.com";
             var isPrimary = true;
 
             return new Email(address, isPrimary);
+        }
+
+        public static EmailCreateDto CreateValidPrimaryEmailCreateDto()
+        {
+            var address = "e@mail.com";
+            var isPrimary = true;
+
+            return new EmailCreateDto(address, isPrimary);
         }
 
         public static string LoremIpsum(int characters)

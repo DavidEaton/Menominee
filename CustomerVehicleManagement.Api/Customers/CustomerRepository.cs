@@ -31,6 +31,12 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             if (customerCreateDto.PersonCreateDto != null)
             {
+                // Pattern:
+                // Map dto to domain entity
+                // Add domain entity to repository
+                // Save changes on repository
+                // Return saved domain entity with new Id from database
+
                 var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
                 // TODO: Add Birthday, DriversLicense, Address, Phones, Emails
                 //...
@@ -114,7 +120,7 @@ namespace CustomerVehicleManagement.Api.Customers
         public async Task<Customer> GetCustomerAsync(int id)
         {
             var customer = await context.Customers.AsNoTracking()
-                                                  .FirstOrDefaultAsync(customer => customer.Id == customer.Id);
+                                                  .FirstOrDefaultAsync(customer => customer.Id == id);
 
             if (customer != null)
             {

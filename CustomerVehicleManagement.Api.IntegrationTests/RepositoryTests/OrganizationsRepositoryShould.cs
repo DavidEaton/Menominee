@@ -4,7 +4,6 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -47,12 +46,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organization = CreateValidOrganization();
 
                 // Act
-                await repository.AddOrganizationAsync(mapper.Map<OrganizationCreateDto>(organization));
+                await repository.AddOrganizationAsync(organization);
                 await repository.SaveChangesAsync();
-                var persons = await repository.GetOrganizationsAsync();
+                var organizations = await repository.GetOrganizationsAsync();
 
                 // Assert
-                persons.Count().Should().Be(1);
+                organizations.Count().Should().Be(1);
             }
         }
 

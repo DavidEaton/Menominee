@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Api.ValidationAttributes
@@ -7,7 +8,7 @@ namespace CustomerVehicleManagement.Api.ValidationAttributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var contactable = (Contactable)validationContext.ObjectInstance;
+            var contactable = (IContactLists)validationContext.ObjectInstance;
             int primaryPhoneCount = 0;
 
             foreach (var phone in contactable.Phones)

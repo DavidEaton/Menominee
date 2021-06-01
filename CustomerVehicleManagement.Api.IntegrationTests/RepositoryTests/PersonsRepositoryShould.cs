@@ -77,7 +77,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new PersonRepository(context, mapper);
 
                 // Act
-                await repository.AddPersonAsync(mapper.Map<PersonCreateDto>(CreateValidPerson()));
+                await repository.AddPersonAsync(CreateValidPerson());
                 await repository.SaveChangesAsync();
                 var persons = await repository.GetPersonsAsync();
 

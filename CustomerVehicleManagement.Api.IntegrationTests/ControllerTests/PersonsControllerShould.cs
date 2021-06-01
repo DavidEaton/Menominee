@@ -9,7 +9,9 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
 using Xunit;
+using CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
@@ -95,7 +97,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var result = await controller.CreatePersonAsync(person);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Never);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<Person>()), Times.Never);
         }
 
         [Fact]
@@ -106,23 +108,23 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Never);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<Person>()), Times.Never);
         }
 
         [Fact]
         public async Task Save_On_CreatePersonAsync_When_ModelState_Valid()
         {
-            PersonCreateDto savedPerson = null;
+            Person savedPerson = null;
 
-            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()))
+            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<Person>()))
                           .Returns(Task.CompletedTask)
-                          .Callback<PersonCreateDto>(x => savedPerson = x);
+                          .Callback<Person>(x => savedPerson = x);
 
             var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()), Times.Once);
+            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<Person>()), Times.Once);
             person.Name.Should().Be(savedPerson.Name);
             person.Gender.Should().Be(savedPerson.Gender);
             person.Birthday.Should().Be(savedPerson.Birthday);
@@ -131,7 +133,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_PersonReadDto_On_CreatePersonAsync_When_ModelState_Valid()
         {
-            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<PersonCreateDto>()));
+            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<Person>()));
 
             var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
             var result = await controller.CreatePersonAsync(person);
@@ -157,7 +159,26 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             result.Should().BeOfType<NotFoundObjectResult>();
         }
 
+        [Fact]
+        public async Task Return_NoContent_On_UpdatePersonAsync()
+        {
+            var Emails = CreateValidEmailReadDtos();
+            PersonReadDto personReadDto = new();
+            personReadDto.Id = 6;
+            personReadDto.Name = "Loompa, Oompa Orange";
+            personReadDto.Gender = Gender.Female;
+            personReadDto.Emails = (IReadOnlyList<EmailReadDto>)Emails;
 
+            var personUpdateDto = new PersonUpdateDto
+            {
+                Gender = Gender.Male
+            };
+
+            var result = await controller.UpdatePersonAsync(personReadDto.Id, personUpdateDto);
+
+            //result.Should().BeOfType<NotFoundObjectResult>();
+            result.Should().BeOfType<NoContentResult>();
+        }
         #endregion Put
     }
 }

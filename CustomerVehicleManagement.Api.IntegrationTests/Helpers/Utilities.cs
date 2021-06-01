@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -192,6 +193,29 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             Emails.Add(Email2);
 
             return Emails;
+        }
+
+        public static IReadOnlyList<EmailReadDto> CreateValidEmailReadDtos()
+        {
+            List<EmailReadDto> Emails = new();
+
+            var address1 = "a@b.c";
+            var isPrimary1 = true;
+            var Email1 = new EmailReadDto();
+            Email1.Address = address1;
+            Email1.IsPrimary = isPrimary1;
+
+            var address2 = "d@e.f";
+            var isPrimary2 = false;
+            var Email2 = new EmailReadDto();
+            Email2.Address = address2;
+            Email2.IsPrimary = isPrimary2;
+
+            Emails.Add(Email1);
+            Emails.Add(Email2);
+
+            IReadOnlyList<EmailReadDto> readOnlyEmails = Emails;
+            return readOnlyEmails;
         }
 
         public static Address CreateValidAddress()

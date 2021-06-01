@@ -144,6 +144,13 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPost]
         public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
+            // Pattern:
+            // Map dto to domain entity
+            // Add domain entity to repository
+            // Save changes on repository
+            // Return saved domain entity with new Id from database
+            // Map saved domain entity to read dto
+            // Return to consumer
             Customer customer = await customerRepository.AddAndSaveCustomerAsync(customerCreateDto);
 
             if (customer != null)

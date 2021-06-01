@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.ValidationAttributes;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,7 @@ namespace CustomerVehicleManagement.UnitTests.AttributeTests
         [Fact]
         public void Succeed_When_Emails_Contains_One_Primary()
         {
-            PersonCreateDto person = new(Helpers.CreateValidPerson().Name, Gender.Female);
+            Person person = new(Helpers.CreateValidPerson().Name, Gender.Female);
             person.SetEmails(Helpers.CreateValidEmails());
             var attribute = new ContactableCanHaveOnlyOnePrimaryEmailAttribute();
 
@@ -25,16 +26,15 @@ namespace CustomerVehicleManagement.UnitTests.AttributeTests
         [Fact]
         public void Not_Succeed_When_Emails_Contains_More_Than_One_Primary()
         {
-            PersonCreateDto dto = new(Helpers.CreateValidPerson().Name, Gender.Female);
-            dto.SetEmails(Helpers.CreateValidEmails());
+            Person person = new(Helpers.CreateValidPerson().Name, Gender.Female);
+            person.SetEmails(Helpers.CreateValidEmails());
 
             // Should we really be allowed to sneak in a second primary email? NO!
-            dto.Emails[1] = Helpers.CreateValidPrimaryEmail();
+            person.Emails.Add(Helpers.CreateValidPrimaryEmail());
 
             var attribute = new ContactableCanHaveOnlyOnePrimaryEmailAttribute();
 
-
-            var result = attribute.GetValidationResult(dto, new ValidationContext(dto));
+            var result = attribute.GetValidationResult(person, new ValidationContext(person));
             var isSuccess = result == ValidationResult.Success;
 
             isSuccess.Should().BeFalse();

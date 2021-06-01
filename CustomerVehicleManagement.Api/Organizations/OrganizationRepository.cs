@@ -26,31 +26,37 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
 
-        public async Task AddOrganizationAsync(OrganizationCreateDto organizationCreateDto)
+        //public async Task AddOrganizationAsync(OrganizationCreateDto organizationCreateDto)
+        //{
+        //    Organization organization = null;
+
+        //    if (organizationCreateDto != null)
+        //    {
+        //        var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
+        //        if (organizationNameOrError.IsFailure)
+        //            return;
+
+        //        organization = new Organization(organizationNameOrError.Value);
+
+        //        if (organizationCreateDto.Address != null)
+        //            organization.SetAddress(organizationCreateDto.Address);
+
+        //        if (organizationCreateDto.Contact != null)
+        //            organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
+
+        //        if (organizationCreateDto.Phones != null)
+        //            organization.SetPhones(organizationCreateDto.Phones);
+
+        //        if (organizationCreateDto.Emails != null)
+        //            organization.SetEmails(organizationCreateDto.Emails);
+        //    }
+
+        //    if (organization != null)
+        //        await context.AddAsync(organization);
+        //}
+
+        public async Task AddOrganizationAsync(Organization organization)
         {
-            Organization organization = null;
-
-            if (organizationCreateDto != null)
-            {
-                var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
-                if (organizationNameOrError.IsFailure)
-                    return;
-
-                organization = new Organization(organizationNameOrError.Value);
-
-                if (organizationCreateDto.Address != null)
-                    organization.SetAddress(organizationCreateDto.Address);
-
-                if (organizationCreateDto.Contact != null)
-                    organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
-
-                if (organizationCreateDto.Phones != null)
-                    organization.SetPhones(organizationCreateDto.Phones);
-
-                if (organizationCreateDto.Emails != null)
-                    organization.SetEmails(organizationCreateDto.Emails);
-            }
-
             if (organization != null)
                 await context.AddAsync(organization);
         }
@@ -77,7 +83,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<IEnumerable<OrganizationReadDto>> GetOrganizationsAsync()
         {
-            IReadOnlyList<Organization> organizationsFromContext = 
+            IReadOnlyList<Organization> organizationsFromContext =
                 await context.Organizations
                              .Include(organization => organization.Phones)
                              .Include(organization => organization.Emails)
