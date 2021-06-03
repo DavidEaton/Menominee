@@ -3,7 +3,6 @@ using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -12,8 +11,6 @@ namespace CustomerVehicleManagement.Domain.Entities
     {
         public static readonly string PhoneEmptyMessage = "Phone number cannot be empty";
 
-        // Blazor 5 requires public JsonConstructor-attributed contructor, 
-        [JsonConstructor]
         public Phone(string number, PhoneType phoneType, bool isPrimary)
         {
             try

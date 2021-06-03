@@ -66,10 +66,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             using (var context = new AppDbContext(options))
             {
                 var repository = new CustomerRepository(context, mapper);
-                var organizationNameOrError = OrganizationName.Create("Jane's Automotive");
-                OrganizationCreateDto organizationCreateDto = null;
-                if (organizationNameOrError.IsSuccess)
-                    organizationCreateDto = new OrganizationCreateDto(organizationNameOrError.Value.ToString());
+
+                var organizationCreateDto = new OrganizationCreateDto("Jane's Automotive");
                 var customerCreateDto = new CustomerCreateDto(null, organizationCreateDto, CustomerType.Retail);
 
                 await repository.AddAndSaveCustomerAsync(customerCreateDto);

@@ -137,42 +137,26 @@ namespace CustomerVehicleManagement.Api.Persons
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Pattern:
-            // Map dto to domain entity
-            // Add domain entity to repository
-            // Save changes on repository
-            // Fetch saved domain entity with new Id from database
-            // Map saved domain entity to read dto
-            // Return to consumer
+            /* Controller Pattern:
+               1. Map dto to domain entity
+               2. Add domain entity to repository
+               3. Save changes on repository
+               4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
+               5. Return to consumer */
 
+            // 1. Map dto to domain entity
             var person = mapper.Map<Person>(personCreateDto);
 
+            // 2. Add domain entity to repository
             await repository.AddPersonAsync(person);
 
-            //if (personCreateDto != null)
-            //{
-            //    person = new Person(personCreateDto.Name, personCreateDto.Gender);
-
-            //    if (personCreateDto.Birthday != null)
-            //        person.SetBirthday(personCreateDto.Birthday);
-
-            //    if (personCreateDto.DriversLicense != null)
-            //        person.SetDriversLicense(personCreateDto.DriversLicense);
-
-            //    if (personCreateDto.Address != null)
-            //        person.SetAddress(personCreateDto.Address);
-
-            //    if (personCreateDto.Emails != null)
-            //        if (personCreateDto.Emails.Count > 0)
-            //            person.SetEmails(mapper.Map<IList<Email>>(personCreateDto.Emails));
-            //}
-
+            // 3. Save changes on repository
             if (await repository.SaveChangesAsync())
             {
-                // Fetch saved domain entity with new Id from database
+                // 4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
                 var personFromRepository = repository.GetPersonAsync(person.Id).Result;
 
-
+                // 5. Return to consumer
                 return CreatedAtRoute("GetPersonAsync",
                     new { id = person.Id },
                     personFromRepository);

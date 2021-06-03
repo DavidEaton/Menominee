@@ -10,7 +10,7 @@ namespace SharedKernel.ValueObjects
         public string Number { get; }
         public DateTimeRange ValidRange { get; }
         public string State { get; }
-        
+
         public DriversLicense(string number, string state, DateTimeRange validRange)
         {
             try

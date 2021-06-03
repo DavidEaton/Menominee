@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -90,31 +88,39 @@ namespace CustomerVehicleManagement.Api.Organizations
         [HttpPost]
         public async Task<ActionResult<OrganizationReadDto>> CreateOrganizationAsync(OrganizationCreateDto organizationCreateDto)
         {
-            // Pattern:
-            // Map dto to domain entity
-            // Add domain entity to repository
-            // Save changes on repository
-            // Return saved domain entity with new Id from database
-            // Map saved domain entity to read dto
-            // Return to consumer
+            /* Controller Pattern:
+               1. Map dto to domain entity
+               2. Add domain entity to repository
+               3. Save changes on repository
+               4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
+               5. Return to consumer */
 
-            // Map dto to domain entity
-            var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
-            if (organizationNameOrError.IsFailure)
-                return BadRequest($"Failed to add {organizationCreateDto.Name}.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var organization = new Organization(organizationNameOrError.Value);
-            if (organization.Address != null)
-                organization.SetAddress(organization.Address);
+            //var organization = new Organization(organizationNameOrError.Value);
+            // 1. Map dto to domain entity
 
-            if (organization.Contact != null)
-                organization.SetContact(new Person(organization.Contact.Name, organization.Contact.Gender));
+            // REPLACE AUTOMAPPER CODE WITH MANUAL MAPPING
+            // THAT REPLACES RUNTIME EXCEPTIONS WITH COMPILER ERRORS
+            var organization = mapper.Map<Organization>(organizationCreateDto);
 
-            if (organization.Phones != null)
-                organization.SetPhones(organization.Phones);
 
-            if (organization.Emails != null)
-                organization.SetEmails(organization.Emails);
+
+
+
+
+            //if (organization.Address != null)
+            //    organization.SetAddress(organization.Address);
+
+            //if (organization.Contact != null)
+            //    organization.SetContact(new Person(organization.Contact.Name, organization.Contact.Gender));
+
+            //if (organization.Phones != null)
+            //    organization.SetPhones(organization.Phones);
+
+            //if (organization.Emails != null)
+            //    organization.SetEmails(organization.Emails);
 
             // Add domain entity to repository
             await repository.AddOrganizationAsync(organization);

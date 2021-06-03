@@ -1,7 +1,6 @@
 ﻿using SharedKernel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace SharedKernel.ValueObjects
 {
@@ -9,7 +8,6 @@ namespace SharedKernel.ValueObjects
     {
         public static readonly string AddressEmptyMessage = "Address details cannot be empty";
 
-        [JsonConstructor]
         public Address(string addressLine, string city, string state, string postalCode)
         {
             try
@@ -30,13 +28,9 @@ namespace SharedKernel.ValueObjects
             PostalCode = postalCode;
         }
 
-        [JsonInclude]
         public string AddressLine { get; private set; }
-        [JsonInclude]
         public string City { get; private set; }
-        [JsonInclude]
         public string State { get; private set; }
-        [JsonInclude]
         public string PostalCode { get; private set; }
 
         public Address NewAddressLine(string newAddressLine)

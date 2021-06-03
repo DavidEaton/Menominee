@@ -4,7 +4,6 @@ using CustomerVehicleManagement.Domain.Utilities;
 using SharedKernel;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
@@ -17,9 +16,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public static readonly string PrimaryEmailExistsMessage = "Cannot add more than one Primary email.";
         public static readonly string EmptyEmailCollectionMessage = "Cannot add an empty email list";
 
-        [JsonInclude]
         public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
-        [JsonInclude]
         public virtual IList<Email> Emails { get; private set; } = new List<Email>();
 
         public void AddPhone(Phone phone)

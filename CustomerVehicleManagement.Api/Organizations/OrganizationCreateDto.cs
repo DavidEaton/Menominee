@@ -1,10 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.ValidationAttributes;
-using CustomerVehicleManagement.Domain.BaseClasses;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Interfaces;
 using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
@@ -59,26 +55,6 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public IList<PhoneCreateDto> Phones { get; private set; } = new List<PhoneCreateDto>();
         public IList<EmailCreateDto> Emails { get; private set; } = new List<EmailCreateDto>();
-
-        //private IList<Email> ConvertCreateDtosToEmails(IList<EmailCreateDto> emails)
-        //{
-        //    IList<Email> newPhones = new List<Email>();
-
-        //    foreach (var email in emails)
-        //        newPhones.Add(new Email(email.Address, email.IsPrimary));
-
-        //    return newPhones;
-        //}
-
-        //private IList<Phone> ConvertCreateDtosToPhones(IList<PhoneCreateDto> phones)
-        //{
-        //    IList<Phone> newPhones = new List<Phone>();
-
-        //    foreach (var phone in phones)
-        //        newPhones.Add(new Phone(phone.Number, phone.PhoneType, phone.Primary));
-
-        //    return newPhones;
-        //}
 
         public string Name { get; private set; }
 

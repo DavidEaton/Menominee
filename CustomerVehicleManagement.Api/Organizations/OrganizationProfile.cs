@@ -23,19 +23,12 @@ namespace CustomerVehicleManagement.Api.Organizations
                         .MapFrom(
                             source => source.Name.Value));
 
-            CreateMap<OrganizationUpdateDto, Organization>()
-                .ForMember(
-                    destination => destination.Name,
-                    configuration => configuration
-                        .MapFrom(
-                            source => source.Name));
-
             CreateMap<Organization, OrganizationCreateDto>()
                 .ForMember(
                     destination => destination.Name,
                     configuration => configuration
                         .MapFrom(
-                            source => source.Name.Value))
+                            source => source.Name))
                 .ReverseMap();
         }
     }
