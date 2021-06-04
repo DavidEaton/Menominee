@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     destination => destination.Name,
                     configuration => configuration
                         .MapFrom(
-                            source => source.Name.Value))
+                            source => source.Name.Name))
                 .ReverseMap();
 
             CreateMap<Organization, OrganizationUpdateDto>()
@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     destination => destination.Name,
                     configuration => configuration
                         .MapFrom(
-                            source => source.Name.Value));
+                            source => source.Name.Name));
 
             CreateMap<Organization, OrganizationCreateDto>()
                 .ForMember(

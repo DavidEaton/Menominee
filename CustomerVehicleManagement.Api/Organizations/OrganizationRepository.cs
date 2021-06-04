@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
             {
                 Id = organization.Id,
-                Name = organization.Name.Value,
+                Name = organization.Name.Name,
                 ContactName = organization?.Contact?.Name.LastFirstMiddle,
                 ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
 

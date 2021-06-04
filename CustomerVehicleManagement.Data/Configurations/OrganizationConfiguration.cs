@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Data.Configurations
 
             // Value Object: OrganizationName
             builder.OwnsOne(organization => organization.Name)
-                   .Property(name => name.Value)
+                   .Property(name => name.Name)
                    .HasColumnName("Name")
                    .HasMaxLength(255);
 

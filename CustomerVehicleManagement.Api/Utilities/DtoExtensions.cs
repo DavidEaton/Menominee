@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
                     {
                         Id = customer.Id,
                         EntityType = EntityType.Organization,
-                        Name = organization.Name.Value,
+                        Name = organization.Name.Name,
                         Address = organization.Address,
                         CustomerType = customer.CustomerType,
                         Contact = (organization.Contact != null)

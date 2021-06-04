@@ -27,7 +27,6 @@ namespace CustomerVehicleManagement.Data.Configurations
             var converter = new EnumToStringConverter<PhoneType>();
             builder.Property(phone => phone.PhoneType)
                 .HasConversion(converter);
-
         }
     }
 }

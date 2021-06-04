@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.Customers
             {
                 await customerRepository.GetCustomerOrganizationEntity(customer);
                 customerReadDto.Address = ((Organization)customer.Entity).Address;
-                customerReadDto.Name = ((Organization)customer.Entity).Name.Value;
+                customerReadDto.Name = ((Organization)customer.Entity).Name.Name;
                 //customerReadDto.Phones = ((Organization)customer.Entity).Phones;
             }
 

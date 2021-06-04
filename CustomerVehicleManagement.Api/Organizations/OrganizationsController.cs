@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         // api/organizations/1
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetOrganizationAsync")]
         public async Task<ActionResult<OrganizationReadDto>> GetOrganizationAsync(int id)
         {
             var result = await repository.GetOrganizationAsync(id);
@@ -98,58 +97,46 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //var organization = new Organization(organizationNameOrError.Value);
             // 1. Map dto to domain entity
+            var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
+            if (organizationNameOrError.IsFailure)
+                return BadRequest(organizationNameOrError.Error);
 
-            // REPLACE AUTOMAPPER CODE WITH MANUAL MAPPING
-            // THAT REPLACES RUNTIME EXCEPTIONS WITH COMPILER ERRORS
-            var organization = mapper.Map<Organization>(organizationCreateDto);
+            var organization = new Organization(organizationNameOrError.Value);
+            organization.SetNotes(organizationCreateDto.Notes);
 
+            if (organizationCreateDto.Address != null)
+                organization.SetAddress(organizationCreateDto.Address);
 
+            //if (organizationCreateDto.Contact != null)
+            //    organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
 
+            if (organizationCreateDto.Phones != null)
+            {
+                var phones = new List<Phone>();
+                foreach (var phone in organizationCreateDto.Phones)
+                    phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
+                organization.SetPhones(phones);
+            }
 
-
-            //if (organization.Address != null)
-            //    organization.SetAddress(organization.Address);
-
-            //if (organization.Contact != null)
-            //    organization.SetContact(new Person(organization.Contact.Name, organization.Contact.Gender));
-
-            //if (organization.Phones != null)
-            //    organization.SetPhones(organization.Phones);
-
-            //if (organization.Emails != null)
+            //if (organizationCreateDto.Emails != null)
             //    organization.SetEmails(organization.Emails);
 
-            // Add domain entity to repository
+
+            // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
 
-            // Save changes on repository
-            // Return saved domain entity with new Id from database
+
+            // 3. Save changes on repository
+            // 4. Fetch saved (with new Id) from database
             if (await repository.SaveChangesAsync())
             {
-                // Map saved domain entity to read dto
-                var organizationReadDto = new OrganizationReadDto
-                {
-                    Id = organization.Id,
-                    Name = organization.Name.Value,
-                    //Contact = new PersonReadDto
-                    //{
-                    //    Id = organizationCreateDto.Contact.Id,
-                    //    Name = organizationCreateDto.Contact.Name.LastFirstMiddleInitial,
-                    //    Phones = mapper.Map<IReadOnlyList<PhoneReadDto>>(organizationCreateDto.Contact.Phones),
-                    //    Emails = mapper.Map<IReadOnlyList<EmailReadDto>>(organizationCreateDto.Contact.Emails)
-                    //},
-                    Address = organization.Address,
-                    Phones = mapper.Map<IList<PhoneReadDto>>(organization.Phones),
-                    Emails = mapper.Map<IList<EmailReadDto>>(organization.Emails)
-                };
-
-                // Return to consumer
-                return CreatedAtRoute("GetOrganization",
-                new { id = organizationReadDto.Id },
-                    organizationReadDto);
+                OrganizationReadDto result = repository.GetOrganizationAsync(organization.Id).Result;
+                // 5. Return to consumer
+                return CreatedAtRoute("GetOrganizationAsync",
+                new { id = result.Id },
+                    result);
             }
 
             return BadRequest($"Failed to add {organizationCreateDto.Name}.");

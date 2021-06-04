@@ -5,15 +5,15 @@ namespace SharedKernel.ValueObjects
 {
     public class OrganizationName : ValueObject
     {
-        public string Value { get; }
+        public string Name { get; }
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 255;
         public static readonly string OrganizationNameEmptyMessage = $"Organization Name cannot be less than {MinimumLength} character(s) in length";
         public static readonly string OrganizationNameInvalidMessage = $"Organization Name cannot be over {MaximumLength} characters in length";
 
-        private OrganizationName(string value)
+        private OrganizationName(string name)
         {
-            Value = value;
+            Name = name;
         }
 
         public static Result<OrganizationName> Create(string name)
@@ -36,7 +36,7 @@ namespace SharedKernel.ValueObjects
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Value;
+            yield return Name;
         }
     }
 }

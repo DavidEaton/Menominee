@@ -52,7 +52,6 @@ namespace CustomerVehicleManagement.Api
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-        //public DbSet<Phone> Phones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

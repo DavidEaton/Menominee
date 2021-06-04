@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsSuccess.Should().BeTrue();
-            organizationNameOrError.Value.Value.Should().Be(name);
+            organizationNameOrError.Value.Name.Should().Be(name);
         }
 
         [Fact]
@@ -82,10 +82,10 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         {
             var name = "jane's";
             Result<OrganizationName> organizationNameOrError = OrganizationName.Create(name);
-            organizationNameOrError.Value.Value.Should().Be(name);
+            organizationNameOrError.Value.Name.Should().Be(name);
             name  = "June's";
 
-            string newOrganizationName = OrganizationName.NewOrganizationName(name).Value;
+            string newOrganizationName = OrganizationName.NewOrganizationName(name).Name;
 
             newOrganizationName.Should().Be(name);
         }
