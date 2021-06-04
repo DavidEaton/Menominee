@@ -87,6 +87,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                 await context.Organizations
                              .Include(organization => organization.Phones)
                              .Include(organization => organization.Emails)
+                             .Include(organization => organization.Contact)
+                                 .ThenInclude(contact => contact.Phones)
+                             .Include(organization => organization.Contact)
+                                 .ThenInclude(contact => contact.Emails)
                              .ToListAsync();
 
             return mapper.Map<IEnumerable<OrganizationReadDto>>(organizationsFromContext);

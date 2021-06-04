@@ -1,7 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.ValidationAttributes;
-using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
@@ -11,8 +9,6 @@ using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
-    //[ContactableCanHaveOnlyOnePrimaryPhone(ErrorMessage = "Can have only one Primary phone.")]
-    //[ContactableCanHaveOnlyOnePrimaryEmail(ErrorMessage = "Can have only one Primary email.")]
     public class PersonCreateDto
     {
         [JsonConstructor]

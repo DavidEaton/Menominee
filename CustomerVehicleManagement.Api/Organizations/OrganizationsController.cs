@@ -88,10 +88,10 @@ namespace CustomerVehicleManagement.Api.Organizations
         public async Task<ActionResult<OrganizationReadDto>> CreateOrganizationAsync(OrganizationCreateDto organizationCreateDto)
         {
             /* Controller Pattern:
-               1. Map dto to domain entity
+               1. Map data transfer object (dto) to domain entity
                2. Add domain entity to repository
                3. Save changes on repository
-               4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
+               4. Get ReadDto (with new Id) from database after save)
                5. Return to consumer */
 
             if (!ModelState.IsValid)
@@ -108,30 +108,19 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (organizationCreateDto.Address != null)
                 organization.SetAddress(organizationCreateDto.Address);
 
-            //if (organizationCreateDto.Contact != null)
-            //    organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
+            MapOrganizationContact(organizationCreateDto, organization);
 
-            if (organizationCreateDto.Phones != null)
-            {
-                var phones = new List<Phone>();
-                foreach (var phone in organizationCreateDto.Phones)
-                    phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+            MapOrganizationPhones(organizationCreateDto, organization);
 
-                organization.SetPhones(phones);
-            }
-
-            //if (organizationCreateDto.Emails != null)
-            //    organization.SetEmails(organization.Emails);
-
+            MapOrganizationEmails(organizationCreateDto, organization);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
 
-
             // 3. Save changes on repository
-            // 4. Fetch saved (with new Id) from database
             if (await repository.SaveChangesAsync())
             {
+                // 4. Get ReadDto (with new Id) from database after save)
                 OrganizationReadDto result = repository.GetOrganizationAsync(organization.Id).Result;
                 // 5. Return to consumer
                 return CreatedAtRoute("GetOrganizationAsync",
@@ -140,6 +129,65 @@ namespace CustomerVehicleManagement.Api.Organizations
             }
 
             return BadRequest($"Failed to add {organizationCreateDto.Name}.");
+        }
+
+        private static void MapOrganizationEmails(OrganizationCreateDto organizationCreateDto, Organization organization)
+        {
+            if (organizationCreateDto.Emails != null)
+            {
+                var emails = new List<Email>();
+                foreach (var email in organizationCreateDto.Emails)
+                    emails.Add(new Email(email.Address, email.IsPrimary));
+
+                organization.SetEmails(emails);
+            }
+        }
+
+        private static void MapOrganizationPhones(OrganizationCreateDto organizationCreateDto, Organization organization)
+        {
+            if (organizationCreateDto.Phones != null)
+            {
+                var phones = new List<Phone>();
+                foreach (var phone in organizationCreateDto.Phones)
+                    phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+
+                organization.SetPhones(phones);
+            }
+        }
+
+        private static void MapOrganizationContact(OrganizationCreateDto organizationCreateDto, Organization organization)
+        {
+            if (organizationCreateDto.Contact != null)
+            {
+                organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
+
+                if (organizationCreateDto.Contact.Birthday != null)
+                    organization.Contact.SetBirthday(organizationCreateDto.Contact.Birthday);
+
+                if (organizationCreateDto.Contact.DriversLicense != null)
+                    organization.Contact.SetDriversLicense(organizationCreateDto.Contact.DriversLicense);
+
+                if (organizationCreateDto.Contact.Address != null)
+                    organization.Contact.SetAddress(organizationCreateDto.Contact.Address);
+
+                if (organizationCreateDto.Contact.Phones != null)
+                {
+                    var phones = new List<Phone>();
+                    foreach (var phone in organizationCreateDto.Contact.Phones)
+                        phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+
+                    organization.Contact.SetPhones(phones);
+                }
+
+                if (organizationCreateDto.Contact.Emails != null)
+                {
+                    var emails = new List<Email>();
+                    foreach (var email in organizationCreateDto.Contact.Emails)
+                        emails.Add(new Email(email.Address, email.IsPrimary));
+
+                    organization.Contact.SetEmails(emails);
+                }
+            }
         }
 
         [HttpDelete("{id:int}")]

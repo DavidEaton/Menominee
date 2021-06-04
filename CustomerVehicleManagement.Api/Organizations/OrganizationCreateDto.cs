@@ -18,23 +18,28 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
         }
 
-        public OrganizationCreateDto(string name, Address address)
-            : this(name, address, null)
+        public OrganizationCreateDto(string name, string notes)
+            : this(name, notes, null)
         {
         }
 
-        public OrganizationCreateDto(string name, Address address, PersonCreateDto contact)
-            : this(name, address, contact, null)
+        public OrganizationCreateDto(string name, string notes, Address address)
+            : this(name, notes, address, null)
         {
         }
 
-        public OrganizationCreateDto(string name, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones)
-            : this(name, address, contact, phones, null)
+        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact)
+            : this(name, notes, address, contact, null)
+        {
+        }
+
+        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones)
+            : this(name, notes, address, contact, phones, null)
         {
         }
 
         [JsonConstructor]
-        public OrganizationCreateDto(string name, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones, IList<EmailCreateDto> emails)
+        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones, IList<EmailCreateDto> emails)
         {
             try
             {
@@ -51,6 +56,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (contact != null) Contact = contact;
             if (phones != null) Phones = phones;
             if (emails != null) Emails = emails;
+            if (!string.IsNullOrWhiteSpace(notes)) Notes = notes;
         }
 
         public IList<PhoneCreateDto> Phones { get; private set; } = new List<PhoneCreateDto>();
