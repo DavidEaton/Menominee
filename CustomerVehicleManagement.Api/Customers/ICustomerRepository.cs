@@ -6,7 +6,7 @@ namespace CustomerVehicleManagement.Api.Customers
 {
     public interface ICustomerRepository
     {
-        Task<Customer> AddAndSaveCustomerAsync(CustomerCreateDto entity);
+        Task AddCustomerAsync(Customer entity);
         void DeleteCustomer(Customer entity);
         void FixTrackingState();
         Task<bool> CustomerExistsAsync(int id);

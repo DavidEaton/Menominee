@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using AutoMapper;
+using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -144,14 +145,58 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPost]
         public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
-            // Pattern:
-            // Map dto to domain entity
-            // Add domain entity to repository
-            // Save changes on repository
-            // Return saved domain entity with new Id from database
-            // Map saved domain entity to read dto
-            // Return to consumer
-            Customer customer = await customerRepository.AddAndSaveCustomerAsync(customerCreateDto);
+            Customer customer = null;
+
+            if (customerCreateDto.PersonCreateDto != null)
+            {
+                var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
+                // TODO: Add Birthday, DriversLicense, Address, Phones, Emails
+                //...
+
+                if (person != null)
+                {
+                    await personRepository.AddPersonAsync(person);
+
+                    if (await personRepository.SaveChangesAsync())
+                    {
+                        customer = new(person);
+
+                        if (customer != null)
+                            await customerRepository.AddCustomerAsync(customer);
+
+                        if (!await customerRepository.SaveChangesAsync())
+                            return BadRequest($"Failed to add {customerCreateDto}.");
+                    }
+                }
+            }
+
+            if (customerCreateDto.OrganizationCreateDto != null)
+            {
+                var organizationNameOrError = OrganizationName.Create(customerCreateDto.OrganizationCreateDto.Name);
+                if (organizationNameOrError.IsFailure)
+                    return BadRequest(organizationNameOrError.Error);
+
+                var organization = new Organization(organizationNameOrError.Value);
+                organization.SetNotes(customerCreateDto.OrganizationCreateDto.Notes);
+                // TODO: Add Contact, DriversLicense, Address, Phones, Emails
+                //...
+
+                if (organization != null)
+                {
+                    await organizationRepository.AddOrganizationAsync(organization);
+
+                    if (await organizationRepository.SaveChangesAsync())
+                    {
+                        customer = new(organization);
+
+                        if (customer != null)
+                            await customerRepository.AddCustomerAsync(customer);
+
+                        if (!await customerRepository.SaveChangesAsync())
+                            return BadRequest($"Failed to add {customerCreateDto}.");
+                    }
+                }
+            }
 
             if (customer != null)
             {

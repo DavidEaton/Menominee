@@ -27,6 +27,12 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+        public async Task AddCustomerAsync(Customer customer)
+        {
+            if (customer != null)
+                await context.AddAsync(customer);
+        }
+
         public async Task<Customer> AddAndSaveCustomerAsync(CustomerCreateDto customerCreateDto)
         {
             if (customerCreateDto.PersonCreateDto != null)
@@ -243,6 +249,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             return null;
         }
+
     }
 
 }
