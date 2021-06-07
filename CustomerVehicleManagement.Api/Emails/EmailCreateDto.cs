@@ -10,10 +10,7 @@ namespace CustomerVehicleManagement.Api.Emails
         public static readonly string EmailEmptyMessage = "Email address cannot be empty";
         public const string EmailErrorMessage = "Email address and/or its format is invalid";
 
-        [JsonInclude]
         public string Address { get; private set; }
-
-        [JsonInclude]
         public bool IsPrimary { get; private set; }
 
         [JsonConstructor]

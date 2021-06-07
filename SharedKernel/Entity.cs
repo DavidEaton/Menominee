@@ -1,6 +1,5 @@
 ﻿using SharedKernel.Enums;
 using SharedKernel.Interfaces;
-using System.Text.Json.Serialization;
 
 namespace SharedKernel
 {
@@ -48,7 +47,6 @@ namespace SharedKernel
 
         #region ORM
 
-        [JsonConstructor]
         public Entity()
         {
             // Keep EF informed of object state in disconnected api
@@ -61,7 +59,6 @@ namespace SharedKernel
             TrackingState = state;
         }
 
-        [JsonInclude]
         public TrackingState TrackingState { get; private set; }
 
         #endregion

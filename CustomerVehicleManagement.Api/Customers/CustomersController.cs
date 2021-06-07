@@ -10,8 +10,6 @@ using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using AutoMapper;
 using SharedKernel.ValueObjects;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.Emails;
 
 namespace CustomerVehicleManagement.Api.Customers
 {

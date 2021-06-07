@@ -27,11 +27,8 @@ namespace CustomerVehicleManagement.Api.Phones
             IsPrimary = isPrimary;
         }
 
-        [JsonInclude]
         public string Number { get; private set; }
-        [JsonInclude]
         public PhoneType PhoneType { get; private set; }
-        [JsonInclude]
         public bool IsPrimary { get; private set; }
 
     }
