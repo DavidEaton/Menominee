@@ -167,7 +167,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             personReadDto.Id = 6;
             personReadDto.Name = "Loompa, Oompa Orange";
             personReadDto.Gender = Gender.Female;
-            personReadDto.Emails = (IReadOnlyList<EmailReadDto>)Emails;
+            personReadDto.Emails = Emails;
 
             var personUpdateDto = new PersonUpdateDto
             {

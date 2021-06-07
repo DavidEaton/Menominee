@@ -69,14 +69,14 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
+            var organizationFromRepository = await repository.GetOrganizationAsync(id);
             if (organizationFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository, mapper);
-            organizationFromRepository.SetTrackingState(TrackingState.Modified);
+            //DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository, mapper);
+            //organizationFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
-            repository.UpdateOrganizationAsync(organizationFromRepository);
+            //repository.UpdateOrganizationAsync(organizationFromRepository);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
@@ -193,12 +193,11 @@ namespace CustomerVehicleManagement.Api.Organizations
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteOrganizationAsync(int id)
         {
-            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
-
+            var organizationFromRepository = await repository.GetOrganizationAsync(id);
             if (organizationFromRepository == null)
                 return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
-            repository.DeleteOrganization(organizationFromRepository);
+            await repository.DeleteOrganizationAsync(id);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();

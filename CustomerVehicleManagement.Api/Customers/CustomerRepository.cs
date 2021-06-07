@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Data.Dtos;
+using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -92,62 +95,105 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private async Task<IEntity> GetPersonEntityAsync(int entityId)
+        public async Task DeleteCustomerAsync(int id)
         {
-            Person personFromContext = null;
+            var customer = await context.Customers.AsNoTracking()
+                                      .FirstOrDefaultAsync(customer => customer.Id == id);
 
-            personFromContext = await context.Persons
-                                                    .FirstOrDefaultAsync(person => person.Id == entityId);
-
-            if (personFromContext != null)
-                return personFromContext;
-
-            return null;
+            if (customer != null)
+                context.Remove(customer);
         }
 
-        private async Task<IEntity> GetOrganizationEntityAsync(int entityId)
-        {
-            Organization organizationFromContext = null;
-
-            organizationFromContext = await context.Organizations
-                                                                .FirstOrDefaultAsync(person => person.Id == entityId);
-
-            if (organizationFromContext != null)
-                return organizationFromContext;
-
-            return null;
-        }
-
-        public void DeleteCustomer(Customer customer)
-        {
-            context.Remove(customer);
-        }
-
-        public async Task<Customer> GetCustomerAsync(int id)
+        public async Task<CustomerReadDto> GetCustomerAsync(int id)
         {
             var customer = await context.Customers.AsNoTracking()
                                                   .FirstOrDefaultAsync(customer => customer.Id == id);
 
             if (customer != null)
             {
+                var customerReadDto = new CustomerReadDto
+                {
+                    Id = customer.Id,
+                    CustomerType = customer.CustomerType,
+                    EntityType = customer.EntityType
+                };
+
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    var entity = await context.Organizations.FindAsync(customer.EntityId);
-
-                    customer.SetEntity(entity);
+                    await GetCustomerOrganizationEntity(customer);
+                    customerReadDto.Address = ((Organization)customer.Entity).Address;
+                    customerReadDto.Name = ((Organization)customer.Entity).Name.Name;
+                    MapPhones(((Organization)customer.Entity).Phones, customerReadDto.Phones);
+                    MapEmails(((Organization)customer.Entity).Emails, customerReadDto.Emails);
+                    if (((Organization)customer.Entity).Contact != null)
+                        customerReadDto.Contact = MapContactToReadDto(((Organization)customer.Entity).Contact);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    var entity = await context.Persons.FindAsync(customer.EntityId);
-
-                    customer.SetEntity(entity);
+                    await GetCustomerPersonEntity(customer);
+                    customerReadDto.Address = ((Person)customer.Entity).Address;
+                    customerReadDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
+                    MapPhones(((Person)customer.Entity).Phones, customerReadDto.Phones);
+                    MapEmails(((Person)customer.Entity).Emails, customerReadDto.Emails);
                 }
 
-                return customer;
+                return customerReadDto;
             }
 
             return null;
+        }
+
+        private PersonReadDto MapContactToReadDto(Person contact)
+        {
+            PersonReadDto contactReadDto = new();
+
+            contactReadDto.Id = contact.Id;
+            contactReadDto.Address = contact.Address;
+            contactReadDto.Birthday = contact.Birthday;
+            contactReadDto.DriversLicense = contact.DriversLicense;
+            contactReadDto.Gender = contact.Gender;
+            contactReadDto.Name = contact.Name.LastFirstMiddle;
+            contactReadDto.Emails = MapEmails(contact.Emails);
+            contactReadDto.Phones = MapPhones(contact.Phones);
+
+            return contactReadDto;
+        }
+
+        private IReadOnlyList<PhoneReadDto> MapPhones(IList<Phone> phones)
+        {
+            List<PhoneReadDto> phoneReadDtos = new();
+
+            if (phones != null)
+                foreach (var phone in phones)
+                    phoneReadDtos.Add(new PhoneReadDto() { Number = phone.Number, PhoneType = phone.PhoneType.ToString(), IsPrimary = phone.IsPrimary });
+
+            return phoneReadDtos;
+        }
+
+        private IReadOnlyList<EmailReadDto> MapEmails(IList<Email> emails)
+        {
+            List<EmailReadDto> emailReadDtos = new();
+
+            if (emails != null)
+                foreach (var email in emails)
+                    emailReadDtos.Add(new EmailReadDto() { Address = email.Address, IsPrimary = email.IsPrimary });
+
+            return emailReadDtos;
+        }
+
+        private static void MapPhones(IList<Phone> phones, IList<PhoneReadDto> phoneReadDtos)
+        {
+            if (phones != null)
+                foreach (var phone in phones)
+                    phoneReadDtos.Add(new PhoneReadDto() { Number = phone.Number, PhoneType = phone.PhoneType.ToString(), IsPrimary = phone.IsPrimary });
+        }
+
+        private static void MapEmails(IList<Email> emails, IList<EmailReadDto> emailReadDtos)
+        {
+            if (emails != null)
+                foreach (var email in emails)
+                    emailReadDtos.Add(new EmailReadDto() { Address = email.Address, IsPrimary = email.IsPrimary });
         }
 
         public async Task<IEnumerable<CustomerReadDto>> GetCustomersAsync()
@@ -178,28 +224,42 @@ namespace CustomerVehicleManagement.Api.Customers
 
         public async Task GetCustomerPersonEntity(Customer customer)
         {
-            var entity = await context.Persons.FindAsync(customer.EntityId);
+            var personFromContext = await context.Persons
+                .Include(person => person.Phones)
+                .Include(person => person.Emails)
+                .FirstOrDefaultAsync(person => person.Id == customer.EntityId);
 
-            if (entity?.Phones != null)
-                foreach (var phone in entity.Phones)
+            if (personFromContext?.Phones != null)
+                foreach (var phone in personFromContext.Phones)
                     customer.AddPhone(phone);
 
-            customer.SetEntity(entity);
+            if (personFromContext?.Emails != null)
+                foreach (var email in personFromContext.Emails)
+                    customer.AddEmail(email);
+
+            customer.SetEntity(personFromContext);
         }
 
         public async Task GetCustomerOrganizationEntity(Customer customer)
         {
-            var entity = await context.Organizations.FindAsync(customer.EntityId);
+            var oganizationFromContext = await context.Organizations
+                .Include(oganization => oganization.Phones)
+                .Include(oganization => oganization.Emails)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Phones)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Emails)
+                .FirstOrDefaultAsync(oganization => oganization.Id == customer.EntityId);
 
-            if (entity?.Phones != null)
-                foreach (var phone in entity.Phones)
+            if (oganizationFromContext?.Phones != null)
+                foreach (var phone in oganizationFromContext.Phones)
                     customer.AddPhone(phone);
 
-            if (entity?.Emails != null)
-                foreach (var email in entity.Emails)
+            if (oganizationFromContext?.Emails != null)
+                foreach (var email in oganizationFromContext.Emails)
                     customer.AddEmail(email);
 
-            customer.SetEntity(entity);
+            customer.SetEntity(oganizationFromContext);
         }
 
         public async Task<bool> CustomerExistsAsync(int id)

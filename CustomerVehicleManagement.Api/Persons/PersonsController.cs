@@ -141,7 +141,7 @@ namespace CustomerVehicleManagement.Api.Persons
                1. Map dto to domain entity
                2. Add domain entity to repository
                3. Save changes on repository
-               4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
+               4. Get ReadDto (with new Id) from database after save)
                5. Return to consumer */
 
             // 1. Map dto to domain entity
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Api.Persons
             // 3. Save changes on repository
             if (await repository.SaveChangesAsync())
             {
-                // 4. Fetch PersonReadDto with new Id from database (from saved domain entity: person.Id)
+                // 4. Get ReadDto (with new Id) from database after save)
                 var personFromRepository = repository.GetPersonAsync(person.Id).Result;
 
                 // 5. Return to consumer

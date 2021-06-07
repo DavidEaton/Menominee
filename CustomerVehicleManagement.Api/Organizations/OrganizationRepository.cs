@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,45 +24,16 @@ namespace CustomerVehicleManagement.Api.Organizations
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-
-        //public async Task AddOrganizationAsync(OrganizationCreateDto organizationCreateDto)
-        //{
-        //    Organization organization = null;
-
-        //    if (organizationCreateDto != null)
-        //    {
-        //        var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
-        //        if (organizationNameOrError.IsFailure)
-        //            return;
-
-        //        organization = new Organization(organizationNameOrError.Value);
-
-        //        if (organizationCreateDto.Address != null)
-        //            organization.SetAddress(organizationCreateDto.Address);
-
-        //        if (organizationCreateDto.Contact != null)
-        //            organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
-
-        //        if (organizationCreateDto.Phones != null)
-        //            organization.SetPhones(organizationCreateDto.Phones);
-
-        //        if (organizationCreateDto.Emails != null)
-        //            organization.SetEmails(organizationCreateDto.Emails);
-        //    }
-
-        //    if (organization != null)
-        //        await context.AddAsync(organization);
-        //}
-
         public async Task AddOrganizationAsync(Organization organization)
         {
             if (organization != null)
                 await context.AddAsync(organization);
         }
 
-        public void DeleteOrganization(Organization organization)
+        public async Task DeleteOrganizationAsync(int id)
         {
-            context.Remove(organization);
+            var organizationFromContext = await context.Organizations.FindAsync(id);
+            context.Remove(organizationFromContext);
         }
 
         public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
@@ -107,8 +77,11 @@ namespace CustomerVehicleManagement.Api.Organizations
         public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()
         {
             IReadOnlyList<Organization> organizations = await context.Organizations
-                                                               .Include(organization => organization.Contact.Phones)
-                                                               .ToListAsync();
+                                                                     .Include(organization => organization.Contact)
+                                                                        .ThenInclude(contact => contact.Phones)
+                                                                     .Include(organization => organization.Contact)
+                                                                        .ThenInclude(contact => contact.Emails)
+                                                                     .ToListAsync();
 
             List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
             {

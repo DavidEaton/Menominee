@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Persons;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
@@ -38,9 +39,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var persons = await httpClient.GetFromJsonAsync<List<PersonInListDto>>(UriSegment);
 
-            // TEST DEPENDS ON A PERSON EXISTING IN THE DATABASE WITH Id == 1 AT ROW ONE (INDEX ZERO)
+            // TEST DEPENDS ON AT LEAST ONE PERSON EXISTING IN THE DATABASE
             // Modify to use test database instead of production
-            Assert.Equal(1, persons[0]?.Id);
+            persons.Should().NotBeEmpty();
         }
 
         [Fact]

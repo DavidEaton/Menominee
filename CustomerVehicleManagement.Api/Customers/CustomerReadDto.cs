@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Customers
@@ -12,16 +11,7 @@ namespace CustomerVehicleManagement.Api.Customers
     {
         public int Id { get; set; }
         public EntityType EntityType { get; set; }
-
         public string Name { get; set; }
-
-        // Missing Person properties
-        //public Gender Gender { get; set; }
-        //public DateTime? Birthday { get; set; }
-        //public DriversLicense DriversLicense { get; set; }
-
-        // Missing Organization properties
-        // Notes
         public Address Address { get; set; }
         public PersonReadDto Contact { get; set; }
         public CustomerType CustomerType { get; set; }

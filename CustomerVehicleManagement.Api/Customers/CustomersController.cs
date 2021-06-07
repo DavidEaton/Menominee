@@ -10,6 +10,8 @@ using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using AutoMapper;
 using SharedKernel.ValueObjects;
+using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Api.Emails;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -51,34 +53,12 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpGet("{id:int}", Name = "GetCustomerAsync")]
         public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(int id)
         {
-            var customer = await customerRepository.GetCustomerAsync(id);
+            CustomerReadDto customer = await customerRepository.GetCustomerAsync(id);
 
             if (customer == null)
                 return NotFound();
 
-            CustomerReadDto customerReadDto = new()
-            {
-                Id = customer.Id,
-                CustomerType = customer.CustomerType,
-                EntityType = customer.EntityType
-            };
-
-            if (customer.EntityType == EntityType.Organization)
-            {
-                await customerRepository.GetCustomerOrganizationEntity(customer);
-                customerReadDto.Address = ((Organization)customer.Entity).Address;
-                customerReadDto.Name = ((Organization)customer.Entity).Name.Name;
-                //customerReadDto.Phones = ((Organization)customer.Entity).Phones;
-            }
-
-            if (customer.EntityType == EntityType.Person)
-            {
-                await customerRepository.GetCustomerPersonEntity(customer);
-                customerReadDto.Address = ((Person)customer.Entity).Address;
-                customerReadDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
-            }
-
-            return customerReadDto;
+            return Ok(customer);
         }
 
         // PUT: api/Customer/1
@@ -107,14 +87,14 @@ namespace CustomerVehicleManagement.Api.Customers
             if (fetchedCustomer.EntityType == EntityType.Organization)
             {
                 //1.a) Get domain Organization from repository
-                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(fetchedCustomer.EntityId);
+                var organizationFromRepository = await organizationRepository.GetOrganizationAsync(fetchedCustomer.Id);
 
                 // 2.a) Update domain entity with data in data transfer object(DTO)
-                DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(customerUpdateDto.OrganizationUpdateDto, organizationFromRepository, mapper);
+                //DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(customerUpdateDto.OrganizationUpdateDto, organizationFromRepository, mapper);
 
                 // Update the objects ObjectState and sych the EF Change Tracker
                 // 3) Set entity's TrackingState to Modified
-                fetchedCustomer.SetTrackingState(TrackingState.Modified);
+                //fetchedCustomer.SetTrackingState(TrackingState.Modified);
                 // 4) FixTrackingState: moves entity state tracking into the context
                 customerRepository.FixTrackingState();
             }
@@ -122,13 +102,13 @@ namespace CustomerVehicleManagement.Api.Customers
             if (fetchedCustomer.EntityType == EntityType.Person)
             {
                 //1.a) Get domain Person from repository
-                Person personFromRepository = await personRepository.GetPersonEntityAsync(fetchedCustomer.EntityId);
+                Person personFromRepository = await personRepository.GetPersonEntityAsync(fetchedCustomer.Id);
                 // 2.a) Update domain entity with data in data transfer object(DTO)
                 DtoHelpers.ConvertPersonUpdateDtoToDomainModel(customerUpdateDto.PersonUpdateDto, personFromRepository, mapper);
 
                 // Update the objects ObjectState and sych the EF Change Tracker
                 // 3) Set entity's TrackingState to Modified
-                fetchedCustomer.SetTrackingState(TrackingState.Modified);
+                //fetchedCustomer.SetTrackingState(TrackingState.Modified);
                 // 4) FixTrackingState: moves entity state tracking into the context
                 customerRepository.FixTrackingState();
             }
@@ -149,9 +129,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerCreateDto.PersonCreateDto != null)
             {
-                var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
-                // TODO: Add Birthday, DriversLicense, Address, Phones, Emails
-                //...
+                // 1. Map dto to domain entity
+                var person = mapper.Map<Person>(customerCreateDto.PersonCreateDto);
 
                 if (person != null)
                 {
@@ -177,9 +156,16 @@ namespace CustomerVehicleManagement.Api.Customers
                     return BadRequest(organizationNameOrError.Error);
 
                 var organization = new Organization(organizationNameOrError.Value);
+
                 organization.SetNotes(customerCreateDto.OrganizationCreateDto.Notes);
-                // TODO: Add Contact, DriversLicense, Address, Phones, Emails
-                //...
+                organization.SetAddress(customerCreateDto.OrganizationCreateDto.Address);
+                organization.SetContact(mapper.Map<Person>(customerCreateDto.OrganizationCreateDto.Contact));
+
+                foreach (var phoneCreateDto in customerCreateDto.OrganizationCreateDto.Phones)
+                    organization.AddPhone(new Phone(phoneCreateDto.Number, phoneCreateDto.PhoneType, phoneCreateDto.IsPrimary));
+
+                foreach (var emailCreateDto in customerCreateDto.OrganizationCreateDto.Emails)
+                    organization.AddEmail(new Email(emailCreateDto.Address, emailCreateDto.IsPrimary));
 
                 if (organization != null)
                 {
@@ -200,24 +186,13 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customer != null)
             {
-                string name = string.Empty;
+                // 4. Get ReadDto (with new Id) from database after save)
+                CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
 
-                if (customer.EntityType == EntityType.Organization)
-                    name = customerCreateDto.OrganizationCreateDto.Name;
-
-                if (customer.EntityType == EntityType.Person)
-                    name = customerCreateDto.PersonCreateDto.Name.LastFirstMiddle;
-
-                var customerReadDto = new CustomerReadDto
-                {
-                    Id = customer.Id,
-                    EntityType = customer.EntityType,
-                    Name = name
-                };
-
+                // 5. Return to consumer
                 return CreatedAtRoute("GetCustomerAsync",
-                    new { id = customerReadDto.Id },
-                    customerReadDto);
+                    new { id = customerFromRepository.Id },
+                    customerFromRepository);
             }
 
             return BadRequest($"Failed to add {customerCreateDto}.");
@@ -226,15 +201,13 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomerAsync(int id)
         {
-            var fetchedCustomer = await customerRepository.GetCustomerAsync(id);
-            if (fetchedCustomer == null)
+            var customerFromRepository = await customerRepository.GetCustomerAsync(id);
+            if (customerFromRepository == null)
                 return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
-            customerRepository.DeleteCustomer(fetchedCustomer);
+            await customerRepository.DeleteCustomerAsync(id);
             if (await customerRepository.SaveChangesAsync())
-            {
-                return Ok();
-            }
+                return NoContent();
 
             return BadRequest($"Failed to delete Customer with Id: {id}.");
         }

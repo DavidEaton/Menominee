@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -124,7 +125,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_CustomerReadDto_On_CreateCustomerAsync_When_ModelState_Valid()
         {
-            moqCustomerRepository.Setup(x => x.AddAndSaveCustomerAsync(It.IsAny<CustomerCreateDto>()));
+            moqCustomerRepository.Setup(x => x.AddCustomerAsync(It.IsAny<Customer>()));
 
             var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);

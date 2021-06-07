@@ -98,8 +98,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                     customerFromRepo.Should().NotBeNull();
                     customerFromRepo.Id.Should().BeGreaterThan(0);
-                    customerFromRepo.EntityId.Should().BeGreaterThan(0);
-                    customerFromRepo.Entity.Should().NotBeNull();
                 }
             }
         }
@@ -124,8 +122,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                     customerFromRepo.Should().NotBeNull();
                     customerFromRepo.Id.Should().BeGreaterThan(0);
-                    customerFromRepo.EntityId.Should().BeGreaterThan(0);
-                    customerFromRepo.Entity.Should().NotBeNull();
                 }
             }
         }
