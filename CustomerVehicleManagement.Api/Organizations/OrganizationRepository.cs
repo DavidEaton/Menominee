@@ -69,7 +69,14 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<Organization> GetOrganizationEntityAsync(int id)
         {
-            var organizationFromContext = context.Organizations.FindAsync(id);
+            var organizationFromContext = context.Organizations
+                                                 .Include(organization => organization.Phones)
+                                                 .Include(organization => organization.Emails)
+                                                 .Include(organization => organization.Contact)
+                                                     .ThenInclude(contact => contact.Phones)
+                                                 .Include(organization => organization.Contact)
+                                                     .ThenInclude(contact => contact.Emails)
+                                                 .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return await (organizationFromContext);
         }

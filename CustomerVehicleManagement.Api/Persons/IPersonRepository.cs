@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Api.Persons
         void DeletePerson(Person entity);
         void FixTrackingState();
         Task<bool> PersonExistsAsync(int id);
-        void UpdatePersonAsync(PersonUpdateDto entity);
+        void UpdatePersonAsync(PersonUpdateDto personUpdateDto);
         Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync();
         Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
@@ -69,19 +68,57 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var organizationFromRepository = await repository.GetOrganizationAsync(id);
-            if (organizationFromRepository == null)
-                return NotFound(notFoundMessage);
+            var organization = repository.GetOrganizationEntityAsync(id).Result;
 
-            //DtoHelpers.ConvertOrganizationUpdateDtoToDomainModel(organizationUpdateDto, organizationFromRepository, mapper);
-            //organizationFromRepository.SetTrackingState(TrackingState.Modified);
+            var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
+
+            if (organizationNameOrError.IsSuccess)
+                organization.SetName(organizationNameOrError.Value);
+
+            organization.SetAddress(organizationUpdateDto.Address);
+            organization.SetNotes(organizationUpdateDto.Notes);
+
+            SetCollections(organizationUpdateDto, organization);
+
+            if (organizationUpdateDto.Contact != null)
+            {
+                var contact = new Person(organizationUpdateDto.Contact.Name, organizationUpdateDto.Contact.Gender);
+
+                contact.SetAddress(organizationUpdateDto.Contact.Address);
+                contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
+                contact.SetDriversLicense(organizationUpdateDto.Contact.DriversLicense);
+                contact.SetPhones(mapper.Map<IList<Phone>>(organizationUpdateDto.Contact.Phones));
+                contact.SetEmails(mapper.Map<IList<Email>>(organizationUpdateDto.Contact.Emails));
+
+                organization.SetContact(contact);
+            }
+
+            organization.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
-            //repository.UpdateOrganizationAsync(organizationFromRepository);
+
+            repository.UpdateOrganizationAsync(organization);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
 
             return BadRequest($"Failed to update {organizationUpdateDto.Name}.");
+        }
+
+        private static void SetCollections(OrganizationUpdateDto organizationUpdateDto, Organization organization)
+        {
+            if (organizationUpdateDto.Phones != null)
+            {
+                organization.Phones.Clear();
+                foreach (var phone in organizationUpdateDto.Phones)
+                    organization.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+            }
+
+            if (organizationUpdateDto.Emails != null)
+            {
+                organization.Emails.Clear();
+                foreach (var email in organizationUpdateDto.Emails)
+                    organization.AddEmail(new Email(email.Address, email.IsPrimary));
+            }
         }
 
         [HttpPost]

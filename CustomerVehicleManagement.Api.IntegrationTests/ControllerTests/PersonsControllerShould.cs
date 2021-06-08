@@ -162,22 +162,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_NoContent_On_UpdatePersonAsync()
         {
-            var Emails = CreateValidEmailReadDtos();
-            PersonReadDto personReadDto = new();
-            personReadDto.Id = 6;
-            personReadDto.Name = "Loompa, Oompa Orange";
-            personReadDto.Gender = Gender.Female;
-            personReadDto.Emails = Emails;
-
-            var personUpdateDto = new PersonUpdateDto
-            {
-                Gender = Gender.Male
-            };
-
-            var result = await controller.UpdatePersonAsync(personReadDto.Id, personUpdateDto);
-
-            //result.Should().BeOfType<NotFoundObjectResult>();
-            result.Should().BeOfType<NoContentResult>();
         }
         #endregion Put
     }

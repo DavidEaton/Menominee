@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -86,7 +83,7 @@ namespace CustomerVehicleManagement.Api.Persons
             */
 
             Person personFromRepository = await repository.GetPersonEntityAsync(id);
-            if (personFromRepository == null)
+             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
             DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
