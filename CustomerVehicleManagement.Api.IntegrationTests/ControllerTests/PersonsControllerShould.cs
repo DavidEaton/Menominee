@@ -159,10 +159,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             result.Should().BeOfType<NotFoundObjectResult>();
         }
 
-        [Fact]
-        public async Task Return_NoContent_On_UpdatePersonAsync()
-        {
-        }
+        //[Fact]
+        //public async Task Return_NoContent_On_UpdatePersonAsync()
+        //{
+        //}
         #endregion Put
     }
 }

@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
@@ -11,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 {
     public static class DtoHelpers
     {
-        public static PersonInListDto CreatePersonsListDtoFromDomain(Person person)
+        public static PersonInListDto PersonToPersonInListDto(Person person)
         {
             return new PersonInListDto()
             {
@@ -26,30 +29,51 @@ namespace CustomerVehicleManagement.Api.Utilities
             };
         }
 
+        public static IList<Phone> PhonesUpdateDtoToPhones(IList<PhoneUpdateDto> phoneUpdateDtos)
+        {
+            var phones = new List<Phone>();
+
+            if (phoneUpdateDtos != null)
+            {
+                foreach (var phone in phoneUpdateDtos)
+                    phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+            }
+
+            return phones;
+        }
+
+        public static IList<Email> EmailsUpdateDtoToEmails(IList<EmailUpdateDto> emailUpdateDtos)
+        {
+            var emails = new List<Email>();
+
+            if (emailUpdateDtos != null)
+            {
+                foreach (var email in emailUpdateDtos)
+                    emails.Add(new Email(email.Address, email.IsPrimary));
+            }
+
+            return emails;
+        }
+
         /// <summary>
         /// Map the PersonUpdateDto back to the domain entity
-        /// TODO: REPLACE THIS METHOD WITH AUTOMAPPER
         /// </summary>
         /// <param name="personUpdateDto"></param>
         /// <param name="person"></param>
-        /// <param name="mapper"></param>
-        public static void ConvertPersonUpdateDtoToDomainModel(
-            PersonUpdateDto personUpdateDto,
-            Person person,
-            IMapper mapper)
+        public static void PersonUpdateDtoToPerson(PersonUpdateDto personUpdateDto,
+                                                               Person person)
         {
             person.SetName(personUpdateDto.Name);
             person.SetGender(personUpdateDto.Gender);
             person.SetAddress(personUpdateDto.Address);
             person.SetBirthday(personUpdateDto.Birthday);
             person.SetDriversLicense(personUpdateDto.DriversLicense);
-            person.SetPhones(mapper.Map<IList<Phone>>(personUpdateDto.Phones));
-            person.SetEmails(mapper.Map<IList<Email>>(personUpdateDto.Emails));
+            person.SetPhones(PhonesUpdateDtoToPhones(personUpdateDto.Phones));
+            person.SetEmails(EmailsUpdateDtoToEmails(personUpdateDto.Emails));
         }
 
         /// <summary>
         /// Map the OrganizationUpdateDto back to the domain entity
-        /// TODO: REPLACE THIS METHOD WITH AUTOMAPPER
         /// </summary>
         /// <param name="organizationUpdateDto"></param>
         /// <param name="organization"></param>

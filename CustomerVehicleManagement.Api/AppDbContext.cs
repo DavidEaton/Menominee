@@ -1,8 +1,11 @@
-﻿using CustomerVehicleManagement.Data.Configurations;
+﻿using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
+using SharedKernel.Enums;
+using System;
 
 namespace CustomerVehicleManagement.Api
 {

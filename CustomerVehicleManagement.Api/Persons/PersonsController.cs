@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Api.Persons
              if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
+            DtoHelpers.PersonUpdateDtoToPerson(personUpdateDto, personFromRepository);
 
             // TODO: Discover why the next two operations break unit tests
             // and our Controller update pattern:

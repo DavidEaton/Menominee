@@ -140,7 +140,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var invalidId = 0;
 
-            CustomerUpdateDto customer = new();
+            CustomerUpdateDto customer = new(CustomerType.Retail, null, null);
 
             var result = await controller.UpdateCustomerAsync(invalidId, customer);
 

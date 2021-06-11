@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
@@ -30,7 +31,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         [Route("list")]
         [HttpGet]
         [ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<OrganizationsInListDto>>> GetOrganizationsListAsync()
+        public async Task<ActionResult<IReadOnlyList<OrganizationsInListDto>>> GetOrganizationsListAsync()
         {
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);
@@ -38,7 +39,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrganizationReadDto>>> GetOrganizationsAsync()
+        public async Task<ActionResult<IReadOnlyList<OrganizationReadDto>>> GetOrganizationsAsync()
         {
             var result = await repository.GetOrganizationsAsync();
             return Ok(result);
@@ -78,7 +79,8 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetAddress(organizationUpdateDto.Address);
             organization.SetNotes(organizationUpdateDto.Notes);
 
-            SetCollections(organizationUpdateDto, organization);
+            organization.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(organizationUpdateDto.Phones));
+            organization.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(organizationUpdateDto.Emails));
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -102,23 +104,6 @@ namespace CustomerVehicleManagement.Api.Organizations
                 return NoContent();
 
             return BadRequest($"Failed to update {organizationUpdateDto.Name}.");
-        }
-
-        private static void SetCollections(OrganizationUpdateDto organizationUpdateDto, Organization organization)
-        {
-            if (organizationUpdateDto.Phones != null)
-            {
-                organization.Phones.Clear();
-                foreach (var phone in organizationUpdateDto.Phones)
-                    organization.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
-            }
-
-            if (organizationUpdateDto.Emails != null)
-            {
-                organization.Emails.Clear();
-                foreach (var email in organizationUpdateDto.Emails)
-                    organization.AddEmail(new Email(email.Address, email.IsPrimary));
-            }
         }
 
         [HttpPost]

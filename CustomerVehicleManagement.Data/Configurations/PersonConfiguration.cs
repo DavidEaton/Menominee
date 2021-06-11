@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Data.Configurations
 {
@@ -13,12 +11,6 @@ namespace CustomerVehicleManagement.Data.Configurations
             base.Configure(builder); // <--
             builder.ToTable("Person", "dbo");
             builder.Ignore(person => person.TrackingState);
-
-            // Convert enum values to and from strings in the database
-            var converter = new EnumToStringConverter<Gender>();
-            builder.Property(person => person.Gender)
-                .IsRequired()
-                .HasConversion(converter);
 
             // Value Object: Name
             builder.OwnsOne(person => person.Name)

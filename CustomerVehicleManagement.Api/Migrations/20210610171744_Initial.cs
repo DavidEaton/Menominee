@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CustomerVehicleManagement.Api.Migrations
 {
-    public partial class ResetToInitialState : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     MiddleName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DriversLicenseNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     DriversLicenseIssued = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -147,7 +147,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Number = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PhoneType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PhoneType = table.Column<int>(type: "int", nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: true),
                     PersonId = table.Column<int>(type: "int", nullable: true)

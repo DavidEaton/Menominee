@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
             var persons = await client.GetFromJsonAsync<IEnumerable<PersonInListDto>>("/api/persons/list");
 
 
-            persons.Should().HaveCountGreaterOrEqualTo(2);
+            persons.Should().HaveCountGreaterOrEqualTo(1);
         }
 
     }

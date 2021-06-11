@@ -1,16 +1,22 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
     public class CustomerUpdateDto
     {
-        public int Id { get; set; }
+        [JsonConstructor]
+        public CustomerUpdateDto(CustomerType customerType, PersonUpdateDto personUpdateDto, OrganizationUpdateDto organizationUpdateDto)
+        {
+            CustomerType = customerType;
+            PersonUpdateDto = personUpdateDto;
+            OrganizationUpdateDto = organizationUpdateDto;
+        }
         public CustomerType CustomerType { get; set; }
         public PersonUpdateDto PersonUpdateDto { get; set; }
         public OrganizationUpdateDto OrganizationUpdateDto { get; set; }
-        public ContactPreferences ContactPreferences { get; set; }
+        //public ContactPreferences ContactPreferences { get; set; }
     }
 }

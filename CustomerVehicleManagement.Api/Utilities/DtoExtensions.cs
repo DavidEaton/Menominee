@@ -11,11 +11,6 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
     /// The static DTO Extensions class.
     /// Contains static extension methods for converting domain classes to data transfer objects (DTOs).
     /// </summary>
-    /// <remarks>
-    /// It made more sense to map these manually, rather than trying to implement AutoMapper
-    /// in a static class. Maybe AutoMapper should have been used, but these extension
-    /// methods work well, and are easy enough to read and comprehend.
-    /// </remarks>
     public static class DtoExtensions
     {
         /// <summary>
@@ -41,6 +36,7 @@ namespace CustomerVehicleManagement.Api.Data.Dtos
                         Name = organization.Name.Name,
                         Address = organization.Address,
                         CustomerType = customer.CustomerType,
+                        Note = organization.Notes,
                         Contact = (organization.Contact != null)
                         ? new PersonReadDto()
                         {

@@ -210,7 +210,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     Birthday = DateTime.Today.AddYears(-20)
                 };
 
-                DtoHelpers.ConvertPersonUpdateDtoToDomainModel(personUpdateDto, personFromRepository, mapper);
+                DtoHelpers.PersonUpdateDtoToPerson(personUpdateDto, personFromRepository);
 
                 repository.UpdatePersonAsync(personUpdateDto);
 
@@ -259,12 +259,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     Emails = mapper.Map<List<EmailUpdateDto>>(personFromRepository.Emails)
                 };
 
-                var phone = new PhoneUpdateDto
-                {
-                    Number = number,
-                    IsPrimary = isPrimary,
-                    PhoneType = phoneType
-                };
+                var phone = new PhoneUpdateDto(number, phoneType, isPrimary);
 
                 var email = new EmailUpdateDto
                 {

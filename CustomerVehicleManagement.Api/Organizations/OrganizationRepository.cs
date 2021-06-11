@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Emails;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -51,86 +53,132 @@ namespace CustomerVehicleManagement.Api.Organizations
             return mapper.Map<OrganizationReadDto>(organizationFromContext);
         }
 
-        public async Task<IEnumerable<OrganizationReadDto>> GetOrganizationsAsync()
+        public async Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync()
         {
+            IList<OrganizationReadDto> list = new List<OrganizationReadDto>();
+
             IReadOnlyList<Organization> organizationsFromContext =
                 await context.Organizations
                              .Include(organization => organization.Phones)
                              .Include(organization => organization.Emails)
                              .Include(organization => organization.Contact)
                                  .ThenInclude(contact => contact.Phones)
-                             .Include(organization => organization.Contact)
-                                 .ThenInclude(contact => contact.Emails)
+                                 .Include(contact => contact.Emails)
                              .ToListAsync();
 
-            return mapper.Map<IEnumerable<OrganizationReadDto>>(organizationsFromContext);
-        }
-
-
-        public async Task<Organization> GetOrganizationEntityAsync(int id)
-        {
-            var organizationFromContext = context.Organizations
-                                                 .Include(organization => organization.Phones)
-                                                 .Include(organization => organization.Emails)
-                                                 .Include(organization => organization.Contact)
-                                                     .ThenInclude(contact => contact.Phones)
-                                                 .Include(organization => organization.Contact)
-                                                     .ThenInclude(contact => contact.Emails)
-                                                 .FirstOrDefaultAsync(organization => organization.Id == id);
-
-            return await (organizationFromContext);
-        }
-
-        public async Task<IEnumerable<OrganizationsInListDto>> GetOrganizationsListAsync()
-        {
-            IReadOnlyList<Organization> organizations = await context.Organizations
-                                                                     .Include(organization => organization.Contact)
-                                                                        .ThenInclude(contact => contact.Phones)
-                                                                     .Include(organization => organization.Contact)
-                                                                        .ThenInclude(contact => contact.Emails)
-                                                                     .ToListAsync();
-
-            List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
+            foreach (var organization in organizationsFromContext)
             {
-                Id = organization.Id,
-                Name = organization.Name.Name,
-                ContactName = organization?.Contact?.Name.LastFirstMiddle,
-                ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
+                list.Add(new OrganizationReadDto()
+                {
+                    Id = organization.Id,
+                    Name = organization.Name.Name,
+                    Address = organization.Address,
+                    Notes = organization.Notes,
 
-                AddressLine = organization?.Address?.AddressLine,
-                City = organization?.Address?.City,
-                State = organization?.Address?.City,
-                PostalCode = organization?.Address?.PostalCode,
+                    Phones = organization.Phones.Select(x => new PhoneReadDto()
+                    {
+                        Number = x.Number,
+                        PhoneType = x.PhoneType.ToString(),
+                        IsPrimary = x.IsPrimary
+                    }).ToArray(),
 
-                Notes = organization.Notes,
-                PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
-                PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
-            }).ToList();
-
-            return dtos;
+                    Emails = organization.Emails.Select(x => new EmailReadDto()
+                    {
+                        Address = x.Address,
+                        IsPrimary = x.IsPrimary
+                    }).ToArray()
+                });
+            }
+            return (IReadOnlyList<OrganizationReadDto>)list;
         }
 
+            //var organizationReadDto = organizationsFromContext.Select(organization => new OrganizationReadDto()
+            //{
+            //    Id = organization.Id,
+            //    Name = organization.Name.Name,
+            //    Address = organization.Address,
+            //    Notes = organization.Notes,
 
-        public void UpdateOrganizationAsync(Organization organization)
-        {
-            // No code in this implementation.
-        }
+            //    Phones = organization.Phones.Select(x => new PhoneReadDto()
+            //    {
+            //        Number = x.Number,
+            //        PhoneType = x.PhoneType.ToString(),
+            //        IsPrimary = x.IsPrimary
+            //    }).ToArray(),
 
-        public async Task<bool> OrganizationExistsAsync(int id)
-        {
-            return await context.Organizations
-                .AnyAsync(o => o.Id == id);
-        }
+            //    Emails = organization.Emails.Select(x => new EmailReadDto()
+            //    {
+            //        Address = x.Address,
+            //        IsPrimary = x.IsPrimary
+            //    }).ToArray()
 
-        public async Task<bool> SaveChangesAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
-        }
+            //}).ToArray();
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
+
+    public async Task<Organization> GetOrganizationEntityAsync(int id)
+    {
+        var organizationFromContext = context.Organizations
+                                             .Include(organization => organization.Phones)
+                                             .Include(organization => organization.Emails)
+                                             .Include(organization => organization.Contact)
+                                                 .ThenInclude(contact => contact.Phones)
+                                             .Include(organization => organization.Contact)
+                                                 .ThenInclude(contact => contact.Emails)
+                                             .FirstOrDefaultAsync(organization => organization.Id == id);
+
+        return await (organizationFromContext);
     }
+
+    public async Task<IReadOnlyList<OrganizationsInListDto>> GetOrganizationsListAsync()
+    {
+        IReadOnlyList<Organization> organizations = await context.Organizations
+                                                                 .Include(organization => organization.Contact)
+                                                                    .ThenInclude(contact => contact.Phones)
+                                                                 .Include(organization => organization.Contact)
+                                                                    .ThenInclude(contact => contact.Emails)
+                                                                 .ToListAsync();
+
+        List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
+        {
+            Id = organization.Id,
+            Name = organization.Name.Name,
+            ContactName = organization?.Contact?.Name.LastFirstMiddle,
+            ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
+
+            AddressLine = organization?.Address?.AddressLine,
+            City = organization?.Address?.City,
+            State = organization?.Address?.City,
+            PostalCode = organization?.Address?.PostalCode,
+
+            Notes = organization.Notes,
+            PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
+            PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
+        }).ToList();
+
+        return dtos;
+    }
+
+
+    public void UpdateOrganizationAsync(Organization organization)
+    {
+        // No code in this implementation.
+    }
+
+    public async Task<bool> OrganizationExistsAsync(int id)
+    {
+        return await context.Organizations
+            .AnyAsync(o => o.Id == id);
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await context.SaveChangesAsync() > 0;
+    }
+
+    public void FixTrackingState()
+    {
+        context.FixState();
+    }
+}
 }
 

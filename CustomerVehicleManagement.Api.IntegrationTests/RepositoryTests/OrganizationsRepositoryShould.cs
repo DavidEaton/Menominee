@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
 
                 // Act
-                var organizations = (List<OrganizationReadDto>)await repository.GetOrganizationsAsync();
+                var organizations = await repository.GetOrganizationsAsync();
 
                 // Assert
                 organizations.Count.Should().Be(1);
