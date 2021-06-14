@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Data.Dtos;
 using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel;
 using SharedKernel.Enums;
-using SharedKernel.Interfaces;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,15 +15,11 @@ namespace CustomerVehicleManagement.Api.Customers
     public class CustomerRepository : ICustomerRepository
     {
         private readonly AppDbContext context;
-        private readonly IMapper mapper;
 
         public CustomerRepository(AppDbContext context, IMapper mapper)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task AddCustomerAsync(Customer customer)
