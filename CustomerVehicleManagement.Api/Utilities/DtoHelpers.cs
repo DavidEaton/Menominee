@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Organizations;
+﻿using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using Helper = CustomerVehicleManagement.Api.Utilities.ContactableHelpers;
 
@@ -70,29 +66,6 @@ namespace CustomerVehicleManagement.Api.Utilities
             person.SetDriversLicense(personUpdateDto.DriversLicense);
             person.SetPhones(PhonesUpdateDtoToPhones(personUpdateDto.Phones));
             person.SetEmails(EmailsUpdateDtoToEmails(personUpdateDto.Emails));
-        }
-
-        /// <summary>
-        /// Map the OrganizationUpdateDto back to the domain entity
-        /// </summary>
-        /// <param name="organizationUpdateDto"></param>
-        /// <param name="organization"></param>
-        /// <param name="mapper"></param>
-        public static void ConvertOrganizationUpdateDtoToDomainModel(
-            OrganizationUpdateDto organizationUpdateDto,
-            Organization organization,
-            IMapper mapper)
-        {
-            var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
-            if (organizationNameOrError.IsFailure)
-                return;
-
-            organization.SetName(organizationNameOrError.Value);
-            //organization.SetContact(organizationUpdateDto.Contact);
-            organization.SetAddress(organizationUpdateDto.Address);
-            organization.SetNotes(organizationUpdateDto.Notes);
-            organization.SetPhones(mapper.Map<IList<Phone>>(organizationUpdateDto.Phones));
-            organization.SetEmails(mapper.Map<IList<Email>>(organizationUpdateDto.Emails));
         }
     }
 }

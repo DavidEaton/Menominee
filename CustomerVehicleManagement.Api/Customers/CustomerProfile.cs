@@ -7,17 +7,6 @@ namespace CustomerVehicleManagement.Api.Customers
     {
         public CustomerProfile()
         {
-            // TODO: Try replacing AutoMapper PreCondition with Condition:
-
-            //CreateMap<Customer, CustomerReadDto>()
-            //        .ForMember(
-            //            destination => destination.Contact,
-            //            configuration =>
-            //            {
-            //                configuration.PreCondition(customer => customer.Entity as Organization != null);
-            //                configuration.MapFrom(source => (source.Entity as Organization).Contact);
-            //            });
-
             CreateMap<CustomerUpdateDto, Customer>().ReverseMap();
 
             CreateMap<Customer, CustomerCreateDto>()

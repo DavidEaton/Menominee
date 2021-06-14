@@ -70,48 +70,13 @@ namespace CustomerVehicleManagement.Api.Persons
         {
             var notFoundMessage = $"Could not find Person to update";
 
-            /* Update Pattern in Controllers:
-                1) Get domain entity from repository
-                2) Update domain entity with data in data transfer object (DTO)
-                3) Set entity's TrackingState to Modified
-                4) FixTrackingState: moves entity state tracking back out of
-                the object and into the context to track entity state in this
-                disconnected applications. In other words, sych the EF Change
-                Tracker with our disconnected entity's TrackingState
-                5) Save changes
-                6) return NoContent()
-            */
-
             Person personFromRepository = await repository.GetPersonEntityAsync(id);
              if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
             DtoHelpers.PersonUpdateDtoToPerson(personUpdateDto, personFromRepository);
 
-            // TODO: Discover why the next two operations break unit tests
-            // and our Controller update pattern:
-
-            //personFromRepository.SetTrackingState(TrackingState.Modified);
-            //repository.FixTrackingState();
-
             repository.UpdatePersonAsync(personUpdateDto);
-
-            /* Returning the updated resource is acceptible, for example:
-                 return Ok(personFromRepository);
-               even preferred over returning NoContent if updated resource
-               contains properties that are mutated by the data store
-               (which they are not in this case).
-
-               Instead, our app will:
-                 return NoContent();
-               ... and let the caller decide whether to get the updated resource,
-               which is also acceptible. The HTTP specification (RFC 2616) has a
-               number of recommendations that are applicable:
-            HTTP status code 200 OK for a successful PUT of an update to an existing resource. No response body needed.
-            HTTP status code 201 Created for a successful PUT of a new resource
-            HTTP status code 409 Conflict for a PUT that is unsuccessful due to a 3rd-party modification
-            HTTP status code 400 Bad Request for an unsuccessful PUT
-            */
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
@@ -123,37 +88,18 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
-            /*
-            Web API controllers don't have to check ModelState.IsValid if they have the
-            [ApiController] attribute. In that case, an automatic HTTP 400 response containing
-            error details is returned when model state is invalid.
-
-            However, excluding the ModelState check code breaks tests. Comment the ModelState
-            check code (if (!ModelState.IsValid)...) to break tests: */
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            /* Controller Pattern:
-               1. Map dto to domain entity
-               2. Add domain entity to repository
-               3. Save changes on repository
-               4. Get ReadDto (with new Id) from database after save)
-               5. Return to consumer */
-
-            // 1. Map dto to domain entity
             var person = mapper.Map<Person>(personCreateDto);
 
-            // 2. Add domain entity to repository
             await repository.AddPersonAsync(person);
 
-            // 3. Save changes on repository
             if (await repository.SaveChangesAsync())
             {
-                // 4. Get ReadDto (with new Id) from database after save)
                 var personFromRepository = repository.GetPersonAsync(person.Id).Result;
 
-                // 5. Return to consumer
                 return CreatedAtRoute("GetPersonAsync",
                     new { id = person.Id },
                     personFromRepository);
@@ -164,12 +110,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePersonAsync(int id)
-        {   /* Delete Pattern in Controllers:
-                1) Get domain entity from repository
-                2) Call repository.DeletePerson(), which removes person from context
-                3) Save changes
-                4) return Ok()
-            */
+        {
             var personFromRepository = await repository.GetPersonEntityAsync(id);
 
             if (personFromRepository == null)

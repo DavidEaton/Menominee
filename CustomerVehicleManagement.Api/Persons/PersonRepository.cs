@@ -36,8 +36,6 @@ namespace CustomerVehicleManagement.Api.Persons
         }
         public async Task<Person> GetPersonEntityAsync(int id)
         {
-            // Prefer FindAsync() over Single() or First() for single objects (non-collections);
-            // FindAsync() checks the Identity Map Cache before making a trip to the database.
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
                 .Include(person => person.Emails)
@@ -65,9 +63,6 @@ namespace CustomerVehicleManagement.Api.Persons
 
             foreach (var person in personsFromContext)
             {
-                // Mapping Phones works but Emails fail:
-                // mapper.Map<IEnumerable<Email>>(person.Emails);
-                // ...so instead of automapper for the emails, MapDomainEmailToReadDto()
                 mapper.Map<IReadOnlyList<Phone>>(person.Phones);
             }
 

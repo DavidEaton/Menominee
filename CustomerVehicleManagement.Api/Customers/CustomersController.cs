@@ -67,68 +67,40 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto customerUpdateDto)
         {
-            /* Update Pattern in Controllers:
-                1) Get domain entity from repository
-                2) Update domain entity with data in data transfer object (DTO)
-                3) Set entity's TrackingState to Modified
-                4) FixTrackingState: moves entity state tracking back out of
-                the object and into the context to track entity state in this
-                disconnected applications. In other words, sych the EF Change
-                Tracker with our disconnected entity's TrackingState
-                5) Save changes
-                6) return NoContent()
-            */
-
-            //1) Get domain entity from repository
             CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
-            // 2) Update domain entity with data in data transfer object(DTO)
             if (customerFromRepository.EntityType == EntityType.Organization)
             {
-                //1.a) Get domain Organization from repository
-                Organization organizationEntityFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.EntityId);
+                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.EntityId);
 
-                // 2.a) Update domain entity with data in data transfer object(DTO)
                 var organizationNameOrError = OrganizationName.Create(customerUpdateDto.OrganizationUpdateDto.Name);
                 if (organizationNameOrError.IsFailure)
                     return BadRequest(organizationNameOrError.Error);
 
-                organizationEntityFromRepository.SetName(organizationNameOrError.Value);
-                organizationEntityFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
-                organizationEntityFromRepository.SetNotes(customerUpdateDto.OrganizationUpdateDto.Notes);
+                organizationFromRepository.SetName(organizationNameOrError.Value);
+                organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
+                organizationFromRepository.SetNotes(customerUpdateDto.OrganizationUpdateDto.Notes);
+                DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
+                organizationFromRepository.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(customerUpdateDto.OrganizationUpdateDto.Phones));
+                organizationFromRepository.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(customerUpdateDto.OrganizationUpdateDto.Emails));
 
-                Person contact = new Person(customerUpdateDto.OrganizationUpdateDto.Contact.Name,
-                                            customerUpdateDto.OrganizationUpdateDto.Contact.Gender);
-
-                //organizationEntityFromRepository.SetContact();
-
-                // Update the objects ObjectState and sych the EF Change Tracker
-                // 3) Set entity's TrackingState to Modified
-                //fetchedCustomer.SetTrackingState(TrackingState.Modified);
-                // 4) FixTrackingState: moves entity state tracking into the context
-                //customerRepository.FixTrackingState();
+                organizationFromRepository.SetTrackingState(TrackingState.Modified);
+                customerRepository.FixTrackingState();
             }
 
             if (customerFromRepository.EntityType == EntityType.Person)
             {
-                //1.a) Get domain Person from repository
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.EntityId);
-                // 2.a) Update domain entity with data in data transfer object(DTO)
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.PersonUpdateDto, personFromRepository);
 
-                // Update the objects ObjectState and sych the EF Change Tracker
-                // 3) Set entity's TrackingState to Modified
                 personFromRepository.SetTrackingState(TrackingState.Modified);
-                // 4) FixTrackingState: moves entity state tracking into the context
                 customerRepository.FixTrackingState();
             }
 
-            //5) Save changes
             if (await customerRepository.SaveChangesAsync())
-                // 6) return NoContent()
                 return NoContent();
 
             return BadRequest($"Failed to update .");
@@ -142,7 +114,6 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerCreateDto.PersonCreateDto != null)
             {
-                // 1. Map dto to domain entity
                 var person = mapper.Map<Person>(customerCreateDto.PersonCreateDto);
 
                 if (person != null)
@@ -199,10 +170,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customer != null)
             {
-                // 4. Get ReadDto (with new Id) from database after save)
                 CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
 
-                // 5. Return to consumer
                 return CreatedAtRoute("GetCustomerAsync",
                     new { id = customerFromRepository.Id },
                     customerFromRepository);

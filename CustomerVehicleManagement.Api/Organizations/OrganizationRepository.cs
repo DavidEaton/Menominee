@@ -92,32 +92,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             return (IReadOnlyList<OrganizationReadDto>)list;
         }
 
-            //var organizationReadDto = organizationsFromContext.Select(organization => new OrganizationReadDto()
-            //{
-            //    Id = organization.Id,
-            //    Name = organization.Name.Name,
-            //    Address = organization.Address,
-            //    Notes = organization.Notes,
-
-            //    Phones = organization.Phones.Select(x => new PhoneReadDto()
-            //    {
-            //        Number = x.Number,
-            //        PhoneType = x.PhoneType.ToString(),
-            //        IsPrimary = x.IsPrimary
-            //    }).ToArray(),
-
-            //    Emails = organization.Emails.Select(x => new EmailReadDto()
-            //    {
-            //        Address = x.Address,
-            //        IsPrimary = x.IsPrimary
-            //    }).ToArray()
-
-            //}).ToArray();
-
-
     public async Task<Organization> GetOrganizationEntityAsync(int id)
     {
-        var organizationFromContext = context.Organizations
+            // Prefer FindAsync() over Single() or First() for single objects (non-collections);
+            // FindAsync() checks the Identity Map Cache before making a trip to the database.
+            var organizationFromContext = context.Organizations
                                              .Include(organization => organization.Phones)
                                              .Include(organization => organization.Emails)
                                              .Include(organization => organization.Contact)
@@ -126,7 +105,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                  .ThenInclude(contact => contact.Emails)
                                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
-        return await (organizationFromContext);
+        return await organizationFromContext;
     }
 
     public async Task<IReadOnlyList<OrganizationsInListDto>> GetOrganizationsListAsync()
