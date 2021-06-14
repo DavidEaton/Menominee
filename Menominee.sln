@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menomin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Idp", "Menominee.Idp\Menominee.Idp.csproj", "{B9C023A9-2785-46E2-926E-7BBDD99EA549}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.UiExperiments", "Menominee.UiExperiments\Menominee.UiExperiments.csproj", "{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

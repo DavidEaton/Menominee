@@ -1,0 +1,73 @@
+﻿@page "/customers"
+    [Authorize]
+    @if (CustomersList == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="pane">
+            <SfSplitter ID="splitter"
+                        EnablePersistence
+                        Width="100%"
+                        CssClass="borderless">
+                <SplitterPanes>
+                    <SplitterPane Size="35%"
+                                  Collapsible
+                                  Min="35%"
+                                  Max="50%">
+                        <ContentTemplate>
+                            <div class="pane">
+                                <h2>Customers</h2>
+                                <SfGrid DataSource="@CustomersList"
+                                        AllowPaging="true"
+                                        AllowSorting="true"
+                                        AllowFiltering="true"
+                                        AllowTextWrap="true"
+                                        AllowResizing="true"
+                                        AllowReordering="true"
+                                        EnablePersistence
+                                        Width="100%"
+                                        ID="nav-grid"
+                                        GridLines="GridLine.None"
+                                        RowHeight="25">
+                                    <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="200"></GridFilterSettings>
+                                    <GridEvents RowSelected="RowSelectedHandler"
+                                                TValue="CustomerList">
+                                    </GridEvents>
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(CustomerList.CustomerName)
+                                                    HeaderText="Name"
+                                                    Width="30%"
+                                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                                        </GridColumn>
+                                        <GridColumn Field=@nameof(CustomerList.AddressFull)
+                                                    HeaderText="Address"
+                                                    Width="50%"
+                                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                                        </GridColumn>
+                                        <GridColumn Field=@nameof(CustomerList.Phone)
+                                                    HeaderText="Phone"
+                                                    Width="20%"
+                                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                                        </GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                            </div>
+                        </ContentTemplate>
+                    </SplitterPane>
+                    <SplitterPane Size="65%"
+                                  Min="50%">
+                        <ContentTemplate>
+                            <div class="pane">
+                                @if (SelectedId > 0)
+                                {
+                                    <CustomerDetail @ref="CustomerDetail" Id="@SelectedId"></CustomerDetail>
+                                }
+                            </div>
+                        </ContentTemplate>
+                    </SplitterPane>
+                </SplitterPanes>
+            </SfSplitter>
+        </div>
+    }
