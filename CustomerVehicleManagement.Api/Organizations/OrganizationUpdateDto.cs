@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
+﻿using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 

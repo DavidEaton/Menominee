@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +16,6 @@ namespace CustomerVehicleManagement.Api.Persons
         Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync();
         Task<PersonReadDto> GetPersonAsync(int id);
         Task<Person> GetPersonEntityAsync(int id);
-        Task<int> GetPersonsTotalAsync();
         Task<bool> SaveChangesAsync();
     }
 }

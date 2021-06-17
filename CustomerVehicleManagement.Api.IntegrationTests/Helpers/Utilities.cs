@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;

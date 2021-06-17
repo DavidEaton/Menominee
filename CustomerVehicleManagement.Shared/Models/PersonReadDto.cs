@@ -3,7 +3,7 @@ using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace Menominee.UiExperiments.Models
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class PersonReadDto
     {

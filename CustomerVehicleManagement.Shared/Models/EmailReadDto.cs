@@ -1,4 +1,4 @@
-﻿namespace Menominee.UiExperiments.Models
+﻿namespace CustomerVehicleManagement.Shared.Models
 {
     public class EmailReadDto
     {

@@ -1,8 +1,10 @@
-﻿using Menominee.Client.Models;
+﻿using CustomerVehicleManagement.Shared.Models;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
+using SharedKernel.Enums;
 using SharedKernel.Static;
 using SharedKernel.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +17,8 @@ namespace Menominee.Client.Components
 
         [Parameter]
         public int Id { get; set; }
-        public PersonFlatDto Person { get; set; } = new PersonFlatDto();
+        public PersonUpdateDto PersonUpdateDto { get; set; } = new PersonUpdateDto();
+        public Person Person { get; set; } = new Person();
         public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
@@ -25,15 +28,15 @@ namespace Menominee.Client.Components
 
         protected override async Task OnParametersSetAsync()
         {
-            Saved = false;
+            //Saved = false;
 
-            if (Id > 0)
-                Person = await PersonDataService.GetPersonDetails(Id);
+            //if (Id > 0)
+            //    Person = await PersonDataService.GetPersonDetails(Id);
         }
 
         protected async Task HandleValidSubmit()
         {
-            Saved = false;
+            //Saved = false;
 
             //if (Person.Id == 0) // new
             //{
@@ -51,12 +54,12 @@ namespace Menominee.Client.Components
             //        Saved = false;
             //    }
             //}
-            //else // existing
-            //{
-            await PersonDataService.UpdatePerson(Person);
-            StatusClass = "alert-success";
-            Message = "Person updated successfully.";
-            Saved = true;
+            ////else // existing
+            ////{
+            //await PersonDataService.UpdatePerson(Person);
+            //StatusClass = "alert-success";
+            //Message = "Person updated successfully.";
+            //Saved = true;
             //}
         }
 
@@ -72,9 +75,21 @@ namespace Menominee.Client.Components
             Message = string.Empty;
             StatusClass = string.Empty;
             Id = -1;
-            Person.Id = 0;
             StateHasChanged();
         }
     }
 
+    public class Person
+    {
+        public string Name { get; set; }
+        public Gender Gender { get; set; }
+        public DateTime? Birthday { get; set; }
+        //public DriversLicense DriversLicense { get; set; }
+        //public string DriversLicenseNumber { get; }
+        //public DateTimeRange ValidRange { get; }
+        //public string DriversLicenseState { get; }
+
+        //public Address Address { get; set; }
+
+    }
 }

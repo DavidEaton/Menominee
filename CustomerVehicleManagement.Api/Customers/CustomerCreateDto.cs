@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;

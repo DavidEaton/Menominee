@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;

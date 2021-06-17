@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Api.Emails
+﻿namespace CustomerVehicleManagement.Shared.Models
 {
     public class EmailUpdateDto
     {

@@ -1,4 +1,6 @@
-﻿namespace CustomerVehicleManagement.Api.Persons
+﻿using System;
+
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class PersonInListDto
     {
@@ -9,6 +11,7 @@
         public string State { get; set; }
         public string PostalCode { get; set; }
         public string AddressFull { get => $"{AddressLine} {City}, {State}  {PostalCode}"; }
+        public DateTime? Birthday { get; set; }
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
     }

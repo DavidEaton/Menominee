@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -122,13 +123,6 @@ namespace CustomerVehicleManagement.Api.Persons
                 return NoContent();
 
             return BadRequest($"Failed to delete Person with Id: {id}.");
-        }
-
-        [HttpGet("total")]
-        public async Task<IActionResult> GetPersonsTotalAsync()
-        {
-            var results = await repository.GetPersonsTotalAsync();
-            return Ok(results);
         }
     }
 }

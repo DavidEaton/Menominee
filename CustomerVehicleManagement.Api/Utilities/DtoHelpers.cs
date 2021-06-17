@@ -1,7 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using System.Collections.Generic;
 using Helper = CustomerVehicleManagement.Api.Utilities.ContactableHelpers;
 
@@ -15,6 +13,7 @@ namespace CustomerVehicleManagement.Api.Utilities
             return new PersonInListDto()
             {
                 AddressLine = person?.Address?.AddressLine,
+                Birthday = person?.Birthday,
                 City = person?.Address?.City,
                 Id = person.Id,
                 Name = person.Name.LastFirstMiddle,

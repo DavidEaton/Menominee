@@ -1,4 +1,4 @@
-﻿using Menominee.Client.Models;
+﻿using CustomerVehicleManagement.Shared.Models;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using SharedKernel.Enums;
@@ -49,7 +49,12 @@ namespace Menominee.Client.Components
 
             if (FormIsValid())
             {
-                Person = new PersonCreateDto(PersonAdd.Name, PersonAdd.Gender, PersonAdd.Birthday, PersonAdd.Address);
+                Person = new PersonCreateDto(PersonAdd.Name, PersonAdd.Gender)
+                {
+                    Birthday = PersonAdd.Birthday,
+                    Address = PersonAdd.Address
+                };
+
                 await PersonDataService.AddPerson(Person);
                 ShowDialog = false;
 

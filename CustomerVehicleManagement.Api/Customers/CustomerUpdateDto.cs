@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.Enums;
 using System.Text.Json.Serialization;
 

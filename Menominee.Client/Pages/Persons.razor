@@ -19,8 +19,8 @@ else
                 <tbody>
                     @foreach (var person in PersonsList)
                     {
-                        <tr @onclick="@(e => SetSelectedId(person))">
-                            <td>@person.LastFirstMiddle</td>
+                        <tr @onclick="@(e => SetSelectedId(person.Id))">
+                            <td>@person.Name</td>
                             <td>@person.AddressFull</td>
                             <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
                         </tr>
@@ -29,7 +29,7 @@ else
             </table>
         </div>
         <div class="flex-fill">
-            <PersonDetail @ref="PersonDetail" Id="@SelectedId"></PersonDetail>
+            @*<PersonDetail @ref="PersonDetail" Id="@SelectedId"></PersonDetail>*@
         </div>
     </div>
     <div class="d-flex flex-row w-25">

@@ -1,5 +1,5 @@
-﻿using Menominee.Client.Components;
-using Menominee.Client.Models;
+﻿using CustomerVehicleManagement.Shared.Models;
+using Menominee.Client.Components;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -18,12 +18,12 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Persons> Logger { get; set; }
 
-        public IEnumerable<PersonFlatDto> PersonsList;
+        public IReadOnlyList<PersonInListDto> PersonsList;
         public int SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
         protected AddPersonDialog AddPersonDialog { get; set; }
-        protected PersonDetail PersonDetail { get; set; }
+        //protected PersonDetail PersonDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Persons.OnInitializedAsync()");
@@ -32,7 +32,7 @@ namespace Menominee.Client.Pages
 
         protected void AddPerson()
         {
-            PersonDetail?.Close();
+            //PersonDetail?.Close();
             AddPersonDialog.Show();
         }
 
@@ -41,9 +41,9 @@ namespace Menominee.Client.Pages
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             StateHasChanged();
         }
-        private void SetSelectedId(PersonFlatDto selected)
+        private void SetSelectedId(int id)
         {
-            SelectedId = selected.Id;
+            SelectedId = id;
         }
     }
 

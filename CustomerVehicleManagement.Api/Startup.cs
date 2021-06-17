@@ -93,9 +93,7 @@ namespace CustomerVehicleManagement.Api
                     mvcOptions.ReturnHttpNotAcceptable = true;
                     // Only allow authenticated users
                     mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-                    // Provide xml content type
-                }).AddXmlDataContractSerializerFormatters()
-                  .AddJsonOptions(options =>
+                }).AddJsonOptions(options =>
                   {
                       options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                   });
@@ -112,7 +110,7 @@ namespace CustomerVehicleManagement.Api
         public void Configure(IApplicationBuilder app)
         {
             string environment = HostEnvironment.EnvironmentName;
-            string[] testOrigin = { "http://localhost:44378, https://localhost:44378" };
+            string[] testOrigin = { "http://localhost:44307, https://localhost:44307" };
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -127,8 +125,9 @@ namespace CustomerVehicleManagement.Api
             }
 
             if (environment != "Prodution")
-                app.UseCors(cors => cors.WithOrigins(testOrigin)
-                                    .AllowAnyMethod().AllowAnyHeader());
+                app.UseCors(cors => cors.AllowAnyOrigin()
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader());
 
             if (environment == "Prodution")
                 app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())

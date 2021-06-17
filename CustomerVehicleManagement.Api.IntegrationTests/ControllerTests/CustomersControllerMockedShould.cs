@@ -5,6 +5,7 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

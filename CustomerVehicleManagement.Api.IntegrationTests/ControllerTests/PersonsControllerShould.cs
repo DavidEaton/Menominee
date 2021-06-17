@@ -9,9 +9,9 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
 using Xunit;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {

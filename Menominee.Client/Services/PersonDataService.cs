@@ -1,4 +1,4 @@
-﻿using Menominee.Client.Models;
+﻿using CustomerVehicleManagement.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -18,63 +18,38 @@ namespace Menominee.Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonFlatDto> AddPerson(PersonCreateDto newPerson)
+        public async Task<PersonReadDto> AddPerson(PersonCreateDto newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<PersonFlatDto>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<PersonReadDto>(await response.Content.ReadAsStreamAsync());
             }
 
             return null;
         }
 
-        public async Task<IEnumerable<PersonFlatDto>> GetAllPersons()
+        public async Task<IReadOnlyList<PersonInListDto>> GetAllPersons()
         {
-            var persons = new List<PersonFlatDto>();
-            Console.WriteLine("GetAllPersons called from PersonDataService.");
             try
             {
-                var personsFromDatabase = await httpClient.GetFromJsonAsync<IEnumerable<PersonReadDto>>(UriSegment);
-
-                return PersonUtilities.MapPersonsFromDatabaseToDto(persons, personsFromDatabase);
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonInListDto>>($"{UriSegment}/list");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Message :{0} ", ex.Message);
+                Console.WriteLine($"Message :{ex.Message}");
             }
 
             return null;
         }
 
-        public async Task<int> GetPersonsTotal()
+        public async Task<PersonReadDto> GetPersonDetails(int id)
         {
-            Console.WriteLine("GetPersonsTotal called from PersonDataService.");
             try
             {
-                return await httpClient.GetFromJsonAsync<int>(UriSegment + "/total");
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Message :{0} ", ex.Message);
-            }
-
-            return 0;
-        }
-
-        public async Task<PersonFlatDto> GetPersonDetails(int id)
-        {
-            var person = new PersonFlatDto();
-
-            try
-            {
-                var personFromDatabase = await httpClient.GetFromJsonAsync<PersonReadDto>(UriSegment + $"/{id}");
-                person = PersonUtilities.MapPersonFromDatabaseToDto(person, personFromDatabase);
-                return person;
-
+                return await httpClient.GetFromJsonAsync<PersonReadDto>(UriSegment + $"/{id}");
             }
             catch (Exception ex)
             {
@@ -83,25 +58,32 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task UpdatePerson(PersonFlatDto person)
+        public async Task UpdatePerson(PersonUpdateDto person)
         {
-            PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
-            var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
+            //PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
+            //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
 
-            try
-            {
-                await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
-                //await httpClient.PutAsJsonAsync
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Message :{ex.Message}");
-            }
+            //try
+            //{
+            //    await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
+            //    //await httpClient.PutAsJsonAsync
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Message :{ex.Message}");
+            //}
         }
 
         public async Task DeletePerson(int id)
         {
-            await httpClient.DeleteAsync($"{UriSegment}/{id}");
+            try
+            {
+                await httpClient.DeleteAsync($"{UriSegment}/{id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message :{ex.Message}");
+            }
         }
     }
 

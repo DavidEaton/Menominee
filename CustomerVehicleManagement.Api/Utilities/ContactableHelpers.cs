@@ -1,8 +1,6 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
+using CustomerVehicleManagement.Shared.Models;
 using System.Collections.Generic;
 using System.Linq;
 

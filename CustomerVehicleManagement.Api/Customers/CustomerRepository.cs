@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 using System;

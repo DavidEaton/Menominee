@@ -1,4 +1,4 @@
-﻿using Menominee.UiExperiments.Models;
+﻿using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using System.Collections.Generic;

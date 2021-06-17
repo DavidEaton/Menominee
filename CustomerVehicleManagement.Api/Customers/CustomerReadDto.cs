@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
+﻿using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
@@ -19,6 +17,5 @@ namespace CustomerVehicleManagement.Api.Customers
         public CustomerType CustomerType { get; set; }
         public IList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
         public IList<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
-
     }
 }

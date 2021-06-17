@@ -3,9 +3,11 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Menominee.UiExperiments.Models;
 using static Menominee.UiExperiments.Pages.Customers;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
+using System.Collections.Generic;
+using SharedKernel.Static;
 
 namespace Menominee.UiExperiments.Components
 {
@@ -17,7 +19,7 @@ namespace Menominee.UiExperiments.Components
         [Parameter]
         public int Id { get; set; }
         public CustomerList Customer { get; set; }
-        public State[] States{ get; set; }
+        public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
         protected string Message = string.Empty;
@@ -29,7 +31,6 @@ namespace Menominee.UiExperiments.Components
             Saved = false;
 
             await GetCustomers();
-            States = await HttpClient.GetFromJsonAsync<State[]>("sample-data/states.json");
         }
 
         private async Task GetCustomers()

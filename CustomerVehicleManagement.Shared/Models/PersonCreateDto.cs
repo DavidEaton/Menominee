@@ -1,13 +1,11 @@
-﻿using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Phones;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Persons
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class PersonCreateDto
     {

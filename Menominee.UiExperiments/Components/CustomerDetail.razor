@@ -67,7 +67,7 @@
                 <label for="state">State: </label>
                 <InputSelect id="state" class="form-control selectpicker col-sm-8" @bind-Value=Customer.AddressState>
                     <option>--select state--</option>
-                    @foreach (var state in States)
+                    @foreach (var state in StatesList)
                         {
                         <option value="@state.Abbreviation">@state.Name</option>
                         }

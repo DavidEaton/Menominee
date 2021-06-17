@@ -18,8 +18,10 @@ namespace Menominee.Client
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 
+            var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
+
             builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
-                client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddOidcAuthentication(options =>

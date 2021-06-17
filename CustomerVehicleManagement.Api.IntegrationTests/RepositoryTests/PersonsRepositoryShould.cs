@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

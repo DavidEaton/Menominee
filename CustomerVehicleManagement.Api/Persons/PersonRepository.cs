@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -119,11 +120,6 @@ namespace CustomerVehicleManagement.Api.Persons
         {
             return await context.Persons
                 .AnyAsync(person => person.Id == id);
-        }
-
-        public async Task<int> GetPersonsTotalAsync()
-        {
-            return await context.Persons.CountAsync();
         }
     }
 }
