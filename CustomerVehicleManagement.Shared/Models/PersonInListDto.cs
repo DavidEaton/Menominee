@@ -14,5 +14,6 @@ namespace CustomerVehicleManagement.Shared.Models
         public DateTime? Birthday { get; set; }
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
+        public string PrimaryEmail { get; set; }
     }
 }

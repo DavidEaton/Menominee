@@ -21,6 +21,7 @@ namespace CustomerVehicleManagement.Api.Utilities
                 State = person?.Address?.State,
                 PrimaryPhone = Helper.GetPrimaryPhone(person) ?? Helper.GetOrdinalPhone(person, 0),
                 PrimaryPhoneType = Helper.GetPrimaryPhoneType(person) ?? Helper.GetOrdinalPhoneType(person, 0),
+                PrimaryEmail = Helper.GetPrimaryEmail(person) ?? Helper.GetOrdinalEmail(person, 0)
             };
         }
 

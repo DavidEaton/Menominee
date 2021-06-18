@@ -14,16 +14,22 @@ else
                         <th>Name</th>
                         <th>Address</th>
                         <th>Birthday</th>
+                        <th>Primary Phone</th>
+                        <th>Type</th>
+                        <th>Primary Email</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var person in PersonsList)
                     {
-                        <tr @onclick="@(e => SetSelectedId(person.Id))">
-                            <td>@person.Name</td>
-                            <td>@person.AddressFull</td>
-                            <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
-                        </tr>
+                    <tr @onclick="@(e => SetSelectedId(person.Id))">
+                        <td>@person.Name</td>
+                        <td>@person.AddressFull</td>
+                        <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
+                        <td>@person.PrimaryPhone</td>
+                        <td>@person.PrimaryPhoneType</td>
+                        <td>@person.PrimaryEmail</td>
+                    </tr>
                     }
                 </tbody>
             </table>

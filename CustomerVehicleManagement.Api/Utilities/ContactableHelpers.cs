@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
 using CustomerVehicleManagement.Shared.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +25,19 @@ namespace CustomerVehicleManagement.Api.Utilities
         public static string GetOrdinalPhoneType(IContactLists entity, int position)
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].PhoneType.ToString() : string.Empty;
+        }
+
+        internal static string GetOrdinalEmail(IContactLists entity, int position)
+        {
+            return entity.Emails.Count > 0 ? entity.Emails[position].ToString() : string.Empty;
+        }
+
+        internal static string GetPrimaryEmail(IContactLists entity)
+        {
+            if (entity == null)
+                return string.Empty;
+
+            return entity.Emails.Count > 0 ? entity.Emails.FirstOrDefault(email => email.IsPrimary == true).Address : string.Empty;
         }
 
         public static string GetOrdinalPhone(IContactLists entity, int position)
