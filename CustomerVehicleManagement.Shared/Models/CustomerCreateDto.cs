@@ -1,11 +1,9 @@
-﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Domain.BaseClasses;
-using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Customers
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class CustomerCreateDto : Contactable
     {

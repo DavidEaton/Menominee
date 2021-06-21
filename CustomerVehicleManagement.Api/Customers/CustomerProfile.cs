@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 
 namespace CustomerVehicleManagement.Api.Customers
 {

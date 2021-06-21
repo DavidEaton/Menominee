@@ -1,9 +1,8 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Customers
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class CustomerReadDto
     {

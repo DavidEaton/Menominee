@@ -1,9 +1,7 @@
-﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Shared.Models;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Customers
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class CustomerUpdateDto
     {

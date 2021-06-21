@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Idp", "Menominee.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.UiExperiments", "Menominee.UiExperiments\Menominee.UiExperiments.csproj", "{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

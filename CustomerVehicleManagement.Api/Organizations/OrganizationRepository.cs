@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         return await organizationFromContext;
     }
 
-    public async Task<IReadOnlyList<OrganizationsInListDto>> GetOrganizationsListAsync()
+    public async Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync()
     {
         IReadOnlyList<Organization> organizations = await context.Organizations
                                                                  .Include(organization => organization.Contact)
@@ -116,7 +116,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                                     .ThenInclude(contact => contact.Emails)
                                                                  .ToListAsync();
 
-        List<OrganizationsInListDto> dtos = organizations.Select(organization => new OrganizationsInListDto
+        List<OrganizationInListDto> dtos = organizations.Select(organization => new OrganizationInListDto
         {
             Id = organization.Id,
             Name = organization.Name.Name,

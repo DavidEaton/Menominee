@@ -24,6 +24,10 @@ namespace Menominee.Client
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
+            builder.Services.AddHttpClient<ICustomerDataService, CustomerDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);

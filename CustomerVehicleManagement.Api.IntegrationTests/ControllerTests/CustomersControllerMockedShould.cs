@@ -69,12 +69,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_CustomerReadDto_On_GetCustomersAsync()
+        public async Task Return_ActionResult_Of_IReadOnlyList_Of_CustomerReadDto_On_GetCustomersAsync()
         {
             var result = await controller.GetCustomersAsync();
 
-            result.Result.Should().BeOfType<OkObjectResult>();
-            result.Should().BeOfType<ActionResult<IEnumerable<CustomerReadDto>>>();
+            result.Result.Should().BeOfType<NotFoundResult>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<CustomerReadDto>>>();
         }
 
         [Fact]

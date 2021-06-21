@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -31,7 +32,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         [Route("list")]
         [HttpGet]
         //[ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IReadOnlyList<OrganizationsInListDto>>> GetOrganizationsListAsync()
+        public async Task<ActionResult<IReadOnlyList<OrganizationInListDto>>> GetOrganizationsListAsync()
         {
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);

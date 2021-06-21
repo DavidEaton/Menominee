@@ -3,10 +3,10 @@ using CustomerVehicleManagement.Api.Emails;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using SharedKernel.ValueObjects;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -82,7 +82,38 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizations = await repository.GetOrganizationsAsync();
 
                 // Assert
-                organizations.Count.Should().Be(1);
+                organizations.Count.Should().BeGreaterOrEqualTo(1);
+            }
+        }
+
+        [Fact]
+        public async Task GetOrganizationsInListAsync()
+        {
+            // Arrange
+
+            // Create an in-memory database
+            var options = CreateDbContextOptions();
+
+            // Due to the disconnected nature of web requests/responses,
+            // our tests create and use unique contexts for each
+            // request, like our production code does.
+
+            // Add a Organization to the in-memory database
+            using (var context = new AppDbContext(options))
+            {
+                context.Organizations.Add(CreateValidOrganization());
+                context.SaveChanges();
+            }
+            // Read all Organizations from the in-memory database
+            using (var context = new AppDbContext(options))
+            {
+                var repository = new OrganizationRepository(context, mapper);
+
+                // Act
+                var organizations = await repository.GetOrganizationsListAsync();
+
+                // Assert
+                organizations.Count.Should().BeGreaterOrEqualTo(1);
             }
         }
 
@@ -207,8 +238,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepository.Contact.Should().NotBeNull();
-                organizationFromRepository.Contact.Phones.Count().Should().BeGreaterThan(0);
-                organizationFromRepository.Contact.Emails.Count().Should().BeGreaterThan(0);
+                organizationFromRepository.Contact.Phones.Count().Should().BeGreaterOrEqualTo(1);
+                organizationFromRepository.Contact.Emails.Count().Should().BeGreaterOrEqualTo(1);
             };
         }
 
@@ -228,7 +259,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizations = await repository.GetOrganizationsListAsync();
 
-                organizations.Count().Should().Be(1);
+                organizations.Count().Should().BeGreaterOrEqualTo(1);
             }
         }
 

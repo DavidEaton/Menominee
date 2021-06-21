@@ -46,7 +46,21 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        public async Task<IEnumerable<CustomerReadDto>> GetCustomersAsync()
+        public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
+        {
+            var customersFromContext = await context.Customers.ToArrayAsync();
+
+            var customersList = new List<CustomerInListDto>();
+
+            foreach (var customer in customersFromContext)
+            {
+                customersList.Add(DtoHelpers.CustomerToCustomerInListDto(customer));
+            }
+
+            return customersList;
+        }
+
+        public async Task<IReadOnlyList<CustomerReadDto>> GetCustomersAsync()
         {
             var customers = new List<CustomerReadDto>();
 

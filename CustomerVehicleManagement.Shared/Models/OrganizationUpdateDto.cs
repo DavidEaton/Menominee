@@ -1,8 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using SharedKernel.ValueObjects;
+﻿using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Organizations
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class OrganizationUpdateDto
     {

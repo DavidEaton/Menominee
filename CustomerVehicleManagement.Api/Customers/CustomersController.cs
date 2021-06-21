@@ -10,6 +10,7 @@ using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using AutoMapper;
 using SharedKernel.ValueObjects;
+using CustomerVehicleManagement.Shared.Models;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -38,10 +39,23 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+        // GET: api/customers/list
+        [Route("list")]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
+        {
+            var customers = await customerRepository.GetCustomersInListAsync();
+
+            if (customers == null)
+                return NotFound();
+
+            return Ok(customers);
+        }
+
         // GET: api/Customers
         [HttpGet]
         //[ResponseCache(Duration = MaxCacheAge)]
-        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
+        public async Task<ActionResult<IReadOnlyList<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
 

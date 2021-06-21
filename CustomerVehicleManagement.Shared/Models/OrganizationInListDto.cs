@@ -1,6 +1,6 @@
-﻿namespace CustomerVehicleManagement.Api.Organizations
+﻿namespace CustomerVehicleManagement.Shared.Models
 {
-    public class OrganizationsInListDto
+    public class OrganizationInListDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -1,11 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using SharedKernel.Utilities;
+﻿using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace CustomerVehicleManagement.Api.Organizations
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class OrganizationCreateDto
     {
