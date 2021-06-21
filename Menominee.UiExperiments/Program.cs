@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Syncfusion.Blazor;
-using Menominee.UiExperiments;
+using Microsoft.Extensions.Logging;
+using Menominee.UiExperiments.MessageHandlers;
+using Menominee.UiExperiments.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Menominee.UiExperiments
 {
@@ -18,8 +20,14 @@ namespace Menominee.UiExperiments
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Logging.SetMinimumLevel(LogLevel.Debug);
+            builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 
+            var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
+
+            builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
             builder.Services.AddSyncfusionBlazor();
 
             await builder.Build().RunAsync();

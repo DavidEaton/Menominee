@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customers
         [HttpGet]
-        [ResponseCache(Duration = MaxCacheAge)]
+        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();

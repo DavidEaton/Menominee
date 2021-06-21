@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         // api/organizations/list
         [Route("list")]
         [HttpGet]
-        [ResponseCache(Duration = MaxCacheAge)]
+        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IReadOnlyList<OrganizationsInListDto>>> GetOrganizationsListAsync()
         {
             var results = await repository.GetOrganizationsListAsync();

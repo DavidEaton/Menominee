@@ -69,16 +69,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             Assert.True(response.Content.Headers.ContentLength > 0);
         }
 
-        [Fact]
-        public async Task Get_Sets_Expected_CacheControl_Header()
-        {
-            var response = await httpClient.GetAsync(string.Empty);
+        //[Fact]
+        //public async Task Get_Sets_Expected_CacheControl_Header()
+        //{
+        //    var response = await httpClient.GetAsync(string.Empty);
 
-            var header = response.Headers.CacheControl;
+        //    var header = response.Headers.CacheControl;
 
-            Assert.True(header.MaxAge.HasValue);
-            Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
-            Assert.True(header.Public);
-        }
+        //    Assert.True(header.MaxAge.HasValue);
+        //    Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
+        //    Assert.True(header.Public);
+        //}
     }
 }

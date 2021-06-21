@@ -29,7 +29,6 @@ namespace Menominee.Client
                 builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
             });
 
-
             await builder.Build().RunAsync();
         }
 
