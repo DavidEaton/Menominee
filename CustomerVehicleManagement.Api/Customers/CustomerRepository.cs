@@ -53,9 +53,7 @@ namespace CustomerVehicleManagement.Api.Customers
             var customersList = new List<CustomerInListDto>();
 
             foreach (var customer in customersFromContext)
-            {
-                customersList.Add(DtoHelpers.CustomerToCustomerInListDto(customer));
-            }
+                customersList.Add(await MapCustomerToListDto(customer));
 
             return customersList;
         }
@@ -107,6 +105,41 @@ namespace CustomerVehicleManagement.Api.Customers
             }
 
             return customerReadDto;
+        }
+
+        private async Task<CustomerInListDto> MapCustomerToListDto(Customer customer)
+        {
+            var customerInListDto = new CustomerInListDto
+            {
+                Id = customer.Id,
+                CustomerType = customer.CustomerType.ToString(),
+                EntityType = customer.EntityType
+            };
+
+            if (customer.EntityType == EntityType.Organization)
+            {
+                await GetCustomerOrganizationEntity(customer);
+                customerInListDto.EntityId = ((Organization)customer.Entity).Id;
+                customerInListDto.AddressFull = ((Organization)customer.Entity).Address.AddressFull;
+                customerInListDto.Name = ((Organization)customer.Entity).Name.Name;
+                customerInListDto.Note = ((Organization)customer.Entity).Notes;
+                //MapPhones(((Organization)customer.Entity).Phones, customerInListDto.Phones);
+                //MapEmails(((Organization)customer.Entity).Emails, customerInListDto.Emails);
+                //if (((Organization)customer.Entity).Contact != null)
+                //    customerInListDto.Contact = MapContactToReadDto(((Organization)customer.Entity).Contact);
+            }
+
+            if (customer.EntityType == EntityType.Person)
+            {
+                await GetCustomerPersonEntity(customer);
+                customerInListDto.EntityId = ((Person)customer.Entity).Id;
+                customerInListDto.AddressFull = ((Person)customer.Entity).Address.AddressFull;
+                customerInListDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
+                //MapPhones(((Person)customer.Entity).Phones, customerInListDto.Phones);
+                //MapEmails(((Person)customer.Entity).Emails, customerInListDto.Emails);
+            }
+
+            return customerInListDto;
         }
 
         public async Task GetCustomerPersonEntity(Customer customer)

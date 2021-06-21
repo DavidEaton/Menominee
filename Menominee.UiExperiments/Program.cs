@@ -19,7 +19,6 @@ namespace Menominee.UiExperiments
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 

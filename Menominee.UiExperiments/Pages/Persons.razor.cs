@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Grids;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Menominee.UiExperiments.Pages
@@ -13,7 +12,7 @@ namespace Menominee.UiExperiments.Pages
     {
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
-        public IEnumerable<PersonReadDto> PersonsList;
+        public IReadOnlyList<PersonReadDto> PersonsList;
         public int SelectedId { get; set; }
 
         protected override async Task OnInitializedAsync()

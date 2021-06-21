@@ -40,15 +40,15 @@ namespace CustomerVehicleManagement.Api.Utilities
 
                 customerInListDto.AddressFull = organization?.Address?.AddressLine;
                 customerInListDto.Name = organization?.Name?.Name;
-                customerInListDto.PrimaryPhone = Helper.GetPrimaryPhone(organization) ?? Helper.GetOrdinalPhone(organization, 0);
-                customerInListDto.PrimaryPhoneType = Helper.GetPrimaryPhoneType(organization) ?? Helper.GetOrdinalPhoneType(organization, 0);
-                customerInListDto.PrimaryEmail = Helper.GetPrimaryEmail(organization) ?? Helper.GetOrdinalEmail(organization, 0);
+                //customerInListDto.PrimaryPhone = Helper.GetPrimaryPhone(organization) ?? Helper.GetOrdinalPhone(organization, 0);
+                //customerInListDto.PrimaryPhoneType = Helper.GetPrimaryPhoneType(organization) ?? Helper.GetOrdinalPhoneType(organization, 0);
+                //customerInListDto.PrimaryEmail = Helper.GetPrimaryEmail(organization) ?? Helper.GetOrdinalEmail(organization, 0);
 
-                customerInListDto.ContactName = organization?.Contact?.Name.LastFirstMiddle;
-                customerInListDto.ContactPrimaryPhone = Helper.GetPrimaryPhone(organization?.Contact)
-                                                     ?? Helper.GetOrdinalPhone(organization?.Contact, 0);
-                customerInListDto.ContactPrimaryPhoneType = Helper.GetPrimaryPhoneType(organization?.Contact)
-                                                     ?? Helper.GetOrdinalPhoneType(organization?.Contact, 0);
+                //customerInListDto.ContactName = organization?.Contact?.Name.LastFirstMiddle;
+                //customerInListDto.ContactPrimaryPhone = Helper.GetPrimaryPhone(organization?.Contact)
+                //                                     ?? Helper.GetOrdinalPhone(organization?.Contact, 0);
+                //customerInListDto.ContactPrimaryPhoneType = Helper.GetPrimaryPhoneType(organization?.Contact)
+                //                                     ?? Helper.GetOrdinalPhoneType(organization?.Contact, 0);
             }
 
             if (customer.EntityType == EntityType.Person)
