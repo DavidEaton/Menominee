@@ -11,11 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{906E971D-D608-433E-8C54-60D5DD65504E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9D1DC6FF-FF06-45BA-8AF8-2A6C87B2145C}"
-	ProjectSection(SolutionItems) = preProject
-		DevelopmentProcess.md = DevelopmentProcess.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api", "CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj", "{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api.IntegrationTests", "CustomerVehicleManagement.Api.IntegrationTests\CustomerVehicleManagement.Api.IntegrationTests.csproj", "{1E6810F2-097A-4214-9663-5650306E5EA2}"
@@ -26,9 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menomin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Idp", "Menominee.Idp\Menominee.Idp.csproj", "{B9C023A9-2785-46E2-926E-7BBDD99EA549}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.UiExperiments", "Menominee.UiExperiments\Menominee.UiExperiments.csproj", "{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,10 +61,6 @@ Global
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0CF1525-5301-4785-A81B-96B0DAFAAD8E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
