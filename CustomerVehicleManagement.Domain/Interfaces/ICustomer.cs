@@ -8,15 +8,15 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Interfaces
 {
+    // VK: Interfaces for domain classes is a bad idea. Here are a couple of relevant sections from my book on this topic:
+    // https://i.imgur.com/IA2jBpy.png
+    // https://i.imgur.com/auGHL30.png
+    
     public interface ICustomer
     {
-        IEntity Entity { get; }
-        int EntityId { get; }
         CustomerType CustomerType { get; }
         ContactPreferences ContactPreferences { get; }
         DateTime Created { get; }
         IList<Vehicle> Vehicles { get; }
-
-        void SetEntity(Entity entity);
     }
 }

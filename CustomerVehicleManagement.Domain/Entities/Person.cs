@@ -1,11 +1,10 @@
-﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Person : Contactable
+    public class Person : Customer
     {
         public Person(PersonName name, Gender gender)
         {
@@ -17,7 +16,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Gender Gender { get; private set; }
         public DateTime? Birthday { get; private set; }
         public DriversLicense DriversLicense { get; private set; }
-        public Address Address { get; private set; }
 
         public void SetName(PersonName name)
         {
@@ -38,11 +36,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void SetDriversLicense(DriversLicense driversLicense)
         {
             DriversLicense = driversLicense;
-        }
-
-        public void SetAddress(Address address)
-        {
-            Address = address;
         }
 
         #region ORM

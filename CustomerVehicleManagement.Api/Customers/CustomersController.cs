@@ -13,6 +13,14 @@ using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
+    // VK: only use auto mappers when mapping from domain classes to DTOs, not the other way around
+    // because DTO -> Domain requires making a decision as to whether the data in the DTO is correct.
+    // This decision should be explicit; it is validation
+    // More on this: https://enterprisecraftsmanship.com/posts/on-automappers/
+    // And even for the Domain -> DTO conversion, you are usually better of just doing the mapping manually
+    // It's more straightforward and at the same time requires the same amount of code
+    // (for auto mapper, this code resides in the configurations; for the manual approach -- in the controller, where it should be)
+
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -67,10 +75,21 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto customerUpdateDto)
         {
+            // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
+            // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
+            // You can skip the parts about FluentValidation and go straight to "Validating Input the DDD Way" module.
+            // Let me know if you need a code with 30-day access to Pluralsight
+
             CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
+
+            // VK: here, the logic should be:
+            // 1. Get the customer entity (not DTO) from the DB
+            // 2. Look at its type
+            // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
+            // 4. Save back to the DB
 
             if (customerFromRepository.EntityType == EntityType.Organization)
             {
@@ -110,6 +129,10 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPost]
         public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
+            // VK: here, the logic should be:
+            // 1. Look at customerCreateDto.EntityType and a customer of the corresponding type (you can introduce a factory method for this)
+            // 2. Save it to the DB
+
             Customer customer = null;
 
             if (customerCreateDto.PersonCreateDto != null)

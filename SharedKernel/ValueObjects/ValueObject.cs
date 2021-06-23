@@ -16,6 +16,15 @@ namespace SharedKernel.ValueObjects
     /// </summary>
     #endregion
 
+    // VK: Regarding the comment above: I didn't see any mutable value objects in the code base, but still wanted to comment.
+    // It's best to not make value objects mutable for the purpose of trasferring them over the wire
+    // The same goes for the [JsonConstructor] attributes. What needs to be transferred between the server and its clients is DTOs
+    // (data transfer objects), not value objects. Here's an article on the differences between the two: https://enterprisecraftsmanship.com/posts/dto-vs-value-object-vs-poco/
+    // The reason for this guideline is
+    // 1. Backward compatibility between clients and the server: you need to maintain it if the client is deployed separately from the server
+    // 2. Separatation of concerns: DTOs represent data contracts between the server and the client; VOs model the domain. You don't want to conflate them.
+    // In your case, looks like #1 is not a problem because the web client is deployed simulteniously with the server, but #2 still stands
+
     public abstract class ValueObject
     {
         protected abstract IEnumerable<object> GetEqualityComponents();
