@@ -21,7 +21,6 @@ namespace CustomerVehicleManagement.Api.Customers
         private readonly ICustomerRepository customerRepository;
         private readonly IPersonRepository personRepository;
         private readonly IOrganizationRepository organizationRepository;
-        private const int MaxCacheAge = 300;
         private readonly IMapper mapper;
 
         public CustomersController(ICustomerRepository customerRepository,
@@ -54,7 +53,6 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customers
         [HttpGet]
-        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IReadOnlyList<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();

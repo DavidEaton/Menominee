@@ -14,6 +14,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         private readonly AppDbContext context;
         private readonly IMapper mapper;
+        private const int organizationNoteTruncateAt = 100;
         public OrganizationRepository(
             AppDbContext context,
             IMapper mapper)
@@ -99,9 +100,8 @@ namespace CustomerVehicleManagement.Api.Organizations
                                              .Include(organization => organization.Phones)
                                              .Include(organization => organization.Emails)
                                              .Include(organization => organization.Contact)
-                                                 .ThenInclude(contact => contact.Phones)
-                                             .Include(organization => organization.Contact)
-                                                 .ThenInclude(contact => contact.Emails)
+                                                .ThenInclude(contact => contact.Phones)
+                                             .Include(contact => contact.Emails)
                                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
         return await organizationFromContext;
@@ -110,10 +110,11 @@ namespace CustomerVehicleManagement.Api.Organizations
     public async Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync()
     {
         IReadOnlyList<Organization> organizations = await context.Organizations
+                                                                 .Include(organization => organization.Phones)
+                                                                 .Include(organization => organization.Emails)
                                                                  .Include(organization => organization.Contact)
                                                                     .ThenInclude(contact => contact.Phones)
-                                                                 .Include(organization => organization.Contact)
-                                                                    .ThenInclude(contact => contact.Emails)
+                                                                    .Include(contact => contact.Emails)
                                                                  .ToListAsync();
 
         List<OrganizationInListDto> dtos = organizations.Select(organization => new OrganizationInListDto
@@ -125,12 +126,14 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             AddressLine = organization?.Address?.AddressLine,
             City = organization?.Address?.City,
-            State = organization?.Address?.City,
+            State = organization?.Address?.State,
             PostalCode = organization?.Address?.PostalCode,
 
-            Notes = organization.Notes,
+            Notes = organization?.Notes?.Length <= organizationNoteTruncateAt ? organization?.Notes : organization?.Notes?.Substring(0, organizationNoteTruncateAt) + "...",
+
             PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
-            PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
+            PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization),
+            PrimaryEmail = ContactableHelpers.GetPrimaryEmail(organization)
         }).ToList();
 
         return dtos;

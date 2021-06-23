@@ -17,7 +17,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private const string Path = "https://localhost/api/customers";
-        private const int MaxCacheAge = 300;
         private const int Minute = 60;
         private readonly HttpClient httpClient;
 
@@ -55,17 +54,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             Assert.True(response.Content.Headers.ContentLength > 0);
         }
 
-        //[Fact]
-        //public async Task Sets_Expected_CacheControl_Header_On_GetCustomers()
-        //{
-        //    var response = await httpClient.GetAsync(string.Empty);
-
-        //    var header = response.Headers.CacheControl;
-
-        //    Assert.True(header.MaxAge.HasValue);
-        //    Assert.Equal(TimeSpan.FromMinutes(MaxCacheAge / Minute), header.MaxAge);
-        //    Assert.True(header.Public);
-        //}
 
         [Fact]
         public async Task Return_Organization_Customer_On_GetCustomer()

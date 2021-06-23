@@ -1,0 +1,49 @@
+﻿@page "/organizations"
+
+@if (OrganizationsList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="d-flex flex-row w-25">
+        <button @onclick="AddOrganization" class="btn btn-primary">
+            <span class="oi oi-plus" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="d-flex flex-row">
+        <div class="d-flex flex-row">
+            <table class="table table-responsive table-striped small">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Primary Phone</th>
+                        <th>Type</th>
+                        <th>Primary Email</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var organization in OrganizationsList)
+                    {
+                        <tr @onclick="@(e => SetSelectedId(organization.Id))">
+                            <td>@organization.Name</td>
+                            <td>@organization.AddressFull</td>
+                            <td>@organization.PrimaryPhone</td>
+                            <td>@organization.PrimaryPhoneType</td>
+                            <td>@organization.PrimaryEmail</td>
+                            <td>@organization.Notes</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-fill">
+            @*<OrganizationDetail @ref="OrganizationDetail" Id="@SelectedId"></OrganizationDetail>*@
+        </div>
+    </div>
+
+    <AddOrganizationDialog @ref="AddOrganizationDialog" CloseEventCallback="@AddOrganizationDialog_OnDialogClose"></AddOrganizationDialog>
+}

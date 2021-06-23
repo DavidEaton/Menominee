@@ -59,8 +59,8 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task UpdateCustomer(CustomerUpdateDto person)
-        {
+        //public async Task UpdateCustomer(CustomerUpdateDto person)
+        //{
             //CustomerUpdateDto personToUpdate = CustomerUtilities.MapUpdatedCustomerToDto(person);
             //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
 
@@ -73,7 +73,7 @@ namespace Menominee.Client.Services
             //{
             //    Console.WriteLine($"Message :{ex.Message}");
             //}
-        }
+        //}
 
         public async Task DeleteCustomer(int id)
         {

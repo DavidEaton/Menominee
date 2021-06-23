@@ -11,6 +11,7 @@
         public string AddressFull { get => $"{AddressLine} {City}, {State}  {PostalCode}"; }
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
+        public string PrimaryEmail { get; set; }
         public string Notes { get; set; }
         public string ContactName { get; set; }
         public string ContactPrimaryPhone { get; set; }

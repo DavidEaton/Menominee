@@ -71,8 +71,21 @@ namespace CustomerVehicleManagement.Api.Persons
 
             foreach (var personReadDto in list)
             {
-                personReadDto.Emails = ContactableHelpers.MapEmailReadDtoToReadDto(personReadDto.Emails);
+
+                var emailReadDtos = new List<EmailReadDto>();
+
+                foreach (var email in personReadDto.Emails)
+                {
+                    emailReadDtos.Add(new EmailReadDto
+                    {
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
+                    });
+                }
+
+                personReadDto.Emails = emailReadDtos;
             }
+
 
             return list;
         }

@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using SharedKernel.ValueObjects;
+using SharedKernel.Static;
+using System.Collections.Generic;
 
 namespace Menominee.Client.Components
 {
@@ -9,6 +11,8 @@ namespace Menominee.Client.Components
     {
         AddressProperties Address { get; set; } = new AddressProperties();
         public Address EntityAddress { get; set; }
+
+        private static readonly List<State> states = States.ToList();
 
         [Parameter]
         public EventCallback<bool> CloseEventCallback { get; set; }

@@ -59,22 +59,6 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task UpdatePerson(PersonUpdateDto person)
-        {
-            //PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
-            //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
-
-            //try
-            //{
-            //    await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
-            //    //await httpClient.PutAsJsonAsync
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Message :{ex.Message}");
-            //}
-        }
-
         public async Task DeletePerson(int id)
         {
             try

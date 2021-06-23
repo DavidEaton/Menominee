@@ -16,7 +16,6 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationsController : ControllerBase
     {
         private readonly IOrganizationRepository repository;
-        private const int MaxCacheAge = 300;
         private readonly IMapper mapper;
 
         public OrganizationsController(IOrganizationRepository repository, IMapper mapper)
@@ -31,7 +30,6 @@ namespace CustomerVehicleManagement.Api.Organizations
         // api/organizations/list
         [Route("list")]
         [HttpGet]
-        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IReadOnlyList<OrganizationInListDto>>> GetOrganizationsListAsync()
         {
             var results = await repository.GetOrganizationsListAsync();

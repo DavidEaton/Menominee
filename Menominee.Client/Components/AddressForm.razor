@@ -1,10 +1,11 @@
 ﻿<EditForm Model="@Address">
+
     <DataAnnotationsValidator />
     <ValidationSummary></ValidationSummary>
 
     <div class="form-group">
         <label for="addressLine">Address: </label>
-        <InputText id="addressLine" 
+        <InputText id="addressLine"
                    class="form-control"
                    @onblur="Validate"
                    @bind-Value="@Address.AddressLine"
@@ -26,12 +27,16 @@
 
     <div class="form-group">
         <label for="state">State: </label>
-        <InputText id="state"
-                   class="form-control"
-                   @onblur="Validate"
-                   @bind-Value="@Address.State"
-                   placeholder="Enter state">
-        </InputText>
+        <InputSelect id="state"
+                     class="form-control"
+                     @onblur="Validate"
+                     @bind-Value="@Address.State"
+                     placeholder="Enter state">
+            @foreach (var state in states)
+            {
+                <option value="@state.Abbreviation">@state.Name</option>
+            }
+        </InputSelect>
         <ValidationMessage For="@(() => Address.State)" />
     </div>
 
@@ -45,4 +50,5 @@
         </InputText>
         <ValidationMessage For="@(() => Address.PostalCode)" />
     </div>
+
 </EditForm>

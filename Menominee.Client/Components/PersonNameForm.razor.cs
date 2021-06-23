@@ -44,6 +44,4 @@ namespace Menominee.Client.Components
 
         }
     }
-
-
 }

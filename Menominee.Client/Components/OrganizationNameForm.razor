@@ -1,0 +1,16 @@
+﻿<EditForm Model="@Name">
+    <DataAnnotationsValidator />
+    <ValidationSummary></ValidationSummary>
+
+    <div class="form-group">
+        <label for="name">*Name: </label>
+        <InputText id="name"
+                   class="form-control"
+                   @bind-Value="@Name.Name"
+                   @onblur="Validate"
+                   placeholder="Enter organization name">
+        </InputText>
+        <ValidationMessage For="@(() => Name.Name)" />
+    </div>
+
+</EditForm>
