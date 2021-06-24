@@ -130,7 +130,7 @@ namespace CustomerVehicleManagement.Api.Customers
         public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
             // VK: here, the logic should be:
-            // 1. Look at customerCreateDto.EntityType and a customer of the corresponding type (you can introduce a factory method for this)
+            // 1. Look at customerCreateDto.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
             // 2. Save it to the DB
 
             Customer customer = null;
