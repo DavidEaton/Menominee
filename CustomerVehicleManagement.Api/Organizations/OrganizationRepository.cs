@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         private readonly AppDbContext context;
         private readonly IMapper mapper;
-        private const int organizationNoteTruncateAt = 100;
+        private const int organizationNoteTruncateAt = 50;
         public OrganizationRepository(
             AppDbContext context,
             IMapper mapper)

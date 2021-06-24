@@ -17,8 +17,8 @@ namespace Menominee.Client.Components
 
         [Parameter]
         public int Id { get; set; }
-        public PersonUpdateDto PersonUpdateDto { get; set; } = new PersonUpdateDto();
-        public Person Person { get; set; } = new Person();
+        public PersonUpdateDto PersonUpdateDto { get; set; }
+        public PersonReadDto Person { get; set; } = new PersonReadDto();
         public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
@@ -30,8 +30,10 @@ namespace Menominee.Client.Components
         {
             //Saved = false;
 
-            //if (Id > 0)
-            //    Person = await PersonDataService.GetPersonDetails(Id);
+            if (Id > 0)
+                Person = await PersonDataService.GetPersonDetails(Id);
+
+            PersonUpdateDto = new();
         }
 
         protected async Task HandleValidSubmit()
@@ -77,19 +79,5 @@ namespace Menominee.Client.Components
             Id = -1;
             StateHasChanged();
         }
-    }
-
-    public class Person
-    {
-        public string Name { get; set; }
-        public Gender Gender { get; set; }
-        public DateTime? Birthday { get; set; }
-        //public DriversLicense DriversLicense { get; set; }
-        //public string DriversLicenseNumber { get; }
-        //public DateTimeRange ValidRange { get; }
-        //public string DriversLicenseState { get; }
-
-        //public Address Address { get; set; }
-
     }
 }

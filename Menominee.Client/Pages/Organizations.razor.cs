@@ -21,7 +21,7 @@ namespace Menominee.Client.Pages
         public int SelectedId { get; set; }
 
         protected AddOrganizationDialog AddOrganizationDialog { get; set; }
-        //protected OrganizationDetail OrganizationDetail { get; set; }
+        protected OrganizationDetail OrganizationDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Organizations.OnInitializedAsync()");
@@ -30,7 +30,7 @@ namespace Menominee.Client.Pages
 
         protected void AddOrganization()
         {
-            //OrganizationDetail?.Close();
+            OrganizationDetail?.Close();
             AddOrganizationDialog.Show();
         }
 

@@ -6,7 +6,7 @@
     <EditForm Model="@Person" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
         <div class="form-group row">
             <label for="lastName" class="col-sm-3">Last Name: </label>
-            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Person.Name.LastName" placeholder="Enter last name"></InputText>
+            <InputText id="lastName" class="form-control col-sm-8" @bind-Value="@Person.Name" placeholder="Enter last name"></InputText>
         </div>
 
         <div class="form-group row">
