@@ -22,14 +22,13 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void SetContact(Person contact)
         {
             Guard.ForNull(contact, "contact");
-
             Contact = contact;
         }
 
         public void SetNotes(string notes)
         {
-            if (notes != null)
-                Notes = notes;
+            Guard.ForNull(notes, "notes");
+            Notes = notes;
         }
 
         #region ORM

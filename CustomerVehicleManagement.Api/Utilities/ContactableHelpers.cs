@@ -1,7 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Interfaces;
 using CustomerVehicleManagement.Shared.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +7,7 @@ namespace CustomerVehicleManagement.Api.Utilities
 {
     public static class ContactableHelpers
     {
-        public static string GetPrimaryPhone(IContactLists entity)
+        public static string GetPrimaryPhone(Customer entity)
         {
             if (entity == null)
                 return string.Empty;
@@ -17,22 +15,22 @@ namespace CustomerVehicleManagement.Api.Utilities
             return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : string.Empty;
         }
 
-        public static string GetPrimaryPhoneType(IContactLists entity)
+        public static string GetPrimaryPhoneType(Customer entity)
         {
             return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : string.Empty;
         }
 
-        public static string GetOrdinalPhoneType(IContactLists entity, int position)
+        public static string GetOrdinalPhoneType(Customer entity, int position)
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].PhoneType.ToString() : string.Empty;
         }
 
-        internal static string GetOrdinalEmail(IContactLists entity, int position)
+        internal static string GetOrdinalEmail(Customer entity, int position)
         {
             return entity.Emails.Count > 0 ? entity.Emails[position].ToString() : string.Empty;
         }
 
-        internal static string GetPrimaryEmail(IContactLists entity)
+        internal static string GetPrimaryEmail(Customer entity)
         {
             if (entity == null)
                 return string.Empty;
@@ -40,7 +38,7 @@ namespace CustomerVehicleManagement.Api.Utilities
             return entity.Emails.Count > 0 ? entity.Emails.FirstOrDefault(email => email.IsPrimary == true).Address : string.Empty;
         }
 
-        public static string GetOrdinalPhone(IContactLists entity, int position)
+        public static string GetOrdinalPhone(Customer entity, int position)
         {
             return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : string.Empty;
         }
