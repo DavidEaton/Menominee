@@ -50,12 +50,13 @@ namespace CustomerVehicleManagement.Domain.Entities
             Phones.Remove(phone);
         }
 
+        // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
         public void SetPhones(IList<Phone> phones)
         {
             Guard.ForNull(phones, "phones");
 
             if (DuplicatePhoneExists(phones))
-                throw new Exception("phones == null");
+                throw new Exception("duplicate phone exists");
 
             if (PrimaryPhoneCountExceedsOne(phones))
                 throw new Exception("primary phone already exists.");
@@ -113,22 +114,27 @@ namespace CustomerVehicleManagement.Domain.Entities
             Address = address;
         }
 
+        // VK: no need to make these methods public, they are just for the Customer class
+        // you can also keep them non-static, so that you don't need to pass in the existing collection of phones
         public static bool DuplicatePhoneNumberExists(Phone phone, IList<Phone> phones)
         {
             Guard.ForNull(phones, "phones");
 
-            bool result = false;
+            // VK: just use LINQ
+            return phones.Any(x => x.Number == phone.Number);
 
-            foreach (var existingPhone in phones)
-            {
-                if (existingPhone.Number == phone.Number)
-                {
-                    result = true;
-                    break;
-                }
-            }
+            //bool result = false;
 
-            return result;
+            //foreach (var existingPhone in phones)
+            //{
+            //    if (existingPhone.Number == phone.Number)
+            //    {
+            //        result = true;
+            //        break;
+            //    }
+            //}
+
+            //return result;
         }
 
         public static bool PrimaryPhoneExists(IList<Phone> phones)
@@ -169,6 +175,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             return primaryPhoneCount > 1;
         }
 
+        
         public static bool PrimaryEmailExists(IList<Email> emails)
         {
             Guard.ForNull(emails, "emails");
