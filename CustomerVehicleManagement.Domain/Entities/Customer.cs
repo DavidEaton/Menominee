@@ -30,22 +30,20 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
-            if (DuplicatePhoneNumberExists(phone, Phones))
-                throw new Exception("duplicate phone");
+            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check
+            Guard.ForNull(phone, "phone");
 
-            if (PrimaryPhoneExists(Phones) && phone.IsPrimary)
-                throw new Exception("primary phone already exists.");
+            if (CustomerHasPhone(phone))
+                throw new Exception("customer already has this phone");
 
-            // VK: no need for this since Phones is initialized on class instantiation
-            //if (Phones == null)
-            //    Phones = new List<Phone>();
+            if (CustomerHasPrimaryPhone())
+                throw new Exception("customer already has primary phone.");
 
             Phones.Add(phone);
         }
 
         public void RemovePhone(Phone phone)
         {
-            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check
             Guard.ForNull(phone, "phone");
             Phones.Remove(phone);
         }
@@ -55,24 +53,19 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             Guard.ForNull(phones, "phones");
 
-            if (DuplicatePhoneExists(phones))
-                throw new Exception("duplicate phone exists");
-
-            if (PrimaryPhoneCountExceedsOne(phones))
-                throw new Exception("primary phone already exists.");
-
-            Phones = phones;
+            foreach (var phone in phones)
+                AddPhone(phone);
         }
 
         public void AddEmail(Email email)
         {
             Guard.ForNull(email, "email");
 
-            if (DuplicateEmailExists(email, Emails))
-                throw new Exception("duplicate email.");
+            if (CustomerHasEmail(email))
+                throw new Exception("customer already has this email.");
 
-            if (PrimaryEmailExists(Emails) && email.IsPrimary)
-                throw new Exception("primary email exists.");
+            if (CustomerHasPrimaryEmail())
+                throw new Exception("customer already has primary email.");
 
             Emails.Add(email);
         }
@@ -87,18 +80,17 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             Guard.ForNull(emails, "emails");
 
-            if (DuplicateEmailExists(emails))
-                throw new Exception("duplicate email.");
-
-            if (PrimaryEmailCountExceedsOne(emails))
-                throw new Exception("primary email exists.");
-
-            Emails = emails;
+            foreach (var email in emails)
+                AddEmail(email);
         }
 
         public void AddVehicle(Vehicle vehicle)
         {
             Guard.ForNull(vehicle, "vehicle");
+
+            if (CustomerHasVehicle(vehicle))
+                throw new Exception("customer already has this vehicle.");
+
             Vehicles.Add(vehicle);
         }
 
@@ -116,120 +108,28 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         // VK: no need to make these methods public, they are just for the Customer class
         // you can also keep them non-static, so that you don't need to pass in the existing collection of phones
-        public static bool DuplicatePhoneNumberExists(Phone phone, IList<Phone> phones)
+        private bool CustomerHasPhone(Phone phone)
         {
-            Guard.ForNull(phones, "phones");
-
-            // VK: just use LINQ
-            return phones.Any(x => x.Number == phone.Number);
-
-            //bool result = false;
-
-            //foreach (var existingPhone in phones)
-            //{
-            //    if (existingPhone.Number == phone.Number)
-            //    {
-            //        result = true;
-            //        break;
-            //    }
-            //}
-
-            //return result;
+            return Phones.Any(x => x.Number == phone.Number);
         }
 
-        public static bool PrimaryPhoneExists(IList<Phone> phones)
+        private bool CustomerHasPrimaryPhone()
         {
-            Guard.ForNull(phones, "phones");
-
-            bool result = false;
-
-            foreach (var existingPhone in phones)
-            {
-                if (existingPhone.IsPrimary)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
+            return Phones.Any(x => x.IsPrimary);
         }
 
-        public static bool DuplicatePhoneExists(IList<Phone> phones)
+        private bool CustomerHasPrimaryEmail()
         {
-            Guard.ForNull(phones, "phones");
-
-            return phones.Count != phones.Distinct().Count();
+            return Emails.Any(x => x.IsPrimary);
         }
 
-        public static bool PrimaryPhoneCountExceedsOne(IList<Phone> phones)
+        private bool CustomerHasEmail(Email email)
         {
-            Guard.ForNull(phones, "phones");
-
-            int primaryPhoneCount = 0;
-
-            foreach (var existingPhone in phones)
-                if (existingPhone.IsPrimary)
-                    primaryPhoneCount += 1;
-
-            return primaryPhoneCount > 1;
+            return Emails.Any(x => x.Address == email.Address);
         }
-
-        
-        public static bool PrimaryEmailExists(IList<Email> emails)
+        private bool CustomerHasVehicle(Vehicle vehicle)
         {
-            Guard.ForNull(emails, "emails");
-
-            bool result = false;
-
-            foreach (var existingEmail in emails)
-            {
-                if (existingEmail.IsPrimary)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        public static bool PrimaryEmailCountExceedsOne(IList<Email> emails)
-        {
-            Guard.ForNull(emails, "emails");
-
-            int primaryEmailCount = 0;
-
-            foreach (var existingEmail in emails)
-                if (existingEmail.IsPrimary)
-                    primaryEmailCount += 1;
-
-            return primaryEmailCount > 1;
-        }
-
-        public static bool DuplicateEmailExists(IList<Email> emails)
-        {
-            Guard.ForNull(emails, "emails");
-
-            return emails.Count != emails.Distinct().Count();
-        }
-
-        public static bool DuplicateEmailExists(Email email, IList<Email> emails)
-        {
-            Guard.ForNull(emails, "emails");
-
-            bool result = false;
-
-            foreach (var existingEmail in emails)
-            {
-                if (existingEmail.Address == email.Address)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
+            return Vehicles.Any(x => x.Id == vehicle.Id);
         }
     }
 }
