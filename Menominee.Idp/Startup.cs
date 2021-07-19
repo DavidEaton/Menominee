@@ -37,8 +37,9 @@ namespace Menominee.Idp
                 // Configure IdentityServer to use AspNetCore Identity membership
                 .AddAspNetIdentity<ApplicationUser>();
 
-            if (Environment.IsDevelopment()) // not recommended for production - you need to store your key material somewhere secure
+            if (Environment.IsDevelopment())
             {
+                // not recommended for production - you need to store your key material somewhere secure
                 builder.AddDeveloperSigningCredential();
                 services.AddTransient<IEmailSender, DummyEmailSender>();
             }

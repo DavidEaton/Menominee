@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -21,10 +22,14 @@ namespace CustomerVehicleManagement.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        ILogger<Startup> logger;
+        public Startup(IConfiguration configuration,
+                       IWebHostEnvironment environment,
+                       ILogger<Startup> logger)
         {
             Configuration = configuration;
             HostEnvironment = environment;
+            this.logger = logger;
         }
 
         private IConfiguration Configuration { get; }

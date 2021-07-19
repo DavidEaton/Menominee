@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages
 {
-    public partial class Customers
+    public partial class Customers : ComponentBase
     {
         [Inject]
         public ICustomerDataService CustomerDataService { get; set; }
