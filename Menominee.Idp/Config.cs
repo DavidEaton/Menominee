@@ -16,7 +16,6 @@ namespace Menominee.Idp
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
-                new IdentityResource("country", new [] { "country"}),
                 new IdentityResource("tenantId", new [] { "tenantId"})
             };
 

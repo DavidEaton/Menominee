@@ -6,6 +6,7 @@ using SharedKernel.Static;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages
@@ -65,30 +66,40 @@ namespace Menominee.Client.Pages
 
         protected async Task HandleValidSubmit()
         {
-            //Saved = false;
+            Saved = false;
 
-            //if (Organization.Id == 0) // new
+            if (Organization.Id == 0) // new
+            {
+                var phones = Organization.Phones.Select(x => new PhoneCreateDto(x.Number, x.PhoneType, x.IsPrimary));
+
+                var org = new OrganizationCreateDto(Organization.Name,
+                                                    Organization.Notes,
+                                                    Organization.Address,
+                                                    null,
+                                                    Organization.Phones,
+                                                    Organization.Emails);
+                org.Address = Organization.Address;
+
+                var addedOrganization = await OrganizationDataService.AddOrganization(Organization);
+                if (addedOrganization != null)
+                {
+                    StatusClass = "alert-success";
+                    Message = "New person added successfully.";
+                    Saved = true;
+                }
+                else
+                {
+                    StatusClass = "alert-danger";
+                    Message = "Something went wrong adding the new person. Error logged.";
+                    Saved = false;
+                }
+            }
+            //else // existing
             //{
-            //    var addedOrganization = await OrganizationDataService.AddOrganization(Organization);
-            //    if (addedOrganization != null)
-            //    {
-            //        StatusClass = "alert-success";
-            //        Message = "New person added successfully.";
-            //        Saved = true;
-            //    }
-            //    else
-            //    {
-            //        StatusClass = "alert-danger";
-            //        Message = "Something went wrong adding the new person. Error logged.";
-            //        Saved = false;
-            //    }
-            //}
-            ////else // existing
-            ////{
-            //await OrganizationDataService.UpdateOrganization(Organization);
-            //StatusClass = "alert-success";
-            //Message = "Organization updated successfully.";
-            //Saved = true;
+            //    await OrganizationDataService.UpdateOrganization(Organization);
+            //    StatusClass = "alert-success";
+            //    Message = "Organization updated successfully.";
+            //    Saved = true;
             //}
         }
 
