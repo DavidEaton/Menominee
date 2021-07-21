@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -12,8 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public OrganizationName Name { get; private set; }
         public virtual Person Contact { get; private set; }
-        public Address Address { get; private set; }
-        public string Notes { get; private set; }
+        public string Note { get; private set; }
 
         public void SetName(OrganizationName name)
         {
@@ -22,20 +22,14 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetContact(Person contact)
         {
-            if (contact != null)
-                Contact = contact;
+            Guard.ForNull(contact, "contact");
+            Contact = contact;
         }
 
-        public void SetAddress(Address address)
+        public void SetNote(string note)
         {
-            if (address != null)
-                Address = address;
-        }
-
-        public void SetNotes(string notes)
-        {
-            if (notes != null)
-                Notes = notes;
+            Guard.ForNull(note, "note");
+            Note = note;
         }
 
         #region ORM

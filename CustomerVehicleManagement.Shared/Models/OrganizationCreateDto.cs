@@ -15,28 +15,28 @@ namespace CustomerVehicleManagement.Shared.Models
         {
         }
 
-        public OrganizationCreateDto(string name, string notes)
-            : this(name, notes, null)
+        public OrganizationCreateDto(string name, string note)
+            : this(name, note, null)
         {
         }
 
-        public OrganizationCreateDto(string name, string notes, Address address)
-            : this(name, notes, address, null)
+        public OrganizationCreateDto(string name, string note, Address address)
+            : this(name, note, address, null)
         {
         }
 
-        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact)
-            : this(name, notes, address, contact, null)
+        public OrganizationCreateDto(string name, string note, Address address, PersonCreateDto contact)
+            : this(name, note, address, contact, null)
         {
         }
 
-        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones)
-            : this(name, notes, address, contact, phones, null)
+        public OrganizationCreateDto(string name, string note, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones)
+            : this(name, note, address, contact, phones, null)
         {
         }
 
         [JsonConstructor]
-        public OrganizationCreateDto(string name, string notes, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones, IList<EmailCreateDto> emails)
+        public OrganizationCreateDto(string name, string note, Address address, PersonCreateDto contact, IList<PhoneCreateDto> phones, IList<EmailCreateDto> emails)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Shared.Models
             if (contact != null) Contact = contact;
             if (phones != null) Phones = phones;
             if (emails != null) Emails = emails;
-            if (!string.IsNullOrWhiteSpace(notes)) Notes = notes;
+            if (!string.IsNullOrWhiteSpace(note)) Note = note;
         }
 
         public IList<PhoneCreateDto> Phones { get; private set; } = new List<PhoneCreateDto>();
@@ -65,6 +65,6 @@ namespace CustomerVehicleManagement.Shared.Models
 
         public Address Address { get; private set; }
 
-        public string Notes { get; private set; }
+        public string Note { get; private set; }
     }
 }

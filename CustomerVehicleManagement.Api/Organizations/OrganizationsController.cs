@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 organization.SetName(organizationNameOrError.Value);
 
             organization.SetAddress(organizationUpdateDto.Address);
-            organization.SetNotes(organizationUpdateDto.Notes);
+            organization.SetNote(organizationUpdateDto.Note);
 
             organization.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(organizationUpdateDto.Phones));
             organization.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(organizationUpdateDto.Emails));
@@ -172,7 +172,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 return BadRequest(organizationNameOrError.Error);
 
             var organization = new Organization(organizationNameOrError.Value);
-            organization.SetNotes(organizationCreateDto.Notes);
+            organization.SetNote(organizationCreateDto.Note);
 
             if (organizationCreateDto.Address != null)
                 organization.SetAddress(organizationCreateDto.Address);

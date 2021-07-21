@@ -16,7 +16,5 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync();
         Task<CustomerReadDto> GetCustomerAsync(int id);
         Task<bool> SaveChangesAsync();
-        Task GetCustomerOrganizationEntity(Customer customer);
-        Task GetCustomerPersonEntity(Customer customer);
     }
 }

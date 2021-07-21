@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             organization.SetPhones(phones);
 
             organization.Phones.Count.Should().Be(2);
-            organization.Phones[0].Number.Should().Contain("555.444.3333");
+            organization.Phones.Contains(phone);
         }
 
         [Fact]
@@ -199,8 +199,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.AddPhone(phone);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Contactable.PrimaryPhoneExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -215,8 +214,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.AddPhone(phone);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Contactable.DuplicatePhoneExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -282,8 +280,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.SetEmails(emails);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Organization.PrimaryEmailExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -298,8 +295,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.SetEmails(emails);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -310,10 +306,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.SetEmails(emails);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage($"{Organization.EmptyEmailCollectionMessage} (Parameter 'emails')")
-                           .And
-                           .ParamName.Should().Be("emails");
+            action.Should().Throw<ArgumentException>();
         }
 
         [Fact]
@@ -328,8 +321,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.AddEmail(email);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Organization.PrimaryEmailExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -344,8 +336,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => organization.AddEmail(email);
 
-            action.Should().Throw<InvalidOperationException>()
-                           .WithMessage(Contactable.DuplicateEmailExistsMessage);
+            action.Should().Throw<Exception>();
         }
 
         [Fact]
@@ -401,9 +392,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var notes = "Behold, notes!";
 
-            organization.SetNotes(notes);
+            organization.SetNote(notes);
 
-            organization.Notes.Should().Be(notes);
+            organization.Note.Should().Be(notes);
         }
     }
 }

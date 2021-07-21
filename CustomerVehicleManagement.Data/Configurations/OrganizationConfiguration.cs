@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Data.Configurations
             base.Configure(builder); // <--
             builder.ToTable("Organization", "dbo");
             builder.Ignore(organization => organization.TrackingState);
-            builder.Property(organization => organization.Notes)
+            builder.Property(organization => organization.Note)
                    .HasMaxLength(10_000);
 
             // Value Object: OrganizationName

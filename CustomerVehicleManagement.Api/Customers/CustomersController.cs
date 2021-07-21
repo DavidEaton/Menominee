@@ -14,6 +14,14 @@ using CustomerVehicleManagement.Shared.Models;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
+    // VK: only use auto mappers when mapping from domain classes to DTOs, not the other way around
+    // because DTO -> Domain requires making a decision as to whether the data in the DTO is correct.
+    // This decision should be explicit; it is validation
+    // More on this: https://enterprisecraftsmanship.com/posts/on-automappers/
+    // And even for the Domain -> DTO conversion, you are usually better of just doing the mapping manually
+    // It's more straightforward and at the same time requires the same amount of code
+    // (for auto mapper, this code resides in the configurations; for the manual approach -- in the controller, where it should be)
+
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -53,7 +61,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CustomerReadDto>>> GetCustomersAsync()
+        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
 
@@ -79,14 +87,25 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto customerUpdateDto)
         {
+            // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
+            // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
+            // You can skip the parts about FluentValidation and go straight to "Validating Input the DDD Way" module.
+            // Let me know if you need a code with 30-day access to Pluralsight
+
             CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
+            // VK: here, the logic should be:
+            // 1. Get the customer entity (not DTO) from the DB
+            // 2. Look at its type
+            // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
+            // 4. Save back to the DB
+
             if (customerFromRepository.EntityType == EntityType.Organization)
             {
-                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.EntityId);
+                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.Organization.Id);
 
                 var organizationNameOrError = OrganizationName.Create(customerUpdateDto.OrganizationUpdateDto.Name);
                 if (organizationNameOrError.IsFailure)
@@ -94,7 +113,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
-                organizationFromRepository.SetNotes(customerUpdateDto.OrganizationUpdateDto.Notes);
+                organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
                 organizationFromRepository.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(customerUpdateDto.OrganizationUpdateDto.Phones));
                 organizationFromRepository.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(customerUpdateDto.OrganizationUpdateDto.Emails));
@@ -105,7 +124,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerFromRepository.EntityType == EntityType.Person)
             {
-                Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.EntityId);
+                Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.PersonUpdateDto, personFromRepository);
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
@@ -122,6 +141,10 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPost]
         public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
         {
+            // VK: here, the logic should be:
+            // 1. Look at customerCreateDto.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
+            // 2. Save it to the DB
+
             Customer customer = null;
 
             if (customerCreateDto.PersonCreateDto != null)
@@ -153,7 +176,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 var organization = new Organization(organizationNameOrError.Value);
 
-                organization.SetNotes(customerCreateDto.OrganizationCreateDto.Notes);
+                organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
                 organization.SetAddress(customerCreateDto.OrganizationCreateDto.Address);
                 organization.SetContact(mapper.Map<Person>(customerCreateDto.OrganizationCreateDto.Contact));
 

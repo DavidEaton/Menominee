@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Customers;
+using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;
@@ -17,7 +18,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private const string Path = "https://localhost/api/customers";
-        private const int Minute = 60;
         private readonly HttpClient httpClient;
 
         public CustomersControllerShould(WebApplicationFactory<Startup> factory)
@@ -49,7 +49,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var response = await httpClient.GetAsync(string.Empty);
 
-            // Confirm that endpoint returns content (!= null && length > 0)
             Assert.NotNull(response.Content);
             Assert.True(response.Content.Headers.ContentLength > 0);
         }
@@ -60,7 +59,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             HttpContent content = (await httpClient.GetAsync(Path + "/1")).Content;
             string jsonContent = content.ReadAsStringAsync().Result;
-            Customer customer = JsonSerializer.Deserialize<Customer>(jsonContent);
+            CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
 
             Assert.NotNull(customer);
         }
@@ -70,7 +69,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             HttpContent content = (await httpClient.GetAsync(Path + "/2")).Content;
             string jsonContent = content.ReadAsStringAsync().Result;
-            Customer customer = JsonSerializer.Deserialize<Customer>(jsonContent);
+            CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
 
             Assert.NotNull(customer);
         }

@@ -1,94 +1,77 @@
-﻿using CustomerVehicleManagement.Domain.Interfaces;
-using SharedKernel;
+﻿using SharedKernel;
 using SharedKernel.Enums;
-using SharedKernel.Interfaces;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using SharedKernel.Utilities;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Customer : Entity, ICustomer
+    public class Customer : Entity
     {
-        public Customer(IEntity entity)
+        public Person Person { get; private set; }
+        public Organization Organization { get; private set; }
+        public EntityType EntityType => GetEntityType();
+        public CustomerType CustomerType { get; private set; }
+        public ContactPreferences ContactPreferences { get; private set; }
+        public DateTime Created { get; private set; }
+        public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
+        public Customer(Person person)
         {
-            if (entity is Organization organization)
-            {
-                Entity = organization;
-                EntityType = EntityType.Organization;
-            }
+            Guard.ForNull(person, "person == null");
 
-            if (entity is Person person)
-            {
-                Entity = person;
-                EntityType = EntityType.Person;
-            }
-
-            if (entity != null)
-                EntityId = entity.Id;
-
+            Person = person;
+            CustomerType = CustomerType.Retail;
             Created = DateTime.UtcNow;
         }
 
-        // Person or Organization
-        public IEntity Entity { get; private set; }
-
-        public EntityType EntityType { get; private set; }
-
-        public int EntityId { get; private set; }
-
-        public CustomerType CustomerType { get; private set; }
-
-        public ContactPreferences ContactPreferences { get; private set; }
-
-        public DateTime Created { get; private set; }
-
-        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
-
-        public virtual IList<Email> Emails { get; private set; } = new List<Email>();
-
-        public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
-
-        public void AddPhone(Phone phone)
+        public Customer(Organization organization)
         {
-            Phones.Add(phone);
+            Guard.ForNull(organization, "organization == null");
+
+            Organization = organization;
+            CustomerType = CustomerType.Retail;
+            Created = DateTime.UtcNow;
         }
 
-        public void RemovePhone(Phone phone)
+        private EntityType GetEntityType()
         {
-            Phones.Remove(phone);
-        }
+            if (Person is not null)
+                return EntityType.Person;
 
-        public void AddEmail(Email email)
-        {
-            Emails.Add(email);
-        }
+            if (Organization is not null)
+                return EntityType.Organization;
 
-        public void RemoveEmail(Email email)
-        {
-            Emails.Remove(email);
+            throw new InvalidOperationException("Unknown entity type");
         }
 
         public void AddVehicle(Vehicle vehicle)
         {
+            Guard.ForNull(vehicle, "vehicle");
+
+            if (CustomerHasVehicle(vehicle))
+                throw new Exception("customer already has this vehicle.");
+
             Vehicles.Add(vehicle);
         }
 
         public void RemoveVehicle(Vehicle vehicle)
         {
+            Guard.ForNull(vehicle, "vehicle");
             Vehicles.Remove(vehicle);
         }
 
-        public void SetEntity(Entity entity)
+        private bool CustomerHasVehicle(Vehicle vehicle)
         {
-            Entity = entity;
+            return Vehicles.Any(x => x == vehicle);
         }
-
         #region ORM
 
         // EF requires an empty constructor
         protected Customer() { }
 
         #endregion
+
     }
 }

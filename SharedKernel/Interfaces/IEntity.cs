@@ -2,6 +2,8 @@
 
 namespace SharedKernel.Interfaces
 {
+    // VK: No need for an entity interface either
+    
     public interface IEntity
     {
         int Id { get; }

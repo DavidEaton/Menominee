@@ -102,7 +102,10 @@ namespace CustomerVehicleManagement.Api.Utilities
         {
             person.SetName(personUpdateDto.Name);
             person.SetGender(personUpdateDto.Gender);
-            person.SetAddress(personUpdateDto.Address);
+
+            if (personUpdateDto.Address != null)
+                person.SetAddress(personUpdateDto.Address);
+
             person.SetBirthday(personUpdateDto.Birthday);
             person.SetDriversLicense(personUpdateDto.DriversLicense);
             person.SetPhones(PhonesUpdateDtoToPhones(personUpdateDto.Phones));

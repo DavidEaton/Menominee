@@ -1,100 +1,108 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
-using CustomerVehicleManagement.Domain.Utilities;
 using SharedKernel;
+using SharedKernel.Utilities;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
     public abstract class Contactable : Entity, IContactLists
     {
-        public static readonly string DuplicatePhoneExistsMessage = "Cannot add duplicate phone.";
-        public static readonly string PrimaryPhoneExistsMessage = "Cannot add more than one Primary phone.";
-        public static readonly string EmptyPhoneCollectionMessage = "Cannot add an empty phone list";
-        public static readonly string DuplicateEmailExistsMessage = "Cannot add duplicate email.";
-        public static readonly string PrimaryEmailExistsMessage = "Cannot add more than one Primary email.";
-        public static readonly string EmptyEmailCollectionMessage = "Cannot add an empty email list";
-
         public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
         public virtual IList<Email> Emails { get; private set; } = new List<Email>();
+        public Address Address { get; private set; }
 
         public void AddPhone(Phone phone)
         {
-            if (PhoneHelpers.DuplicatePhoneNumberExists(phone, Phones))
-                throw new InvalidOperationException(DuplicatePhoneExistsMessage);
+            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check
+            Guard.ForNull(phone, "phone");
 
-            if (PhoneHelpers.PrimaryPhoneExists(Phones) && phone.IsPrimary)
-                throw new InvalidOperationException(PrimaryPhoneExistsMessage);
+            if (ContactableHasPhone(phone))
+                throw new Exception("Contactable already has this phone");
 
-            if (Phones == null)
-                Phones = new List<Phone>();
+            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
+                throw new Exception("Contactable already has primary phone.");
 
-            if (Phones != null)
-                Phones.Add(phone);
+            Phones.Add(phone);
         }
 
         public void RemovePhone(Phone phone)
         {
-            if (Phones != null && phone != null)
-                Phones.Remove(phone);
+            Guard.ForNull(phone, "phone");
+            Phones.Remove(phone);
         }
 
+        // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
         public void SetPhones(IList<Phone> phones)
         {
-            if (phones == null)
-                throw new ArgumentException(EmptyPhoneCollectionMessage, nameof(phones));
+            Guard.ForNull(phones, "phones");
 
-            if (PhoneHelpers.DuplicatePhoneExists(phones))
-                throw new InvalidOperationException(DuplicatePhoneExistsMessage);
-
-            if (PhoneHelpers.PrimaryPhoneCountExceedsOne(phones))
-                throw new InvalidOperationException(PrimaryPhoneExistsMessage);
-
-            if (Phones == null)
-                Phones = new List<Phone>();
-
-            if (Phones != null)
-                Phones = phones;
+            var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
+            foreach (var phone in sortedPhones)
+                AddPhone(phone);
         }
 
         public void AddEmail(Email email)
         {
-            if (EmailHelpers.DuplicateEmailExists(email, Emails))
-                throw new InvalidOperationException(DuplicateEmailExistsMessage);
+            Guard.ForNull(email, "email");
 
-            if (EmailHelpers.PrimaryEmailExists(Emails) && email.IsPrimary)
-                throw new InvalidOperationException(PrimaryEmailExistsMessage);
+            if (ContactableHasEmail(email))
+                throw new Exception("Contactable already has this email.");
 
-            if (Emails == null)
-                Emails = new List<Email>();
+            if (ContactableHasPrimaryEmail() && email.IsPrimary)
+                throw new Exception("Contactable already has primary email.");
 
-            if (Emails != null)
-                Emails.Add(email);
+            Emails.Add(email);
         }
 
         public void RemoveEmail(Email email)
         {
-            if (Emails != null && email != null)
-                Emails.Remove(email);
+            Guard.ForNull(email, "email");
+            Emails.Remove(email);
         }
 
         public void SetEmails(IList<Email> emails)
         {
-            if (emails == null)
-                throw new ArgumentException(EmptyEmailCollectionMessage, nameof(emails));
+            Guard.ForNull(emails, "emails");
 
-            if (EmailHelpers.DuplicateEmailExists(emails))
-                throw new InvalidOperationException(DuplicateEmailExistsMessage);
+            // If a primary email exists before the end of the list, AddEmail()
+            // fails at check ContactableHasPrimaryEmail() since the primary email
+            // in the list was already added. This code will work when list is
+            // sorted and the Primary email is added last:
+            var sortedEmails = emails.OrderBy(e => e.IsPrimary).ToList();
+            foreach (var email in sortedEmails)
+                AddEmail(email);
+        }
 
-            if (EmailHelpers.PrimaryEmailCountExceedsOne(emails))
-                throw new InvalidOperationException(PrimaryEmailExistsMessage);
+        public void SetAddress(Address address)
+        {
+            Guard.ForNull(address, "address");
+            Address = address;
+        }
 
-            if (Emails == null)
-                Emails = new List<Email>();
+        // VK: no need to make these methods public, they are just for the Contactable class
+        // you can also keep them non-static, so that you don't need to pass in the existing collections
+        private bool ContactableHasPhone(Phone phone)
+        {
+            return Phones.Any(x => x.Number == phone.Number);
+        }
 
-            if (Emails != null)
-                Emails = emails;
+        private bool ContactableHasPrimaryPhone()
+        {
+            return Phones.Any(x => x.IsPrimary);
+        }
+
+        private bool ContactableHasPrimaryEmail()
+        {
+            return Emails.Any(x => x.IsPrimary);
+        }
+
+        private bool ContactableHasEmail(Email email)
+        {
+            return Emails.Any(x => x.Address == email.Address);
         }
     }
 }

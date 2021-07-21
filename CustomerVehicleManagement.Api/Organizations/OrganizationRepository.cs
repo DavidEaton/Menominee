@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     Id = organization.Id,
                     Name = organization.Name.Name,
                     Address = organization.Address,
-                    Notes = organization.Notes,
+                    Note = organization.Note,
 
                     Phones = organization.Phones.Select(x => new PhoneReadDto()
                     {
@@ -129,8 +129,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             State = organization?.Address?.State,
             PostalCode = organization?.Address?.PostalCode,
 
-            Notes = organization?.Notes?.Length <= organizationNoteTruncateAt ? organization?.Notes : organization?.Notes?.Substring(0, organizationNoteTruncateAt) + "...",
-
+            Note = organization.Note,
             PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
             PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization),
             PrimaryEmail = ContactableHelpers.GetPrimaryEmail(organization)

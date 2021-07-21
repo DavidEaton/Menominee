@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -38,12 +39,45 @@ namespace CustomerVehicleManagement.Api.Customers
         public async Task<CustomerReadDto> GetCustomerAsync(int id)
         {
             var customer = await context.Customers.AsNoTracking()
+                                                  .Include(x => x.Organization)
+                                                  .Include(x => x.Person)
                                                   .FirstOrDefaultAsync(customer => customer.Id == id);
 
-            if (customer != null)
-                return await MapCustomerToReadDto(customer);
+            if (customer == null)
+                return null;
 
-            return null;
+            var customerReadDto = new CustomerReadDto
+            {
+                Id = customer.Id,
+                CustomerType = customer.CustomerType,
+                EntityType = customer.EntityType
+            };
+
+            if (customer.EntityType == EntityType.Organization)
+            {
+                Organization customerOrganization = await GetCustomerOrganization(customer);
+                customerReadDto.Organization = MapOrganizationToReadDto(customerOrganization);
+                customerReadDto.Address = customerOrganization?.Address;
+                customerReadDto.Name = customerOrganization.Name.Name;
+                customerReadDto.Note = customerOrganization.Note;
+                MapPhones(customerOrganization.Phones, customerReadDto.Phones);
+                MapEmails(customerOrganization.Emails, customerReadDto.Emails);
+                if (customerOrganization.Contact != null)
+                    customerReadDto.Contact = MapPersonToReadDto(customerOrganization.Contact);
+            }
+
+            if (customer.EntityType == EntityType.Person)
+            {
+                Person customerPerson = await GetCustomerPerson(customer);
+                customerReadDto.Person = MapPersonToReadDto(customerPerson);
+                customerReadDto.Address = customerPerson.Address;
+                customerReadDto.Name = customerPerson.Name.LastFirstMiddle;
+                MapPhones(customerPerson.Phones, customerReadDto.Phones);
+                MapEmails(customerPerson.Emails, customerReadDto.Emails);
+            }
+
+
+            return customerReadDto;
         }
 
         public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
@@ -83,103 +117,57 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customer.EntityType == EntityType.Organization)
             {
-                await GetCustomerOrganizationEntity(customer);
-                customerReadDto.EntityId = ((Organization)customer.Entity).Id;
-                customerReadDto.Address = ((Organization)customer.Entity).Address;
-                customerReadDto.Name = ((Organization)customer.Entity).Name.Name;
-                customerReadDto.Note = ((Organization)customer.Entity).Notes;
-                MapPhones(((Organization)customer.Entity).Phones, customerReadDto.Phones);
-                MapEmails(((Organization)customer.Entity).Emails, customerReadDto.Emails);
-                if (((Organization)customer.Entity).Contact != null)
-                    customerReadDto.Contact = MapContactToReadDto(((Organization)customer.Entity).Contact);
+                Organization customerOrganization = await GetCustomerOrganization(customer);
+                customerReadDto.Organization = MapOrganizationToReadDto(customerOrganization);
+                customerReadDto.Address = customerOrganization?.Address;
+                customerReadDto.Name = customerOrganization.Name.Name;
+                customerReadDto.Note = customerOrganization.Note;
+                MapPhones(customerOrganization.Phones, customerReadDto.Phones);
+                MapEmails(customerOrganization.Emails, customerReadDto.Emails);
+                if (customerOrganization.Contact != null)
+                    customerReadDto.Contact = MapPersonToReadDto(customerOrganization.Contact);
             }
 
             if (customer.EntityType == EntityType.Person)
             {
-                await GetCustomerPersonEntity(customer);
-                customerReadDto.EntityId = ((Person)customer.Entity).Id;
-                customerReadDto.Address = ((Person)customer.Entity).Address;
-                customerReadDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
-                MapPhones(((Person)customer.Entity).Phones, customerReadDto.Phones);
-                MapEmails(((Person)customer.Entity).Emails, customerReadDto.Emails);
+                Person customerPerson = await GetCustomerPerson(customer);
+                customerReadDto.Person = MapPersonToReadDto(customerPerson);
+                customerReadDto.Address = customerPerson.Address;
+                customerReadDto.Name = customerPerson.Name.LastFirstMiddle;
+                MapPhones(customerPerson.Phones, customerReadDto.Phones);
+                MapEmails(customerPerson.Emails, customerReadDto.Emails);
             }
 
-            return customerReadDto;
+            if (customer.EntityType != EntityType.Person && customer.EntityType != EntityType.Organization)
+                return null;
+
+                return customerReadDto;
         }
 
-        private async Task<CustomerInListDto> MapCustomerToListDto(Customer customer)
-        {
-            var customerInListDto = new CustomerInListDto
-            {
-                Id = customer.Id,
-                CustomerType = customer.CustomerType.ToString(),
-                EntityType = customer.EntityType
-            };
-
-            if (customer.EntityType == EntityType.Organization)
-            {
-                await GetCustomerOrganizationEntity(customer);
-                customerInListDto.EntityId = ((Organization)customer.Entity).Id;
-                customerInListDto.AddressFull = ((Organization)customer.Entity).Address.AddressFull;
-                customerInListDto.Name = ((Organization)customer.Entity).Name.Name;
-                customerInListDto.Note = ((Organization)customer.Entity).Notes;
-                //MapPhones(((Organization)customer.Entity).Phones, customerInListDto.Phones);
-                //MapEmails(((Organization)customer.Entity).Emails, customerInListDto.Emails);
-                //if (((Organization)customer.Entity).Contact != null)
-                //    customerInListDto.Contact = MapContactToReadDto(((Organization)customer.Entity).Contact);
-            }
-
-            if (customer.EntityType == EntityType.Person)
-            {
-                await GetCustomerPersonEntity(customer);
-                customerInListDto.EntityId = ((Person)customer.Entity).Id;
-                customerInListDto.AddressFull = ((Person)customer.Entity).Address.AddressFull;
-                customerInListDto.Name = ((Person)customer.Entity).Name.LastFirstMiddle;
-                //MapPhones(((Person)customer.Entity).Phones, customerInListDto.Phones);
-                //MapEmails(((Person)customer.Entity).Emails, customerInListDto.Emails);
-            }
-
-            return customerInListDto;
-        }
-
-        public async Task GetCustomerPersonEntity(Customer customer)
+        private async Task<Person> GetCustomerPerson(Customer customer)
         {
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
                 .Include(person => person.Emails)
-                .FirstOrDefaultAsync(person => person.Id == customer.EntityId);
+                .FirstOrDefaultAsync(person => person.Id == customer.Person.Id);
 
-            if (personFromContext?.Phones != null)
-                foreach (var phone in personFromContext.Phones)
-                    customer.AddPhone(phone);
+            return personFromContext;
 
-            if (personFromContext?.Emails != null)
-                foreach (var email in personFromContext.Emails)
-                    customer.AddEmail(email);
-
-            customer.SetEntity(personFromContext);
         }
 
-        public async Task GetCustomerOrganizationEntity(Customer customer)
+        private async Task<Organization> GetCustomerOrganization(Customer customer)
         {
-            var oganizationFromContext = await context.Organizations
-                .Include(oganization => oganization.Phones)
-                .Include(oganization => oganization.Emails)
+            var organizationFromContext = await context.Organizations
+                .Include(organization => organization.Phones)
+                .Include(organization => organization.Emails)
                 .Include(organization => organization.Contact)
-                    .ThenInclude(contact => contact.Phones)
+                    .ThenInclude(c => c.Phones)
                 .Include(organization => organization.Contact)
-                    .ThenInclude(contact => contact.Emails)
-                .FirstOrDefaultAsync(oganization => oganization.Id == customer.EntityId);
+                    .ThenInclude(c => c.Emails)
+                .FirstOrDefaultAsync(organization => organization.Id == customer.Organization.Id);
 
-            if (oganizationFromContext?.Phones != null)
-                foreach (var phone in oganizationFromContext.Phones)
-                    customer.AddPhone(phone);
+            return organizationFromContext;
 
-            if (oganizationFromContext?.Emails != null)
-                foreach (var email in oganizationFromContext.Emails)
-                    customer.AddEmail(email);
-
-            customer.SetEntity(oganizationFromContext);
         }
 
         public async Task<bool> CustomerExistsAsync(int id)
@@ -227,20 +215,36 @@ namespace CustomerVehicleManagement.Api.Customers
 
             return null;
         }
-        private PersonReadDto MapContactToReadDto(Person contact)
+        private PersonReadDto MapPersonToReadDto(Person person)
         {
             PersonReadDto contactReadDto = new();
 
-            contactReadDto.Id = contact.Id;
-            contactReadDto.Address = contact.Address;
-            contactReadDto.Birthday = contact.Birthday;
-            contactReadDto.DriversLicense = contact.DriversLicense;
-            contactReadDto.Gender = contact.Gender;
-            contactReadDto.Name = contact.Name.LastFirstMiddle;
-            contactReadDto.Emails = MapEmails(contact.Emails);
-            contactReadDto.Phones = MapPhones(contact.Phones);
+            contactReadDto.Id = person.Id;
+            contactReadDto.Address = person.Address;
+            contactReadDto.Birthday = person.Birthday;
+            contactReadDto.DriversLicense = person.DriversLicense;
+            contactReadDto.Gender = person.Gender;
+            contactReadDto.Name = person.Name.LastFirstMiddle;
+            contactReadDto.Emails = MapEmails(person.Emails);
+            contactReadDto.Phones = MapPhones(person.Phones);
 
             return contactReadDto;
+        }
+
+        private OrganizationReadDto MapOrganizationToReadDto(Organization organization)
+        {
+            OrganizationReadDto organizationReadDto = new();
+
+            organizationReadDto.Id = organization.Id;
+            organizationReadDto.Address = organization.Address;
+            organizationReadDto.Name = organization.Name.Name;
+            organizationReadDto.Emails = MapEmails(organization.Emails);
+            organizationReadDto.Phones = MapPhones(organization.Phones);
+
+            if (organizationReadDto.Contact != null)
+            organizationReadDto.Contact = MapPersonToReadDto(organization.Contact);
+
+            return organizationReadDto;
         }
 
         private IReadOnlyList<PhoneReadDto> MapPhones(IList<Phone> phones)
@@ -278,7 +282,6 @@ namespace CustomerVehicleManagement.Api.Customers
                 foreach (var email in emails)
                     emailReadDtos.Add(new EmailReadDto() { Address = email.Address, IsPrimary = email.IsPrimary });
         }
-
     }
 
 }

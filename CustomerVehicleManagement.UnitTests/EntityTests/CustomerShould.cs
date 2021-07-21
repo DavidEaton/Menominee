@@ -22,7 +22,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var customer = new Customer(person);
 
             // Assert
-            customer.Entity.Should().BeOfType<Person>();
+            customer.EntityType.Should().Be(EntityType.Person);
+            customer.EntityType.Should().BeOfType<EntityType>();
         }
 
         [Fact]
@@ -41,8 +42,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
 
             var customer = new Customer(organization);
-
-            customer.Entity.Should().BeOfType<Organization>();
+            customer.EntityType.Should().Be(EntityType.Organization);
+            customer.EntityType.Should().BeOfType<EntityType>();
         }
 
         [Fact]
@@ -57,9 +58,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             organization.SetAddress(address);
             var customer = new Customer(organization);
-            var janes = (Organization)customer.Entity;
+            var janes = customer.Organization;
 
-            customer.Entity.Should().BeOfType<Organization>();
+            customer.EntityType.Should().Be(EntityType.Organization);
+            customer.EntityType.Should().BeOfType<EntityType>();
             janes.Address.AddressLine.Should().Be(addressLine);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);
@@ -77,14 +79,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             organization.SetContact(person);
 
             var customer = new Customer(organization);
-            var janes = (Organization)customer.Entity;
+            var janes = customer.Organization;
 
             janes.Contact.Should().BeOfType<Person>();
             janes.Contact.Name.LastFirstMiddle.Should().Be($"{lastName}, {firstName}");
         }
 
         [Fact]
-        public void AddPhones()
+        public void AddOrganizationPhones()
         {
             var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
@@ -93,15 +95,15 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var number1 = "(231) 675-1922";
             var phone1 = new Phone(number1, PhoneType.Mobile, false);
 
-            customer.AddPhone(phone0);
-            customer.AddPhone(phone1);
+            customer.Organization.AddPhone(phone0);
+            customer.Organization.AddPhone(phone1);
 
-            customer.Phones.Should().Contain(phone0);
-            customer.Phones.Should().Contain(phone1);
+            customer.Organization.Phones.Should().Contain(phone0);
+            customer.Organization.Phones.Should().Contain(phone1);
         }
 
         [Fact]
-        public void RemovePhones()
+        public void RemoveOrganizationPhones()
         {
             var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
@@ -110,47 +112,117 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var number1 = "(231) 675-1922";
             var phone1 = new Phone(number1, PhoneType.Mobile, false);
 
-            customer.AddPhone(phone0);
-            customer.AddPhone(phone1);
-            customer.Phones.Should().Contain(phone0);
-            customer.Phones.Should().Contain(phone1);
-            customer.RemovePhone(phone0);
-            customer.RemovePhone(phone1);
+            customer.Organization.AddPhone(phone0);
+            customer.Organization.AddPhone(phone1);
+            customer.Organization.Phones.Should().Contain(phone0);
+            customer.Organization.Phones.Should().Contain(phone1);
+            customer.Organization.RemovePhone(phone0);
+            customer.Organization.RemovePhone(phone1);
 
-            customer.Phones.Count.Should().Be(0);
+            customer.Organization.Phones.Count.Should().Be(0);
         }
 
         [Fact]
-        public void AddEmails()
+        public void AddOrganizationEmails()
         {
             var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var email0 = new Email("mary@moops.com", true);
             var email1 = new Email("mikey@yikes.com", false);
 
-            customer.AddEmail(email0);
-            customer.AddEmail(email1);
+            customer.Organization.AddEmail(email0);
+            customer.Organization.AddEmail(email1);
 
-            customer.Emails.Should().Contain(email0);
-            customer.Emails.Should().Contain(email1);
+            customer.Organization.Emails.Should().Contain(email0);
+            customer.Organization.Emails.Should().Contain(email1);
         }
 
         [Fact]
-        public void RemoveEmails()
+        public void RemoveOrganizationEmails()
         {
             var organization = Helpers.CreateValidOrganization();
             var customer = new Customer(organization);
             var email0 = new Email("mary@moops.com", true);
             var email1 = new Email("mikey@yikes.com", false);
 
-            customer.AddEmail(email0);
-            customer.AddEmail(email1);
-            customer.Emails.Should().Contain(email0);
-            customer.Emails.Should().Contain(email1);
-            customer.RemoveEmail(email0);
-            customer.RemoveEmail(email1);
+            customer.Organization.AddEmail(email0);
+            customer.Organization.AddEmail(email1);
+            customer.Organization.Emails.Should().Contain(email0);
+            customer.Organization.Emails.Should().Contain(email1);
+            customer.Organization.RemoveEmail(email0);
+            customer.Organization.RemoveEmail(email1);
 
-            customer.Emails.Count.Should().Be(0);
+            customer.Organization.Emails.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void AddPersonPhones()
+        {
+            var organization = Helpers.CreateValidPerson();
+            var customer = new Customer(organization);
+            var number0 = "(989) 627-9206";
+            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var number1 = "(231) 675-1922";
+            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+
+            customer.Person.AddPhone(phone0);
+            customer.Person.AddPhone(phone1);
+
+            customer.Person.Phones.Should().Contain(phone0);
+            customer.Person.Phones.Should().Contain(phone1);
+        }
+
+        [Fact]
+        public void RemovePersonPhones()
+        {
+            var organization = Helpers.CreateValidPerson();
+            var customer = new Customer(organization);
+            var number0 = "(989) 627-9206";
+            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var number1 = "(231) 675-1922";
+            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+
+            customer.Person.AddPhone(phone0);
+            customer.Person.AddPhone(phone1);
+            customer.Person.Phones.Should().Contain(phone0);
+            customer.Person.Phones.Should().Contain(phone1);
+            customer.Person.RemovePhone(phone0);
+            customer.Person.RemovePhone(phone1);
+
+            customer.Person.Phones.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void AddPersonEmails()
+        {
+            var organization = Helpers.CreateValidPerson();
+            var customer = new Customer(organization);
+            var email0 = new Email("mary@moops.com", true);
+            var email1 = new Email("mikey@yikes.com", false);
+
+            customer.Person.AddEmail(email0);
+            customer.Person.AddEmail(email1);
+
+            customer.Person.Emails.Should().Contain(email0);
+            customer.Person.Emails.Should().Contain(email1);
+        }
+
+        [Fact]
+        public void RemovePersonEmails()
+        {
+            var organization = Helpers.CreateValidPerson();
+            var customer = new Customer(organization);
+            var email0 = new Email("mary@moops.com", true);
+            var email1 = new Email("mikey@yikes.com", false);
+
+            customer.Person.AddEmail(email0);
+            customer.Person.AddEmail(email1);
+            customer.Person.Emails.Should().Contain(email0);
+            customer.Person.Emails.Should().Contain(email1);
+            customer.Person.RemoveEmail(email0);
+            customer.Person.RemoveEmail(email1);
+
+            customer.Person.Emails.Count.Should().Be(0);
         }
 
         [Fact]
