@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     Id = organization.Id,
                     Name = organization.Name.Name,
                     Address = organization.Address,
-                    Notes = organization.Notes,
+                    Note = organization.Note,
 
                     Phones = organization.Phones.Select(x => new PhoneReadDto()
                     {
@@ -128,7 +128,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             State = organization?.Address?.City,
             PostalCode = organization?.Address?.PostalCode,
 
-            Notes = organization.Notes,
+            Note = organization.Note,
             PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
             PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization)
         }).ToList();

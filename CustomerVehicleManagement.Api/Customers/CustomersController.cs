@@ -48,7 +48,6 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customers
         [HttpGet]
-        //[ResponseCache(Duration = MaxCacheAge)]
         public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
@@ -93,7 +92,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerFromRepository.EntityType == EntityType.Organization)
             {
-                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.EntityId);
+                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.Organization.Id);
 
                 var organizationNameOrError = OrganizationName.Create(customerUpdateDto.OrganizationUpdateDto.Name);
                 if (organizationNameOrError.IsFailure)
@@ -101,7 +100,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
-                organizationFromRepository.SetNotes(customerUpdateDto.OrganizationUpdateDto.Notes);
+                organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
                 organizationFromRepository.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(customerUpdateDto.OrganizationUpdateDto.Phones));
                 organizationFromRepository.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(customerUpdateDto.OrganizationUpdateDto.Emails));
@@ -112,7 +111,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerFromRepository.EntityType == EntityType.Person)
             {
-                Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.EntityId);
+                Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.PersonUpdateDto, personFromRepository);
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
@@ -164,7 +163,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 var organization = new Organization(organizationNameOrError.Value);
 
-                organization.SetNotes(customerCreateDto.OrganizationCreateDto.Notes);
+                organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
                 organization.SetAddress(customerCreateDto.OrganizationCreateDto.Address);
                 organization.SetContact(mapper.Map<Person>(customerCreateDto.OrganizationCreateDto.Contact));
 

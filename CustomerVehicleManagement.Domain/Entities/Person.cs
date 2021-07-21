@@ -1,10 +1,11 @@
-﻿using SharedKernel.Enums;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Person : Customer
+    public class Person : Contactable
     {
         public Person(PersonName name, Gender gender)
         {

@@ -8,80 +8,42 @@ using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    // VK: the overarching idea here is to move Contactable's logic to Customer and then inherit Person and Organization from it
-    // To store the hierarchy in the DB, there are 2 common strategies: Table-per-hierarchy and Table-per-type
-    // I usually use Table-per-hierarchy: it's simple and straightforward. Here the documentation: https://docs.microsoft.com/en-us/ef/core/modeling/inheritance
-
-    public abstract class Customer : Entity
+    public class Customer : Entity
     {
-        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
-        public virtual IList<Email> Emails { get; private set; } = new List<Email>();
+        public Person Person { get; private set; }
+        public Organization Organization { get; private set; }
+        public EntityType EntityType => GetEntityType();
         public CustomerType CustomerType { get; private set; }
         public ContactPreferences ContactPreferences { get; private set; }
         public DateTime Created { get; private set; }
         public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
-        // VK: I've moved the Address here because it is present in both Person and Organization
-        public Address Address { get; private set; }
-
-        public Customer()
+        public Customer(Person person)
         {
+            Guard.ForNull(person, "person == null");
+
+            Person = person;
+            CustomerType = CustomerType.Retail;
             Created = DateTime.UtcNow;
         }
 
-        public void AddPhone(Phone phone)
+        public Customer(Organization organization)
         {
-            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check
-            Guard.ForNull(phone, "phone");
+            Guard.ForNull(organization, "organization == null");
 
-            if (CustomerHasPhone(phone))
-                throw new Exception("customer already has this phone");
-
-            if (CustomerHasPrimaryPhone())
-                throw new Exception("customer already has primary phone.");
-
-            Phones.Add(phone);
+            Organization = organization;
+            CustomerType = CustomerType.Retail;
+            Created = DateTime.UtcNow;
         }
 
-        public void RemovePhone(Phone phone)
+        private EntityType GetEntityType()
         {
-            Guard.ForNull(phone, "phone");
-            Phones.Remove(phone);
-        }
+            if (Person is not null)
+                return EntityType.Person;
 
-        // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
-        public void SetPhones(IList<Phone> phones)
-        {
-            Guard.ForNull(phones, "phones");
+            if (Organization is not null)
+                return EntityType.Organization;
 
-            foreach (var phone in phones)
-                AddPhone(phone);
-        }
-
-        public void AddEmail(Email email)
-        {
-            Guard.ForNull(email, "email");
-
-            if (CustomerHasEmail(email))
-                throw new Exception("customer already has this email.");
-
-            if (CustomerHasPrimaryEmail())
-                throw new Exception("customer already has primary email.");
-
-            Emails.Add(email);
-        }
-
-        public void RemoveEmail(Email email)
-        {
-            Guard.ForNull(email, "email");
-            Emails.Remove(email);
-        }
-
-        public void SetEmails(IList<Email> emails)
-        {
-            Guard.ForNull(emails, "emails");
-
-            foreach (var email in emails)
-                AddEmail(email);
+            throw new InvalidOperationException("Unknown entity type");
         }
 
         public void AddVehicle(Vehicle vehicle)
@@ -100,36 +62,16 @@ namespace CustomerVehicleManagement.Domain.Entities
             Vehicles.Remove(vehicle);
         }
 
-        public void SetAddress(Address address)
-        {
-            Guard.ForNull(address, "address");
-            Address = address;
-        }
-
-        // VK: no need to make these methods public, they are just for the Customer class
-        // you can also keep them non-static, so that you don't need to pass in the existing collection of phones
-        private bool CustomerHasPhone(Phone phone)
-        {
-            return Phones.Any(x => x.Number == phone.Number);
-        }
-
-        private bool CustomerHasPrimaryPhone()
-        {
-            return Phones.Any(x => x.IsPrimary);
-        }
-
-        private bool CustomerHasPrimaryEmail()
-        {
-            return Emails.Any(x => x.IsPrimary);
-        }
-
-        private bool CustomerHasEmail(Email email)
-        {
-            return Emails.Any(x => x.Address == email.Address);
-        }
         private bool CustomerHasVehicle(Vehicle vehicle)
         {
-            return Vehicles.Any(x => x.Id == vehicle.Id);
+            return Vehicles.Any(x => x == vehicle);
         }
+        #region ORM
+
+        // EF requires an empty constructor
+        protected Customer() { }
+
+        #endregion
+
     }
 }

@@ -10,10 +10,7 @@ namespace CustomerVehicleManagement.Data.Configurations
         {
             base.Configure(builder); // <--
             builder.ToTable("Customer", "dbo");
-            builder.Ignore(customer => customer.Entity);
             builder.Ignore(customer => customer.TrackingState);
-            builder.Ignore(customer => customer.Phones);
-            builder.Ignore(customer => customer.Emails);
 
             // Value Object: ContactPreferences
             builder.OwnsOne(customer => customer.ContactPreferences)

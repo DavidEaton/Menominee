@@ -1,9 +1,10 @@
-﻿using SharedKernel.Utilities;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Organization : Customer
+    public class Organization : Contactable
     {
         public Organization(OrganizationName name)
         {
@@ -12,7 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public OrganizationName Name { get; private set; }
         public virtual Person Contact { get; private set; }
-        public string Notes { get; private set; }
+        public string Note { get; private set; }
 
         public void SetName(OrganizationName name)
         {
@@ -25,10 +26,10 @@ namespace CustomerVehicleManagement.Domain.Entities
             Contact = contact;
         }
 
-        public void SetNotes(string notes)
+        public void SetNote(string note)
         {
-            Guard.ForNull(notes, "notes");
-            Notes = notes;
+            Guard.ForNull(note, "note");
+            Note = note;
         }
 
         #region ORM
