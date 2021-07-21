@@ -10,5 +10,8 @@ namespace Menominee.Idp.Areas.Identity.Data
         [MaxLength(255)]
         public string Role { get; set; }
         public Guid TenantId { get; set; }
+
+        [MaxLength(255)]
+        public string TenantName { get; set; }
     }
 }
