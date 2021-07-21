@@ -31,15 +31,15 @@ namespace CustomerVehicleManagement.Api.Utilities
             CustomerInListDto customerInListDto = new();
             customerInListDto.Id = customer.Id;
             customerInListDto.EntityType = customer.EntityType;
-            customerInListDto.EntityId = customer.EntityId;
+            customerInListDto.EntityId = customer.EntityType == EntityType.Organization
+                                                                                        ? customer.Organization.Id
+                                                                                        : customer.Person.Id;
             customerInListDto.CustomerType = customer.CustomerType.ToString();
 
             if (customer.EntityType == EntityType.Organization)
             {
-                Organization organization = (Organization)customer.Entity;
-
-                customerInListDto.AddressFull = organization?.Address?.AddressLine;
-                customerInListDto.Name = organization?.Name?.Name;
+                customerInListDto.AddressFull = customer.Organization?.Address?.AddressLine;
+                customerInListDto.Name = customer.Organization?.Name?.Name;
                 //customerInListDto.PrimaryPhone = Helper.GetPrimaryPhone(organization) ?? Helper.GetOrdinalPhone(organization, 0);
                 //customerInListDto.PrimaryPhoneType = Helper.GetPrimaryPhoneType(organization) ?? Helper.GetOrdinalPhoneType(organization, 0);
                 //customerInListDto.PrimaryEmail = Helper.GetPrimaryEmail(organization) ?? Helper.GetOrdinalEmail(organization, 0);
@@ -53,13 +53,11 @@ namespace CustomerVehicleManagement.Api.Utilities
 
             if (customer.EntityType == EntityType.Person)
             {
-                Person person = (Person)customer.Entity;
-
-                customerInListDto.AddressFull = person?.Address?.AddressLine;
-                customerInListDto.Name = person.Name.LastFirstMiddle;
-                customerInListDto.PrimaryPhone = Helper.GetPrimaryPhone(person) ?? Helper.GetOrdinalPhone(person, 0);
-                customerInListDto.PrimaryPhoneType = Helper.GetPrimaryPhoneType(person) ?? Helper.GetOrdinalPhoneType(person, 0);
-                customerInListDto.PrimaryEmail = Helper.GetPrimaryEmail(person) ?? Helper.GetOrdinalEmail(person, 0);
+                customerInListDto.AddressFull = customer.Person?.Address?.AddressLine;
+                customerInListDto.Name = customer.Person?.Name.LastFirstMiddle;
+                customerInListDto.PrimaryPhone = Helper.GetPrimaryPhone(customer.Person) ?? Helper.GetOrdinalPhone(customer.Person, 0);
+                customerInListDto.PrimaryPhoneType = Helper.GetPrimaryPhoneType(customer.Person) ?? Helper.GetOrdinalPhoneType(customer.Person, 0);
+                customerInListDto.PrimaryEmail = Helper.GetPrimaryEmail(customer.Person) ?? Helper.GetOrdinalEmail(customer.Person, 0);
             }
 
             return customerInListDto;

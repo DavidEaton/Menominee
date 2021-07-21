@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Customers;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;

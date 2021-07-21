@@ -46,22 +46,22 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/customers/list
-        [Route("list")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
-        {
-            var customers = await customerRepository.GetCustomersInListAsync();
+        //// GET: api/customers/list
+        //[Route("list")]
+        //[HttpGet]
+        //public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
+        //{
+        //    var customers = await customerRepository.GetCustomersInListAsync();
 
-            if (customers == null)
-                return NotFound();
+        //    if (customers == null)
+        //        return NotFound();
 
-            return Ok(customers);
-        }
+        //    return Ok(customers);
+        //}
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerReadDto>>> GetCustomersAsync()
+        public async Task<ActionResult<IReadOnlyList<CustomerReadDto>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
 

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -80,17 +79,49 @@ namespace CustomerVehicleManagement.Api.Customers
             return customerReadDto;
         }
 
-        public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
-        {
-            var customersFromContext = await context.Customers.ToArrayAsync();
+        //public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
+        //{
+        //    var customersFromContext = await context.Customers.ToArrayAsync();
 
-            var customersList = new List<CustomerInListDto>();
+        //    var customersList = new List<CustomerInListDto>();
 
-            foreach (var customer in customersFromContext)
-                customersList.Add(await MapCustomerToListDto(customer));
+        //    foreach (Customer customer in customersFromContext)
+        //        customersList.Add(new CustomerInListDto() { Id = customer.Id,
+        //                                                    Name = customer.EntityType == EntityType.Organization
+        //                                                                                ? customer.Organization.Name.Name
+        //                                                                                : customer.Person.Name.LastFirstMiddle,
+        //                                                    EntityId = customer.EntityType == EntityType.Organization
+        //                                                                                ? customer.Organization.Id
+        //                                                                                : customer.Person.Id,
+        //                                                    EntityType = customer.EntityType,
+        //                                                    CustomerType = customer.CustomerType,
+        //                                                    AddressFull = customer.EntityType == EntityType.Organization
+        //                                                                                ? customer.Organization.Address.AddressFull
+        //                                                                                : customer.Person.Address.AddressFull,
+        //                                                    Note = customer.EntityType == EntityType.Organization
+        //                                                                                ? customer.Organization.Note
+        //                                                                                : string.Empty,
+        //                                                    PrimaryPhone = customer.EntityType == EntityType.Organization
+        //                                                                                ? GetPrimaryPhone(customer.Organization.Phones)
+        //                                                                                : GetPrimaryPhone(customer.Person.Phones),
+        //        });
 
-            return customersList;
-        }
+
+
+        //    return customersList;
+        //}
+
+        //private string GetPrimaryPhone(IList<Phone> phones)
+        //{
+        //    if (phones == null)
+        //        return null;
+
+        //    var phone = phones.SingleOrDefault(x => x.IsPrimary == true);
+
+        //    if (phone == null)
+        //        return phones[0].Number;
+
+        //}
 
         public async Task<IReadOnlyList<CustomerReadDto>> GetCustomersAsync()
         {
@@ -281,6 +312,11 @@ namespace CustomerVehicleManagement.Api.Customers
             if (emails != null)
                 foreach (var email in emails)
                     emailReadDtos.Add(new EmailReadDto() { Address = email.Address, IsPrimary = email.IsPrimary });
+        }
+
+        public Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 

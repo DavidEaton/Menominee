@@ -68,12 +68,5 @@ namespace CustomerVehicleManagement.Api.Utilities
 
             return emailReadDtos;
         }
-        public static IReadOnlyList<EmailReadDto> MapEmailReadDtoToReadDto(IReadOnlyList<EmailReadDto> emails)
-        {
-            if (entity == null)
-                return string.Empty;
-
-            return entity.Phones.Count > 0 ? entity.Phones[position].ToString() : string.Empty;
-        }
     }
 }
