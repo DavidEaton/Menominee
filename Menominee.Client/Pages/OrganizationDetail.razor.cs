@@ -76,7 +76,7 @@ namespace Menominee.Client.Pages
                 var emails = (IList<EmailCreateDto>)Organization.Emails.Select(x => new EmailCreateDto(x.Address, x.IsPrimary));
 
                 var organization = new OrganizationCreateDto(Organization.Name,
-                                                    Organization.Notes,
+                                                    Organization.Note,
                                                     Organization.Address,
                                                     null, // TODO: handle contact
                                                     phones,

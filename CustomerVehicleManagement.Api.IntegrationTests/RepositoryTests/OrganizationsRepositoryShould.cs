@@ -152,7 +152,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsyncIncludesCollections()
         {
-            var someNotes = "Some notes";
+            var aNote = "Some notes in the note field";
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
@@ -161,7 +161,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetNotes(someNotes);
+                organizationFromRepository.SetNote(aNote);
                 organizationFromRepository.SetAddress(CreateValidAddress());
                 organizationFromRepository.SetContact(CreateValidPerson());
                 organizationFromRepository.SetPhones(CreateValidPhones());
@@ -177,7 +177,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepository.Notes.Should().Be(someNotes);
+                organizationFromRepository.Note.Should().Be(aNote);
                 organizationFromRepository.Address.Should().NotBeNull();
                 organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Emails.Count().Should().BeGreaterThan(0);
@@ -331,7 +331,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             using (var context = new AppDbContext(options))
             {
                 var organization = CreateValidOrganization();
-                organization.SetNotes(someNotes);
+                organization.SetNote(someNotes);
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
@@ -341,9 +341,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
-                organizationFromRepo.Notes.Should().Be(someNotes);
+                organizationFromRepo.Note.Should().Be(someNotes);
 
-                organizationFromRepo.SetNotes(newNotes);
+                organizationFromRepo.SetNote(newNotes);
                 repository.UpdateOrganizationAsync(organizationFromRepo);
 
                 await repository.SaveChangesAsync();
@@ -354,7 +354,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepo.Notes.Should().Be(newNotes);
+                organizationFromRepo.Note.Should().Be(newNotes);
             };
         }
 

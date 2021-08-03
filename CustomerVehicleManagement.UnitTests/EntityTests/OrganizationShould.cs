@@ -401,9 +401,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var notes = "Behold, notes!";
 
-            organization.SetNotes(notes);
+            organization.SetNote(notes);
 
-            organization.Notes.Should().Be(notes);
+            organization.Note.Should().Be(notes);
         }
     }
 }

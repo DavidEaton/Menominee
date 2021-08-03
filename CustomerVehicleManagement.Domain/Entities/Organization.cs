@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public OrganizationName Name { get; private set; }
         public virtual Person Contact { get; private set; }
         public Address Address { get; private set; }
-        public string Notes { get; private set; }
+        public string Note { get; private set; }
 
         public void SetName(OrganizationName name)
         {
@@ -32,10 +32,10 @@ namespace CustomerVehicleManagement.Domain.Entities
                 Address = address;
         }
 
-        public void SetNotes(string notes)
+        public void SetNote(string note)
         {
-            if (notes != null)
-                Notes = notes;
+            if (note != null)
+                Note = note;
         }
 
         #region ORM

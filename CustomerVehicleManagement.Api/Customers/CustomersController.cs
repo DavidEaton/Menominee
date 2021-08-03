@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
-                organizationFromRepository.SetNotes(customerUpdateDto.OrganizationUpdateDto.Notes);
+                organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Notes);
                 DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
                 organizationFromRepository.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(customerUpdateDto.OrganizationUpdateDto.Phones));
                 organizationFromRepository.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(customerUpdateDto.OrganizationUpdateDto.Emails));
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 var organization = new Organization(organizationNameOrError.Value);
 
-                organization.SetNotes(customerCreateDto.OrganizationCreateDto.Notes);
+                organization.SetNote(customerCreateDto.OrganizationCreateDto.Notes);
                 organization.SetAddress(customerCreateDto.OrganizationCreateDto.Address);
                 organization.SetContact(mapper.Map<Person>(customerCreateDto.OrganizationCreateDto.Contact));
 

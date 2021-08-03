@@ -62,11 +62,11 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var customers = new List<CustomerReadDto>();
 
-            Customer[] customersRead = await context.Customers
+            Customer[] customersFromContext = await context.Customers
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
-            foreach (var customer in customersRead)
+            foreach (var customer in customersFromContext)
                 customers.Add(await MapCustomerToReadDto(customer));
 
             return customers;
@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customerReadDto.EntityId = ((Organization)customer.Entity).Id;
                 customerReadDto.Address = ((Organization)customer.Entity).Address;
                 customerReadDto.Name = ((Organization)customer.Entity).Name.Name;
-                customerReadDto.Note = ((Organization)customer.Entity).Notes;
+                customerReadDto.Note = ((Organization)customer.Entity).Note;
                 MapPhones(((Organization)customer.Entity).Phones, customerReadDto.Phones);
                 MapEmails(((Organization)customer.Entity).Emails, customerReadDto.Emails);
                 if (((Organization)customer.Entity).Contact != null)
@@ -122,7 +122,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customerInListDto.EntityId = ((Organization)customer.Entity).Id;
                 customerInListDto.AddressFull = ((Organization)customer.Entity).Address.AddressFull;
                 customerInListDto.Name = ((Organization)customer.Entity).Name.Name;
-                customerInListDto.Note = ((Organization)customer.Entity).Notes;
+                customerInListDto.Note = ((Organization)customer.Entity).Note;
                 //MapPhones(((Organization)customer.Entity).Phones, customerInListDto.Phones);
                 //MapEmails(((Organization)customer.Entity).Emails, customerInListDto.Emails);
                 //if (((Organization)customer.Entity).Contact != null)
