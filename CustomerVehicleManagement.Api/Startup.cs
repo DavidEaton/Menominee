@@ -1,19 +1,21 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Api.User;
 using IdentityServer4.AccessTokenValidation;
+using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -22,14 +24,11 @@ namespace CustomerVehicleManagement.Api
 {
     public class Startup
     {
-        ILogger<Startup> logger;
         public Startup(IConfiguration configuration,
-                       IWebHostEnvironment environment,
-                       ILogger<Startup> logger)
+                       IWebHostEnvironment environment)
         {
             Configuration = configuration;
             HostEnvironment = environment;
-            this.logger = logger;
         }
 
         private IConfiguration Configuration { get; }
@@ -42,10 +41,6 @@ namespace CustomerVehicleManagement.Api
             const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
             const bool useConsoleLoggerInTest = true;
             string environment = HostEnvironment.EnvironmentName;
-            string api_env = Environment.GetEnvironmentVariable("API_ENVIRONMENT");
-            // An environment variable is setup in Azure.  If it's set then grab the connection string
-            // from the Azure slot, otherwise use the appsetting.json connection string.
-
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             if (environment == "Production")
@@ -77,6 +72,8 @@ namespace CustomerVehicleManagement.Api
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddScoped<UserContext, UserContext>();
+            //services.AddScoped<IUserStore<ApplicationUser>, UserOnlyStore<ApplicationUser, IdentityUserDbContext>>();
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();

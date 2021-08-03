@@ -7,6 +7,7 @@ namespace Menominee.Idp.Data.Contexts
     public class UserDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<AspNetTenant> AspNetTenants { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)
         {

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class HealthCheckTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class HealthCheckTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient httpclient;
         private const string UriSegment = "/healthcheck";
@@ -18,9 +18,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
           - the same test server is used by each test method on the class
           - once tests are complete, it will clean up by calling Dispose (if present)
          
-        More efficient when test setup or teardown is expensive
+        More efficient when test setup or teardown is expensive, and running multiple tests.
         */
-        public HealthCheckTests(WebApplicationFactory<Startup> factory)
+        public HealthCheckTests(CustomWebApplicationFactory<Startup> factory)
         {
             httpclient = factory.CreateDefaultClient();
         }
