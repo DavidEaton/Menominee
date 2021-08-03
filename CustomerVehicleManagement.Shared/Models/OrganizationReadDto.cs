@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public Address Address { get; set; }
         public PersonReadDto Contact { get; set; }
         public string Notes { get; set; }
-        public IEnumerable<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
-        public IEnumerable<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
+        public IList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
+        public IList<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
     }
 }

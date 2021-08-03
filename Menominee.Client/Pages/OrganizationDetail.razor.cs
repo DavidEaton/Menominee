@@ -2,6 +2,7 @@
 using Menominee.Client.Components;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
+using SharedKernel.Enums;
 using SharedKernel.Static;
 using SharedKernel.ValueObjects;
 using System;
@@ -70,17 +71,19 @@ namespace Menominee.Client.Pages
 
             if (Organization.Id == 0) // new
             {
-                var phones = Organization.Phones.Select(x => new PhoneCreateDto(x.Number, x.PhoneType, x.IsPrimary));
+                var phones = (IList<PhoneCreateDto>)Organization.Phones.Select(x => new PhoneCreateDto(x.Number, Enum.Parse<PhoneType>(x.PhoneType), x.IsPrimary));
 
-                var org = new OrganizationCreateDto(Organization.Name,
+                var emails = (IList<EmailCreateDto>)Organization.Emails.Select(x => new EmailCreateDto(x.Address, x.IsPrimary));
+
+                var organization = new OrganizationCreateDto(Organization.Name,
                                                     Organization.Notes,
                                                     Organization.Address,
-                                                    null,
-                                                    Organization.Phones,
-                                                    Organization.Emails);
-                org.Address = Organization.Address;
+                                                    null, // TODO: handle contact
+                                                    phones,
+                                                    emails);
 
-                var addedOrganization = await OrganizationDataService.AddOrganization(Organization);
+                var addedOrganization = await OrganizationDataService.AddOrganization(organization);
+
                 if (addedOrganization != null)
                 {
                     StatusClass = "alert-success";
