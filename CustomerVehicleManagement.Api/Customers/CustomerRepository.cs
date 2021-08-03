@@ -127,11 +127,11 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var customers = new List<CustomerReadDto>();
 
-            Customer[] customersRead = await context.Customers
+            Customer[] customersFromContext = await context.Customers
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
-            foreach (var customer in customersRead)
+            foreach (var customer in customersFromContext)
                 customers.Add(await MapCustomerToReadDto(customer));
 
             return customers;
