@@ -30,15 +30,5 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             janes.Address.State.Should().Be(state);
             janes.Address.PostalCode.Should().Be(postalCode);
         }
-
-        [Fact]
-        public void NotSetNullAddress()
-        {
-            var organization = Helpers.CreateValidOrganization();
-
-            Action action = () => organization.SetAddress(null);
-
-            action.Should().Throw<ArgumentOutOfRangeException>();
-        }
     }
 }

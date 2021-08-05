@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;
@@ -16,12 +17,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
     /// </summary>
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private const string Path = "https://localhost/api/customers";
+        private const string CustomersControllerPath = "https://localhost/api/customers";
         private readonly HttpClient httpClient;
 
         public CustomersControllerShould(WebApplicationFactory<Startup> factory)
         {
-            httpClient = factory.CreateDefaultClient(new Uri(Path));
+            httpClient = factory.CreateDefaultClient(new Uri(CustomersControllerPath));
         }
 
         [Fact]
@@ -29,7 +30,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var response = await httpClient.GetAsync(string.Empty);
 
-            // Confirm that endpoint exists at, and returns data from the expected uri
+            // Confirm that endpoint exists at, and returns success code from the expected uri
             response.EnsureSuccessStatusCode();
         }
 
@@ -40,7 +41,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var response = await httpClient.GetAsync(string.Empty);
 
             // Confirm that endpoint returns JSON ContentType
-            Assert.Equal(mediaType, response.Content.Headers.ContentType.MediaType);
+            response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
         }
 
         [Fact]
@@ -48,29 +49,29 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var response = await httpClient.GetAsync(string.Empty);
 
-            Assert.NotNull(response.Content);
-            Assert.True(response.Content.Headers.ContentLength > 0);
+            response.Content.Should().NotBeNull();
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
 
 
         [Fact]
         public async Task Return_Organization_Customer_On_GetCustomer()
         {
-            HttpContent content = (await httpClient.GetAsync(Path + "/1")).Content;
+            HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/11")).Content;
             string jsonContent = content.ReadAsStringAsync().Result;
             CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
 
-            Assert.NotNull(customer);
+            customer.Should().NotBeNull();
         }
 
         [Fact]
         public async Task Return_Person_Customer_On_GetCustomer()
         {
-            HttpContent content = (await httpClient.GetAsync(Path + "/2")).Content;
+            HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/10")).Content;
             string jsonContent = content.ReadAsStringAsync().Result;
             CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
 
-            Assert.NotNull(customer);
+            customer.Should().NotBeNull();
         }
 
     }

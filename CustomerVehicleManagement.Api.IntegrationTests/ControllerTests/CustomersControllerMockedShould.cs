@@ -22,7 +22,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
     /// </summary>
     public class CustomersControllerMockedShould
     {
-        private readonly IMapper mapper;
         private readonly CustomersController controller;
         private readonly Mock<IPersonRepository> moqPersonRepository;
         private readonly Mock<IOrganizationRepository> moqOrganizationRepository;
@@ -34,26 +33,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             moqOrganizationRepository = new Mock<IOrganizationRepository>();
             moqCustomerRepository = new Mock<ICustomerRepository>();
 
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    configuration.AddProfile(new PersonProfile());
-                    configuration.AddProfile(new OrganizationProfile());
-                    configuration.AddProfile(new CustomerProfile());
-                    configuration.AddProfile(new EmailProfile());
-                    configuration.AddProfile(new PhoneProfile());
-                });
-
-                mapper = mapperConfiguration.CreateMapper();
-                controller = new CustomersController(moqCustomerRepository.Object, moqPersonRepository.Object, moqOrganizationRepository.Object, mapper);
-            }
+            controller = new CustomersController(moqCustomerRepository.Object, moqPersonRepository.Object, moqOrganizationRepository.Object);
         }
 
         [Fact]
         public async Task Return_ActionResult_Of_CustomerReadDto_On_GetCustomerAsync()
         {
-            var result = await controller.GetCustomerAsync(1);
+            var result = await controller.GetCustomerAsync(10000);
 
             result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<CustomerReadDto>>();

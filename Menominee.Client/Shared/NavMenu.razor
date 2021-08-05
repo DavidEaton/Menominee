@@ -50,8 +50,19 @@
 
     private async Task WriteToken()
     {
+        string accessToken;
+
         var tokenResult = await TokenProvider.RequestAccessToken();
         if (tokenResult.TryGetToken(out var token))
-            Console.WriteLine(token.Value);
+        {
+            accessToken = token.Value;
+            Console.WriteLine(accessToken);
+
+            foreach (var item in token.GrantedScopes)
+            {
+                Console.WriteLine(item.ToString());
+            }
+
+        }
     }
 }

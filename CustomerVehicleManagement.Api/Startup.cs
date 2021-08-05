@@ -64,16 +64,24 @@ namespace CustomerVehicleManagement.Api
                              };
                          });
 
-            if (environment != "Testing")
-                services.AddScoped(_ => new AppDbContext(Connection, HostEnvironment.IsDevelopment()));
-
-            if (environment == "Testing")
-                services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
-
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<UserContext, UserContext>();
             //services.AddScoped<IUserStore<ApplicationUser>, UserOnlyStore<ApplicationUser, IdentityUserDbContext>>();
+
+
+            if (environment != "Testing")
+                services.AddScoped(_ => new AppDbContext(Connection,
+                                                         HostEnvironment.IsDevelopment(),
+                                                         null,
+                                                         HostEnvironment,
+                                                         Configuration));
+
+
+            //if (environment == "Testing")
+            //services.AddScoped(_ => new AppDbContext(TestConnection,
+            //                                         useConsoleLoggerInTest));
+
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -132,7 +140,7 @@ namespace CustomerVehicleManagement.Api
                                         .AllowAnyHeader());
 
             if (environment == "Prodution")
-                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
                                         .AllowAnyMethod().AllowAnyHeader());
 
             if (HostEnvironment.IsDevelopment())

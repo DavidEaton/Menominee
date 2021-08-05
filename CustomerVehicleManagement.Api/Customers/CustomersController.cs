@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using AutoMapper;
 using SharedKernel.ValueObjects;
 using CustomerVehicleManagement.Shared.Models;
 
@@ -29,12 +28,10 @@ namespace CustomerVehicleManagement.Api.Customers
         private readonly ICustomerRepository customerRepository;
         private readonly IPersonRepository personRepository;
         private readonly IOrganizationRepository organizationRepository;
-        private readonly IMapper mapper;
 
         public CustomersController(ICustomerRepository customerRepository,
                                    IPersonRepository personRepository,
-                                   IOrganizationRepository organizationRepository,
-                                   IMapper mapper)
+                                   IOrganizationRepository organizationRepository)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
@@ -42,8 +39,6 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(personRepository));
             this.organizationRepository = organizationRepository ??
                 throw new ArgumentNullException(nameof(organizationRepository));
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         //// GET: api/customers/list
@@ -145,84 +140,100 @@ namespace CustomerVehicleManagement.Api.Customers
             // 1. Look at customerCreateDto.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
             // 2. Save it to the DB
 
+            var entityType = customerCreateDto.EntityType;
             Customer customer = null;
 
-            if (customerCreateDto.PersonCreateDto != null)
-            {
-                var person = mapper.Map<Person>(customerCreateDto.PersonCreateDto);
+            if (entityType == EntityType.Person)
+                customer = CreatePersonCustomer(customerCreateDto);
 
-                if (person != null)
-                {
-                    await personRepository.AddPersonAsync(person);
-
-                    if (await personRepository.SaveChangesAsync())
-                    {
-                        customer = new(person);
-
-                        if (customer != null)
-                            await customerRepository.AddCustomerAsync(customer);
-
-                        if (!await customerRepository.SaveChangesAsync())
-                            return BadRequest($"Failed to add {customerCreateDto}.");
-                    }
-                }
-            }
-
-            if (customerCreateDto.OrganizationCreateDto != null)
-            {
-                var organizationNameOrError = OrganizationName.Create(customerCreateDto.OrganizationCreateDto.Name);
-                if (organizationNameOrError.IsFailure)
-                    return BadRequest(organizationNameOrError.Error);
-
-                var organization = new Organization(organizationNameOrError.Value);
-
-                organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
-                organization.SetAddress(customerCreateDto.OrganizationCreateDto.Address);
-                organization.SetContact(mapper.Map<Person>(customerCreateDto.OrganizationCreateDto.Contact));
-
-                foreach (var phoneCreateDto in customerCreateDto.OrganizationCreateDto.Phones)
-                    organization.AddPhone(new Phone(phoneCreateDto.Number, phoneCreateDto.PhoneType, phoneCreateDto.IsPrimary));
-
-                foreach (var emailCreateDto in customerCreateDto.OrganizationCreateDto.Emails)
-                    organization.AddEmail(new Email(emailCreateDto.Address, emailCreateDto.IsPrimary));
-
-                if (organization != null)
-                {
-                    await organizationRepository.AddOrganizationAsync(organization);
-
-                    if (await organizationRepository.SaveChangesAsync())
-                    {
-                        customer = new(organization);
-
-                        if (customer != null)
-                            await customerRepository.AddCustomerAsync(customer);
-
-                        if (!await customerRepository.SaveChangesAsync())
-                            return BadRequest($"Failed to add {customerCreateDto}.");
-                    }
-                }
-            }
+            if (entityType == EntityType.Organization)
+                customer = CreateOrganizationCustomer(customerCreateDto);
 
             if (customer != null)
-            {
-                CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
+                await customerRepository.AddCustomerAsync(customer);
 
-                return CreatedAtRoute("GetCustomerAsync",
-                    new { id = customerFromRepository.Id },
-                    customerFromRepository);
+            if (!await customerRepository.SaveChangesAsync())
+                return BadRequest($"Failed to add {customerCreateDto}.");
+
+            CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
+
+            if (customerFromRepository == null)
+                return BadRequest($"Failed to add {customerCreateDto}.");
+
+            return CreatedAtRoute("GetCustomerAsync",
+                new { id = customerFromRepository.Id },
+                customerFromRepository);
+        }
+
+        private static Customer CreateOrganizationCustomer(CustomerCreateDto customerCreateDto)
+        {
+            var organizationNameOrError = OrganizationName.Create(customerCreateDto.OrganizationCreateDto.Name);
+
+            if (organizationNameOrError.IsSuccess)
+            {
+                Organization organization = new(organizationNameOrError.Value);
+
+                if (customerCreateDto.OrganizationCreateDto.Contact != null)
+                {
+                    Person contact = new(customerCreateDto.OrganizationCreateDto.Contact.Name,
+                                         customerCreateDto.OrganizationCreateDto.Contact.Gender);
+
+                    contact.SetAddress(customerCreateDto.OrganizationCreateDto.Contact?.Address);
+                    contact.SetBirthday(customerCreateDto.OrganizationCreateDto.Contact?.Birthday);
+                    contact.SetDriversLicense(customerCreateDto.OrganizationCreateDto.Contact?.DriversLicense);
+
+                    if (customerCreateDto.OrganizationCreateDto?.Contact?.Phones?.Count > 0)
+                        foreach (var phone in customerCreateDto.OrganizationCreateDto.Contact.Phones)
+                            contact.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+
+                    if (customerCreateDto.OrganizationCreateDto?.Contact?.Emails?.Count > 0)
+                        foreach (var email in customerCreateDto.OrganizationCreateDto.Contact.Emails)
+                            contact.AddEmail(new Email(email.Address, email.IsPrimary));
+
+                    organization.SetContact(contact);
+                    organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
+                }
+
+                Customer customer = new(organization);
+
+                return customer;
             }
 
-            return BadRequest($"Failed to add {customerCreateDto}.");
+            return null;
+        }
+
+        private static Customer CreatePersonCustomer(CustomerCreateDto customerCreateDto)
+        {
+            var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
+
+            person.SetAddress(customerCreateDto.PersonCreateDto?.Address);
+            person.SetBirthday(customerCreateDto.PersonCreateDto?.Birthday);
+            person.SetDriversLicense(customerCreateDto.PersonCreateDto?.DriversLicense);
+
+            if (customerCreateDto.PersonCreateDto?.Phones?.Count > 0)
+                foreach (var phone in customerCreateDto.PersonCreateDto.Phones)
+                    person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+
+            if (customerCreateDto.PersonCreateDto?.Emails?.Count > 0)
+                foreach (var email in customerCreateDto.PersonCreateDto.Emails)
+                    person.AddEmail(new Email(email.Address, email.IsPrimary));
+
+
+            Customer customer = new(person);
+
+            return customer;
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCustomerAsync(int id)
         {
             var customerFromRepository = await customerRepository.GetCustomerAsync(id);
+
             if (customerFromRepository == null)
                 return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
 
             await customerRepository.DeleteCustomerAsync(id);
+
             if (await customerRepository.SaveChangesAsync())
                 return NoContent();
 

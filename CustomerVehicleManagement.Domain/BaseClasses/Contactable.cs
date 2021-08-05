@@ -79,8 +79,11 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void SetAddress(Address address)
         {
-            Guard.ForNull(address, "address");
-            Address = address;
+            // Doesn't a guard unnecessarily throw exception when we just need a null check?
+            // Address is optional, so excluding it shouldn't throw an exception when excluded.
+            // Guard.ForNull(address, "address");
+            if (address != null)
+                Address = address;
         }
 
         // VK: no need to make these methods public, they are just for the Contactable class

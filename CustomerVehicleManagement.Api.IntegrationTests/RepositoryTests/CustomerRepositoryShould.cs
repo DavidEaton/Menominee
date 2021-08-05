@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     if (customer != null)
                         await context.AddAsync(customer);
                     await context.SaveChangesAsync();
-                    var repository = new CustomerRepository(context, mapper);
+                    var repository = new CustomerRepository(context);
                     var customerFromRepo = await repository.GetCustomerAsync(customer.Id);
 
                     customerFromRepo.Should().NotBeNull();
@@ -118,7 +118,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     if (customer != null)
                         await context.AddAsync(customer);
                     await context.SaveChangesAsync();
-                    var repository = new CustomerRepository(context, mapper);
+                    var repository = new CustomerRepository(context);
                     var customerFromRepo = await repository.GetCustomerAsync(customer.Id);
 
                     customerFromRepo.Should().NotBeNull();

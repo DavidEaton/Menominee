@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,9 +25,11 @@ namespace CustomerVehicleManagement.Api
         private readonly bool useConsoleLogger;
         private readonly string connection;
         private readonly UserContext userContext;
-        private readonly IdentityUserDbContext identityContext;
+        //private readonly IdentityUserDbContext identityContext;
         private List<Tenant> Tenants;
         public IWebHostEnvironment environment;
+
+
         private IConfiguration configuration { get; }
 
         protected AppDbContext() { }
@@ -40,14 +43,14 @@ namespace CustomerVehicleManagement.Api
         public AppDbContext(string connection,
                             bool useConsoleLogger,
                             UserContext userContext,
-                            IdentityUserDbContext identityContext,
+                            //IdentityUserDbContext identityContext,
                             IWebHostEnvironment environment,
                             IConfiguration configuration)
         {
             this.connection = connection;
             this.useConsoleLogger = useConsoleLogger;
             this.userContext = userContext;
-            this.identityContext = identityContext;
+            //this.identityContext = identityContext;
             this.environment = environment;
             this.configuration = configuration;
         }
@@ -80,6 +83,7 @@ namespace CustomerVehicleManagement.Api
                 //return;
             }
 
+            //Tenant tenant = GetTenant(GetTenantId(httpContext));
 
             //if (!environment.IsEnvironment("Testing"))
             //{
@@ -154,10 +158,10 @@ namespace CustomerVehicleManagement.Api
 
         private Tenant GetTenant(string tenantId)
         {
-            Tenants = identityContext.Tenants.ToList();
+            //Tenants = identityContext.Tenants.ToList();
 
-            if (Tenants != null)
-                return Tenants.Find(t => t.Id.ToString().ToLower() == tenantId.ToLower());
+            //if (Tenants != null)
+            //    return Tenants.Find(t => t.Id.ToString().ToLower() == tenantId.ToLower());
 
             return null;
         }
