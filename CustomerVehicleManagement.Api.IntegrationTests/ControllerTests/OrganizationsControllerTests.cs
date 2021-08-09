@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CustomerVehicleManagement.Api.Organizations;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;
@@ -10,24 +11,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     public class OrganizationsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private static IMapper mapper;
-        private const string Path = "https://localhost/api/organizations/list";
-        private const int Minute = 60;
+        private const string OrganizationsControllerListPath = "https://localhost/api/organizations/list";
         private readonly HttpClient httpClient;
 
         public OrganizationsControllerTests(WebApplicationFactory<Startup> factory)
         {
-            httpClient = factory.CreateDefaultClient(new Uri(Path));
-
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    configuration.AddProfile(new OrganizationProfile());
-                });
-
-                mapper = mapperConfiguration.CreateMapper();
-            }
+            httpClient = factory.CreateDefaultClient(new Uri(OrganizationsControllerListPath));
         }
 
         [Fact]
@@ -43,9 +32,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Get_Returns_Expected_MediaType()
         {
             var response = await httpClient.GetAsync(string.Empty);
+            var mediaType = "application/json";
 
             // Confirm that endpoint returns JSON ContentType
-            Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+            response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
         }
 
         [Fact]
@@ -54,8 +44,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var response = await httpClient.GetAsync(string.Empty);
 
             // Confirm that endpoint returns content (!= null && length > 0)
-            Assert.NotNull(response.Content);
-            Assert.True(response.Content.Headers.ContentLength > 0);
+            response.Content.Should().NotBeNull();
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -63,9 +53,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var response = await httpClient.GetAsync("list");
 
-            // Confirm that endpoint returns content (!= null && length > 0)
-            Assert.NotNull(response.Content);
-            Assert.True(response.Content.Headers.ContentLength > 0);
+            response.Content.Should().NotBeNull();
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
     }
 }
