@@ -18,7 +18,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
     {
         private const string Path = "https://localhost/api/persons/list";
         private const string UriSegment = "";
-        private const int Minute = 60;
         private readonly HttpClient httpClient;
 
         public PersonsControllerTests(WebApplicationFactory<Startup> factory)

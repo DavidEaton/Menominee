@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
     public class HealthCheckTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly HttpClient httpclient;
-        private const string UriSegment = "/healthcheck";
+        private const string BaseAddress = "/healthcheck";
 
         /*
         By default, xUnit creates a new instance of a test class for each test method.
@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
               Routing sends requests to the expected endpoint
             ***********************************************************************/
 
-            var response = await httpclient.GetAsync(UriSegment);
+            var response = await httpclient.GetAsync(BaseAddress);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }

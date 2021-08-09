@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
+﻿using CustomerVehicleManagement.Api.Persons;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,26 +14,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
     public class PersonsControllerShould
     {
-        private readonly IMapper mapper;
         private readonly PersonsController controller;
         private readonly Mock<IPersonRepository> moqRepository;
 
         public PersonsControllerShould()
         {
             moqRepository = new Mock<IPersonRepository>();
-
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    configuration.AddProfile(new PersonProfile());
-                    configuration.AddProfile(new EmailProfile());
-                    configuration.AddProfile(new PhoneProfile());
-                });
-
-                mapper = mapperConfiguration.CreateMapper();
-                controller = new PersonsController(moqRepository.Object, mapper);
-            }
+            controller = new PersonsController(moqRepository.Object);
         }
 
         #region ********************************Get***********************************

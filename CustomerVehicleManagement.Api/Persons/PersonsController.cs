@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Utilities;
+﻿using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +14,11 @@ namespace CustomerVehicleManagement.Api.Persons
     public class PersonsController : ControllerBase
     {
         private readonly IPersonRepository repository;
-        private readonly IMapper mapper;
 
-        public PersonsController(IPersonRepository repository, IMapper mapper)
+        public PersonsController(IPersonRepository repository)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/persons/list
@@ -87,11 +82,10 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
         {
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var person = mapper.Map<Person>(personCreateDto);
+            Person person = CreateNewPerson(personCreateDto);
 
             await repository.AddPersonAsync(person);
 
@@ -105,6 +99,25 @@ namespace CustomerVehicleManagement.Api.Persons
             }
 
             return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");
+        }
+
+        private static Person CreateNewPerson(PersonCreateDto personCreateDto)
+        {
+            var person = new Person(personCreateDto.Name, personCreateDto.Gender);
+
+            person.SetAddress(personCreateDto?.Address);
+            person.SetBirthday(personCreateDto?.Birthday);
+            person.SetDriversLicense(personCreateDto?.DriversLicense);
+
+            if (personCreateDto?.Phones?.Count > 0)
+                foreach (var phone in personCreateDto.Phones)
+                    person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+
+            if (personCreateDto?.Emails?.Count > 0)
+                foreach (var email in personCreateDto.Emails)
+                    person.AddEmail(new Email(email.Address, email.IsPrimary));
+
+            return person;
         }
 
         [HttpDelete("{id:int}")]

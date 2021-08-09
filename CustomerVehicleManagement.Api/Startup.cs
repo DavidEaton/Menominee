@@ -37,13 +37,13 @@ namespace CustomerVehicleManagement.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
-            const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
-            const bool useConsoleLoggerInTest = true;
+            //const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+            //const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+            //const bool useConsoleLoggerInTest = true;
             string environment = HostEnvironment.EnvironmentName;
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            if (environment == "Production")
+            if (environment == "Production" || environment == "Development")
                 services
                     .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                     .AddIdentityServerAuthentication(options =>
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api
             //services.AddScoped<IUserStore<ApplicationUser>, UserOnlyStore<ApplicationUser, IdentityUserDbContext>>();
 
 
-            services.AddDbContext<AppDbContext>();
+            //services.AddDbContext<AppDbContext>();
             //services.AddScoped(_ => new AppDbContext(Connection,
             //                             HostEnvironment.IsDevelopment(),
             //                             null,
@@ -78,8 +78,8 @@ namespace CustomerVehicleManagement.Api
             //                             Configuration));
 
             //if (environment == "Testing")
-            //services.AddScoped(_ => new AppDbContext(TestConnection,
-            //                                         useConsoleLoggerInTest));
+            //services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
+            services.AddDbContext<AppDbContext>();
 
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();

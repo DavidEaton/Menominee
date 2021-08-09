@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices((Action<IServiceCollection>)(services =>
+            builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
                             "database with test messages. Error: {Message}", ex.Message);
                     }
                 }
-            }));
+            });
         }
     }
 }

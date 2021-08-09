@@ -23,8 +23,8 @@ namespace CustomerVehicleManagement.Api
     public class AppDbContext : DbContext
     {
         private readonly bool useConsoleLogger;
-        private readonly string connection;
         private readonly UserContext userContext;
+        private string connection;
         //private readonly IdentityUserDbContext identityContext;
         private List<Tenant> Tenants;
         public IWebHostEnvironment environment;
@@ -70,8 +70,11 @@ namespace CustomerVehicleManagement.Api
                       .AddConsole();
                 });
 
+                if (connection == null)
+                    connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+
                 optionsBuilder.UseSqlServer(connection)
-                              .UseLazyLoadingProxies(false);
+                                                  .UseLazyLoadingProxies(false);
 
                 if (useConsoleLogger)
                 {
@@ -79,8 +82,6 @@ namespace CustomerVehicleManagement.Api
                         .UseLoggerFactory(loggerFactory)
                         .EnableSensitiveDataLogging();
                 }
-
-                //return;
             }
 
             //Tenant tenant = GetTenant(GetTenantId(httpContext));

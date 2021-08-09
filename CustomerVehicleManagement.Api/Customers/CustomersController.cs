@@ -218,7 +218,6 @@ namespace CustomerVehicleManagement.Api.Customers
                 foreach (var email in customerCreateDto.PersonCreateDto.Emails)
                     person.AddEmail(new Email(email.Address, email.IsPrimary));
 
-
             Customer customer = new(person);
 
             return customer;

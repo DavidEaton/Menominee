@@ -10,26 +10,21 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class BasicTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class BasicTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private readonly HttpClient client;
-        private const string BaseAddress = "https://localhost:44378/api";
-        public BasicTests(CustomWebApplicationFactory<Startup> factory)
+        private const string Path = "https://localhost/api/persons/list"; 
+        private readonly HttpClient httpClient;
+        public BasicTests(WebApplicationFactory<Startup> factory)
         {
-            client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri(BaseAddress)
-            });
+            httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task Post_DeleteAllMessagesHandler_ReturnsRedirectToRoot()
+        public async Task Should_Have_Some_Persons()
         {
-            var persons = await client.GetFromJsonAsync<IEnumerable<PersonInListDto>>("/api/persons/list");
+            var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonInListDto>>("");
 
             persons.Should().HaveCountGreaterOrEqualTo(1);
         }
-
     }
 }
