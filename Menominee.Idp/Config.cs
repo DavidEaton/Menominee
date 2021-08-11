@@ -16,19 +16,58 @@ namespace Menominee.Idp
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
-                new IdentityResource("tenantId", new [] { "tenantId"})
+
+                new IdentityResource(
+                    "tenantId",
+                    "Id of User's Tenant",
+                    new List<string>() { "tenantId"}),
+
+                new IdentityResource(
+                    "tenantName",
+                    "Name of User's Tenant",
+                    new List<string>() { "tenantName"}),
+
+                new IdentityResource(
+                    "roles",
+                    "Shop Roles",
+                    new List<string>() { "User", "Manager", "Admin", "Owner", "Development" }),
+
+                new IdentityResource(
+                    "subscriptionLevel",
+                    "User's Subsription Level",
+                    new List<string>() { "Free", "Paid" }),
+
+                new IdentityResource(
+                    "subscribedProducts",
+                    "User's subscribed Products",
+                    new List<string>() { "Core", "MVConnect", "InSpec", "Text Messaging", "Tire Size", "Tire Trac", "TireMetrix" })
             };
 
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                new ApiResource("menominee-api", "Menominee API", new [] { "country", "tenantId" }),
+                new ApiResource("menominee-api", "Menominee API"),
+
+                new ApiResource(
+                    "ddc-api",
+                    "Dynamic Database Conection API",
+                    new List<string>() { "role" }) // include role scope in access token
+
+
+                //new ApiResource("menominee-api", "Menominee API", new [] { "country", "tenantId" }),
+                //new ApiResource("ddc-api", "Dynamic Database Conection API", new [] { "tenantName", "tenantId" }),
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope(name: "menominee-api", displayName: "Menominee API")
+                new ApiScope(name: "menominee-api", displayName: "Menominee API"),
+                new ApiScope(name: "ddc-api", displayName: "Dynamic Database Conection API")
+                //new ApiScope(name: "tenantId", displayName: "Id of User's Tenant"),
+                //new ApiScope(name: "tenantName", displayName: "Name of User's Tenant"),
+                //new ApiScope(name: "roles", displayName: "User's Shop Role(s)"),
+                //new ApiScope(name: "subscriptionLevel", displayName: "User's Subsription Level"),
+                //new ApiScope(name: "subscribedProducts", displayName: "User's subscribed Products")
             };
 
         public static IEnumerable<Client> Clients =>
@@ -54,7 +93,13 @@ namespace Menominee.Idp
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
-                        "menominee-api"
+                        "menominee-api",
+                        "ddc-api",
+                        "tenantId",
+                        "tenantName",
+                        "roles",
+                        "subscriptionLevel",
+                        "subscribedProducts"
                     },
                     AllowedCorsOrigins = new List<string>()
                     {

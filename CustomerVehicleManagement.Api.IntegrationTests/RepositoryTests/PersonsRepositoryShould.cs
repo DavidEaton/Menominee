@@ -49,14 +49,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // request, like our production code does.
 
             // Add a Person to the in-memory database
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 context.Persons.Add(CreateValidPerson());
                 context.SaveChanges();
             }
 
             // Read all Persons from the in-memory database
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
 
@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
 
@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 0;
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPerson();
                 context.Persons.Add(person);
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = person.Id;
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
 
@@ -117,7 +117,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 0;
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPersonWithPhones();
                 context.Persons.Add(person);
@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = person.Id;
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 var personFromRepo = await repository.GetPersonAsync(id);
@@ -142,7 +142,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 0;
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPersonWithEmails();
                 context.Persons.Add(person);
@@ -150,7 +150,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = person.Id;
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 var personFromRepo = await repository.GetPersonAsync(id);
@@ -166,13 +166,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 context.Persons.Add(CreateValidPerson());
                 context.SaveChanges();
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
 
@@ -191,7 +191,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var id = 0;
 
             // Create Person and save
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 context.Persons.Add(person);
                 context.SaveChanges();
@@ -199,7 +199,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
 
             // Get the saved Person, set their Birthday and save again
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 personFromRepository = await repository.GetPersonEntityAsync(id);
@@ -219,7 +219,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
 
             // Get the updated Person and Assert
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 personFromRepository = await repository.GetPersonEntityAsync(id);
@@ -245,7 +245,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             CreateAndSavePersonGraph(options, out person, out id);
 
             // Get the Person from the database
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 personFromRepository = await repository.GetPersonEntityAsync(id);
@@ -284,7 +284,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             }
 
             // Get the updated Person and Assert
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 personFromRepositoryUpdated = await repository.GetPersonAsync(id);
@@ -301,7 +301,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 0;
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPerson();
                 context.Persons.Add(person);
@@ -309,7 +309,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = person.Id;
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 var personFromRepo = await repository.GetPersonEntityAsync(id);
@@ -343,7 +343,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 Action action = () => new PersonRepository(context, null);
                 action.Should().Throw<ArgumentNullException>();
@@ -356,7 +356,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 0;
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPerson();
                 context.Persons.Add(person);
@@ -364,7 +364,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = person.Id;
             }
 
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var repository = new PersonRepository(context, mapper);
                 var personExists = await repository.PersonExistsAsync(id);
@@ -381,11 +381,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var connectionStringBuilder =
                 new SqliteConnectionStringBuilder { DataSource = ":memory:" };
             var connection = new SqliteConnection(connectionStringBuilder.ToString());
-            var options = new DbContextOptionsBuilder<AppDbContext>()
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlite(connection)
                 .Options;
             var person = CreateValidPerson();
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 context.Database.OpenConnection();
                 context.Database.EnsureCreated();

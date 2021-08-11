@@ -2,11 +2,15 @@
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -27,11 +31,38 @@ namespace CustomerVehicleManagement.Api.Organizations
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+        public async Task WriteOutIdentityInformation()
+        {
+            try
+            {
+            // get the saved identity token
+            var identityToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+            // write it out
+            Debug.WriteLine($"Identity token: {identityToken}");
+
+            // write out the user claims
+            foreach (var claim in User.Claims)
+            {
+                Debug.WriteLine($"Claim type: {claim.Type} - Claim value: {claim.Value}");
+            }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"exception: {ex}");
+                throw;
+            }
+
+        }
+
         // api/organizations/list
         [Route("list")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrganizationInListDto>>> GetOrganizationsListAsync()
         {
+            await WriteOutIdentityInformation();
+
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);
         }

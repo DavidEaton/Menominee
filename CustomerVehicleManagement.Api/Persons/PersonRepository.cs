@@ -11,11 +11,11 @@ namespace CustomerVehicleManagement.Api.Persons
 {
     public class PersonRepository : IPersonRepository
     {
-        private readonly AppDbContext context;
+        private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
 
         public PersonRepository(
-            AppDbContext context,
+            ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context ??

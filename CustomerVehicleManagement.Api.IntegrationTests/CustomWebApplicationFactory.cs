@@ -18,11 +18,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
             {
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
-                        typeof(DbContextOptions<AppDbContext>));
+                        typeof(DbContextOptions<ApplicationDbContext>));
 
                 services.Remove(descriptor);
 
-                services.AddDbContext<AppDbContext>(options =>
+                services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseInMemoryDatabase($"testdb{Guid.NewGuid()}");
                 });
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var context = scopedServices.GetRequiredService<AppDbContext>();
+                    var context = scopedServices.GetRequiredService<ApplicationDbContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 

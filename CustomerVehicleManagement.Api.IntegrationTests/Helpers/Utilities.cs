@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
     public static class Utilities
     {
-        public static void InitializeDbForTests(AppDbContext db)
+        public static void InitializeDbForTests(ApplicationDbContext db)
         {
             Task<bool> personsHasRows = db.Persons.AnyAsync();
 
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 
         }
 
-        public static void ReinitializeDbForTests(AppDbContext db)
+        public static void ReinitializeDbForTests(ApplicationDbContext db)
         {
             db.Persons.RemoveRange(db.Persons);
             InitializeDbForTests(db);
@@ -40,9 +40,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             };
         }
 
-        public static DbContextOptions<AppDbContext> CreateDbContextOptions()
+        public static DbContextOptions<ApplicationDbContext> CreateDbContextOptions()
         {
-            return new DbContextOptionsBuilder<AppDbContext>()
+            return new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase($"testdb{Guid.NewGuid()}")
                 .Options;
         }
@@ -82,10 +82,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         }
 
 
-        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<AppDbContext> options, out Customer customer, out int id)
+        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out int id)
         {
             // Create a new Person with Emails and Phones, and save
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 customer = CreateValidOrganizationCustomer();
                 context.Customers.Add(customer);
@@ -94,10 +94,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             }
         }
 
-        public static int CreateAndSaveValidOrganizationId(DbContextOptions<AppDbContext> options)
+        public static int CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
         {
             int id;
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 Organization organization = CreateValidOrganization();
                 context.Organizations.Add(organization);
@@ -108,10 +108,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return id;
         }
 
-        public static Organization CreateAndSaveValidOrganization(DbContextOptions<AppDbContext> options)
+        public static Organization CreateAndSaveValidOrganization(DbContextOptions<ApplicationDbContext> options)
         {
             Organization organization;
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 organization = CreateValidOrganization();
                 context.Organizations.Add(organization);
@@ -144,10 +144,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return person;
         }
 
-        public static void CreateAndSavePersonGraph(DbContextOptions<AppDbContext> options, out Person person, out int id)
+        public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out int id)
         {
             // Create a new Person with Emails and Phones, and save
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 person = CreateValidPersonWithEmails();
                 person.SetPhones(CreateValidPhones());

@@ -12,11 +12,11 @@ namespace CustomerVehicleManagement.Api.Organizations
 {
     public class OrganizationRepository : IOrganizationRepository
     {
-        private readonly AppDbContext context;
+        private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
         private const int organizationNoteTruncateAt = 50;
         public OrganizationRepository(
-            AppDbContext context,
+            ApplicationDbContext context,
             IMapper mapper)
         {
             this.context = context ??

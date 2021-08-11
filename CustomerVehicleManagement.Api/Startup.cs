@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -48,13 +49,13 @@ namespace CustomerVehicleManagement.Api
                     .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                     .AddIdentityServerAuthentication(options =>
                         {
-                            options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                            options.Authority = Configuration[$"IDPSettings:BaseUrl"];
                             options.ApiName = Configuration["ApiName"];
                         })
                     .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
                         options =>
                          {
-                             options.Authority = Configuration[$"IDPSettings:BaseUrl:{environment}"];
+                             options.Authority = Configuration[$"IDPSettings:BaseUrl"];
                              options.Audience = Configuration["ApiName"];
                              options.RequireHttpsMetadata = false;
                              options.TokenValidationParameters = new
@@ -78,8 +79,8 @@ namespace CustomerVehicleManagement.Api
             //                             Configuration));
 
             //if (environment == "Testing")
-            //services.AddScoped(_ => new AppDbContext(TestConnection, useConsoleLoggerInTest));
-            services.AddDbContext<AppDbContext>();
+            //services.AddScoped(_ => new AppDbContext(Connection, useConsoleLoggerInTest));
+            services.AddDbContext<ApplicationDbContext>();
 
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
@@ -118,29 +119,14 @@ namespace CustomerVehicleManagement.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            string environment = HostEnvironment.EnvironmentName;
-            string[] testOrigin = { "http://localhost:44307, https://localhost:44307" };
-
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthorization();
+            app.UseAuthentication();
 
-            if (!HostEnvironment.IsDevelopment())
-            {
-
-                app.UseAuthorization();
-                app.UseAuthentication();
-                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
-                                        .AllowAnyMethod().AllowAnyHeader());
-            }
-
-            if (environment != "Prodution")
-                app.UseCors(cors => cors.AllowAnyOrigin()
-                                        .AllowAnyMethod()
-                                        .AllowAnyHeader());
-
-            if (environment == "Prodution")
-                app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins:{environment}").Get<string>())
-                                        .AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
 
             if (HostEnvironment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
@@ -155,7 +141,9 @@ namespace CustomerVehicleManagement.Api
                     .AddRedirectToHttps();
                 app.UseRewriter(options);
 
-                app.UseExceptionHandler(appBuilder =>
+                if (HostEnvironment.IsProduction())
+                {
+                    app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
                     {
@@ -166,12 +154,14 @@ namespace CustomerVehicleManagement.Api
                         //      return StatusCode(StatusCodes.Status500InternalServerError, ex);
                         context.Response.StatusCode = 500;
                         logMessage = context.Response.StatusCode.ToString();
+                        //logger.LogError(logMessage);
                         await context.Response.WriteAsync("An unexpected fault occurred. Fault logged.");
                     });
                 });
+                }
 
-                // Testing
-                if (api_env == "Testing")
+                // Staging
+                if (api_env == "Staging")
                     app.UseDeveloperExceptionPage();
             }
 

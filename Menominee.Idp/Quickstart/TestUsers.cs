@@ -25,8 +25,12 @@ namespace IdentityServerHost.Quickstart.UI
                      new Claim(JwtClaimTypes.GivenName, "Frank"),
                      new Claim(JwtClaimTypes.FamilyName, "Underwood"),
                      new Claim(JwtClaimTypes.Email, "frank@underwood.com"),
-                     new Claim("country", "BE"),
-                     new Claim("TenantId", "714514FC-69C5-4125-A100-FF2DEF725449")
+                     new Claim("tenantName", "janesauto"),
+                     new Claim("tenantId", "3b5dbeef-1de1-4cbf-ba6a-2c464df026a9"),
+                     new Claim("roles", "Owner"),
+                     new Claim("subscriptionLevel", "Paid"),
+                     new Claim("subscribedProducts", "Core"),
+                     new Claim("subscribedProducts", "MVConnect")
                  }
              },
              new TestUser
@@ -41,8 +45,8 @@ namespace IdentityServerHost.Quickstart.UI
                      new Claim(JwtClaimTypes.GivenName, "Bubba"),
                      new Claim(JwtClaimTypes.FamilyName, "Jones"),
                      new Claim(JwtClaimTypes.Email, "bubba@jones.com"),
-                     new Claim("country", "US"),
-                     new Claim("TenantId", "8772A385-E57F-4DC0-8AA6-4D0C2F9513C0")
+                     new Claim("tenantName", "moops"),
+                     new Claim("tenantId", "8772A385-E57F-4DC0-8AA6-4D0C2F9513C0")
                  }
              }
          };

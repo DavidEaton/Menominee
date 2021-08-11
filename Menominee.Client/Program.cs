@@ -1,6 +1,7 @@
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -40,6 +41,17 @@ namespace Menominee.Client
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
+            });
+
+            builder.Services.AddAuthorizationCore(opt =>
+            {
+                opt.AddPolicy(
+                    "CanDoStuff",
+                    policyBuilder =>
+                    {
+                        policyBuilder.RequireAuthenticatedUser();
+                        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
+                    });
             });
 
             await builder.Build().RunAsync();

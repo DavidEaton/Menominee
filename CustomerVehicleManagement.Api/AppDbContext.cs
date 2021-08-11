@@ -28,6 +28,9 @@ namespace CustomerVehicleManagement.Api
         //private readonly IdentityUserDbContext identityContext;
         private List<Tenant> Tenants;
         public IWebHostEnvironment environment;
+        const string ConnectionDevelopment = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+        const string ConnectionTest = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+        //const bool useConsoleLoggerInTest = true;
 
 
         private IConfiguration configuration { get; }
@@ -84,40 +87,47 @@ namespace CustomerVehicleManagement.Api
                 }
             }
 
-            //Tenant tenant = GetTenant(GetTenantId(httpContext));
 
-            //if (!environment.IsEnvironment("Testing"))
-            //{
-            //    Tenant tenant = GetTenant(GetTenantId(userContext));
+            if (environment.IsDevelopment())
+            {
+                connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
+            }
 
-            //    if (tenant != null)
-            //    {
-            //        //string errorMessage = "Unable to find tenant.";
-            //        //Log.Error(errorMessage);
-            //        //throw new ApplicationException(errorMessage);
+            if (environment.IsProduction())
+            {
+                connection = GetTenantConnection();
+            }
+            if (environment.IsEnvironment("Testing"))
+            {
+                connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+            }
 
-
-            //        var dbConnectionOptions = new DbConnectionOptions
-            //        {
-            //            DatabaseName = tenant.Name,
-            //            Server = configuration["DatabaseSettings:Server:Name"],
-            //            IntegratedSecurity = environment.IsDevelopment(),
-            //            Password = configuration["DatabaseSettings:Server:Password"],
-            //            UserId = configuration["DatabaseSettings:Server:UserName"],
-            //            TrustServerCertificate = environment.IsDevelopment()
-            //        };
-
-            //        optionsBuilder.UseSqlServer(BuildTenantDbConnectionString(dbConnectionOptions));
-
-            //        base.OnConfiguring(optionsBuilder);
-            //    }
-            //}
-
-
-
+            optionsBuilder.UseSqlServer(connection);
         }
 
-        private string BuildTenantDbConnectionString(DbConnectionOptions dbOptions)
+        private string GetTenantConnection()
+        {
+            string tenantName = GetTenantName(userContext);
+
+            if (!string.IsNullOrWhiteSpace(tenantName))
+            {
+                var connectionOptions = new DatabaseConnectionOptions
+                {
+                    DatabaseName = tenantName,
+                    Server = configuration["DatabaseSettings:Server:Name"],
+                    IntegratedSecurity = environment.IsDevelopment(),
+                    Password = configuration["DatabaseSettings:Server:Password"],
+                    UserId = configuration["DatabaseSettings:Server:UserName"],
+                    TrustServerCertificate = environment.IsDevelopment()
+                };
+
+                return BuildTenantDbConnectionString(connectionOptions);
+            }
+
+            return string.Empty;
+        }
+
+        private string BuildTenantDbConnectionString(DatabaseConnectionOptions dbOptions)
         {
             var builder = new SqlConnectionStringBuilder
             {
@@ -157,37 +167,6 @@ namespace CustomerVehicleManagement.Api
             modelBuilder.ApplyConfiguration(new EmailConfiguration());
         }
 
-        private Tenant GetTenant(string tenantId)
-        {
-            //Tenants = identityContext.Tenants.ToList();
-
-            //if (Tenants != null)
-            //    return Tenants.Find(t => t.Id.ToString().ToLower() == tenantId.ToLower());
-
-            return null;
-        }
-
-        private static string GetTenantId(UserContext UserContext)
-        {
-            if (UserContext == null)
-                return string.Empty;
-
-            var claims = UserContext.Claims;
-            var tenantId = string.Empty;
-
-            try
-            {
-                tenantId = claims.First(c => c.Type == "tenantId").Value;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Exception message from GetTenantId(): {ex.Message}");
-                return string.Empty;
-            }
-
-            return tenantId;
-        }
-
         private static string GetTenantName(UserContext UserContext)
         {
             if (UserContext == null)
@@ -208,19 +187,5 @@ namespace CustomerVehicleManagement.Api
 
             return tenantName;
         }
-    }
-
-    internal class DbConnectionOptions
-    {
-        public string Server { get; set; }
-        public string DatabaseName { get; set; }
-        public bool IntegratedSecurity { get; set; }
-        public string Password { get; set; }
-        public string UserId { get; set; }
-        public bool PersistSecurityInfo = false;
-        public bool MultipleActiveResultSets = false;
-        public bool Encrypt = true;
-        public bool TrustServerCertificate { get; set; }
-        public int ConnectTimeout = 30;
     }
 }

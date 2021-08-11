@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         //{
         //    var options = CreateDbContextOptions();
 
-        //    using (var context = new AppDbContext(options))
+        //    using (var context = new ApplicationDbContext(options))
         //    {
         //        // Arrange
         //        var repository = new CustomerRepository(context, mapper);
@@ -64,7 +64,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         //{
         //    var options = CreateDbContextOptions();
 
-        //    using (var context = new AppDbContext(options))
+        //    using (var context = new ApplicationDbContext(options))
         //    {
         //        var repository = new CustomerRepository(context, mapper);
 
@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetPersonCustomerAsync()
         {
             var options = CreateDbContextOptions();
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var person = CreateValidPerson();
                 await context.AddAsync(person);
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationCustomerAsync()
         {
             var options = CreateDbContextOptions();
-            using (var context = new AppDbContext(options))
+            using (var context = new ApplicationDbContext(options, null, null, null, null))
             {
                 var organization = CreateValidOrganization();
                 await context.AddAsync(organization);

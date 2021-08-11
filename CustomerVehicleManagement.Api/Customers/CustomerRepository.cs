@@ -12,9 +12,9 @@ namespace CustomerVehicleManagement.Api.Customers
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly AppDbContext context;
+        private readonly ApplicationDbContext context;
 
-        public CustomerRepository(AppDbContext context)
+        public CustomerRepository(ApplicationDbContext context)
         {
             Guard.ForNull(context, "context");
 
