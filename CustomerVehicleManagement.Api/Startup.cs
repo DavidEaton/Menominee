@@ -2,21 +2,16 @@ using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.User;
-using IdentityServer4.AccessTokenValidation;
-using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,6 +29,7 @@ namespace CustomerVehicleManagement.Api
 
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
+        const string AuthenticationScheme = "Bearer";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -46,13 +42,8 @@ namespace CustomerVehicleManagement.Api
 
             if (environment == "Production" || environment == "Development")
                 services
-                    .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                    .AddIdentityServerAuthentication(options =>
-                        {
-                            options.Authority = Configuration[$"IDPSettings:BaseUrl"];
-                            options.ApiName = Configuration["ApiName"];
-                        })
-                    .AddJwtBearer(IdentityServerAuthenticationDefaults.AuthenticationScheme,
+                    .AddAuthentication(AuthenticationScheme)
+                    .AddJwtBearer(AuthenticationScheme,
                         options =>
                          {
                              options.Authority = Configuration[$"IDPSettings:BaseUrl"];
@@ -63,7 +54,8 @@ namespace CustomerVehicleManagement.Api
                              {
                                  ValidateAudience = false
                              };
-                         });
+                         })
+                    ;
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
