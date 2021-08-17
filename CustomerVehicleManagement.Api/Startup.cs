@@ -2,6 +2,7 @@ using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,6 @@ namespace CustomerVehicleManagement.Api
 
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
-        const string AuthenticationScheme = "Bearer";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -37,25 +37,24 @@ namespace CustomerVehicleManagement.Api
             //const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
             //const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
             //const bool useConsoleLoggerInTest = true;
-            string environment = HostEnvironment.EnvironmentName;
+
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            if (environment == "Production" || environment == "Development")
-                services
-                    .AddAuthentication(AuthenticationScheme)
-                    .AddJwtBearer(AuthenticationScheme,
-                        options =>
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+                    options =>
+                     {
+                         options.Authority = Configuration[$"IDPSettings:BaseUrl"];
+                         options.Audience = Configuration["ApiName"];
+                         options.RequireHttpsMetadata = false;
+                         options.TokenValidationParameters = new
+                         TokenValidationParameters()
                          {
-                             options.Authority = Configuration[$"IDPSettings:BaseUrl"];
-                             options.Audience = Configuration["ApiName"];
-                             options.RequireHttpsMetadata = false;
-                             options.TokenValidationParameters = new
-                             TokenValidationParameters()
-                             {
-                                 ValidateAudience = false
-                             };
-                         })
-                    ;
+                             ValidateAudience = false
+                         };
+                     })
+                ;
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -82,18 +81,16 @@ namespace CustomerVehicleManagement.Api
             services.AddCors();
             services.AddHealthChecks();
 
-            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
-            if (environment == "Production")
+            if (HostEnvironment.IsProduction())
             {
+                // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
 
                 services.AddControllers(mvcOptions =>
                 {
-                    // Return 406 Not Acceptible if request content type is unavailable
-                    mvcOptions.ReturnHttpNotAcceptable = true;
-                    // Only allow authenticated users
+                    mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
                     mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
                 }).AddJsonOptions(options =>
                   {
@@ -102,10 +99,11 @@ namespace CustomerVehicleManagement.Api
             }
 
             if (HostEnvironment.IsDevelopment())
-                services.AddControllers().AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                });
+                services.AddControllers()
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -113,7 +111,10 @@ namespace CustomerVehicleManagement.Api
         {
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
+
+            if (HostEnvironment.IsProduction())
+                app.UseAuthorization();
+
             app.UseAuthentication();
 
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())

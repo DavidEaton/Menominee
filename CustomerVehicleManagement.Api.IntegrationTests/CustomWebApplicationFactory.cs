@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
+                    serviceDescriptor => serviceDescriptor.ServiceType ==
                         typeof(DbContextOptions<ApplicationDbContext>));
 
                 services.Remove(descriptor);
@@ -27,9 +27,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
                     options.UseInMemoryDatabase($"testdb{Guid.NewGuid()}");
                 });
 
-                var sp = services.BuildServiceProvider();
+                var serviceProvider = services.BuildServiceProvider();
 
-                using (var scope = sp.CreateScope())
+                using (var scope = serviceProvider.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
                     var context = scopedServices.GetRequiredService<ApplicationDbContext>();

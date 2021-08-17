@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         public void InsertPersonIntoDatabase()
         {
             // Arrange
-            AppDbContext context = CreateTestContext();
+            ApplicationDbContext context = CreateTestContext();
 
             var firstName = "Jane";
             var lastName = "Doe";
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         public async Task GetPersonFromDatabase()
         {
             var id = 0;
-            AppDbContext context = CreateTestContext();
+            ApplicationDbContext context = CreateTestContext();
             var firstName = "Tasha";
             var lastName = "Yar";
             var name = new PersonName(lastName, firstName);
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         public async Task UpdatePersonInDatabase()
         {
             var id = 0;
-            AppDbContext context = CreateTestContext();
+            ApplicationDbContext context = CreateTestContext();
 
             var firstName = "Tasha";
             var lastName = "Yar";
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         public async Task DeletePersonFromDatabase()
         {
             var id = 0;
-            AppDbContext context = CreateTestContext();
+            ApplicationDbContext context = CreateTestContext();
 
             var firstName = "Dianna";
             var lastName = "Troy";
@@ -152,17 +152,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             Dispose();
             GC.SuppressFinalize(this);
         }
-        private static AppDbContext CreateTestContext()
+        private static ApplicationDbContext CreateTestContext()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(Connection);
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseSqlServer(Connection, null);
             var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<AppDbContext>>();
+            var mockLogger = new Mock<ILogger<ApplicationDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:Testing");
-            var context = new AppDbContext(Connection, true);
+            var context = new ApplicationDbContext(Connection);
 
             // Set test database to known state
             context.Database.EnsureDeleted();
@@ -172,15 +172,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 
         public void Dispose()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseSqlServer(Connection);
             var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<AppDbContext>>();
+            var mockLogger = new Mock<ILogger<ApplicationDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new AppDbContext(Connection, true);
+            var context = new ApplicationDbContext(Connection);
             context.Database.EnsureDeleted();
             GC.SuppressFinalize(this);
         }

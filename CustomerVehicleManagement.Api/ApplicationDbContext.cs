@@ -17,12 +17,17 @@ namespace CustomerVehicleManagement.Api
     public class ApplicationDbContext : DbContext
     {
         private readonly IConfiguration Configuration;
-        private readonly IWebHostEnvironment environment;
-        private readonly UserContext userContext;
+        private readonly IWebHostEnvironment Environment;
+        private readonly UserContext UserContext;
         //private readonly IdentityUserDbContext identityContext;
-        private List<Tenant> tenants;
-        readonly ILogger<ApplicationDbContext> logger;
-        private string connection;
+        private List<Tenant> Tenants;
+        readonly ILogger<ApplicationDbContext> Logger;
+        private string Connection = string.Empty;
+
+        public ApplicationDbContext(string connection)
+        {
+            Connection = connection;
+        }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
             IConfiguration configuration,
@@ -32,18 +37,18 @@ namespace CustomerVehicleManagement.Api
             ILogger<ApplicationDbContext> logger)
             : base(options)
         {
-            this.environment = environment;
-            this.Configuration = configuration;
-            this.userContext = userContext;
-            //this.identityContext = identityContext;
-            this.logger = logger;
+            Environment = environment;
+            Configuration = configuration;
+            UserContext = userContext;
+            //identityContext = identityContext;
+            Logger = logger;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            connection = GetTenantConnection();
+            Connection = GetTenantConnection();
 
-            options.UseSqlServer(connection);
+            options.UseSqlServer(Connection);
             base.OnConfiguring(options);
         }
 
@@ -65,7 +70,7 @@ namespace CustomerVehicleManagement.Api
 
         private string GetTenantConnection()
         {
-            string tenantName = GetTenantName(userContext);
+            string tenantName = GetTenantName(UserContext);
 
             if (!string.IsNullOrWhiteSpace(tenantName))
             {
@@ -73,10 +78,10 @@ namespace CustomerVehicleManagement.Api
                 {
                     DatabaseName = tenantName,
                     Server = Configuration["DatabaseSettings:Server:Name"],
-                    IntegratedSecurity = environment.EnvironmentName == "Development",
+                    IntegratedSecurity = Environment.EnvironmentName == "Development",
                     Password = Configuration["DatabaseSettings:Server:Password"],
                     UserId = Configuration["DatabaseSettings:Server:UserName"],
-                    TrustServerCertificate = environment.EnvironmentName == "Development"
+                    TrustServerCertificate = Environment.EnvironmentName == "Development"
                 };
 
                 return BuildConnectionString(connectionOptions);
@@ -118,7 +123,7 @@ namespace CustomerVehicleManagement.Api
             }
             catch (Exception ex)
             {
-                logger.LogError($"Exception message from GetTenantName(): {ex.Message}");
+                Logger.LogError($"Exception message from GetTenantName(): {ex.Message}");
                 return tenantName;
             }
 

@@ -20,14 +20,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
     /// <summary>
     /// These tests use mocks, no database and no data
     /// </summary>
-    public class CustomersControllerMockedShould
+    public class CustomersControllerWithMocksShould
     {
         private readonly CustomersController controller;
         private readonly Mock<IPersonRepository> moqPersonRepository;
         private readonly Mock<IOrganizationRepository> moqOrganizationRepository;
         private readonly Mock<ICustomerRepository> moqCustomerRepository;
 
-        public CustomersControllerMockedShould()
+        public CustomersControllerWithMocksShould()
         {
             moqPersonRepository = new Mock<IPersonRepository>();
             moqOrganizationRepository = new Mock<IOrganizationRepository>();

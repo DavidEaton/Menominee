@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Menominee.Client.MessageHandlers
 {
+    /// <summary>
+    /// Base class AuthorizationMessageHandler takes care of renewing tokens
+    /// </summary>
     public class MenonineeApiAuthorizationMessageHandler : AuthorizationMessageHandler
     {
         public IConfiguration configuration;
@@ -15,7 +18,8 @@ namespace Menominee.Client.MessageHandlers
             : base(provider, navigation)
         {
             this.configuration = configuration;
-            ConfigureHandler(authorizedUrls: new[] { configuration["ApiBaseUrl"] });
+            ConfigureHandler(
+                authorizedUrls: new[] { configuration["ApiBaseUrl"] });
         }
     }
 }

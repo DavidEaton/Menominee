@@ -46,7 +46,10 @@ namespace IdentityServerHost.Quickstart.UI
                      new Claim(JwtClaimTypes.FamilyName, "Jones"),
                      new Claim(JwtClaimTypes.Email, "bubba@jones.com"),
                      new Claim("tenantName", "moops"),
-                     new Claim("tenantId", "8772A385-E57F-4DC0-8AA6-4D0C2F9513C0")
+                     new Claim("tenantId", "8772A385-E57F-4DC0-8AA6-4D0C2F9513C0"),
+                     new Claim("roles", "User"),
+                     new Claim("subscriptionLevel", "Free"),
+                     new Claim("subscribedProducts", "Core")
                  }
              }
          };

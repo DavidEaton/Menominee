@@ -46,7 +46,7 @@ namespace Menominee.Client
             builder.Services.AddAuthorizationCore(opt =>
             {
                 opt.AddPolicy(
-                    "CanDoStuff",
+                    "PaidSubscriptionCanDoStuff",
                     policyBuilder =>
                     {
                         policyBuilder.RequireAuthenticatedUser();

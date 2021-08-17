@@ -18,22 +18,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
     /// </summary>
     public class CustomerRepositoryShould
     {
-        private static IMapper mapper;
+
         public CustomerRepositoryShould()
         {
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    //configuration.AddProfile(new PersonProfile());
-                    //configuration.AddProfile(new EmailProfile());
-                    //configuration.AddProfile(new PhoneProfile());
-                    configuration.AddProfile(new CustomerProfile());
-                    configuration.AddProfile(new OrganizationProfile());
-                });
 
-                mapper = mapperConfiguration.CreateMapper();
-            }
         }
 
         //[Fact]

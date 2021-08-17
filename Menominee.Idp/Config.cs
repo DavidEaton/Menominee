@@ -20,12 +20,12 @@ namespace Menominee.Idp
                 new IdentityResource(
                     "tenantId",
                     "Id of User's Tenant",
-                    new List<string>() { "tenantId"}),
+                    new List<string>() { "tenantId" }),
 
                 new IdentityResource(
                     "tenantName",
                     "Name of User's Tenant",
-                    new List<string>() { "tenantName"}),
+                    new List<string>() { "tenantName" }),
 
                 new IdentityResource(
                     "roles",
@@ -46,16 +46,15 @@ namespace Menominee.Idp
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                new ApiResource("menominee-api", "Menominee API"),
+                new ApiResource(
+                    "menominee-api",
+                    "Menominee API",
+                    new List<string>() { "tenantId" }),
 
                 new ApiResource(
                     "ddc-api",
                     "Dynamic Database Conection API",
                     new List<string>() { "role" }) // include role scope in access token
-
-
-                //new ApiResource("menominee-api", "Menominee API", new [] { "country", "tenantId" }),
-                //new ApiResource("ddc-api", "Dynamic Database Conection API", new [] { "tenantName", "tenantId" }),
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>

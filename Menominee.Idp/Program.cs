@@ -65,35 +65,34 @@ namespace Menominee.Idp
         private static void SeedDatabase(IHost host)
         {
             // seed the database.  Best practice = in Main, using service scope
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            try
             {
-                try
+                var context = scope.ServiceProvider.GetService<UserDbContext>();
+
+                // ensure the DB is migrated before seeding
+                context.Database.Migrate();
+
+                // use the user manager to create test users
+                var userManager = scope.ServiceProvider
+                    .GetRequiredService<UserManager<ApplicationUser>>();
+
+                var jack = userManager.FindByNameAsync("Jack").Result;
+                if (jack == null)
                 {
-                    var context = scope.ServiceProvider.GetService<UserDbContext>();
-
-                    // ensure the DB is migrated before seeding
-                    context.Database.Migrate();
-
-                    // use the user manager to create test users
-                    var userManager = scope.ServiceProvider
-                        .GetRequiredService<UserManager<ApplicationUser>>();
-
-                    var jack = userManager.FindByNameAsync("Jack").Result;
-                    if (jack == null)
+                    jack = new ApplicationUser
                     {
-                        jack = new ApplicationUser
-                        {
-                            UserName = "Jack",
-                            EmailConfirmed = true
-                        };
+                        UserName = "Jack",
+                        EmailConfirmed = true
+                    };
 
-                        var result = userManager.CreateAsync(jack, "P@ssword1").Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
+                    var result = userManager.CreateAsync(jack, "P@ssword1").Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
 
-                        result = userManager.AddClaimsAsync(jack, new Claim[]{
+                    result = userManager.AddClaimsAsync(jack, new Claim[]{
                                 new Claim(JwtClaimTypes.Name, "Jack Torrance"),
                                 new Claim(JwtClaimTypes.GivenName, "Jack"),
                                 new Claim(JwtClaimTypes.FamilyName, "Torrance"),
@@ -101,28 +100,28 @@ namespace Menominee.Idp
                                 new Claim("country", "BE")
                             }).Result;
 
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
+                }
+
+                var wendy = userManager.FindByNameAsync("Wendy").Result;
+                if (wendy == null)
+                {
+                    wendy = new ApplicationUser
+                    {
+                        UserName = "Wendy",
+                        EmailConfirmed = true
+                    };
+
+                    var result = userManager.CreateAsync(wendy, "P@ssword1").Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
                     }
 
-                    var wendy = userManager.FindByNameAsync("Wendy").Result;
-                    if (wendy == null)
-                    {
-                        wendy = new ApplicationUser
-                        {
-                            UserName = "Wendy",
-                            EmailConfirmed = true
-                        };
-
-                        var result = userManager.CreateAsync(wendy, "P@ssword1").Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
-
-                        result = userManager.AddClaimsAsync(wendy, new Claim[]{
+                    result = userManager.AddClaimsAsync(wendy, new Claim[]{
                                 new Claim(JwtClaimTypes.Name, "Wendy Torrance"),
                                 new Claim(JwtClaimTypes.GivenName, "Wendy"),
                                 new Claim(JwtClaimTypes.FamilyName, "Torrance"),
@@ -130,17 +129,16 @@ namespace Menominee.Idp
                                 new Claim("country", "NL")
                             }).Result;
 
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(result.Errors.First().Description);
-                        }
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
                     }
                 }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
-                }
+            }
+            catch (Exception ex)
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database.");
             }
         }
 
