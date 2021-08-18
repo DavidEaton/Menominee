@@ -7,9 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
-using SharedKernel.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CustomerVehicleManagement.Api
@@ -19,8 +17,6 @@ namespace CustomerVehicleManagement.Api
         private readonly IConfiguration Configuration;
         private readonly IWebHostEnvironment Environment;
         private readonly UserContext UserContext;
-        //private readonly IdentityUserDbContext identityContext;
-        private List<Tenant> Tenants;
         readonly ILogger<ApplicationDbContext> Logger;
         private string Connection = string.Empty;
 
@@ -36,14 +32,12 @@ namespace CustomerVehicleManagement.Api
             IConfiguration configuration,
             IWebHostEnvironment environment,
             UserContext userContext,
-            //IdentityUserDbContext identityContext,
             ILogger<ApplicationDbContext> logger)
             : base(options)
         {
             Environment = environment;
             Configuration = configuration;
             UserContext = userContext;
-            //identityContext = identityContext;
             Logger = logger;
         }
 
@@ -126,7 +120,7 @@ namespace CustomerVehicleManagement.Api
 
             try
             {
-                tenantName = claims.First(c => c.Type == "tenantName").Value;
+                tenantName = claims.First(claim => claim.Type == "tenantName").Value;
             }
             catch (Exception ex)
             {

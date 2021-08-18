@@ -61,16 +61,6 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<UserContext, UserContext>();
             //services.AddScoped<IUserStore<ApplicationUser>, UserOnlyStore<ApplicationUser, IdentityUserDbContext>>();
 
-
-            //services.AddDbContext<AppDbContext>();
-            //services.AddScoped(_ => new AppDbContext(Connection,
-            //                             HostEnvironment.IsDevelopment(),
-            //                             null,
-            //                             HostEnvironment,
-            //                             Configuration));
-
-            //if (environment == "Testing")
-            //services.AddScoped(_ => new AppDbContext(Connection, useConsoleLoggerInTest));
             services.AddDbContext<ApplicationDbContext>();
 
             services.AddScoped<IPersonRepository, PersonRepository>();

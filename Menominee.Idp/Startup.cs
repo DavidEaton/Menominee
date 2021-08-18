@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using IdentityServer4.Services;
 using Menominee.Idp.Areas.Identity.Data;
+using Menominee.Idp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -23,6 +25,7 @@ namespace Menominee.Idp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddTransient<IProfileService, CustomProfileService>();
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -35,7 +38,9 @@ namespace Menominee.Idp
                 .AddInMemoryClients(Config.Clients)
 
                 // Configure IdentityServer to use AspNetCore Identity membership
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<CustomProfileService>();
+
 
             if (Environment.IsDevelopment())
             {
