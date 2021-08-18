@@ -42,17 +42,17 @@ namespace CustomerVehicleManagement.Api.Customers
         }
 
         //// GET: api/customers/list
-        //[Route("list")]
-        //[HttpGet]
-        //public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
-        //{
-        //    var customers = await customerRepository.GetCustomersInListAsync();
+        [Route("list")]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
+        {
+            var customers = await customerRepository.GetCustomersInListAsync();
 
-        //    if (customers == null)
-        //        return NotFound();
+            if (customers == null)
+                return NotFound();
 
-        //    return Ok(customers);
-        //}
+            return Ok(customers);
+        }
 
         // GET: api/Customers
         [HttpGet]

@@ -6,6 +6,7 @@ using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Customers
@@ -119,53 +120,51 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        //public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
-        //{
-        //    var customersFromContext = await context.Customers.ToArrayAsync();
-
-        //    var customersList = new List<CustomerInListDto>();
-
-        //    foreach (Customer customer in customersFromContext)
-        //        customersList.Add(new CustomerInListDto() { Id = customer.Id,
-        //                                                    Name = customer.EntityType == EntityType.Organization
-        //                                                                                ? customer.Organization.Name.Name
-        //                                                                                : customer.Person.Name.LastFirstMiddle,
-        //                                                    EntityId = customer.EntityType == EntityType.Organization
-        //                                                                                ? customer.Organization.Id
-        //                                                                                : customer.Person.Id,
-        //                                                    EntityType = customer.EntityType,
-        //                                                    CustomerType = customer.CustomerType,
-        //                                                    AddressFull = customer.EntityType == EntityType.Organization
-        //                                                                                ? customer.Organization.Address.AddressFull
-        //                                                                                : customer.Person.Address.AddressFull,
-        //                                                    Note = customer.EntityType == EntityType.Organization
-        //                                                                                ? customer.Organization.Note
-        //                                                                                : string.Empty,
-        //                                                    PrimaryPhone = customer.EntityType == EntityType.Organization
-        //                                                                                ? GetPrimaryPhone(customer.Organization.Phones)
-        //                                                                                : GetPrimaryPhone(customer.Person.Phones),
-        //        });
-
-
-
-        //    return customersList;
-        //}
-
-        //private string GetPrimaryPhone(IList<Phone> phones)
-        //{
-        //    if (phones == null)
-        //        return null;
-
-        //    var phone = phones.SingleOrDefault(x => x.IsPrimary == true);
-
-        //    if (phone == null)
-        //        return phones[0].Number;
-
-        //}
-
-        public Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
+        public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
         {
-            throw new NotImplementedException();
+            var customersFromContext = await context.Customers
+                                                    .Include(customer => customer.Person)
+                                                    .Include(customer => customer.Organization)
+                                                        .ThenInclude(organization => organization.Contact)
+                                                    .AsNoTracking()
+                                                    .ToArrayAsync();
+
+            var customersList = new List<CustomerInListDto>();
+
+            foreach (Customer customer in customersFromContext)
+                customersList.Add(new CustomerInListDto()
+                {
+                    Id = customer.Id,
+                    Name = customer.EntityType == EntityType.Organization
+                                                    ? customer.Organization.Name.Name
+                                                    : customer.Person.Name.LastFirstMiddle,
+                    EntityId = customer.EntityType == EntityType.Organization
+                                                    ? customer.Organization.Id
+                                                    : customer.Person.Id,
+                    EntityType = customer.EntityType,
+                    CustomerType = customer.CustomerType.ToString(),
+                    AddressFull = customer.EntityType == EntityType.Organization
+                                                    ? customer.Organization.Address.AddressFull
+                                                    : customer.Person.Address.AddressFull,
+                    Note = customer.EntityType == EntityType.Organization
+                                                    ? customer.Organization.Note
+                                                    : string.Empty,
+                    PrimaryPhone = customer.EntityType == EntityType.Organization
+                                                    ? GetPrimaryPhone(customer.Organization.Phones)
+                                                    : GetPrimaryPhone(customer.Person.Phones),
+                });
+
+
+
+            return customersList;
+        }
+
+        private static string GetPrimaryPhone(IList<Phone> phones)
+        {
+            if (phones == null || phones.Count == 0)
+                return null;
+
+            return phones.SingleOrDefault(x => x.IsPrimary == true).Number;
         }
 
         private static CustomerReadDto CustomerToReadDto(Customer customer)
