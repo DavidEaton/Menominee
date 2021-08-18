@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -5,7 +6,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class HealthCheckTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class HealthCheckTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly HttpClient httpclient;
         private const string BaseAddress = "/healthcheck";
@@ -19,7 +20,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 
         More efficient when test setup or teardown is expensive, and running multiple tests.
         */
-        public HealthCheckTests(CustomWebApplicationFactory<Startup> factory)
+        public HealthCheckTests(WebApplicationFactory<Startup> factory)
         {
             httpclient = factory.CreateDefaultClient();
         }

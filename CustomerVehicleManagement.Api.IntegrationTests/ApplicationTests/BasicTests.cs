@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
     public class BasicTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private const string Path = "https://localhost/api/persons/list"; 
+        private const string Path = "https://localhost/api/persons/list";
         private readonly HttpClient httpClient;
         public BasicTests(WebApplicationFactory<Startup> factory)
         {

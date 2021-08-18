@@ -85,7 +85,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out int id)
         {
             // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 customer = CreateValidOrganizationCustomer();
                 context.Customers.Add(customer);
@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         public static int CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
         {
             int id;
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 Organization organization = CreateValidOrganization();
                 context.Organizations.Add(organization);
@@ -111,7 +111,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         public static Organization CreateAndSaveValidOrganization(DbContextOptions<ApplicationDbContext> options)
         {
             Organization organization;
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 organization = CreateValidOrganization();
                 context.Organizations.Add(organization);
@@ -147,7 +147,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out int id)
         {
             // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 person = CreateValidPersonWithEmails();
                 person.SetPhones(CreateValidPhones());

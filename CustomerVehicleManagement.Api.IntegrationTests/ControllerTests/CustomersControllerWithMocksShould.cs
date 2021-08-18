@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Customers;
-using CustomerVehicleManagement.Api.Emails;
+﻿using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;

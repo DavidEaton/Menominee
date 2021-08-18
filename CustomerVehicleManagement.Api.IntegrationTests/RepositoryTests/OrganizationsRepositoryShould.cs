@@ -17,7 +17,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
     public class OrganizationsRepositoryShould
     {
         private static IMapper mapper;
-
         public OrganizationsRepositoryShould()
         {
             if (mapper == null)
@@ -37,51 +36,41 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task AddOrganizationAsync()
         {
+            // Due to the disconnected nature of web requests/responses,
+            // our tests create and use unique contexts for each
+            // request, like our production code does.
             var options = CreateDbContextOptions();
+            using var context = new ApplicationDbContext(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
-            {
-                // Arrange
-                var repository = new OrganizationRepository(context, mapper);
-                var organization = CreateValidOrganization();
+            // Arrange
+            var repository = new OrganizationRepository(context, mapper);
+            var organization = CreateValidOrganization();
 
-                // Act
-                await repository.AddOrganizationAsync(organization);
-                await repository.SaveChangesAsync();
-                var organizations = await repository.GetOrganizationsAsync();
+            // Act
+            await repository.AddOrganizationAsync(organization);
+            await repository.SaveChangesAsync();
+            var organizations = await repository.GetOrganizationsAsync();
 
-                // Assert
-                organizations.Count().Should().Be(1);
-            }
+            // Assert
+            organizations.Count.Should().Be(1);
         }
 
         [Fact]
         public async Task GetOrganizationsAsync()
         {
-            // Arrange
-
-            // Create an in-memory database
             var options = CreateDbContextOptions();
-
-            // Due to the disconnected nature of web requests/responses,
-            // our tests create and use unique contexts for each
-            // request, like our production code does.
-
-            // Add a Organization to the in-memory database
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 context.Organizations.Add(CreateValidOrganization());
                 context.SaveChanges();
             }
-            // Read all Organizations from the in-memory database
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
 
-                // Act
                 var organizations = await repository.GetOrganizationsAsync();
 
-                // Assert
                 organizations.Count.Should().BeGreaterOrEqualTo(1);
             }
         }
@@ -89,23 +78,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationsInListAsync()
         {
-            // Arrange
-
-            // Create an in-memory database
             var options = CreateDbContextOptions();
-
-            // Due to the disconnected nature of web requests/responses,
-            // our tests create and use unique contexts for each
-            // request, like our production code does.
-
-            // Add a Organization to the in-memory database
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 context.Organizations.Add(CreateValidOrganization());
                 context.SaveChanges();
             }
-            // Read all Organizations from the in-memory database
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
 
@@ -123,7 +103,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
 
@@ -139,7 +119,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
 
@@ -156,7 +136,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
@@ -172,7 +152,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
@@ -191,7 +171,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
@@ -203,7 +183,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
@@ -218,7 +198,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
@@ -232,7 +212,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
@@ -248,13 +228,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 context.Organizations.Add(CreateValidOrganization());
                 context.SaveChanges();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizations = await repository.GetOrganizationsListAsync();
@@ -269,7 +249,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationExists = await repository.OrganizationExistsAsync(id);
@@ -284,7 +264,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = 99999;
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationExists = await repository.OrganizationExistsAsync(id);
@@ -300,7 +280,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var newName = "New Name";
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
@@ -311,7 +291,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
@@ -328,7 +308,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var someNotes = "Some notes";
             var newNotes = "New notes";
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var organization = CreateValidOrganization();
                 organization.SetNote(someNotes);
@@ -337,7 +317,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 id = organization.Id;
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
@@ -349,7 +329,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
@@ -364,7 +344,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
@@ -377,7 +357,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
@@ -392,7 +372,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
@@ -405,7 +385,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 await repository.SaveChangesAsync();
             }
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
@@ -420,7 +400,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context, mapper);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
@@ -447,7 +427,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
 
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 Action action = () => new OrganizationRepository(context, null);
                 action.Should().Throw<ArgumentNullException>();

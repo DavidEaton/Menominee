@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetPersonCustomerAsync()
         {
             var options = CreateDbContextOptions();
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var person = CreateValidPerson();
                 await context.AddAsync(person);
@@ -95,7 +95,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationCustomerAsync()
         {
             var options = CreateDbContextOptions();
-            using (var context = new ApplicationDbContext(options, null, null, null, null))
+            using (var context = new ApplicationDbContext(options))
             {
                 var organization = CreateValidOrganization();
                 await context.AddAsync(organization);

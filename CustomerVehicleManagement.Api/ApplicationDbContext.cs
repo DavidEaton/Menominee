@@ -29,6 +29,9 @@ namespace CustomerVehicleManagement.Api
             Connection = connection;
         }
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
             IConfiguration configuration,
             IWebHostEnvironment environment,
@@ -46,10 +49,14 @@ namespace CustomerVehicleManagement.Api
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            Connection = GetTenantConnection();
+            if (UserContext != null) // Unit tests do not yet inject UserContext
+                Connection = GetTenantConnection();
 
-            options.UseSqlServer(Connection);
+            if (!options.IsConfigured) // Unit tests will configure context with test provider
+                options.UseSqlServer(Connection);
+
             base.OnConfiguring(options);
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

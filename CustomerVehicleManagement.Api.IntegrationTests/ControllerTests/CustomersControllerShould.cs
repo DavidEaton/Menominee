@@ -1,20 +1,12 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 {
-    /// <summary>
-    /// Uses CustomerVehicleManagement.Api.Startup.cs: const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
-    /// Tests rely on local database having some rows
-    /// TODO: Add setup and teardown to create and populate database before running tests,
-    /// delete database after tests run
-    /// </summary>
     public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private const string CustomersControllerPath = "https://localhost/api/customers";
