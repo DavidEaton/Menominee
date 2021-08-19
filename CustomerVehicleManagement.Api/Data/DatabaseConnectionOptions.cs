@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Api
+﻿namespace CustomerVehicleManagement.Api.Data
 {
     internal class DatabaseConnectionOptions
     {

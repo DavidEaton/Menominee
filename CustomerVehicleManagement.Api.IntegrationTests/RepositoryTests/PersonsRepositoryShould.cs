@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
@@ -21,22 +18,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
     public class PersonsRepositoryShould
     {
-        private static IMapper mapper;
-        public PersonsRepositoryShould()
-        {
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    configuration.AddProfile(new PersonProfile());
-                    configuration.AddProfile(new EmailProfile());
-                    configuration.AddProfile(new PhoneProfile());
-                });
-
-                mapper = mapperConfiguration.CreateMapper();
-            }
-        }
-
         [Fact]
         public async Task GetPersonsAsync()
         {
@@ -58,7 +39,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Read all Persons from the in-memory database
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
 
                 // Act
                 var persons = (List<PersonReadDto>)await repository.GetPersonsAsync();
@@ -75,7 +56,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
 
                 // Act
                 await repository.AddPersonAsync(CreateValidPerson());
@@ -103,7 +84,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
 
                 var personFromRepo = await repository.GetPersonAsync(id);
 
@@ -127,7 +108,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 var personFromRepo = await repository.GetPersonAsync(id);
 
                 personFromRepo.Should().NotBeNull();
@@ -152,7 +133,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 var personFromRepo = await repository.GetPersonAsync(id);
 
                 personFromRepo.Should().NotBeNull();
@@ -174,7 +155,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
 
                 var persons = await repository.GetPersonsListAsync();
 
@@ -201,7 +182,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Get the saved Person, set their Birthday and save again
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 personFromRepository = await repository.GetPersonEntityAsync(id);
 
                 var personUpdateDto = new PersonUpdateDto
@@ -211,7 +192,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     Birthday = DateTime.Today.AddYears(-20)
                 };
 
-                DtoHelpers.PersonUpdateDtoToPerson(personUpdateDto, personFromRepository);
+                PersonDtoHelper.PersonUpdateDtoToEntity(personUpdateDto, personFromRepository);
 
                 repository.UpdatePersonAsync(personUpdateDto);
 
@@ -221,77 +202,77 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Get the updated Person and Assert
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 personFromRepository = await repository.GetPersonEntityAsync(id);
 
-                personFromRepository.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20));
+                personFromRepository.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20), new TimeSpan(1, 0,0,0));
             }
         }
 
         [Fact(Skip = "Awaiting Implimentation")]
         [Trait("Category", "Experimental")]
-        public async Task UpdatePersonGraphAsync()
+        public void UpdatePersonGraph()
         {
-            var options = CreateDbContextOptions();
-            Person person;
-            Person personFromRepository;
-            PersonReadDto personFromRepositoryUpdated;
-            var id = 0;
-            var number = "(555) 555-5555";
-            var phoneType = PhoneType.Mobile;
-            var isPrimary = false;
-            var address = "a@b.c";
+            //var options = CreateDbContextOptions();
+            //Person person;
+            //Person personFromRepository;
+            //PersonReadDto personFromRepositoryUpdated;
+            //var id = 0;
+            //var number = "(555) 555-5555";
+            //var phoneType = PhoneType.Mobile;
+            //var isPrimary = false;
+            //var address = "a@b.c";
 
-            CreateAndSavePersonGraph(options, out person, out id);
+            //CreateAndSavePersonGraph(options, out person, out id);
 
-            // Get the Person from the database
-            using (var context = new ApplicationDbContext(options))
-            {
-                var repository = new PersonRepository(context, mapper);
-                personFromRepository = await repository.GetPersonEntityAsync(id);
+            //// Get the Person from the database
+            //using (var context = new ApplicationDbContext(options))
+            //{
+            //    var repository = new PersonRepository(context);
+            //    personFromRepository = await repository.GetPersonEntityAsync(id);
 
-                // Create an Update Dto with some changes for the Person
-                var personUpdateDto = new PersonUpdateDto
-                {
-                    Gender = personFromRepository.Gender,
-                    Name = personFromRepository.Name,
-                    Birthday = DateTime.Today.AddYears(-20),
-                    Phones = mapper.Map<List<PhoneUpdateDto>>(personFromRepository.Phones),
-                    Emails = mapper.Map<List<EmailUpdateDto>>(personFromRepository.Emails)
-                };
+            //    // Create an Update Dto with some changes for the Person
+            //    var personUpdateDto = new PersonUpdateDto
+            //    {
+            //        Gender = personFromRepository.Gender,
+            //        Name = personFromRepository.Name,
+            //        Birthday = DateTime.Today.AddYears(-20),
+            //        Phones = mapper.Map<List<PhoneUpdateDto>>(personFromRepository.Phones),
+            //        Emails = mapper.Map<List<EmailUpdateDto>>(personFromRepository.Emails)
+            //    };
 
-                var phone = new PhoneUpdateDto(number, phoneType, isPrimary);
+            //    var phone = new PhoneUpdateDto(number, phoneType, isPrimary);
 
-                var email = new EmailUpdateDto
-                {
-                    Address = address,
-                    IsPrimary = isPrimary
-                };
+            //    var email = new EmailUpdateDto
+            //    {
+            //        Address = address,
+            //        IsPrimary = isPrimary
+            //    };
 
-                personFromRepository.SetTrackingState(TrackingState.Modified);
-                personUpdateDto.Phones.Add(phone);
-                personUpdateDto.Emails.Add(email);
+            //    personFromRepository.SetTrackingState(TrackingState.Modified);
+            //    personUpdateDto.Phones.Add(phone);
+            //    personUpdateDto.Emails.Add(email);
 
-                // ACT
-                mapper.Map<Person>(personUpdateDto);
+            //    // ACT
+            //    mapper.Map<Person>(personUpdateDto);
 
-                repository.FixTrackingState();
+            //    repository.FixTrackingState();
 
 
-                repository.UpdatePersonAsync(personUpdateDto);
+            //    repository.UpdatePersonAsync(personUpdateDto);
 
-                await repository.SaveChangesAsync();
-            }
+            //    await repository.SaveChangesAsync();
+            //}
 
-            // Get the updated Person and Assert
-            using (var context = new ApplicationDbContext(options))
-            {
-                var repository = new PersonRepository(context, mapper);
-                personFromRepositoryUpdated = await repository.GetPersonAsync(id);
+            //// Get the updated Person and Assert
+            //using (var context = new ApplicationDbContext(options))
+            //{
+            //    var repository = new PersonRepository(context);
+            //    personFromRepositoryUpdated = await repository.GetPersonAsync(id);
 
-                personFromRepositoryUpdated.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20));
-                personFromRepositoryUpdated.Phones.Should().Contain(number);
-            }
+            //    personFromRepositoryUpdated.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20));
+            //    personFromRepositoryUpdated.Phones.Should().Contain(number);
+            //}
         }
 
 
@@ -311,7 +292,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 var personFromRepo = await repository.GetPersonEntityAsync(id);
 
                 personFromRepo.Should().NotBeNull();
@@ -333,22 +314,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public void ThrowExceptionWhenPassedNullContext()
         {
-            Action action = () => new PersonRepository(null, mapper);
+            Action action = () => new PersonRepository(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact]
-        public void ThrowExceptionWhenPassedNullMapper()
-        {
-            var options = CreateDbContextOptions();
-
-            using (var context = new ApplicationDbContext(options))
-            {
-                Action action = () => new PersonRepository(context, null);
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
 
         [Fact]
         public async Task ReturnTrueIfPersonExistsAsync()
@@ -366,7 +336,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new PersonRepository(context, mapper);
+                var repository = new PersonRepository(context);
                 var personExists = await repository.PersonExistsAsync(id);
 
                 personExists.Should().Be(true);

@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Utilities;
+﻿using CustomerVehicleManagement.Api.Email;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -10,7 +10,6 @@ using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -20,15 +19,11 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationsController : ControllerBase
     {
         private readonly IOrganizationRepository repository;
-        private readonly IMapper mapper;
 
-        public OrganizationsController(IOrganizationRepository repository, IMapper mapper)
+        public OrganizationsController(IOrganizationRepository repository)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task WriteOutIdentityInformation()
@@ -102,7 +97,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                 5) Save changes
                 6) return NoContent()
             */
-
+            // VK: here, the logic should be:
+            // 1. Get the Organization entity (not DTO) from the DB
+            // 3. Update the corresponding fields in the Organization
+            // 4. Save back to the DB
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -123,8 +121,8 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetAddress(organizationUpdateDto.Address);
             organization.SetNote(organizationUpdateDto.Note);
 
-            organization.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(organizationUpdateDto.Phones));
-            organization.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(organizationUpdateDto.Emails));
+            organization.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Phones));
+            organization.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Emails));
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -133,8 +131,8 @@ namespace CustomerVehicleManagement.Api.Organizations
                 contact.SetAddress(organizationUpdateDto.Contact.Address);
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
                 contact.SetDriversLicense(organizationUpdateDto.Contact.DriversLicense);
-                contact.SetPhones(mapper.Map<IList<Phone>>(organizationUpdateDto.Contact.Phones));
-                contact.SetEmails(mapper.Map<IList<Email>>(organizationUpdateDto.Contact.Emails));
+                contact.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Contact.Phones));
+                contact.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Contact.Emails));
 
                 organization.SetContact(contact);
             }
@@ -235,9 +233,9 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             if (organizationCreateDto.Emails != null)
             {
-                var emails = new List<Email>();
+                var emails = new List<Domain.Entities.Email>();
                 foreach (var email in organizationCreateDto.Emails)
-                    emails.Add(new Email(email.Address, email.IsPrimary));
+                    emails.Add(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
                 organization.SetEmails(emails);
             }
@@ -281,9 +279,9 @@ namespace CustomerVehicleManagement.Api.Organizations
 
                 if (organizationCreateDto.Contact.Emails != null)
                 {
-                    var emails = new List<Email>();
+                    var emails = new List<Domain.Entities.Email>();
                     foreach (var email in organizationCreateDto.Contact.Emails)
-                        emails.Add(new Email(email.Address, email.IsPrimary));
+                        emails.Add(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
                     organization.Contact.SetEmails(emails);
                 }
