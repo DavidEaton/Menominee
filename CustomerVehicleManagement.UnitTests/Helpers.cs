@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Emails;
+﻿using CustomerVehicleManagement.Api.Email;
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;

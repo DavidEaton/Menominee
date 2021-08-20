@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -12,17 +12,12 @@ namespace CustomerVehicleManagement.Api.Persons
     public class PersonRepository : IPersonRepository
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
 
         public PersonRepository(
-            ApplicationDbContext context,
-            IMapper mapper)
+            ApplicationDbContext context)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task AddPersonAsync(Person person)
@@ -52,7 +47,7 @@ namespace CustomerVehicleManagement.Api.Persons
                 .Include(person => person.Emails)
                 .FirstOrDefaultAsync(person => person.Id == id);
 
-            return mapper.Map<PersonReadDto>(personFromContext);
+            return PersonDtoHelper.ToReadDto(personFromContext);
         }
 
         public async Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync()
@@ -62,30 +57,10 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .Include(person => person.Emails)
                                                   .ToArrayAsync();
 
+            var list = new List<PersonReadDto>();
+
             foreach (var person in personsFromContext)
-            {
-                mapper.Map<IReadOnlyList<Phone>>(person.Phones);
-            }
-
-            IReadOnlyList<PersonReadDto> list = mapper.Map<IReadOnlyList<PersonReadDto>>(personsFromContext);
-
-            foreach (var personReadDto in list)
-            {
-
-                var emailReadDtos = new List<EmailReadDto>();
-
-                foreach (var email in personReadDto.Emails)
-                {
-                    emailReadDtos.Add(new EmailReadDto
-                    {
-                        Address = email.Address,
-                        IsPrimary = email.IsPrimary
-                    });
-                }
-
-                personReadDto.Emails = emailReadDtos;
-            }
-
+                list.Add(PersonDtoHelper.ToReadDto(person));
 
             return list;
         }
@@ -97,14 +72,12 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .Include(person => person.Emails)
                                                   .ToArrayAsync();
 
-            var personsList = new List<PersonInListDto>();
+            var list = new List<PersonInListDto>();
 
             foreach (var person in personsFromContext)
-            {
-                personsList.Add(DtoHelpers.PersonToPersonInListDto(person));
-            }
+                list.Add(PersonDtoHelper.ToPersonInListDto(person));
 
-            return personsList;
+            return list;
         }
 
         public async Task<bool> SaveChangesAsync()

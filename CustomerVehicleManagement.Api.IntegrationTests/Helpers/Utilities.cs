@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
@@ -177,17 +178,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return phones;
         }
 
-        public static IList<Email> CreateValidEmails()
+        public static IList<Domain.Entities.Email> CreateValidEmails()
         {
-            IList<Email> Emails = new List<Email>();
+            var Emails = new List<Domain.Entities.Email>();
 
             var address1 = "a@b.c";
             var isPrimary1 = true;
-            var Email1 = new Email(address1, isPrimary1);
+            var Email1 = new Domain.Entities.Email(address1, isPrimary1);
 
             var address2 = "d@e.f";
             var isPrimary2 = false;
-            var Email2 = new Email(address2, isPrimary2);
+            var Email2 = new Domain.Entities.Email(address2, isPrimary2);
 
             Emails.Add(Email1);
             Emails.Add(Email2);

@@ -1,12 +1,7 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Customers;
-using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Api.Persons;
+﻿using CustomerVehicleManagement.Api.Customers;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;

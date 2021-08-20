@@ -10,7 +10,7 @@ using SharedKernel;
 using System;
 using System.Linq;
 
-namespace CustomerVehicleManagement.Api
+namespace CustomerVehicleManagement.Api.Data
 {
     public class ApplicationDbContext : DbContext
     {

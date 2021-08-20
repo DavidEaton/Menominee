@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Email;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -13,17 +15,12 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationRepository : IOrganizationRepository
     {
         private readonly ApplicationDbContext context;
-        private readonly IMapper mapper;
-        private const int organizationNoteTruncateAt = 50;
+
         public OrganizationRepository(
-            ApplicationDbContext context,
-            IMapper mapper)
+            ApplicationDbContext context)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
-
-            this.mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task AddOrganizationAsync(Organization organization)
@@ -50,7 +47,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                                  .ThenInclude(contact => contact.Emails)
                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
-            return mapper.Map<OrganizationReadDto>(organizationFromContext);
+            return OrganizationDtoHelper.ToReadDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync()
@@ -122,7 +119,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             Id = organization.Id,
             Name = organization.Name.Name,
             ContactName = organization?.Contact?.Name.LastFirstMiddle,
-            ContactPrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization?.Contact),
+            ContactPrimaryPhone = PhonesDtoHelper.GetPrimaryPhone(organization?.Contact),
 
             AddressLine = organization?.Address?.AddressLine,
             City = organization?.Address?.City,
@@ -130,9 +127,9 @@ namespace CustomerVehicleManagement.Api.Organizations
             PostalCode = organization?.Address?.PostalCode,
 
             Note = organization.Note,
-            PrimaryPhone = ContactableHelpers.GetPrimaryPhone(organization),
-            PrimaryPhoneType = ContactableHelpers.GetPrimaryPhoneType(organization),
-            PrimaryEmail = ContactableHelpers.GetPrimaryEmail(organization)
+            PrimaryPhone = PhonesDtoHelper.GetPrimaryPhone(organization),
+            PrimaryPhoneType = PhonesDtoHelper.GetPrimaryPhoneType(organization),
+            PrimaryEmail = EmailDtoHelper.GetPrimaryEmail(organization)
         }).ToList();
 
         return dtos;

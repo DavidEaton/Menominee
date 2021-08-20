@@ -1,4 +1,5 @@
 using CustomerVehicleManagement.Api.Customers;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.User;
@@ -34,10 +35,6 @@ namespace CustomerVehicleManagement.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //const string Connection = "Server=localhost;Database=Menominee;Trusted_Connection=True;";
-            //const string TestConnection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
-            //const bool useConsoleLoggerInTest = true;
-
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
             services
@@ -67,7 +64,6 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
-            services.AddAutoMapper(typeof(Startup));
             services.AddCors();
             services.AddHealthChecks();
 

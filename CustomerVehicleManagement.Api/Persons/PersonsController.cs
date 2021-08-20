@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Utilities;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -68,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Persons
              if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            DtoHelpers.PersonUpdateDtoToPerson(personUpdateDto, personFromRepository);
+            PersonDtoHelper.PersonUpdateDtoToEntity(personUpdateDto, personFromRepository);
 
             repository.UpdatePersonAsync(personUpdateDto);
 
@@ -115,7 +114,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
             if (personCreateDto?.Emails?.Count > 0)
                 foreach (var email in personCreateDto.Emails)
-                    person.AddEmail(new Email(email.Address, email.IsPrimary));
+                    person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
             return person;
         }

@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<bool> CustomerExistsAsync(int id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
         Task<IReadOnlyList<CustomerReadDto>> GetCustomersAsync();
-        //Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync();
+        Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync();
         Task<CustomerReadDto> GetCustomerAsync(int id);
         Task<bool> SaveChangesAsync();
     }

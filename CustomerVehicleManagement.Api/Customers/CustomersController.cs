@@ -6,21 +6,14 @@ using SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Api.Utilities;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using SharedKernel.ValueObjects;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Api.Phones;
+using CustomerVehicleManagement.Api.Email;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
-    // VK: only use auto mappers when mapping from domain classes to DTOs, not the other way around
-    // because DTO -> Domain requires making a decision as to whether the data in the DTO is correct.
-    // This decision should be explicit; it is validation
-    // More on this: https://enterprisecraftsmanship.com/posts/on-automappers/
-    // And even for the Domain -> DTO conversion, you are usually better of just doing the mapping manually
-    // It's more straightforward and at the same time requires the same amount of code
-    // (for auto mapper, this code resides in the configurations; for the manual approach -- in the controller, where it should be)
-
     [Route("api/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -42,17 +35,17 @@ namespace CustomerVehicleManagement.Api.Customers
         }
 
         //// GET: api/customers/list
-        //[Route("list")]
-        //[HttpGet]
-        //public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
-        //{
-        //    var customers = await customerRepository.GetCustomersInListAsync();
+        [Route("list")]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
+        {
+            var customers = await customerRepository.GetCustomersInListAsync();
 
-        //    if (customers == null)
-        //        return NotFound();
+            if (customers == null)
+                return NotFound();
 
-        //    return Ok(customers);
-        //}
+            return Ok(customers);
+        }
 
         // GET: api/Customers
         [HttpGet]
@@ -109,9 +102,9 @@ namespace CustomerVehicleManagement.Api.Customers
                 organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
                 organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
-                DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
-                organizationFromRepository.SetPhones(DtoHelpers.PhonesUpdateDtoToPhones(customerUpdateDto.OrganizationUpdateDto.Phones));
-                organizationFromRepository.SetEmails(DtoHelpers.EmailsUpdateDtoToEmails(customerUpdateDto.OrganizationUpdateDto.Emails));
+                PersonDtoHelper.PersonUpdateDtoToEntity(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
+                organizationFromRepository.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
+                organizationFromRepository.SetEmails(EmailDtoHelper.UpdateDtosToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
 
                 organizationFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -120,7 +113,7 @@ namespace CustomerVehicleManagement.Api.Customers
             if (customerFromRepository.EntityType == EntityType.Person)
             {
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
-                DtoHelpers.PersonUpdateDtoToPerson(customerUpdateDto.PersonUpdateDto, personFromRepository);
+                PersonDtoHelper.PersonUpdateDtoToEntity(customerUpdateDto.PersonUpdateDto, personFromRepository);
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -188,7 +181,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                     if (customerCreateDto.OrganizationCreateDto?.Contact?.Emails?.Count > 0)
                         foreach (var email in customerCreateDto.OrganizationCreateDto.Contact.Emails)
-                            contact.AddEmail(new Email(email.Address, email.IsPrimary));
+                            contact.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
                     organization.SetContact(contact);
                     organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
@@ -216,7 +209,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerCreateDto.PersonCreateDto?.Emails?.Count > 0)
                 foreach (var email in customerCreateDto.PersonCreateDto.Emails)
-                    person.AddEmail(new Email(email.Address, email.IsPrimary));
+                    person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
             Customer customer = new(person);
 

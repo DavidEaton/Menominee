@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using CustomerVehicleManagement.Api.Emails;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using SharedKernel.ValueObjects;
@@ -16,23 +13,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
     public class OrganizationsRepositoryShould
     {
-        private static IMapper mapper;
-        public OrganizationsRepositoryShould()
-        {
-            if (mapper == null)
-            {
-                var mapperConfiguration = new MapperConfiguration(configuration =>
-                {
-                    configuration.AddProfile(new OrganizationProfile());
-                    configuration.AddProfile(new PersonProfile());
-                    configuration.AddProfile(new EmailProfile());
-                    configuration.AddProfile(new PhoneProfile());
-                });
-
-                mapper = mapperConfiguration.CreateMapper();
-            }
-        }
-
         [Fact]
         public async Task AddOrganizationAsync()
         {
@@ -43,7 +23,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             using var context = new ApplicationDbContext(options);
 
             // Arrange
-            var repository = new OrganizationRepository(context, mapper);
+            var repository = new OrganizationRepository(context);
             var organization = CreateValidOrganization();
 
             // Act
@@ -67,7 +47,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
 
                 var organizations = await repository.GetOrganizationsAsync();
 
@@ -87,7 +67,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
 
                 // Act
                 var organizations = await repository.GetOrganizationsListAsync();
@@ -105,7 +85,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
 
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
@@ -121,7 +101,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
 
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
@@ -132,16 +112,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsyncIncludesCollections()
         {
-            var aNote = "Some notes in the note field";
+            var note = "Some notes in the note field";
             var options = CreateDbContextOptions();
             var id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetNote(aNote);
+                organizationFromRepository.SetNote(note);
                 organizationFromRepository.SetAddress(CreateValidAddress());
                 organizationFromRepository.SetContact(CreateValidPerson());
                 organizationFromRepository.SetPhones(CreateValidPhones());
@@ -154,10 +134,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepository.Note.Should().Be(aNote);
+                organizationFromRepository.Note.Should().Be(note);
                 organizationFromRepository.Address.Should().NotBeNull();
                 organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Emails.Count().Should().BeGreaterThan(0);
@@ -173,7 +153,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepository.SetContact(CreateValidPerson());
@@ -185,7 +165,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepository.Contact.Should().NotBeNull();
@@ -200,7 +180,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepository.SetContact(CreateValidPerson());
@@ -214,7 +194,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepository.Contact.Should().NotBeNull();
@@ -236,7 +216,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizations = await repository.GetOrganizationsListAsync();
 
                 organizations.Count().Should().BeGreaterOrEqualTo(1);
@@ -251,7 +231,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationExists = await repository.OrganizationExistsAsync(id);
 
                 organizationExists.Should().Be(true);
@@ -266,7 +246,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationExists = await repository.OrganizationExistsAsync(id);
 
                 organizationExists.Should().Be(false);
@@ -282,7 +262,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepo.SetName(OrganizationName.Create(newName).Value);
@@ -293,7 +273,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Name.Should().Be(newName);
@@ -319,7 +299,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Note.Should().Be(someNotes);
 
@@ -331,7 +311,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Note.Should().Be(newNotes);
@@ -346,7 +326,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Address.Should().BeNull();
 
@@ -359,7 +339,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Address.AddressLine.Should().Be("1234 Fifth Ave.");
@@ -374,7 +354,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Contact.Should().BeNull();
 
@@ -387,7 +367,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Contact.Should().NotBeNull();
@@ -402,7 +382,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var repository = new OrganizationRepository(context, mapper);
+                var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Should().NotBeNull();
 
@@ -417,21 +397,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public void ThrowExceptionWhenPassedNullContext()
         {
-            Action action = () => new OrganizationRepository(null, mapper);
+            Action action = () => new OrganizationRepository(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        [Fact]
-        public void ThrowExceptionWhenPassedNullMapper()
-        {
-            var options = CreateDbContextOptions();
-
-            using (var context = new ApplicationDbContext(options))
-            {
-                Action action = () => new OrganizationRepository(context, null);
-                action.Should().Throw<ArgumentNullException>();
-            }
-        }
     }
 }
