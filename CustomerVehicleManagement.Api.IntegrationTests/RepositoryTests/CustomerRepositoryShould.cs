@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
+using SharedKernel.Enums;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
@@ -109,5 +110,49 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 }
             }
         }
+
+        [Fact]
+        public async Task GetCustomersInListAsync()
+        {
+            var options = CreateDbContextOptions();
+            using (var context = new ApplicationDbContext(options))
+            {
+                var organization = CreateValidOrganization();
+                await context.AddAsync(organization);
+
+                var phones = CreateValidPhones();
+                var emails = CreateValidEmails();
+                var note = "notes are strings";
+
+                var contact = CreateValidPerson();
+                contact.SetPhones(CreateValidPhones());
+                contact.SetEmails(CreateValidEmails());
+
+                organization.SetEmails(emails);
+                organization.SetPhones(phones);
+                organization.SetNote(note);
+                organization.SetContact(contact);
+
+                Customer customer = new(organization);
+                await context.AddAsync(customer);
+                await context.SaveChangesAsync();
+
+                var repository = new CustomerRepository(context);
+                var customersFromRepo = await repository.GetCustomersInListAsync();
+
+                customersFromRepo.Should().NotBeNull();
+                customersFromRepo[0].Should().NotBeNull();
+                customersFromRepo[0].EntityType.Should().Be(EntityType.Organization);
+                customersFromRepo[0].Name.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].Note.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].PrimaryEmail.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].PrimaryPhone.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].PrimaryPhoneType.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].ContactName.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].ContactPrimaryPhone.Should().NotBeNullOrEmpty();
+                customersFromRepo[0].ContactPrimaryPhoneType.Should().NotBeNullOrEmpty();
+            }
+        }
     }
+
 }
