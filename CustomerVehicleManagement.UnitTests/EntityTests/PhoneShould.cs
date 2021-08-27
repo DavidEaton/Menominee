@@ -30,8 +30,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Action action = () => new Phone(number, phoneType, true);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(Phone.PhoneEmptyMessage);
+            action.Should().Throw<ArgumentNullException>()
+                           .WithMessage($"Value cannot be null. (Parameter '{Phone.PhoneEmptyMessage}')");
         }
 
         [Fact]

@@ -16,10 +16,26 @@ namespace SharedKernel.ValueObjects
             AllowSms = allowSms;
         }
 
-        public static Result<ContactPreferences> Create()
+        public static Result<ContactPreferences> Create(bool allowMail, bool allowEmail, bool allowSms)
         {
-            return Result.Ok(new ContactPreferences(false, false, false));
+            return Result.Ok(new ContactPreferences(allowMail, allowEmail, allowSms));
         }
+
+        public ContactPreferences NewAllowMail(bool allowMail)
+        {
+            return new ContactPreferences(allowMail, AllowEmail, AllowSms);
+        }
+
+        public ContactPreferences NewAllowEmail(bool allowEmail)
+        {
+            return new ContactPreferences(AllowMail, allowEmail, AllowSms);
+        }
+
+        public ContactPreferences NewAllowSms(bool allowSms)
+        {
+            return new ContactPreferences(AllowMail, AllowEmail, allowSms);
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return AllowEmail;

@@ -2,7 +2,6 @@
 using FluentAssertions;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -14,12 +13,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
-            var address = new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
             var organization = Helpers.CreateValidOrganization();
 
-            organization.SetAddress(address);
+            organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization);
             var janes = customer.Organization;
 

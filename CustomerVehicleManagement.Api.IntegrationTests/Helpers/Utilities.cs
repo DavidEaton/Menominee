@@ -1,12 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
@@ -34,10 +34,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Person>()
             {
-                new Person(new PersonName("Smith", "Jane"), Gender.Female),
-                new Person(new PersonName("Jones", "Latisha"), Gender.Female),
-                new Person(new PersonName("Lee", "Wong"), Gender.Male),
-                new Person(new PersonName("Kelly", "Junice"), Gender.Female),
+                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female),
+                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female),
+                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male),
+                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female),
             };
         }
 
@@ -47,40 +47,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                 .UseInMemoryDatabase($"testdb{Guid.NewGuid()}")
                 .Options;
         }
-        internal static Organization CreateValidOrganization()
-        {
-            var name = "jane's";
-            Organization organization = null;
-            var organizationNameOrError = OrganizationName.Create(name);
-
-            if (organizationNameOrError.IsSuccess)
-                organization = new Organization(organizationNameOrError.Value);
-
-            return organization;
-        }
-
-        internal static Customer CreateValidOrganizationCustomer()
-        {
-            var name = "jane's";
-            Organization organization = null;
-            var organizationNameOrError = OrganizationName.Create(name);
-
-            if (organizationNameOrError.IsSuccess)
-                organization = new Organization(organizationNameOrError.Value);
-
-            var customer = new Customer(organization);
-
-            return customer;
-        }
-
-        internal static Customer CreateValidPersonCustomer()
-        {
-            var person = CreateValidPerson();
-
-            var customer = new Customer(person);
-
-            return customer;
-        }
 
 
         public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out int id)
@@ -88,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))
             {
-                customer = CreateValidOrganizationCustomer();
+                customer = Helper.CreateValidOrganizationCustomer();
                 context.Customers.Add(customer);
                 context.SaveChanges();
                 id = customer.Id;
@@ -100,7 +66,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             int id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = CreateValidOrganization();
+                Organization organization = Helper.CreateValidOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
@@ -114,7 +80,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             Organization organization;
             using (var context = new ApplicationDbContext(options))
             {
-                organization = CreateValidOrganization();
+                organization = Helper.CreateValidOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
             }
@@ -122,110 +88,19 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return organization;
         }
 
-        public static Person CreateValidPerson()
-        {
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
-
-            return new Person(name, Gender.Female);
-        }
-
-        public static Person CreateValidPersonWithPhones()
-        {
-            var person = CreateValidPerson();
-            person.SetPhones(CreateValidPhones());
-            return person;
-        }
-
-        public static Person CreateValidPersonWithEmails()
-        {
-            var person = CreateValidPerson();
-            person.SetEmails(CreateValidEmails());
-            return person;
-        }
 
         public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out int id)
         {
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))
             {
-                person = CreateValidPersonWithEmails();
-                person.SetPhones(CreateValidPhones());
+                person = Helper.CreateValidPersonWithEmails();
+                person.SetPhones(Helper.CreateValidPhones());
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
             }
         }
 
-        public static IList<Phone> CreateValidPhones()
-        {
-            IList<Phone> phones = new List<Phone>();
-
-            var number1 = "(555) 987-6543";
-            var phoneType1 = PhoneType.Mobile;
-            var isPrimary1 = true;
-            var phone1 = new Phone(number1, phoneType1, isPrimary1);
-
-            var number2 = "(555) 123-4567";
-            var phoneType2 = PhoneType.Mobile;
-            var isPrimary2 = false;
-            var phone2 = new Phone(number2, phoneType2, isPrimary2);
-
-            phones.Add(phone1);
-            phones.Add(phone2);
-
-            return phones;
-        }
-
-        public static IList<Domain.Entities.Email> CreateValidEmails()
-        {
-            var Emails = new List<Domain.Entities.Email>();
-
-            var address1 = "a@b.c";
-            var isPrimary1 = true;
-            var Email1 = new Domain.Entities.Email(address1, isPrimary1);
-
-            var address2 = "d@e.f";
-            var isPrimary2 = false;
-            var Email2 = new Domain.Entities.Email(address2, isPrimary2);
-
-            Emails.Add(Email1);
-            Emails.Add(Email2);
-
-            return Emails;
-        }
-
-        public static IReadOnlyList<EmailReadDto> CreateValidEmailReadDtos()
-        {
-            List<EmailReadDto> Emails = new();
-
-            var address1 = "a@b.c";
-            var isPrimary1 = true;
-            var Email1 = new EmailReadDto();
-            Email1.Address = address1;
-            Email1.IsPrimary = isPrimary1;
-
-            var address2 = "d@e.f";
-            var isPrimary2 = false;
-            var Email2 = new EmailReadDto();
-            Email2.Address = address2;
-            Email2.IsPrimary = isPrimary2;
-
-            Emails.Add(Email1);
-            Emails.Add(Email2);
-
-            IReadOnlyList<EmailReadDto> readOnlyEmails = Emails;
-            return readOnlyEmails;
-        }
-
-        public static Address CreateValidAddress()
-        {
-            string addressLine = "1234 Fifth Ave.";
-            string city = "Traverse City";
-            string state = "MI";
-            string postalCode = "49686";
-            return new Address(addressLine, city, state, postalCode);
-        }
     }
 }

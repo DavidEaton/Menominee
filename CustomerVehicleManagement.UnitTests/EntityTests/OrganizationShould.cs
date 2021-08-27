@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using SharedKernel.Enums;
@@ -56,11 +55,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
-            var address = new Address(addressLine, city, state, postalCode);
+            var address = Address.Create(addressLine, city, state, postalCode);
 
-            organization.SetAddress(address);
+            organization.SetAddress(address.Value);
 
             organization.Address.AddressLine.Should().Be(addressLine);
             organization.Address.City.Should().Be(city);
@@ -74,7 +73,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var firstName = "Jane";
             var lastName = "Doe";
-            var personName = new PersonName(lastName, firstName);
+            var personName = PersonName.Create(lastName, firstName).Value;
             var contact = new Person(personName, Gender.Female);
 
             organization.SetContact(contact);
@@ -357,7 +356,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var firstName = "Jane";
             var lastName = "Doe";
-            var personName = new PersonName(lastName, firstName);
+            var personName = PersonName.Create(lastName, firstName).Value;
             var contact = new Person(personName, Gender.Female);
 
             organization.SetContact(contact);
@@ -371,11 +370,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Helpers.CreateValidOrganization();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
-            var address = new Address(addressLine, city, state, postalCode);
+            var address = Address.Create(addressLine, city, state, postalCode);
 
-            organization.SetAddress(address);
+            organization.SetAddress(address.Value);
 
             using (new AssertionScope())
             {

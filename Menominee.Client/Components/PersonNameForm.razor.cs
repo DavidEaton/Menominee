@@ -17,7 +17,7 @@ namespace Menominee.Client.Components
         {
             if (Name.IsValid)
             {
-                PersonName = new PersonName(Name.LastName, Name.FirstName, Name.MiddleName);
+                PersonName = PersonName.Create(Name.LastName, Name.FirstName, Name.MiddleName).Value;
                 await CloseEventCallback.InvokeAsync(true);
                 StateHasChanged();
             }

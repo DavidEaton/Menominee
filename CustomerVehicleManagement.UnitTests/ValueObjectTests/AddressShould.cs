@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using CustomerVehicleManagement.Shared.TestUtilities;
+using FluentAssertions;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using Xunit;
@@ -8,88 +10,75 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
     public class AddressShould
     {
         [Fact]
-        public void CreateAddress()
+        public void Create_Address()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
 
-            var address = new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
-            address.Should().NotBeNull();
+            addressOrError.Should().NotBeNull();
+            addressOrError.IsSuccess.Should().BeTrue();
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyAddressLine()
+        public void Return_IsFailure_Result_On_Create_With_Empty_AddressLine()
         {
             string addressLine = null;
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
 
-            Action action = () => new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(Address.AddressEmptyMessage);
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyCity()
+        public void Return_IsFailure_Result_On_Create_With_Empty_City()
         {
             var addressLine = "1234 Five Street";
             string city = null;
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
 
-            Action action = () => new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(Address.AddressEmptyMessage);
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyState()
+        public void Return_IsFailure_Result_On_Create_With_Empty_PostalCode()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            string state = null;
-            var postalCode = "49735";
-
-            Action action = () => new Address(addressLine, city, state, postalCode);
-
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(Address.AddressEmptyMessage);
-        }
-
-        [Fact]
-        public void ThrowExceptionWithEmptyPostalCode()
-        {
-            var addressLine = "1234 Five Street";
-            var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             string postalCode = null;
 
-            Action action = () => new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(Address.AddressEmptyMessage);
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void EquateTwoAddressInstancesHavingSameValues()
+        public void Equate_Two_Address_Instances_Having_Same_Values()
         {
-            var address1 = CreateValidAddress();
-            var address2 = CreateValidAddress();
+            var address1 = Utilities.CreateValidAddress();
+            var address2 = Utilities.CreateValidAddress();
 
             address1.Should().BeEquivalentTo(address2);
         }
 
         [Fact]
-        public void NotEquateTwoAddressInstancesHavingDifferingValues()
+        public void Not_Equate_Two_Address_Instances_Having_Differing_Values()
         {
-            var address1 = CreateValidAddress();
-            var address2 = CreateValidAddress();
+            var address1 = Utilities.CreateValidAddress();
+            var address2 = Utilities.CreateValidAddress();
             var newAddressLine = "54321";
 
             address2 = address2.NewAddressLine(newAddressLine);
@@ -99,9 +88,9 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
 
         [Fact]
-        public void ReturnNewAddressOnNewAddressLine()
+        public void Return_New_Address_On_NewAddressLine()
         {
-            var address = CreateValidAddress();
+            var address = Utilities.CreateValidAddress();
             var newAddressLine = "5432 One Street";
 
             address = address.NewAddressLine("5432 One Street");
@@ -110,9 +99,19 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewAddressOnNewCity()
+        public void Throw_Exception_On_NewAddressLine_Passing_Null_Parameter()
         {
-            var address = CreateValidAddress();
+            var address = Utilities.CreateValidAddress();
+
+            Action action = () => address = address.NewAddressLine(null);
+
+            action.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void Return_New_Address_On_NewCity()
+        {
+            var address = Utilities.CreateValidAddress();
             var newCity = "Oomapopalis";
 
             address = address.NewCity(newCity);
@@ -121,20 +120,29 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewAddressOnNewState()
+        public void Throw_Exception_On_NewCity_Passing_Null_Parameter()
         {
-            var address = CreateValidAddress();
-            var newState = "ZA";
+            var address = Utilities.CreateValidAddress();
 
-            address = address.NewState("ZA");
+            Action action = () => address = address.NewCity(null);
+
+            action.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void Return_New_Address_On_NewState()
+        {
+            var address = Utilities.CreateValidAddress();
+            var newState = State.HI;
+            address = address.NewState(newState);
 
             address.State.Should().Be(newState);
         }
 
         [Fact]
-        public void ReturnNewAddressOnNewPostalCode()
+        public void Return_New_Address_On_NewPostalCode()
         {
-            var address = CreateValidAddress();
+            var address = Utilities.CreateValidAddress();
             var newPostalCode = "55555";
 
             address = address.NewPostalCode(newPostalCode);
@@ -142,15 +150,14 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             address.PostalCode.Should().Be(newPostalCode);
         }
 
-        internal static Address CreateValidAddress()
+        [Fact]
+        public void Throw_Exception_On_NewPostalCode_Passing_Null_Parameter()
         {
-            var addressLine = "1234 Five Street";
-            var city = "Gaylord";
-            var state = "MI";
-            var postalCode = "49735";
+            var address = Utilities.CreateValidAddress();
 
-            return new Address(addressLine, city, state, postalCode);
+            Action action = () => address = address = address.NewPostalCode(null);
+
+            action.Should().Throw<Exception>();
         }
     }
-
 }

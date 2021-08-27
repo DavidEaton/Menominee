@@ -123,7 +123,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             AddressLine = organization?.Address?.AddressLine,
             City = organization?.Address?.City,
-            State = organization?.Address?.State,
+            State = organization?.Address?.State.ToString(),
             PostalCode = organization?.Address?.PostalCode,
 
             Note = organization.Note,

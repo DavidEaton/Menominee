@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using Xunit;
@@ -8,75 +9,53 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
     public class DriversLicenseShould
     {
         [Fact]
-        public void CreateNewDriversLicense()
+        public void Create_New_DriversLicense()
         {
-            var driversLicense = CreateDriversLicense();
+            var driversLicense = Create_DriversLicense();
 
             driversLicense.Should().NotBeNull();
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyNumber()
+        public void Return_IsFailure_Result_With_Empty_Number()
         {
             string driversLicenseNumber = null;
-            var driversLicenseState = "MI";
             var issued = DateTime.Today;
             var expiry = DateTime.Today.AddYears(4);
-            DateTimeRange driversLicenseValidRange = new DateTimeRange(issued, expiry);
+            DateTimeRange driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange); });
+            var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
 
-            Action action = () => new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
-
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(DriversLicense.DriversLicenseInvalidMessage);
+            driversLicenseOrError.IsFailure.Should().BeTrue();
+            driversLicenseOrError.Error.Should().Be(DriversLicense.DriversLicenseNumberUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyState()
+        public void Return_IsFailure_Result_With_Empty_ValidRange()
         {
             var driversLicenseNumber = "123456789POIUYTREWQ";
-            string driversLicenseState = null;
-            var issued = DateTime.Today;
-            var expiry = DateTime.Today.AddYears(4);
-
-            DateTimeRange driversLicenseValidRange = new DateTimeRange(issued, expiry);
-
-            Action action = () => new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
-
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(DriversLicense.DriversLicenseInvalidMessage);
-        }
-
-        [Fact]
-        public void ThrowExceptionWithEmptyValidRange()
-        {
-            var driversLicenseNumber = "123456789POIUYTREWQ";
-            var driversLicenseState = "MI";
-
             DateTimeRange driversLicenseValidRange = null;
 
-            Action action = () => new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(DriversLicense.DriversLicenseInvalidMessage);
+            driversLicenseOrError.IsFailure.Should().BeTrue();
+            driversLicenseOrError.Error.Should().Be(DriversLicense.DriversLicenseDateRangeInvalidMessage);
         }
 
         [Fact]
-        public void EquateTwoDriversLicenseInstancesHavingSameValues()
+        public void Equate_Two_Drivers_License_Instances_Having_Same_Values()
         {
-            var driversLicense1 = CreateDriversLicense();
-            var driversLicense2 = CreateDriversLicense();
+            var driversLicense1 = Create_DriversLicense();
+            var driversLicense2 = Create_DriversLicense();
 
             driversLicense1.Should().Be(driversLicense2);
         }
 
         [Fact]
-        public void NotEquateTwoDriversLicenseInstancesHavingDifferingValues()
+        public void Not_Equate_Two_DriversLicense_Instances_Having_Differing_Values()
         {
-            var driversLicense1 = CreateDriversLicense();
-            var driversLicense2 = CreateDriversLicense();
+            var driversLicense1 = Create_DriversLicense();
+            var driversLicense2 = Create_DriversLicense();
 
             driversLicense2 = driversLicense2.NewNumber("BR549");
 
@@ -84,9 +63,9 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewDriversLicenseOnNewLicenseNumber()
+        public void Return_New_DriversLicense_On_NewNumber()
         {
-            var driversLicense = CreateDriversLicense();
+            var driversLicense = Create_DriversLicense();
             var newNumber = "BR549";
 
             driversLicense = driversLicense.NewNumber(newNumber);
@@ -95,20 +74,20 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewDriversLicenseOnNewLicenseState()
+        public void Return_New_DriversLicense_On_NewState()
         {
-            var driversLicense = CreateDriversLicense();
-            var newState = "CO";
+            var driversLicense = Create_DriversLicense();
 
-            driversLicense = driversLicense.NewState(newState);
+            var newState = State.CA;
+            driversLicense = driversLicense.NewState(State.CA);
 
             driversLicense.State.Should().Be(newState);
         }
 
         [Fact]
-        public void ReturnNewDriversLicenseOnNewLicenseValidRange()
+        public void Return_New_DriversLicense_On_NewValidRange()
         {
-            var driversLicense = CreateDriversLicense();
+            var driversLicense = Create_DriversLicense();
             var issued = DateTime.Today.AddYears(4);
             var expiry = DateTime.Today.AddYears(8);
 
@@ -118,15 +97,14 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             driversLicense.ValidRange.End.Should().Be(expiry);
         }
 
-        internal static DriversLicense CreateDriversLicense()
+        internal static DriversLicense Create_DriversLicense()
         {
             var driversLicenseNumber = "123456789POIUYTREWQ";
-            var driversLicenseState = "MI";
             var issued = DateTime.Today;
             var expiry = DateTime.Today.AddYears(4);
-            var driversLicenseValidRange = new DateTimeRange(issued, expiry);
+            var driversLicenseValidRange = DateTimeRange.Create (issued, expiry).Value;
 
-            return new DriversLicense(driversLicenseNumber, driversLicenseState, driversLicenseValidRange);
+            return DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange).Value;
         }
     }
 

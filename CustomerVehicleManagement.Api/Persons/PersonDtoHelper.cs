@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Persons
                 Id = person.Id,
                 Name = person.Name.LastFirstMiddle,
                 PostalCode = person?.Address?.PostalCode,
-                State = person?.Address?.State,
+                State = person?.Address?.State.ToString(),
                 PrimaryPhone = PhonesDtoHelper.GetPrimaryPhone(person) ?? PhonesDtoHelper.GetOrdinalPhone(person, 0),
                 PrimaryPhoneType = PhonesDtoHelper.GetPrimaryPhoneType(person) ?? PhonesDtoHelper.GetOrdinalPhoneType(person, 0),
                 PrimaryEmail = EmailDtoHelper.GetPrimaryEmail(person) ?? EmailDtoHelper.GetOrdinalEmail(person, 0)

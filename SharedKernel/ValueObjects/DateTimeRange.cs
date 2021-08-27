@@ -1,7 +1,6 @@
 ﻿using SharedKernel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace SharedKernel.ValueObjects
 {
@@ -11,20 +10,18 @@ namespace SharedKernel.ValueObjects
         public DateTime Start { get; }
         public DateTime End { get; }
 
-        [JsonConstructor]
-        public DateTimeRange(DateTime start, DateTime end)
+        private DateTimeRange(DateTime start, DateTime end)
         {
-            try
-            {
-                Guard.ForPrecedesDate(start, end, "start");
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException(DateTimeRangeInvalidMessage);
-            }
-
             Start = start;
             End = end;
+        }
+
+        public static Result<DateTimeRange> Create(DateTime start, DateTime end)
+        {
+            if (start >= end)
+                return Result.Fail<DateTimeRange>(DateTimeRangeInvalidMessage);
+
+            return Result.Ok(new DateTimeRange(start, end));
         }
 
         public DateTimeRange(DateTime start, TimeSpan duration) : this(start, start.Add(duration))
@@ -38,14 +35,18 @@ namespace SharedKernel.ValueObjects
 
         public DateTimeRange NewEnd(DateTime newEnd)
         {
+            Guard.ForPrecedesDate(Start, newEnd, "newEnd");
             return new DateTimeRange(Start, newEnd);
         }
+
         public DateTimeRange NewDuration(TimeSpan newDuration)
         {
             return new DateTimeRange(Start, newDuration);
         }
+        
         public DateTimeRange NewStart(DateTime newStart)
         {
+            Guard.ForPrecedesDate(newStart, End, "newStart");
             return new DateTimeRange(newStart, End);
         }
 

@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.UnitTests
             var firstName = "Jane";
             var lastName = "Doe";
 
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
 
             return person;

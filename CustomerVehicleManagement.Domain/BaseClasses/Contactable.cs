@@ -17,7 +17,9 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void AddPhone(Phone phone)
         {
-            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check
+            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check.
+            /* Null check silently swallows exception, hiding potential bugs. Use a guard to throw exception in
+             * this exceptional case: we don't expect a null to ever reach here, so there must be a bug. -DE */
             Guard.ForNull(phone, "phone");
 
             if (ContactableHasPhone(phone))
@@ -79,8 +81,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void SetAddress(Address address)
         {
-            // Doesn't a guard unnecessarily throw exception when we just need a null check?
-            // Address is optional, so excluding it shouldn't throw an exception when excluded.
+            // Guard unnecessarily throws exception; we just need a null check.
+            // Address is optional, so excluding it shouldn't throw an exception:
             // Guard.ForNull(address, "address");
             if (address != null)
                 Address = address;

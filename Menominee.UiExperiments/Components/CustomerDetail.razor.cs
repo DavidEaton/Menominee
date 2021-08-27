@@ -5,9 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Menominee.UiExperiments.Pages.Customers;
 using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
 using System.Collections.Generic;
-using SharedKernel.Static;
 
 namespace Menominee.UiExperiments.Components
 {
@@ -19,7 +17,6 @@ namespace Menominee.UiExperiments.Components
         [Parameter]
         public int Id { get; set; }
         public CustomerList Customer { get; set; }
-        public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
         protected string Message = string.Empty;

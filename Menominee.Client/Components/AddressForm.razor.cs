@@ -2,26 +2,24 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using SharedKernel.ValueObjects;
-using SharedKernel.Static;
 using System.Collections.Generic;
+using SharedKernel.Enums;
 
 namespace Menominee.Client.Components
 {
     public partial class AddressForm : ComponentBase
     {
-        AddressProperties Address { get; set; } = new AddressProperties();
+        AddressProperties AddressValidators { get; set; } = new AddressProperties();
         public Address EntityAddress { get; set; }
-
-        private static readonly List<State> states = States.ToList();
 
         [Parameter]
         public EventCallback<bool> CloseEventCallback { get; set; }
 
         protected async Task Validate()
         {
-            if (Address.IsValid)
+            if (AddressValidators.IsValid)
             {
-                EntityAddress = new Address(Address.AddressLine, Address.City, Address.State, Address.PostalCode);
+                EntityAddress = Address.Create(AddressValidators.AddressLine, AddressValidators.City, AddressValidators.State, AddressValidators.PostalCode).Value;
                 await CloseEventCallback.InvokeAsync(true);
                 StateHasChanged();
             }
@@ -40,7 +38,7 @@ namespace Menominee.Client.Components
             [StringLength(100, ErrorMessage = "Please limit City to 100 characters")]
             public string City { get; set; }
 
-            public string State { get; set; }
+            public State State { get; set; }
 
             [StringLength(50, ErrorMessage = "Please limit Postal Code to 50 characters")]
             public string PostalCode { get; set; }
@@ -48,7 +46,6 @@ namespace Menominee.Client.Components
             public bool IsValid =>
                        AddressLine?.Length < 100
                     && City?.Length < 100
-                    && State?.Length < 100
                     && PostalCode?.Length < 50;
         }
     }

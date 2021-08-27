@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             var lastName = "Doe";
 
             // Act
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
             var efDefaultId = person.Id;
 
@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             ApplicationDbContext context = CreateTestContext();
             var firstName = "Tasha";
             var lastName = "Yar";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
 
             context.Persons.Add(person);
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 
             var firstName = "Tasha";
             var lastName = "Yar";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
 
             context.Persons.Add(person);
@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             person.Name.LastName.Should().Be(lastName);
             person.Name.FirstName.Should().Be(firstName);
 
-            var nameNew = new PersonName("Smith", firstName);
+            var nameNew = PersonName.Create("Smith", firstName).Value;
             person.SetName(nameNew);
 
             context.Update(person);
@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 
             var firstName = "Dianna";
             var lastName = "Troy";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
 
             context.Persons.Add(person);

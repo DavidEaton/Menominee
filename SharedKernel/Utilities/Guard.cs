@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedKernel.ValueObjects;
+using System;
 
 namespace SharedKernel.Utilities
 {
@@ -23,6 +24,14 @@ namespace SharedKernel.Utilities
         public static void ForNullOrEmpty(string value, string parameterName)
         {
             if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+
+        public static void ForNullOrEmpty(PersonName value, string parameterName)
+        {
+            if (value ==  null)
             {
                 throw new ArgumentOutOfRangeException(parameterName);
             }
