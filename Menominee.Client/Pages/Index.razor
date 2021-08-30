@@ -1,4 +1,37 @@
 ﻿@page "/"
-<div>
-    <p>Index page of <strong>Menominee</strong></p>
-</div>
+
+    @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+    @inject IAccessTokenProvider TokenProvider
+
+    <div>
+        <p>Index page of <strong>Menominee</strong></p>
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="top-row pl-4 navbar navbar-dark">
+                <button class="" @onclick="WriteToken">
+                    <span>Write Token</span>
+                </button>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+    @code {
+
+        private async Task WriteToken()
+        {
+            string accessToken;
+
+            var tokenResult = await TokenProvider.RequestAccessToken();
+            if (tokenResult.TryGetToken(out var token))
+            {
+                accessToken = token.Value;
+                Console.WriteLine(accessToken);
+
+                foreach (var item in token.GrantedScopes)
+                {
+                    Console.WriteLine(item.ToString());
+                }
+
+            }
+        }
+    }

@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Email;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -9,7 +11,6 @@ using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Customers
@@ -127,8 +128,19 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
+                                                        .ThenInclude(person => person.Phones)
+                                                    .Include(customer => customer.Person)
+                                                        .ThenInclude(person => person.Emails)
+                                                    .Include(customer => customer.Organization)
+                                                        .ThenInclude(organization => organization.Phones)
+                                                    .Include(customer => customer.Organization)
+                                                        .ThenInclude(organization => organization.Emails)
                                                     .Include(customer => customer.Organization)
                                                         .ThenInclude(organization => organization.Contact)
+                                                            .ThenInclude(contact => contact.Phones)
+                                                    .Include(customer => customer.Organization)
+                                                        .ThenInclude(organization => organization.Contact)
+                                                            .ThenInclude(contact => contact.Emails)
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
@@ -147,27 +159,32 @@ namespace CustomerVehicleManagement.Api.Customers
                     EntityType = customer.EntityType,
                     CustomerType = customer.CustomerType.ToString(),
                     AddressFull = customer.EntityType == EntityType.Organization
-                                                    ? customer.Organization.Address.AddressFull
-                                                    : customer.Person.Address.AddressFull,
+                                                    ? customer.Organization?.Address?.AddressFull
+                                                    : customer.Person?.Address?.AddressFull,
                     Note = customer.EntityType == EntityType.Organization
-                                                    ? customer.Organization.Note
+                                                    ? customer.Organization?.Note
                                                     : string.Empty,
                     PrimaryPhone = customer.EntityType == EntityType.Organization
-                                                    ? GetPrimaryPhone(customer.Organization.Phones)
-                                                    : GetPrimaryPhone(customer.Person.Phones),
+                                                    ? PhonesDtoHelper.GetPrimaryPhone(customer?.Organization)
+                                                    : PhonesDtoHelper.GetPrimaryPhone(customer?.Person),
+                    PrimaryPhoneType = customer.EntityType == EntityType.Organization
+                                                    ? PhonesDtoHelper.GetPrimaryPhoneType(customer?.Organization)
+                                                    : PhonesDtoHelper.GetPrimaryPhoneType(customer?.Person),
+                    PrimaryEmail = customer.EntityType == EntityType.Organization
+                                                    ? EmailDtoHelper.GetPrimaryEmail(customer?.Organization)
+                                                    : EmailDtoHelper.GetPrimaryEmail(customer?.Person),
+                    ContactName = customer.EntityType == EntityType.Organization
+                                                    ? customer?.Organization?.Contact.Name.LastFirstMiddle
+                                                    : string.Empty,
+                    ContactPrimaryPhone = customer.EntityType == EntityType.Organization
+                                                    ? PhonesDtoHelper.GetPrimaryPhone(customer?.Organization?.Contact)
+                                                    : string.Empty,
+                    ContactPrimaryPhoneType = customer.EntityType == EntityType.Organization
+                                                    ? PhonesDtoHelper.GetPrimaryPhoneType(customer?.Organization?.Contact)
+                                                    : string.Empty
                 });
 
-
-
             return customersList;
-        }
-
-        private static string GetPrimaryPhone(IList<Phone> phones)
-        {
-            if (phones == null || phones.Count == 0)
-                return null;
-
-            return phones.SingleOrDefault(x => x.IsPrimary == true).Number;
         }
 
         private static CustomerReadDto CustomerToReadDto(Customer customer)
