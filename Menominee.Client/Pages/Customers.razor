@@ -1,4 +1,5 @@
 ﻿@page "/customers"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
 @if (CustomersList == null)
 {
@@ -24,16 +25,16 @@ else
                 <tbody>
                     @foreach (var customer in CustomersList)
                     {
-                    <tr @onclick="@(e => SetSelectedId(customer.Id))">
-                        <td>@customer.Name</td>
-                        <td>@customer.AddressFull</td>
-                        <td>@customer.PrimaryPhone</td>
-                        <td>@customer.PrimaryPhoneType</td>
-                        <td>@customer.PrimaryEmail</td>
-                        <td>@customer.CustomerType</td>
-                        <td>@customer.ContactName</td>
-                        <td>@customer.ContactPrimaryPhone</td>
-                    </tr>
+                        <tr @onclick="@(e => SetSelectedId(customer.Id))">
+                            <td>@customer.Name</td>
+                            <td>@customer.AddressFull</td>
+                            <td>@customer.PrimaryPhone</td>
+                            <td>@customer.PrimaryPhoneType</td>
+                            <td>@customer.PrimaryEmail</td>
+                            <td>@customer.CustomerType</td>
+                            <td>@customer.ContactName</td>
+                            <td>@customer.ContactPrimaryPhone</td>
+                        </tr>
                     }
                 </tbody>
             </table>

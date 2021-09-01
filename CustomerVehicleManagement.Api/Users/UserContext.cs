@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace CustomerVehicleManagement.Api.User
+namespace CustomerVehicleManagement.Api.Users
 {
     public class UserContext
     {

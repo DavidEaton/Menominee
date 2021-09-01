@@ -1,0 +1,10 @@
+﻿@page "/users"
+@using CustomerVehicleManagement.Shared
+@attribute [Microsoft.AspNetCore.Authorization.Authorize
+(Policy = Policies.CanManageUsers)]
+
+<h4>Users</h4>
+
+@code {
+
+}

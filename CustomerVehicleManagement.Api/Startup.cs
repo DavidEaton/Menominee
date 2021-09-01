@@ -2,7 +2,8 @@ using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Api.User;
+using CustomerVehicleManagement.Api.Users;
+using CustomerVehicleManagement.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -52,6 +53,22 @@ namespace CustomerVehicleManagement.Api
                          };
                      })
                 ;
+
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.AddPolicy(
+                    "PaidSubscriptionCanDoStuff",
+                    policyBuilder =>
+                    {
+                        policyBuilder.RequireAuthenticatedUser();
+                        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
+                    });
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageUsers,
+                    Policies.CanManageUsersPolicy()
+                    );
+            });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
