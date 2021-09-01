@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Entities;
 
-namespace CustomerVehicleManagement.Api.User
+namespace CustomerVehicleManagement.Api.Users
 {
     public class IdentityUserDbContext : IdentityUserContext<ApplicationUser>
     {

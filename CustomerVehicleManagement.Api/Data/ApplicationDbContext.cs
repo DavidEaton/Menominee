@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.User;
+﻿using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;

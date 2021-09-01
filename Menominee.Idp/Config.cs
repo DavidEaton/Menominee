@@ -28,9 +28,9 @@ namespace Menominee.Idp
                     new List<string>() { "tenantName" }),
 
                 new IdentityResource(
-                    "roles",
+                    "role",
                     "Shop Roles",
-                    new List<string>() { "User", "Manager", "Admin", "Owner", "Development" }),
+                    new List<string>() { "Admin", "Owner", "Employee", "Advisor", "Technician", "Manager" }),
 
                 new IdentityResource(
                     "subscriptionLevel",
@@ -96,7 +96,7 @@ namespace Menominee.Idp
                         "ddc-api",
                         "tenantId",
                         "tenantName",
-                        "roles",
+                        "role",
                         "subscriptionLevel",
                         "subscribedProducts"
                     },

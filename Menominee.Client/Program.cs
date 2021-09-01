@@ -1,7 +1,7 @@
+using CustomerVehicleManagement.Shared;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,17 +41,23 @@ namespace Menominee.Client
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
+                builder.Configuration.Bind("UserOptions", options.UserOptions);
             });
 
-            builder.Services.AddAuthorizationCore(opt =>
+            builder.Services.AddAuthorizationCore(authorizationOptions =>
             {
-                opt.AddPolicy(
+                authorizationOptions.AddPolicy(
                     "PaidSubscriptionCanDoStuff",
                     policyBuilder =>
                     {
                         policyBuilder.RequireAuthenticatedUser();
                         policyBuilder.RequireClaim("subscriptionLevel", "Paid");
                     });
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageUsers,
+                    Policies.CanManageUsersPolicy()
+                    );
             });
 
             await builder.Build().RunAsync();
