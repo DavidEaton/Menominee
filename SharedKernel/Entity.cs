@@ -1,9 +1,8 @@
 ﻿using SharedKernel.Enums;
-using SharedKernel.Interfaces;
 
 namespace SharedKernel
 {
-    public abstract class Entity : IEntity
+    public abstract class Entity
     {
         public virtual int Id { get; private set; }
         public override bool Equals(object obj)

@@ -75,12 +75,17 @@ namespace Menominee.Client.Pages
 
                 var emails = (IList<EmailCreateDto>)Organization.Emails.Select(x => new EmailCreateDto(x.Address, x.IsPrimary));
 
-                var organization = new OrganizationCreateDto(Organization.Name,
-                                                    Organization.Note,
-                                                    Organization.Address,
-                                                    null, // TODO: handle contact
-                                                    phones,
-                                                    emails);
+                var organization = new OrganizationAddDto
+                {
+                    Name = Organization.Name,
+                    Address = Organization.Address,
+                    Note = Organization.Note
+                };
+
+                organization.Address = Organization.Address;
+                organization.Note = Organization.Note;
+                //organization.Phones = Organization.Phones;
+                //organization.Emails = Organization.Emails;
 
                 var addedOrganization = await OrganizationDataService.AddOrganization(organization);
 

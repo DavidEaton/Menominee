@@ -10,7 +10,7 @@ namespace SharedKernel.ValueObjects
         public PersonName(string lastName, string firstName, string middleName = null)
         {
             // VK: no need to catch exceptions thrown by the Guard. Just leave the Guard clause as-is
-            
+
             try
             {
                 // First name can be null or empty OR last name can be, but not both

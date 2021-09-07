@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public PersonName Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
-        public DriversLicense DriversLicense { get; set; }
+        public DriversLicenseCreateDto DriversLicense { get; set; }
         public Address Address { get; set; }
         public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
         public IList<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();

@@ -10,7 +10,7 @@ namespace Menominee.Client.Components
     public partial class AddOrganizationDialog
     {
         private OrganizationAddProperties OrganizationAdd { get; set; }
-        private OrganizationCreateDto Organization { get; set; }
+        private OrganizationAddDto Organization { get; set; }
         public string Message { get; set; }
         public EntityType EntityType { get; set; }
         protected OrganizationNameForm OrganizationNameForm { get; set; }
@@ -47,7 +47,10 @@ namespace Menominee.Client.Components
 
             if (FormIsValid())
             {
-                Organization = new OrganizationCreateDto(OrganizationAdd.Name.Name, OrganizationAdd.Note, OrganizationAdd.Address);
+                Organization = new OrganizationAddDto
+                {
+                    Name = OrganizationAdd.Name.Name
+                };
 
                 await OrganizationDataService.AddOrganization(Organization);
                 ShowDialog = false;

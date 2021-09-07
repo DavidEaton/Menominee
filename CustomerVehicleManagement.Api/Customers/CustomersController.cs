@@ -137,10 +137,10 @@ namespace CustomerVehicleManagement.Api.Customers
             Customer customer = null;
 
             if (entityType == EntityType.Person)
-                customer = CreatePersonCustomer(customerCreateDto);
+                customer = CreatePersonCustomer(customerCreateDto.PersonCreateDto);
 
             if (entityType == EntityType.Organization)
-                customer = CreateOrganizationCustomer(customerCreateDto);
+                customer = AddOrganizationCustomer(customerCreateDto.OrganizationCreateDto);
 
             if (customer != null)
                 await customerRepository.AddCustomerAsync(customer);
@@ -158,33 +158,44 @@ namespace CustomerVehicleManagement.Api.Customers
                 customerFromRepository);
         }
 
-        private static Customer CreateOrganizationCustomer(CustomerCreateDto customerCreateDto)
+        private static Customer AddOrganizationCustomer(OrganizationAddDto organizationAddDto)
         {
-            var organizationNameOrError = OrganizationName.Create(customerCreateDto.OrganizationCreateDto.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
 
             if (organizationNameOrError.IsSuccess)
             {
-                Organization organization = new(organizationNameOrError.Value);
+                var organization = new Organization(organizationNameOrError.Value);
 
-                if (customerCreateDto.OrganizationCreateDto.Contact != null)
+                if (organizationAddDto.Contact != null)
                 {
-                    Person contact = new(customerCreateDto.OrganizationCreateDto.Contact.Name,
-                                         customerCreateDto.OrganizationCreateDto.Contact.Gender);
+                    var contact = new Person(organizationAddDto.Contact.Name,
+                                             organizationAddDto.Contact.Gender);
 
-                    contact.SetAddress(customerCreateDto.OrganizationCreateDto.Contact?.Address);
-                    contact.SetBirthday(customerCreateDto.OrganizationCreateDto.Contact?.Birthday);
-                    contact.SetDriversLicense(customerCreateDto.OrganizationCreateDto.Contact?.DriversLicense);
+                    contact.SetAddress(organizationAddDto.Contact?.Address);
+                    contact.SetBirthday(organizationAddDto.Contact?.Birthday);
 
-                    if (customerCreateDto.OrganizationCreateDto?.Contact?.Phones?.Count > 0)
-                        foreach (var phone in customerCreateDto.OrganizationCreateDto.Contact.Phones)
+                    if (organizationAddDto.Contact.DriversLicense != null)
+                    {
+                        var dateTimeRange = new DateTimeRange(organizationAddDto.Contact.DriversLicense.Issued,
+                                                              organizationAddDto.Contact.DriversLicense.Expiry);
+
+                        var driversLicense = new DriversLicense(organizationAddDto.Contact.DriversLicense.Number,
+                                                                organizationAddDto.Contact.DriversLicense.State,
+                                                                dateTimeRange);
+
+                        contact.SetDriversLicense(driversLicense);
+                    }
+
+                    if (organizationAddDto?.Contact?.Phones?.Count > 0)
+                        foreach (var phone in organizationAddDto.Contact.Phones)
                             contact.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
-                    if (customerCreateDto.OrganizationCreateDto?.Contact?.Emails?.Count > 0)
-                        foreach (var email in customerCreateDto.OrganizationCreateDto.Contact.Emails)
+                    if (organizationAddDto?.Contact?.Emails?.Count > 0)
+                        foreach (var email in organizationAddDto.Contact.Emails)
                             contact.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
                     organization.SetContact(contact);
-                    organization.SetNote(customerCreateDto.OrganizationCreateDto.Note);
+                    organization.SetNote(organizationAddDto.Note);
                 }
 
                 Customer customer = new(organization);
@@ -195,25 +206,34 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private static Customer CreatePersonCustomer(CustomerCreateDto customerCreateDto)
+        private static Customer CreatePersonCustomer(PersonCreateDto personCreateDto)
         {
-            var person = new Person(customerCreateDto.PersonCreateDto.Name, customerCreateDto.PersonCreateDto.Gender);
+            var person = new Person(personCreateDto.Name, personCreateDto.Gender);
 
-            person.SetAddress(customerCreateDto.PersonCreateDto?.Address);
-            person.SetBirthday(customerCreateDto.PersonCreateDto?.Birthday);
-            person.SetDriversLicense(customerCreateDto.PersonCreateDto?.DriversLicense);
+            person.SetAddress(personCreateDto?.Address);
+            person.SetBirthday(personCreateDto?.Birthday);
 
-            if (customerCreateDto.PersonCreateDto?.Phones?.Count > 0)
-                foreach (var phone in customerCreateDto.PersonCreateDto.Phones)
+            if (personCreateDto.DriversLicense != null)
+            {
+                var dateTimeRange = new DateTimeRange(personCreateDto.DriversLicense.Issued,
+                                                      personCreateDto.DriversLicense.Expiry);
+
+                var driversLicense = new DriversLicense(personCreateDto.DriversLicense.Number,
+                                                        personCreateDto.DriversLicense.State,
+                                                        dateTimeRange);
+
+                person.SetDriversLicense(driversLicense);
+            }
+
+            if (personCreateDto?.Phones?.Count > 0)
+                foreach (var phone in personCreateDto.Phones)
                     person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
-            if (customerCreateDto.PersonCreateDto?.Emails?.Count > 0)
-                foreach (var email in customerCreateDto.PersonCreateDto.Emails)
+            if (personCreateDto?.Emails?.Count > 0)
+                foreach (var email in personCreateDto.Emails)
                     person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
-            Customer customer = new(person);
-
-            return customer;
+            return new Customer(person);
         }
 
         [HttpDelete("{id:int}")]

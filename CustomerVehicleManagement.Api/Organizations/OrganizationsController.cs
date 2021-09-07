@@ -2,14 +2,11 @@
 using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -26,38 +23,11 @@ namespace CustomerVehicleManagement.Api.Organizations
                 throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task WriteOutIdentityInformation()
-        {
-            try
-            {
-            // get the saved identity token
-            var identityToken = await HttpContext
-                .GetTokenAsync(OpenIdConnectParameterNames.IdToken);
-
-            // write it out
-            Debug.WriteLine($"Identity token: {identityToken}");
-
-            // write out the user claims
-            foreach (var claim in User.Claims)
-            {
-                Debug.WriteLine($"Claim type: {claim.Type} - Claim value: {claim.Value}");
-            }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"exception: {ex}");
-                throw;
-            }
-
-        }
-
         // api/organizations/list
         [Route("list")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrganizationInListDto>>> GetOrganizationsListAsync()
         {
-            await WriteOutIdentityInformation();
-
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);
         }
@@ -121,8 +91,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetAddress(organizationUpdateDto.Address);
             organization.SetNote(organizationUpdateDto.Note);
 
-            organization.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Phones));
-            organization.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Emails));
+            if (organizationUpdateDto.Phones.Count > 0)
+                organization.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Phones));
+
+            if (organizationUpdateDto.Emails.Count > 0)
+                organization.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Emails));
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -136,12 +109,6 @@ namespace CustomerVehicleManagement.Api.Organizations
 
                 organization.SetContact(contact);
             }
-
-            // TODO: Discover why the next two operations break unit tests
-            // and our Controller update pattern:
-
-            //personFromRepository.SetTrackingState(TrackingState.Modified);
-            //repository.FixTrackingState();
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -175,8 +142,13 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationReadDto>> CreateOrganizationAsync(OrganizationCreateDto organizationCreateDto)
+        public async Task<ActionResult<OrganizationReadDto>> AddOrganizationAsync(OrganizationAddDto organizationAddDto)
         {
+            /*
+                Web API controllers don't have to check ModelState.IsValid if they have the
+                [ApiController] attribute. In that case, an automatic HTTP 400 response containing
+                error details is returned when model state is invalid.*/
+
             /* Controller Pattern:
                 1. Map data transfer object (dto) to domain entity
                 2. Add domain entity to repository
@@ -184,33 +156,22 @@ namespace CustomerVehicleManagement.Api.Organizations
                 4. Get ReadDto (with new Id) from database after save)
                 5. Return to consumer */
 
-            /*
-                Web API controllers don't have to check ModelState.IsValid if they have the
-                [ApiController] attribute. In that case, an automatic HTTP 400 response containing
-                error details is returned when model state is invalid.
-
-                However, excluding the ModelState check code breaks tests. Comment the ModelState
-                check code (if (!ModelState.IsValid)...) to break tests: */
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             // 1. Map dto to domain entity
-            var organizationNameOrError = OrganizationName.Create(organizationCreateDto.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
             if (organizationNameOrError.IsFailure)
                 return BadRequest(organizationNameOrError.Error);
 
             var organization = new Organization(organizationNameOrError.Value);
-            organization.SetNote(organizationCreateDto.Note);
+            organization.SetNote(organizationAddDto.Note);
 
-            if (organizationCreateDto.Address != null)
-                organization.SetAddress(organizationCreateDto.Address);
+            if (organizationAddDto.Address != null)
+                organization.SetAddress(organizationAddDto.Address);
 
-            MapOrganizationContact(organizationCreateDto, organization);
+            MapOrganizationContact(organizationAddDto, organization);
 
-            MapOrganizationPhones(organizationCreateDto, organization);
+            MapOrganizationPhones(organizationAddDto, organization);
 
-            MapOrganizationEmails(organizationCreateDto, organization);
+            MapOrganizationEmails(organizationAddDto, organization);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
@@ -226,10 +187,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                     result);
             }
 
-            return BadRequest($"Failed to add {organizationCreateDto.Name}.");
+            return BadRequest($"Failed to add {organizationAddDto.Name}.");
         }
 
-        private static void MapOrganizationEmails(OrganizationCreateDto organizationCreateDto, Organization organization)
+        private static void MapOrganizationEmails(OrganizationAddDto organizationCreateDto, Organization organization)
         {
             if (organizationCreateDto.Emails != null)
             {
@@ -241,7 +202,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             }
         }
 
-        private static void MapOrganizationPhones(OrganizationCreateDto organizationCreateDto, Organization organization)
+        private static void MapOrganizationPhones(OrganizationAddDto organizationCreateDto, Organization organization)
         {
             if (organizationCreateDto.Phones != null)
             {
@@ -253,7 +214,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             }
         }
 
-        private static void MapOrganizationContact(OrganizationCreateDto organizationCreateDto, Organization organization)
+        private static void MapOrganizationContact(OrganizationAddDto organizationCreateDto, Organization organization)
         {
             if (organizationCreateDto.Contact != null)
             {
@@ -263,7 +224,13 @@ namespace CustomerVehicleManagement.Api.Organizations
                     organization.Contact.SetBirthday(organizationCreateDto.Contact.Birthday);
 
                 if (organizationCreateDto.Contact.DriversLicense != null)
-                    organization.Contact.SetDriversLicense(organizationCreateDto.Contact.DriversLicense);
+                {
+                    var validRange = new DateTimeRange(organizationCreateDto.Contact.DriversLicense.Issued, organizationCreateDto.Contact.DriversLicense.Expiry);
+
+                    var driversLicense = new DriversLicense(organizationCreateDto.Contact.DriversLicense.Number, organizationCreateDto.Contact.DriversLicense.State, validRange);
+
+                    organization.Contact.SetDriversLicense(driversLicense);
+                }
 
                 if (organizationCreateDto.Contact.Address != null)
                     organization.Contact.SetAddress(organizationCreateDto.Contact.Address);

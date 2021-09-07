@@ -40,9 +40,13 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         {
             Guard.ForNull(phones, "phones");
 
-            var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
-            foreach (var phone in sortedPhones)
-                AddPhone(phone);
+            if (phones.Count > 0)
+            {
+                Phones.Clear();
+                var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
+                foreach (var phone in sortedPhones)
+                    AddPhone(phone);
+            }
         }
 
         public void AddEmail(Email email)
@@ -68,13 +72,17 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         {
             Guard.ForNull(emails, "emails");
 
-            // If a primary email exists before the end of the list, AddEmail()
-            // fails at check ContactableHasPrimaryEmail() since the primary email
-            // in the list was already added. This code will work when list is
-            // sorted and the Primary email is added last:
-            var sortedEmails = emails.OrderBy(e => e.IsPrimary).ToList();
-            foreach (var email in sortedEmails)
-                AddEmail(email);
+            if (emails.Count > 0)
+            {
+                Emails.Clear();
+                // If a primary email exists before the end of the list, AddEmail()
+                // fails at check ContactableHasPrimaryEmail() since the primary email
+                // in the list was already added. This code will work when list is
+                // sorted and the Primary email is added last:
+                var sortedEmails = emails.OrderBy(e => e.IsPrimary).ToList();
+                foreach (var email in sortedEmails)
+                    AddEmail(email);
+            }
         }
 
         public void SetAddress(Address address)

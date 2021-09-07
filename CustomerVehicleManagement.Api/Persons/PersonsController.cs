@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -64,7 +65,7 @@ namespace CustomerVehicleManagement.Api.Persons
             var notFoundMessage = $"Could not find Person to update";
 
             Person personFromRepository = await repository.GetPersonEntityAsync(id);
-             if (personFromRepository == null)
+            if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
             PersonDtoHelper.PersonUpdateDtoToEntity(personUpdateDto, personFromRepository);
@@ -106,7 +107,18 @@ namespace CustomerVehicleManagement.Api.Persons
 
             person.SetAddress(personCreateDto?.Address);
             person.SetBirthday(personCreateDto?.Birthday);
-            person.SetDriversLicense(personCreateDto?.DriversLicense);
+
+            if (personCreateDto.DriversLicense != null)
+            {
+                var dateTimeRange = new DateTimeRange(personCreateDto.DriversLicense.Issued,
+                                                      personCreateDto.DriversLicense.Expiry);
+
+                var driversLicense = new DriversLicense(personCreateDto.DriversLicense.Number,
+                                                        personCreateDto.DriversLicense.State,
+                                                        dateTimeRange);
+
+                person.SetDriversLicense(driversLicense);
+            }
 
             if (personCreateDto?.Phones?.Count > 0)
                 foreach (var phone in personCreateDto.Phones)
