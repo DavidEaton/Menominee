@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models
          * Lazy loading is harmful only in reads
          * The drawbacks of the lazy loading can be overcome by the adherence to CQRS: use lazy loading only in writes, handwrite SQL queries in reads
          */
-        public virtual PersonCreateDto Contact { get; set; }
+        public virtual PersonAddDto Contact { get; set; }
         public Address Address { get; set; }
         public string Note { get; set; }
         public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();

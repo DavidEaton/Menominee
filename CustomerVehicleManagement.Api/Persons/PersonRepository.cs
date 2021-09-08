@@ -5,6 +5,7 @@ using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Persons
@@ -47,7 +48,7 @@ namespace CustomerVehicleManagement.Api.Persons
                 .Include(person => person.Emails)
                 .FirstOrDefaultAsync(person => person.Id == id);
 
-            return PersonDtoHelper.ToReadDto(personFromContext);
+            return PersonReadDto.ConvertToDto(personFromContext);
         }
 
         public async Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync()
@@ -57,12 +58,8 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .Include(person => person.Emails)
                                                   .ToArrayAsync();
 
-            var list = new List<PersonReadDto>();
 
-            foreach (var person in personsFromContext)
-                list.Add(PersonDtoHelper.ToReadDto(person));
-
-            return list;
+            return personsFromContext.Select(person => PersonReadDto.ConvertToDto(person)).ToList();
         }
 
         public async Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync()
@@ -72,12 +69,7 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .Include(person => person.Emails)
                                                   .ToArrayAsync();
 
-            var list = new List<PersonInListDto>();
-
-            foreach (var person in personsFromContext)
-                list.Add(PersonDtoHelper.ToPersonInListDto(person));
-
-            return list;
+            return personsFromContext.Select(person => PersonInListDto.ConvertToDto(person)).ToList();
         }
 
         public async Task<bool> SaveChangesAsync()
@@ -90,7 +82,7 @@ namespace CustomerVehicleManagement.Api.Persons
             context.FixState();
         }
 
-        public void UpdatePersonAsync(PersonUpdateDto person)
+        public void UpdatePersonAsync(Person person)
         {
             // No code in this implementation.
 

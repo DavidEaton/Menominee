@@ -1,6 +1,4 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Email;
-using CustomerVehicleManagement.Api.Phones;
 using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
@@ -47,13 +45,11 @@ namespace CustomerVehicleManagement.Api.Organizations
                                  .ThenInclude(contact => contact.Emails)
                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
-            return OrganizationDtoHelper.ToReadDto(organizationFromContext);
+            return OrganizationReadDto.ConvertToDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync()
         {
-            IList<OrganizationReadDto> list = new List<OrganizationReadDto>();
-
             IReadOnlyList<Organization> organizationsFromContext =
                 await context.Organizations
                              .Include(organization => organization.Phones)
@@ -63,34 +59,12 @@ namespace CustomerVehicleManagement.Api.Organizations
                                  .Include(contact => contact.Emails)
                              .ToListAsync();
 
-            foreach (var organization in organizationsFromContext)
-            {
-                list.Add(new OrganizationReadDto()
-                {
-                    Id = organization.Id,
-                    Name = organization.Name.Name,
-                    Address = organization.Address,
-                    Note = organization.Note,
+            return organizationsFromContext.Select(organization => OrganizationReadDto.ConvertToDto(organization)).ToList();
 
-                    Phones = organization.Phones.Select(x => new PhoneReadDto()
-                    {
-                        Number = x.Number,
-                        PhoneType = x.PhoneType.ToString(),
-                        IsPrimary = x.IsPrimary
-                    }).ToArray(),
-
-                    Emails = organization.Emails.Select(x => new EmailReadDto()
-                    {
-                        Address = x.Address,
-                        IsPrimary = x.IsPrimary
-                    }).ToArray()
-                });
-            }
-            return (IReadOnlyList<OrganizationReadDto>)list;
         }
 
-    public async Task<Organization> GetOrganizationEntityAsync(int id)
-    {
+        public async Task<Organization> GetOrganizationEntityAsync(int id)
+        {
             // Prefer FindAsync() over Single() or First() for single objects (non-collections);
             // FindAsync() checks the Identity Map Cache before making a trip to the database.
             var organizationFromContext = context.Organizations
@@ -101,61 +75,42 @@ namespace CustomerVehicleManagement.Api.Organizations
                                              .Include(contact => contact.Emails)
                                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
-        return await organizationFromContext;
-    }
+            return await organizationFromContext;
+        }
 
-    public async Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync()
-    {
-        IReadOnlyList<Organization> organizations = await context.Organizations
-                                                                 .Include(organization => organization.Phones)
-                                                                 .Include(organization => organization.Emails)
-                                                                 .Include(organization => organization.Contact)
-                                                                    .ThenInclude(contact => contact.Phones)
-                                                                    .Include(contact => contact.Emails)
-                                                                 .ToListAsync();
-
-        List<OrganizationInListDto> dtos = organizations.Select(organization => new OrganizationInListDto
+        public async Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync()
         {
-            Id = organization.Id,
-            Name = organization.Name.Name,
-            ContactName = organization?.Contact?.Name.LastFirstMiddle,
-            ContactPrimaryPhone = PhonesDtoHelper.GetPrimaryPhone(organization?.Contact),
+            IReadOnlyList<Organization> organizations = await context.Organizations
+                                                                     .Include(organization => organization.Phones)
+                                                                     .Include(organization => organization.Emails)
+                                                                     .Include(organization => organization.Contact)
+                                                                        .ThenInclude(contact => contact.Phones)
+                                                                        .Include(contact => contact.Emails)
+                                                                     .ToListAsync();
 
-            AddressLine = organization?.Address?.AddressLine,
-            City = organization?.Address?.City,
-            State = organization?.Address?.State,
-            PostalCode = organization?.Address?.PostalCode,
+            return organizations.Select(organization => OrganizationInListDto.ConvertToDto(organization)).ToList();
+        }
 
-            Note = organization.Note,
-            PrimaryPhone = PhonesDtoHelper.GetPrimaryPhone(organization),
-            PrimaryPhoneType = PhonesDtoHelper.GetPrimaryPhoneType(organization),
-            PrimaryEmail = EmailDtoHelper.GetPrimaryEmail(organization)
-        }).ToList();
+        public void UpdateOrganizationAsync(Organization organization)
+        {
+            // No code in this implementation.
+        }
 
-        return dtos;
+        public async Task<bool> OrganizationExistsAsync(int id)
+        {
+            return await context.Organizations
+                .AnyAsync(o => o.Id == id);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            return await context.SaveChangesAsync() > 0;
+        }
+
+        public void FixTrackingState()
+        {
+            context.FixState();
+        }
     }
-
-
-    public void UpdateOrganizationAsync(Organization organization)
-    {
-        // No code in this implementation.
-    }
-
-    public async Task<bool> OrganizationExistsAsync(int id)
-    {
-        return await context.Organizations
-            .AnyAsync(o => o.Id == id);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
-
-    public void FixTrackingState()
-    {
-        context.FixState();
-    }
-}
 }
 

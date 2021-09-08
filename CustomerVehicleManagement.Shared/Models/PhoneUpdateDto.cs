@@ -1,6 +1,8 @@
-﻿using SharedKernel.Enums;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Shared.Models
@@ -30,5 +32,19 @@ namespace CustomerVehicleManagement.Shared.Models
             PhoneType = phoneType;
             IsPrimary = isPrimary;
         }
+
+        public static IList<Phone> ConvertToEntities(IList<PhoneUpdateDto> phones)
+        {
+            var phoneEntities = new List<Phone>();
+
+            if (phones != null)
+            {
+                foreach (var phone in phones)
+                    phoneEntities.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+            }
+
+            return phoneEntities;
+        }
+
     }
 }

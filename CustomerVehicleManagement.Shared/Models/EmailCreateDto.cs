@@ -1,4 +1,5 @@
-﻿using SharedKernel.Utilities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -35,6 +36,16 @@ namespace CustomerVehicleManagement.Shared.Models
 
             Address = address;
             IsPrimary = isPrimary;
+        }
+
+        public static Email ConvertToEntity(EmailCreateDto email)
+        {
+            if (email != null)
+            {
+                return new Email(email.Address, email.IsPrimary);
+            }
+
+            return null;
         }
     }
 }

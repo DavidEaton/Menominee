@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models
     public class CustomerCreateDto
     {
         [JsonConstructor]
-        public CustomerCreateDto(PersonCreateDto personCreateDto, OrganizationAddDto organizationCreateDto, CustomerType customerType)
+        public CustomerCreateDto(PersonAddDto personCreateDto, OrganizationAddDto organizationCreateDto, CustomerType customerType)
         {
             if (personCreateDto != null)
             {
@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Shared.Models
 
         public EntityType EntityType { get; set; }
         public OrganizationAddDto OrganizationCreateDto { get; set; }
-        public PersonCreateDto PersonCreateDto { get; set; }
+        public PersonAddDto PersonCreateDto { get; set; }
 
         [Required(ErrorMessage = "Customer Type is required.")]
         public CustomerType CustomerType { get; set; }

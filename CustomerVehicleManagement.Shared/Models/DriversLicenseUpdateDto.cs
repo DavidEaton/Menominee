@@ -1,16 +1,17 @@
 ﻿using SharedKernel.Utilities;
+using SharedKernel.ValueObjects;
 using System;
 using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class DriversLicenseCreateDto
+    public class DriversLicenseUpdateDto
     {
         public static readonly string DriversLicenseEmptyMessage = "Drivers License number cannot be empty";
         public static readonly string DriversLicenseDateRangeMessage = "Drivers License Expiry date cannot preceed Issued date";
 
         [JsonConstructor]
-        public DriversLicenseCreateDto(string number, DateTime issued, DateTime expiry, string state)
+        public DriversLicenseUpdateDto(string number, DateTime issued, DateTime expiry, string state)
         {
             try
             {
@@ -39,5 +40,12 @@ namespace CustomerVehicleManagement.Shared.Models
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
         public string State { get; set; }
+
+        public static DriversLicense ConvertToEntity(DriversLicenseUpdateDto driversLicense)
+        {
+            return driversLicense != null
+                ? new DriversLicense(driversLicense.Number, driversLicense.State, new DateTimeRange(driversLicense.Issued, driversLicense.Expiry))
+                : null;
+        }
     }
 }

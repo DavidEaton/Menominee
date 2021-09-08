@@ -1,4 +1,5 @@
-﻿using SharedKernel.Enums;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Enums;
 using SharedKernel.Utilities;
 using System;
 using System.Text.Json.Serialization;
@@ -31,5 +32,14 @@ namespace CustomerVehicleManagement.Shared.Models
         public PhoneType PhoneType { get; private set; }
         public bool IsPrimary { get; private set; }
 
+        public static Phone ConvertToEntity(PhoneCreateDto phone)
+        {
+            if (phone != null)
+            {
+                return new Phone(phone.Number, phone.PhoneType, phone.IsPrimary);
+            }
+
+            return null;
+        }
     }
 }

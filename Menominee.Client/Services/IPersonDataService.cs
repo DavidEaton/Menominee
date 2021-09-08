@@ -8,6 +8,6 @@ namespace Menominee.Client.Services
     {
         Task<IReadOnlyList<PersonInListDto>> GetAllPersons();
         Task<PersonReadDto> GetPersonDetails(int id);
-        Task<PersonReadDto> AddPerson(PersonCreateDto person);
+        Task<PersonReadDto> AddPerson(PersonAddDto person);
     }
 }

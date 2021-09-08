@@ -90,7 +90,7 @@ namespace Menominee.Client.Components
         {
             internal OrganizationName Name { get; set; }
             internal Address Address { get; set; }
-            internal virtual PersonCreateDto Contact { get; set; }
+            internal virtual PersonAddDto Contact { get; set; }
             internal string Note { get; set; }
         }
     }

@@ -192,9 +192,19 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                     Birthday = DateTime.Today.AddYears(-20)
                 };
 
-                PersonDtoHelper.PersonUpdateDtoToEntity(personUpdateDto, personFromRepository);
+                personFromRepository.SetName(personUpdateDto.Name);
+                personFromRepository.SetAddress(personUpdateDto.Address);
+                personFromRepository.SetBirthday(personUpdateDto.Birthday);
+                personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto.DriversLicense));
+                personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto.Emails));
+                personFromRepository.SetGender(personUpdateDto.Gender);
+                personFromRepository.SetName(personUpdateDto.Name);
+                personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto.Phones));
 
-                repository.UpdatePersonAsync(personUpdateDto);
+                personFromRepository.SetTrackingState(TrackingState.Modified);
+                repository.FixTrackingState();
+
+                repository.UpdatePersonAsync(personFromRepository);
 
                 await repository.SaveChangesAsync();
             }

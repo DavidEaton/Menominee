@@ -1,4 +1,6 @@
-﻿using SharedKernel.Enums;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Helpers;
+using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
@@ -18,5 +20,49 @@ namespace CustomerVehicleManagement.Shared.Models
         public string ContactPrimaryPhone { get; set; }
         public string ContactPrimaryPhoneType { get; set; }
 
+        public static CustomerInListDto ConvertToDto(Customer customer)
+        {
+            if (customer != null)
+            {
+                return new CustomerInListDto()
+                {
+                    Id = customer.Id,
+                    Name = customer.EntityType == EntityType.Organization
+                                                        ? customer.Organization.Name.Name
+                                                        : customer.Person.Name.LastFirstMiddle,
+                    EntityId = customer.EntityType == EntityType.Organization
+                                                        ? customer.Organization.Id
+                                                        : customer.Person.Id,
+                    EntityType = customer.EntityType,
+                    CustomerType = customer.CustomerType.ToString(),
+                    AddressFull = customer.EntityType == EntityType.Organization
+                                                        ? customer.Organization?.Address?.AddressFull
+                                                        : customer.Person?.Address?.AddressFull,
+                    Note = customer.EntityType == EntityType.Organization
+                                                        ? customer.Organization?.Note
+                                                        : string.Empty,
+                    PrimaryPhone = customer.EntityType == EntityType.Organization
+                                                        ? PhoneHelper.GetPrimaryPhone(customer?.Organization)
+                                                        : PhoneHelper.GetPrimaryPhone(customer?.Person),
+                    PrimaryPhoneType = customer.EntityType == EntityType.Organization
+                                                        ? PhoneHelper.GetPrimaryPhoneType(customer?.Organization)
+                                                        : PhoneHelper.GetPrimaryPhoneType(customer?.Person),
+                    PrimaryEmail = customer.EntityType == EntityType.Organization
+                                                        ? EmailHelper.GetPrimaryEmail(customer?.Organization)
+                                                        : EmailHelper.GetPrimaryEmail(customer?.Person),
+                    ContactName = customer.EntityType == EntityType.Organization
+                                                        ? customer?.Organization?.Contact.Name.LastFirstMiddle
+                                                        : string.Empty,
+                    ContactPrimaryPhone = customer.EntityType == EntityType.Organization
+                                                        ? PhoneHelper.GetPrimaryPhone(customer?.Organization?.Contact)
+                                                        : string.Empty,
+                    ContactPrimaryPhoneType = customer.EntityType == EntityType.Organization
+                                                        ? PhoneHelper.GetPrimaryPhoneType(customer?.Organization?.Contact)
+                                                        : string.Empty
+                };
+            }
+
+            return null;
+        }
     }
 }

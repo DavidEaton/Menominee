@@ -1,4 +1,5 @@
-﻿using SharedKernel.Enums;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,20 @@ namespace CustomerVehicleManagement.Shared.Models
         public Address Address { get; set; }
         public IReadOnlyList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
         public IReadOnlyList<EmailReadDto> Emails { get; set; } = new List<EmailReadDto>();
+
+        public static PersonReadDto ConvertToDto(Person person)
+        {
+            return person != null
+                ? new PersonReadDto()
+                {
+                    Id = person.Id,
+                    Name = person.Name.LastFirstMiddle,
+                    Address = person?.Address,
+                    Birthday = person?.Birthday,
+                    Phones = PhoneReadDto.ConvertToDto(person.Phones),
+                    Emails = EmailReadDto.ConvertToDto(person.Emails)
+                }
+                : null;
+        }
     }
 }

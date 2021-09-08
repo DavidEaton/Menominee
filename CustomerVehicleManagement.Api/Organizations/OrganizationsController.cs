@@ -1,12 +1,11 @@
-﻿using CustomerVehicleManagement.Api.Email;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -92,10 +91,10 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetNote(organizationUpdateDto.Note);
 
             if (organizationUpdateDto.Phones.Count > 0)
-                organization.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Phones));
+                organization.SetPhones(PhoneUpdateDto.ConvertToEntities(organizationUpdateDto.Phones));
 
             if (organizationUpdateDto.Emails.Count > 0)
-                organization.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Emails));
+                organization.SetEmails(EmailUpdateDto.ConvertToEntities(organizationUpdateDto.Emails));
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -103,9 +102,9 @@ namespace CustomerVehicleManagement.Api.Organizations
 
                 contact.SetAddress(organizationUpdateDto.Contact.Address);
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
-                contact.SetDriversLicense(organizationUpdateDto.Contact.DriversLicense);
-                contact.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Contact.Phones));
-                contact.SetEmails(EmailDtoHelper.UpdateDtosToEntities(organizationUpdateDto.Contact.Emails));
+                contact.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(organizationUpdateDto.Contact.DriversLicense));
+                contact.SetPhones(PhoneUpdateDto.ConvertToEntities(organizationUpdateDto.Contact.Phones));
+                contact.SetEmails(EmailUpdateDto.ConvertToEntities(organizationUpdateDto.Contact.Emails));
 
                 organization.SetContact(contact);
             }
@@ -150,28 +149,30 @@ namespace CustomerVehicleManagement.Api.Organizations
                 error details is returned when model state is invalid.*/
 
             /* Controller Pattern:
-                1. Map data transfer object (dto) to domain entity
+                1. Convert data transfer object (dto) to domain entity
                 2. Add domain entity to repository
                 3. Save changes on repository
                 4. Get ReadDto (with new Id) from database after save)
                 5. Return to consumer */
 
-            // 1. Map dto to domain entity
+            // 1. Convert dto to domain entity
             var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
             if (organizationNameOrError.IsFailure)
                 return BadRequest(organizationNameOrError.Error);
 
             var organization = new Organization(organizationNameOrError.Value);
+
             organization.SetNote(organizationAddDto.Note);
 
-            if (organizationAddDto.Address != null)
-                organization.SetAddress(organizationAddDto.Address);
+            organization.SetAddress(organizationAddDto?.Address);
 
-            MapOrganizationContact(organizationAddDto, organization);
+            if (organizationAddDto?.Phones != null)
+                organization.SetPhones(organizationAddDto?.Phones.Select(phone => PhoneCreateDto.ConvertToEntity(phone)).ToList());
 
-            MapOrganizationPhones(organizationAddDto, organization);
+            if (organizationAddDto?.Emails != null)
+                organization.SetEmails(organizationAddDto?.Emails.Select(email => EmailCreateDto.ConvertToEntity(email)).ToList());
 
-            MapOrganizationEmails(organizationAddDto, organization);
+            organization.SetContact(PersonAddDto.ConvertToEntity(organizationAddDto?.Contact));
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
@@ -188,71 +189,6 @@ namespace CustomerVehicleManagement.Api.Organizations
             }
 
             return BadRequest($"Failed to add {organizationAddDto.Name}.");
-        }
-
-        private static void MapOrganizationEmails(OrganizationAddDto organizationCreateDto, Organization organization)
-        {
-            if (organizationCreateDto.Emails != null)
-            {
-                var emails = new List<Domain.Entities.Email>();
-                foreach (var email in organizationCreateDto.Emails)
-                    emails.Add(new Domain.Entities.Email(email.Address, email.IsPrimary));
-
-                organization.SetEmails(emails);
-            }
-        }
-
-        private static void MapOrganizationPhones(OrganizationAddDto organizationCreateDto, Organization organization)
-        {
-            if (organizationCreateDto.Phones != null)
-            {
-                var phones = new List<Phone>();
-                foreach (var phone in organizationCreateDto.Phones)
-                    phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
-
-                organization.SetPhones(phones);
-            }
-        }
-
-        private static void MapOrganizationContact(OrganizationAddDto organizationCreateDto, Organization organization)
-        {
-            if (organizationCreateDto.Contact != null)
-            {
-                organization.SetContact(new Person(organizationCreateDto.Contact.Name, organizationCreateDto.Contact.Gender));
-
-                if (organizationCreateDto.Contact.Birthday != null)
-                    organization.Contact.SetBirthday(organizationCreateDto.Contact.Birthday);
-
-                if (organizationCreateDto.Contact.DriversLicense != null)
-                {
-                    var validRange = new DateTimeRange(organizationCreateDto.Contact.DriversLicense.Issued, organizationCreateDto.Contact.DriversLicense.Expiry);
-
-                    var driversLicense = new DriversLicense(organizationCreateDto.Contact.DriversLicense.Number, organizationCreateDto.Contact.DriversLicense.State, validRange);
-
-                    organization.Contact.SetDriversLicense(driversLicense);
-                }
-
-                if (organizationCreateDto.Contact.Address != null)
-                    organization.Contact.SetAddress(organizationCreateDto.Contact.Address);
-
-                if (organizationCreateDto.Contact.Phones != null)
-                {
-                    var phones = new List<Phone>();
-                    foreach (var phone in organizationCreateDto.Contact.Phones)
-                        phones.Add(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
-
-                    organization.Contact.SetPhones(phones);
-                }
-
-                if (organizationCreateDto.Contact.Emails != null)
-                {
-                    var emails = new List<Domain.Entities.Email>();
-                    foreach (var email in organizationCreateDto.Contact.Emails)
-                        emails.Add(new Domain.Entities.Email(email.Address, email.IsPrimary));
-
-                    organization.Contact.SetEmails(emails);
-                }
-            }
         }
 
         [HttpDelete("{id:int}")]

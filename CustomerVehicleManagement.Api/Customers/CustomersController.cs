@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using SharedKernel.ValueObjects;
 using CustomerVehicleManagement.Shared.Models;
-using CustomerVehicleManagement.Api.Phones;
-using CustomerVehicleManagement.Api.Email;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -102,9 +100,9 @@ namespace CustomerVehicleManagement.Api.Customers
                 organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
                 organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
-                PersonDtoHelper.PersonUpdateDtoToEntity(customerUpdateDto.OrganizationUpdateDto.Contact, organizationFromRepository.Contact);
-                organizationFromRepository.SetPhones(PhonesDtoHelper.UpdateDtosToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
-                organizationFromRepository.SetEmails(EmailDtoHelper.UpdateDtosToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
+                organizationFromRepository.SetContact(PersonUpdateDto.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
+                organizationFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
+                organizationFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
 
                 organizationFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -113,7 +111,15 @@ namespace CustomerVehicleManagement.Api.Customers
             if (customerFromRepository.EntityType == EntityType.Person)
             {
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
-                PersonDtoHelper.PersonUpdateDtoToEntity(customerUpdateDto.PersonUpdateDto, personFromRepository);
+
+                personFromRepository.SetName(customerUpdateDto.PersonUpdateDto.Name);
+                personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
+                personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
+                personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
+                personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
+                personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
+                personFromRepository.SetName(customerUpdateDto.PersonUpdateDto.Name);
+                personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -206,7 +212,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private static Customer CreatePersonCustomer(PersonCreateDto personCreateDto)
+        private static Customer CreatePersonCustomer(PersonAddDto personCreateDto)
         {
             var person = new Person(personCreateDto.Name, personCreateDto.Gender);
 

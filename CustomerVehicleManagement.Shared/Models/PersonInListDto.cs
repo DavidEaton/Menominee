@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Helpers;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
@@ -15,5 +17,26 @@ namespace CustomerVehicleManagement.Shared.Models
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
         public string PrimaryEmail { get; set; }
+        public static PersonInListDto ConvertToDto(Person person)
+        {
+            if (person != null)
+            {
+                return new PersonInListDto()
+                {
+                    AddressLine = person?.Address?.AddressLine,
+                    Birthday = person?.Birthday,
+                    City = person?.Address?.City,
+                    Id = person.Id,
+                    Name = person.Name.LastFirstMiddle,
+                    PostalCode = person?.Address?.PostalCode,
+                    State = person?.Address?.State,
+                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(person) ?? PhoneHelper.GetOrdinalPhone(person, 0),
+                    PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
+                    PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)
+                };
+            }
+
+            return null;
+        }
     }
 }

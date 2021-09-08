@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.ValueObjects;
+using SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -68,9 +68,19 @@ namespace CustomerVehicleManagement.Api.Persons
             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            PersonDtoHelper.PersonUpdateDtoToEntity(personUpdateDto, personFromRepository);
+            personFromRepository.SetName(personUpdateDto.Name);
+            personFromRepository.SetAddress(personUpdateDto.Address);
+            personFromRepository.SetBirthday(personUpdateDto.Birthday);
+            personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto.DriversLicense));
+            personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto.Emails));
+            personFromRepository.SetGender(personUpdateDto.Gender);
+            personFromRepository.SetName(personUpdateDto.Name);
+            personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto.Phones));
 
-            repository.UpdatePersonAsync(personUpdateDto);
+            personFromRepository.SetTrackingState(TrackingState.Modified);
+            repository.FixTrackingState();
+
+            repository.UpdatePersonAsync(personFromRepository);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
@@ -80,12 +90,12 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // POST: api/persons/
         [HttpPost]
-        public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonCreateDto personCreateDto)
+        public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonAddDto personCreateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Person person = CreateNewPerson(personCreateDto);
+            Person person = PersonAddDto.ConvertToEntity(personCreateDto);
 
             await repository.AddPersonAsync(person);
 
@@ -99,36 +109,6 @@ namespace CustomerVehicleManagement.Api.Persons
             }
 
             return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");
-        }
-
-        private static Person CreateNewPerson(PersonCreateDto personCreateDto)
-        {
-            var person = new Person(personCreateDto.Name, personCreateDto.Gender);
-
-            person.SetAddress(personCreateDto?.Address);
-            person.SetBirthday(personCreateDto?.Birthday);
-
-            if (personCreateDto.DriversLicense != null)
-            {
-                var dateTimeRange = new DateTimeRange(personCreateDto.DriversLicense.Issued,
-                                                      personCreateDto.DriversLicense.Expiry);
-
-                var driversLicense = new DriversLicense(personCreateDto.DriversLicense.Number,
-                                                        personCreateDto.DriversLicense.State,
-                                                        dateTimeRange);
-
-                person.SetDriversLicense(driversLicense);
-            }
-
-            if (personCreateDto?.Phones?.Count > 0)
-                foreach (var phone in personCreateDto.Phones)
-                    person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
-
-            if (personCreateDto?.Emails?.Count > 0)
-                foreach (var email in personCreateDto.Emails)
-                    person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
-
-            return person;
         }
 
         [HttpDelete("{id:int}")]
