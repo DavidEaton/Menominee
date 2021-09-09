@@ -30,17 +30,17 @@ namespace Menominee.Idp
                 new IdentityResource(
                     "roles",
                     "Shop Roles",
-                    new List<string>() { "User", "Manager", "Admin", "Owner", "Development" }),
+                    new List<string>() { "roles" }),
 
                 new IdentityResource(
                     "subscriptionLevel",
                     "User's Subsription Level",
-                    new List<string>() { "Free", "Paid" }),
+                    new List<string>() { "subscriptionLevel" }),
 
                 new IdentityResource(
                     "subscribedProducts",
                     "User's subscribed Products",
-                    new List<string>() { "Core", "MVConnect", "InSpec", "Text Messaging", "Tire Size", "Tire Trac", "TireMetrix" })
+                    new List<string>() { "subscribedProducts" })
             };
 
         public static IEnumerable<ApiResource> Apis =>

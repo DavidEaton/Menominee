@@ -97,12 +97,8 @@ namespace CustomerVehicleManagement.Api
         {
             app.UseHttpsRedirection();
             app.UseRouting();
-
-            if (HostEnvironment.IsProduction())
-                app.UseAuthorization();
-
+            app.UseAuthorization();
             app.UseAuthentication();
-
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
