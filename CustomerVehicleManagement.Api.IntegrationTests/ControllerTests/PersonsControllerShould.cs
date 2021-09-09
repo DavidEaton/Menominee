@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_ActionResult_Of_PersonReadDto_On_CreatePersonAsync()
         {
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Return_BadRequestObjectResult_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -104,11 +104,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
                           .Returns(Task.CompletedTask)
                           .Callback<Person>(person => savedPerson = person);
 
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(x => x.AddPersonAsync(It.IsAny<Person>()), Times.Once);
+            moqRepository.Verify(repository => repository.AddPersonAsync(It.IsAny<Person>()), Times.Once);
             person.Name.Should().Be(savedPerson.Name);
             person.Gender.Should().Be(savedPerson.Gender);
             person.Birthday.Should().Be(savedPerson.Birthday);
@@ -117,9 +117,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_PersonReadDto_On_CreatePersonAsync_When_ModelState_Valid()
         {
-            moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<Person>()));
+            moqRepository.Setup(repository => repository.AddPersonAsync(It.IsAny<Person>()));
 
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             var result = await controller.CreatePersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonReadDto>>();

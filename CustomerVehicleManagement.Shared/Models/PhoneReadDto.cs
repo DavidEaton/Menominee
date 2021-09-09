@@ -13,7 +13,10 @@ namespace CustomerVehicleManagement.Shared.Models
 
         public static IReadOnlyList<PhoneReadDto> ConvertToDto(IList<Phone> phones)
         {
-            return phones.Select(phone => ConvertToDto(phone)).ToList();
+            return phones
+                .Select(phone =>
+                        ConvertToDto(phone))
+                .ToList();
         }
 
         private static PhoneReadDto ConvertToDto(Phone phone)

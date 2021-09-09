@@ -10,12 +10,7 @@ namespace SharedKernel.ValueObjects
         public DateTime Start { get; }
         public DateTime End { get; }
 
-        public DateTimeRange(DateTime start, DateTime end)
-        public DateTimeRange(DateTime start, DateTime end)
-        public DateTimeRange(DateTime start, DateTime end)
-        public DateTimeRange(DateTime start, DateTime end)
-        public DateTimeRange(DateTime start, DateTime end)
-        public DateTimeRange(DateTime start, DateTime end)
+        private DateTimeRange(DateTime start, DateTime end)
         {
             Start = start;
             End = end;
@@ -48,7 +43,7 @@ namespace SharedKernel.ValueObjects
         {
             return new DateTimeRange(Start, newDuration);
         }
-        
+
         public DateTimeRange NewStart(DateTime newStart)
         {
             Guard.ForPrecedesDate(newStart, End, "newStart");

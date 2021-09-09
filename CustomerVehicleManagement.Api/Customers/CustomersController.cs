@@ -182,12 +182,12 @@ namespace CustomerVehicleManagement.Api.Customers
 
                     if (organizationAddDto.Contact.DriversLicense != null)
                     {
-                        var dateTimeRange = new DateTimeRange(organizationAddDto.Contact.DriversLicense.Issued,
-                                                              organizationAddDto.Contact.DriversLicense.Expiry);
+                        var dateTimeRange = DateTimeRange.Create(organizationAddDto.Contact.DriversLicense.Issued,
+                                                              organizationAddDto.Contact.DriversLicense.Expiry).Value;
 
-                        var driversLicense = new DriversLicense(organizationAddDto.Contact.DriversLicense.Number,
-                                                                organizationAddDto.Contact.DriversLicense.State,
-                                                                dateTimeRange);
+                        var driversLicense = DriversLicense.Create(organizationAddDto.Contact.DriversLicense.Number,
+                                                                Enum.Parse<State>(organizationAddDto.Contact.DriversLicense.State),
+                                                                dateTimeRange).Value;
 
                         contact.SetDriversLicense(driversLicense);
                     }
@@ -212,31 +212,31 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private static Customer CreatePersonCustomer(PersonAddDto personCreateDto)
+        private static Customer CreatePersonCustomer(PersonAddDto personAddDto)
         {
-            var person = new Person(personCreateDto.Name, personCreateDto.Gender);
+            var person = new Person(personAddDto.Name, personAddDto.Gender);
 
-            person.SetAddress(personCreateDto?.Address);
-            person.SetBirthday(personCreateDto?.Birthday);
+            person.SetAddress(personAddDto?.Address);
+            person.SetBirthday(personAddDto?.Birthday);
 
-            if (personCreateDto.DriversLicense != null)
+            if (personAddDto.DriversLicense != null)
             {
-                var dateTimeRange = new DateTimeRange(personCreateDto.DriversLicense.Issued,
-                                                      personCreateDto.DriversLicense.Expiry);
+                var dateTimeRange = DateTimeRange.Create(personAddDto.DriversLicense.Issued,
+                                                      personAddDto.DriversLicense.Expiry).Value;
 
-                var driversLicense = new DriversLicense(personCreateDto.DriversLicense.Number,
-                                                        personCreateDto.DriversLicense.State,
-                                                        dateTimeRange);
+                var driversLicense = DriversLicense.Create(personAddDto.DriversLicense.Number,
+                                                        Enum.Parse<State>(personAddDto.DriversLicense.State),
+                                                        dateTimeRange).Value;
 
                 person.SetDriversLicense(driversLicense);
             }
 
-            if (personCreateDto?.Phones?.Count > 0)
-                foreach (var phone in personCreateDto.Phones)
+            if (personAddDto?.Phones?.Count > 0)
+                foreach (var phone in personAddDto.Phones)
                     person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
-            if (personCreateDto?.Emails?.Count > 0)
-                foreach (var email in personCreateDto.Emails)
+            if (personAddDto?.Emails?.Count > 0)
+                foreach (var email in personAddDto.Emails)
                     person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
             return new Customer(person);

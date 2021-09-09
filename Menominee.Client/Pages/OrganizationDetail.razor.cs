@@ -68,9 +68,20 @@ namespace Menominee.Client.Pages
 
             if (Organization.Id == 0) // new
             {
-                var phones = (IList<PhoneCreateDto>)Organization.Phones.Select(phone => new PhoneCreateDto(phone.Number, Enum.Parse<PhoneType>(phone.PhoneType), phone.IsPrimary));
+                var phones = (IList<PhoneCreateDto>)Organization.Phones
+                    .Select(phone =>
+                            new PhoneCreateDto(
+                                phone.Number,
+                                Enum.Parse<PhoneType>(phone.PhoneType),
+                                phone.IsPrimary)
+                            );
 
-                var emails = (IList<EmailCreateDto>)Organization.Emails.Select(email => new EmailCreateDto(email.Address, email.IsPrimary));
+                var emails = (IList<EmailCreateDto>)Organization.Emails
+                    .Select(email =>
+                            new EmailCreateDto(
+                                email.Address,
+                                email.IsPrimary)
+                            );
 
                 var organization = new OrganizationAddDto
                 {

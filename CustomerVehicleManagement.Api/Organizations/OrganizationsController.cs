@@ -167,10 +167,14 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetAddress(organizationAddDto?.Address);
 
             if (organizationAddDto?.Phones != null)
-                organization.SetPhones(organizationAddDto?.Phones.Select(phone => PhoneCreateDto.ConvertToEntity(phone)).ToList());
+                organization.SetPhones(organizationAddDto?.Phones
+                                                          .Select(phone => PhoneCreateDto.ConvertToEntity(phone))
+                                                          .ToList());
 
             if (organizationAddDto?.Emails != null)
-                organization.SetEmails(organizationAddDto?.Emails.Select(email => EmailCreateDto.ConvertToEntity(email)).ToList());
+                organization.SetEmails(organizationAddDto?.Emails
+                                                          .Select(email => EmailCreateDto.ConvertToEntity(email))
+                                                          .ToList());
 
             organization.SetContact(PersonAddDto.ConvertToEntity(organizationAddDto?.Contact));
 

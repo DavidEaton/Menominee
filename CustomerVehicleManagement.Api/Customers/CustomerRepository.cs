@@ -132,7 +132,10 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
-            return customersFromContext.Select(customer => CustomerInListDto.ConvertToDto(customer)).ToList();
+            return customersFromContext
+                .Select(customer =>
+                        CustomerInListDto.ConvertToDto(customer))
+                .ToList();
         }
     }
 }

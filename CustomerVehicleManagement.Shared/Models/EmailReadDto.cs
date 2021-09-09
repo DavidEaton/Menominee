@@ -36,7 +36,10 @@ namespace CustomerVehicleManagement.Shared.Models
                 });
             }
 
-            return emails.Select(email => EmailReadDto.ConvertToDto(email)).ToList();
+            return emails
+                .Select(email =>
+                        ConvertToDto(email))
+                .ToList();
         }
     }
 }

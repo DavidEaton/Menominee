@@ -37,12 +37,16 @@ namespace CustomerVehicleManagement.Shared.Models
 
                 if (personAddDto.DriversLicense != null)
                 {
-                    var dateTimeRange = new DateTimeRange(personAddDto.DriversLicense.Issued,
-                                                          personAddDto.DriversLicense.Expiry);
+                    DateTimeRange dateTimeRange = DateTimeRange.Create(
+                                                                    personAddDto.DriversLicense.Issued,
+                                                                    personAddDto.DriversLicense.Expiry)
+                                                               .Value;
 
-                    var driversLicense = new DriversLicense(personAddDto.DriversLicense.Number,
-                                                            personAddDto.DriversLicense.State,
-                                                            dateTimeRange);
+                    DriversLicense driversLicense = SharedKernel.ValueObjects.DriversLicense.Create(
+                                                                    personAddDto.DriversLicense.Number,
+                                                                    Enum.Parse<State>(personAddDto.DriversLicense.State),
+                                                                    dateTimeRange)
+                                                               .Value;
 
                     person.SetDriversLicense(driversLicense);
                 }

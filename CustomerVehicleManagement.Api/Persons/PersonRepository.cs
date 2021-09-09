@@ -59,7 +59,10 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .ToArrayAsync();
 
 
-            return personsFromContext.Select(person => PersonReadDto.ConvertToDto(person)).ToList();
+            return personsFromContext
+                .Select(person =>
+                        PersonReadDto.ConvertToDto(person))
+                .ToList();
         }
 
         public async Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync()
@@ -69,7 +72,10 @@ namespace CustomerVehicleManagement.Api.Persons
                                                   .Include(person => person.Emails)
                                                   .ToArrayAsync();
 
-            return personsFromContext.Select(person => PersonInListDto.ConvertToDto(person)).ToList();
+            return personsFromContext
+                .Select(person =>
+                        PersonInListDto.ConvertToDto(person))
+                .ToList();
         }
 
         public async Task<bool> SaveChangesAsync()

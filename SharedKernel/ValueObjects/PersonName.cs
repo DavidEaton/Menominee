@@ -1,25 +1,27 @@
 ﻿using SharedKernel.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace SharedKernel.ValueObjects
 {
     public class PersonName : ValueObject
     {
-        public static readonly string PersonNameEmptyMessage = "First Last and Middle Names cannot be empty";
-        public PersonName(string lastName, string firstName, string middleName = null)
+        public static readonly int LastNameMinimumLength = 1;
+        public static readonly int LastNameMaximumLength = 255;
+        public static readonly string LastNameUnderMinimumLengthMessage = $"Last name cannot be less than {LastNameMinimumLength} character(s) in length";
+        public static readonly string LastNameOverMaximumLengthMessage = $"Last name cannot be over {LastNameMaximumLength} characters in length";
+
+        public static readonly int FirstNameMinimumLength = 1;
+        public static readonly int FirstNameMaximumLength = 255;
+        public static readonly string FirstNameUnderMinimumLengthMessage = $"First name cannot be less than {FirstNameMinimumLength} character(s) in length";
+        public static readonly string FirstNameOverMaximumLengthMessage = $"First name cannot be over {FirstNameMaximumLength} characters in length";
+
+        public static readonly int MiddleNameMinimumLength = 1;
+        public static readonly int MiddleNameMaximumLength = 255;
+        public static readonly string MiddleNameUnderMinimumLengthMessage = $"Middle name cannot be less than {MiddleNameMinimumLength} character(s) in length";
+        public static readonly string MiddleNameOverMaximumLengthMessage = $"Middle name cannot be over {MiddleNameMaximumLength} characters in length";
+        private PersonName(string lastName, string firstName, string middleName = null)
         {
-            // VK: no need to catch exceptions thrown by the Guard. Just leave the Guard clause as-is
-
-            try
-            {
-                // First name can be null or empty OR last name can be, but not both
-                Guard.ForNullOrEmpty(lastName + firstName, "Name");
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException(PersonNameEmptyMessage);
-            }
-
             LastName = lastName;
             FirstName = firstName;
             MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;

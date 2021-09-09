@@ -1,4 +1,5 @@
-﻿using SharedKernel.Utilities;
+﻿using SharedKernel.Enums;
+using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
 using System.Text.Json.Serialization;
@@ -44,7 +45,13 @@ namespace CustomerVehicleManagement.Shared.Models
         public static DriversLicense ConvertToEntity(DriversLicenseUpdateDto driversLicense)
         {
             return driversLicense != null
-                ? new DriversLicense(driversLicense.Number, driversLicense.State, new DateTimeRange(driversLicense.Issued, driversLicense.Expiry))
+                ? DriversLicense.Create(
+                    driversLicense.Number,
+                    Enum.Parse<State>(driversLicense.State),
+                    DateTimeRange.Create(driversLicense.Issued,
+                    driversLicense.Expiry)
+                    .Value)
+                .Value
                 : null;
         }
     }

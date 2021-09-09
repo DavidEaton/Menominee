@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_ActionResult_Of_CustomerReadDto_On_CreateCustomerAsync()
         {
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);
 
             var result = await controller.CreateCustomerAsync(customerCreateDto);
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_BadRequestObjectResult_On_CreateCustomerAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);
 
             var result = await controller.CreateCustomerAsync(customerCreateDto);
@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Not_Save_On_CreateCustomerAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);
 
             var result = await controller.CreateCustomerAsync(customerCreateDto);
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Save_On_CreateCustomerAsync_When_ModelState_Valid()
         {
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);
 
             var result = await controller.CreateCustomerAsync(customerCreateDto);
@@ -111,7 +111,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             moqCustomerRepository.Setup(repo => repo.AddCustomerAsync(It.IsAny<Customer>()));
 
-            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonAddDto(PersonName.Create("Doe", "Jane").Value, Gender.Female);
             CustomerCreateDto customerCreateDto = new(person, null, CustomerType.Retail);
 
             var result = await controller.CreateCustomerAsync(customerCreateDto);

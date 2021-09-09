@@ -118,19 +118,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = CreateValidOrganization();
+                var organization = Helper.CreateValidOrganization();
                 await context.AddAsync(organization);
 
-                var phones = CreateValidPhones();
-                var emails = CreateValidEmails();
                 var note = "notes are strings";
 
-                var contact = CreateValidPerson();
-                contact.SetPhones(CreateValidPhones());
-                contact.SetEmails(CreateValidEmails());
+                var contact = Helper.CreateValidPerson();
+                contact.SetEmails(Helper.CreateValidEmails());
+                contact.SetPhones(Helper.CreateValidPhones());
 
-                organization.SetEmails(emails);
-                organization.SetPhones(phones);
+                organization.SetEmails(Helper.CreateValidEmails());
+                organization.SetPhones(Helper.CreateValidPhones());
                 organization.SetNote(note);
                 organization.SetContact(contact);
 

@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Shared.Models
                     Id = person.Id,
                     Name = person.Name.LastFirstMiddle,
                     PostalCode = person?.Address?.PostalCode,
-                    State = person?.Address?.State,
+                    State = person?.Address?.State.ToString(),
                     PrimaryPhone = PhoneHelper.GetPrimaryPhone(person) ?? PhoneHelper.GetOrdinalPhone(person, 0),
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)

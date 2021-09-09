@@ -59,7 +59,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                                  .Include(contact => contact.Emails)
                              .ToListAsync();
 
-            return organizationsFromContext.Select(organization => OrganizationReadDto.ConvertToDto(organization)).ToList();
+            return organizationsFromContext
+                .Select(organization =>
+                        OrganizationReadDto.ConvertToDto(organization))
+                .ToList();
 
         }
 
@@ -88,7 +91,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                                         .Include(contact => contact.Emails)
                                                                      .ToListAsync();
 
-            return organizations.Select(organization => OrganizationInListDto.ConvertToDto(organization)).ToList();
+            return organizations.
+                Select(organization =>
+                       OrganizationInListDto.ConvertToDto(organization))
+                .ToList();
         }
 
         public void UpdateOrganizationAsync(Organization organization)
