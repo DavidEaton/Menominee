@@ -3,8 +3,6 @@ using Menominee.Client.Components;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using SharedKernel.Enums;
-using SharedKernel.Static;
-using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +21,6 @@ namespace Menominee.Client.Pages
         protected AddressForm AddressForm { get; set; }
         public OrganizationUpdateDto OrganizationUpdateDto { get; set; } = new();
         public OrganizationReadDto Organization { get; set; } = new();
-        public List<State> StatesList { get; set; } = States.ToList();
 
         // Screen state
         protected FormMode FormMode = FormMode.Read;

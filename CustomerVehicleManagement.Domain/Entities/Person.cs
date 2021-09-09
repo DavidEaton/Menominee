@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using SharedKernel.Enums;
+using SharedKernel.Utilities;
 using SharedKernel.ValueObjects;
 using System;
 
@@ -9,6 +10,8 @@ namespace CustomerVehicleManagement.Domain.Entities
     {
         public Person(PersonName name, Gender gender)
         {
+            Guard.ForNullOrEmpty(name, "PersonName");
+
             Name = name;
             Gender = gender;
         }
@@ -20,6 +23,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetName(PersonName name)
         {
+            Guard.ForNullOrEmpty(name, "PersonName");
             Name = name;
         }
 
@@ -36,7 +40,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetDriversLicense(DriversLicense driversLicense)
         {
-            DriversLicense = driversLicense;
+            if (driversLicense != null) 
+                DriversLicense = driversLicense;
         }
 
         #region ORM

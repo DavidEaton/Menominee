@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             moqRepository.Setup(x => x.AddPersonAsync(It.IsAny<Person>()));
 
-            var person = new PersonAddDto(new PersonName("Doe", "Jane"), Gender.Female);
+            var person = new PersonCreateDto(new PersonName("Doe", "Jane"), Gender.Female);
             var result = await controller.CreatePersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonReadDto>>();

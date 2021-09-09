@@ -9,122 +9,124 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
     public class PersonNameShould
     {
         [Fact]
-        public void CreatePersonName()
+        public void Create_PersonName()
         {
             // Arrange
             var firstName = "Jane";
             var lastName = "Doe";
 
             // Act
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
 
             // Assert
             name.Should().NotBeNull();
         }
 
         [Fact]
-        public void NotCreatePersonNameWithEmptyName()
+        public void Return_IsFailure_Result_On_Create_With_Empty_Name()
         {
             var firstName = "";
             var lastName = "";
 
-            var exception = Assert.Throws<ArgumentException>(
-                () => { new PersonName(firstName, lastName); });
+            var personNameOrError = PersonName.Create(firstName, lastName);
 
-            Action action = () => new PersonName(firstName, lastName);
-
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(PersonName.PersonNameEmptyMessage);
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void NotCreatePersonNameWithNullName()
+        public void Return_IsFailure_Result_On_Create_With_Null_Name()
         {
             string firstName = null;
             string lastName = null;
 
-            Action action = () => new PersonName(firstName, lastName);
+            var personNameOrError = PersonName.Create(firstName, lastName);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage(PersonName.PersonNameEmptyMessage);
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void CreatePersonNameWithEmptyLastName()
+        public void Return_IsFailure_Result_On_Create_With_Empty_LastName()
         {
             var firstName = "Molly";
             var lastName = "";
 
-            var name = new PersonName(lastName, firstName);
+            var personNameOrError = PersonName.Create(lastName, firstName);
 
-            name.Should().NotBeNull();
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void CreatePersonNameWithEmptyFirstName()
+        public void Return_IsFailure_Result_On_Create_With_Empty_FirstName()
         {
             var firstName = "";
             var lastName = "Moops";
 
-            var name = new PersonName(lastName, firstName);
+            var personNameOrError = PersonName.Create(lastName, firstName);
 
-            name.Should().NotBeNull();
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.FirstNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void CreatePersonNameWithNullLastName()
+        public void Return_IsFailure_Result_On_Create_With_Null_LastName()
         {
             var firstName = "Molly";
             string lastName = null;
 
-            var name = new PersonName(lastName, firstName);
+            var personNameOrError = PersonName.Create(lastName, firstName);
 
-            name.Should().NotBeNull();
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void CreatePersonWithNameNullFirstName()
+        public void Return_IsFailure_Result_On_Create_With_Null_FirstName()
         {
             string firstName = null;
             var lastName = "Moops";
 
-            var name = new PersonName(lastName, firstName);
+            var personNameOrError = PersonName.Create(lastName, firstName);
 
-            name.Should().NotBeNull();
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.FirstNameUnderMinimumLengthMessage);
         }
 
         [Fact]
-        public void EquateTwoPersonNameInstancesHavingSameValues()
+        public void Equate_Two_PersonName_Instances_Having_Same_Values()
         {
             var firstName = "Jane";
             var lastName = "Doe";
+            var middleInitial = "Z";
 
-            var name1 = new PersonName(lastName, firstName);
-            var name2 = new PersonName(lastName, firstName);
+            var name1 = PersonName.Create(firstName, lastName, middleInitial).Value;
+            var name2 = PersonName.Create(firstName, lastName, middleInitial).Value;
 
             name1.Should().BeEquivalentTo(name2);
         }
 
         [Fact]
-        public void NotEquateTwoPersonNameInstancesHavingDifferingValues()
+        public void Not_Equate_Two_PersonName_Instances_Having_Differing_Values()
         {
             var firstName = "Jane";
             var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var newFirstName = "Jim";
             var newLastName = "Doane";
 
-            var nameNew = new PersonName(newFirstName, newLastName);
+            var nameNew = PersonName.Create(newFirstName, newLastName).Value;
 
             name.Should().NotBeEquivalentTo(nameNew);
         }
 
         [Fact]
-        public void ReturnNewPersonNameOnNewLastName()
+        public void Return_New_PersonName_On_NewLastName()
         {
             var firstName = "Jane";
             var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var newLastName = "Smith";
 
             name = name.NewLastName(newLastName);
@@ -133,11 +135,11 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewPersonNameOnNewFirstName()
+        public void Return_New_PersonName_On_NewFirstName()
         {
             var firstName = "Jane";
             var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var newFirstName = "Smith";
 
             name = name.NewFirstName(newFirstName);
@@ -146,12 +148,12 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void ReturnNewPersonNameOnNewMiddleName()
+        public void Return_New_PersonName_On_NewMiddleName()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var middleName = "Jingleheimer";
-            var name = new PersonName(lastName, firstName, middleName);
+            var name = PersonName.Create(lastName, firstName, middleName).Value;
             var newMiddleName = "Allabaster";
 
             name = name.NewMiddleName(newMiddleName);
@@ -161,13 +163,13 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
 
         [Fact]
-        public void ReturnAllPersonNameVariants()
+        public void Return_All_PersonName_Variants()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var middleName = "The";
 
-            var name = new PersonName(lastName, firstName, middleName);
+            var name = PersonName.Create(lastName, firstName, middleName).Value;
 
             using (new AssertionScope())
             {

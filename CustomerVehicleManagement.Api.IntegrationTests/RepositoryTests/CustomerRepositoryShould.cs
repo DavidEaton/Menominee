@@ -6,6 +6,7 @@ using SharedKernel.Enums;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
+using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
@@ -69,7 +70,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = CreateValidPerson();
+                var person = Helper.CreateValidPerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -93,7 +94,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = CreateValidOrganization();
+                var organization = Helper.CreateValidOrganization();
                 await context.AddAsync(organization);
 
                 if ((await context.SaveChangesAsync()) > 0)

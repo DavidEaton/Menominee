@@ -13,15 +13,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public Phone(string number, PhoneType phoneType, bool isPrimary)
         {
-            try
-            {
-                Guard.ForNullOrEmpty(number, "number");
-
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException(PhoneEmptyMessage);
-            }
+            if (string.IsNullOrWhiteSpace(number))
+                throw new ArgumentNullException(PhoneEmptyMessage);
 
             Number = number;
             PhoneType = phoneType;
@@ -29,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
 
         public string Number { get; private set; }
-        public PhoneType PhoneType { get; private set;}
+        public PhoneType PhoneType { get; private set; }
         public bool IsPrimary { get; private set; }
 
         public Phone NewNumber(string newNumber)
@@ -50,16 +43,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             Number = RemoveNonNumericCharacters(Number);
 
-            switch (Number.Length)
+            return Number.Length switch
             {
-                case 7:
-                    return Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2");
-
-                case 10:
-                    return Regex.Replace(Number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3");
-                default:
-                    return Number;
-            }
+                7  => Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2"),
+                10 => Regex.Replace(Number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3"),
+                _  => Number,
+            };
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.Enums;
+using System;
 
 namespace CustomerVehicleManagement.Data.Configurations
 {
@@ -43,7 +45,10 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.OwnsOne(person => person.Address)
                    .Property(address => address.State)
                    .HasColumnName("AddressState")
-                   .HasMaxLength(255);
+                   .HasMaxLength(2)
+                   .HasConversion(
+                        stringType => stringType.ToString(),
+                        stringType => (State)Enum.Parse(typeof(State), stringType));
 
             // Value Object: DriversLicense
             builder.OwnsOne(person => person.DriversLicense)
@@ -53,7 +58,10 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.OwnsOne(person => person.DriversLicense)
                 .Property(driversLicense => driversLicense.State)
                 .HasColumnName("DriversLicenseState")
-                .HasMaxLength(2);
+                   .HasMaxLength(2)
+                   .HasConversion(
+                        stringType => stringType.ToString(),
+                        stringType => (State)Enum.Parse(typeof(State), stringType));
             builder.OwnsOne(person => person.DriversLicense)
                 .OwnsOne(driversLicense => driversLicense.ValidRange)
                 .Property(dateTimeRange => dateTimeRange.Start)

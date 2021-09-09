@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             // Arrange
             var firstName = "Jane";
             var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
 
             // Act
@@ -51,12 +51,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
-            var state = "MI";
+            var state = State.MI;
             var postalCode = "49735";
-            var address = new Address(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
             var organization = Helpers.CreateValidOrganization();
 
-            organization.SetAddress(address);
+            organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization);
             var janes = customer.Organization;
 
@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var firstName = "Jane";
             var lastName = "Doe";
-            var name = new PersonName(lastName, firstName);
+            var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
             var organization = Helpers.CreateValidOrganization();
             organization.SetContact(person);

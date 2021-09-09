@@ -1,5 +1,4 @@
 ﻿using SharedKernel.Utilities;
-using System;
 using System.Collections.Generic;
 
 namespace SharedKernel.ValueObjects
@@ -30,18 +29,48 @@ namespace SharedKernel.ValueObjects
         public string FirstName { get; }
         public string MiddleName { get; }
 
+        public static Result<PersonName> Create(string lastName, string firstName, string middleName = null)
+        {
+            lastName = (lastName ?? string.Empty).Trim();
+            firstName = (firstName ?? string.Empty).Trim();
+            middleName = (middleName ?? string.Empty).Trim();
+
+            if (lastName.Length < LastNameMinimumLength)
+                return Result.Fail<PersonName>(LastNameUnderMinimumLengthMessage);
+
+            if (lastName.Length > LastNameMaximumLength)
+                return Result.Fail<PersonName>(LastNameOverMaximumLengthMessage);
+
+            if (firstName.Length < FirstNameMinimumLength)
+                return Result.Fail<PersonName>(FirstNameUnderMinimumLengthMessage);
+
+            if (firstName.Length > FirstNameMaximumLength)
+                return Result.Fail<PersonName>(FirstNameOverMaximumLengthMessage);
+
+            if (middleName.Length > MiddleNameMaximumLength)
+                return Result.Fail<PersonName>(MiddleNameOverMaximumLengthMessage);
+
+            return Result.Ok(new PersonName(lastName, firstName, middleName));
+        }
+
         public PersonName NewLastName(string newLastName)
         {
+            newLastName = (newLastName ?? string.Empty).Trim();
+            Guard.ForNullOrEmpty(newLastName, "newLastName");
             return new PersonName(newLastName, FirstName, MiddleName);
         }
 
         public PersonName NewFirstName(string newFirstName)
         {
+            newFirstName = (newFirstName ?? string.Empty).Trim();
+            Guard.ForNullOrEmpty(newFirstName, "newFirstName");
             return new PersonName(LastName, newFirstName, MiddleName);
         }
 
         public PersonName NewMiddleName(string newMiddleName)
         {
+            newMiddleName = (newMiddleName ?? string.Empty).Trim();
+            Guard.ForNullOrEmpty(newMiddleName, "newMiddleName");
             return new PersonName(LastName, FirstName, newMiddleName);
         }
 
@@ -56,6 +85,11 @@ namespace SharedKernel.ValueObjects
         public string FirstMiddleLast
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{FirstName} {LastName}" : $"{FirstName} {MiddleName} {LastName}";
+        }
+
+        public override string ToString()
+        {
+            return LastFirstMiddleInitial;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
