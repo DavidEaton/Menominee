@@ -19,7 +19,7 @@ namespace Menominee.Client.Pages
         public ILogger<Persons> Logger { get; set; }
 
         public IReadOnlyList<PersonInListDto> PersonsList;
-        public int SelectedId { get; set; }
+        public long SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
         protected AddPersonDialog AddPersonDialog { get; set; }
@@ -41,7 +41,7 @@ namespace Menominee.Client.Pages
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
             StateHasChanged();
         }
-        private void SetSelectedId(int id)
+        private void SetSelectedId(long id)
         {
             SelectedId = id;
         }

@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         }
 
 
-        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out int id)
+        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out long id)
         {
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))
@@ -61,9 +61,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             }
         }
 
-        public static int CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
+        public static long CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
         {
-            int id;
+            long id;
             using (var context = new ApplicationDbContext(options))
             {
                 Organization organization = Helper.CreateValidOrganization();
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         }
 
 
-        public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out int id)
+        public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out long id)
         {
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))

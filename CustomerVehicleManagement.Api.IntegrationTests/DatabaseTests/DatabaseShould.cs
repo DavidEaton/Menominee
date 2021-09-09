@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         [Fact]
         public async Task GetPersonFromDatabase()
         {
-            var id = 0;
+            long id = 0;
             ApplicationDbContext context = CreateTestContext();
             var firstName = "Tasha";
             var lastName = "Yar";
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         [Fact]
         public async Task UpdatePersonInDatabase()
         {
-            var id = 0;
+            long id = 0;
             ApplicationDbContext context = CreateTestContext();
 
             var firstName = "Tasha";
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         [Fact]
         public async Task DeletePersonFromDatabase()
         {
-            var id = 0;
+            long id = 0;
             ApplicationDbContext context = CreateTestContext();
 
             var firstName = "Dianna";

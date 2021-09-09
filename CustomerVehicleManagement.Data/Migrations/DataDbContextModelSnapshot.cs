@@ -21,9 +21,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Created")
@@ -32,11 +32,11 @@ namespace CustomerVehicleManagement.Data.Migrations
                     b.Property<int>("CustomerType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
+                    b.Property<long?>("OrganizationId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("int");
+                    b.Property<long?>("PersonId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -49,9 +49,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Email", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
@@ -64,11 +64,11 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
+                    b.Property<long?>("OrganizationId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("int");
+                    b.Property<long?>("PersonId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -81,13 +81,13 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ContactId")
-                        .HasColumnType("int");
+                    b.Property<long?>("ContactId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Note")
                         .HasMaxLength(10000)
@@ -102,9 +102,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime?>("Birthday")
@@ -120,9 +120,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Phone", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("IsPrimary")
@@ -133,11 +133,11 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
+                    b.Property<long?>("OrganizationId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("int");
+                    b.Property<long?>("PersonId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("PhoneType")
                         .HasColumnType("int");
@@ -153,13 +153,13 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<long?>("CustomerId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Make")
                         .HasColumnType("nvarchar(max)");
@@ -192,9 +192,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.OwnsOne("SharedKernel.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
                         {
-                            b1.Property<int>("CustomerId")
+                            b1.Property<long>("CustomerId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<bool>("AllowEmail")
@@ -243,9 +243,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.OwnsOne("SharedKernel.ValueObjects.Address", "Address", b1 =>
                         {
-                            b1.Property<int>("OrganizationId")
+                            b1.Property<long>("OrganizationId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<string>("AddressLine")
@@ -279,9 +279,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.OwnsOne("SharedKernel.ValueObjects.OrganizationName", "Name", b1 =>
                         {
-                            b1.Property<int>("OrganizationId")
+                            b1.Property<long>("OrganizationId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<string>("Name")
@@ -308,9 +308,9 @@ namespace CustomerVehicleManagement.Data.Migrations
                 {
                     b.OwnsOne("SharedKernel.ValueObjects.Address", "Address", b1 =>
                         {
-                            b1.Property<int>("PersonId")
+                            b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<string>("AddressLine")
@@ -344,9 +344,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.OwnsOne("SharedKernel.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
-                            b1.Property<int>("PersonId")
+                            b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<string>("Number")
@@ -355,6 +355,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasColumnName("DriversLicenseNumber");
 
                             b1.Property<string>("State")
+                                .IsRequired()
                                 .HasMaxLength(2)
                                 .HasColumnType("nvarchar(2)")
                                 .HasColumnName("DriversLicenseState");
@@ -368,9 +369,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                             b1.OwnsOne("SharedKernel.ValueObjects.DateTimeRange", "ValidRange", b2 =>
                                 {
-                                    b2.Property<int>("DriversLicensePersonId")
+                                    b2.Property<long>("DriversLicensePersonId")
                                         .ValueGeneratedOnAdd()
-                                        .HasColumnType("int")
+                                        .HasColumnType("bigint")
                                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                                     b2.Property<DateTime>("End")
@@ -394,9 +395,9 @@ namespace CustomerVehicleManagement.Data.Migrations
 
                     b.OwnsOne("SharedKernel.ValueObjects.PersonName", "Name", b1 =>
                         {
-                            b1.Property<int>("PersonId")
+                            b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
+                                .HasColumnType("bigint")
                                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                             b1.Property<string>("FirstName")

@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class OrganizationInListDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string AddressLine { get; set; }
         public string City { get; set; }

@@ -7,9 +7,9 @@ namespace Menominee.UiExperiments.Services
     public interface IPersonDataService
     {
         Task<IReadOnlyList<PersonReadDto>> GetAllPersons();
-        Task<PersonReadDto> GetPersonDetails(int id);
+        Task<PersonReadDto> GetPersonDetails(long id);
         Task<PersonReadDto> AddPerson(PersonAddDto person);
         Task UpdatePerson(PersonUpdateDto person);
-        Task DeletePerson(int id);
+        Task DeletePerson(long id);
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CustomerVehicleManagement.Data.Migrations
 {
-    public partial class StateAbbreviationInAddress : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                     DriversLicenseState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressState = table.Column<int>(type: "int", maxLength: 2, nullable: true),
+                    AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
@@ -41,14 +41,14 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    ContactId = table.Column<int>(type: "int", nullable: true),
+                    ContactId = table.Column<long>(type: "bigint", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", maxLength: 10000, nullable: true),
                     AddressLine = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressCity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AddressState = table.Column<int>(type: "int", maxLength: 2, nullable: true),
+                    AddressState = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     AddressPostalCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
@@ -68,10 +68,10 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<int>(type: "int", nullable: true),
-                    OrganizationId = table.Column<int>(type: "int", nullable: true),
+                    PersonId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
                     CustomerType = table.Column<int>(type: "int", nullable: false),
                     AllowMail = table.Column<bool>(type: "bit", nullable: true),
                     AllowEmail = table.Column<bool>(type: "bit", nullable: true),
@@ -102,12 +102,12 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: true),
-                    PersonId = table.Column<int>(type: "int", nullable: true)
+                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
+                    PersonId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -133,13 +133,13 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Number = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PhoneType = table.Column<int>(type: "int", nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: true),
-                    PersonId = table.Column<int>(type: "int", nullable: true)
+                    OrganizationId = table.Column<long>(type: "bigint", nullable: true),
+                    PersonId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,13 +165,13 @@ namespace CustomerVehicleManagement.Data.Migrations
                 schema: "dbo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VIN = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Year = table.Column<int>(type: "int", nullable: false),
                     Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: true)
+                    CustomerId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {

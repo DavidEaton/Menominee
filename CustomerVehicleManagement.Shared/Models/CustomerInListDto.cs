@@ -6,9 +6,9 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class CustomerInListDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public EntityType EntityType { get; set; }
-        public int EntityId { get; set; }
+        public long EntityId { get; set; }
         public string Name { get; set; }
         public string AddressFull { get; set; }
         public string PrimaryPhone { get; set; }

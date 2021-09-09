@@ -15,7 +15,7 @@ namespace Menominee.UiExperiments.Components
         public HttpClient HttpClient { get; set; }
 
         [Parameter]
-        public int Id { get; set; }
+        public long Id { get; set; }
         public CustomerList Customer { get; set; }
 
         // Screen state

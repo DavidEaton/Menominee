@@ -7,7 +7,7 @@ namespace Menominee.Client.Services
     public interface IPersonDataService
     {
         Task<IReadOnlyList<PersonInListDto>> GetAllPersons();
-        Task<PersonReadDto> GetPersonDetails(int id);
+        Task<PersonReadDto> GetPersonDetails(long id);
         Task<PersonReadDto> AddPerson(PersonAddDto person);
     }
 }

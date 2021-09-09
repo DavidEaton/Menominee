@@ -46,7 +46,7 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task<PersonReadDto> GetPersonDetails(int id)
+        public async Task<PersonReadDto> GetPersonDetails(long id)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task DeletePerson(int id)
+        public async Task DeletePerson(long id)
         {
             try
             {

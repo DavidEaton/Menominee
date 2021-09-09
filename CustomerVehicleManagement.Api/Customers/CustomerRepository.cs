@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Customers
             await context.AddAsync(customer);
         }
 
-        public async Task DeleteCustomerAsync(int id)
+        public async Task DeleteCustomerAsync(long id)
         {
             var customer = await context.Customers.AsNoTracking()
                                       .FirstOrDefaultAsync(customer => customer.Id == id);
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Customers
             context.Remove(customer);
         }
 
-        public async Task<CustomerReadDto> GetCustomerAsync(int id)
+        public async Task<CustomerReadDto> GetCustomerAsync(long id)
         {
             var customerFromContext = await context.Customers
                                         .Include(customer => customer.Person)
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return customers;
         }
 
-        public async Task<bool> CustomerExistsAsync(int id)
+        public async Task<bool> CustomerExistsAsync(long id)
         {
             return await context.Customers
                 .AnyAsync(customer => customer.Id == id);

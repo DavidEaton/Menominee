@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api.Persons
         {
             context.Remove(person);
         }
-        public async Task<Person> GetPersonEntityAsync(int id)
+        public async Task<Person> GetPersonEntityAsync(long id)
         {
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.Persons
             return personFromContext;
         }
 
-        public async Task<PersonReadDto> GetPersonAsync(int id)
+        public async Task<PersonReadDto> GetPersonAsync(long id)
         {
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.Persons
             */
         }
 
-        public async Task<bool> PersonExistsAsync(int id)
+        public async Task<bool> PersonExistsAsync(long id)
         {
             return await context.Persons
                 .AnyAsync(person => person.Id == id);

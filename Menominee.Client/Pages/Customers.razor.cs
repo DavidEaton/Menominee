@@ -17,7 +17,7 @@ namespace Menominee.Client.Pages
         public ILogger<Customers> Logger { get; set; }
 
         public IReadOnlyList<CustomerInListDto> CustomersList;
-        public int SelectedId { get; set; }
+        public long SelectedId { get; set; }
 
         //protected AddCustomerDialog AddCustomerDialog { get; set; }
         //protected CustomerDetail CustomerDetail { get; set; }
@@ -32,7 +32,7 @@ namespace Menominee.Client.Pages
             //CustomerDetail?.Close();
             //AddCustomerDialog.Show();
         }
-        private void SetSelectedId(int id)
+        private void SetSelectedId(long id)
         {
             SelectedId = id;
         }

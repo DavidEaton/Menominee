@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class CustomerReadDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public PersonReadDto Person { get; set; }
         public OrganizationReadDto Organization { get; set; }
         public EntityType EntityType { get; set; }

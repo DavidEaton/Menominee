@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customer/1
         [HttpGet("{id:int}", Name = "GetCustomerAsync")]
-        public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(int id)
+        public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(long id)
         {
             CustomerReadDto customer = await customerRepository.GetCustomerAsync(id);
 
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id, CustomerUpdateDto customerUpdateDto)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerUpdateDto customerUpdateDto)
         {
             // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
             // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
@@ -243,7 +243,7 @@ namespace CustomerVehicleManagement.Api.Customers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteCustomerAsync(int id)
+        public async Task<IActionResult> DeleteCustomerAsync(long id)
         {
             var customerFromRepository = await customerRepository.GetCustomerAsync(id);
 

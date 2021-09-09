@@ -27,13 +27,13 @@ namespace CustomerVehicleManagement.Api.Organizations
                 await context.AddAsync(organization);
         }
 
-        public async Task DeleteOrganizationAsync(int id)
+        public async Task DeleteOrganizationAsync(long id)
         {
             var organizationFromContext = await context.Organizations.FindAsync(id);
             context.Remove(organizationFromContext);
         }
 
-        public async Task<OrganizationReadDto> GetOrganizationAsync(int id)
+        public async Task<OrganizationReadDto> GetOrganizationAsync(long id)
         {
             var organizationFromContext =
                 await context.Organizations
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         }
 
-        public async Task<Organization> GetOrganizationEntityAsync(int id)
+        public async Task<Organization> GetOrganizationEntityAsync(long id)
         {
             // Prefer FindAsync() over Single() or First() for single objects (non-collections);
             // FindAsync() checks the Identity Map Cache before making a trip to the database.
@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             // No code in this implementation.
         }
 
-        public async Task<bool> OrganizationExistsAsync(int id)
+        public async Task<bool> OrganizationExistsAsync(long id)
         {
             return await context.Organizations
                 .AnyAsync(o => o.Id == id);

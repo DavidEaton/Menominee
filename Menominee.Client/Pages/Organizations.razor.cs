@@ -18,7 +18,7 @@ namespace Menominee.Client.Pages
         public ILogger<Organizations> Logger { get; set; }
 
         public IReadOnlyList<OrganizationInListDto> OrganizationsList;
-        public int SelectedId { get; set; }
+        public long SelectedId { get; set; }
 
         protected AddOrganizationDialog AddOrganizationDialog { get; set; }
         protected OrganizationDetail OrganizationDetail { get; set; }
@@ -39,7 +39,7 @@ namespace Menominee.Client.Pages
             OrganizationsList = (await OrganizationsDataService.GetAllOrganizations()).ToList();
             StateHasChanged();
         }
-        private void SetSelectedId(int id)
+        private void SetSelectedId(long id)
         {
             SelectedId = id;
         }

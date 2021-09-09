@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // GET: api/persons/1
         [HttpGet("{id:int}", Name = "GetPersonAsync")]
-        public async Task<ActionResult<PersonReadDto>> GetPersonAsync(int id)
+        public async Task<ActionResult<PersonReadDto>> GetPersonAsync(long id)
         {
             var person = await repository.GetPersonAsync(id);
 
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // PUT: api/persons/1
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdatePersonAsync(int id, PersonUpdateDto personUpdateDto)
+        public async Task<IActionResult> UpdatePersonAsync(long id, PersonUpdateDto personUpdateDto)
         {
             var notFoundMessage = $"Could not find Person to update";
 
@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Api.Persons
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeletePersonAsync(int id)
+        public async Task<IActionResult> DeletePersonAsync(long id)
         {
             var personFromRepository = await repository.GetPersonEntityAsync(id);
 

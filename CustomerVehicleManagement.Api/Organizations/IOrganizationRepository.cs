@@ -9,13 +9,13 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         Task AddOrganizationAsync(Organization entity);
         Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync();
-        Task<OrganizationReadDto> GetOrganizationAsync(int id);
+        Task<OrganizationReadDto> GetOrganizationAsync(long id);
         Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync();
         void UpdateOrganizationAsync(Organization entity);
-        Task DeleteOrganizationAsync(int id);
+        Task DeleteOrganizationAsync(long id);
         void FixTrackingState();
-        Task<bool> OrganizationExistsAsync(int id);
+        Task<bool> OrganizationExistsAsync(long id);
         Task<bool> SaveChangesAsync();
-        Task<Organization> GetOrganizationEntityAsync(int id);
+        Task<Organization> GetOrganizationEntityAsync(long id);
     }
 }

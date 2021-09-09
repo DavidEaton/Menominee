@@ -46,7 +46,7 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task<CustomerReadDto> GetCustomerDetails(int id)
+        public async Task<CustomerReadDto> GetCustomerDetails(long id)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Menominee.Client.Services
             //}
         //}
 
-        public async Task DeleteCustomer(int id)
+        public async Task DeleteCustomer(long id)
         {
             try
             {

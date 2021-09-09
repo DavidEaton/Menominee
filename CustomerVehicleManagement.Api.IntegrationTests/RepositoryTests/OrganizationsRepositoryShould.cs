@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationEntityAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var note = "Some notes in the note field";
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -150,7 +150,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationAsyncIncludesContact()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -177,7 +177,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetOrganizationAsyncIncludesContactCollections()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -228,7 +228,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task Return_True_When_OrganizationExistsAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -243,7 +243,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task Return_False_When_OrganizationExistsAsync()
         {
             var options = CreateDbContextOptions();
-            var id = 99999;
+            long id = 99999;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -259,7 +259,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
             var options = CreateDbContextOptions();
             var newName = "New Name";
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -285,7 +285,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task UpdateOrganizationNotesAsync()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
             var someNotes = "Some notes";
             var newNotes = "New notes";
 
@@ -323,7 +323,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task UpdateOrganizationAddressAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -351,7 +351,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task UpdateOrganizationContactAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -379,7 +379,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task DeleteOrganizationAsync()
         {
             var options = CreateDbContextOptions();
-            var id = CreateAndSaveValidOrganizationId(options);
+            long id = CreateAndSaveValidOrganizationId(options);
 
             using (var context = new ApplicationDbContext(options))
             {

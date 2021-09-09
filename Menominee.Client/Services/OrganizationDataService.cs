@@ -47,7 +47,7 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task<OrganizationReadDto> GetOrganizationDetails(int id)
+        public async Task<OrganizationReadDto> GetOrganizationDetails(long id)
         {
             try
             {

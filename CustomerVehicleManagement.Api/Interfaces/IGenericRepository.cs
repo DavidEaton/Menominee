@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Api.Interfaces
     {
         Task<IEnumerable<TEntity>> AllAsync();
         Task<IEnumerable<TEntity>> FindByAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> FindByKeyAsync(int id);
+        Task<TEntity> FindByKeyAsync(long id);
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);
     }

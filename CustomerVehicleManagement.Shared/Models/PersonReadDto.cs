@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class PersonReadDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }

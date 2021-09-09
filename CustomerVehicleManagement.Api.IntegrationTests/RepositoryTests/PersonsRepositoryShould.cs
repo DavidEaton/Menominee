@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetPersonAsync()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -96,7 +96,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetPersonAsyncIncludesPhones()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -121,7 +121,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task GetPersonAsyncIncludesEmails()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -169,7 +169,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             Person person = Helper.CreateValidPerson();
             Person personFromRepository;
-            var id = 0;
+            long id = 0;
 
             // Create Person and save
             using (var context = new ApplicationDbContext(options))
@@ -223,7 +223,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task DeletePerson()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -267,7 +267,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         public async Task ReturnTrueIfPersonExistsAsync()
         {
             var options = CreateDbContextOptions();
-            var id = 0;
+            long id = 0;
 
             using (var context = new ApplicationDbContext(options))
             {

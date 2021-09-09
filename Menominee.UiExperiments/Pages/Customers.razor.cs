@@ -17,7 +17,7 @@ namespace Menominee.UiExperiments.Pages
         public HttpClient HttpClient { get; set; }
 
         public IEnumerable<CustomerList> CustomersList;
-        public int SelectedId { get; set; }
+        public long SelectedId { get; set; }
         protected CustomerDetail CustomerDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
@@ -43,7 +43,7 @@ namespace Menominee.UiExperiments.Pages
 
         public class CustomerList
         {
-            public int Id { get; set; }
+            public long Id { get; set; }
             public EntityType EntityType { get; set; }
             public string Name { get; set; }
             public PersonName PersonName { get; set; }

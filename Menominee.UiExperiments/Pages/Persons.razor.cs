@@ -13,7 +13,7 @@ namespace Menominee.UiExperiments.Pages
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
         public IReadOnlyList<PersonReadDto> PersonsList;
-        public int SelectedId { get; set; }
+        public long SelectedId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

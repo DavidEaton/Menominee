@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpGet("{id:int}", Name = "GetOrganizationAsync")]
-        public async Task<ActionResult<OrganizationReadDto>> GetOrganizationAsync(int id)
+        public async Task<ActionResult<OrganizationReadDto>> GetOrganizationAsync(long id)
         {
             var result = await repository.GetOrganizationAsync(id);
 
@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(int id, OrganizationUpdateDto organizationUpdateDto)
+        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationUpdateDto organizationUpdateDto)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -196,7 +196,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteOrganizationAsync(int id)
+        public async Task<IActionResult> DeleteOrganizationAsync(long id)
         {
             /* Delete Pattern in Controllers:
              1) Get domain entity from repository

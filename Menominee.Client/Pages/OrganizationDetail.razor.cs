@@ -16,7 +16,7 @@ namespace Menominee.Client.Pages
         public IOrganizationDataService OrganizationDataService { get; set; }
 
         [Parameter]
-        public int Id { get; set; }
+        public long Id { get; set; }
         protected OrganizationNameForm OrganizationNameForm { get; set; }
         protected AddressForm AddressForm { get; set; }
         public OrganizationUpdateDto OrganizationUpdateDto { get; set; } = new();
