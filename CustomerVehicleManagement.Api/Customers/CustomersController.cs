@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Api.Customers
         }
 
         // GET: api/Customer/1
-        [HttpGet("{id:int}", Name = "GetCustomerAsync")]
+        [HttpGet("{id:long}", Name = "GetCustomerAsync")]
         public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(long id)
         {
             CustomerReadDto customer = await customerRepository.GetCustomerAsync(id);
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Customers
         }
 
         // PUT: api/Customer/1
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:long}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerUpdateDto customerUpdateDto)
         {
             // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
@@ -242,7 +242,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return new Customer(person);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteCustomerAsync(long id)
         {
             var customerFromRepository = await customerRepository.GetCustomerAsync(id);

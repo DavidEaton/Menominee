@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         // api/organizations/1
-        [HttpGet("{id:int}", Name = "GetOrganizationAsync")]
+        [HttpGet("{id:long}", Name = "GetOrganizationAsync")]
         public async Task<ActionResult<OrganizationReadDto>> GetOrganizationAsync(long id)
         {
             var result = await repository.GetOrganizationAsync(id);
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         // api/organizations/1
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationUpdateDto organizationUpdateDto)
         {
             /* Update Pattern in Controllers:
@@ -195,7 +195,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             return BadRequest($"Failed to add {organizationAddDto.Name}.");
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteOrganizationAsync(long id)
         {
             /* Delete Pattern in Controllers:
