@@ -26,6 +26,10 @@ namespace Menominee.Client
 
             var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 
+            builder.Services.AddHttpClient<IUserDataService, UserDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
             builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();

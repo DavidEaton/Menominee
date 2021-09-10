@@ -3,8 +3,35 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (Policy = Policies.CanManageUsers)]
 
-<h4>Users</h4>
-
-@code {
-
+@if (UsersList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="d-flex flex-row">
+        <table class="table table-responsive table-striped small">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in UsersList)
+                {
+                    <tr @onclick="@(e => SetSelectedId(user.Id))">
+                        <td>@user.Id</td>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td>@user.Name</td>
+                        <td>@user.Role</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

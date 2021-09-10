@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Shared
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim(ClaimType.role.ToString(), Role.Admin.ToString(), Role.Owner.ToString())
+                .RequireClaim(ClaimType.role.ToString(), new[] { Role.Admin.ToString(), Role.Owner.ToString() })
                 .Build();
         }
     }

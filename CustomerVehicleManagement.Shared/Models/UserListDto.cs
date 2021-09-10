@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Api.Users
+﻿namespace CustomerVehicleManagement.Shared.Models
 {
     public class UserListDto
     {

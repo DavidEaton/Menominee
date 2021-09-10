@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared;
+using CustomerVehicleManagement.Shared.Models;
 using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +54,30 @@ namespace CustomerVehicleManagement.Api.Users
         {
             var loggedInUser = await UserManager.GetUserAsync(User);
             return loggedInUser.TenantId;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsersAsync()
+        {
+            var users = UserManager.Users.ToList();
+
+            if (users != null)
+            {
+                var userLookups = new List<UserListDto>();
+                foreach (var user in users)
+                {
+                    var userLookup = new UserListDto
+                    {
+                        Id = user.Id,
+                        Username = user.UserName
+                    };
+                    userLookups.Add(userLookup);
+                }
+
+                return Ok(userLookups);
+            }
+            else
+                return NotFound();
         }
     }
 }
