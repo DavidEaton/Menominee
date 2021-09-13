@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Enums;
 using Syncfusion.Blazor;
 using System;
 using System.Threading.Tasks;
@@ -24,6 +25,43 @@ namespace Menominee.Client
             builder.Services.AddSyncfusionBlazor();
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 
+
+            builder.Services.AddOidcAuthentication(options =>
+            {
+                builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
+                builder.Configuration.Bind("UserOptions", options.UserOptions);
+            });
+
+            builder.Services.AddAuthorizationCore(authorizationOptions =>
+            {
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageUsers,
+                    Policies.CanManageUsersPolicy());
+
+                    //policyBuilder =>
+                    //{
+                    //    policyBuilder.RequireAuthenticatedUser();
+                    //    //policyBuilder.RequireClaim(ClaimType.ShopRole.ToString(), ShopRole.HumanResources.ToString());
+                    //    policyBuilder.RequireRole(ShopRole.Admin.ToString());
+                    //});
+
+                //authorizationOptions.AddPolicy(
+                //    "PaidSubscriptionCanDoStuff",
+                //    policyBuilder =>
+                //    {
+                //        policyBuilder.RequireAuthenticatedUser();
+                //        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
+                //    });
+
+                //authorizationOptions.AddPolicy(
+                //    Policies.CanManageUsers,
+                //    Policies.CanManageUsersPolicy()
+                //    );
+            });
+
+            await builder.Build().RunAsync();
+
             var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(
@@ -42,29 +80,7 @@ namespace Menominee.Client
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
-            builder.Services.AddOidcAuthentication(options =>
-            {
-                builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
-                builder.Configuration.Bind("UserOptions", options.UserOptions);
-            });
 
-            builder.Services.AddAuthorizationCore(authorizationOptions =>
-            {
-                authorizationOptions.AddPolicy(
-                    "PaidSubscriptionCanDoStuff",
-                    policyBuilder =>
-                    {
-                        policyBuilder.RequireAuthenticatedUser();
-                        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
-                    });
-
-                authorizationOptions.AddPolicy(
-                    Policies.CanManageUsers,
-                    Policies.CanManageUsersPolicy()
-                    );
-            });
-
-            await builder.Build().RunAsync();
         }
 
         private static void ConfigureLogging(

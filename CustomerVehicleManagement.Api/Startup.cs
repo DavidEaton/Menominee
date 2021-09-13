@@ -4,16 +4,13 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Shared;
-using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -59,14 +56,6 @@ namespace CustomerVehicleManagement.Api
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.AddPolicy(
-                    "PaidSubscriptionCanDoStuff",
-                    policyBuilder =>
-                    {
-                        policyBuilder.RequireAuthenticatedUser();
-                        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
-                    });
-
                 authorizationOptions.AddPolicy(
                     Policies.CanManageUsers,
                     Policies.CanManageUsersPolicy()
@@ -132,8 +121,8 @@ namespace CustomerVehicleManagement.Api
         {
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
