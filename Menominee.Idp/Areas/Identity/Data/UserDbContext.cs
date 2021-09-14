@@ -1,12 +1,13 @@
 ﻿using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SharedKernel.Entities;
 
 namespace Menominee.Idp.Data.Contexts
 {
     public class UserDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<AspNetTenant> AspNetTenants { get; set; }
+        public DbSet<Tenant> AspNetTenants { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)
@@ -19,9 +20,11 @@ namespace Menominee.Idp.Data.Contexts
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-            builder.Entity<AspNetTenant>()
+            builder.Entity<Tenant>()
                 .HasAlternateKey(tenant => tenant.Name)
                 .HasName("AlternateKey_Name");
+
+
         }
     }
 }

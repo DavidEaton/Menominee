@@ -7,6 +7,16 @@ namespace CustomerVehicleManagement.Shared
     public static class Policies
     {
         public const string CanManageUsers = "CanManageUsers";
+        public const string Technician = "Technician";
+
+        public static AuthorizationPolicy CanManageUsersPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireRole(ShopRole.Admin.ToString())
+                //.RequireClaim("Role", ShopRole.Admin.ToString())
+                .Build();
+        }
 
         public static AuthorizationPolicy FreeUserPolicy()
         {
@@ -33,11 +43,12 @@ namespace CustomerVehicleManagement.Shared
                 .Build();
         }
 
-        public static AuthorizationPolicy CanManageUsersPolicy()
+        public static AuthorizationPolicy TechnicianPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireRole(ShopRole.Admin.ToString())
+                //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
+                .RequireRole(new[] { ShopRole.Technician.ToString(), ShopRole.Admin.ToString(), ShopRole.Owner.ToString() })
                 .Build();
         }
 

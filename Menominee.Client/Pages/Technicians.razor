@@ -1,0 +1,9 @@
+﻿@page "/technicians"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize
+(Policy = CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
+
+<h3>Technicians</h3>
+
+@code {
+
+}

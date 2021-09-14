@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Menominee.Idp.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class intital : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,6 +33,7 @@ namespace Menominee.Idp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetTenants", x => x.Id);
+                    table.UniqueConstraint("AlternateKey_Name", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,6 +41,9 @@ namespace Menominee.Idp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

@@ -1,37 +1,107 @@
 ﻿@page "/"
 
-    @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-    @inject IAccessTokenProvider TokenProvider
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject IAccessTokenProvider TokenProvider
 
-    <div>
-        <p>Index page of <strong>Menominee</strong></p>
-    </div>
-    <AuthorizeView>
-        <Authorized>
-            <div class="top-row pl-4 navbar navbar-dark">
-                <button class="" @onclick="WriteToken">
-                    <span>Write Token</span>
-                </button>
-            </div>
-        </Authorized>
-    </AuthorizeView>
-    @code {
 
-        private async Task WriteToken()
-        {
-            string accessToken;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Identity;
 
-            var tokenResult = await TokenProvider.RequestAccessToken();
-            if (tokenResult.TryGetToken(out var token))
+<p>@Details</p>
+
+<div>
+    <p>Index page of <strong>Menominee</strong></p>
+</div>
+<AuthorizeView>
+    <Authorized>
+        <div class="top-row pl-4 navbar navbar-dark">
+            <button class="" @onclick="WriteToken">
+                <span>Write Token</span>
+            </button>
+        </div>
+        <div class="top-row pl-4 navbar navbar-dark">
+            <button class="" @onclick="IsInRole">
+                <span>Role</span>
+            </button>
+        </div>
+
+
+        <div>
+            @context.User.Identity.Name
+
+            @foreach (var claim in @context.User.Claims)
             {
-                accessToken = token.Value;
-                Console.WriteLine(accessToken);
-
-                foreach (var item in token.GrantedScopes)
-                {
-                    Console.WriteLine(item.ToString());
-                }
-
+                <div>
+                    @claim.Type;
+                    @claim.Value;
+                </div>
             }
+        </div>
+
+    </Authorized>
+</AuthorizeView>
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+    private System.Security.Claims.ClaimsPrincipal principal;
+    private bool admin = false;
+    private string Details { get; set; }
+
+    private async Task WriteToken()
+    {
+        string accessToken;
+
+        var tokenResult = await TokenProvider.RequestAccessToken();
+        if (tokenResult.TryGetToken(out var token))
+        {
+            accessToken = token.Value;
+            Console.WriteLine(accessToken);
+
+            foreach (var item in token.GrantedScopes)
+            {
+                Console.WriteLine(item.ToString());
+            }
+
         }
     }
+
+    private async Task IsInRole()
+    {
+        //if (authenticationState != null)
+        //{
+        //    principal = (await authenticationState).User;
+
+        //    admin = principal.IsInRole("Admin");
+
+        //    var msg = $"admin: {admin}";
+
+        //    Console.WriteLine(msg);
+
+        //}
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        admin = user.IsInRole("Admin");
+
+        var msg = $"admin: {admin}";
+
+        Console.WriteLine(msg);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Details = $"Your user.Identity.Name is {user.Identity.Name}.";
+        }
+        else
+        {
+            Details = "Current user is NOT authenticated.";
+        }
+    }
+}

@@ -39,28 +39,13 @@ namespace Menominee.Client
                     Policies.CanManageUsers,
                     Policies.CanManageUsersPolicy());
 
-                    //policyBuilder =>
-                    //{
-                    //    policyBuilder.RequireAuthenticatedUser();
-                    //    //policyBuilder.RequireClaim(ClaimType.ShopRole.ToString(), ShopRole.HumanResources.ToString());
-                    //    policyBuilder.RequireRole(ShopRole.Admin.ToString());
-                    //});
+                authorizationOptions.AddPolicy(
+                    Policies.Technician,
+                    Policies.TechnicianPolicy());
 
-                //authorizationOptions.AddPolicy(
-                //    "PaidSubscriptionCanDoStuff",
-                //    policyBuilder =>
-                //    {
-                //        policyBuilder.RequireAuthenticatedUser();
-                //        policyBuilder.RequireClaim("subscriptionLevel", "Paid");
-                //    });
 
-                //authorizationOptions.AddPolicy(
-                //    Policies.CanManageUsers,
-                //    Policies.CanManageUsersPolicy()
-                //    );
             });
 
-            await builder.Build().RunAsync();
 
             var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 
@@ -80,6 +65,7 @@ namespace Menominee.Client
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
+            await builder.Build().RunAsync();
 
         }
 

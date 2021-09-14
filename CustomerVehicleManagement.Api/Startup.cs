@@ -60,30 +60,16 @@ namespace CustomerVehicleManagement.Api
                     Policies.CanManageUsers,
                     Policies.CanManageUsersPolicy()
                     );
+
+                authorizationOptions.AddPolicy(
+                    Policies.Technician,
+                    Policies.TechnicianPolicy());
             });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<UserContext, UserContext>();
-
             services.AddDbContext<ApplicationDbContext>();
-
-
-
-            //services.AddDbContext<IdentityUserDbContext>(options =>
-            //        options.UseSqlServer(Configuration[$"IDPSettings:Connection"],
-            //        sqlServerOptionsAction: sqlOptions =>
-            //        {
-            //            sqlOptions.EnableRetryOnFailure();
-            //        }));
-
-
-            //services.AddIdentity<ApplicationUser, IdentityRole>()
-            //        .AddEntityFrameworkStores<ApplicationDbContext>()
-            //        .AddDefaultTokenProviders();
-
-
-
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
