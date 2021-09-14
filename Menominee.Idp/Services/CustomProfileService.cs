@@ -37,6 +37,8 @@ namespace Menominee.Idp.Services
             if (user.TenantName != string.Empty)
                 claims.Add(new Claim("tenantName", user.TenantName));
 
+            claims.Add(new Claim("ShopRole", user.ShopRole.ToString()));
+
             context.IssuedClaims = claims;
         }
 

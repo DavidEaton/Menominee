@@ -62,8 +62,8 @@ namespace CustomerVehicleManagement.Api
                     );
 
                 authorizationOptions.AddPolicy(
-                    Policies.Technician,
-                    Policies.TechnicianPolicy());
+                    Policies.TechniciansUser,
+                    Policies.TechniciansUserPolicy());
             });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -34,16 +34,13 @@ namespace Menominee.Client
 
             builder.Services.AddAuthorizationCore(authorizationOptions =>
             {
-
                 authorizationOptions.AddPolicy(
                     Policies.CanManageUsers,
                     Policies.CanManageUsersPolicy());
 
                 authorizationOptions.AddPolicy(
-                    Policies.Technician,
-                    Policies.TechnicianPolicy());
-
-
+                    Policies.TechniciansUser,
+                    Policies.TechniciansUserPolicy());
             });
 
 

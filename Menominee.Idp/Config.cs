@@ -29,8 +29,13 @@ namespace Menominee.Idp
 
                 new IdentityResource(
                     "role",
-                    "Shop Roles",
-                    new List<string>() { "roles" }),
+                    "Roles",
+                    new List<string>() { "role" }),
+
+                new IdentityResource(
+                    "shopRole",
+                    "Shop Role",
+                    new List<string>() { "shopRole" }),
 
                 new IdentityResource(
                     "subscriptionLevel",
@@ -97,6 +102,7 @@ namespace Menominee.Idp
                         "tenantId",
                         "tenantName",
                         "role",
+                        "shopRole",
                         "subscriptionLevel",
                         "subscribedProducts"
                     },

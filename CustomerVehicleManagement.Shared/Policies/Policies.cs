@@ -6,15 +6,21 @@ namespace CustomerVehicleManagement.Shared
     // removed ".Policies" from namespace to avoid drilling into it twice
     public static class Policies
     {
+        // Settle on a naming convention
         public const string CanManageUsers = "CanManageUsers";
-        public const string Technician = "Technician";
+        public const string TechniciansUser = "TechniciansUser";
+        public const string FreeUser = "FreeUser";
+        public const string PaidUser = "PaidUser";
+        public const string CanManageHumanResources = "CanManageHumanResources";
+        public const string Admin = "Admin";
+        public const string Owner = "Owner";
 
         public static AuthorizationPolicy CanManageUsersPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireRole(ShopRole.Admin.ToString())
-                //.RequireClaim("Role", ShopRole.Admin.ToString())
+                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
                 .Build();
         }
 
@@ -34,21 +40,23 @@ namespace CustomerVehicleManagement.Shared
                 .Build();
         }
 
-        public static AuthorizationPolicy HumanResourcesPolicy()
+        public static AuthorizationPolicy CanManageHumanResourcesPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
-                .RequireClaim("role", new[] { ShopRole.HumanResources.ToString(), ShopRole.Admin.ToString(), ShopRole.Owner.ToString() })
+                .RequireClaim("ShopRole", new[] { ShopRole.HumanResources.ToString(),
+                                                  ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
                 .Build();
         }
 
-        public static AuthorizationPolicy TechnicianPolicy()
+        public static AuthorizationPolicy TechniciansUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
-                .RequireRole(new[] { ShopRole.Technician.ToString(), ShopRole.Admin.ToString(), ShopRole.Owner.ToString() })
+                .RequireClaim("ShopRole", new[] { ShopRole.Technician.ToString(),
+                                                  ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
                 .Build();
         }
 
@@ -56,8 +64,8 @@ namespace CustomerVehicleManagement.Shared
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
-                .RequireClaim("role", new[] { ShopRole.Admin.ToString(), ShopRole.Owner.ToString() })
+                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
                 .Build();
         }
 
@@ -65,10 +73,8 @@ namespace CustomerVehicleManagement.Shared
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
-                .RequireClaim("role", new[] { ShopRole.Owner.ToString() })
+                .RequireClaim("ShopRole", new[] { ShopRole.Owner.ToString() })
                 .Build();
         }
-
     }
 }
