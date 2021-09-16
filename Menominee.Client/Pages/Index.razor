@@ -2,16 +2,13 @@
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject IAccessTokenProvider TokenProvider
-
-
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@using Microsoft.AspNetCore.Identity;
-
-<p>@Details</p>
-
 <div>
     <p>Index page of <strong>Menominee</strong></p>
 </div>
+
+<p>@Details</p>
+
 <AuthorizeView>
     <Authorized>
         <div class="top-row pl-4 navbar navbar-dark">
@@ -19,13 +16,6 @@
                 <span>Write Token</span>
             </button>
         </div>
-        <div class="top-row pl-4 navbar navbar-dark">
-            <button class="" @onclick="IsInRole">
-                <span>Role</span>
-            </button>
-        </div>
-
-
         <div>
             @context.User.Identity.Name
 
@@ -65,30 +55,6 @@
         }
     }
 
-    private async Task IsInRole()
-    {
-        //if (authenticationState != null)
-        //{
-        //    principal = (await authenticationState).User;
-
-        //    admin = principal.IsInRole("Admin");
-
-        //    var msg = $"admin: {admin}";
-
-        //    Console.WriteLine(msg);
-
-        //}
-
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        admin = user.IsInRole("Admin");
-
-        var msg = $"admin: {admin}";
-
-        Console.WriteLine(msg);
-    }
-
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -101,7 +67,7 @@
         }
         else
         {
-            Details = "Current user is NOT authenticated.";
+            Details = "You are NOT logged in. Please log in.";
         }
     }
 }

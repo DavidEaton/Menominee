@@ -7,13 +7,32 @@ namespace CustomerVehicleManagement.Shared
     public static class Policies
     {
         // Settle on a naming convention
-        public const string CanManageUsers = "CanManageUsers";
-        public const string TechniciansUser = "TechniciansUser";
-        public const string FreeUser = "FreeUser";
-        public const string PaidUser = "PaidUser";
-        public const string CanManageHumanResources = "CanManageHumanResources";
-        public const string Admin = "Admin";
-        public const string Owner = "Owner";
+        public const string AdminOnly = "AdminPolicy";
+        public const string CanManageHumanResources = "CanManageHumanResourcesPolicy";
+        public const string CanManageUsers = "CanManageUsersPolicy";
+        public const string FreeUser = "FreeUserPolicy";
+        public const string OwnerOnly = "OwnerPolicy";
+        public const string PaidUser = "PaidUserPolicy";
+        public const string TechniciansUser = "TechniciansUserPolicy";
+
+        public static AuthorizationPolicy AdminPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
+                .Build();
+        }
+
+        public static AuthorizationPolicy CanManageHumanResourcesPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("ShopRole", new[] { ShopRole.HumanResources.ToString(),
+                                                  ShopRole.Admin.ToString(),
+                                                  ShopRole.Owner.ToString() })
+                .Build();
+        }
 
         public static AuthorizationPolicy CanManageUsersPolicy()
         {
@@ -32,6 +51,14 @@ namespace CustomerVehicleManagement.Shared
                 .Build();
         }
 
+        public static AuthorizationPolicy OwnerPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim("ShopRole", new[] { ShopRole.Owner.ToString() })
+                .Build();
+        }
+
         public static AuthorizationPolicy PaidUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
@@ -40,40 +67,13 @@ namespace CustomerVehicleManagement.Shared
                 .Build();
         }
 
-        public static AuthorizationPolicy CanManageHumanResourcesPolicy()
-        {
-            return new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.HumanResources.ToString(),
-                                                  ShopRole.Admin.ToString(),
-                                                  ShopRole.Owner.ToString() })
-                .Build();
-        }
-
-        public static AuthorizationPolicy TechniciansUserPolicy()
+        public static AuthorizationPolicy TechnicianUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .RequireClaim("ShopRole", new[] { ShopRole.Technician.ToString(),
                                                   ShopRole.Admin.ToString(),
                                                   ShopRole.Owner.ToString() })
-                .Build();
-        }
-
-        public static AuthorizationPolicy AdminPolicy()
-        {
-            return new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
-                                                  ShopRole.Owner.ToString() })
-                .Build();
-        }
-
-        public static AuthorizationPolicy OwnerPolicy()
-        {
-            return new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Owner.ToString() })
                 .Build();
         }
     }

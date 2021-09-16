@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Enums;
 using Syncfusion.Blazor;
 using System;
 using System.Threading.Tasks;
@@ -35,12 +34,32 @@ namespace Menominee.Client
             builder.Services.AddAuthorizationCore(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(
+                    Policies.AdminOnly,
+                    Policies.AdminPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageHumanResources,
+                    Policies.CanManageHumanResourcesPolicy());
+
+                authorizationOptions.AddPolicy(
                     Policies.CanManageUsers,
                     Policies.CanManageUsersPolicy());
 
                 authorizationOptions.AddPolicy(
+                    Policies.FreeUser,
+                    Policies.FreeUserPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.OwnerOnly,
+                    Policies.OwnerPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.PaidUser,
+                    Policies.PaidUserPolicy());
+
+                authorizationOptions.AddPolicy(
                     Policies.TechniciansUser,
-                    Policies.TechniciansUserPolicy());
+                    Policies.TechnicianUserPolicy());
             });
 
 
@@ -59,6 +78,10 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IEmployeeDataService, EmployeeDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

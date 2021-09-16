@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace CustomerVehicleManagement.Api.Users
 {
     [Route("api/[controller]")]
-    //[Authorize(Policy = Policies.CanManageUsers)]
+    [Authorize(Policy = Policies.CanManageUsers)]
     public class AccountController : ControllerBase
     {
         private readonly IdentityUserDbContext Context;
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Users
                     //Name = u.Name,
                     Username = u.UserName,
                     Id = u.Id,
-                    Role = u.Role
+                    ShopRole = u.ShopRole
                 };
 
                 users.Add(user);

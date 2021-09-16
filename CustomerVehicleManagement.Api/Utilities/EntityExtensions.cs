@@ -27,10 +27,10 @@ namespace CustomerVehicleManagement.Api.Utilities
 
         public static void FixState(this DbContext context)
         {
-            foreach (var entry in context.ChangeTracker.Entries<IStateObject>())
+            foreach (var entry in context.ChangeTracker.Entries<IStateTracker>())
             {
-                IStateObject stateInfo = entry.Entity;
-                entry.State = ConvertState(stateInfo.TrackingState);
+                IStateTracker state = entry.Entity;
+                entry.State = ConvertState(state.TrackingState);
             }
         }
     }

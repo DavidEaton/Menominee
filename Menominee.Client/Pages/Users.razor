@@ -1,7 +1,13 @@
 ﻿@page "/users"
-@attribute [Microsoft.AspNetCore.Authorization.Authorize
-    (Policy = CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
+@*@attribute [Microsoft.AspNetCore.Authorization.Authorize
+    (CustomerVehicleManagement.Shared.Policies.CanManageUsers)]*@
+@*Policies work everywhere but here. Even tho logged-in user meets CanManageUsers requirements, Authorization fails in client
+    but grabbing that user's token and hitting the api endpoint works :/*@
 
+<div class="h4">Registered Users</div>
+<button class="btn btn-primary ">
+    <span class="oi oi-plus" title="Register User" aria-hidden="true"></span> Register User
+</button>
 @if (UsersList == null)
 {
     <p><em>Loading...</em></p>
@@ -12,10 +18,8 @@ else
         <table class="table table-responsive table-striped small">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Username</th>
                     <th>Email</th>
-                    <th>Name</th>
                     <th>Role</th>
                 </tr>
             </thead>
@@ -23,11 +27,9 @@ else
                 @foreach (var user in UsersList)
                 {
                     <tr @onclick="@(e => SetSelectedId(user.Id))">
-                        <td>@user.Id</td>
                         <td>@user.Username</td>
                         <td>@user.Email</td>
-                        <td>@user.Name</td>
-                        <td>@user.Role</td>
+                        <td>@user.ShopRole</td>
                     </tr>
                 }
             </tbody>

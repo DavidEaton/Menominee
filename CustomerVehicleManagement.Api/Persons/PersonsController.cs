@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using System;
@@ -12,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Persons
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class PersonsController : ControllerBase
     {
         private readonly IPersonRepository repository;

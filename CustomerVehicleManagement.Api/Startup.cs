@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -54,16 +55,39 @@ namespace CustomerVehicleManagement.Api
                      })
                 ;
 
+            services.AddDbContext<IdentityUserDbContext>(options =>
+                                                         options
+                                                        .UseSqlServer(Configuration[$"IDPSettings:Connection"]));
+
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(
+                    Policies.AdminOnly,
+                    Policies.AdminPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageHumanResources,
+                    Policies.CanManageHumanResourcesPolicy());
+
+                authorizationOptions.AddPolicy(
                     Policies.CanManageUsers,
-                    Policies.CanManageUsersPolicy()
-                    );
+                    Policies.CanManageUsersPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.FreeUser,
+                    Policies.FreeUserPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.OwnerOnly,
+                    Policies.OwnerPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.PaidUser,
+                    Policies.PaidUserPolicy());
 
                 authorizationOptions.AddPolicy(
                     Policies.TechniciansUser,
-                    Policies.TechniciansUserPolicy());
+                    Policies.TechnicianUserPolicy());
             });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

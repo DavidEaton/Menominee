@@ -1,4 +1,6 @@
-﻿namespace CustomerVehicleManagement.Shared.Models
+﻿using SharedKernel.Enums;
+
+namespace CustomerVehicleManagement.Shared.Models
 {
     public class UserListDto
     {
@@ -6,6 +8,6 @@
         public string Username { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public string Role { get; set; }
+        public ShopRole ShopRole { get; set; }
     }
 }

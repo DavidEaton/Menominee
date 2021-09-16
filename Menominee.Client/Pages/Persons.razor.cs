@@ -13,7 +13,7 @@ namespace Menominee.Client.Pages
     public partial class Persons : ComponentBase
     {
         [Inject]
-        public IPersonDataService PersonsDataService { get; set; }
+        public IPersonDataService PersonDataService { get; set; }
 
         [Inject]
         public ILogger<Persons> Logger { get; set; }
@@ -26,8 +26,7 @@ namespace Menominee.Client.Pages
         //protected PersonDetail PersonDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
-            Logger.LogInformation("Persons.OnInitializedAsync()");
-            PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
+            PersonsList = (await PersonDataService.GetAllPersons()).ToList();
         }
 
         protected void AddPerson()
@@ -38,7 +37,7 @@ namespace Menominee.Client.Pages
 
         public async void AddPersonDialog_OnDialogClose()
         {
-            PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
+            PersonsList = (await PersonDataService.GetAllPersons()).ToList();
             StateHasChanged();
         }
         private void SetSelectedId(long id)

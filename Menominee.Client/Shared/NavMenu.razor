@@ -34,19 +34,22 @@
                 <span class="oi oi-people" aria-hidden="true"></span> Users
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="register">
-                <span class="oi oi-person" aria-hidden="true"></span> Register
-            </NavLink>
-        </li>
     </Authorized>
 </AuthorizeView>
-
 <AuthorizeView Policy="@Policies.TechniciansUser">
     <Authorized>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="technicians">
                 <span class="oi oi-cog" aria-hidden="true"></span> Technicians
+            </NavLink>
+        </li>
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Policy="@Policies.CanManageHumanResources">
+    <Authorized>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="employees">
+                <span class="oi oi-cog" aria-hidden="true"></span> Employees
             </NavLink>
         </li>
     </Authorized>
