@@ -36,7 +36,8 @@ namespace CustomerVehicleManagement.Api.Users
             try
             {
                 connection.Open();
-                string query = $"SELECT * FROM [dbo].[AspNetUsers] WHERE [TenantId] = '{tenantId}';";
+                string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers];";
+                //string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers] WHERE [TenantId] = '{tenantId}';";
                 using SqlCommand command = new(query, connection);
                 using SqlDataReader reader = command.ExecuteReader();
 
@@ -51,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Users
                             Username = reader["Username"].ToString(),
                             Name = reader["Username"].ToString(),
                             Email = reader["Email"].ToString(),
-                            ShopRole = Enum.Parse<ShopRole>((string)reader["ShopRole"])
+                            ShopRole = (string)reader["ShopRole"]
                         });
                     }
                 }

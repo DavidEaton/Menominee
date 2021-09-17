@@ -8,6 +8,6 @@ namespace CustomerVehicleManagement.Shared.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public ShopRole ShopRole { get; set; }
+        public string ShopRole { get; set; }
     }
 }

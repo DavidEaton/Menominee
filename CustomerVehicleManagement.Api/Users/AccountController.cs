@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Users
                     //Name = u.Name,
                     Username = u.UserName,
                     Id = u.Id,
-                    ShopRole = u.ShopRole
+                    ShopRole = u.ShopRole.ToString()
                 };
 
                 users.Add(user);

@@ -1,14 +1,17 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Handlers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Shared;
+using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
@@ -39,56 +42,73 @@ namespace CustomerVehicleManagement.Api
         {
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-                    options =>
-                     {
-                         options.Authority = Configuration[$"IDPSettings:BaseUrl"];
-                         options.Audience = Configuration["ApiName"];
-                         options.RequireHttpsMetadata = false;
-                         options.TokenValidationParameters = new
-                         TokenValidationParameters()
+            if (HostEnvironment.IsDevelopment())
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+
+            if (HostEnvironment.IsProduction())
+            {
+
+                services
+                    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+                        options =>
                          {
-                             ValidateAudience = false
-                         };
-                     })
-                ;
+                             options.Authority = Configuration[$"IDPSettings:BaseUrl"];
+                             options.Audience = Configuration["ApiName"];
+                             options.RequireHttpsMetadata = false;
+                             options.TokenValidationParameters = new
+                             TokenValidationParameters()
+                             {
+                                 ValidateAudience = false
+                             };
+                         })
+                    ;
+
+                services.AddAuthorization(authorizationOptions =>
+                {
+                    authorizationOptions.AddPolicy(
+                        Policies.AdminOnly,
+                        Policies.AdminPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.CanManageHumanResources,
+                        Policies.CanManageHumanResourcesPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.CanManageUsers,
+                        Policies.CanManageUsersPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.FreeUser,
+                        Policies.FreeUserPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.OwnerOnly,
+                        Policies.OwnerPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.PaidUser,
+                        Policies.PaidUserPolicy());
+
+                    authorizationOptions.AddPolicy(
+                        Policies.TechniciansUser,
+                        Policies.TechnicianUserPolicy());
+                });
+
+            }
 
             services.AddDbContext<IdentityUserDbContext>(options =>
                                                          options
                                                         .UseSqlServer(Configuration[$"IDPSettings:Connection"]));
 
-            services.AddAuthorization(authorizationOptions =>
-            {
-                authorizationOptions.AddPolicy(
-                    Policies.AdminOnly,
-                    Policies.AdminPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.CanManageHumanResources,
-                    Policies.CanManageHumanResourcesPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.CanManageUsers,
-                    Policies.CanManageUsersPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.FreeUser,
-                    Policies.FreeUserPolicy());
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<IdentityUserDbContext>()
+            .AddDefaultTokenProviders();
 
-                authorizationOptions.AddPolicy(
-                    Policies.OwnerOnly,
-                    Policies.OwnerPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.PaidUser,
-                    Policies.PaidUserPolicy());
-
-                authorizationOptions.AddPolicy(
-                    Policies.TechniciansUser,
-                    Policies.TechnicianUserPolicy());
-            });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -98,11 +118,11 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
-            services.AddCors();
             services.AddHealthChecks();
 
             if (HostEnvironment.IsProduction())
             {
+                services.AddCors();
                 // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
@@ -131,8 +151,13 @@ namespace CustomerVehicleManagement.Api
         {
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
+            if (HostEnvironment.IsProduction())
+            {
+                app.UseAuthentication();
+                app.UseAuthorization();
+            }
+
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
