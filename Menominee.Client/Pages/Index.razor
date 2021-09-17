@@ -1,73 +1,53 @@
 ﻿@page "/"
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
 @inject IAccessTokenProvider TokenProvider
 @inject AuthenticationStateProvider AuthenticationStateProvider
+
 <div>
     <p>Index page of <strong>Menominee</strong></p>
 </div>
 
-<p>@Details</p>
+<h3>ClaimsPrincipal Data</h3>
 
-<AuthorizeView>
-    <Authorized>
-        <div class="top-row pl-4 navbar navbar-dark">
-            <button class="" @onclick="WriteToken">
-                <span>Write Token</span>
-            </button>
-        </div>
-        <div>
-            @context.User.Identity.Name
+<button @onclick="GetClaimsPrincipalData">Get ClaimsPrincipal Data</button>
 
-            @foreach (var claim in @context.User.Claims)
-            {
-                <div>
-                    @claim.Type;
-                    @claim.Value;
-                </div>
-            }
-        </div>
+<p>@_authMessage</p>
 
-    </Authorized>
-</AuthorizeView>
-@code {
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
-    private System.Security.Claims.ClaimsPrincipal principal;
-    private bool admin = false;
-    private string Details { get; set; }
-
-    private async Task WriteToken()
-    {
-        string accessToken;
-
-        var tokenResult = await TokenProvider.RequestAccessToken();
-        if (tokenResult.TryGetToken(out var token))
+@if (_claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in _claims)
         {
-            accessToken = token.Value;
-            Console.WriteLine(accessToken);
-
-            foreach (var item in token.GrantedScopes)
-            {
-                Console.WriteLine(item.ToString());
-            }
-
+            <li>@claim.Type: @claim.Value</li>
         }
-    }
+    </ul>
+}
 
-    protected override async Task OnInitializedAsync()
+<p>@_surnameMessage</p>
+@code {
+    private string _authMessage;
+    private string _surnameMessage;
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+    private async Task GetClaimsPrincipalData()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-
         if (user.Identity.IsAuthenticated)
         {
-            Details = $"Your user.Identity.Name is {user.Identity.Name}.";
+            _authMessage = $"{user.Identity.Name} is authenticated.";
+            _claims = user.Claims;
+            _surnameMessage =
+                $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
         }
         else
         {
-            Details = "You are NOT logged in. Please log in.";
+            _authMessage = "The user is NOT authenticated.";
         }
     }
 }
