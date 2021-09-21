@@ -51,12 +51,12 @@ namespace Menominee.Idp
                 new ApiResource(
                     "menominee-api",
                     "Menominee API",
-                    new List<string>() { "tenantId" }),
-
-                new ApiResource(
-                    "ddc-api",
-                    "Dynamic Database Conection API",
-                    new List<string>() { "role" }) // include role scope in access token
+                    new List<string>() { "tenantId",
+                                         "tenantName",
+                                         "role",
+                                         "shopRole",
+                                         "subscriptionLevel",
+                                         "subscribedProducts"}) // include userClaims in access token
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>

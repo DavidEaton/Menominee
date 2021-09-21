@@ -158,7 +158,7 @@ namespace CustomerVehicleManagement.Api
                 app.UseAuthorization();
             }
 
-            app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:Origins").Get<string>())
+            app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:AllowedOrigins").Get<string>().Split(";"))
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
 
