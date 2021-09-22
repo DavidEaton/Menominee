@@ -70,8 +70,6 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 1. Get the Organization entity (not DTO) from the DB
             // 3. Update the corresponding fields in the Organization
             // 4. Save back to the DB
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
             var notFoundMessage = $"Could not find Organization to update: {organizationUpdateDto.Name}";
 
@@ -164,7 +162,11 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             organization.SetNote(organizationAddDto.Note);
 
-            organization.SetAddress(organizationAddDto?.Address);
+            if (organizationAddDto?.Address != null)
+                organization.SetAddress(Address.Create(organizationAddDto.Address.AddressLine,
+                                                organizationAddDto.Address.City,
+                                                organizationAddDto.Address.State,
+                                                organizationAddDto.Address.PostalCode).Value);
 
             if (organizationAddDto?.Phones != null)
                 organization.SetPhones(organizationAddDto?.Phones

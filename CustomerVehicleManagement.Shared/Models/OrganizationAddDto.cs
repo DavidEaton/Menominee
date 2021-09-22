@@ -1,5 +1,4 @@
-﻿using SharedKernel.ValueObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
@@ -16,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models
          * The drawbacks of the lazy loading can be overcome by the adherence to CQRS: use lazy loading only in writes, handwrite SQL queries in reads
          */
         public virtual PersonAddDto Contact { get; set; }
-        public Address Address { get; set; }
+        public AddressAddDto Address { get; set; }
         public string Note { get; set; }
         public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
         public IList<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();

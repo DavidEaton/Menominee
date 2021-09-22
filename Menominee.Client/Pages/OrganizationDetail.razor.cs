@@ -52,21 +52,24 @@ namespace Menominee.Client.Pages
 
         protected void ToggleFormMode()
         {
-            if (FormMode == FormMode.Edit)
+            switch (FormMode)
             {
-                FormMode = FormMode.Read;
-                return;
+                case FormMode.Edit:
+                    FormMode = FormMode.Read;
+                    break;
+                case FormMode.Read:
+                    FormMode = FormMode.Edit;
+                    break;
+                default:
+                    break;
             }
-
-            if (FormMode == FormMode.Read)
-                FormMode = FormMode.Edit;
         }
 
         protected async Task HandleValidSubmit()
         {
             Saved = false;
 
-            if (Organization.Id == 0) // new
+            if (Organization.Id == 0) // new Organization
             {
                 var phones = (IList<PhoneCreateDto>)Organization.Phones
                     .Select(phone =>
@@ -86,12 +89,14 @@ namespace Menominee.Client.Pages
                 var organization = new OrganizationAddDto
                 {
                     Name = Organization.Name,
-                    Address = Organization.Address,
+                    Address = new AddressAddDto(Organization.Address.AddressLine,
+                                                Organization.Address.City,
+                                                Organization.Address.State,
+                                                Organization.Address.PostalCode),
                     Note = Organization.Note
                 };
 
-                organization.Address = Organization.Address;
-                organization.Note = Organization.Note;
+                //organization.Contact = Organization.Contact;
                 //organization.Phones = Organization.Phones;
                 //organization.Emails = Organization.Emails;
 
@@ -144,6 +149,7 @@ namespace Menominee.Client.Pages
     public enum FormMode
     {
         Read,
+        Add,
         Edit
     }
 }

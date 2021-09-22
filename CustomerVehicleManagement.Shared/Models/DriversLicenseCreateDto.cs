@@ -1,4 +1,5 @@
-﻿using SharedKernel.Utilities;
+﻿using SharedKernel.Enums;
+using SharedKernel.Utilities;
 using System;
 using System.Text.Json.Serialization;
 
@@ -10,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public static readonly string DriversLicenseDateRangeMessage = "Drivers License Expiry date cannot preceed Issued date";
 
         [JsonConstructor]
-        public DriversLicenseCreateDto(string number, DateTime issued, DateTime expiry, string state)
+        public DriversLicenseCreateDto(string number, DateTime issued, DateTime expiry, State state)
         {
             try
             {
@@ -38,6 +39,6 @@ namespace CustomerVehicleManagement.Shared.Models
         public string Number { get; set; }
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
-        public string State { get; set; }
+        public State State { get; set; }
     }
 }

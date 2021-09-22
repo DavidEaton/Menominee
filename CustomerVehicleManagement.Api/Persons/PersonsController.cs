@@ -108,7 +108,7 @@ namespace CustomerVehicleManagement.Api.Persons
                     personFromRepository);
             }
 
-            return BadRequest($"Failed to add {personCreateDto.Name.FirstMiddleLast}.");
+            return BadRequest($"Failed to add {personCreateDto.Name}.");
         }
 
         [HttpDelete("{id:long}")]

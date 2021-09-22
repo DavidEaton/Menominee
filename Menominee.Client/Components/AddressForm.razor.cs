@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CustomerVehicleManagement.Shared.Models;
+using Microsoft.AspNetCore.Components;
+using SharedKernel.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using SharedKernel.ValueObjects;
-using System.Collections.Generic;
-using SharedKernel.Enums;
 
 namespace Menominee.Client.Components
 {
     public partial class AddressForm : ComponentBase
     {
         AddressProperties AddressValidators { get; set; } = new AddressProperties();
-        public Address EntityAddress { get; set; }
+        public AddressAddDto EntityAddress { get; set; }
 
         [Parameter]
         public EventCallback<bool> CloseEventCallback { get; set; }
@@ -19,7 +18,7 @@ namespace Menominee.Client.Components
         {
             if (AddressValidators.IsValid)
             {
-                EntityAddress = Address.Create(AddressValidators.AddressLine, AddressValidators.City, AddressValidators.State, AddressValidators.PostalCode).Value;
+                EntityAddress = new AddressAddDto(AddressValidators.AddressLine, AddressValidators.City, AddressValidators.State, AddressValidators.PostalCode);
                 await CloseEventCallback.InvokeAsync(true);
                 StateHasChanged();
             }

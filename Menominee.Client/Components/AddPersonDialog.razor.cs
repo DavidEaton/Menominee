@@ -49,7 +49,13 @@ namespace Menominee.Client.Components
 
             if (FormIsValid())
             {
-                Person = new PersonAddDto(PersonAdd.Name, PersonAdd.Gender)
+                Person = new PersonAddDto(
+                    new PersonNameAddDto
+                    {
+                        FirstName = PersonAdd.Name.FirstName,
+                        LastName = PersonAdd.Name.LastName, 
+                        MiddleName = PersonAdd.Name.MiddleName },
+                    PersonAdd.Gender)
                 {
                     Birthday = PersonAdd.Birthday,
                     Address = PersonAdd.Address
@@ -93,7 +99,7 @@ namespace Menominee.Client.Components
             internal PersonName Name { get; set; }
             public Gender Gender { get; set; }
             public DateTime? Birthday { get; set; }
-            internal Address Address { get; set; }
+            internal AddressAddDto Address { get; set; }
         }
     }
 }

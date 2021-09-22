@@ -89,7 +89,7 @@ namespace Menominee.Client.Components
         private class OrganizationAddProperties
         {
             internal OrganizationName Name { get; set; }
-            internal Address Address { get; set; }
+            internal AddressAddDto Address { get; set; }
             internal virtual PersonAddDto Contact { get; set; }
             internal string Note { get; set; }
         }

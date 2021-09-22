@@ -11,18 +11,18 @@ namespace CustomerVehicleManagement.Shared.Models
     public class PersonAddDto
     {
         [JsonConstructor]
-        public PersonAddDto(PersonName name, Gender gender)
+        public PersonAddDto(PersonNameAddDto name, Gender gender)
         {
             Name = name;
             Gender = gender;
         }
 
         [Required(ErrorMessage = "Person Name is required.")]
-        public PersonName Name { get; set; }
+        public PersonNameAddDto Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
         public DriversLicenseCreateDto DriversLicense { get; set; }
-        public Address Address { get; set; }
+        public AddressAddDto Address { get; set; }
         public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
         public IList<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
 
@@ -30,9 +30,20 @@ namespace CustomerVehicleManagement.Shared.Models
         {
             if (personAddDto != null)
             {
-                var person = new Person(personAddDto.Name, personAddDto.Gender);
+                var person = new Person(
+                    PersonName.Create(
+                        personAddDto.Name.LastName,
+                        personAddDto.Name.FirstName,
+                        personAddDto.Name.MiddleName).Value,
+                    personAddDto.Gender);
 
-                person.SetAddress(personAddDto?.Address);
+                if (personAddDto?.Address != null)
+                    person.SetAddress(SharedKernel.ValueObjects.Address.Create(
+                        personAddDto.Address.AddressLine,
+                        personAddDto.Address.City,
+                        personAddDto.Address.State,
+                        personAddDto.Address.PostalCode).Value);
+
                 person.SetBirthday(personAddDto?.Birthday);
 
                 if (personAddDto.DriversLicense != null)
@@ -44,7 +55,7 @@ namespace CustomerVehicleManagement.Shared.Models
 
                     DriversLicense driversLicense = SharedKernel.ValueObjects.DriversLicense.Create(
                                                                     personAddDto.DriversLicense.Number,
-                                                                    Enum.Parse<State>(personAddDto.DriversLicense.State),
+                                                                    personAddDto.DriversLicense.State,
                                                                     dateTimeRange)
                                                                .Value;
 

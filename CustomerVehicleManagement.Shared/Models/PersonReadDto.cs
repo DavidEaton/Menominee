@@ -24,6 +24,7 @@ namespace CustomerVehicleManagement.Shared.Models
                 {
                     Id = person.Id,
                     Name = person.Name.LastFirstMiddle,
+                    DriversLicense = person.DriversLicense,
                     Address = person?.Address,
                     Birthday = person?.Birthday,
                     Phones = PhoneReadDto.ConvertToDto(person.Phones),

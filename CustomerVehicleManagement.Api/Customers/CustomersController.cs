@@ -1,14 +1,14 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using SharedKernel.ValueObjects;
-using CustomerVehicleManagement.Shared.Models;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -174,10 +174,20 @@ namespace CustomerVehicleManagement.Api.Customers
 
                 if (organizationAddDto.Contact != null)
                 {
-                    var contact = new Person(organizationAddDto.Contact.Name,
-                                             organizationAddDto.Contact.Gender);
+                    var contact = new Person(
+                        PersonName.Create(
+                            organizationAddDto.Contact.Name.LastName,
+                            organizationAddDto.Contact.Name.LastName,
+                            organizationAddDto.Contact.Name.MiddleName).Value,
+                        organizationAddDto.Contact.Gender);
 
-                    contact.SetAddress(organizationAddDto.Contact?.Address);
+                    if (organizationAddDto?.Contact?.Address != null)
+                        contact.SetAddress(Address.Create(
+                            organizationAddDto.Contact.Address.AddressLine,
+                            organizationAddDto.Contact.Address.City,
+                            organizationAddDto.Contact.Address.State,
+                            organizationAddDto.Contact.Address.PostalCode).Value);
+
                     contact.SetBirthday(organizationAddDto.Contact?.Birthday);
 
                     if (organizationAddDto.Contact.DriversLicense != null)
@@ -186,7 +196,7 @@ namespace CustomerVehicleManagement.Api.Customers
                                                               organizationAddDto.Contact.DriversLicense.Expiry).Value;
 
                         var driversLicense = DriversLicense.Create(organizationAddDto.Contact.DriversLicense.Number,
-                                                                Enum.Parse<State>(organizationAddDto.Contact.DriversLicense.State),
+                                                                organizationAddDto.Contact.DriversLicense.State,
                                                                 dateTimeRange).Value;
 
                         contact.SetDriversLicense(driversLicense);
@@ -214,9 +224,17 @@ namespace CustomerVehicleManagement.Api.Customers
 
         private static Customer CreatePersonCustomer(PersonAddDto personAddDto)
         {
-            var person = new Person(personAddDto.Name, personAddDto.Gender);
+            var person = new Person(
+                PersonName.Create(
+                    personAddDto.Name.LastName, personAddDto.Name.FirstName, personAddDto.Name.MiddleName).Value,
+                personAddDto.Gender);
 
-            person.SetAddress(personAddDto?.Address);
+            if (personAddDto?.Address != null)
+                person.SetAddress(Address.Create(personAddDto.Address.AddressLine,
+                                                personAddDto.Address.City,
+                                                personAddDto.Address.State,
+                                                personAddDto.Address.PostalCode).Value);
+
             person.SetBirthday(personAddDto?.Birthday);
 
             if (personAddDto.DriversLicense != null)
@@ -225,7 +243,7 @@ namespace CustomerVehicleManagement.Api.Customers
                                                       personAddDto.DriversLicense.Expiry).Value;
 
                 var driversLicense = DriversLicense.Create(personAddDto.DriversLicense.Number,
-                                                        Enum.Parse<State>(personAddDto.DriversLicense.State),
+                                                        personAddDto.DriversLicense.State,
                                                         dateTimeRange).Value;
 
                 person.SetDriversLicense(driversLicense);
