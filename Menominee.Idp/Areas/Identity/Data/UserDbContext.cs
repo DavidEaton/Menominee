@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using SharedKernel.Entities;
 using SharedKernel.Enums;
 using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Menominee.Idp.Data.Contexts
 {
@@ -19,22 +22,44 @@ namespace Menominee.Idp.Data.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+
             modelBuilder.Entity<Tenant>()
                 .HasAlternateKey(tenant => tenant.Name)
                 .HasName("AlternateKey_Name");
 
             modelBuilder.Entity<ApplicationUser>()
-                .ToTable("AspNetUsers", "dbo");
+                .ToTable("AspNetUsers", "dbo")
+                .HasIndex(user => user.UserName)
+                .IsUnique();
 
             modelBuilder.Entity<ApplicationUser>()
+                .ToTable("AspNetUsers", "dbo")
                 .Property(user => user.ShopRole)
-                   .HasMaxLength(50)
-                   .HasConversion(
-                        stringType => stringType.ToString(),
-                        stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
+                .HasMaxLength(50)
+                .HasConversion(
+                    stringType => stringType.ToString(),
+                    stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
+
+            modelBuilder.Entity<UserClaim>()
+                .ToTable("AspNetUserClaims", "dbo")
+                .Property(claim => claim.ApplicationUserId)
+                .HasColumnName("UserId")
+                .IsRequired();
         }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var updatedConcurrencyAwareEntries = ChangeTracker.Entries()
+                                 .Where(entry => entry.State == EntityState.Modified)
+                                 .OfType<IConcurrencyAware>();
+
+            foreach (var entry in updatedConcurrencyAwareEntries)
+            {
+                entry.ConcurrencyStamp = Guid.NewGuid().ToString();
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
     }
 }

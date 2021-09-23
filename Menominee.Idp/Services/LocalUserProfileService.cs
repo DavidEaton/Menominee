@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Menominee.Idp.Services
 {
-    public class CustomProfileService : IProfileService
+    public class LocalUserProfileService : IProfileService
     {
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _claimsFactory;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CustomProfileService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
+        public LocalUserProfileService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
         {
             _userManager = userManager;
             _claimsFactory = claimsFactory;
@@ -27,17 +27,24 @@ namespace Menominee.Idp.Services
             var user = await _userManager.FindByIdAsync(sub);
             var principal = await _claimsFactory.CreateAsync(user);
             var claims = principal.Claims.ToList();
-            // Add user claims
-            if (user.Role != null)
-                claims.Add(new Claim("role", user.Role.ToString()));
 
+            // Add user claims
             if (user.TenantId != Guid.Empty)
                 claims.Add(new Claim("tenantId", user.TenantId.ToString()));
 
             if (user.TenantName != string.Empty)
                 claims.Add(new Claim("tenantName", user.TenantName));
 
+            if (user.Role != null)
+                claims.Add(new Claim("role", user.Role.ToString()));
+
             claims.Add(new Claim("ShopRole", user.ShopRole.ToString()));
+
+            //if (user.SubscriptionLevel != string.Empty)
+            //claims.Add(new Claim("subscriptionLevel", user.SubscriptionLevel.ToString()));
+
+            //if (user.SubscribedProducts != string.Empty)
+            //claims.Add(new Claim("subscribedProducts", user.SubscribedProducts.ToString()));
 
             context.IssuedClaims = claims;
         }
