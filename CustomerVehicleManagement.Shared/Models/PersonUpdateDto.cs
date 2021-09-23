@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class PersonUpdateDto
     {
-        public PersonName Name { get; set; }
+        public PersonNameUpdateDto Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
         public DriversLicenseUpdateDto DriversLicense { get; set; }
@@ -20,7 +20,11 @@ namespace CustomerVehicleManagement.Shared.Models
         {
             if (personUpdateDto != null)
             {
-                var person = new Person(personUpdateDto.Name, personUpdateDto.Gender);
+                var person = new Person(PersonName.Create(
+                                            personUpdateDto.Name.LastName,
+                                            personUpdateDto.Name.FirstName,
+                                            personUpdateDto.Name.MiddleName).Value,
+                                        personUpdateDto.Gender);
 
                 person.SetAddress(personUpdateDto?.Address);
                 person.SetBirthday(personUpdateDto?.Birthday);

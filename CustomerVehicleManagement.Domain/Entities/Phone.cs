@@ -1,6 +1,5 @@
 ﻿using SharedKernel;
 using SharedKernel.Enums;
-using SharedKernel.Utilities;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -45,9 +44,9 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             return Number.Length switch
             {
-                7  => Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2"),
+                7 => Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2"),
                 10 => Regex.Replace(Number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3"),
-                _  => Number,
+                _ => Number,
             };
         }
 

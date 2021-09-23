@@ -85,7 +85,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (organizationNameOrError.IsSuccess)
                 organization.SetName(organizationNameOrError.Value);
 
-            organization.SetAddress(organizationUpdateDto.Address);
+            if (organizationUpdateDto?.Address != null)
+                organization.SetAddress(Address.Create(organizationUpdateDto.Address.AddressLine,
+                                                                     organizationUpdateDto.Address.City,
+                                                                     organizationUpdateDto.Address.State,
+                                                                     organizationUpdateDto.Address.PostalCode).Value);
             organization.SetNote(organizationUpdateDto.Note);
 
             if (organizationUpdateDto.Phones.Count > 0)
@@ -96,7 +100,11 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             if (organizationUpdateDto.Contact != null)
             {
-                var contact = new Person(organizationUpdateDto.Contact.Name, organizationUpdateDto.Contact.Gender);
+                var contact = new Person(PersonName.Create(
+                                            organizationUpdateDto.Contact.Name.LastName,
+                                            organizationUpdateDto.Contact.Name.FirstName,
+                                            organizationUpdateDto.Contact.Name.MiddleName).Value,
+                                        organizationUpdateDto.Contact.Gender);
 
                 contact.SetAddress(organizationUpdateDto.Contact.Address);
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);

@@ -98,7 +98,13 @@ namespace CustomerVehicleManagement.Api.Customers
                     return BadRequest(organizationNameOrError.Error);
 
                 organizationFromRepository.SetName(organizationNameOrError.Value);
-                organizationFromRepository.SetAddress(customerUpdateDto.OrganizationUpdateDto.Address);
+
+                if (customerUpdateDto.OrganizationUpdateDto?.Address != null)
+                    organizationFromRepository.SetAddress(Address.Create(customerUpdateDto.OrganizationUpdateDto.Address.AddressLine,
+                                                                         customerUpdateDto.OrganizationUpdateDto.Address.City,
+                                                                         customerUpdateDto.OrganizationUpdateDto.Address.State,
+                                                                         customerUpdateDto.OrganizationUpdateDto.Address.PostalCode).Value);
+
                 organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
                 organizationFromRepository.SetContact(PersonUpdateDto.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
                 organizationFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
@@ -112,13 +118,15 @@ namespace CustomerVehicleManagement.Api.Customers
             {
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
 
-                personFromRepository.SetName(customerUpdateDto.PersonUpdateDto.Name);
+                personFromRepository.SetName(PersonName.Create(
+                                                customerUpdateDto.PersonUpdateDto.Name.LastName,
+                                                customerUpdateDto.PersonUpdateDto.Name.FirstName,
+                                                customerUpdateDto.PersonUpdateDto.Name.MiddleName).Value);
+                personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
                 personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
                 personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
                 personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
                 personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
-                personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
-                personFromRepository.SetName(customerUpdateDto.PersonUpdateDto.Name);
                 personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);

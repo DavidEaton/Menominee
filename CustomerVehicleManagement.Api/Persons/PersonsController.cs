@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -68,13 +69,16 @@ namespace CustomerVehicleManagement.Api.Persons
             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            personFromRepository.SetName(personUpdateDto.Name);
+            personFromRepository.SetName(PersonName.Create(
+                                            personUpdateDto.Name.LastName,
+                                            personUpdateDto.Name.FirstName,
+                                            personUpdateDto.Name.MiddleName).Value);
+
+            personFromRepository.SetGender(personUpdateDto.Gender);
             personFromRepository.SetAddress(personUpdateDto.Address);
             personFromRepository.SetBirthday(personUpdateDto.Birthday);
             personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto.DriversLicense));
             personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto.Emails));
-            personFromRepository.SetGender(personUpdateDto.Gender);
-            personFromRepository.SetName(personUpdateDto.Name);
             personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto.Phones));
 
             personFromRepository.SetTrackingState(TrackingState.Modified);
@@ -85,7 +89,7 @@ namespace CustomerVehicleManagement.Api.Persons
             if (await repository.SaveChangesAsync())
                 return NoContent();
 
-            return BadRequest($"Failed to update {personUpdateDto.Name.FirstMiddleLast}.");
+            return BadRequest($"Failed to update {personUpdateDto.Name.LastFirstMiddle}.");
         }
 
         // POST: api/persons/

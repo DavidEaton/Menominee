@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public static readonly string DriversLicenseDateRangeMessage = "Drivers License Expiry date cannot preceed Issued date";
 
         [JsonConstructor]
-        public DriversLicenseUpdateDto(string number, DateTime issued, DateTime expiry, string state)
+        public DriversLicenseUpdateDto(string number, DateTime issued, DateTime expiry, State state)
         {
             try
             {
@@ -40,14 +40,14 @@ namespace CustomerVehicleManagement.Shared.Models
         public string Number { get; set; }
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
-        public string State { get; set; }
+        public State State { get; set; }
 
         public static DriversLicense ConvertToEntity(DriversLicenseUpdateDto driversLicense)
         {
             return driversLicense != null
                 ? DriversLicense.Create(
                     driversLicense.Number,
-                    Enum.Parse<State>(driversLicense.State),
+                    driversLicense.State,
                     DateTimeRange.Create(driversLicense.Issued,
                     driversLicense.Expiry)
                     .Value)

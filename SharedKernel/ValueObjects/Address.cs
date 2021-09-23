@@ -1,6 +1,7 @@
 ﻿using SharedKernel.Utilities;
 using SharedKernel.Enums;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SharedKernel.ValueObjects
 {
@@ -20,7 +21,7 @@ namespace SharedKernel.ValueObjects
         public static readonly int PostalCodeMaximumLength = 32;
         public static readonly string PostalCodeUnderMinimumLengthMessage = $"Postal Code cannot be less than {PostalCodeMinimumLength} character(s) in length";
         public static readonly string PostalCodeOverMaximumLengthMessage = $"Postal Code cannot be over {PostalCodeMaximumLength} characters in length";
-        public static readonly string StateEmptyMessage = "State cannot be empty";
+        public static readonly string PostalCodeInvalidMessage = "Please enter a valid Postal Code";
 
         public string AddressLine { get; private set; }
         public string City { get; private set; }
@@ -37,6 +38,9 @@ namespace SharedKernel.ValueObjects
 
         public static Result<Address> Create(string addressLine, string city, State state, string postalCode)
         {
+            // from http://unicode.org/Public/cldr/26.0.1/
+            var usPostalCodeRegEx = @"\d{5}([ \-]\d{4})?";
+
             addressLine = (addressLine ?? string.Empty).Trim();
             city = (city ?? string.Empty).Trim();
             postalCode = (postalCode ?? string.Empty).Trim();
@@ -58,6 +62,9 @@ namespace SharedKernel.ValueObjects
 
             if (postalCode.Length > PostalCodeMaximumLength)
                 return Result.Fail<Address>(PostalCodeOverMaximumLengthMessage);
+
+            if (!Regex.Match(postalCode, usPostalCodeRegEx).Success)
+                return Result.Fail<Address>(PostalCodeInvalidMessage);
 
             return Result.Ok(new Address(addressLine, city, state, postalCode));
         }
@@ -92,7 +99,7 @@ namespace SharedKernel.ValueObjects
         {
             return AddressFull;
         }
-        
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return AddressLine;

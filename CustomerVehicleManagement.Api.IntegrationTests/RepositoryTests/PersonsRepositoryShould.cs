@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Enums;
+using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,62 +161,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var persons = await repository.GetPersonsListAsync();
 
                 persons.Count().Should().BeGreaterThan(0);
-            }
-        }
-
-        [Fact]
-        public async Task UpdatePersonAsync()
-        {
-            var options = CreateDbContextOptions();
-            Person person = Helper.CreateValidPerson();
-            Person personFromRepository;
-            long id = 0;
-
-            // Create Person and save
-            using (var context = new ApplicationDbContext(options))
-            {
-                context.Persons.Add(person);
-                context.SaveChanges();
-                id = person.Id;
-            }
-
-            // Get the saved Person, set their Birthday and save again
-            using (var context = new ApplicationDbContext(options))
-            {
-                var repository = new PersonRepository(context);
-                personFromRepository = await repository.GetPersonEntityAsync(id);
-
-                var personUpdateDto = new PersonUpdateDto
-                {
-                    Name = personFromRepository.Name,
-                    Gender = personFromRepository.Gender,
-                    Birthday = DateTime.Today.AddYears(-20)
-                };
-
-                personFromRepository.SetName(personUpdateDto.Name);
-                personFromRepository.SetAddress(personUpdateDto.Address);
-                personFromRepository.SetBirthday(personUpdateDto.Birthday);
-                personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto.DriversLicense));
-                personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto.Emails));
-                personFromRepository.SetGender(personUpdateDto.Gender);
-                personFromRepository.SetName(personUpdateDto.Name);
-                personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto.Phones));
-
-                personFromRepository.SetTrackingState(TrackingState.Modified);
-                repository.FixTrackingState();
-
-                repository.UpdatePersonAsync(personFromRepository);
-
-                await repository.SaveChangesAsync();
-            }
-
-            // Get the updated Person and Assert
-            using (var context = new ApplicationDbContext(options))
-            {
-                var repository = new PersonRepository(context);
-                personFromRepository = await repository.GetPersonEntityAsync(id);
-
-                personFromRepository.Birthday.Should().BeCloseTo(DateTime.Today.AddYears(-20), new TimeSpan(1, 0,0,0));
             }
         }
 
