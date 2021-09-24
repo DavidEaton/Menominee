@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.ValueObjects;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
@@ -8,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public Address Address { get; set; }
+        public AddressReadDto Address { get; set; }
         public PersonReadDto Contact { get; set; }
         public string Note { get; set; }
         public IReadOnlyList<PhoneReadDto> Phones { get; set; } = new List<PhoneReadDto>();
@@ -22,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
-                    Address = organization.Address,
+                    Address = AddressReadDto.ConvertToDto(organization.Address),
                     Note = organization.Note,
                     Phones = PhoneReadDto.ConvertToDto(organization.Phones),
                     Emails = EmailReadDto.ConvertToDto(organization.Emails),

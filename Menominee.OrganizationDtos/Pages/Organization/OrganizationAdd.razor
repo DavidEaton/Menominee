@@ -1,0 +1,26 @@
+﻿@page "/organization/add"
+
+<h4>Add Organization</h4>
+
+<EditForm Model="Organization"
+          OnValidSubmit="HandleValidSubmit"
+          OnInvalidSubmit="HandleInvalidSubmit">
+    <div class="form-group">
+        <div class="form-group row">
+            <label for="name">Organization Name</label>
+            <InputText id="name" class="form-control" @bind-Value="@Organization.Name" placeholder="name" />
+        </div>
+        <div class="form-group row">
+            <label for="note">Notes</label>
+            <InputText id="note" class="form-control" @bind-Value="@Organization.Note" placeholder="notes" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+    <a class="btn btn-outline-primary" @onclick="@Close">
+        Close
+    </a>
+
+</EditForm>

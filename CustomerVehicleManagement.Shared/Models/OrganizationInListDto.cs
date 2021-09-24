@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
-        public string AddressFull { get => $"{AddressLine} {City}, {State}  {PostalCode}"; }
+        public string AddressFull { get => string.IsNullOrWhiteSpace(AddressLine) ? $"{string.Empty}" : $"{AddressLine} {City}, {State} {PostalCode}"; }
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
         public string PrimaryEmail { get; set; }

@@ -1,5 +1,4 @@
-﻿using SharedKernel.ValueObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
@@ -11,6 +10,5 @@ namespace CustomerVehicleManagement.Shared.Models
         public string Note { get; set; }
         public IList<PhoneUpdateDto> Phones { get; set; } = new List<PhoneUpdateDto>();
         public IList<EmailUpdateDto> Emails { get; set; } = new List<EmailUpdateDto>();
-
     }
 }

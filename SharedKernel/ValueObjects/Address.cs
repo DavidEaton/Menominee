@@ -108,7 +108,7 @@ namespace SharedKernel.ValueObjects
             yield return PostalCode;
         }
 
-        public string AddressFull { get => $"{AddressLine} {City}, {State} {PostalCode}"; }
+        public string AddressFull { get => string.IsNullOrWhiteSpace(AddressLine) ? $"{string.Empty}" : $"{AddressLine} {City}, {State} {PostalCode}"; }
 
         #region ORM
 

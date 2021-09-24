@@ -49,16 +49,16 @@ namespace CustomerVehicleManagement.Shared.Models
                                                         : PhoneHelper.GetPrimaryPhoneType(customer?.Person),
                     PrimaryEmail = customer.EntityType == EntityType.Organization
                                                         ? EmailHelper.GetPrimaryEmail(customer?.Organization)
-                                                        : EmailHelper.GetPrimaryEmail(customer?.Person),
-                    ContactName = customer.EntityType == EntityType.Organization
-                                                        ? customer?.Organization?.Contact.Name.LastFirstMiddle
-                                                        : string.Empty,
-                    ContactPrimaryPhone = customer.EntityType == EntityType.Organization
-                                                        ? PhoneHelper.GetPrimaryPhone(customer?.Organization?.Contact)
-                                                        : string.Empty,
-                    ContactPrimaryPhoneType = customer.EntityType == EntityType.Organization
-                                                        ? PhoneHelper.GetPrimaryPhoneType(customer?.Organization?.Contact)
-                                                        : string.Empty
+                                                        : EmailHelper.GetPrimaryEmail(customer?.Person)
+                    //ContactName = customer.EntityType == EntityType.Organization
+                    //                                    ? customer?.Organization?.Contact.Name.LastFirstMiddle
+                    //                                    : string.Empty,
+                    //ContactPrimaryPhone = customer.EntityType == EntityType.Organization
+                    //                                    ? PhoneHelper.GetPrimaryPhone(customer?.Organization?.Contact)
+                    //                                    : string.Empty,
+                    //ContactPrimaryPhoneType = customer.EntityType == EntityType.Organization
+                    //                                    ? PhoneHelper.GetPrimaryPhoneType(customer?.Organization?.Contact)
+                    //                                    : string.Empty
                 };
             }
 
