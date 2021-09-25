@@ -1,25 +1,39 @@
 ﻿@page "/organization/edit/{Id:long}"
+@using Menominee.OrganizationDtos.Components
 
 <h4>Edit Organization</h4>
 
 @if (Organization != null)
 {
-<EditForm Model="Organization"
-          OnValidSubmit="HandleValidSubmit"
-          OnInvalidSubmit="HandleInvalidSubmit">
-    <div class="form-group row">
-        <label for="name">Organization Name</label>
-        <InputText id="name" class="form-control" @bind-Value="@Organization.Name" />
-    </div>
-    <div class="form-group row">
-        <label for="note">Notes</label>
-        <InputText id="note" class="form-control" @bind-Value="@Organization.Note" />
-    </div>
-    <button type="submit" class="btn btn-primary">
-        Save
-    </button>
-    <a class="btn btn-outline-primary" @onclick="@Close">
-        Close
-    </a>
-</EditForm>
+    <EditForm Model="Organization"
+              OnValidSubmit="HandleValidSubmit"
+              OnInvalidSubmit="HandleInvalidSubmit">
+
+        <div class="form-group row">
+            <label for="name">Organization Name</label>
+            <InputText id="name" class="form-control" @bind-Value="@Organization.Name" />
+        </div>
+
+        <div class="form-group row">
+            <label for="note">Notes</label>
+            <InputText id="note" class="form-control" @bind-Value="@Organization.Note" />
+        </div>
+
+        <div class="form-group row ml-1">
+            <AddressEdit Address="@Organization.Address" />
+        </div>
+
+        <div class="form-group row">
+
+            <button type="submit" class="btn btn-primary">
+                Save
+            </button>
+
+            <a class="btn btn-outline-primary" @onclick="@Close">
+                Close
+            </a>
+
+        </div>
+
+    </EditForm>
 }
