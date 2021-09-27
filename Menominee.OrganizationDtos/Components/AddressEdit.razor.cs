@@ -8,10 +8,5 @@ namespace Menominee.OrganizationDtos.Components
     {
         [Parameter]
         public AddressUpdateDto Address { get; set; }
-
-        protected void Add()
-        {
-            Console.WriteLine("Add called from AddressEdit component");
-        }
     }
 }

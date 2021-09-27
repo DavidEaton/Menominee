@@ -1,6 +1,4 @@
-﻿@if (Address != null)
-{
-    <EditForm Model="Address">
+﻿    <EditForm Model="Address">
 
         <div class="form-group row">
             <label for="address" class="small text-muted">Address</label>
@@ -28,13 +26,5 @@
         </div>
 
     </EditForm>
-}
-else
-{
-<div class="d-flex flex-row">
-    <button class="btn btn-sm btn-success mr-1" @onclick="Add">
-        <span class="oi oi-plus" title="Add Organization Address" aria-hidden="true"></span>
-    </button>
-    <span class="small ml=1">Add Address</span>
-</div>
-}
+
+

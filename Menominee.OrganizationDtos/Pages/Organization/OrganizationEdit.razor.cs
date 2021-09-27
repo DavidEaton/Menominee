@@ -19,6 +19,9 @@ namespace Menominee.OrganizationDtos.Pages.Organization
         NavigationManager NavigationManager { get; set; }
 
         protected OrganizationUpdateDto Organization { get; set; }
+
+        public AddressAddDto AddressToAdd { get; set; }
+        protected bool AddingAddress { get; set; } = false;
         public string Message { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -37,7 +40,7 @@ namespace Menominee.OrganizationDtos.Pages.Organization
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
-                    State = (readDto.Address.State),
+                    State = readDto.Address.State,
                     PostalCode = readDto.Address.PostalCode
                 };
             }
@@ -65,13 +68,25 @@ namespace Menominee.OrganizationDtos.Pages.Organization
             }
         }
 
-        protected async Task HandleValidSubmit()
+        protected async Task HandleSubmit()
         {
             Message = string.Empty;
+
+            if (AddingAddress)
+            {
+                Organization.Address = new AddressUpdateDto
+                {
+                    AddressLine = AddressToAdd.AddressLine,
+                    City = AddressToAdd.City,
+                    PostalCode = AddressToAdd.PostalCode,
+                    State = AddressToAdd.State
+                };
+            }
 
             if (FormIsValid())
             {
                 await OrganizationDataService.UpdateOrganization(Organization, Id);
+                AddingAddress = false;
                 Close();
             }
 
@@ -79,11 +94,6 @@ namespace Menominee.OrganizationDtos.Pages.Organization
             {
                 Message = "Please complete all required items";
             }
-        }
-
-        protected async Task HandleInvalidSubmit()
-        {
-            Message = "Please complete all required items";
         }
 
         public void Close()
@@ -94,10 +104,17 @@ namespace Menominee.OrganizationDtos.Pages.Organization
 
         private bool FormIsValid()
         {
+
             if (Organization.Name != null)
                 return true;
 
             return false;
+        }
+
+        public void AddAddress()
+        {
+            AddingAddress = true;
+            AddressToAdd = new AddressAddDto();
         }
 
     }

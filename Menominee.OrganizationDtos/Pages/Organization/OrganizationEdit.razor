@@ -7,8 +7,7 @@
 {
     <div class="container-fluid">
         <EditForm Model="Organization"
-                  OnValidSubmit="HandleValidSubmit"
-                  OnInvalidSubmit="HandleInvalidSubmit">
+                  OnSubmit="HandleSubmit">
 
             <div class="form-group row">
                 <label for="name" class="small text-muted">Organization Name</label>
@@ -21,9 +20,30 @@
             </div>
 
             <div class="row ml-1">
-                <div class="form-group">
-                    <AddressEdit Address="@Organization.Address" />
-                </div>
+                @if (Organization.Address != null)
+                {
+                    <div class="form-group">
+                        <AddressEdit Address="@Organization.Address" />
+                    </div>
+                }
+                else
+                {
+                    @if (!AddingAddress)
+                    {
+                        <div class="form-group row">
+                            <button class="btn btn-sm btn-success mr-1" @onclick="AddAddress">
+                                <span class="oi oi-plus" title="Add Organization Address" aria-hidden="true"></span>
+                            </button>
+                            <span class="small ml=1">Add Address</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <AddressAdd Address="@AddressToAdd" />
+                        </div>
+                    }
+                }
 
                 <div class="form-group ml-4 col-sm">
                     <EmailsEdit Emails="@Organization.Emails"></EmailsEdit>

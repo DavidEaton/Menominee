@@ -8,7 +8,7 @@ namespace Menominee.OrganizationDtos.Components
     public partial class EmailsEdit : ComponentBase
     {
         [Parameter]
-        public IEnumerable<EmailUpdateDto> Emails { get; set; }
+        public IList<EmailUpdateDto> Emails { get; set; }
         protected void Add()
         {
             Console.WriteLine("Add called from EmailsEdit component");

@@ -89,10 +89,13 @@ namespace Menominee.Client.Pages
                 var organization = new OrganizationAddDto
                 {
                     Name = Organization.Name,
-                    Address = new AddressAddDto(Organization.Address.AddressLine,
-                                                Organization.Address.City,
-                                                Organization.Address.State,
-                                                Organization.Address.PostalCode),
+                    Address = new AddressAddDto
+                    {
+                        AddressLine = Organization.Address.AddressLine,
+                        City = Organization.Address.City,
+                        State = Organization.Address.State,
+                        PostalCode = Organization.Address.PostalCode
+                    },
                     Note = Organization.Note
                 };
 

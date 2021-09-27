@@ -18,7 +18,14 @@ namespace Menominee.Client.Components
         {
             if (AddressValidators.IsValid)
             {
-                EntityAddress = new AddressAddDto(AddressValidators.AddressLine, AddressValidators.City, AddressValidators.State, AddressValidators.PostalCode);
+                EntityAddress = new AddressAddDto
+                {
+                    AddressLine = AddressValidators.AddressLine,
+                    City = AddressValidators.City,
+                    State = AddressValidators.State,
+                    PostalCode = AddressValidators.PostalCode
+                };
+
                 await CloseEventCallback.InvokeAsync(true);
                 StateHasChanged();
             }
