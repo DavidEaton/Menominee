@@ -1,24 +1,22 @@
 ﻿@if (((int)Emails.Count()) > 0)
 {
-    <div>
-        <label class="small">Emails</label>
-        <ContactableTemplate Items="Emails"
-                             TItem="EmailUpdateDto"
-                             Context="email">
-            <TableHeader>
-                <th>Address</th>
-                <th>Primary</th>
-            </TableHeader>
-            <RowTemplate>
-                <td>
-                    <InputText @bind-Value="@email.Address" />
-                </td>
-                <td>
-                    <InputCheckbox @bind-Value="email.IsPrimary" />
-                </td>
-            </RowTemplate>
-        </ContactableTemplate>
-    </div>
+    <label class="small">Emails</label>
+    <ContactableTemplate Items="Emails"
+                         TItem="EmailUpdateDto"
+                         Context="email">
+        <TableHeader>
+            <th>Address</th>
+            <th>Primary</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>
+                <InputText class="form-control" @bind-Value="@email.Address" />
+            </td>
+            <td>
+                <InputCheckbox @bind-Value="email.IsPrimary" />
+            </td>
+        </RowTemplate>
+    </ContactableTemplate>
 }
 <div class="d-flex flex-row">
     <button class="btn btn-sm btn-success mr-1" @onclick="Add">
