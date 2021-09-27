@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Menominee.OrganizationDtos.Services;
 using Microsoft.AspNetCore.Components;
+using SharedKernel.Enums;
+using System;
 using System.Threading.Tasks;
 
 namespace Menominee.OrganizationDtos.Pages.Organization
@@ -38,6 +40,28 @@ namespace Menominee.OrganizationDtos.Pages.Organization
                     State = (readDto.Address.State),
                     PostalCode = readDto.Address.PostalCode
                 };
+            }
+
+            if (readDto?.Emails.Count > 0)
+            {
+                foreach (var email in readDto.Emails)
+                {
+                    Organization.Emails.Add(new EmailUpdateDto
+                    {
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
+                    });
+                }
+            }
+
+            if (readDto?.Phones.Count > 0)
+            {
+                foreach (var phone in readDto.Phones)
+                {
+                    Organization.Phones.Add(new PhoneUpdateDto(phone.Number,
+                                                               Enum.Parse<PhoneType>(phone.PhoneType),
+                                                               phone.IsPrimary));
+                }
             }
         }
 

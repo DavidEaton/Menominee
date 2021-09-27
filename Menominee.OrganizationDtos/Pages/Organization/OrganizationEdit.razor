@@ -5,35 +5,46 @@
 
 @if (Organization != null)
 {
-    <EditForm Model="Organization"
-              OnValidSubmit="HandleValidSubmit"
-              OnInvalidSubmit="HandleInvalidSubmit">
+    <div class="container-fluid">
+        <EditForm Model="Organization"
+                  OnValidSubmit="HandleValidSubmit"
+                  OnInvalidSubmit="HandleInvalidSubmit">
 
-        <div class="form-group row">
-            <label for="name">Organization Name</label>
-            <InputText id="name" class="form-control" @bind-Value="@Organization.Name" />
-        </div>
+            <div class="form-group row">
+                <label for="name" class="small text-muted">Organization Name</label>
+                <InputText id="name" class="form-control" @bind-Value="@Organization.Name" />
+            </div>
 
-        <div class="form-group row">
-            <label for="note">Notes</label>
-            <InputText id="note" class="form-control" @bind-Value="@Organization.Note" />
-        </div>
+            <div class="form-group row">
+                <label for="note" class="small text-muted">Notes</label>
+                <InputText id="note" class="form-control" @bind-Value="@Organization.Note" />
+            </div>
 
-        <div class="form-group row ml-1">
-            <AddressEdit Address="@Organization.Address" />
-        </div>
+            <div class="row ml-1">
+                <div class="form-group">
+                    <AddressEdit Address="@Organization.Address" />
+                </div>
 
-        <div class="form-group row">
+                <div class="form-group ml-4 col-sm">
+                    <EmailsEdit Emails="@Organization.Emails"></EmailsEdit>
+                </div>
+                <div class="form-group col-sm">
+                    <PhonesEdit Phones="@Organization.Phones"></PhonesEdit>
+                </div>
+            </div>
 
-            <button type="submit" class="btn btn-primary">
-                Save
-            </button>
+            <div class="form-group row">
 
-            <a class="btn btn-outline-primary" @onclick="@Close">
-                Close
-            </a>
+                <button type="submit" class="btn btn-primary">
+                    Save
+                </button>
 
-        </div>
+                <a class="btn btn-outline-primary ml-1" @onclick="@Close">
+                    Close
+                </a>
 
-    </EditForm>
+            </div>
+
+        </EditForm>
+    </div>
 }

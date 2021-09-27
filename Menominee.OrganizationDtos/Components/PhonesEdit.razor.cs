@@ -1,17 +1,18 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Collections.Generic;
 
 namespace Menominee.OrganizationDtos.Components
 {
-    public partial class AddressEdit : ComponentBase
+    public partial class PhonesEdit : ComponentBase
     {
         [Parameter]
-        public AddressUpdateDto Address { get; set; }
-
+        public IEnumerable<PhoneUpdateDto> Phones { get; set; }
         protected void Add()
         {
-            Console.WriteLine("Add called from AddressEdit component");
+            Console.WriteLine("Add called from PhonesEdit component");
         }
+
     }
 }
