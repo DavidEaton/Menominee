@@ -117,5 +117,9 @@ namespace Menominee.OrganizationDtos.Pages.Organization
             AddressToAdd = new AddressAddDto();
         }
 
+        public void AddEmail()
+        {
+            Organization.Emails.Add(new EmailUpdateDto());
+        }
     }
 }
