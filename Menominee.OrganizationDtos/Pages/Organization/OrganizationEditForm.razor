@@ -1,0 +1,33 @@
+﻿@if (FormMode == FormMode.Add)
+{
+    <h4>Add Mode</h4>
+}
+
+@if (FormMode == FormMode.Edit)
+{
+    <h4>Edit Mode</h4>
+    <div class="container-fluid">
+        <EditForm Model="OrganizationToUpdate"
+                  OnSubmit="HandleUpdateSubmit">
+
+            <div class="form-group row">
+                <label for="name" class="small text-muted">Organization Name</label>
+                <InputText id="name" class="form-control" @bind-Value="@OrganizationToUpdate.Name" />
+            </div>
+
+            <div class="form-group row">
+                <label for="note" class="small text-muted">Notes</label>
+                <InputText id="note" class="form-control" @bind-Value="@OrganizationToUpdate.Note" />
+            </div>
+
+            <div class="form-group row">
+                <button type="submit" class="btn btn-primary">
+                    Save
+                </button>
+                <a class="btn btn-outline-primary ml-1" @onclick="() => Close(false)">
+                    Close
+                </a>
+            </div>
+        </EditForm>
+    </div>
+}

@@ -9,11 +9,11 @@
 }
 else
 {
-<div class="d-flex flex-row w-25">
-    <a class="btn btn-primary" href="organization/add">
-        <span class="oi oi-plus" title="Add New Organization" aria-hidden="true"></span> Add Organization
-    </a>
-</div>
+    <div class="d-flex flex-row w-25">
+        <a class="btn btn-primary" @onclick="Add">
+            <span class="oi oi-plus" title="Add New Organization" aria-hidden="true"></span> Add Organization
+        </a>
+    </div>
 
     <div class="d-flex flex-row">
         <div class="d-flex flex-row">
@@ -44,4 +44,12 @@ else
             </table>
         </div>
     </div>
+}
+@if (FormMode == FormMode.Add && OrganizationsList == null)
+{
+    <OrganizationEditForm FormMode="FormMode.Add" />
+}
+@if (FormMode == FormMode.Edit && OrganizationsList == null)
+{
+    <OrganizationEditForm OnEditCompleted="EditCompletedAsync" FormMode="FormMode.Edit" Id="Id"/>
 }
