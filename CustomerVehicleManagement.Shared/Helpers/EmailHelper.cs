@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using System;
 using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Helpers
@@ -10,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
             if (entity == null)
                 return string.Empty;
 
-            return entity.Emails.Count > 0 ? entity.Emails.FirstOrDefault(email => email.IsPrimary == true).Address : string.Empty;
+            return entity.Emails.Count > 0 ? entity.Emails.FirstOrDefault(email => email?.IsPrimary == true)?.Address : string.Empty;
         }
 
         public static string GetOrdinalEmail(Contactable entity, int position)
@@ -18,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
             if (entity == null)
                 return string.Empty;
 
-            return entity.Emails.Count > 0 ? entity.Emails[position].ToString() : string.Empty;
+            return entity.Emails.Count > 0 ? entity.Emails[position]?.ToString() : string.Empty;
         }
     }
 }

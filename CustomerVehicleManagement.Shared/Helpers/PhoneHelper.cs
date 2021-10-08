@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
             if (entity == null)
                 return string.Empty;
 
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).ToString() : string.Empty;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone?.IsPrimary == true)?.ToString() : string.Empty;
         }
 
         public static string GetPrimaryPhoneType(Contactable entity)
@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
             if (entity == null)
                 return string.Empty;
 
-            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone.IsPrimary == true).PhoneType.ToString() : string.Empty;
+            return entity.Phones.Count > 0 ? entity.Phones.FirstOrDefault(phone => phone?.IsPrimary == true)?.PhoneType.ToString() : string.Empty;
         }
 
         public static string GetOrdinalPhone(Person person, int position)
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
             if (person == null)
                 return string.Empty;
 
-            return person?.Phones.Count > 0 ? person?.Phones[position].PhoneType.ToString() : string.Empty;
+            return person?.Phones.Count > 0 ? person?.Phones[position]?.PhoneType.ToString() : string.Empty;
         }
     }
 }
