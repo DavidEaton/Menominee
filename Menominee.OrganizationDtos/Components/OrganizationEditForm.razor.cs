@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using SharedKernel.Enums;
 using System.Threading.Tasks;
 
-namespace Menominee.OrganizationDtos.Pages.Organization
+namespace Menominee.OrganizationDtos.Components
 {
     public partial class OrganizationEditForm : ComponentBase
     {
@@ -55,7 +55,7 @@ namespace Menominee.OrganizationDtos.Pages.Organization
             if (OrganizationToUpdate.Name != null && !string.IsNullOrWhiteSpace(OrganizationToUpdate.Name))
                 await OrganizationDataService.UpdateOrganization(OrganizationToUpdate, Id);
 
-             Close(true);
+            Close(true);
         }
 
         public void Close(bool saved)
@@ -64,4 +64,5 @@ namespace Menominee.OrganizationDtos.Pages.Organization
             OnEditCompleted.InvokeAsync(saved);
         }
     }
+
 }
