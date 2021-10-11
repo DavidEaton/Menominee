@@ -1,0 +1,75 @@
+﻿@if (FormMode == FormMode.Add)
+{
+    @if (((int)PhonesToAdd?.Count()) > 0)
+    {
+        <label>Phones</label>
+        <ContactableTemplate Items="PhonesToAdd"
+                             TItem="PhoneCreateDto"
+                             Context="phone">
+            <TableHeader>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Primary</th>
+            </TableHeader>
+            <RowTemplate>
+                <td>
+                    <InputText class="field" @bind-Value="@phone.Number" />
+                </td>
+                <td>
+                    <InputSelect class="ui dropdown" @bind-Value="@phone.PhoneType">
+                        @foreach (var type in Enum.GetValues(typeof(PhoneType)))
+                                {
+                            <option value="@type">@type</option>
+                                }
+                    </InputSelect>
+                </td>
+                <td>
+                    <InputCheckbox @bind-Value="phone.IsPrimary" />
+                </td>
+            </RowTemplate>
+        </ContactableTemplate>
+    }
+    <div class="field">
+        <button type="button" class="ui green basic button" @onclick='() => PhonesToAdd.Add(new PhoneCreateDto())'>
+            Add Phone
+        </button>
+    </div>
+}
+
+@if (FormMode == FormMode.Edit)
+{
+    @if (((int)PhonesToUpdate?.Count()) > 0)
+    {
+        <label>Phones</label>
+        <ContactableTemplate Items="PhonesToUpdate"
+                             TItem="PhoneUpdateDto"
+                             Context="phone">
+            <TableHeader>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Primary</th>
+            </TableHeader>
+            <RowTemplate>
+                <td>
+                    <InputText class="field" @bind-Value="@phone.Number" />
+                </td>
+                <td>
+                    <InputSelect class="ui dropdown" @bind-Value="@phone.PhoneType">
+                        @foreach (var type in Enum.GetValues(typeof(PhoneType)))
+                                {
+                            <option value="@type">@type</option>
+                                }
+                    </InputSelect>
+                </td>
+                <td>
+                    <InputCheckbox @bind-Value="phone.IsPrimary" />
+                </td>
+            </RowTemplate>
+        </ContactableTemplate>
+    }
+    <div class="field">
+        <button type="button" class="ui green basic button" @onclick='() => PhonesToUpdate.Add(new PhoneUpdateDto())'>
+            Add Phone
+        </button>
+    </div>
+}

@@ -1,0 +1,17 @@
+﻿@typeparam TItem
+
+<table class="ui small table">
+    <thead>
+        <tr class="">
+            @TableHeader
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            <tr @key="item">
+                @RowTemplate(item)
+            </tr>
+        }
+    </tbody>
+</table>

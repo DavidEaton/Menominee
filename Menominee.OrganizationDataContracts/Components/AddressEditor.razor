@@ -1,0 +1,26 @@
+﻿@typeparam TItem
+
+<div class="field">
+    <label for="address">Address</label>
+    <InputText class="ui input" id="address" @bind-Value="@AddressLine" placeholder="address"></InputText>
+</div>
+
+<div class="field">
+    <label for="city">City</label>
+    <InputText class="ui input" id="city" @bind-Value="@City" placeholder="city"></InputText>
+</div>
+
+<div class="field">
+    <label for="state">State</label>
+    <InputSelect id="state" class="ui dropdown" @bind-Value="@State">
+        @foreach (var state in Enum.GetValues(typeof(State)))
+        {
+            <option value="@state">@state</option>
+        }
+    </InputSelect>
+</div>
+
+<div class="field">
+    <label for="postalCode">Postal Code</label>
+    <InputText class="ui input" id="postalCode" @bind-Value="@PostalCode" placeholder="postal code"></InputText>
+</div>

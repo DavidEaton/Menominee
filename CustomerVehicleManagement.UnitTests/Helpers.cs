@@ -39,12 +39,14 @@ namespace CustomerVehicleManagement.UnitTests
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneCreateDto(number1, phoneType1, isPrimary1);
+            var phone1 = new PhoneCreateDto
+            { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneCreateDto(number2, phoneType2, isPrimary2);
+            var phone2 = new PhoneCreateDto
+            { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
             phones.Add(phone2);
@@ -79,12 +81,14 @@ namespace CustomerVehicleManagement.UnitTests
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneCreateDto(number1, phoneType1, isPrimary1);
+            var phone1 = new PhoneCreateDto
+            { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneCreateDto(number2, phoneType2, isPrimary2);
+            var phone2 = new PhoneCreateDto
+            { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
             phones.Add(phone2);
@@ -105,7 +109,8 @@ namespace CustomerVehicleManagement.UnitTests
             var number = "(555) 987-6543";
             var phoneType = PhoneType.Mobile;
             var isPrimary = true;
-            return new PhoneCreateDto(number, phoneType, isPrimary);
+            return new PhoneCreateDto
+            { Number = number, PhoneType = phoneType, IsPrimary = isPrimary };
         }
 
         public static IList<Phone> CreateInValidPhones()
@@ -152,12 +157,12 @@ namespace CustomerVehicleManagement.UnitTests
             var address = "e@mail.com";
             var isPrimary = true;
 
-            emails.Add(new EmailCreateDto(address, isPrimary));
+            emails.Add(new EmailCreateDto { Address = address, IsPrimary = isPrimary });
 
             address = "i@pod.com";
             isPrimary = false;
 
-            emails.Add(new EmailCreateDto(address, isPrimary));
+            emails.Add(new EmailCreateDto { Address = address, IsPrimary = isPrimary });
 
             return emails;
         }
@@ -175,7 +180,7 @@ namespace CustomerVehicleManagement.UnitTests
             var address = "e@mail.com";
             var isPrimary = true;
 
-            return new EmailCreateDto(address, isPrimary);
+            return new EmailCreateDto { Address = address, IsPrimary = isPrimary };
         }
 
         public static string LoremIpsum(int characters)

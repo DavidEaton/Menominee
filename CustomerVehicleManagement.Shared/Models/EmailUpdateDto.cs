@@ -5,8 +5,8 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class EmailUpdateDto
     {
-        public string Address { get; set; }
-        public bool IsPrimary { get; set; }
+        public string Address { get; set; } = string.Empty;
+        public bool IsPrimary { get; set; } = false;
 
         public static IList<Email> ConvertToEntities(IList<EmailUpdateDto> emails)
         {

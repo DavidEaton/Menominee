@@ -1,0 +1,56 @@
+﻿@if (FormMode == FormMode.Add)
+{
+    @if (((int)EmailsToAdd.Count()) > 0)
+    {
+        <label>Emails</label>
+        <ContactableTemplate Items="EmailsToAdd"
+                             TItem="EmailCreateDto"
+                             Context="email">
+            <TableHeader>
+                <th>Address</th>
+                <th>Primary</th>
+            </TableHeader>
+            <RowTemplate>
+                <td>
+                    <InputText class="form-control" @bind-Value="@email.Address" />
+                </td>
+                <td>
+                    <InputCheckbox @bind-Value="email.IsPrimary" />
+                </td>
+            </RowTemplate>
+        </ContactableTemplate>
+    }
+    <div class="field">
+        <button type="button" class="ui green basic button" @onclick='() => EmailsToAdd.Add(new EmailCreateDto())'>
+            Add Email
+        </button>
+    </div>
+}
+@if (FormMode == FormMode.Edit)
+{
+    @if (((int)EmailsToUpdate.Count()) > 0)
+    {
+        <label>Emails</label>
+        <ContactableTemplate Items="EmailsToUpdate"
+                             TItem="EmailUpdateDto"
+                             Context="email">
+            <TableHeader>
+                <th>Address</th>
+                <th>Primary</th>
+            </TableHeader>
+            <RowTemplate>
+                <td>
+                    <InputText class="form-control" @bind-Value="@email.Address" />
+                </td>
+                <td>
+                    <InputCheckbox @bind-Value="email.IsPrimary" />
+                </td>
+            </RowTemplate>
+        </ContactableTemplate>
+    }
+    <div class="field">
+        <button type="button" class="ui green basic button" @onclick='() => EmailsToUpdate.Add(new EmailUpdateDto())'>
+            Add Email
+        </button>
+    </div>
+}

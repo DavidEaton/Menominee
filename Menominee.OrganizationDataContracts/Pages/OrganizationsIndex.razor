@@ -1,0 +1,126 @@
+﻿@page "/organizations"
+
+<div class="ui container">
+    <div class="ui medium header">Organizations</div>
+
+    @if (OrganizationsList == null)
+    {
+        @if (!EditingOrganization && !AddingOrganization)
+        {
+            <p><em>Loading...</em></p>
+        }
+    }
+    @if (!EditingOrganization && !AddingOrganization && OrganizationsList != null)
+    {
+        <a class="ui primary button" @onclick="Add">
+            <span class="oi oi-plus" title="Add New Organization" aria-hidden="true"></span> Add Organization
+        </a>
+
+        <table class="ui celled table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Primary Phone</th>
+                    <th>Type</th>
+                    <th>Primary Email</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var organization in OrganizationsList)
+                {
+                    <OrganizationsIndexRow @key="organization" Organization="organization" OnEdit="EditAsync"></OrganizationsIndexRow>
+                }
+            </tbody>
+        </table>
+
+    }
+
+    @if (AddingOrganization && OrganizationToAdd != null)
+    {
+        <EditForm class="ui form"
+                  Model="@OrganizationToAdd"
+                  OnSubmit="HandleAddSubmit">
+            <OrganizationEditor TItem="OrganizationAddDto"
+                                Item="@OrganizationToAdd"
+                                NameProperty="Name"
+                                NoteProperty="Note" />
+
+            <div class="ui stackable three column grid">
+                <div class="column">
+                    @if (OrganizationToAdd?.Address != null)
+                    {
+                        <AddressEditor TItem="AddressAddDto"
+                                       Item="@OrganizationToAdd?.Address"
+                                       AddressLineProperty="AddressLine"
+                                       CityProperty="City"
+                                       StateProperty="State"
+                                       PostalCodeProperty="PostalCode" />
+                    }
+                    else
+                    {
+                        <div class="field">
+                            <button type="button" @onclick="() => OrganizationToAdd.Address = new()" class="ui green basic button">
+                                Add Address
+                            </button>
+                        </div>
+                    }
+                </div>
+                <div class="column">
+                    <PhonesEditor PhonesToAdd="@OrganizationToAdd?.Phones" FormMode="FormMode.Add"></PhonesEditor>
+                </div>
+                <div class="column">
+                    <EmailsEditor EmailsToAdd="@OrganizationToAdd?.Emails" FormMode="FormMode.Add"></EmailsEditor>
+                </div>
+            </div>
+
+            <div class="ui divider"></div>
+            <EditFormButtons CloseEventCallback="EndAddAsync"></EditFormButtons>
+        </EditForm>
+    }
+
+    @if (EditingOrganization && OrganizationToUpdate != null)
+    {
+        <EditForm class="ui form"
+                  Model="@OrganizationToUpdate"
+                  OnSubmit="HandleUpdateSubmit">
+
+            <OrganizationEditor TItem="OrganizationUpdateDto"
+                                Item="@OrganizationToUpdate"
+                                NameProperty="Name"
+                                NoteProperty="Note" />
+
+            <div class="ui stackable three column grid">
+                <div class="column">
+                    @if (OrganizationToUpdate?.Address != null)
+                    {
+                        <AddressEditor TItem="AddressUpdateDto"
+                                       Item="@OrganizationToUpdate?.Address"
+                                       AddressLineProperty="AddressLine"
+                                       CityProperty="City"
+                                       StateProperty="State"
+                                       PostalCodeProperty="PostalCode" />
+                    }
+                    else
+                    {
+                        <div class="field">
+                            <button type="button" @onclick="() => OrganizationToUpdate.Address = new()" class="ui green basic button">
+                                Add Address
+                            </button>
+                        </div>
+                    }
+                </div>
+                <div class="column">
+                    <PhonesEditor PhonesToUpdate="@OrganizationToUpdate?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
+                </div>
+                <div class="column">
+                    <EmailsEditor EmailsToUpdate="@OrganizationToUpdate?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
+                </div>
+            </div>
+
+            <div class="ui divider"></div>
+            <EditFormButtons CloseEventCallback="EndEditAsync"></EditFormButtons>
+        </EditForm>
+    }
+</div>

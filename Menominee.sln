@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.UiExperiments", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.OrganizationDtos", "Menominee.OrganizationDtos\Menominee.OrganizationDtos.csproj", "{C4D1DF10-2299-4132-ADBE-BBE236C819EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menominee.OrganizationDataContracts", "Menominee.OrganizationDataContracts\Menominee.OrganizationDataContracts.csproj", "{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,10 +73,10 @@ Global
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4D1DF10-2299-4132-ADBE-BBE236C819EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4D1DF10-2299-4132-ADBE-BBE236C819EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4D1DF10-2299-4132-ADBE-BBE236C819EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4D1DF10-2299-4132-ADBE-BBE236C819EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
