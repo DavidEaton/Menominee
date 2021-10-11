@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.TestUtilities

@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 
 namespace CustomerVehicleManagement.Data.Configurations

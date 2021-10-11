@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Components;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.OrganizationDataContracts.Components

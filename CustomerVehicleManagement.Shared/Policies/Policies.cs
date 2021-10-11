@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared
 {

@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Menominee.UiExperiments.Pages.Customers;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.UiExperiments.Components

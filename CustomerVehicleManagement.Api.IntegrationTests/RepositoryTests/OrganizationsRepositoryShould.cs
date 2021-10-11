@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
-using SharedKernel.ValueObjects;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

@@ -3,7 +3,7 @@ using Menominee.Client.Components;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Entities;
+using Menominee.Common.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Api.Utilities
 {

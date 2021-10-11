@@ -1,9 +1,9 @@
 ﻿using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Entities;
-using SharedKernel.Enums;
+using Menominee.Common.Entities;
 using System;
+using Menominee.Common.Enums;
 
 namespace Menominee.Idp.Data.Contexts
 {

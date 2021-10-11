@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components

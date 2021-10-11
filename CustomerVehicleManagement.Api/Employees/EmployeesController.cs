@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

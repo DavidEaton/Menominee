@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using SharedKernel.ValueObjects;
+using Menominee.Common.ValueObjects;
 using System;
 using Xunit;
 

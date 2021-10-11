@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;

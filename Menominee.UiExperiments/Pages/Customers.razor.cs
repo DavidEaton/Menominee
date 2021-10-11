@@ -6,8 +6,8 @@ using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Menominee.UiExperiments.Components;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 
 namespace Menominee.UiExperiments.Pages
 {

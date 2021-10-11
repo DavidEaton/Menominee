@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Helpers;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models
 {

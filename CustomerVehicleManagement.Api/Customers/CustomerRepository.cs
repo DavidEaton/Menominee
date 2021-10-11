@@ -3,7 +3,7 @@ using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Utilities;
+using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

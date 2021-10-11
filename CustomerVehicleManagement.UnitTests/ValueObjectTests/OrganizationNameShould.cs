@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using SharedKernel.Utilities;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Utilities;
+using Menominee.Common.ValueObjects;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.ValueObjectTests

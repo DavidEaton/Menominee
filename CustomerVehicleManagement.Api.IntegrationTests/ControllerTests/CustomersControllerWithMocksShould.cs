@@ -6,7 +6,7 @@ using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;

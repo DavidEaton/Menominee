@@ -1,4 +1,4 @@
-﻿using SharedKernel;
+﻿using Menominee.Common;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {

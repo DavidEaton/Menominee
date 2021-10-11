@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

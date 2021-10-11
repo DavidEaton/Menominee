@@ -1,5 +1,5 @@
-﻿using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+﻿using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 
 namespace CustomerVehicleManagement.Shared.Models
 {

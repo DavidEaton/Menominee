@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Data", "CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj", "{5CDD6DF2-2522-4875-BA7E-664384EE46F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Common", "SharedKernel\Menominee.Common.csproj", "{906E971D-D608-433E-8C54-60D5DD65504E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api", "CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj", "{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api.IntegrationTests", "CustomerVehicleManagement.Api.IntegrationTests\CustomerVehicleManagement.Api.IntegrationTests.csproj", "{1E6810F2-097A-4214-9663-5650306E5EA2}"
@@ -27,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.OrganizationDataContracts", "Menominee.OrganizationDataContracts\Menominee.OrganizationDataContracts.csproj", "{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menominee.Common", "Menominee.Common\Menominee.Common.csproj", "{4ED3B2BF-C725-4711-8488-C678FB9AF910}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +41,6 @@ Global
 		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{906E971D-D608-433E-8C54-60D5DD65504E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{906E971D-D608-433E-8C54-60D5DD65504E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{906E971D-D608-433E-8C54-60D5DD65504E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{906E971D-D608-433E-8C54-60D5DD65504E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,6 +73,10 @@ Global
 		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ED3B2BF-C725-4711-8488-C678FB9AF910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ED3B2BF-C725-4711-8488-C678FB9AF910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ED3B2BF-C725-4711-8488-C678FB9AF910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ED3B2BF-C725-4711-8488-C678FB9AF910}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using SharedKernel.Enums;
-using SharedKernel.Utilities;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
+using Menominee.Common.ValueObjects;
 using System;
 
 namespace CustomerVehicleManagement.Domain.Entities

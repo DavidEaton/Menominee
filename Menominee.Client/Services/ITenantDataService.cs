@@ -1,4 +1,4 @@
-﻿using SharedKernel.Entities;
+﻿using Menominee.Common.Entities;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Services

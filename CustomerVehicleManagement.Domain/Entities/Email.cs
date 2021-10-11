@@ -1,5 +1,5 @@
-﻿using SharedKernel;
-using SharedKernel.Utilities;
+﻿using Menominee.Common;
+using Menominee.Common.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 

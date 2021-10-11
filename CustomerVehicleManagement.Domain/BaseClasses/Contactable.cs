@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
-using SharedKernel;
-using SharedKernel.Utilities;
-using SharedKernel.ValueObjects;
+using Menominee.Common;
+using Menominee.Common.Utilities;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

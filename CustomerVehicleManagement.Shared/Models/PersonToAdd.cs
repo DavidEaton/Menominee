@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models
                     personAddDto.Gender);
 
                 if (personAddDto?.Address != null)
-                    person.SetAddress(SharedKernel.ValueObjects.Address.Create(
+                    person.SetAddress(Menominee.Common.ValueObjects.Address.Create(
                         personAddDto.Address.AddressLine,
                         personAddDto.Address.City,
                         personAddDto.Address.State,
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Shared.Models
                                                                     personAddDto.DriversLicense.Expiry)
                                                                .Value;
 
-                    DriversLicense driversLicense = SharedKernel.ValueObjects.DriversLicense.Create(
+                    DriversLicense driversLicense = Menominee.Common.ValueObjects.DriversLicense.Create(
                                                                     personAddDto.DriversLicense.Number,
                                                                     personAddDto.DriversLicense.State,
                                                                     dateTimeRange)

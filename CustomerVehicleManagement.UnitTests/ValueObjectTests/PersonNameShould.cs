@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
-using SharedKernel.ValueObjects;
+using Menominee.Common.ValueObjects;
 using System;
 using Xunit;
 

@@ -1,12 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
+using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using SharedKernel;
 using System;
 using System.Linq;
 

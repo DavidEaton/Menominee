@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Data.Configurations;
 using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel;
+using Menominee.Common;
 
 namespace CustomerVehicleManagement.Data
 {

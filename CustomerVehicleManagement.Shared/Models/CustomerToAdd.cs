@@ -1,4 +1,4 @@
-﻿using SharedKernel.Enums;
+﻿using Menominee.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 

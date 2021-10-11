@@ -2,7 +2,7 @@
 using Menominee.OrganizationDataContracts.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

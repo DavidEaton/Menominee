@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
-    <ProjectReference Include="..\SharedKernel\Menominee.Common.csproj" />
   </ItemGroup>
 
 </Project>

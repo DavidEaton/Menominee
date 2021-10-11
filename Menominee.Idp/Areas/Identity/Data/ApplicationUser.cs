@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 

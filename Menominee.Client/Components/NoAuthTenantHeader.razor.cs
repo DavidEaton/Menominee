@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using SharedKernel.Entities;
+using Menominee.Common.Entities;
 using System;
 using System.Threading.Tasks;
 

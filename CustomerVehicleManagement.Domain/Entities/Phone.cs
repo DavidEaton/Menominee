@@ -1,5 +1,5 @@
-﻿using SharedKernel;
-using SharedKernel.Enums;
+﻿using Menominee.Common;
+using Menominee.Common.Enums;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;

@@ -190,7 +190,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PersonId");
 
-                    b.OwnsOne("SharedKernel.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
                         {
                             b1.Property<long>("CustomerId")
                                 .ValueGeneratedOnAdd()
@@ -241,7 +241,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("OrganizationId")
                                 .ValueGeneratedOnAdd()
@@ -277,7 +277,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasForeignKey("OrganizationId");
                         });
 
-                    b.OwnsOne("SharedKernel.ValueObjects.OrganizationName", "Name", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.OrganizationName", "Name", b1 =>
                         {
                             b1.Property<long>("OrganizationId")
                                 .ValueGeneratedOnAdd()
@@ -306,7 +306,7 @@ namespace CustomerVehicleManagement.Data.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
                 {
-                    b.OwnsOne("SharedKernel.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()
@@ -342,7 +342,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                                 .HasForeignKey("PersonId");
                         });
 
-                    b.OwnsOne("SharedKernel.ValueObjects.DriversLicense", "DriversLicense", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()
@@ -367,7 +367,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("PersonId");
 
-                            b1.OwnsOne("SharedKernel.ValueObjects.DateTimeRange", "ValidRange", b2 =>
+                            b1.OwnsOne("Menominee.Common.ValueObjects.DateTimeRange", "ValidRange", b2 =>
                                 {
                                     b2.Property<long>("DriversLicensePersonId")
                                         .ValueGeneratedOnAdd()
@@ -393,7 +393,7 @@ namespace CustomerVehicleManagement.Data.Migrations
                             b1.Navigation("ValidRange");
                         });
 
-                    b.OwnsOne("SharedKernel.ValueObjects.PersonName", "Name", b1 =>
+                    b.OwnsOne("Menominee.Common.ValueObjects.PersonName", "Name", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .ValueGeneratedOnAdd()

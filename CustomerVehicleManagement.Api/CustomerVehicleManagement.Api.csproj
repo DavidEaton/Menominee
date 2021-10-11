@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
+    <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
     <ProjectReference Include="..\Menominee.Idp\Menominee.Idp.csproj" />
   </ItemGroup>
 

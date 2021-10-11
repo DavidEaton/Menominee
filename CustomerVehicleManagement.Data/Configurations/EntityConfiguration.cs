@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedKernel;
+using Menominee.Common;
 
 namespace CustomerVehicleManagement.Data.Configurations
 {

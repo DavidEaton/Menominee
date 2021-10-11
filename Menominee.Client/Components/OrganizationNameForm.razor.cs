@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using SharedKernel.ValueObjects;
+using Menominee.Common.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 

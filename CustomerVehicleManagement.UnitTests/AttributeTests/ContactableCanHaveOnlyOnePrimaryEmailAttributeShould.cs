@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Api.ValidationAttributes;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 

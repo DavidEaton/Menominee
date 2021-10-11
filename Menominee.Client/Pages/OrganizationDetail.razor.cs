@@ -2,7 +2,7 @@
 using Menominee.Client.Components;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 using Xunit;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using SharedKernel.Enums;
+using Menominee.Common.Enums;
 using System;
 
 namespace Menominee.OrganizationDataContracts.Components

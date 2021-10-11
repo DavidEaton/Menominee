@@ -1,4 +1,4 @@
-﻿using SharedKernel.Enums;
+﻿using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models
 {

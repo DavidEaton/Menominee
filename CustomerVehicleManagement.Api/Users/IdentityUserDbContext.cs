@@ -1,7 +1,7 @@
 ﻿using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Entities;
+using Menominee.Common.Entities;
 
 namespace CustomerVehicleManagement.Api.Users
 {

@@ -228,7 +228,7 @@ namespace Menominee.Idp.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("SharedKernel.Entities.Tenant", b =>
+            modelBuilder.Entity("Menominee.Common.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
