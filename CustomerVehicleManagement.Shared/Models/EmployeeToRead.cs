@@ -2,7 +2,7 @@
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class EmployeeReadDto
+    public class EmployeeToRead
     {
         public long Id { get; set; }
         public string Name { get; set; }

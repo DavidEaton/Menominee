@@ -3,7 +3,7 @@ using SharedKernel.ValueObjects;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class AddressReadDto
+    public class AddressToRead
     {
         public string AddressLine { get; set; }
         public string City { get; set; }
@@ -11,11 +11,11 @@ namespace CustomerVehicleManagement.Shared.Models
         public string PostalCode { get; set; }
         public string AddressFull { get => string.IsNullOrWhiteSpace(AddressLine) ? $"{string.Empty}" : $"{AddressLine} {City}, {State} {PostalCode}"; }
 
-        public static AddressReadDto ConvertToDto(Address address)
+        public static AddressToRead ConvertToDto(Address address)
         {
             if (address != null)
             {
-                var addressReadDto = new AddressReadDto
+                var addressReadDto = new AddressToRead
                 {
                     AddressLine = address.AddressLine,
                     City = address.City,

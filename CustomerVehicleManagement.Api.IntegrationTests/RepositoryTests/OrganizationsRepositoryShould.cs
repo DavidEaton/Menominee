@@ -341,7 +341,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context);
-                OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
+                OrganizationToRead organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Address.AddressLine.Should().Be("1234 Fifth Ave.");
             };
@@ -369,7 +369,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             using (var context = new ApplicationDbContext(options))
             {
                 var repository = new OrganizationRepository(context);
-                OrganizationReadDto organizationFromRepo = await repository.GetOrganizationAsync(id);
+                OrganizationToRead organizationFromRepo = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepo.Contact.Should().NotBeNull();
             };

@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
         [Fact]
         public async Task Should_Have_Some_Persons()
         {
-            var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonInListDto>>("");
+            var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonToReadInList>>("");
 
             persons.Should().HaveCountGreaterOrEqualTo(1);
         }

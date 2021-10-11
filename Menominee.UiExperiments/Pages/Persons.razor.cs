@@ -12,7 +12,7 @@ namespace Menominee.UiExperiments.Pages
     {
         [Inject]
         public IPersonDataService PersonsDataService { get; set; }
-        public IReadOnlyList<PersonReadDto> PersonsList;
+        public IReadOnlyList<PersonToRead> PersonsList;
         public long SelectedId { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -20,7 +20,7 @@ namespace Menominee.UiExperiments.Pages
             PersonsList = (await PersonsDataService.GetAllPersons()).ToList();
         }
 
-        public void RowSelectedHandler(RowSelectEventArgs<PersonReadDto> args)
+        public void RowSelectedHandler(RowSelectEventArgs<PersonToRead> args)
         {
             SelectedId = args.Data.Id;
         }

@@ -4,16 +4,16 @@ using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class EmailReadDto
+    public class EmailToRead
     {
         public string Address { get; set; }
         public bool IsPrimary { get; set; }
 
-        public static EmailReadDto ConvertToDto(Email email)
+        public static EmailToRead ConvertToDto(Email email)
         {
             if (email != null)
             {
-                return new EmailReadDto()
+                return new EmailToRead()
                 {
                     Address = email.Address,
                     IsPrimary = email.IsPrimary
@@ -23,13 +23,13 @@ namespace CustomerVehicleManagement.Shared.Models
             return null;
         }
 
-        public static IReadOnlyList<EmailReadDto> ConvertToDto(IEnumerable<Email> emails)
+        public static IReadOnlyList<EmailToRead> ConvertToDto(IEnumerable<Email> emails)
         {
-            var emailReadDtos = new List<EmailReadDto>();
+            var emailReadDtos = new List<EmailToRead>();
 
             foreach (var email in emails)
             {
-                emailReadDtos.Add(new EmailReadDto
+                emailReadDtos.Add(new EmailToRead
                 {
                     Address = email.Address,
                     IsPrimary = email.IsPrimary

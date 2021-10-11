@@ -18,14 +18,14 @@ namespace Menominee.OrganizationDataContracts.Pages
         [Inject]
         public ILogger<OrganizationsIndex> Logger { get; set; }
 
-        public IReadOnlyList<OrganizationInListDto> OrganizationsList;
+        public IReadOnlyList<OrganizationToReadInList> OrganizationsList;
         public long Id { get; set; }
 
         private bool EditingOrganization { get; set; } = false;
         private bool AddingOrganization { get; set; } = false;
 
-        private OrganizationAddDto OrganizationToAdd;
-        private OrganizationUpdateDto OrganizationToUpdate;
+        private OrganizationToAdd OrganizationToAdd;
+        private OrganizationToEdit OrganizationToEdit;
 
         protected override async Task OnInitializedAsync()
         {
@@ -39,7 +39,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = null;
 
             var readDto = await OrganizationDataService.GetOrganization(id);
-            OrganizationToUpdate = new OrganizationUpdateDto
+            OrganizationToEdit = new OrganizationToEdit
             {
                 Name = readDto.Name,
                 Note = readDto.Note
@@ -47,7 +47,7 @@ namespace Menominee.OrganizationDataContracts.Pages
 
             if (readDto.Address != null)
             {
-                OrganizationToUpdate.Address = new AddressUpdateDto
+                OrganizationToEdit.Address = new AddressToEdit
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
@@ -60,7 +60,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var email in readDto.Emails)
                 {
-                    OrganizationToUpdate.Emails.Add(new EmailUpdateDto
+                    OrganizationToEdit.Emails.Add(new EmailToEdit
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary
@@ -72,7 +72,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var phone in readDto.Phones)
                 {
-                    OrganizationToUpdate.Phones.Add(new PhoneUpdateDto
+                    OrganizationToEdit.Phones.Add(new PhoneToEdit
                     {
                         Number = phone.Number,
                         PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
@@ -101,9 +101,9 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         protected async Task HandleUpdateSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToUpdate.Name))
+            if (!string.IsNullOrWhiteSpace(OrganizationToEdit.Name))
             {
-                await OrganizationDataService.UpdateOrganization(OrganizationToUpdate, Id);
+                await OrganizationDataService.UpdateOrganization(OrganizationToEdit, Id);
                 await EndEditAsync();
             }
         }

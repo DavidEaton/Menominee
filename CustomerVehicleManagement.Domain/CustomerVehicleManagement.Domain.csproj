@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\SharedKernel\Menominee.Common.csproj" />
   </ItemGroup>
 
 </Project>

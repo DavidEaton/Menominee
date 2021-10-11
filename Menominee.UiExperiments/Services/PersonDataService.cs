@@ -18,24 +18,24 @@ namespace Menominee.UiExperiments.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonReadDto> AddPerson(PersonAddDto newPerson)
+        public async Task<PersonToRead> AddPerson(PersonToAdd newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<PersonReadDto>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<PersonToRead>(await response.Content.ReadAsStreamAsync());
             }
 
             return null;
         }
 
-        public async Task<IReadOnlyList<PersonReadDto>> GetAllPersons()
+        public async Task<IReadOnlyList<PersonToRead>> GetAllPersons()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonReadDto>>(UriSegment);
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToRead>>(UriSegment);
             }
             catch (Exception ex)
             {
@@ -45,11 +45,11 @@ namespace Menominee.UiExperiments.Services
             return null;
         }
 
-        public async Task<PersonReadDto> GetPersonDetails(long id)
+        public async Task<PersonToRead> GetPersonDetails(long id)
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<PersonReadDto>(UriSegment + $"/{id}");
+                return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace Menominee.UiExperiments.Services
             return null;
         }
 
-        public async Task UpdatePerson(PersonUpdateDto person)
+        public async Task UpdatePerson(PersonToEdit person)
         {
             //PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
             //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");

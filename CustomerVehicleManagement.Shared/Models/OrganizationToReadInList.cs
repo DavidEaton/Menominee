@@ -3,7 +3,7 @@ using CustomerVehicleManagement.Shared.Helpers;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class OrganizationInListDto
+    public class OrganizationToReadInList
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -18,11 +18,11 @@ namespace CustomerVehicleManagement.Shared.Models
         public string Note { get; set; }
         public string ContactName { get; set; }
         public string ContactPrimaryPhone { get; set; }
-        public static OrganizationInListDto ConvertToDto(Organization organization)
+        public static OrganizationToReadInList ConvertToDto(Organization organization)
         {
             if (organization != null)
             {
-                return new OrganizationInListDto
+                return new OrganizationToReadInList
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,

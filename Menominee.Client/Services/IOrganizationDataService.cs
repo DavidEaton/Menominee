@@ -6,8 +6,8 @@ namespace Menominee.Client.Services
 {
     public interface IOrganizationDataService
     {
-        Task<IReadOnlyList<OrganizationInListDto>> GetAllOrganizations();
-        Task<OrganizationReadDto> GetOrganizationDetails(long id);
-        Task<OrganizationReadDto> AddOrganization(OrganizationAddDto Organization);
+        Task<IReadOnlyList<OrganizationToReadInList>> GetAllOrganizations();
+        Task<OrganizationToRead> GetOrganizationDetails(long id);
+        Task<OrganizationToRead> AddOrganization(OrganizationToAdd Organization);
     }
 }

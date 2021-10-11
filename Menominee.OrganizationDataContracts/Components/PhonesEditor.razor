@@ -4,7 +4,7 @@
     {
         <label>Phones</label>
         <ContactableTemplate Items="PhonesToAdd"
-                             TItem="PhoneCreateDto"
+                             TItem="PhoneToAdd"
                              Context="phone">
             <TableHeader>
                 <th>Number</th>
@@ -30,7 +30,7 @@
         </ContactableTemplate>
     }
     <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => PhonesToAdd.Add(new PhoneCreateDto())'>
+        <button type="button" class="ui green basic button" @onclick='() => PhonesToAdd.Add(new PhoneToAdd())'>
             Add Phone
         </button>
     </div>
@@ -42,7 +42,7 @@
     {
         <label>Phones</label>
         <ContactableTemplate Items="PhonesToUpdate"
-                             TItem="PhoneUpdateDto"
+                             TItem="PhoneToEdit"
                              Context="phone">
             <TableHeader>
                 <th>Number</th>
@@ -68,7 +68,7 @@
         </ContactableTemplate>
     }
     <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => PhonesToUpdate.Add(new PhoneUpdateDto())'>
+        <button type="button" class="ui green basic button" @onclick='() => PhonesToUpdate.Add(new PhoneToEdit())'>
             Add Phone
         </button>
     </div>

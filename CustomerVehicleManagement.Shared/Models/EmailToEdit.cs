@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class EmailUpdateDto
+    public class EmailToEdit
     {
         public string Address { get; set; } = string.Empty;
         public bool IsPrimary { get; set; } = false;
 
-        public static IList<Email> ConvertToEntities(IList<EmailUpdateDto> emails)
+        public static IList<Email> ConvertToEntities(IList<EmailToEdit> emails)
         {
             var emailEntities = new List<Email>();
 

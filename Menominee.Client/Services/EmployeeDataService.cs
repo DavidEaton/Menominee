@@ -16,11 +16,11 @@ namespace Menominee.Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<IReadOnlyList<EmployeeReadDto>> GetAllEmployees()
+        public async Task<IReadOnlyList<EmployeeToRead>> GetAllEmployees()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<EmployeeReadDto>>($"{UriSegment}");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<EmployeeToRead>>($"{UriSegment}");
             }
             catch (Exception ex)
             {

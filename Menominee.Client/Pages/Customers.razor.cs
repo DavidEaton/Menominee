@@ -16,7 +16,7 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Customers> Logger { get; set; }
 
-        public IReadOnlyList<CustomerInListDto> CustomersList;
+        public IReadOnlyList<CustomerToReadInList> CustomersList;
         public long SelectedId { get; set; }
 
         //protected AddCustomerDialog AddCustomerDialog { get; set; }

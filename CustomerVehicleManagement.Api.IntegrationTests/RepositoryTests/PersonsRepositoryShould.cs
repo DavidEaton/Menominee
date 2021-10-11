@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new PersonRepository(context);
 
                 // Act
-                var persons = (List<PersonReadDto>)await repository.GetPersonsAsync();
+                var persons = (List<PersonToRead>)await repository.GetPersonsAsync();
 
                 // Assert
                 persons.Count.Should().BeGreaterThan(0);

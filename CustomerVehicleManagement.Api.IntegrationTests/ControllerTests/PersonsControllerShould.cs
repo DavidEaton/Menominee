@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             var result = await controller.GetPersonAsync(1);
 
             result.Result.Should().BeOfType<NotFoundResult>();
-            result.Should().BeOfType<ActionResult<PersonReadDto>>();
+            result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonAsync(0);
 
-            result.Should().BeOfType<ActionResult<PersonReadDto>>();
+            result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonsAsync();
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonReadDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonToRead>>>();
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var result = await controller.GetPersonsListAsync();
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonInListDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<PersonToReadInList>>>();
         }
 
         #endregion Get
@@ -64,18 +64,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         [Fact]
         public async Task Return_ActionResult_Of_PersonReadDto_On_CreatePersonAsync()
         {
-            var person = new PersonAddDto(new PersonNameAddDto { LastName = "Doe", FirstName = "Jane" }, Gender.Female);
+            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
-            result.Should().BeOfType<ActionResult<PersonReadDto>>();
+            result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
 
         [Fact]
         public async Task Return_BadRequestObjectResult_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonAddDto(new PersonNameAddDto { LastName = "Doe", FirstName = "Jane" }, Gender.Female);
+            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonAddDto(new PersonNameAddDto { LastName = "Doe", FirstName = "Jane" }, Gender.Female);
+            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
                           .Returns(Task.CompletedTask)
                           .Callback<Person>(person => savedPerson = person);
 
-            var person = new PersonAddDto(new PersonNameAddDto { LastName = "Doe", FirstName = "Jane" }, Gender.Female);
+            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", MiddleName = "J.", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -120,10 +120,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             moqRepository.Setup(repository => repository.AddPersonAsync(It.IsAny<Person>()));
 
-            var person = new PersonAddDto(new PersonNameAddDto { LastName = "Doe", FirstName = "Jane" }, Gender.Female);
+            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
             var result = await controller.CreatePersonAsync(person);
 
-            result.Should().BeOfType<ActionResult<PersonReadDto>>();
+            result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
 
         #endregion Post
@@ -134,7 +134,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Return_NotFoundObjectResult_On_UpdatePersonAsync_With_Invalid_Id()
         {
             var invaldId = 0;
-            var person = new PersonUpdateDto
+            var person = new PersonToEdit
             {
                 Gender = Gender.Female
             };

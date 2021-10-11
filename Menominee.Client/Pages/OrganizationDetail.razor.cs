@@ -19,8 +19,8 @@ namespace Menominee.Client.Pages
         public long Id { get; set; }
         protected OrganizationNameForm OrganizationNameForm { get; set; }
         protected AddressForm AddressForm { get; set; }
-        public OrganizationUpdateDto OrganizationUpdateDto { get; set; } = new();
-        public OrganizationReadDto Organization { get; set; } = new();
+        public OrganizationToEdit OrganizationUpdateDto { get; set; } = new();
+        public OrganizationToRead Organization { get; set; } = new();
 
         // Screen state
         protected FormMode FormMode = FormMode.Read;
@@ -71,25 +71,25 @@ namespace Menominee.Client.Pages
 
             if (Organization.Id == 0) // new Organization
             {
-                var phones = (IList<PhoneCreateDto>)Organization.Phones
+                var phones = (IList<PhoneToAdd>)Organization.Phones
                     .Select(phone =>
-                            new PhoneCreateDto {
+                            new PhoneToAdd {
                                 Number = phone.Number,
                                 PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
                                 IsPrimary = phone.IsPrimary
                             });
 
-                var emails = (IList<EmailCreateDto>)Organization.Emails
+                var emails = (IList<EmailToAdd>)Organization.Emails
                     .Select(email =>
-                            new EmailCreateDto {
+                            new EmailToAdd {
                                 Address = email.Address,
                                 IsPrimary = email.IsPrimary
                             });
 
-                var organization = new OrganizationAddDto
+                var organization = new OrganizationToAdd
                 {
                     Name = Organization.Name,
-                    Address = new AddressAddDto
+                    Address = new AddressToAdd
                     {
                         AddressLine = Organization.Address.AddressLine,
                         City = Organization.Address.City,

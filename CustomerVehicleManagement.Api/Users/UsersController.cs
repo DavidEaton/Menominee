@@ -26,11 +26,11 @@ namespace CustomerVehicleManagement.Api.Users
         }
 
         [HttpGet]
-        public ActionResult<IReadOnlyList<UserListDto>> GetUsers()
+        public ActionResult<IReadOnlyList<UserToReadInList>> GetUsers()
         {
             var tenantId = GetTenantId();
 
-            var users = new List<UserListDto>();
+            var users = new List<UserToReadInList>();
 
             using SqlConnection connection = new(Configuration[$"IDPSettings:Connection"]);
             try
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Users
                     while (reader.Read())
                     {
                         users.Add(
-                        new UserListDto()
+                        new UserToReadInList()
                         {
                             Id = (string)reader["Id"],
                             Username = reader["Username"].ToString(),

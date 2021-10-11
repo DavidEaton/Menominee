@@ -6,6 +6,6 @@ namespace Menominee.Client.Services
 {
     public interface IEmployeeDataService
     {
-        Task<IReadOnlyList<EmployeeReadDto>> GetAllEmployees();
+        Task<IReadOnlyList<EmployeeToRead>> GetAllEmployees();
     }
 }

@@ -6,9 +6,9 @@ namespace Menominee.Client.Services
 {
     public interface ICustomerDataService
     {
-        Task<IReadOnlyList<CustomerInListDto>> GetAllCustomers();
-        Task<CustomerReadDto> GetCustomerDetails(long id);
-        Task<CustomerReadDto> AddCustomer(CustomerCreateDto person);
+        Task<IReadOnlyList<CustomerToReadInList>> GetAllCustomers();
+        Task<CustomerToRead> GetCustomerDetails(long id);
+        Task<CustomerToRead> AddCustomer(CustomerToAdd person);
         //Task UpdateCustomer(CustomerUpdateDto person);
         Task DeleteCustomer(long id);
     }

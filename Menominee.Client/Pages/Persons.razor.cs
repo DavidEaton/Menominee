@@ -18,7 +18,7 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Persons> Logger { get; set; }
 
-        public IReadOnlyList<PersonInListDto> PersonsList;
+        public IReadOnlyList<PersonToReadInList> PersonsList;
         public long SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 

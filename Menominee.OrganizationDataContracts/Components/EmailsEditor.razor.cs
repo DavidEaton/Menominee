@@ -11,10 +11,10 @@ namespace Menominee.OrganizationDataContracts.Components
         public FormMode FormMode { get; set; }
 
         [Parameter]
-        public IList<EmailCreateDto> EmailsToAdd { get; set; }
+        public IList<EmailToAdd> EmailsToAdd { get; set; }
 
         [Parameter]
-        public IList<EmailUpdateDto> EmailsToUpdate { get; set; }
+        public IList<EmailToEdit> EmailsToUpdate { get; set; }
 
     }
 }

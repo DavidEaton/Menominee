@@ -4,7 +4,7 @@
     {
         <label>Emails</label>
         <ContactableTemplate Items="EmailsToAdd"
-                             TItem="EmailCreateDto"
+                             TItem="EmailToAdd"
                              Context="email">
             <TableHeader>
                 <th>Address</th>
@@ -21,7 +21,7 @@
         </ContactableTemplate>
     }
     <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => EmailsToAdd.Add(new EmailCreateDto())'>
+        <button type="button" class="ui green basic button" @onclick='() => EmailsToAdd.Add(new EmailToAdd())'>
             Add Email
         </button>
     </div>
@@ -32,7 +32,7 @@
     {
         <label>Emails</label>
         <ContactableTemplate Items="EmailsToUpdate"
-                             TItem="EmailUpdateDto"
+                             TItem="EmailToEdit"
                              Context="email">
             <TableHeader>
                 <th>Address</th>
@@ -49,7 +49,7 @@
         </ContactableTemplate>
     }
     <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => EmailsToUpdate.Add(new EmailUpdateDto())'>
+        <button type="button" class="ui green basic button" @onclick='() => EmailsToUpdate.Add(new EmailToEdit())'>
             Add Email
         </button>
     </div>

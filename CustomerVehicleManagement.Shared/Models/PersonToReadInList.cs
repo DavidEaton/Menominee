@@ -4,7 +4,7 @@ using System;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class PersonInListDto
+    public class PersonToReadInList
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -17,11 +17,11 @@ namespace CustomerVehicleManagement.Shared.Models
         public string PrimaryPhone { get; set; }
         public string PrimaryPhoneType { get; set; }
         public string PrimaryEmail { get; set; }
-        public static PersonInListDto ConvertToDto(Person person)
+        public static PersonToReadInList ConvertToDto(Person person)
         {
             if (person != null)
             {
-                return new PersonInListDto()
+                return new PersonToReadInList()
                 {
                     AddressLine = person?.Address?.AddressLine,
                     Birthday = person?.Birthday,

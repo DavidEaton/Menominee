@@ -17,7 +17,7 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Organizations> Logger { get; set; }
 
-        public IReadOnlyList<OrganizationInListDto> OrganizationsList;
+        public IReadOnlyList<OrganizationToReadInList> OrganizationsList;
         public long SelectedId { get; set; }
 
         protected AddOrganizationDialog AddOrganizationDialog { get; set; }

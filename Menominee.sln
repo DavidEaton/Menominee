@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Data", "CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj", "{5CDD6DF2-2522-4875-BA7E-664384EE46F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "SharedKernel\SharedKernel.csproj", "{906E971D-D608-433E-8C54-60D5DD65504E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Common", "SharedKernel\Menominee.Common.csproj", "{906E971D-D608-433E-8C54-60D5DD65504E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api", "CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj", "{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}"
 EndProject
@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.UiExperiments", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menominee.OrganizationDataContracts", "Menominee.OrganizationDataContracts\Menominee.OrganizationDataContracts.csproj", "{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.OrganizationDataContracts", "Menominee.OrganizationDataContracts\Menominee.OrganizationDataContracts.csproj", "{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

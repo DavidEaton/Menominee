@@ -41,17 +41,17 @@ namespace CustomerVehicleManagement.Api.Persons
             return personFromContext;
         }
 
-        public async Task<PersonReadDto> GetPersonAsync(long id)
+        public async Task<PersonToRead> GetPersonAsync(long id)
         {
             var personFromContext = await context.Persons
                 .Include(person => person.Phones)
                 .Include(person => person.Emails)
                 .FirstOrDefaultAsync(person => person.Id == id);
 
-            return PersonReadDto.ConvertToDto(personFromContext);
+            return PersonToRead.ConvertToDto(personFromContext);
         }
 
-        public async Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync()
+        public async Task<IReadOnlyList<PersonToRead>> GetPersonsAsync()
         {
             var personsFromContext = await context.Persons
                                                   .Include(person => person.Phones)
@@ -61,11 +61,11 @@ namespace CustomerVehicleManagement.Api.Persons
 
             return personsFromContext
                 .Select(person =>
-                        PersonReadDto.ConvertToDto(person))
+                        PersonToRead.ConvertToDto(person))
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync()
+        public async Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync()
         {
             var personsFromContext = await context.Persons
                                                   .Include(person => person.Phones)
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
             return personsFromContext
                 .Select(person =>
-                        PersonInListDto.ConvertToDto(person))
+                        PersonToReadInList.ConvertToDto(person))
                 .ToList();
         }
 

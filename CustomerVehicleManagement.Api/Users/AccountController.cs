@@ -32,12 +32,12 @@ namespace CustomerVehicleManagement.Api.Users
         {
             var tenantId = await GetTenantId();
 
-            var users = new List<UserListDto>();
+            var users = new List<UserToReadInList>();
             var identityUsers = UserManager.Users.Where(u => u.TenantId == tenantId).ToList();
 
             foreach (var u in identityUsers)
             {
-                var user = new UserListDto
+                var user = new UserToReadInList
                 {
                     Email = u.Email,
                     //Name = u.Name,
@@ -63,10 +63,10 @@ namespace CustomerVehicleManagement.Api.Users
 
             if (users != null)
             {
-                var userLookups = new List<UserListDto>();
+                var userLookups = new List<UserToReadInList>();
                 foreach (var user in users)
                 {
-                    var userLookup = new UserListDto
+                    var userLookup = new UserToReadInList
                     {
                         Id = user.Id,
                         Username = user.UserName

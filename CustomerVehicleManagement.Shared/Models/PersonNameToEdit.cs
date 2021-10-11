@@ -1,6 +1,6 @@
 ﻿namespace CustomerVehicleManagement.Shared.Models
 {
-    public class PersonNameUpdateDto
+    public class PersonNameToEdit
     {
         public string LastName { get; set; }
         public string FirstName { get; set; }

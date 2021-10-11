@@ -19,24 +19,24 @@ namespace Menominee.Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonReadDto> AddPerson(PersonAddDto newPerson)
+        public async Task<PersonToRead> AddPerson(PersonToAdd newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<PersonReadDto>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<PersonToRead>(await response.Content.ReadAsStreamAsync());
             }
 
             return null;
         }
 
-        public async Task<IReadOnlyList<PersonInListDto>> GetAllPersons()
+        public async Task<IReadOnlyList<PersonToReadInList>> GetAllPersons()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonInListDto>>($"{UriSegment}/list");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToReadInList>>($"{UriSegment}/list");
             }
             catch (Exception ex)
             {
@@ -46,11 +46,11 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task<PersonReadDto> GetPersonDetails(long id)
+        public async Task<PersonToRead> GetPersonDetails(long id)
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<PersonReadDto>(UriSegment + $"/{id}");
+                return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
             }
             catch (Exception ex)
             {

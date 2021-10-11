@@ -2,12 +2,12 @@
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class EmailCreateDto
+    public class EmailToAdd
     {
         public string Address { get; set; } = string.Empty;
         public bool IsPrimary { get; set; } = false;
 
-        public static Email ConvertToEntity(EmailCreateDto email)
+        public static Email ConvertToEntity(EmailToAdd email)
         {
             if (email != null)
             {

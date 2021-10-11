@@ -42,7 +42,7 @@
         <EditForm class="ui form"
                   Model="@OrganizationToAdd"
                   OnSubmit="HandleAddSubmit">
-            <OrganizationEditor TItem="OrganizationAddDto"
+            <OrganizationEditor TItem="OrganizationToAdd"
                                 Item="@OrganizationToAdd"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
@@ -51,7 +51,7 @@
                 <div class="column">
                     @if (OrganizationToAdd?.Address != null)
                     {
-                        <AddressEditor TItem="AddressAddDto"
+                        <AddressEditor TItem="AddressToAdd"
                                        Item="@OrganizationToAdd?.Address"
                                        AddressLineProperty="AddressLine"
                                        CityProperty="City"
@@ -80,23 +80,23 @@
         </EditForm>
     }
 
-    @if (EditingOrganization && OrganizationToUpdate != null)
+    @if (EditingOrganization && OrganizationToEdit != null)
     {
         <EditForm class="ui form"
-                  Model="@OrganizationToUpdate"
+                  Model="@OrganizationToEdit"
                   OnSubmit="HandleUpdateSubmit">
 
-            <OrganizationEditor TItem="OrganizationUpdateDto"
-                                Item="@OrganizationToUpdate"
+            <OrganizationEditor TItem="OrganizationToEdit"
+                                Item="@OrganizationToEdit"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
 
             <div class="ui stackable three column grid">
                 <div class="column">
-                    @if (OrganizationToUpdate?.Address != null)
+                    @if (OrganizationToEdit?.Address != null)
                     {
-                        <AddressEditor TItem="AddressUpdateDto"
-                                       Item="@OrganizationToUpdate?.Address"
+                        <AddressEditor TItem="AddressToEdit"
+                                       Item="@OrganizationToEdit?.Address"
                                        AddressLineProperty="AddressLine"
                                        CityProperty="City"
                                        StateProperty="State"
@@ -105,17 +105,17 @@
                     else
                     {
                         <div class="field">
-                            <button type="button" @onclick="() => OrganizationToUpdate.Address = new()" class="ui green basic button">
+                            <button type="button" @onclick="() => OrganizationToEdit.Address = new()" class="ui green basic button">
                                 Add Address
                             </button>
                         </div>
                     }
                 </div>
                 <div class="column">
-                    <PhonesEditor PhonesToUpdate="@OrganizationToUpdate?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
+                    <PhonesEditor PhonesToUpdate="@OrganizationToEdit?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
                 </div>
                 <div class="column">
-                    <EmailsEditor EmailsToUpdate="@OrganizationToUpdate?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
+                    <EmailsEditor EmailsToUpdate="@OrganizationToEdit?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
                 </div>
             </div>
 

@@ -8,10 +8,10 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class PhonesEditor : ComponentBase
     {
         [Parameter]
-        public IList<PhoneUpdateDto> PhonesToUpdate { get; set; }
+        public IList<PhoneToEdit> PhonesToUpdate { get; set; }
 
         [Parameter]
-        public IList<PhoneCreateDto> PhonesToAdd { get; set; }
+        public IList<PhoneToAdd> PhonesToAdd { get; set; }
 
         [Parameter]
         public FormMode FormMode { get; set; }

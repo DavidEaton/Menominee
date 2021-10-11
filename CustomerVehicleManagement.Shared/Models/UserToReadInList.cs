@@ -1,8 +1,6 @@
-﻿using SharedKernel.Enums;
-
-namespace CustomerVehicleManagement.Shared.Models
+﻿namespace CustomerVehicleManagement.Shared.Models
 {
-    public class UserListDto
+    public class UserToReadInList
     {
         public string Id { get; set; }
         public string Username { get; set; }

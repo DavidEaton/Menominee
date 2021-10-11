@@ -10,7 +10,7 @@ namespace Menominee.Client.Components
     public partial class AddOrganizationDialog
     {
         private OrganizationAddProperties OrganizationAdd { get; set; }
-        private OrganizationAddDto Organization { get; set; }
+        private OrganizationToAdd Organization { get; set; }
         public string Message { get; set; }
         public EntityType EntityType { get; set; }
         protected OrganizationNameForm OrganizationNameForm { get; set; }
@@ -47,7 +47,7 @@ namespace Menominee.Client.Components
 
             if (FormIsValid())
             {
-                Organization = new OrganizationAddDto
+                Organization = new OrganizationToAdd
                 {
                     Name = OrganizationAdd.Name.Name
                 };
@@ -89,8 +89,8 @@ namespace Menominee.Client.Components
         private class OrganizationAddProperties
         {
             internal OrganizationName Name { get; set; }
-            internal AddressAddDto Address { get; set; }
-            internal virtual PersonAddDto Contact { get; set; }
+            internal AddressToAdd Address { get; set; }
+            internal virtual PersonToAdd Contact { get; set; }
             internal string Note { get; set; }
         }
     }

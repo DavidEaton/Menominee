@@ -17,7 +17,7 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Employees> Logger { get; set; }
 
-        public IReadOnlyList<EmployeeReadDto> EmployeesList;
+        public IReadOnlyList<EmployeeToRead> EmployeesList;
         public long SelectedId { get; set; }
 
         protected override async Task OnInitializedAsync()

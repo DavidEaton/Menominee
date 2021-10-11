@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         // api/organizations/list
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrganizationInListDto>>> GetOrganizationsListAsync()
+        public async Task<ActionResult<IReadOnlyList<OrganizationToReadInList>>> GetOrganizationsListAsync()
         {
             var results = await repository.GetOrganizationsListAsync();
             return Ok(results);
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrganizationReadDto>>> GetOrganizationsAsync()
+        public async Task<ActionResult<IReadOnlyList<OrganizationToRead>>> GetOrganizationsAsync()
         {
             var result = await repository.GetOrganizationsAsync();
             return Ok(result);
@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpGet("{id:long}", Name = "GetOrganizationAsync")]
-        public async Task<ActionResult<OrganizationReadDto>> GetOrganizationAsync(long id)
+        public async Task<ActionResult<OrganizationToRead>> GetOrganizationAsync(long id)
         {
             var result = await repository.GetOrganizationAsync(id);
 
@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationUpdateDto organizationUpdateDto)
+        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToEdit organizationUpdateDto)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -93,10 +93,10 @@ namespace CustomerVehicleManagement.Api.Organizations
             organization.SetNote(organizationUpdateDto.Note);
 
             if (organizationUpdateDto.Phones.Count > 0)
-                organization.SetPhones(PhoneUpdateDto.ConvertToEntities(organizationUpdateDto.Phones));
+                organization.SetPhones(PhoneToEdit.ConvertToEntities(organizationUpdateDto.Phones));
 
             if (organizationUpdateDto.Emails.Count > 0)
-                organization.SetEmails(EmailUpdateDto.ConvertToEntities(organizationUpdateDto.Emails));
+                organization.SetEmails(EmailToEdit.ConvertToEntities(organizationUpdateDto.Emails));
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -108,9 +108,9 @@ namespace CustomerVehicleManagement.Api.Organizations
 
                 contact.SetAddress(organizationUpdateDto.Contact.Address);
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
-                contact.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(organizationUpdateDto.Contact.DriversLicense));
-                contact.SetPhones(PhoneUpdateDto.ConvertToEntities(organizationUpdateDto.Contact.Phones));
-                contact.SetEmails(EmailUpdateDto.ConvertToEntities(organizationUpdateDto.Contact.Emails));
+                contact.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(organizationUpdateDto.Contact.DriversLicense));
+                contact.SetPhones(PhoneToEdit.ConvertToEntities(organizationUpdateDto.Contact.Phones));
+                contact.SetEmails(EmailToEdit.ConvertToEntities(organizationUpdateDto.Contact.Emails));
 
                 organization.SetContact(contact);
             }
@@ -147,7 +147,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationReadDto>> AddOrganizationAsync(OrganizationAddDto organizationAddDto)
+        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationAddDto)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -178,15 +178,15 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             if (organizationAddDto?.Phones != null)
                 organization.SetPhones(organizationAddDto?.Phones
-                                                          .Select(phone => PhoneCreateDto.ConvertToEntity(phone))
+                                                          .Select(phone => PhoneToAdd.ConvertToEntity(phone))
                                                           .ToList());
 
             if (organizationAddDto?.Emails != null)
                 organization.SetEmails(organizationAddDto?.Emails
-                                                          .Select(email => EmailCreateDto.ConvertToEntity(email))
+                                                          .Select(email => EmailToAdd.ConvertToEntity(email))
                                                           .ToList());
 
-            organization.SetContact(PersonAddDto.ConvertToEntity(organizationAddDto?.Contact));
+            organization.SetContact(PersonToAdd.ConvertToEntity(organizationAddDto?.Contact));
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
@@ -195,7 +195,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (await repository.SaveChangesAsync())
             {
                 // 4. Get ReadDto (with new Id) from database after save)
-                OrganizationReadDto result = repository.GetOrganizationAsync(organization.Id).Result;
+                OrganizationToRead result = repository.GetOrganizationAsync(organization.Id).Result;
                 // 5. Return to consumer
                 return CreatedAtRoute("GetOrganizationAsync",
                 new { id = result.Id },

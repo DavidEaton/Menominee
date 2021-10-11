@@ -3,30 +3,20 @@ using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class PersonAddDto
+    public class PersonToAdd
     {
-        [JsonConstructor]
-        public PersonAddDto(PersonNameAddDto name, Gender gender)
-        {
-            Name = name;
-            Gender = gender;
-        }
-
-        [Required(ErrorMessage = "Person Name is required.")]
-        public PersonNameAddDto Name { get; set; }
+        public PersonNameToAdd Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
-        public DriversLicenseCreateDto DriversLicense { get; set; }
-        public AddressAddDto Address { get; set; }
-        public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
-        public IList<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
+        public DriversLicenseToAdd DriversLicense { get; set; }
+        public AddressToAdd Address { get; set; }
+        public IList<PhoneToAdd> Phones { get; set; } = new List<PhoneToAdd>();
+        public IList<EmailToAdd> Emails { get; set; } = new List<EmailToAdd>();
 
-        public static Person ConvertToEntity(PersonAddDto personAddDto)
+        public static Person ConvertToEntity(PersonToAdd personAddDto)
         {
             if (personAddDto != null)
             {

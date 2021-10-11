@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
                Confirms that response includes content (!= null && length > 0)
             */
 
-            var persons = await httpClient.GetFromJsonAsync<List<PersonInListDto>>(UriSegment);
+            var persons = await httpClient.GetFromJsonAsync<List<PersonToReadInList>>(UriSegment);
 
             // TEST DEPENDS ON AT LEAST ONE PERSON EXISTING IN THE DATABASE
             // Modify to use test database instead of production

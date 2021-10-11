@@ -8,9 +8,9 @@ namespace CustomerVehicleManagement.Api.Organizations
     public interface IOrganizationRepository
     {
         Task AddOrganizationAsync(Organization entity);
-        Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync();
-        Task<OrganizationReadDto> GetOrganizationAsync(long id);
-        Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync();
+        Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync();
+        Task<OrganizationToRead> GetOrganizationAsync(long id);
+        Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync();
         void UpdateOrganizationAsync(Organization entity);
         Task DeleteOrganizationAsync(long id);
         void FixTrackingState();

@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.Persons
         // GET: api/persons/list
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PersonInListDto>>> GetPersonsListAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonToReadInList>>> GetPersonsListAsync()
         {
             var persons = await repository.GetPersonsListAsync();
 
@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // GET: api/persons
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PersonReadDto>>> GetPersonsAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetPersonsAsync()
         {
             var persons = await repository.GetPersonsAsync();
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // GET: api/persons/1
         [HttpGet("{id:long}", Name = "GetPersonAsync")]
-        public async Task<ActionResult<PersonReadDto>> GetPersonAsync(long id)
+        public async Task<ActionResult<PersonToRead>> GetPersonAsync(long id)
         {
             var person = await repository.GetPersonAsync(id);
 
@@ -61,7 +61,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // PUT: api/persons/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePersonAsync(long id, PersonUpdateDto personUpdateDto)
+        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToEdit personUpdateDto)
         {
             var notFoundMessage = $"Could not find Person to update";
 
@@ -77,9 +77,9 @@ namespace CustomerVehicleManagement.Api.Persons
             personFromRepository.SetGender(personUpdateDto.Gender);
             personFromRepository.SetAddress(personUpdateDto.Address);
             personFromRepository.SetBirthday(personUpdateDto.Birthday);
-            personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto.DriversLicense));
-            personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto.Emails));
-            personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto.Phones));
+            personFromRepository.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(personUpdateDto.DriversLicense));
+            personFromRepository.SetEmails(EmailToEdit.ConvertToEntities(personUpdateDto.Emails));
+            personFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(personUpdateDto.Phones));
 
             personFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
@@ -94,12 +94,12 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // POST: api/persons/
         [HttpPost]
-        public async Task<ActionResult<PersonReadDto>> CreatePersonAsync(PersonAddDto personCreateDto)
+        public async Task<ActionResult<PersonToRead>> CreatePersonAsync(PersonToAdd personCreateDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Person person = PersonAddDto.ConvertToEntity(personCreateDto);
+            Person person = PersonToAdd.ConvertToEntity(personCreateDto);
 
             await repository.AddPersonAsync(person);
 

@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
-    <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\SharedKernel\Menominee.Common.csproj" />
   </ItemGroup>
 
 </Project>

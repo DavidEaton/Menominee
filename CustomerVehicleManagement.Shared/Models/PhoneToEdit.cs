@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class PhoneUpdateDto
+    public class PhoneToEdit
     {
         public string Number { get; set; } = string.Empty;
         public PhoneType PhoneType { get; set; } = PhoneType.Other;
         public bool IsPrimary { get; set; } = false;
 
-        public static IList<Phone> ConvertToEntities(IList<PhoneUpdateDto> phones)
+        public static IList<Phone> ConvertToEntities(IList<PhoneToEdit> phones)
         {
             var phoneEntities = new List<Phone>();
 

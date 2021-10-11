@@ -6,17 +6,17 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class PersonUpdateDto
+    public class PersonToEdit
     {
-        public PersonNameUpdateDto Name { get; set; }
+        public PersonNameToEdit Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
-        public DriversLicenseUpdateDto DriversLicense { get; set; }
+        public DriversLicenseToEdit DriversLicense { get; set; }
         public Address Address { get; set; }
-        public IList<PhoneUpdateDto> Phones { get; set; } = new List<PhoneUpdateDto>();
-        public IList<EmailUpdateDto> Emails { get; set; } = new List<EmailUpdateDto>();
+        public IList<PhoneToEdit> Phones { get; set; } = new List<PhoneToEdit>();
+        public IList<EmailToEdit> Emails { get; set; } = new List<EmailToEdit>();
 
-        public static Person ConvertToEntity(PersonUpdateDto personUpdateDto)
+        public static Person ConvertToEntity(PersonToEdit personUpdateDto)
         {
             if (personUpdateDto != null)
             {
@@ -28,9 +28,9 @@ namespace CustomerVehicleManagement.Shared.Models
 
                 person.SetAddress(personUpdateDto?.Address);
                 person.SetBirthday(personUpdateDto?.Birthday);
-                person.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(personUpdateDto?.DriversLicense));
-                person.SetPhones(PhoneUpdateDto.ConvertToEntities(personUpdateDto?.Phones));
-                person.SetEmails(EmailUpdateDto.ConvertToEntities(personUpdateDto?.Emails));
+                person.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(personUpdateDto?.DriversLicense));
+                person.SetPhones(PhoneToEdit.ConvertToEntities(personUpdateDto?.Phones));
+                person.SetEmails(EmailToEdit.ConvertToEntities(personUpdateDto?.Emails));
 
                 return person;
             }

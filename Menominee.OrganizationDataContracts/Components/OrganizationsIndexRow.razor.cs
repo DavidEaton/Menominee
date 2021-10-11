@@ -7,7 +7,7 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class OrganizationsIndexRow : ComponentBase
     {
         [Parameter]
-        public OrganizationInListDto Organization { get; set; }
+        public OrganizationToReadInList Organization { get; set; }
 
         [Parameter]
         public EventCallback<long> OnEdit { get; set; }

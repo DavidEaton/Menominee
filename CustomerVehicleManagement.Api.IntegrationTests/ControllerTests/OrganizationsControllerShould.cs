@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var result = await controller.GetOrganizationAsync(1);
 
             result.Result.Should().BeOfType<NotFoundResult>();
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetOrganizationAsync(0);
 
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetOrganizationsAsync();
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationReadDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationToRead>>>();
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetOrganizationsListAsync();
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationInListDto>>>();
+            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationToReadInList>>>();
         }
 
         #endregion Get
@@ -65,21 +65,21 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_ActionResult_Of_OrganizationReadDto_On_CreateOrganizationAsync()
         {
-            var Organization = new OrganizationAddDto
+            var Organization = new OrganizationToAdd
             {
                 Name = "Doe"
             };
 
             var result = await controller.AddOrganizationAsync(Organization);
 
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
         }
 
         [Fact]
         public async Task Return_BadRequestObjectResult_On_CreateOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var organization = new OrganizationAddDto();
+            var organization = new OrganizationToAdd();
 
             var result = await controller.AddOrganizationAsync(organization);
 
@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Not_Save_On_CreateOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var Organization = new OrganizationAddDto();
+            var Organization = new OrganizationToAdd();
 
             var result = await controller.AddOrganizationAsync(Organization);
 
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                                     .Returns(Task.CompletedTask)
                                     .Callback<Organization>(organization => savedOrganization = organization);
 
-            var Organization = new OrganizationAddDto
+            var Organization = new OrganizationToAdd
             {
                 Name = "Moops"
             };
@@ -134,10 +134,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                                 organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()));
 
-            var Organization = new OrganizationAddDto();
+            var Organization = new OrganizationToAdd();
             var result = await controller.AddOrganizationAsync(Organization);
 
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
         }
 
         #endregion Post
@@ -148,7 +148,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_NotFoundObjectResult_On_UpdateOrganizationAsync_With_Invalid_Id()
         {
             var invaldId = 0;
-            var Organization = new OrganizationUpdateDto
+            var Organization = new OrganizationToEdit
             {
                 Note = "note"
             };

@@ -24,7 +24,7 @@ namespace Menominee.OrganizationDataContracts.Services
             this.toastService = toastService;
         }
 
-        public async Task<OrganizationReadDto> AddOrganization(OrganizationAddDto organization)
+        public async Task<OrganizationToRead> AddOrganization(OrganizationToAdd organization)
         {
             var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -32,18 +32,18 @@ namespace Menominee.OrganizationDataContracts.Services
             if (response.IsSuccessStatusCode)
             {
                 toastService.ShowSuccess($"{organization.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<OrganizationReadDto>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<OrganizationToRead>(await response.Content.ReadAsStreamAsync());
             }
 
             toastService.ShowError($"{organization.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 
-        public async Task<IReadOnlyList<OrganizationInListDto>> GetAllOrganizations()
+        public async Task<IReadOnlyList<OrganizationToReadInList>> GetAllOrganizations()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<OrganizationInListDto>>($"{UriSegment}/list");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<OrganizationToReadInList>>($"{UriSegment}/list");
             }
             catch (Exception ex)
             {
@@ -53,11 +53,11 @@ namespace Menominee.OrganizationDataContracts.Services
             return null;
         }
 
-        public async Task<OrganizationReadDto> GetOrganization(long id)
+        public async Task<OrganizationToRead> GetOrganization(long id)
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<OrganizationReadDto>(UriSegment + $"/{id}");
+                return await httpClient.GetFromJsonAsync<OrganizationToRead>(UriSegment + $"/{id}");
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace Menominee.OrganizationDataContracts.Services
             return null;
         }
 
-        public async Task UpdateOrganization(OrganizationUpdateDto organization, long id)
+        public async Task UpdateOrganization(OrganizationToEdit organization, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);

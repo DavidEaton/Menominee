@@ -104,13 +104,13 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return Emails;
         }
 
-        public static IReadOnlyList<EmailReadDto> CreateValidEmailReadDtos()
+        public static IReadOnlyList<EmailToRead> CreateValidEmailReadDtos()
         {
-            List<EmailReadDto> Emails = new();
+            List<EmailToRead> Emails = new();
 
             var address1 = "a@b.c";
             var isPrimary1 = true;
-            var Email1 = new EmailReadDto
+            var Email1 = new EmailToRead
             {
                 Address = address1,
                 IsPrimary = isPrimary1
@@ -118,7 +118,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
 
             var address2 = "d@e.f";
             var isPrimary2 = false;
-            var Email2 = new EmailReadDto
+            var Email2 = new EmailToRead
             {
                 Address = address2,
                 IsPrimary = isPrimary2
@@ -127,7 +127,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             Emails.Add(Email1);
             Emails.Add(Email2);
 
-            IReadOnlyList<EmailReadDto> readOnlyEmails = Emails;
+            IReadOnlyList<EmailToRead> readOnlyEmails = Emails;
             return readOnlyEmails;
         }
 

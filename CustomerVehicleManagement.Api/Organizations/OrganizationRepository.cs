@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             context.Remove(organizationFromContext);
         }
 
-        public async Task<OrganizationReadDto> GetOrganizationAsync(long id)
+        public async Task<OrganizationToRead> GetOrganizationAsync(long id)
         {
             var organizationFromContext =
                 await context.Organizations
@@ -45,10 +45,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                                  .ThenInclude(contact => contact.Emails)
                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
-            return OrganizationReadDto.ConvertToDto(organizationFromContext);
+            return OrganizationToRead.ConvertToDto(organizationFromContext);
         }
 
-        public async Task<IReadOnlyList<OrganizationReadDto>> GetOrganizationsAsync()
+        public async Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync()
         {
             IReadOnlyList<Organization> organizationsFromContext =
                 await context.Organizations
@@ -61,7 +61,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext
                 .Select(organization =>
-                        OrganizationReadDto.ConvertToDto(organization))
+                        OrganizationToRead.ConvertToDto(organization))
                 .ToList();
 
         }
@@ -81,7 +81,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             return await organizationFromContext;
         }
 
-        public async Task<IReadOnlyList<OrganizationInListDto>> GetOrganizationsListAsync()
+        public async Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync()
         {
             IReadOnlyList<Organization> organizations = await context.Organizations
                                                                      .Include(organization => organization.Phones)
@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizations.
                 Select(organization =>
-                       OrganizationInListDto.ConvertToDto(organization))
+                       OrganizationToReadInList.ConvertToDto(organization))
                 .ToList();
         }
 

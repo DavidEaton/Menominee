@@ -4,7 +4,7 @@ using SharedKernel.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class CustomerInListDto
+    public class CustomerToReadInList
     {
         public long Id { get; set; }
         public EntityType EntityType { get; set; }
@@ -20,11 +20,11 @@ namespace CustomerVehicleManagement.Shared.Models
         public string ContactPrimaryPhone { get; set; }
         public string ContactPrimaryPhoneType { get; set; }
 
-        public static CustomerInListDto ConvertToDto(Customer customer)
+        public static CustomerToReadInList ConvertToDto(Customer customer)
         {
             if (customer != null)
             {
-                return new CustomerInListDto()
+                return new CustomerToReadInList()
                 {
                     Id = customer.Id,
                     Name = customer.EntityType == EntityType.Organization

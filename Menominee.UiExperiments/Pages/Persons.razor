@@ -32,20 +32,20 @@ else
                                     RowHeight="25">
                                 <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="200"></GridFilterSettings>
                                 <GridEvents RowSelected="RowSelectedHandler"
-                                            TValue="PersonReadDto">
+                                            TValue="PersonToRead">
                                 </GridEvents>
                                 <GridColumns>
-                                    <GridColumn Field=@nameof(PersonReadDto.Name)
+                                    <GridColumn Field=@nameof(PersonToRead.Name)
                                                 HeaderText="Name"
                                                 Width="30%"
                                                 FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
                                     </GridColumn>
-                                    <GridColumn Field=@nameof(PersonReadDto.Address.AddressFull)
+                                    <GridColumn Field=@nameof(PersonToRead.Address.AddressFull)
                                                 HeaderText="Address"
                                                 Width="50%"
                                                 FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
                                     </GridColumn>
-                                    <GridColumn Field=@nameof(PersonReadDto.Phones)
+                                    <GridColumn Field=@nameof(PersonToRead.Phones)
                                                 HeaderText="Phone"
                                                 Width="20%"
                                                 FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">

@@ -12,9 +12,9 @@ namespace CustomerVehicleManagement.Api.Persons
         void FixTrackingState();
         Task<bool> PersonExistsAsync(long id);
         void UpdatePersonAsync(Person personUpdateDto);
-        Task<IReadOnlyList<PersonReadDto>> GetPersonsAsync();
-        Task<IReadOnlyList<PersonInListDto>> GetPersonsListAsync();
-        Task<PersonReadDto> GetPersonAsync(long id);
+        Task<IReadOnlyList<PersonToRead>> GetPersonsAsync();
+        Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync();
+        Task<PersonToRead> GetPersonAsync(long id);
         Task<Person> GetPersonEntityAsync(long id);
         Task<bool> SaveChangesAsync();
     }

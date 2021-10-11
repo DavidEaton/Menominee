@@ -2,7 +2,7 @@
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class AddressAddDto
+    public class AddressToEdit
     {
         public string AddressLine { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;

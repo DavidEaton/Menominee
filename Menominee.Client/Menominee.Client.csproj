@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
-    <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+    <ProjectReference Include="..\SharedKernel\Menominee.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

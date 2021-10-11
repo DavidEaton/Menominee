@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Api.Customers
         //// GET: api/customers/list
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CustomerInListDto>>> GetCustomersListAsync()
+        public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetCustomersListAsync()
         {
             var customers = await customerRepository.GetCustomersInListAsync();
 
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CustomerReadDto>>> GetCustomersAsync()
+        public async Task<ActionResult<IReadOnlyList<CustomerToRead>>> GetCustomersAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
 
@@ -59,9 +59,9 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // GET: api/Customer/1
         [HttpGet("{id:long}", Name = "GetCustomerAsync")]
-        public async Task<ActionResult<CustomerReadDto>> GetCustomerAsync(long id)
+        public async Task<ActionResult<CustomerToRead>> GetCustomerAsync(long id)
         {
-            CustomerReadDto customer = await customerRepository.GetCustomerAsync(id);
+            CustomerToRead customer = await customerRepository.GetCustomerAsync(id);
 
             if (customer == null)
                 return NotFound();
@@ -71,14 +71,14 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerUpdateDto customerUpdateDto)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToEdit customerUpdateDto)
         {
             // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
             // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
             // You can skip the parts about FluentValidation and go straight to "Validating Input the DDD Way" module.
             // Let me know if you need a code with 30-day access to Pluralsight
 
-            CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(id);
+            CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
@@ -106,9 +106,9 @@ namespace CustomerVehicleManagement.Api.Customers
                                                                          customerUpdateDto.OrganizationUpdateDto.Address.PostalCode).Value);
 
                 organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
-                organizationFromRepository.SetContact(PersonUpdateDto.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
-                organizationFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
-                organizationFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
+                organizationFromRepository.SetContact(PersonToEdit.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
+                organizationFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
+                organizationFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
 
                 organizationFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -125,9 +125,9 @@ namespace CustomerVehicleManagement.Api.Customers
                 personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
                 personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
                 personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
-                personFromRepository.SetDriversLicense(DriversLicenseUpdateDto.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
-                personFromRepository.SetEmails(EmailUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
-                personFromRepository.SetPhones(PhoneUpdateDto.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
+                personFromRepository.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
+                personFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
+                personFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -141,7 +141,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerReadDto>> CreateCustomerAsync(CustomerCreateDto customerCreateDto)
+        public async Task<ActionResult<CustomerToRead>> CreateCustomerAsync(CustomerToAdd customerCreateDto)
         {
             // VK: here, the logic should be:
             // 1. Look at customerCreateDto.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Api.Customers
             if (!await customerRepository.SaveChangesAsync())
                 return BadRequest($"Failed to add {customerCreateDto}.");
 
-            CustomerReadDto customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
+            CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
 
             if (customerFromRepository == null)
                 return BadRequest($"Failed to add {customerCreateDto}.");
@@ -172,7 +172,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customerFromRepository);
         }
 
-        private static Customer AddOrganizationCustomer(OrganizationAddDto organizationAddDto)
+        private static Customer AddOrganizationCustomer(OrganizationToAdd organizationAddDto)
         {
             var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
 
@@ -230,7 +230,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private static Customer CreatePersonCustomer(PersonAddDto personAddDto)
+        private static Customer CreatePersonCustomer(PersonToAdd personAddDto)
         {
             var person = new Person(
                 PersonName.Create(

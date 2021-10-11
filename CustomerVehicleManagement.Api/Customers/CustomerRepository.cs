@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Customers
             context.Remove(customer);
         }
 
-        public async Task<CustomerReadDto> GetCustomerAsync(long id)
+        public async Task<CustomerToRead> GetCustomerAsync(long id)
         {
             var customerFromContext = await context.Customers
                                         .Include(customer => customer.Person)
@@ -54,12 +54,12 @@ namespace CustomerVehicleManagement.Api.Customers
 
             Guard.ForNull(customerFromContext, "customerFromContext");
 
-            return CustomerReadDto.ConvertToDto(customerFromContext);
+            return CustomerToRead.ConvertToDto(customerFromContext);
         }
 
-        public async Task<IReadOnlyList<CustomerReadDto>> GetCustomersAsync()
+        public async Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync()
         {
-            var customers = new List<CustomerReadDto>();
+            var customers = new List<CustomerToRead>();
 
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
-                customers.Add(CustomerReadDto.ConvertToDto(customer));
+                customers.Add(CustomerToRead.ConvertToDto(customer));
 
             return customers;
         }
@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        public async Task<IReadOnlyList<CustomerInListDto>> GetCustomersInListAsync()
+        public async Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync()
         {
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
@@ -134,7 +134,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             return customersFromContext
                 .Select(customer =>
-                        CustomerInListDto.ConvertToDto(customer))
+                        CustomerToReadInList.ConvertToDto(customer))
                 .ToList();
         }
     }

@@ -4,10 +4,10 @@ using System.Text.Json.Serialization;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class CustomerCreateDto
+    public class CustomerToAdd
     {
         [JsonConstructor]
-        public CustomerCreateDto(PersonAddDto personCreateDto, OrganizationAddDto organizationCreateDto, CustomerType customerType)
+        public CustomerToAdd(PersonToAdd personCreateDto, OrganizationToAdd organizationCreateDto, CustomerType customerType)
         {
             if (personCreateDto != null)
             {
@@ -25,8 +25,8 @@ namespace CustomerVehicleManagement.Shared.Models
         }
 
         public EntityType EntityType { get; set; }
-        public OrganizationAddDto OrganizationCreateDto { get; set; }
-        public PersonAddDto PersonCreateDto { get; set; }
+        public OrganizationToAdd OrganizationCreateDto { get; set; }
+        public PersonToAdd PersonCreateDto { get; set; }
 
         [Required(ErrorMessage = "Customer Type is required.")]
         public CustomerType CustomerType { get; set; }

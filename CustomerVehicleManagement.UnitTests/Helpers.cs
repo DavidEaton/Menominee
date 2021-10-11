@@ -32,20 +32,20 @@ namespace CustomerVehicleManagement.UnitTests
             return organization;
         }
 
-        public static IList<PhoneCreateDto> CreatePhoneCreateDtos()
+        public static IList<PhoneToAdd> CreatePhoneCreateDtos()
         {
-            var phones = new List<PhoneCreateDto>();
+            var phones = new List<PhoneToAdd>();
 
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneCreateDto
+            var phone1 = new PhoneToAdd
             { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneCreateDto
+            var phone2 = new PhoneToAdd
             { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
@@ -74,20 +74,20 @@ namespace CustomerVehicleManagement.UnitTests
             return phones;
         }
 
-        public static IList<PhoneCreateDto> CreateValidPhoneCreateDtos()
+        public static IList<PhoneToAdd> CreateValidPhoneCreateDtos()
         {
-            var phones = new List<PhoneCreateDto>();
+            var phones = new List<PhoneToAdd>();
 
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneCreateDto
+            var phone1 = new PhoneToAdd
             { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneCreateDto
+            var phone2 = new PhoneToAdd
             { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
@@ -104,12 +104,12 @@ namespace CustomerVehicleManagement.UnitTests
             return new Phone(number, phoneType, isPrimary);
         }
 
-        public static PhoneCreateDto CreateValidPrimaryPhoneCreateDto()
+        public static PhoneToAdd CreateValidPrimaryPhoneCreateDto()
         {
             var number = "(555) 987-6543";
             var phoneType = PhoneType.Mobile;
             var isPrimary = true;
-            return new PhoneCreateDto
+            return new PhoneToAdd
             { Number = number, PhoneType = phoneType, IsPrimary = isPrimary };
         }
 
@@ -150,19 +150,19 @@ namespace CustomerVehicleManagement.UnitTests
             return emails;
         }
 
-        public static IList<EmailCreateDto> CreateValidEmailCreateDtos()
+        public static IList<EmailToAdd> CreateValidEmailCreateDtos()
         {
-            var emails = new List<EmailCreateDto>();
+            var emails = new List<EmailToAdd>();
 
             var address = "e@mail.com";
             var isPrimary = true;
 
-            emails.Add(new EmailCreateDto { Address = address, IsPrimary = isPrimary });
+            emails.Add(new EmailToAdd { Address = address, IsPrimary = isPrimary });
 
             address = "i@pod.com";
             isPrimary = false;
 
-            emails.Add(new EmailCreateDto { Address = address, IsPrimary = isPrimary });
+            emails.Add(new EmailToAdd { Address = address, IsPrimary = isPrimary });
 
             return emails;
         }
@@ -175,12 +175,12 @@ namespace CustomerVehicleManagement.UnitTests
             return new Email(address, isPrimary);
         }
 
-        public static EmailCreateDto CreateValidPrimaryEmailCreateDto()
+        public static EmailToAdd CreateValidPrimaryEmailCreateDto()
         {
             var address = "e@mail.com";
             var isPrimary = true;
 
-            return new EmailCreateDto { Address = address, IsPrimary = isPrimary };
+            return new EmailToAdd { Address = address, IsPrimary = isPrimary };
         }
 
         public static string LoremIpsum(int characters)

@@ -2,7 +2,7 @@
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class OrganizationAddDto
+    public class OrganizationToAdd
     {
         public string Name { get; set; } = string.Empty;
 
@@ -14,10 +14,10 @@ namespace CustomerVehicleManagement.Shared.Models
          * Lazy loading is harmful only in reads
          * The drawbacks of the lazy loading can be overcome by the adherence to CQRS: use lazy loading only in writes, handwrite SQL queries in reads
          */
-        public virtual PersonAddDto Contact { get; set; }
-        public AddressAddDto Address { get; set; }
+        public virtual PersonToAdd Contact { get; set; }
+        public AddressToAdd Address { get; set; }
         public string Note { get; set; } = string.Empty;
-        public IList<PhoneCreateDto> Phones { get; set; } = new List<PhoneCreateDto>();
-        public IList<EmailCreateDto> Emails { get; set; } = new List<EmailCreateDto>();
+        public IList<PhoneToAdd> Phones { get; set; } = new List<PhoneToAdd>();
+        public IList<EmailToAdd> Emails { get; set; } = new List<EmailToAdd>();
     }
 }

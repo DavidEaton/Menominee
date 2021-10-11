@@ -4,18 +4,18 @@ using System;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class DriversLicenseReadDto
+    public class DriversLicenseToRead
     {
         public string Number { get; set; }
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
         public State State { get; set; }
 
-        public static DriversLicenseReadDto ConvertToDto(DriversLicense driversLicense)
+        public static DriversLicenseToRead ConvertToDto(DriversLicense driversLicense)
         {
             if (driversLicense != null)
             {
-                var driversLicenseReadDto = new DriversLicenseReadDto
+                var driversLicenseReadDto = new DriversLicenseToRead
                 {
                     Number = driversLicense.Number,
                     Issued = driversLicense.ValidRange.Start,
@@ -26,6 +26,5 @@ namespace CustomerVehicleManagement.Shared.Models
             }
             return null;
         }
-
     }
 }
