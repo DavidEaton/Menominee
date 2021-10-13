@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Validators;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
@@ -149,6 +150,13 @@ namespace CustomerVehicleManagement.Api.Organizations
         [HttpPost]
         public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationAddDto)
         {
+            //Fluent Validation
+            var validator = new OrganizationToAddValidator();
+            var result = validator.Validate(organizationAddDto);
+
+            if (result.IsValid == false)
+                return BadRequest(result.Errors[0].ErrorMessage);
+
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
                 [ApiController] attribute. In that case, an automatic HTTP 400 response containing
@@ -195,11 +203,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (await repository.SaveChangesAsync())
             {
                 // 4. Get ReadDto (with new Id) from database after save)
-                OrganizationToRead result = repository.GetOrganizationAsync(organization.Id).Result;
+                OrganizationToRead organizationToRead = repository.GetOrganizationAsync(organization.Id).Result;
                 // 5. Return to consumer
                 return CreatedAtRoute("GetOrganizationAsync",
-                new { id = result.Id },
-                    result);
+                new { id = organizationToRead.Id },
+                    organizationToRead);
             }
 
             return BadRequest($"Failed to add {organizationAddDto.Name}.");
