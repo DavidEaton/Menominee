@@ -22,15 +22,15 @@ namespace CustomerVehicleManagement.Api.Validators
 
         private bool HaveOnlyOnePrimaryPhone(IList<PhoneToAdd> phones)
         {
-            int primaryPhoneCount = 0;
+            int primaryCount = 0;
 
             foreach (var phone in phones)
             {
                 if (phone.IsPrimary)
-                    primaryPhoneCount += 1;
+                    primaryCount += 1;
             }
 
-            if (primaryPhoneCount > 1)
+            if (primaryCount > 1)
             {
                 return false;
             }
