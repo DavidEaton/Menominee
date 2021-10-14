@@ -148,6 +148,25 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
+        public async Task Return_BadRequestObjectResult_On_AddOrganizationAsync_When_OrganizationName_Null()
+        {
+            var organization = new OrganizationToAdd
+            {
+                Name = null
+            };
+
+            var result = await controller.AddOrganizationAsync(organization);
+
+            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            badRequestObjectResult.StatusCode.Should().Be(400);
+            badRequestObjectResult.Value.ToString().Should().Contain("'Name' must not be empty.");
+            moqRepository.Verify(organizationRepository =>
+                                 organizationRepository
+                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+        }
+
+        [Fact]
         public async Task Return_BadRequestObjectResult_On_AddOrganizationAsync_When_Organization_Address_AddressLine_Empty()
         {
             var organization = new OrganizationToAdd
