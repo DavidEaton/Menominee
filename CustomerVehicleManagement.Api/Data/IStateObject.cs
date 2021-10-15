@@ -1,6 +1,6 @@
 ﻿using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Api.Interfaces
+namespace CustomerVehicleManagement.Api.Data
 {
     public interface IStateTracker
     {

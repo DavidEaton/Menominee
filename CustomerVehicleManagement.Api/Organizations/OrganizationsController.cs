@@ -8,12 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CustomerVehicleManagement.Api.Validators;
+using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrganizationsController : ControllerBase
+    public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
 

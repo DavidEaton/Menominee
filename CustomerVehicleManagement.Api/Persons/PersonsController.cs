@@ -7,12 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PersonsController : ControllerBase
+    public class PersonsController : ApplicationController
     {
         private readonly IPersonRepository repository;
 

@@ -616,7 +616,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Address' is not a valid email address.");
+            badRequestObjectResult.Value.Should().Be("Please enter a valid email address.");
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);

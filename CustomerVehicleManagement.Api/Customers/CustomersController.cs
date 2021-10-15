@@ -9,12 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : ApplicationController
     {
         private readonly ICustomerRepository customerRepository;
         private readonly IPersonRepository personRepository;

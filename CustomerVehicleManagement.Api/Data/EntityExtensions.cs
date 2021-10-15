@@ -1,8 +1,8 @@
-﻿using CustomerVehicleManagement.Api.Interfaces;
+﻿using CustomerVehicleManagement.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Api.Utilities
+namespace CustomerVehicleManagement.Api.Data
 {
     /// <summary>
     /// Moves entity state tracking back out of the object and into the context to track entity state in disconnected applications.

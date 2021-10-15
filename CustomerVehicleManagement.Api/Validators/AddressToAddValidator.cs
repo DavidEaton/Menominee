@@ -1,13 +1,12 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
-using System;
 using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class AddressValidator : AbstractValidator<AddressToAdd>
+    public class AddressToAddValidator : AbstractValidator<AddressToAdd>
     {
-        public AddressValidator()
+        public AddressToAddValidator()
         {
             RuleFor(address => address.AddressLine).NotEmpty().Length(2, 255);
             RuleFor(address => address.City).NotEmpty().Length(2, 255);

@@ -4,7 +4,9 @@ using CustomerVehicleManagement.Api.Handlers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
+using CustomerVehicleManagement.Api.Validators;
 using CustomerVehicleManagement.Shared;
+using FluentValidation.AspNetCore;
 using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -119,31 +121,41 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             services.AddHealthChecks();
+            services.AddCors();
 
             if (HostEnvironment.IsProduction())
             {
-                services.AddCors();
                 // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
-
-                services.AddControllers(mvcOptions =>
-                {
-                    mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
-                    mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-                }).AddJsonOptions(options =>
-                  {
-                      options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                  });
+                AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
             }
 
             if (HostEnvironment.IsDevelopment())
-                services.AddControllers()
-                    .AddJsonOptions(options =>
-                    {
-                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                    });
+            {
+                AddControllersWithOptions(services, false);
+            }
+        }
+
+        private static void AddControllersWithOptions(IServiceCollection services, bool isProduction, AuthorizationPolicy requireAuthenticatedUserPolicy = null)
+        {
+            services.AddControllers(mvcOptions =>
+            {
+                if (isProduction)
+                {
+                    mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
+                    mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+                }
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            })
+            .AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssemblyContaining<OrganizationToAddValidator>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Api.Validators
                 .ForEach(email =>
                 {
                     email.NotEmpty();
-                    email.SetValidator(new EmailValidator());
+                    email.SetValidator(new EmailToAddValidator());
                 });
 
         }
