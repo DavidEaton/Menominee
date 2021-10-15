@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
 using Xunit;
@@ -18,8 +19,8 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var range = DateTimeRange.Create(start, end).Value;
 
             // Assert
-            range.Start.Should().BeCloseTo(start);
-            range.End.Should().BeCloseTo(end);
+            range.Start.Should().BeCloseTo(start, 1.Minutes());
+            range.End.Should().BeCloseTo(end, 1.Minutes());
         }
 
         [Fact]

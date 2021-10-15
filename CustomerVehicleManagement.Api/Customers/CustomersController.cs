@@ -1,15 +1,15 @@
-﻿using CustomerVehicleManagement.Api.Organizations;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Customers
 {

@@ -23,7 +23,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var janes = customer.Organization;
 
             customer.EntityType.Should().Be(EntityType.Organization);
-            customer.EntityType.Should().BeOfType<EntityType>();
             janes.Address.AddressLine.Should().Be(addressLine);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);

@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using FluentAssertions.Extensions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
@@ -298,7 +299,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
-            person.Birthday.Should().BeCloseTo(DateTime.Today.AddDays(10));
+            person.Birthday.Should().BeCloseTo(DateTime.Today.AddDays(10), 1.Minutes());
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
@@ -23,7 +24,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Assert
             customer.EntityType.Should().Be(EntityType.Person);
-            customer.EntityType.Should().BeOfType<EntityType>();
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var customer = new Customer(organization);
 
-            customer.Created.Should().BeCloseTo(DateTime.UtcNow);
+            customer.Created.Should().BeCloseTo(DateTime.UtcNow, 1.Minutes());
         }
 
         [Fact]
@@ -43,7 +43,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var customer = new Customer(organization);
             customer.EntityType.Should().Be(EntityType.Organization);
-            customer.EntityType.Should().BeOfType<EntityType>();
         }
 
         [Fact]
@@ -61,7 +60,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var janes = customer.Organization;
 
             customer.EntityType.Should().Be(EntityType.Organization);
-            customer.EntityType.Should().BeOfType<EntityType>();
             janes.Address.AddressLine.Should().Be(addressLine);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);
