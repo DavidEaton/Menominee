@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.AddressUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.AddressMinimumLengthMessage);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.CityUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.CityMinimumLengthMessage);
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.PostalCodeUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
         }
 
         [Fact]

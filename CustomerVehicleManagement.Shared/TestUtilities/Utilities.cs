@@ -2,12 +2,22 @@
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.TestUtilities
 {
     public static class Utilities
     {
+        private static readonly Random random = new();
+        public static string RandomCharacters(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         public static Organization CreateValidOrganization()
         {
             var name = "jane's";

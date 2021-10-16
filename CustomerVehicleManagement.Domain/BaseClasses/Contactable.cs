@@ -90,6 +90,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public void SetAddress(Address address)
         {
             // Guard unnecessarily throws exception; we just need a null check.
+            // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
             // Guard.ForNull(address, "address");
             if (address != null)

@@ -1,4 +1,5 @@
-﻿using Menominee.Common.Enums;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,9 @@ namespace Menominee.Common.ValueObjects
         public static readonly string DriversLicenseNumberOverMaximumLengthMessage = $"Drivers License cannot be over {DriversLicenseNumberMaximumLength} characters in length";
         public static readonly string DriversLicenseDateRangeInvalidMessage = $"Drivers License must have valid dates";
 
-        public string Number { get; }
-        public DateTimeRange ValidRange { get; }
-        public State State { get; }
+        public string Number { get; private set; }
+        public DateTimeRange ValidRange { get; private set; }
+        public State State { get; private set; }
 
         private DriversLicense(string number, State state, DateTimeRange validRange)
         {
@@ -29,15 +30,15 @@ namespace Menominee.Common.ValueObjects
             number = (number ?? string.Empty).Trim();
 
             if (validRange == null)
-                return Result.Fail<DriversLicense>(DriversLicenseDateRangeInvalidMessage);
+                return Result.Failure<DriversLicense>(DriversLicenseDateRangeInvalidMessage);
 
             if (number.Length < DriversLicenseNumberMinimumLength)
-                return Result.Fail<DriversLicense>(DriversLicenseNumberUnderMinimumLengthMessage);
+                return Result.Failure<DriversLicense>(DriversLicenseNumberUnderMinimumLengthMessage);
 
             if (number.Length > DriversLicenseNumberMaximumLength)
-                return Result.Fail<DriversLicense>(DriversLicenseNumberOverMaximumLengthMessage);
+                return Result.Failure<DriversLicense>(DriversLicenseNumberOverMaximumLengthMessage);
 
-            return Result.Ok(new DriversLicense(number, state, validRange));
+            return Result.Success(new DriversLicense(number, state, validRange));
         }
 
         public DriversLicense NewNumber(string newNumber)

@@ -1,8 +1,10 @@
 ﻿using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -18,14 +20,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         private readonly OrganizationsController controller;
         private readonly Mock<IOrganizationRepository> moqRepository;
 
-        private static readonly Random random = new();
-        private static string RandomCharacters(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
         /*
           Validators should only be tested with integration tests. Moreover, they shouldn't be tested directly, only via integration tests that cover corresponding controllers. Otherwise, the tests risk raising false negatives (e.g when you write a validator but forget to tie it to the appropriate controller, hence the tests don't turn red when they should) and false positives (e.g you move some of the validations to the controller but tests fail because they expect those validations to be present in the validator). -Vladimir Khorikov
         */
@@ -39,7 +33,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Get***********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_GetOrganizationAsync()
+        public async Task Return_ActionResult_Of_OrganizationToRead_On_GetOrganizationAsync()
         {
             var result = await controller.GetOrganizationAsync(1);
 
@@ -56,7 +50,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationToRead_On_GetOrganizationsAsync()
         {
             var result = await controller.GetOrganizationsAsync();
 
@@ -64,7 +58,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsListAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationToRead_On_GetOrganizationsListAsync()
         {
             var result = await controller.GetOrganizationsListAsync();
 
@@ -76,7 +70,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Post**********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_AddOrganizationAsync()
+        public async Task Return_ActionResult_Of_OrganizationToRead_On_AddOrganizationAsync()
         {
             var Organization = new OrganizationToAdd
             {
@@ -127,7 +121,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 
             var organization = new OrganizationToAdd
             {
-                Name = RandomCharacters(256)
+                Name = Utilities.RandomCharacters(256)
             };
 
             var result = await controller.AddOrganizationAsync(organization);
@@ -135,7 +129,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Name' must be between 2 and 255 characters. You entered 256 characters.");
+            badRequestObjectResult.Value.Should().Be(OrganizationName.MaximumLengthMessage);
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
@@ -155,7 +149,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
             actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
             result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Contain("'Name' must not be empty.");
+            result.Value.ToString().Should().Be(OrganizationName.RequiredMessage);
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
@@ -174,7 +168,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
             actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
             result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Contain("'Name' must not be empty.");
+            result.Value.ToString().Should().Be(OrganizationName.RequiredMessage);
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
@@ -186,7 +180,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var organization = new OrganizationToAdd
             {
                 Name = "Moops",
-                Note = RandomCharacters(10001)
+                Note = Utilities.RandomCharacters(10001)
             };
 
             var actionResult = await controller.AddOrganizationAsync(organization);
@@ -194,7 +188,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
             actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
             result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Be("'Note' must be between 0 and 10000 characters. You entered 10001 characters.");
+            result.Value.ToString().Should().Be(OrganizationName.MaximumLengthMessage);
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
@@ -312,7 +306,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Name = "Moops",
                 Address = new AddressToAdd
                 {
-                    AddressLine = RandomCharacters(256),
+                    AddressLine = Utilities.RandomCharacters(256),
                     City = "Traverse City",
                     State = State.MI,
                     PostalCode = "49999"
@@ -339,7 +333,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Address = new AddressToAdd
                 {
                     AddressLine = "1234 Five Ave.",
-                    City = RandomCharacters(256),
+                    City = Utilities.RandomCharacters(256),
                     State = State.MI,
                     PostalCode = "49999"
                 }
@@ -775,7 +769,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_OrganizationReadDto_On_AddOrganizationAsync_When_ModelState_Valid()
+        public async Task Return_OrganizationToRead_On_AddOrganizationAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(organizationRepository =>
                                 organizationRepository

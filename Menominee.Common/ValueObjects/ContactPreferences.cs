@@ -1,4 +1,4 @@
-﻿using Menominee.Common.Utilities;
+﻿using CSharpFunctionalExtensions;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -18,7 +18,7 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<ContactPreferences> Create(bool allowMail, bool allowEmail, bool allowSms)
         {
-            return Result.Ok(new ContactPreferences(allowMail, allowEmail, allowSms));
+            return Result.Success(new ContactPreferences(allowMail, allowEmail, allowSms));
         }
 
         public ContactPreferences NewAllowMail(bool allowMail)

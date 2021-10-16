@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CustomerVehicleManagement.Shared.TestUtilities;
+using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.ValueObjects;
 using System;
@@ -31,7 +32,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(firstName, lastName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
         }
 
         [Fact]
@@ -43,7 +44,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(firstName, lastName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
         }
 
         [Fact]
@@ -55,7 +56,31 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Short_LastName()
+        {
+            var firstName = "Molly";
+            var lastName = "M";
+
+            var personNameOrError = PersonName.Create(lastName, firstName);
+
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Long_LastName()
+        {
+            var firstName = "Molly";
+            var lastName = Utilities.RandomCharacters(256);
+
+            var personNameOrError = PersonName.Create(lastName, firstName);
+
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.LastNameMaximumLengthMessage);
         }
 
         [Fact]
@@ -67,7 +92,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.FirstNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.FirstNameRequiredMessage);
         }
 
         [Fact]
@@ -79,7 +104,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
         }
 
         [Fact]
@@ -91,7 +116,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.FirstNameUnderMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.FirstNameRequiredMessage);
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CSharpFunctionalExtensions;
+using FluentAssertions;
 using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using Xunit;
@@ -26,7 +27,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
         }
 
         [Fact]
@@ -37,7 +38,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
         }
 
         [Fact]
@@ -48,7 +49,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.OverMaximumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MaximumLengthMessage);
 
         }
 
@@ -60,7 +61,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
 
         }
 

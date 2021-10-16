@@ -1,16 +1,17 @@
-﻿using Menominee.Common.Utilities;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Utilities;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
     public class OrganizationName : ValueObject
     {
-        public string Name { get; }
+        public string Name { get; private set; }
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 255;
-        public static readonly string UnderMinimumLengthMessage = $"Organization Name cannot be less than {MinimumLength} character(s) in length";
-        public static readonly string OverMaximumLengthMessage = $"Organization Name cannot be over {MaximumLength} characters in length";
-        
+        public static readonly string MinimumLengthMessage = $"Organization name cannot be less than {MinimumLength} character(s) in length.";
+        public static readonly string MaximumLengthMessage = $"Organization name cannot be over {MaximumLength} characters in length.";
+        public static readonly string RequiredMessage = $"Organization name is required.";
         private OrganizationName(string name)
         {
             Name = name;
@@ -18,15 +19,18 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<OrganizationName> Create(string name)
         {
-            name = (name ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(name))
+                return Result.Failure<OrganizationName>(RequiredMessage);
+
+            name = name.Trim();
 
             if (name.Length < MinimumLength)
-                return Result.Fail<OrganizationName>(UnderMinimumLengthMessage);
+                return Result.Failure<OrganizationName>(MinimumLengthMessage);
 
             if (name.Length > MaximumLength)
-                return Result.Fail<OrganizationName>(OverMaximumLengthMessage);
+                return Result.Failure<OrganizationName>(MaximumLengthMessage);
 
-            return Result.Ok(new OrganizationName(name));
+            return Result.Success(new OrganizationName(name));
         }
 
         public static OrganizationName NewOrganizationName(string newOrganizationName)

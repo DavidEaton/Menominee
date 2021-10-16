@@ -1,14 +1,13 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Api.Validators;
-using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
@@ -149,17 +148,12 @@ namespace CustomerVehicleManagement.Api.Organizations
         [HttpPost]
         public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationAddDto)
         {
-            //Fluent Validation
-            var validator = new OrganizationToAddValidator();
-            var result = validator.Validate(organizationAddDto);
-
-            if (result.IsValid == false)
-                return BadRequest(result.Errors[0].ErrorMessage);
-
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
-                [ApiController] attribute. In that case, an automatic HTTP 400 response containing
-                error details is returned when model state is invalid.*/
+                [ApiController] attribute; applicatin controllers inherit from ApplicationController,
+                which has the [ApiController] attribute. With [ApiController] attribute applied,
+                an automatic HTTP 400 response containing error details is returned when model
+                state is invalid.*/
 
             /* Controller Pattern:
                 1. Convert data transfer object (dto) to domain entity

@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
