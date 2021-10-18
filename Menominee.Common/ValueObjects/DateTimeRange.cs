@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class DateTimeRange : ValueObject
+    public class DateTimeRange : AppValueObject
     {
         public static readonly string DateTimeRangeInvalidMessage = "End date cannot occur before Start date";
         public DateTime Start { get; private set; }

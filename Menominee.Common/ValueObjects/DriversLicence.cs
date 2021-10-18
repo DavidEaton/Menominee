@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class DriversLicense : ValueObject
+    public class DriversLicense : AppValueObject
     {
         public static readonly int DriversLicenseNumberMinimumLength = 3;
         public static readonly int DriversLicenseNumberMaximumLength = 255;

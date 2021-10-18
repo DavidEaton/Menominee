@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             address2 = address2.NewAddressLine(newAddressLine);
 
-            address1.Should().NotBeEquivalentTo(address2);
+            address1.Should().NotBeSameAs(address2);
         }
 
 

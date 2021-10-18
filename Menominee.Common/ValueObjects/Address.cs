@@ -6,7 +6,7 @@ using CSharpFunctionalExtensions;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class Address : ValueObject
+    public class Address : AppValueObject
     {
         public static readonly int AddressMinimumLength = 3;
         public static readonly int AddressMaximumLength = 255;

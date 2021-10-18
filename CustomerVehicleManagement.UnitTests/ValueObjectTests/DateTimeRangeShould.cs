@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var range1 = DateTimeRange.Create(start, end).Value;
             var range2 = DateTimeRange.Create(start, end.AddDays(1)).Value;
 
-            range1.Should().NotBeEquivalentTo(range2);
+            range1.Should().NotBeSameAs(range2);
         }
 
         [Fact]

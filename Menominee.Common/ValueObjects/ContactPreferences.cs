@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class ContactPreferences : ValueObject
+    public class ContactPreferences : AppValueObject
     {
         public bool AllowMail { get; private set; }
         public bool AllowEmail { get; private set; }

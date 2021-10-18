@@ -129,7 +129,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var name1 = PersonName.Create(firstName, lastName, middleInitial).Value;
             var name2 = PersonName.Create(firstName, lastName, middleInitial).Value;
 
-            name1.Should().BeEquivalentTo(name2);
+            name1.Should().Be(name2);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             var nameNew = PersonName.Create(newFirstName, newLastName).Value;
 
-            name.Should().NotBeEquivalentTo(nameNew);
+            name.Should().NotBe(nameNew);
         }
 
         [Fact]

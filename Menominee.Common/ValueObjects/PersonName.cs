@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class PersonName : ValueObject
+    public class PersonName : AppValueObject
     {
-        public static readonly int LastNameMinimumLength = 1;
+        public static readonly int LastNameMinimumLength = 2;
         public static readonly int LastNameMaximumLength = 255;
         public static readonly string LastNameMinimumLengthMessage = $"Last name cannot be less than {LastNameMinimumLength} character(s) in length";
         public static readonly string LastNameMaximumLengthMessage = $"Last name cannot be over {LastNameMaximumLength} characters in length";

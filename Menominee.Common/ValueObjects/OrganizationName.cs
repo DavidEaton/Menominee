@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class OrganizationName : ValueObject
+    public class OrganizationName : AppValueObject
     {
         public string Name { get; private set; }
         public static readonly int MinimumLength = 1;
