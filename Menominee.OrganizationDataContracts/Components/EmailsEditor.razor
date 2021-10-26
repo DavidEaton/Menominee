@@ -1,56 +1,119 @@
-﻿@if (FormMode == FormMode.Add)
-{
-    @if (((int)EmailsToAdd.Count()) > 0)
+﻿<div class="container">
+    @if (FormMode == FormMode.Add)
     {
-        <label>Emails</label>
-        <ContactableTemplate Items="EmailsToAdd"
-                             TItem="EmailToAdd"
-                             Context="email">
-            <TableHeader>
-                <th>Address</th>
-                <th>Primary</th>
-            </TableHeader>
-            <RowTemplate>
-                <td>
-                    <InputText class="form-control" @bind-Value="@email.Address" />
-                </td>
-                <td>
-                    <InputCheckbox @bind-Value="email.IsPrimary" />
-                </td>
-            </RowTemplate>
-        </ContactableTemplate>
+        <div class="h6">Emails</div>
+
+        @if (((int)EmailsToAdd.Count()) > 0 && !AddingEmail)
+        {
+            <ContactableTemplate Items="EmailsToAdd"
+                                 TItem="EmailToAdd"
+                                 Context="email">
+                <TableHeader>
+                    <th>Address</th>
+                    <th>Primary</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td>
+                        @email.Address
+                    </td>
+                    <td>
+                        <TelerikCheckBox @bind-Value="email.IsPrimary" Enabled="false" />
+                    </td>
+                </RowTemplate>
+            </ContactableTemplate>
+        }
+
+
+        @if (AddingEmail)
+        {
+            <EditForm Model="EmailToAdd">
+
+                <TelerikGridLayout>
+                    <GridLayoutRows>
+                        <GridLayoutRow></GridLayoutRow>
+                    </GridLayoutRows>
+                    <GridLayoutItems>
+                        <div class="mb-3">
+                            <GridLayoutItem>
+                                <label class="form-control-label">Address</label>
+                                <TelerikTextBox @bind-Value="@EmailToAdd.Address"
+                                                Width="100%">
+                                </TelerikTextBox>
+                            </GridLayoutItem>
+                        </div>
+                        <div class="mb-3">
+                            <GridLayoutItem>
+                                <label>
+                                    <TelerikCheckBox @bind-Value="@EmailToAdd.IsPrimary"></TelerikCheckBox>
+                                    <span class="form-control-label">Primary</span>
+                                </label>
+                            </GridLayoutItem>
+                        </div>
+                    </GridLayoutItems>
+                </TelerikGridLayout>
+
+            </EditForm>
+        }
+
+        @if (!AddingEmail)
+        {
+            <TelerikButton OnClick='() => AddEmail("EmailToAdd")'
+                           Icon="plus"
+                           ButtonType="ButtonType.Button"
+                           Class="button-border-success"
+                           title="Add New Email">
+                Add Email
+            </TelerikButton>
+        }
+        else
+        {
+            <TelerikButton OnClick='() => SaveEmail("EmailToAdd")'
+                           Icon="save"
+                           ButtonType="ButtonType.Button"
+                           Primary="true"
+                           title="Save New Email">
+                Okay
+            </TelerikButton>
+            <TelerikButton OnClick="Cancel"
+                           Icon="x"
+                           ButtonType="ButtonType.Button"
+                           title="Cancel New Email">
+                Cancel
+            </TelerikButton>
+        }
     }
-    <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => EmailsToAdd.Add(new EmailToAdd())'>
-            Add Email
-        </button>
-    </div>
-}
-@if (FormMode == FormMode.Edit)
-{
-    @if (((int)EmailsToUpdate.Count()) > 0)
+
+
+
+
+
+    @if (FormMode == FormMode.Edit)
     {
-        <label>Emails</label>
-        <ContactableTemplate Items="EmailsToUpdate"
-                             TItem="EmailToEdit"
-                             Context="email">
-            <TableHeader>
-                <th>Address</th>
-                <th>Primary</th>
-            </TableHeader>
-            <RowTemplate>
-                <td>
-                    <InputText class="form-control" @bind-Value="@email.Address" />
-                </td>
-                <td>
-                    <InputCheckbox @bind-Value="email.IsPrimary" />
-                </td>
-            </RowTemplate>
-        </ContactableTemplate>
-    }
-    <div class="field">
-        <button type="button" class="ui green basic button" @onclick='() => EmailsToUpdate.Add(new EmailToEdit())'>
+        @if (((int)EmailsToEdit.Count()) > 0)
+        {
+            <label>Emails</label>
+            <ContactableTemplate Items="EmailsToEdit"
+                                 TItem="EmailToEdit"
+                                 Context="email">
+                <TableHeader>
+                    <th>Address</th>
+                    <th>Primary</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td>
+                        <InputText class="form-control" @bind-Value="@email.Address" />
+                    </td>
+                    <td>
+                        <InputCheckbox @bind-Value="email.IsPrimary" />
+                    </td>
+                </RowTemplate>
+            </ContactableTemplate>
+        }
+        <TelerikButton OnClick="() => EmailsToEdit.Add(new EmailToEdit())"
+                       Icon="plus"
+                       ButtonType="ButtonType.Button"
+                       title="Add New Email">
             Add Email
-        </button>
-    </div>
-}
+        </TelerikButton>
+    }
+</div>

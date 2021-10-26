@@ -1,7 +1,7 @@
 ﻿@page "/organizations"
 
-<div class="ui container">
-    <div class="ui medium header">Organizations</div>
+<div class="container">
+    <div class="h5">Organizations</div>
 
     @if (OrganizationsList == null)
     {
@@ -12,11 +12,14 @@
     }
     @if (!EditingOrganization && !AddingOrganization && OrganizationsList != null)
     {
-        <a class="ui primary button" @onclick="Add">
-            <span class="oi oi-plus" title="Add New Organization" aria-hidden="true"></span> Add Organization
-        </a>
+        <TelerikButton OnClick="Add"
+                       Primary="true"
+                       Icon="plus"
+                       title="Add New Organization">
+            Add Organization
+        </TelerikButton>
 
-        <table class="ui celled table">
+        <table class="">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -39,45 +42,59 @@
 
     @if (AddingOrganization && OrganizationToAdd != null)
     {
-        <EditForm class="ui form"
-                  Model="@OrganizationToAdd"
-                  OnSubmit="HandleAddSubmit">
+        <EditForm class=""
+                  Model="@OrganizationToAdd">
             <OrganizationEditor TItem="OrganizationToAdd"
                                 Item="@OrganizationToAdd"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
 
-            <div class="ui stackable three column grid">
-                <div class="column">
-                    @if (OrganizationToAdd?.Address != null)
-                    {
-                        <AddressEditor TItem="AddressToAdd"
-                                       Item="@OrganizationToAdd?.Address"
-                                       AddressLineProperty="AddressLine"
-                                       CityProperty="City"
-                                       StateProperty="State"
-                                       PostalCodeProperty="PostalCode" />
-                    }
-                    else
-                    {
-                        <div class="field">
-                            <button type="button" @onclick="() => OrganizationToAdd.Address = new()" class="ui green basic button">
+            <TelerikGridLayout>
+                <GridLayoutColumns>
+                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                </GridLayoutColumns>
+                <GridLayoutRows>
+                    <GridLayoutRow></GridLayoutRow>
+                </GridLayoutRows>
+                <GridLayoutItems>
+                    <GridLayoutItem>
+                        <div class="h6">Address</div>
+                        @if (OrganizationToAdd?.Address != null)
+                        {
+                            <AddressEditor TItem="AddressToAdd"
+                                           Item="@OrganizationToAdd?.Address"
+                                           AddressLineProperty="AddressLine"
+                                           CityProperty="City"
+                                           StateProperty="State"
+                                           PostalCodeProperty="PostalCode" />
+                        }
+                        else
+                        {
+                            <TelerikButton OnClick="() => OrganizationToAdd.Address = new()"
+                                           Icon="plus"
+                                           Class="button-border-success"
+                                           title="Add New Address">
                                 Add Address
-                            </button>
-                        </div>
-                    }
-                </div>
-                <div class="column">
-                    <PhonesEditor PhonesToAdd="@OrganizationToAdd?.Phones" FormMode="FormMode.Add"></PhonesEditor>
-                </div>
-                <div class="column">
-                    <EmailsEditor EmailsToAdd="@OrganizationToAdd?.Emails" FormMode="FormMode.Add"></EmailsEditor>
-                </div>
-            </div>
-
-            <div class="ui divider"></div>
-            <EditFormButtons CloseEventCallback="EndAddAsync"></EditFormButtons>
+                            </TelerikButton>
+                        }
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <PhonesEditor PhonesToAdd="@OrganizationToAdd?.Phones" FormMode="FormMode.Add"></PhonesEditor>
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <EmailsEditor EmailsToAdd="@OrganizationToAdd?.Emails" FormMode="FormMode.Add"></EmailsEditor>
+                    </GridLayoutItem>
+                </GridLayoutItems>
+            </TelerikGridLayout>
         </EditForm>
+
+        <div class="pt-4">
+            <EditFormButtons CloseEventCallback="EndAddAsync"
+                             SaveEventCallback="HandleAddSubmit">
+            </EditFormButtons>
+        </div>
     }
 
     @if (EditingOrganization && OrganizationToEdit != null)
@@ -91,35 +108,45 @@
                                 NameProperty="Name"
                                 NoteProperty="Note" />
 
-            <div class="ui stackable three column grid">
-                <div class="column">
-                    @if (OrganizationToEdit?.Address != null)
-                    {
-                        <AddressEditor TItem="AddressToEdit"
-                                       Item="@OrganizationToEdit?.Address"
-                                       AddressLineProperty="AddressLine"
-                                       CityProperty="City"
-                                       StateProperty="State"
-                                       PostalCodeProperty="PostalCode" />
-                    }
-                    else
-                    {
-                        <div class="field">
-                            <button type="button" @onclick="() => OrganizationToEdit.Address = new()" class="ui green basic button">
+            <TelerikGridLayout>
+                <GridLayoutColumns>
+                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                </GridLayoutColumns>
+                <GridLayoutRows>
+                    <GridLayoutRow></GridLayoutRow>
+                </GridLayoutRows>
+                <GridLayoutItems>
+                    <GridLayoutItem>
+                        @if (OrganizationToEdit?.Address != null)
+                        {
+                            <AddressEditor TItem="AddressToEdit"
+                                           Item="@OrganizationToEdit?.Address"
+                                           AddressLineProperty="AddressLine"
+                                           CityProperty="City"
+                                           StateProperty="State"
+                                           PostalCodeProperty="PostalCode" />
+                        }
+                        else
+                        {
+                            <TelerikButton OnClick="() => OrganizationToEdit.Address = new()"
+                                           Icon="plus"
+                                           Class="button-border-success"
+                                           title="Add New Address">
                                 Add Address
-                            </button>
-                        </div>
-                    }
-                </div>
-                <div class="column">
-                    <PhonesEditor PhonesToUpdate="@OrganizationToEdit?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
-                </div>
-                <div class="column">
-                    <EmailsEditor EmailsToUpdate="@OrganizationToEdit?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
-                </div>
-            </div>
+                            </TelerikButton>
+                        }
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <PhonesEditor PhonesToEdit="@OrganizationToEdit?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <EmailsEditor EmailsToEdit="@OrganizationToEdit?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
+                    </GridLayoutItem>
+                </GridLayoutItems>
+            </TelerikGridLayout>
 
-            <div class="ui divider"></div>
             <EditFormButtons CloseEventCallback="EndEditAsync"></EditFormButtons>
         </EditForm>
     }

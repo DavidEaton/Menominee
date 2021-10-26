@@ -14,6 +14,7 @@ namespace Menominee.OrganizationDataContracts
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+			builder.Services.AddTelerikBlazor();
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
             builder.Services.AddBlazoredToast();
 
