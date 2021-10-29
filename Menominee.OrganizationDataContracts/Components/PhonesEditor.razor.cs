@@ -22,7 +22,8 @@ namespace Menominee.OrganizationDataContracts.Components
         public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
 
-        private bool AddingPhone { get; set; } = false;
+        private bool Adding { get; set; } = false;
+        private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }
         protected override void OnInitialized()
         {
@@ -34,7 +35,13 @@ namespace Menominee.OrganizationDataContracts.Components
             base.OnInitialized();
         }
 
-        private async Task AddPhoneAsync(string type)
+        private void Edit(PhoneToEdit item)
+        {
+            PhoneToEdit = item;
+            Editing = true;
+        }
+
+        private async Task AddAsync(string type)
         {
             if (type == "PhoneToAdd")
                 PhoneToAdd = new();
@@ -45,25 +52,27 @@ namespace Menominee.OrganizationDataContracts.Components
             if (PhoneNumberControl != null)
                 await PhoneNumberControl.FocusAsync();
 
-            AddingPhone = true;
+            Adding = true;
         }
 
-        private void SavePhone(string type)
+        private void Save(string type)
         {
             if (type == "PhoneToAdd")
                 PhonesToAdd.Add(PhoneToAdd);
 
-            if (type == "PhoneToEdit")
+            if (type == "PhoneToEdit" && Adding)
                 PhonesToEdit.Add(PhoneToEdit);
 
-            AddingPhone = false;
+            Adding = false;
+            Editing = false;
         }
 
         private void Cancel()
         {
             PhoneToAdd = null;
             PhoneToEdit = null;
-            AddingPhone = false;
+            Adding = false;
+            Editing = false;
         }
     }
     public class PhoneTypeEnumModel

@@ -4,14 +4,16 @@
     <div class="form-group row">
         <label for="address" class="form-control-label">Street</label>
         <TelerikTextBox @bind-Value="@AddressLine"
-                        Width="100%">
+                        Width="100%"
+                        Enabled="EnableEditor">
         </TelerikTextBox>
     </div>
 
     <div class="form-group row">
         <label for="city" class="form-control-label">City</label>
         <TelerikTextBox @bind-Value="@City"
-                        Width="100%">
+                        Width="100%"
+                        Enabled="EnableEditor">
         </TelerikTextBox>
     </div>
 
@@ -24,14 +26,16 @@
                          Width="100%"
                          Filterable="true"
                          ClearButton="false"
-                         Placeholder="Select a State">
+                         Placeholder="Select a State"
+                         Enabled="EnableEditor">
         </TelerikComboBox>
     </div>
 
     <div class="form-group row">
         <label for="postalCode" class="form-control-label">Postal Code</label>
         <TelerikTextBox @bind-Value="@PostalCode"
-                        Width="100%">
+                        Width="100%"
+                        Enabled="EnableEditor">
         </TelerikTextBox>
     </div>
 </div>

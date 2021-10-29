@@ -11,6 +11,9 @@ namespace Menominee.OrganizationDataContracts.Components
         public TItem Item { get; set; }
 
         [Parameter]
+        public bool EnableEditor { get; set; }
+
+        [Parameter]
         public string AddressLineProperty { get; set; }
 
         [Parameter]

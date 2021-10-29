@@ -1,9 +1,9 @@
 ﻿<div class="container">
+    <div class="h6">Emails</div>
     @if (FormMode == FormMode.Add)
     {
-        <div class="h6">Emails</div>
-
-        @if (((int)EmailsToAdd.Count()) > 0 && !AddingEmail)
+        // If there are emails, list them in a table. If adding email, hide email list
+        @if (((int)EmailsToAdd.Count()) > 0 && !Adding)
         {
             <ContactableTemplate Items="EmailsToAdd"
                                  TItem="EmailToAdd"
@@ -23,8 +23,8 @@
             </ContactableTemplate>
         }
 
-
-        @if (AddingEmail)
+        // If adding email, show the edit form
+        @if (Adding)
         {
             <EditForm Model="EmailToAdd">
 
@@ -53,67 +53,112 @@
                 </TelerikGridLayout>
 
             </EditForm>
+            <div class="pb-4">
+                <TelerikButton OnClick='() => Save("EmailToAdd")'
+                               Icon="save"
+                               ButtonType="ButtonType.Button"
+                               Primary="true"
+                               title="Save New Email">
+                    Okay
+                </TelerikButton>
+                <TelerikButton OnClick="Cancel"
+                               Icon="x"
+                               ButtonType="ButtonType.Button"
+                               title="Cancel New Email">
+                    Cancel
+                </TelerikButton>
+            </div>
         }
-
-        @if (!AddingEmail)
-        {
-            <TelerikButton OnClick='() => AddEmail("EmailToAdd")'
+        <div>
+            <TelerikButton OnClick='() => Add("EmailToAdd")'
                            Icon="plus"
                            ButtonType="ButtonType.Button"
                            Class="button-border-success"
+                           Enabled="!Adding"
                            title="Add New Email">
                 Add Email
             </TelerikButton>
-        }
-        else
-        {
-            <TelerikButton OnClick='() => SaveEmail("EmailToAdd")'
-                           Icon="save"
-                           ButtonType="ButtonType.Button"
-                           Primary="true"
-                           title="Save New Email">
-                Okay
-            </TelerikButton>
-            <TelerikButton OnClick="Cancel"
-                           Icon="x"
-                           ButtonType="ButtonType.Button"
-                           title="Cancel New Email">
-                Cancel
-            </TelerikButton>
-        }
+        </div>
     }
-
-
-
-
 
     @if (FormMode == FormMode.Edit)
     {
-        @if (((int)EmailsToEdit.Count()) > 0)
+        // If there are emails, list them in a table. If adding email, hide email list
+        @if (((int)EmailsToEdit.Count()) > 0 && !Adding)
         {
-            <label>Emails</label>
             <ContactableTemplate Items="EmailsToEdit"
                                  TItem="EmailToEdit"
-                                 Context="email">
+                                 Context="email"
+                                 @key="EmailToEdit"
+                                 OnRowClick="EditEmail">
                 <TableHeader>
                     <th>Address</th>
                     <th>Primary</th>
                 </TableHeader>
                 <RowTemplate>
                     <td>
-                        <InputText class="form-control" @bind-Value="@email.Address" />
+                        @email.Address
                     </td>
                     <td>
-                        <InputCheckbox @bind-Value="email.IsPrimary" />
+                        <TelerikCheckBox @bind-Value="email.IsPrimary" Enabled="false" />
                     </td>
                 </RowTemplate>
             </ContactableTemplate>
         }
-        <TelerikButton OnClick="() => EmailsToEdit.Add(new EmailToEdit())"
-                       Icon="plus"
-                       ButtonType="ButtonType.Button"
-                       title="Add New Email">
-            Add Email
-        </TelerikButton>
+
+        // If adding email, show the edit form
+        @if (Adding|| Editing)
+        {
+            <EditForm Model="EmailToEdit">
+                <TelerikGridLayout>
+                    <GridLayoutRows>
+                        <GridLayoutRow></GridLayoutRow>
+                    </GridLayoutRows>
+                    <GridLayoutItems>
+                        <div class="mb-3">
+                            <GridLayoutItem>
+                                <label class="form-control-label">Address</label>
+                                <TelerikTextBox @bind-Value="@EmailToEdit.Address"
+                                                Width="100%">
+                                </TelerikTextBox>
+                            </GridLayoutItem>
+                        </div>
+                        <div class="mb-3">
+                            <GridLayoutItem>
+                                <label>
+                                    <TelerikCheckBox @bind-Value="@EmailToEdit.IsPrimary"></TelerikCheckBox>
+                                    <span class="form-control-label">Primary</span>
+                                </label>
+                            </GridLayoutItem>
+                        </div>
+                    </GridLayoutItems>
+                </TelerikGridLayout>
+            </EditForm>
+            <div class="pb-4">
+                <TelerikButton OnClick='() => Save("EmailToEdit")'
+                               Icon="save"
+                               Primary="true"
+                               ButtonType="ButtonType.Button"
+                               title="Save New Email">
+                    Okay
+                </TelerikButton>
+                <TelerikButton OnClick="Cancel"
+                               ButtonType="ButtonType.Button"
+                               Icon="x"
+                               title="Cancel New Email">
+                    Cancel
+                </TelerikButton>
+            </div>
+        }
+        <div>
+            <TelerikButton OnClick='() => Add("EmailToEdit")'
+                           Icon="plus"
+                           ButtonType="ButtonType.Button"
+                           Class="button-border-success"
+                           Enabled="!Adding"
+                           title="Add New Email">
+                Add Email
+            </TelerikButton>
+        </div>
     }
 </div>

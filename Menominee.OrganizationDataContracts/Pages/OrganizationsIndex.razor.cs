@@ -23,6 +23,8 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private bool EditingOrganization { get; set; } = false;
         private bool AddingOrganization { get; set; } = false;
+        private bool EditingAddress { get; set; } = false;
+        private bool AddingAddress { get; set; } = false;
 
         private OrganizationToAdd OrganizationToAdd;
         private OrganizationToEdit OrganizationToEdit;
@@ -30,6 +32,23 @@ namespace Menominee.OrganizationDataContracts.Pages
         protected override async Task OnInitializedAsync()
         {
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
+        }
+
+        private void AddAddress()
+        {
+            OrganizationToAdd.Address = new();
+            AddingAddress = true;
+        }
+
+        private void CancelAddAddress()
+        {
+            OrganizationToAdd.Address = null;
+            AddingAddress = false;
+        }
+
+        public void WriteToConsole()
+        {
+            Console.WriteLine("WriteToConsole() called");
         }
 
         private async Task EditAsync(long id)

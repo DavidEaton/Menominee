@@ -33,7 +33,7 @@
             <tbody>
                 @foreach (var organization in OrganizationsList)
                 {
-                    <OrganizationsIndexRow @key="organization" Organization="organization" OnEdit="EditAsync"></OrganizationsIndexRow>
+                    <OrganizationsIndexRow @key="organization" Organization="organization" OnRowClick="EditAsync"></OrganizationsIndexRow>
                 }
             </tbody>
         </table>
@@ -42,8 +42,7 @@
 
     @if (AddingOrganization && OrganizationToAdd != null)
     {
-        <EditForm class=""
-                  Model="@OrganizationToAdd">
+        <EditForm Model="@OrganizationToAdd">
             <OrganizationEditor TItem="OrganizationToAdd"
                                 Item="@OrganizationToAdd"
                                 NameProperty="Name"
@@ -63,16 +62,49 @@
                         <div class="h6">Address</div>
                         @if (OrganizationToAdd?.Address != null)
                         {
-                            <AddressEditor TItem="AddressToAdd"
-                                           Item="@OrganizationToAdd?.Address"
-                                           AddressLineProperty="AddressLine"
-                                           CityProperty="City"
-                                           StateProperty="State"
-                                           PostalCodeProperty="PostalCode" />
+                            <TelerikWindow Visible="OrganizationToAdd?.Address != null && AddingAddress"
+                                           Modal="true">
+                                <WindowTitle>
+                                    Address
+                                </WindowTitle>
+                                <WindowContent>
+                                    <AddressEditor TItem="AddressToAdd"
+                                                   Item="@OrganizationToAdd?.Address"
+                                                   AddressLineProperty="AddressLine"
+                                                   CityProperty="City"
+                                                   StateProperty="State"
+                                                   PostalCodeProperty="PostalCode"
+                                                   EnableEditor="true" />
+
+                                    <TelerikButton OnClick="() => AddingAddress = false"
+                                                   Icon="check"
+                                                   Primary="true"
+                                                   ButtonType="ButtonType.Button"
+                                                   title="Save New Address">
+                                        Okay
+                                    </TelerikButton>
+                                    <TelerikButton OnClick="CancelAddAddress"
+                                                   ButtonType="ButtonType.Button"
+                                                   Icon="x"
+                                                   title="Cancel New Address">
+                                        Cancel
+                                    </TelerikButton>
+                                </WindowContent>
+                            </TelerikWindow>
+                            @if (OrganizationToAdd?.Address != null && !AddingAddress)
+                            {
+                                <AddressEditor TItem="AddressToAdd"
+                                               Item="@OrganizationToAdd?.Address"
+                                               AddressLineProperty="AddressLine"
+                                               CityProperty="City"
+                                               StateProperty="State"
+                                               PostalCodeProperty="PostalCode"
+                                               EnableEditor="false" />
+                            }
                         }
                         else
                         {
-                            <TelerikButton OnClick="() => OrganizationToAdd.Address = new()"
+                            <TelerikButton OnClick="AddAddress"
                                            Icon="plus"
                                            Class="button-border-success"
                                            title="Add New Address">
@@ -119,6 +151,15 @@
                 </GridLayoutRows>
                 <GridLayoutItems>
                     <GridLayoutItem>
+                        <div class="h6"
+                             @onclick="WriteToConsole">
+                            Address
+                            &nbsp &nbsp
+                            @if (OrganizationToEdit?.Address != null)
+                            {
+                                <TelerikIcon Icon="pencil" />
+                            }
+                        </div>
                         @if (OrganizationToEdit?.Address != null)
                         {
                             <AddressEditor TItem="AddressToEdit"

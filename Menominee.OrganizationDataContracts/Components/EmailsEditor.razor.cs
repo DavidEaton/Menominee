@@ -17,8 +17,9 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public IList<EmailToEdit> EmailsToEdit { get; set; }
         public EmailToEdit EmailToEdit { get; set; }
-        private bool AddingEmail { get; set; } = false;
-        private void AddEmail(string type)
+        private bool Adding { get; set; } = false;
+        private bool Editing { get; set; } = false;
+        private void Add(string type)
         {
             if (type == "EmailToAdd")
                 EmailToAdd = new();
@@ -26,25 +27,33 @@ namespace Menominee.OrganizationDataContracts.Components
             if (type == "EmailToEdit")
                 EmailToEdit = new();
 
-            AddingEmail = true;
+            Adding = true;
         }
 
-        private void SaveEmail(string type)
+        private void Edit(EmailToEdit item)
+        {
+            EmailToEdit = item;
+            Editing = true;
+        }
+
+        private void Save(string type)
         {
             if (type == "EmailToAdd")
                 EmailsToAdd.Add(EmailToAdd);
 
-            if (type == "EmailToEdit")
+            if (type == "EmailToEdit" && Adding)
                 EmailsToEdit.Add(EmailToEdit);
 
-            AddingEmail = false;
+            Adding = false;
+            Editing = false;
         }
 
         private void Cancel()
         {
             EmailToAdd = null;
             EmailToEdit = null;
-            AddingEmail = false;
+            Adding = false;
+            Editing = false;
         }
     }
 }

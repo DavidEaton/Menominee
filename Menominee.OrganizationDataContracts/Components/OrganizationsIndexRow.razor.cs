@@ -10,11 +10,11 @@ namespace Menominee.OrganizationDataContracts.Components
         public OrganizationToReadInList Organization { get; set; }
 
         [Parameter]
-        public EventCallback<long> OnEdit { get; set; }
+        public EventCallback<long> OnRowClick { get; set; }
 
         protected async Task EditAsync(long id)
         {
-            await OnEdit.InvokeAsync(id);
+            await OnRowClick.InvokeAsync(id);
         }
     }
 }
