@@ -32,6 +32,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType().Name;
             }
         }
@@ -40,6 +43,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(AddressLineProperty)
                     .GetValue(Item).ToString();
@@ -57,6 +63,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(CityProperty)
                     .GetValue(Item).ToString();
@@ -74,6 +83,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return State.MI;
+
                 return (State)Convert.ToInt32(Item.GetType()
                     .GetProperty(StateProperty)
                     .GetValue(Item));
@@ -91,6 +103,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(PostalCodeProperty)
                     .GetValue(Item).ToString();

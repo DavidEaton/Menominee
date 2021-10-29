@@ -1,103 +1,115 @@
 ﻿<div class="container">
     <div class="h6">Phones</div>
-    @*@if (FormMode == FormMode.Add)
+    @if (FormMode == FormMode.Add)
+    {
+        // If there are phones, list them in a table. If adding phone, hide phones list
+        @if (((int)PhonesToAdd?.Count()) > 0 && !Adding)
         {
-            // If there are phones, list them in a table. If adding phone, hide phones list
-            @if (((int)PhonesToAdd?.Count()) > 0 && !Adding)
-            {
-                <ContactableTemplate Items="PhonesToAdd"
-                                     TItem="PhoneToAdd"
-                                     Context="phone">
-                    <TableHeader>
-                        <th>Number</th>
-                        <th>Type</th>
-                        <th>Primary</th>
-                    </TableHeader>
-                    <RowTemplate>
-                        <td>
-                            @phone.ToString()
-                        </td>
-                        <td>
-                            @phone.PhoneType
-                        </td>
-                        <td>
-                            <TelerikCheckBox @bind-Value="phone.IsPrimary" Enabled="false" />
-                        </td>
-                    </RowTemplate>
-                </ContactableTemplate>
-            }
+            <ContactableTemplate Items="PhonesToAdd"
+                                 TItem="PhoneToAdd"
+                                 Context="phone">
+                <TableHeader>
+                    <th>Number</th>
+                    <th>Type</th>
+                    <th>Primary</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td>
+                        @phone.ToString()
+                    </td>
+                    <td>
+                        @phone.PhoneType
+                    </td>
+                    <td>
+                        <TelerikCheckBox @bind-Value="phone.IsPrimary" Enabled="false" />
+                    </td>
+                </RowTemplate>
+            </ContactableTemplate>
+        }
 
-            @if (Adding)
-            {
-                // If there are phones, show the edit form
-                <EditForm Model="PhoneToAdd">
+        @if (Adding)
+        {
+            // If there are phones, show the edit form
+            <EditForm Model="PhoneToAdd">
 
-                    <TelerikGridLayout>
-                        <GridLayoutRows>
-                            <GridLayoutRow></GridLayoutRow>
-                        </GridLayoutRows>
-                        <GridLayoutItems>
-                            <div class="mb-3">
-                                <GridLayoutItem>
-                                    <label class="form-control-label">Number</label>
-                                    <TelerikMaskedTextBox @bind-Value="@PhoneToAdd.Number"
-                                                          Mask="(999) 000-0000"
-                                                          Width="100%"
-                                                          @ref="PhoneNumberControl">
-                                    </TelerikMaskedTextBox>
-                                </GridLayoutItem>
+                <TelerikWindow Visible="DialogVisible"
+                               Modal="true">
+                    <WindowTitle>
+                        Address
+                    </WindowTitle>
+                    <WindowContent>
+                        <div class="container">
+                            <div class="form-group row">
+                                <label class="form-control-label">Number</label>
+                                <TelerikMaskedTextBox @bind-Value="@PhoneToAdd.Number"
+                                                      Mask="(999) 000-0000"
+                                                      Width="100%"
+                                                      @ref="PhoneNumberControl">
+                                </TelerikMaskedTextBox>
                             </div>
-                            <div class="mb-3">
-                                <GridLayoutItem>
-                                    <label class="form-control-label">Type</label>
-                                    <TelerikDropDownList @bind-Value="@PhoneToAdd.PhoneType"
-                                                         Data="PhoneTypeEnumData"
-                                                         Width="100%"
-                                                         TextField="DisplayText"
-                                                         ValueField="Value">
-                                    </TelerikDropDownList>
-                                </GridLayoutItem>
+                            <div class="form-group row">
+                                <label class="form-control-label">Type</label>
+                                <TelerikDropDownList @bind-Value="@PhoneToAdd.PhoneType"
+                                                     Data="PhoneTypeEnumData"
+                                                     Width="100%"
+                                                     TextField="DisplayText"
+                                                     ValueField="Value">
+                                </TelerikDropDownList>
                             </div>
-                            <div class="mb-3">
-                                <GridLayoutItem>
-                                    <label>
-                                        <TelerikCheckBox @bind-Value="@PhoneToAdd.IsPrimary"></TelerikCheckBox>
-                                        <span class="form-control-label">Primary</span>
-                                    </label>
-                                </GridLayoutItem>
+                            <div class="form-group row">
+                                <label>
+                                    <TelerikCheckBox @bind-Value="@PhoneToAdd.IsPrimary"></TelerikCheckBox>
+                                    <span class="form-control-label">Primary</span>
+                                </label>
                             </div>
-                        </GridLayoutItems>
-                    </TelerikGridLayout>
+                            <div>
+                                <TelerikButton OnClick='() => Save("PhoneToAdd")'
+                                               Icon="check"
+                                               Primary="true"
+                                               ButtonType="ButtonType.Button"
+                                               title="Save New Phone">
+                                    Okay
+                                </TelerikButton>
+                                <TelerikButton OnClick="CancelEditPhone"
+                                               ButtonType="ButtonType.Button"
+                                               Icon="x"
+                                               title="Cancel New Phone">
+                                    Cancel
+                                </TelerikButton>
+                            </div>
+                        </div>
+                    </WindowContent>
+                </TelerikWindow>
 
-                </EditForm>
-                <div class="pb-4">
-                    <TelerikButton OnClick='() => Save("PhoneToAdd")'
-                                   Icon="save"
-                                   ButtonType="ButtonType.Button"
-                                   Primary="true"
-                                   title="Save New Phone">
-                        Okay
-                    </TelerikButton>
-                    <TelerikButton OnClick="CancelAddPhone"
-                                   Icon="x"
-                                   ButtonType="ButtonType.Button"
-                                   title="Cancel New Phone">
-                        Cancel
-                    </TelerikButton>
-                </div>
-            }
-
-            <div>
-                <TelerikButton OnClick='() => AddAsync("PhoneToAdd")'
-                               Icon="plus"
+            </EditForm>
+            <div class="pb-4">
+                <TelerikButton OnClick='() => Save("PhoneToAdd")'
+                               Icon="save"
                                ButtonType="ButtonType.Button"
-                               Class="button-border-success"
-                               title="Add New Phone"
-                               Enabled="!Adding">
-                    Add Phone
+                               Primary="true"
+                               title="Save New Phone">
+                    Okay
+                </TelerikButton>
+                <TelerikButton OnClick="CancelAddPhone"
+                               Icon="x"
+                               ButtonType="ButtonType.Button"
+                               title="Cancel New Phone">
+                    Cancel
                 </TelerikButton>
             </div>
-        }*@
+        }
+
+        <div>
+            <TelerikButton OnClick='() => AddAsync("PhoneToAdd")'
+                           Icon="plus"
+                           ButtonType="ButtonType.Button"
+                           Class="button-border-success"
+                           title="Add New Phone"
+                           Enabled="!Adding">
+                Add Phone
+            </TelerikButton>
+        </div>
+    }
 
     @if (FormMode == FormMode.Edit)
     {

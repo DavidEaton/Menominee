@@ -25,6 +25,7 @@ namespace Menominee.OrganizationDataContracts.Pages
         private bool AddingOrganization { get; set; } = false;
         private bool EditingAddress { get; set; } = false;
         private bool AddingAddress { get; set; } = false;
+        private bool AddressDialogVisible => (OrganizationToEdit?.Address != null && (AddingAddress || EditingAddress)) || (OrganizationToAdd?.Address != null && (AddingAddress || EditingAddress));
 
         private OrganizationToAdd OrganizationToAdd;
         private OrganizationToEdit OrganizationToEdit;
@@ -34,16 +35,24 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 
-        private void AddAddress()
+        private void AddAddressAddingOrganization()
         {
             OrganizationToAdd.Address = new();
             AddingAddress = true;
         }
 
+        private void AddAddressEditingOrganization()
+        {
+            OrganizationToEdit.Address = new();
+            EditingAddress = true;
+        }
+
         private void CancelAddAddress()
         {
-            OrganizationToAdd.Address = null;
             AddingAddress = false;
+
+            if (OrganizationToAdd.Address != null)
+                OrganizationToAdd.Address = null;
         }
 
         private void CancelEditAddress()

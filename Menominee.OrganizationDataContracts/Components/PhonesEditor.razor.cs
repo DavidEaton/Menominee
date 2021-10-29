@@ -21,7 +21,7 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-        private bool DialogVisible => PhoneToEdit != null && (Adding || Editing);
+        private bool DialogVisible => (PhoneToEdit != null && (Adding || Editing)) || (PhoneToAdd != null && (Adding || Editing));
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }

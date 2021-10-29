@@ -62,7 +62,7 @@
                         <div class="h6">Address</div>
                         @if (OrganizationToAdd?.Address != null)
                         {
-                            <TelerikWindow Visible="OrganizationToAdd?.Address != null && AddingAddress"
+                            <TelerikWindow Visible="AddressDialogVisible"
                                            Modal="true">
                                 <WindowTitle>
                                     Address
@@ -104,7 +104,7 @@
                         }
                         else
                         {
-                            <TelerikButton OnClick="AddAddress"
+                            <TelerikButton OnClick="AddAddressAddingOrganization"
                                            Icon="plus"
                                            Class="button-border-success"
                                            title="Add New Address">
@@ -196,7 +196,7 @@
                         }
                         else
                         {
-                            <TelerikButton OnClick="() => OrganizationToEdit.Address = new()"
+                            <TelerikButton OnClick="AddAddressEditingOrganization"
                                            Icon="plus"
                                            Class="button-border-success"
                                            title="Add New Address">
