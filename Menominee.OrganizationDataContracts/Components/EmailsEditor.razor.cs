@@ -17,6 +17,8 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public IList<EmailToEdit> EmailsToEdit { get; set; }
         public EmailToEdit EmailToEdit { get; set; }
+        private bool DialogVisible => EmailToEdit != null && (Adding || Editing);
+
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private void Add(string type)
@@ -47,8 +49,13 @@ namespace Menominee.OrganizationDataContracts.Components
             Adding = false;
             Editing = false;
         }
+        private void CancelEditEmail()
+        {
+            Adding = false;
+            Editing = false;
+        }
 
-        private void Cancel()
+        private void CancelAddEmail()
         {
             EmailToAdd = null;
             EmailToEdit = null;

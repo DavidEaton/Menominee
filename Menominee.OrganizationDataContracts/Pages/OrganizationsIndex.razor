@@ -152,22 +152,47 @@
                 <GridLayoutItems>
                     <GridLayoutItem>
                         <div class="h6"
-                             @onclick="WriteToConsole">
+                             tabindex="-1"
+                             @onclick="EditAddress">
                             Address
                             &nbsp &nbsp
                             @if (OrganizationToEdit?.Address != null)
                             {
-                                <TelerikIcon Icon="pencil" />
+                                <TelerikIcon Icon="pencil"/>
                             }
                         </div>
                         @if (OrganizationToEdit?.Address != null)
                         {
-                            <AddressEditor TItem="AddressToEdit"
-                                           Item="@OrganizationToEdit?.Address"
-                                           AddressLineProperty="AddressLine"
-                                           CityProperty="City"
-                                           StateProperty="State"
-                                           PostalCodeProperty="PostalCode" />
+
+                            <TelerikWindow Visible="OrganizationToEdit?.Address != null && EditingAddress"
+                                           Modal="true">
+                                <WindowTitle>
+                                    Address
+                                </WindowTitle>
+                                <WindowContent>
+                                    <AddressEditor TItem="AddressToEdit"
+                                                   Item="@OrganizationToEdit?.Address"
+                                                   AddressLineProperty="AddressLine"
+                                                   CityProperty="City"
+                                                   StateProperty="State"
+                                                   PostalCodeProperty="PostalCode"
+                                                   EnableEditor="EditingAddress" />
+
+                                    <TelerikButton OnClick="() => EditingAddress = false"
+                                                   Icon="check"
+                                                   Primary="true"
+                                                   ButtonType="ButtonType.Button"
+                                                   title="Save New Address">
+                                        Okay
+                                    </TelerikButton>
+                                    <TelerikButton OnClick="CancelEditAddress"
+                                                   ButtonType="ButtonType.Button"
+                                                   Icon="x"
+                                                   title="Cancel Edit Address">
+                                        Cancel
+                                    </TelerikButton>
+                                </WindowContent>
+                            </TelerikWindow>
                         }
                         else
                         {
@@ -177,6 +202,19 @@
                                            title="Add New Address">
                                 Add Address
                             </TelerikButton>
+                        }
+
+                        @if (OrganizationToEdit?.Address != null && !EditingAddress)
+                        {
+                            <div @onclick="EditAddress">
+                                <AddressEditor TItem="AddressToEdit"
+                                               Item="@OrganizationToEdit?.Address"
+                                               AddressLineProperty="AddressLine"
+                                               CityProperty="City"
+                                               StateProperty="State"
+                                               PostalCodeProperty="PostalCode"
+                                               EnableEditor="EditingAddress" />
+                            </div>
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>

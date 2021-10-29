@@ -1,10 +1,10 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Components;
 using Menominee.Common.Enums;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Components;
 using System;
-using Telerik.Blazor.Components;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telerik.Blazor.Components;
 
 namespace Menominee.OrganizationDataContracts.Components
 {
@@ -21,7 +21,7 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-
+        private bool DialogVisible => PhoneToEdit != null && (Adding || Editing);
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }
@@ -67,13 +67,21 @@ namespace Menominee.OrganizationDataContracts.Components
             Editing = false;
         }
 
-        private void Cancel()
+        private void CancelAddPhone()
         {
-            PhoneToAdd = null;
-            PhoneToEdit = null;
+            Adding = false;
+            Editing = false;
+
+            if (PhoneToAdd != null)
+                PhoneToAdd = null;
+        }
+
+        private void CancelEditPhone()
+        {
             Adding = false;
             Editing = false;
         }
+
     }
     public class PhoneTypeEnumModel
     {

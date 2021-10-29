@@ -61,7 +61,7 @@
                                title="Save New Email">
                     Okay
                 </TelerikButton>
-                <TelerikButton OnClick="Cancel"
+                <TelerikButton OnClick="CancelAddEmail"
                                Icon="x"
                                ButtonType="ButtonType.Button"
                                title="Cancel New Email">
@@ -83,14 +83,14 @@
 
     @if (FormMode == FormMode.Edit)
     {
-        // If there are emails, list them in a table. If adding email, hide email list
-        @if (((int)EmailsToEdit.Count()) > 0 && !Adding)
+        // If there are emails, list them in a table.
+        @if (((int)EmailsToEdit.Count()) > 0)
         {
             <ContactableTemplate Items="EmailsToEdit"
                                  TItem="EmailToEdit"
                                  Context="email"
                                  @key="EmailToEdit"
-                                 OnRowClick="EditEmail">
+                                 OnRowClick="Edit">
                 <TableHeader>
                     <th>Address</th>
                     <th>Primary</th>
@@ -106,49 +106,49 @@
             </ContactableTemplate>
         }
 
-        // If adding email, show the edit form
-        @if (Adding|| Editing)
+        // If adding or editing email, show the edit form
+        @if (Adding || Editing)
         {
             <EditForm Model="EmailToEdit">
-                <TelerikGridLayout>
-                    <GridLayoutRows>
-                        <GridLayoutRow></GridLayoutRow>
-                    </GridLayoutRows>
-                    <GridLayoutItems>
-                        <div class="mb-3">
-                            <GridLayoutItem>
+                <TelerikWindow Visible="DialogVisible"
+                               Modal="true">
+                    <WindowTitle>
+                        Email
+                    </WindowTitle>
+                    <WindowContent>
+                        <div class="container">
+                            <div class="form-group row">
                                 <label class="form-control-label">Address</label>
                                 <TelerikTextBox @bind-Value="@EmailToEdit.Address"
                                                 Width="100%">
                                 </TelerikTextBox>
-                            </GridLayoutItem>
-                        </div>
-                        <div class="mb-3">
-                            <GridLayoutItem>
+                            </div>
+                            <div class="form-group row">
                                 <label>
                                     <TelerikCheckBox @bind-Value="@EmailToEdit.IsPrimary"></TelerikCheckBox>
                                     <span class="form-control-label">Primary</span>
                                 </label>
-                            </GridLayoutItem>
+                            </div>
+                            <div>
+                                <TelerikButton OnClick='() => Save("EmailToEdit")'
+                                               Icon="save"
+                                               Primary="true"
+                                               ButtonType="ButtonType.Button"
+                                               title="Save New Email">
+                                    Okay
+                                </TelerikButton>
+                                <TelerikButton OnClick="CancelEditEmail"
+                                               ButtonType="ButtonType.Button"
+                                               Icon="x"
+                                               title="Cancel New Email">
+                                    Cancel
+                                </TelerikButton>
+                            </div>
                         </div>
-                    </GridLayoutItems>
-                </TelerikGridLayout>
+                    </WindowContent>
+                </TelerikWindow>
             </EditForm>
-            <div class="pb-4">
-                <TelerikButton OnClick='() => Save("EmailToEdit")'
-                               Icon="save"
-                               Primary="true"
-                               ButtonType="ButtonType.Button"
-                               title="Save New Email">
-                    Okay
-                </TelerikButton>
-                <TelerikButton OnClick="Cancel"
-                               ButtonType="ButtonType.Button"
-                               Icon="x"
-                               title="Cancel New Email">
-                    Cancel
-                </TelerikButton>
-            </div>
+
         }
         <div>
             <TelerikButton OnClick='() => Add("EmailToEdit")'

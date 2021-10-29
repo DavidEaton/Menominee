@@ -46,9 +46,14 @@ namespace Menominee.OrganizationDataContracts.Pages
             AddingAddress = false;
         }
 
-        public void WriteToConsole()
+        private void CancelEditAddress()
         {
-            Console.WriteLine("WriteToConsole() called");
+            EditingAddress = false;
+        }
+
+        public void EditAddress()
+        {
+            EditingAddress = true;
         }
 
         private async Task EditAsync(long id)
@@ -131,6 +136,7 @@ namespace Menominee.OrganizationDataContracts.Pages
         {
             EditingOrganization = false;
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
+            EditingAddress = false;
         }
 
         protected async Task EndAddAsync()
