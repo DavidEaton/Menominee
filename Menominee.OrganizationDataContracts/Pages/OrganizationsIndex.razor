@@ -12,32 +12,68 @@
     }
     @if (!EditingOrganization && !AddingOrganization && OrganizationsList != null)
     {
-        <TelerikButton OnClick="Add"
-                       Primary="true"
-                       Icon="plus"
-                       title="Add New Organization">
-            Add Organization
-        </TelerikButton>
+        <div class="pb-3">
+            <TelerikButton OnClick="Add"
+                           Primary="true"
+                           Icon="plus"
+                           title="Add New Organization">
+                Add Organization
+            </TelerikButton>
+        </div>
 
-        <table class="table table-hover table-responsive table-sm">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Primary Phone</th>
-                    <th>Type</th>
-                    <th>Primary Email</th>
-                    <th>Note</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var organization in OrganizationsList)
-                {
-                    <OrganizationsIndexRow @key="organization" Organization="organization" OnRowClick="EditAsync"></OrganizationsIndexRow>
-                }
-            </tbody>
-        </table>
+        <TelerikGrid Data="OrganizationsList"
+                     OnRowClick="@EditAsync"
+                     Sortable="true"
+                     Pageable="true"
+                     FilterMode="GridFilterMode.FilterMenu"
+                     Resizable="true"
+                     Reorderable="true"
+                     ShowColumnMenu="true"
+                     OnStateInit="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateInitHandler(args))"
+                     OnStateChanged="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateChangedHandler(args))"
+                     @ref="@Grid">
+            <GridToolBar>
+                <TelerikButton OnClick="@ResetState"
+                               Icon="reset"
+                               Title="Reset grid to default layout/columns..."></TelerikButton>
+                <span class="k-toolbar-spacer"></span>
+                <GridCommandButton Command="ExcelExport"
+                                   Icon="file-excel"
+                                   Title="Export to Excel"
+                                   OnClick="@ShowLoadingSign">
+                </GridCommandButton>
+                <GridCommandButton Command="CsvExport"
+                                   OnClick="@ShowLoadingSign"
+                                   Title="Export to CSV"
+                                   Icon="file-csv">
+                </GridCommandButton>
+                <label class="k-checkbox-label"
+                       title="Export all: unchecking will export only rows currently visible in grid">
+                    <TelerikCheckBox @bind-Value="@ExportAllPages" /><span class="small">Export All</span>
+                </label>
+                <span class="k-toolbar-spacer"></span>
+                <GridSearchBox />
+            </GridToolBar>
+            <GridExport>
+                <GridExcelExport FileName="Organizations" AllPages="true" />
+            </GridExport>
+            <GridColumns>
+                <GridColumn Field="Name" Title="Name"></GridColumn>
+                <GridColumn Field="AddressFull" Title="Address"></GridColumn>
+                <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
+                <GridColumn Field="PrimaryPhoneType" Title="Type"></GridColumn>
+                <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
+                <GridColumn Field="Note" Title="Note"></GridColumn>
+            </GridColumns>
+        </TelerikGrid>
 
+        <TelerikWindow Visible="@isExporting" Modal="true">
+            <WindowTitle>Please wait...</WindowTitle>
+            <WindowContent>
+                <TelerikLoader Size="LoaderSize.Large" />
+                We are exporting your data; your file will download shortly.
+            </WindowContent>
+        </TelerikWindow>
     }
 
     @if (AddingOrganization && OrganizationToAdd != null)
@@ -158,7 +194,7 @@
                             &nbsp &nbsp
                             @if (OrganizationToEdit?.Address != null)
                             {
-                                <TelerikIcon Icon="pencil"/>
+                                <TelerikIcon Icon="pencil" />
                             }
                         </div>
                         @if (OrganizationToEdit?.Address != null)

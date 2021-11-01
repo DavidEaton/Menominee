@@ -23,6 +23,8 @@ namespace Menominee.OrganizationDataContracts
 			builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>
 										  (client => client.BaseAddress = baseAddress);
 
+			builder.Services.AddScoped<LocalStorage>();
+
 			await builder.Build().RunAsync();
 		}
 	}
