@@ -2,6 +2,8 @@
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Telerik.Blazor.Components;
 
 namespace Menominee.OrganizationDataContracts.Components
 {
@@ -17,17 +19,21 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public IList<EmailToEdit> EmailsToEdit { get; set; }
         public EmailToEdit EmailToEdit { get; set; }
-        private bool DialogVisible => EmailToEdit != null && (Adding || Editing);
-
+        private bool DialogVisible => (EmailToEdit != null && (Adding || Editing)) || (EmailToAdd != null && (Adding || Editing));
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
-        private void Add(string type)
+        private TelerikTextBox EmailAddressControl { get; set; }
+
+        private async Task AddAsync(string type)
         {
             if (type == "EmailToAdd")
                 EmailToAdd = new();
 
             if (type == "EmailToEdit")
                 EmailToEdit = new();
+
+            if (EmailAddressControl != null)
+                await EmailAddressControl.FocusAsync();
 
             Adding = true;
         }
@@ -57,8 +63,9 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void CancelAddEmail()
         {
-            EmailToAdd = null;
-            EmailToEdit = null;
+            if (EmailToAdd != null)
+                EmailToAdd = null;
+
             Adding = false;
             Editing = false;
         }
