@@ -1,22 +1,20 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Handlers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Shared;
-using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -35,13 +33,13 @@ namespace CustomerVehicleManagement.Api
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            if (HostEnvironment.IsDevelopment())
-                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+            // TODO: Separate Startup class for tests should use:
+            //if (HostEnvironment.IsDevelopment())
+            //    services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -64,8 +62,15 @@ namespace CustomerVehicleManagement.Api
                     })
                 ;
 
+            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
+            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
             services.AddAuthorization(authorizationOptions =>
             {
+                authorizationOptions.AddPolicy("RequireAuthenticatedUserPolicy", requireAuthenticatedUserPolicy);
+
                 authorizationOptions.AddPolicy(
                     Policies.AdminOnly,
                     Policies.AdminPolicy());
@@ -99,11 +104,7 @@ namespace CustomerVehicleManagement.Api
                                                          options
                                                         .UseSqlServer(Configuration[$"IDPSettings:Connection"]));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.ClaimsIdentity.UserIdClaimType = "sub")
-                .AddEntityFrameworkStores<IdentityUserDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<UserContext, UserContext>();
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped<IPersonRepository, PersonRepository>();
@@ -112,11 +113,6 @@ namespace CustomerVehicleManagement.Api
 
             services.AddHealthChecks();
             services.AddCors();
-
-            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
-            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
-            .RequireAuthenticatedUser()
-            .Build();
 
             services.AddControllers(mvcOptions =>
             {

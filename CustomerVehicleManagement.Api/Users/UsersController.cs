@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,7 @@ namespace CustomerVehicleManagement.Api.Users
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policies.CanManageUsers)]
+    [Authorize(Policies.CanManageUsers)]
     public class UsersController : ControllerBase
     {
         private readonly IConfiguration Configuration;
@@ -36,8 +35,8 @@ namespace CustomerVehicleManagement.Api.Users
             try
             {
                 connection.Open();
-                string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers];";
-                //string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers] WHERE [TenantId] = '{tenantId}';";
+                //string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers];";
+                string query = $"SELECT * FROM [dbo].[AspNetUsers] WHERE [TenantId] = '{tenantId}';";
                 using SqlCommand command = new(query, connection);
                 using SqlDataReader reader = command.ExecuteReader();
 
