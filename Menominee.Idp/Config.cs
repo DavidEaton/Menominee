@@ -103,6 +103,10 @@ namespace Menominee.Idp
                         "subscriptionLevel",
                         "subscribedProducts"
                     },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
                     AllowedCorsOrigins = new List<string>()
                     {
                         "https://localhost:44307"

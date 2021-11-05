@@ -17,11 +17,9 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
 
 namespace CustomerVehicleManagement.Api
 {
@@ -45,73 +43,67 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
                 services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
 
-            if (HostEnvironment.IsProduction())
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        // base-address of our identityserver
+                        options.Authority = Configuration[$"IDPSettings:BaseUrl"];
+
+                        // name of the API resource
+                        options.Audience = Configuration["ApiName"];
+
+                        options.RequireHttpsMetadata = false;
+                        //options.ApiSecret
+                        options.TokenValidationParameters = new
+                        TokenValidationParameters()
+                        {
+                            ValidateAudience = false
+                        };
+                    })
+                ;
+
+            services.AddAuthorization(authorizationOptions =>
             {
+                authorizationOptions.AddPolicy(
+                    Policies.AdminOnly,
+                    Policies.AdminPolicy());
 
-                services
-                    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-                        options =>
-                         {
-                             options.Authority = Configuration[$"IDPSettings:BaseUrl"];
-                             options.Audience = Configuration["ApiName"];
-                             options.RequireHttpsMetadata = false;
-                             options.TokenValidationParameters = new
-                             TokenValidationParameters()
-                             {
-                                 ValidateAudience = false
-                             };
-                         })
-                    ;
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageHumanResources,
+                    Policies.CanManageHumanResourcesPolicy());
 
-                services.AddAuthorization(authorizationOptions =>
-                {
-                    authorizationOptions.AddPolicy(
-                        Policies.AdminOnly,
-                        Policies.AdminPolicy());
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageUsers,
+                    Policies.CanManageUsersPolicy());
 
-                    authorizationOptions.AddPolicy(
-                        Policies.CanManageHumanResources,
-                        Policies.CanManageHumanResourcesPolicy());
+                authorizationOptions.AddPolicy(
+                    Policies.FreeUser,
+                    Policies.FreeUserPolicy());
 
-                    authorizationOptions.AddPolicy(
-                        Policies.CanManageUsers,
-                        Policies.CanManageUsersPolicy());
+                authorizationOptions.AddPolicy(
+                    Policies.OwnerOnly,
+                    Policies.OwnerPolicy());
 
-                    authorizationOptions.AddPolicy(
-                        Policies.FreeUser,
-                        Policies.FreeUserPolicy());
+                authorizationOptions.AddPolicy(
+                    Policies.PaidUser,
+                    Policies.PaidUserPolicy());
 
-                    authorizationOptions.AddPolicy(
-                        Policies.OwnerOnly,
-                        Policies.OwnerPolicy());
-
-                    authorizationOptions.AddPolicy(
-                        Policies.PaidUser,
-                        Policies.PaidUserPolicy());
-
-                    authorizationOptions.AddPolicy(
-                        Policies.TechniciansUser,
-                        Policies.TechnicianUserPolicy());
-                });
-
-            }
+                authorizationOptions.AddPolicy(
+                    Policies.TechniciansUser,
+                    Policies.TechnicianUserPolicy());
+            });
 
             services.AddDbContext<IdentityUserDbContext>(options =>
                                                          options
                                                         .UseSqlServer(Configuration[$"IDPSettings:Connection"]));
 
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.ClaimsIdentity.UserIdClaimType = "sub")
+                .AddEntityFrameworkStores<IdentityUserDbContext>()
+                .AddDefaultTokenProviders();
 
-
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<IdentityUserDbContext>()
-            .AddDefaultTokenProviders();
-
-
-
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            services.AddHttpContextAccessor();
             services.AddScoped<UserContext, UserContext>();
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped<IPersonRepository, PersonRepository>();
@@ -119,31 +111,21 @@ namespace CustomerVehicleManagement.Api
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             services.AddHealthChecks();
+            services.AddCors();
 
-            if (HostEnvironment.IsProduction())
+            // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
+            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
+
+            services.AddControllers(mvcOptions =>
             {
-                services.AddCors();
-                // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
-                var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
-                services.AddControllers(mvcOptions =>
-                {
-                    mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
-                    mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
-                }).AddJsonOptions(options =>
-                  {
-                      options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                  });
-            }
-
-            if (HostEnvironment.IsDevelopment())
-                services.AddControllers()
-                    .AddJsonOptions(options =>
-                    {
-                        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                    });
+                mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
+                mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+            }).AddJsonOptions(options =>
+              {
+                  options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+              });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -152,11 +134,8 @@ namespace CustomerVehicleManagement.Api
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            if (HostEnvironment.IsProduction())
-            {
-                app.UseAuthentication();
-                app.UseAuthorization();
-            }
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:AllowedOrigins").Get<string>().Split(";"))
                                     .AllowAnyMethod()
@@ -165,19 +144,13 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            else
+            var options = new RewriteOptions()
+                .AddRedirectToHttps();
+            app.UseRewriter(options);
+
+            if (HostEnvironment.IsProduction())
             {
-                // Production || Testing
-                string api_env = Environment.GetEnvironmentVariable("API_ENVIRONMENT");
-                var logMessage = $"Configure called in {api_env} slot";
-
-                var options = new RewriteOptions()
-                    .AddRedirectToHttps();
-                app.UseRewriter(options);
-
-                if (HostEnvironment.IsProduction())
-                {
-                    app.UseExceptionHandler(appBuilder =>
+                app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
                     {
@@ -187,16 +160,11 @@ namespace CustomerVehicleManagement.Api
                         //    try...catch (Exception ex)
                         //      return StatusCode(StatusCodes.Status500InternalServerError, ex);
                         context.Response.StatusCode = 500;
-                        logMessage = context.Response.StatusCode.ToString();
+                        //logMessage = context.Response.StatusCode.ToString();
                         //logger.LogError(logMessage);
                         await context.Response.WriteAsync("An unexpected fault occurred. Fault logged.");
                     });
                 });
-                }
-
-                // Staging
-                if (api_env == "Staging")
-                    app.UseDeveloperExceptionPage();
             }
 
             app.UseEndpoints(endpoints =>

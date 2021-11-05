@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 
             var response = await httpclient.GetAsync(BaseAddress);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
         }
     }
 }
