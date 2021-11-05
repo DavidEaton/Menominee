@@ -69,13 +69,7 @@ namespace Menominee.Idp
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope(name: "menominee-api", displayName: "Menominee API"),
-                new ApiScope(name: "ddc-api", displayName: "Dynamic Database Conection API")
-                //new ApiScope(name: "tenantId", displayName: "Id of User's Tenant"),
-                //new ApiScope(name: "tenantName", displayName: "Name of User's Tenant"),
-                //new ApiScope(name: "roles", displayName: "User's Shop Role(s)"),
-                //new ApiScope(name: "subscriptionLevel", displayName: "User's Subsription Level"),
-                //new ApiScope(name: "subscribedProducts", displayName: "User's subscribed Products")
+                new ApiScope(name: "menominee-api", displayName: "Menominee API")
             };
 
         public static IEnumerable<Client> Clients =>
@@ -102,7 +96,6 @@ namespace Menominee.Idp
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "menominee-api",
-                        "ddc-api",
                         "tenantId",
                         "tenantName",
                         "role",
