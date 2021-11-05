@@ -51,12 +51,19 @@ namespace Menominee.Idp
                 new ApiResource(
                     "menominee-api",
                     "Menominee API",
-                    new List<string>() { "tenantId",
-                                         "tenantName",
-                                         "role",
-                                         "shopRole",
-                                         "subscriptionLevel",
-                                         "subscribedProducts"}) // include userClaims in access token
+                    new[] { "role" })
+                    {
+                        Scopes = {
+                            "menominee-api",
+                            "tenantId",
+                            "tenantName",
+                            "role",
+                            "shopRole",
+                            "subscriptionLevel",
+                            "subscribedProducts"
+                        },
+                        ApiSecrets = { new Secret("apisecret".Sha256())}
+                    }
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>

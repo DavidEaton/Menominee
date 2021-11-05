@@ -92,10 +92,9 @@ namespace Menominee.Idp
                 app.UseDeveloperExceptionPage();
                 app.UseCors(CorsPolicyDevelopment);
             }
-            else
-            {
+
+            if (Environment.IsProduction())
                 app.UseCors(CorsPolicyProduction);
-            }
 
             app.UseStaticFiles();
             app.UseRouting();
