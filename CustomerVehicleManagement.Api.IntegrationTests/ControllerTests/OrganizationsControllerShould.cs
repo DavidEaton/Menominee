@@ -1,164 +1,78 @@
-﻿using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using SharedKernel.Enums;
-using SharedKernel.ValueObjects;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class OrganizationsControllerShould
+    /// <summary>
+    /// Integrations tests will alert us to breaking changes in our API
+    /// Tests controller action methods and underlying business logic
+    /// </summary>
+
+    // With IClassFixture, create a shared instance of this test class used for all of the tests within.
+    // By default, xUnit creates a new instance of the test class for every test method. When using a class
+    // fixture, a single instance is created before any of the test methods are executed. After all of the
+    // tests have completed, the class fixture will be cleaned up by calling its dispose method.
+    public class OrganizationsControllerShould : SharedInstanceTest
     {
-        private readonly OrganizationsController controller;
-        private readonly Mock<IOrganizationRepository> moqRepository;
+        private const string Path = "https://localhost/api/organizations/";
+        private const string ListPath = "https://localhost/api/organizations/list";
+        private readonly HttpClient httpClient;
 
-        public OrganizationsControllerShould()
+        public OrganizationsControllerShould(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
         {
-            moqRepository = new Mock<IOrganizationRepository>();
-            controller = new OrganizationsController(moqRepository.Object);
-        }
-
-        #region ********************************Get***********************************
-
-        [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_GetOrganizationAsync()
-        {
-            var result = await controller.GetOrganizationAsync(1);
-
-            result.Result.Should().BeOfType<NotFoundResult>();
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task Return_NotFoundResult_On_GetOrganizationAsyncWithInvalidId()
+        public async Task Return_Success_And_Expected_MediaType_For_Regular_User_On_Get()
         {
-            var result = await controller.GetOrganizationAsync(0);
+            // Arrange
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
+            var mediaType = "application/json";
 
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
+            // Act
+            var response = await client.GetAsync(Path);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsAsync()
+        public async Task Return_Content_On_Get()
         {
-            var result = await controller.GetOrganizationsAsync();
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationReadDto>>>();
+            var response = await client.GetAsync(ListPath);
+
+            // Confirm that endpoint returns content (!= null && length > 0)
+            response.Content.Should().NotBeNull();
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
 
-        [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsListAsync()
+        [Theory]
+        [InlineData(Path)]
+        [InlineData(ListPath)]
+        [InlineData(Path + "1")]
+        public async Task Get_EndpointsReturnFailToAnonymousUserForSecureUrls(string url)
         {
-            var result = await controller.GetOrganizationsListAsync();
+            var client = Factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
-            result.Should().BeOfType<ActionResult<IReadOnlyList<OrganizationInListDto>>>();
+            // NOT hits controller action
+            var response = await client.GetAsync(url);
+            var redirectUrl = response.Headers.Location.LocalPath;
+
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+            Assert.Equal("/auth/login", redirectUrl);
         }
-
-        #endregion Get
-
-        #region ********************************Post**********************************
-
-        [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_CreateOrganizationAsync()
-        {
-            var Organization = new OrganizationAddDto
-            {
-                Name = "Doe"
-            };
-
-            var result = await controller.AddOrganizationAsync(Organization);
-
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_On_CreateOrganizationAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var organization = new OrganizationAddDto();
-
-            var result = await controller.AddOrganizationAsync(organization);
-
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task Not_Save_On_CreateOrganizationAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var Organization = new OrganizationAddDto();
-
-            var result = await controller.AddOrganizationAsync(Organization);
-
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task Save_On_CreateOrganizationAsync_When_ModelState_Valid()
-        {
-            Organization savedOrganization = null;
-
-            moqRepository.Setup(organizationRepository =>
-                                organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()))
-                                    .Returns(Task.CompletedTask)
-                                    .Callback<Organization>(organization => savedOrganization = organization);
-
-            var Organization = new OrganizationAddDto
-            {
-                Name = "Moops"
-            };
-
-            var result = await controller.AddOrganizationAsync(Organization);
-
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Once);
-
-            Organization.Name.Should().Be(savedOrganization.Name.Name.ToString());
-        }
-
-        [Fact]
-        public async Task Return_OrganizationReadDto_On_CreateOrganizationAsync_When_ModelState_Valid()
-        {
-            moqRepository.Setup(organizationRepository =>
-                                organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()));
-
-            var Organization = new OrganizationAddDto();
-            var result = await controller.AddOrganizationAsync(Organization);
-
-            result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
-        }
-
-        #endregion Post
-
-        #region ********************************Put***********************************
-
-        [Fact]
-        public async Task Return_NotFoundObjectResult_On_UpdateOrganizationAsync_With_Invalid_Id()
-        {
-            var invaldId = 0;
-            var Organization = new OrganizationUpdateDto
-            {
-                Note = "note"
-            };
-
-            var result = await controller.UpdateOrganizationAsync(invaldId, Organization);
-
-            result.Should().BeOfType<NotFoundObjectResult>();
-        }
-
-        #endregion Put
 
     }
 }

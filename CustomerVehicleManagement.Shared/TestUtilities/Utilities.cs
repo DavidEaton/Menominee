@@ -2,7 +2,9 @@
 using CustomerVehicleManagement.Shared.Models;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.TestUtilities
 {
@@ -52,6 +54,22 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return new Person(nameOrError.Value, Gender.Female);
         }
 
+        public static List<Person> CreateValidPersons(int count)
+        {
+            var persons = new List<Person>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var firstName = RandomString(10);
+                var lastName = RandomString(10);
+                var nameOrError = PersonName.Create(lastName, firstName);
+
+                persons.Add(new Person(nameOrError.Value, Gender.Female));
+            }
+
+            return persons;
+        }
+
         public static Person CreateValidPersonWithPhones()
         {
             var person = CreateValidPerson();
@@ -86,17 +104,17 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return phones;
         }
 
-        public static IList<Domain.Entities.Email> CreateValidEmails()
+        public static IList<Email> CreateValidEmails()
         {
-            var Emails = new List<Domain.Entities.Email>();
+            var Emails = new List<Email>();
 
             var address1 = "a@b.c";
             var isPrimary1 = true;
-            var Email1 = new Domain.Entities.Email(address1, isPrimary1);
+            var Email1 = new Email(address1, isPrimary1);
 
             var address2 = "d@e.f";
             var isPrimary2 = false;
-            var Email2 = new Domain.Entities.Email(address2, isPrimary2);
+            var Email2 = new Email(address2, isPrimary2);
 
             Emails.Add(Email1);
             Emails.Add(Email2);
@@ -142,5 +160,12 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return addressOrError.Value;
         }
 
+        private static Random random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
     }
 }

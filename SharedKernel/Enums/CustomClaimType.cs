@@ -2,7 +2,7 @@
 
 namespace SharedKernel.Enums
 {
-    public enum ClaimType
+    public enum CustomClaimType
     {
         [Display(Name = "Subscription Level")]
         SubscriptionLevel,

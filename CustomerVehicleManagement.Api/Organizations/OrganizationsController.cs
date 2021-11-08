@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel.Enums;
 using SharedKernel.ValueObjects;
@@ -12,6 +13,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrganizationsController : ControllerBase
     {
         private readonly IOrganizationRepository repository;

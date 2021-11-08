@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using SharedKernel.ValueObjects;
 using CustomerVehicleManagement.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerRepository customerRepository;

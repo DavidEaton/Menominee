@@ -1,30 +1,32 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class BasicTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class BasicTests : SharedInstanceTest
     {
         private const string Path = "https://localhost/api/persons/list";
         private readonly HttpClient httpClient;
-        public BasicTests(WebApplicationFactory<Startup> factory)
+        public BasicTests(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
         {
             httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task Should_Have_Some_Persons()
+        public async Task Should_Return_Content_On_Get()
         {
-            var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonInListDto>>("");
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
 
-            persons.Should().HaveCountGreaterOrEqualTo(1);
+            var response = await client.GetAsync(Path);
+
+            // Confirm that endpoint returns content (!= null && length > 0)
+            response.Content.Should().NotBeNull();
+            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
     }
 }

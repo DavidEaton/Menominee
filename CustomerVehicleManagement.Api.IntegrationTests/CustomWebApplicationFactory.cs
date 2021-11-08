@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests
 {

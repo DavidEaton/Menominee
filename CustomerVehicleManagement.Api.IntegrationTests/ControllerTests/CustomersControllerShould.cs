@@ -1,72 +1,63 @@
-﻿using FluentAssertions;
+﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
+namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
+    public class CustomersControllerShould : SharedInstanceTest
     {
-        private const string CustomersControllerPath = "https://localhost/api/customers";
+        private const string Path = "https://localhost/api/customers";
         private readonly HttpClient httpClient;
 
-        public CustomersControllerShould(WebApplicationFactory<Startup> factory)
+        public CustomersControllerShould(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
         {
-            httpClient = factory.CreateDefaultClient(new Uri(CustomersControllerPath));
+            httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task Return_Success_Status_On_GetCustomers()
+        public async Task Return_Success_And_Expected_MediaType_For_Regular_User_On_Get()
         {
-            var response = await httpClient.GetAsync(string.Empty);
-
-            // Confirm that endpoint exists at, and returns success code from the expected uri
-            response.EnsureSuccessStatusCode();
-        }
-
-        [Fact]
-        public async Task Return_Expected_MediaType_On_GetCustomers()
-        {
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
             var mediaType = "application/json";
-            var response = await httpClient.GetAsync(string.Empty);
 
-            // Confirm that endpoint returns JSON ContentType
+            var response = await client.GetAsync(Path);
+
+            response.EnsureSuccessStatusCode();
             response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
         }
 
         [Fact]
-        public async Task Return_Content_On_GetCustomers()
+        public async Task Return_Content_On_Get()
         {
-            var response = await httpClient.GetAsync(string.Empty);
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
+
+            var response = await client.GetAsync(Path);
 
             response.Content.Should().NotBeNull();
             response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
 
-        // These next two tests depend on hard-coded entity Id values.
-        // Refactor to remove that dependency.
+        [Theory]
+        [InlineData(Path)]
+        //[InlineData(Path + "1")]
+        //[InlineData(Path + "list")]
+        public async Task Get_EndpointsReturnFailToAnonymousUserForSecureUrls(string url)
+        {
+            var client = Factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
-        //[Fact]
-        //public async Task Return_Organization_Customer_On_GetCustomer()
-        //{
-        //    HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/11")).Content;
-        //    string jsonContent = content.ReadAsStringAsync().Result;
-        //    CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
+            // hits controller action
+            var response = await client.GetAsync(url);
+            var redirectUrl = response.Headers.Location.LocalPath;
 
-        //    customer.Should().NotBeNull();
-        //}
-
-        //[Fact]
-        //public async Task Return_Person_Customer_On_GetCustomer()
-        //{
-        //    HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/10")).Content;
-        //    string jsonContent = content.ReadAsStringAsync().Result;
-        //    CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
-
-        //    customer.Should().NotBeNull();
-        //}
-
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+            Assert.Equal("/auth/login", redirectUrl);
+        }
     }
 }

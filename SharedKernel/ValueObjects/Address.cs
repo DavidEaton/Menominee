@@ -1,5 +1,5 @@
-﻿using SharedKernel.Utilities;
-using SharedKernel.Enums;
+﻿using SharedKernel.Enums;
+using SharedKernel.Utilities;
 using System.Collections.Generic;
 
 namespace SharedKernel.ValueObjects
@@ -92,7 +92,7 @@ namespace SharedKernel.ValueObjects
         {
             return AddressFull;
         }
-        
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return AddressLine;

@@ -5,7 +5,7 @@ using FluentAssertions;
 using SharedKernel.Enums;
 using System.Threading.Tasks;
 using Xunit;
-using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
 using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
@@ -20,49 +20,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         {
 
         }
-
-        //[Fact]
-        //public async Task AddPersonCustomerAsync()
-        //{
-        //    var options = CreateDbContextOptions();
-
-        //    using (var context = new ApplicationDbContext(options))
-        //    {
-        //        // Arrange
-        //        var repository = new CustomerRepository(context, mapper);
-        //        var personCreateDto = new PersonCreateDto(new PersonName("Moops", "Molly"), Gender.Female);
-        //        var customerCreateDto = new CustomerCreateDto(personCreateDto, null, CustomerType.Retail);
-        //        var customer = new Customer(customerCreateDto.PersonCreateDto)
-
-        //        // Act
-        //        await repository.AddCustomerAsync(customerCreateDto);
-        //        await repository.SaveChangesAsync();
-        //        var Customers = await repository.GetCustomersAsync();
-
-        //        // Assert
-        //        Customers.Count().Should().BeGreaterThan(0);
-        //    }
-        //}
-
-        //[Fact]
-        //public async Task AddOrganizationCustomerAsync()
-        //{
-        //    var options = CreateDbContextOptions();
-
-        //    using (var context = new ApplicationDbContext(options))
-        //    {
-        //        var repository = new CustomerRepository(context, mapper);
-
-        //        var organizationCreateDto = new OrganizationCreateDto("Jane's Automotive");
-        //        var customerCreateDto = new CustomerCreateDto(null, organizationCreateDto, CustomerType.Retail);
-
-        //        await repository.CustomerAsync(customerCreateDto);
-        //        await repository.SaveChangesAsync();
-        //        var Customers = await repository.GetCustomersAsync();
-
-        //        Customers.Count().Should().BeGreaterThan(0);
-        //    }
-        //}
 
         [Fact]
         public async Task GetPersonCustomerAsync()

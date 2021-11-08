@@ -1,6 +1,7 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
 using Menominee.Idp.Configuration;
+using SharedKernel.Enums;
 using System.Collections.Generic;
 
 namespace Menominee.Idp
@@ -31,17 +32,17 @@ namespace Menominee.Idp
 
                 new IdentityResource(
                     "shopRole",
-                    "Shop Role",
+                    CustomClaimType.ShopRole.ToString(),
                     new List<string>() { "shopRole" }),
 
                 new IdentityResource(
                     "subscriptionLevel",
-                    "User's Subsription Level",
+                    CustomClaimType.SubscriptionLevel.ToString(),
                     new List<string>() { "subscriptionLevel" }),
 
                 new IdentityResource(
                     "subscribedProducts",
-                    "User's subscribed Products",
+                    CustomClaimType.SubscribedProducts.ToString(),
                     new List<string>() { "subscribedProducts" })
             };
 
