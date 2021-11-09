@@ -37,10 +37,6 @@ namespace CustomerVehicleManagement.Api
         {
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();
 
-            // TODO: Separate Startup class for tests should use:
-            //if (HostEnvironment.IsDevelopment())
-            //    services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
-
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,

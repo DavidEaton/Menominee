@@ -7,7 +7,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {
-    public class BasicTests : SharedInstanceTest
+    public class BasicTests : SharedInstanceTestFixture
     {
         private const string Path = "https://localhost/api/persons/list";
         private readonly HttpClient httpClient;

@@ -39,6 +39,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return provider;
         }
 
+        public static TestClaimsProvider WithHumanResourcesClaims()
+        {
+            var provider = new TestClaimsProvider();
+            provider.Claims.Add(new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()));
+            provider.Claims.Add(new Claim(ClaimTypes.Name, "Shop HumanResources user"));
+            provider.Claims.Add(new Claim(CustomClaimType.ShopRole.ToString(), ShopRole.HumanResources.ToString()));
+
+            return provider;
+        }
+
         public static TestClaimsProvider WithShopOwnerClaims()
         {
             var provider = new TestClaimsProvider();

@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Shared;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,37 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                             options.AccessDeniedPath = new PathString("/auth/denied");
                         });
 
-            services.AddAuthorization();
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.AddPolicy(
+                    Policies.AdminOnly,
+                    Policies.AdminPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageHumanResources,
+                    Policies.CanManageHumanResourcesPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.CanManageUsers,
+                    Policies.CanManageUsersPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.FreeUser,
+                    Policies.FreeUserPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.OwnerOnly,
+                    Policies.OwnerPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.PaidUser,
+                    Policies.PaidUserPolicy());
+
+                authorizationOptions.AddPolicy(
+                    Policies.TechniciansUser,
+                    Policies.TechnicianUserPolicy());
+            });
+
             services.AddControllersWithViews();
 
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();

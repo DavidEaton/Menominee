@@ -9,9 +9,9 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class CustomersControllerShould : SharedInstanceTest
+    public class CustomersControllerShould : SharedInstanceTestFixture
     {
-        private const string Path = "https://localhost/api/customers";
+        private const string Path = "https://localhost/api/customers/";
         private readonly HttpClient httpClient;
 
         public CustomersControllerShould(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
@@ -30,34 +30,23 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 
             response.EnsureSuccessStatusCode();
             response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
-        }
-
-        [Fact]
-        public async Task Return_Content_On_Get()
-        {
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = Factory.CreateClientWithTestAuth(provider);
-
-            var response = await client.GetAsync(Path);
-
             response.Content.Should().NotBeNull();
             response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
 
         [Theory]
         [InlineData(Path)]
-        //[InlineData(Path + "1")]
-        //[InlineData(Path + "list")]
-        public async Task Get_EndpointsReturnFailToAnonymousUserForSecureUrls(string url)
+        [InlineData(Path + "1")]
+        [InlineData(Path + "list")]
+        public async Task Return_Redirect_To_Anonymous_User_On_Get_Secure_Urls(string url)
         {
             var client = Factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
             // hits controller action
             var response = await client.GetAsync(url);
-            var redirectUrl = response.Headers.Location.LocalPath;
 
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.Equal("/auth/login", redirectUrl);
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.LocalPath.Should().Be("/auth/login");
         }
     }
 }

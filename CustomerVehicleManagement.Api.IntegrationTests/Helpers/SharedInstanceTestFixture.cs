@@ -2,11 +2,11 @@
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
-    public abstract class SharedInstanceTest : IClassFixture<TestApplicationFactory<Startup, TestStartup>>
+    public abstract class SharedInstanceTestFixture : IClassFixture<TestApplicationFactory<Startup, TestStartup>>
     {
         protected CustomWebApplicationFactory<TestStartup> Factory { get; }
 
-        public SharedInstanceTest(TestApplicationFactory<Startup, TestStartup> factory)
+        public SharedInstanceTestFixture(TestApplicationFactory<Startup, TestStartup> factory)
         {
             Factory = factory;
         }

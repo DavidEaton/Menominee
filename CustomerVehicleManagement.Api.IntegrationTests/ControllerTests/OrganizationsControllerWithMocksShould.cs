@@ -10,12 +10,12 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class OrganizationsMockedRepoControllerShould
+    public class OrganizationsControllerWithMocksShould
     {
         private readonly OrganizationsController controller;
         private readonly Mock<IOrganizationRepository> moqRepository;
 
-        public OrganizationsMockedRepoControllerShould()
+        public OrganizationsControllerWithMocksShould()
         {
             moqRepository = new Mock<IOrganizationRepository>();
             controller = new OrganizationsController(moqRepository.Object);
@@ -28,7 +28,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetOrganizationAsync(1);
 
-            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
         }
 
@@ -37,6 +36,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetOrganizationAsync(0);
 
+            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<OrganizationReadDto>>();
         }
 

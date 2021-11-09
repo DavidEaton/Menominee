@@ -30,7 +30,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetPersonAsync(1);
 
-            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
 
@@ -39,6 +38,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var result = await controller.GetPersonAsync(0);
 
+            result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<PersonReadDto>>();
         }
 
