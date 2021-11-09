@@ -4,9 +4,11 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Shared;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,8 +35,16 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                             options.AccessDeniedPath = new PathString("/auth/denied");
                         });
 
+            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
             services.AddAuthorization(authorizationOptions =>
             {
+                authorizationOptions.AddPolicy(
+                    "RequireAuthenticatedUserPolicy",
+                    requireAuthenticatedUserPolicy);
+
                 authorizationOptions.AddPolicy(
                     Policies.AdminOnly,
                     Policies.AdminPolicy());
@@ -64,7 +74,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                     Policies.TechnicianUserPolicy());
             });
 
-            services.AddControllersWithViews();
+            services.AddControllers(mvcOptions =>
+            {
+                mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
+                mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            });
 
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IPersonRepository, PersonRepository>();

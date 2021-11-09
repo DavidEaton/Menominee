@@ -13,21 +13,15 @@ namespace CustomerVehicleManagement.Api.Users
 {
     [Route("api/[controller]")]
     [Authorize(Policy = Policies.CanManageUsers)]
-    public class AccountController : ControllerBase
+    public class AccountsController : ControllerBase
     {
-        private readonly IdentityUserDbContext Context;
-        private readonly UserContext UserContext;
         private readonly UserManager<ApplicationUser> UserManager;
-        public AccountController(UserManager<ApplicationUser> userManager,
-                                 IdentityUserDbContext context,
-                                 UserContext userContext)
+        public AccountsController(UserManager<ApplicationUser> userManager)
         {
             UserManager = userManager;
-            Context = context;
-            UserContext = userContext;
         }
 
-        [HttpGet("users")]
+        [HttpGet]
         public async Task<IActionResult> GetIdentityUsersAsync()
         {
             var tenantId = await GetTenantId();
@@ -52,32 +46,31 @@ namespace CustomerVehicleManagement.Api.Users
         }
         public async Task<Guid> GetTenantId()
         {
-            var loggedInUser = await UserManager.GetUserAsync(User);
-            return loggedInUser.TenantId;
+            //var loggedInUser = await UserManager.GetUserAsync(User);
+            //return loggedInUser.TenantId;
+            Guid tenantId = new("8451406b-8cca-4e2b-ad2c-096a563bc7bc");
+            return tenantId;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUsersAsync()
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] RegisterUser model)
         {
-            var users = UserManager.Users.ToList();
+            var newUser = new ApplicationUser { UserName = model.Email,
+                                                Email = model.Email,
+                                                EmailConfirmed = true};
 
-            if (users != null)
+            var result = await UserManager.CreateAsync(newUser, model.Password);
+
+            if (!result.Succeeded)
             {
-                var userLookups = new List<UserListDto>();
-                foreach (var user in users)
-                {
-                    var userLookup = new UserListDto
-                    {
-                        Id = user.Id,
-                        Username = user.UserName
-                    };
-                    userLookups.Add(userLookup);
-                }
+                var errors = result.Errors.Select(x => x.Description);
 
-                return Ok(userLookups);
+                return Ok(new RegisterUserResult { Successful = false, Errors = errors });
+
             }
-            else
-                return NotFound();
+
+            return Ok(new RegisterUserResult { Successful = true });
         }
+
     }
 }

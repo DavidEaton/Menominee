@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Shared;
+using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -42,14 +43,9 @@ namespace CustomerVehicleManagement.Api
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
                     options =>
                     {
-                        // base-address of our identityserver
-                        options.Authority = Configuration[$"IDPSettings:BaseUrl"];
-
-                        // name of the API resource
-                        options.Audience = Configuration["ApiName"];
-
-                        options.RequireHttpsMetadata = false;
-                        //options.ApiSecret
+                        options.Authority = Configuration[$"IDPSettings:BaseUrl"];// base-address of our identity server
+                        options.Audience = Configuration["ApiName"]; // name of the API resource
+                        options.RequireHttpsMetadata = HostEnvironment.IsProduction() ? true : false;
                         options.TokenValidationParameters = new
                         TokenValidationParameters()
                         {
@@ -65,7 +61,9 @@ namespace CustomerVehicleManagement.Api
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.AddPolicy("RequireAuthenticatedUserPolicy", requireAuthenticatedUserPolicy);
+                authorizationOptions.AddPolicy(
+                    "RequireAuthenticatedUserPolicy",
+                    requireAuthenticatedUserPolicy);
 
                 authorizationOptions.AddPolicy(
                     Policies.AdminOnly,
@@ -98,7 +96,11 @@ namespace CustomerVehicleManagement.Api
 
             services.AddDbContext<IdentityUserDbContext>(options =>
                                                          options
-                                                        .UseSqlServer(Configuration[$"IDPSettings:Connection"]));
+                                                        .UseSqlServer(Configuration[$"IDPSettings:Connection"])
+                                                        );
+
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<IdentityUserDbContext>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<UserContext, UserContext>();
@@ -132,9 +134,6 @@ namespace CustomerVehicleManagement.Api
             app.UseCors(cors => cors.WithOrigins(Configuration.GetSection($"Clients:AllowedOrigins").Get<string>().Split(";"))
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
-
-            if (HostEnvironment.IsDevelopment())
-                app.UseDeveloperExceptionPage();
 
             var options = new RewriteOptions()
                 .AddRedirectToHttps();
