@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SharedKernel.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
@@ -9,8 +11,8 @@ namespace CustomerVehicleManagement.Shared.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        // TODO: Move validation values to centralized setting or service. IdentityHostingStartup in IDP project uses appsettings.json
-        // to retrieve options.Password.RequiredLength = Int32.Parse(Configuration[$"ApplicationSettings:MinimumPasswordLength"]);
+        // TODO: Move validation values to centralized setting or service.
+
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 8)]
         [DataType(DataType.Password)]
@@ -21,5 +23,11 @@ namespace CustomerVehicleManagement.Shared.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public Guid TenantId { get; set; }
+
+        public string TenantName { get; set; }
+
+        public ShopRole ShopRole { get; set; }
     }
 }

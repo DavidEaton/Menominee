@@ -4,6 +4,7 @@ using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +14,22 @@ namespace CustomerVehicleManagement.Api.Users
 {
     [Route("api/[controller]")]
     [Authorize(Policy = Policies.CanManageUsers)]
+    [ApiController]
     public class AccountsController : ControllerBase
     {
+        private readonly UserContext UserContext;
         private readonly UserManager<ApplicationUser> UserManager;
-        public AccountsController(UserManager<ApplicationUser> userManager)
+        public AccountsController(UserManager<ApplicationUser> userManager,
+                                  UserContext userContext)
         {
             UserManager = userManager;
+            UserContext = userContext;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetIdentityUsersAsync()
         {
-            var tenantId = await GetTenantId();
+            var tenantId = GetTenantId();
 
             var users = new List<UserListDto>();
             var identityUsers = UserManager.Users.Where(u => u.TenantId == tenantId).ToList();
@@ -44,20 +49,57 @@ namespace CustomerVehicleManagement.Api.Users
             }
             return Ok(users);
         }
-        public async Task<Guid> GetTenantId()
+        private Guid GetTenantId()
         {
-            //var loggedInUser = await UserManager.GetUserAsync(User);
-            //return loggedInUser.TenantId;
-            Guid tenantId = new("8451406b-8cca-4e2b-ad2c-096a563bc7bc");
+            if (UserContext == null)
+                return new Guid();
+
+            var claims = UserContext.Claims;
+            Guid tenantId;
+
+            try
+            {
+                tenantId = Guid.Parse(claims.First(claim => claim.Type == "tenantId").Value);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Logger.LogError($"Exception message from GetTenantId(): {ex.Message}");
+                return new Guid();
+            }
+
             return tenantId;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] RegisterUser model)
+        private string GetTenantName()
         {
-            var newUser = new ApplicationUser { UserName = model.Email,
-                                                Email = model.Email,
-                                                EmailConfirmed = true};
+            if (UserContext == null)
+                return string.Empty;
+
+            var claims = UserContext.Claims;
+
+            try
+            {
+                return (claims.First(claim => claim.Type == "tenantName").Value);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Logger.LogError($"Exception message from GetTenantId(): {ex.Message}");
+                return string.Empty;
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post(RegisterUser model)
+        {
+            var newUser = new ApplicationUser {
+                UserName = model.Email,
+                Email = model.Email,
+                EmailConfirmed = true,
+                TenantId = GetTenantId(),
+                TenantName = GetTenantName(),
+                ShopRole = ShopRole.Technician
+            };
 
             var result = await UserManager.CreateAsync(newUser, model.Password);
 
