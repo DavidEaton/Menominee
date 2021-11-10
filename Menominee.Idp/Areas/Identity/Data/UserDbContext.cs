@@ -35,7 +35,6 @@ namespace Menominee.Idp.Data.Contexts
             modelBuilder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers", "dbo")
                 .Property(user => user.ShopRole)
-                .HasMaxLength(50)
                 .HasConversion(
                     stringType => stringType.ToString(),
                     stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
