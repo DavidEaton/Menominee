@@ -6,6 +6,7 @@ namespace Menominee.OrganizationDataContracts.Services
 {
     public class LocalStorage
     {
+        // Used by Telerik Grid to store and retrieve user GridState
         protected IJSRuntime JSRuntimeInstance { get; set; }
 
         public LocalStorage(IJSRuntime jsRuntime)
