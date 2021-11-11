@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.OrganizationDataContracts.Components
 {
@@ -14,5 +16,13 @@ namespace Menominee.OrganizationDataContracts.Components
 
         [Parameter]
         public IEnumerable<TItem> Items { get; set; }
+
+        [Parameter]
+        public EventCallback<TItem> OnRowClick{ get; set; }
+
+        protected async Task EditAsync(TItem item)
+        {
+            await OnRowClick.InvokeAsync(item);
+        }
     }
 }

@@ -8,21 +8,24 @@ using System.Threading.Tasks;
 
 namespace Menominee.OrganizationDataContracts
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
-            builder.Logging.SetMinimumLevel(LogLevel.Debug);
-            builder.Services.AddBlazoredToast();
+	public class Program
+	{
+		public static async Task Main(string[] args)
+		{
+			var builder = WebAssemblyHostBuilder.CreateDefault(args);
+			builder.RootComponents.Add<App>("#app");
+			builder.Services.AddTelerikBlazor();
+			builder.Logging.SetMinimumLevel(LogLevel.Debug);
+			builder.Services.AddBlazoredToast();
 
-            var baseAddress = new Uri("https://localhost:54382/api/");
+			var baseAddress = new Uri("https://localhost:54382/api/");
 
-            builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>
-                                          (client => client.BaseAddress = baseAddress);
+			builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>
+										  (client => client.BaseAddress = baseAddress);
 
-            await builder.Build().RunAsync();
-        }
-    }
+			builder.Services.AddScoped<LocalStorage>();
+
+			await builder.Build().RunAsync();
+		}
+	}
 }

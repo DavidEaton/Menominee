@@ -1,11 +1,6 @@
-﻿@inherits LayoutComponentBase
-
-<div class="">
-    <div class="">
-        <NavMenu />
-    </div>
-
-    <div class="">
-        @Body
-    </div>
-</div>
+﻿@layout TelerikLayout
+@inherits LayoutComponentBase
+<TelerikRootComponent>
+    <NavMenu />
+    @Body
+</TelerikRootComponent>

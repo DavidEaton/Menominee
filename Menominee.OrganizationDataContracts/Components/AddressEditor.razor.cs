@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Components;
 using System;
+using System.Collections.Generic;
 
 namespace Menominee.OrganizationDataContracts.Components
 {
@@ -8,6 +9,9 @@ namespace Menominee.OrganizationDataContracts.Components
     {
         [Parameter]
         public TItem Item { get; set; }
+
+        [Parameter]
+        public bool EnableEditor { get; set; }
 
         [Parameter]
         public string AddressLineProperty { get; set; }
@@ -28,6 +32,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType().Name;
             }
         }
@@ -36,6 +43,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(AddressLineProperty)
                     .GetValue(Item).ToString();
@@ -53,6 +63,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(CityProperty)
                     .GetValue(Item).ToString();
@@ -70,6 +83,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return State.MI;
+
                 return (State)Convert.ToInt32(Item.GetType()
                     .GetProperty(StateProperty)
                     .GetValue(Item));
@@ -87,6 +103,9 @@ namespace Menominee.OrganizationDataContracts.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(PostalCodeProperty)
                     .GetValue(Item).ToString();
@@ -100,5 +119,21 @@ namespace Menominee.OrganizationDataContracts.Components
             }
         }
 
+        protected override void OnInitialized()
+        {
+            foreach (State item in Enum.GetValues(typeof(State)))
+            {
+                StateEnumData.Add(new StateEnumModel { DisplayText = item.ToString(), Value = item });
+            }
+
+            base.OnInitialized();
+        }
+
+        List<StateEnumModel> StateEnumData { get; set; } = new List<StateEnumModel>();
+    }
+    public class StateEnumModel
+    {
+        public State Value { get; set; }
+        public string DisplayText { get; set; }
     }
 }

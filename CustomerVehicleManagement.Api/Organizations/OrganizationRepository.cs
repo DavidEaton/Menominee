@@ -93,6 +93,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             return organizations.
                 Select(organization =>
                        OrganizationToReadInList.ConvertToDto(organization))
+                .OrderBy(organization => organization.Name)
                 .ToList();
         }
 

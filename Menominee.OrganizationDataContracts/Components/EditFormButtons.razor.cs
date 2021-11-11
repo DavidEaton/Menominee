@@ -8,9 +8,16 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public EventCallback CloseEventCallback { get; set; }
 
+        [Parameter]
+        public EventCallback SaveEventCallback { get; set; }
+
         private async Task CloseAsync()
         {
             await CloseEventCallback.InvokeAsync();
+        }
+        private async Task SaveAsync()
+        {
+            await SaveEventCallback.InvokeAsync();
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿@typeparam TItem
 
-<div class="field">
-    <label for="name">Name</label>
-    <InputText id="name" class="ui input" @bind-Value="Name" />
+<div class="form-group row">
+    <label for="name" class="col-form-label">Name</label>
+    <TelerikTextBox @bind-Value="Name"
+                    Width="100%">
+    </TelerikTextBox>
 </div>
-
-
-<div class="field">
-    <label for="note">Notes</label>
-    <InputText id="note" class="ui input" @bind-Value="Note" />
+<div class="form-group row">
+    <label for="note" class="col-form-label">Notes</label>
+    <TelerikTextBox @bind-Value="Note"
+                    Width="100%">
+    </TelerikTextBox>
 </div>

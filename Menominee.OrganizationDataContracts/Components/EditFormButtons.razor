@@ -1,8 +1,12 @@
-﻿<div class="field">
-    <button type="submit" class="ui primary button">
-        Save
-    </button>
-    <a class="ui button" @onclick="CloseAsync">
-        Close
-    </a>
-</div>
+﻿<TelerikButton OnClick="SaveAsync"
+               Primary="true"
+               Icon="save"
+               title="Save Address">
+    Save
+</TelerikButton>
+
+<TelerikButton Icon="x"
+               OnClick="CloseAsync"
+               title="Cancel and Close">
+    Close
+</TelerikButton>

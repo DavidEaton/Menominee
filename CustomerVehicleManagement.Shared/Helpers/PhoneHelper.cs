@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Shared.Helpers
 {
@@ -36,6 +37,22 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 return string.Empty;
 
             return person?.Phones.Count > 0 ? person?.Phones[position]?.PhoneType.ToString() : string.Empty;
+        }
+
+        public static string FormatPhoneNumber(string number)
+        {
+            number = RemoveNonNumericCharacters(number);
+
+            return number.Length switch
+            {
+                7 => Regex.Replace(number, @"(\d{3})(\d{4})", "$1-$2"),
+                10 => Regex.Replace(number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3"),
+                _ => number,
+            };
+        }
+        private static string RemoveNonNumericCharacters(string input)
+        {
+            return new string(input.Where(c => char.IsDigit(c)).ToArray());
         }
     }
 }
