@@ -27,6 +27,25 @@ namespace CustomerVehicleManagement.Api.Validators
             });
         }
 
+        public static IRuleBuilderOptions<T, Address> MustBeValueObject<T, TValueObject>(
+            this IRuleBuilder<T, Address> ruleBuilder,
+            Func<Address, Result<TValueObject>> factoryMethod)
+            where TValueObject : AppValueObject
+        {
+            return (IRuleBuilderOptions<T, Address>)ruleBuilder.Custom((value, context) =>
+            {
+                if (value == null)
+                    return;
+
+                Result<TValueObject> result = factoryMethod(value);
+
+                if (result.IsFailure)
+                {
+                    context.AddFailure(result.Error);
+                }
+            });
+        }
+
         public static IRuleBuilderOptions<T, TElement> MustBeEntity<T, TElement, TValueObject>(
             this IRuleBuilder<T, TElement> ruleBuilder,
             Func<TElement, Result<TValueObject>> factoryMethod)
