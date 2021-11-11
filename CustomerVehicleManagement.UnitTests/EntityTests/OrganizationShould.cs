@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.Enums;
@@ -33,9 +34,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             string name = null;
             var organizationNameOrError = OrganizationName.Create(name);
 
-            Action action = () => new Organization(organizationNameOrError.Value);
-
-            action.Should().Throw<InvalidOperationException>();
+            organizationNameOrError.IsFailure.Should().BeTrue();
+            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
         }
 
         [Fact]

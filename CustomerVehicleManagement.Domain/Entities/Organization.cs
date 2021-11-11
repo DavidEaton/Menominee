@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             note = note.Trim();
 
-            if (note.Length <= NoteMaximumLength)
+            if (note.Length > NoteMaximumLength)
                 return Result.Failure<string>(NoteMaximumLengthMessage);
 
             Note = note;
