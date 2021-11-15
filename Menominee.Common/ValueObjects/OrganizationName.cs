@@ -7,7 +7,7 @@ namespace Menominee.Common.ValueObjects
     public class OrganizationName : AppValueObject
     {
         public string Name { get; private set; }
-        public static readonly int MinimumLength = 1;
+        public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string MinimumLengthMessage = $"Organization name cannot be less than {MinimumLength} character(s) in length.";
         public static readonly string MaximumLengthMessage = $"Organization name cannot be over {MaximumLength} characters in length.";

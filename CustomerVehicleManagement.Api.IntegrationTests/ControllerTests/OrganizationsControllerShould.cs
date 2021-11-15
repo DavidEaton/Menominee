@@ -86,14 +86,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_BadRequestObjectResult_On_AddOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var organization = new OrganizationToAdd();
+            OrganizationToAdd organizationToAdd = Utilities.CreateOrganizationToAdd();
 
-            var result = await controller.AddOrganizationAsync(organization);
+            var result = await controller.AddOrganizationAsync(organizationToAdd);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
         }
 
         [Fact]
@@ -109,10 +106,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Name' must be between 2 and 255 characters. You entered 1 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
         }
 
         [Fact]
@@ -125,6 +119,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             };
 
             var result = await controller.AddOrganizationAsync(organization);
+
 
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();

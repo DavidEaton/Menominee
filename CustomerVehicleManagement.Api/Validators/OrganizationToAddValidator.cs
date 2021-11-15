@@ -15,10 +15,6 @@ namespace CustomerVehicleManagement.Api.Validators
             //                                    .MustBeValueObject(x => Address.Create(x.AddressLine, x.City, x.State, x.PostalCode))
             //                                    .When(address => address != null);
 
-            //RuleFor(organization => organization.Address)
-            //                                    .MustBeValueObject(x => Address.Create(x.AddressLine, x.City, x.State, x.PostalCode))
-            //                                    .When(address => address != null);
-
             RuleFor(organization => organization.Note)
                                                 .Length(0, 10000)
                                                 .When(organization => organization.Note != null);
@@ -28,6 +24,10 @@ namespace CustomerVehicleManagement.Api.Validators
 
             RuleFor(organization => organization.Phones)
                 .SetValidator(new PhonesToAddValidator());
+
+            RuleFor(organization => organization.Contact)
+                .SetValidator(new PersonToAddValidator())
+                .When(organization => organization.Contact != null);
         }
     }
 }

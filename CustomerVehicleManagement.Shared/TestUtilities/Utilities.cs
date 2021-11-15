@@ -30,6 +30,14 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return organization;
         }
 
+        public static OrganizationToAdd CreateOrganizationToAdd()
+        {
+            OrganizationToAdd organizationToAdd = new();
+            organizationToAdd.Name = LoremIpsum(10);
+
+            return organizationToAdd;
+        }
+
         public static Customer CreateOrganizationCustomer()
         {
             var name = "jane's";
@@ -75,7 +83,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             person.SetEmails(CreateEmailList());
             return person;
         }
-        
+
         public static IList<PhoneToAdd> CreatePhoneToAddList()
         {
             var phones = new List<PhoneToAdd>();
