@@ -1,20 +1,16 @@
-﻿using CustomerVehicleManagement.Shared;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CustomerVehicleManagement.Api.Users
 {
-    [Route("api/[controller]")]
-    [ApiController]
     //[Authorize(Policies.CanManageUsers)]
-    public class UsersController : ControllerBase
+    public class UsersController : ApplicationController
     {
         private readonly IConfiguration Configuration;
         private readonly UserContext UserContext;

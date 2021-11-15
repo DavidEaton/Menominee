@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Helper.CreateValidPerson();
+                var person = Helper.CreatePerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = Helper.CreateValidOrganization();
+                var organization = Helper.CreateOrganization();
                 await context.AddAsync(organization);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -118,17 +118,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = Helper.CreateValidOrganization();
+                var organization = Helper.CreateOrganization();
                 await context.AddAsync(organization);
 
                 var note = "notes are strings";
 
-                var contact = Helper.CreateValidPerson();
-                contact.SetEmails(Helper.CreateValidEmails());
-                contact.SetPhones(Helper.CreateValidPhones());
+                var contact = Helper.CreatePerson();
+                contact.SetEmails(Helper.CreateEmailList());
+                contact.SetPhones(Helper.CreatePhoneList());
 
-                organization.SetEmails(Helper.CreateValidEmails());
-                organization.SetPhones(Helper.CreateValidPhones());
+                organization.SetEmails(Helper.CreateEmailList());
+                organization.SetPhones(Helper.CreatePhoneList());
                 organization.SetNote(note);
                 organization.SetContact(contact);
 

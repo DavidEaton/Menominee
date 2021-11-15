@@ -215,7 +215,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                     if (organizationAddDto?.Contact?.Emails?.Count > 0)
                         foreach (var email in organizationAddDto.Contact.Emails)
-                            contact.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
+                            contact.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
                     organization.SetContact(contact);
                     organization.SetNote(organizationAddDto.Note);
@@ -262,7 +262,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (personAddDto?.Emails?.Count > 0)
                 foreach (var email in personAddDto.Emails)
-                    person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
+                    person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
             return new Customer(person);
         }

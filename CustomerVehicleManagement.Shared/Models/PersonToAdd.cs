@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Shared.Models
 
                 if (personAddDto?.Emails?.Count > 0)
                     foreach (var email in personAddDto.Emails)
-                        person.AddEmail(new Email(email.Address, email.IsPrimary));
+                        person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
                 return person;
             }

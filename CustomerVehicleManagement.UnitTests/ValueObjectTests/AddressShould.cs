@@ -68,8 +68,8 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Equate_Two_Address_Instances_Having_Same_Values()
         {
-            var address1 = Utilities.CreateValidAddress();
-            var address2 = Utilities.CreateValidAddress();
+            var address1 = Utilities.CreateAddress();
+            var address2 = Utilities.CreateAddress();
 
             address1.Should().BeEquivalentTo(address2);
         }
@@ -77,8 +77,8 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Not_Equate_Two_Address_Instances_Having_Differing_Values()
         {
-            var address1 = Utilities.CreateValidAddress();
-            var address2 = Utilities.CreateValidAddress();
+            var address1 = Utilities.CreateAddress();
+            var address2 = Utilities.CreateAddress();
             var newAddressLine = "54321";
 
             address2 = address2.NewAddressLine(newAddressLine);
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewAddressLine()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newAddressLine = "5432 One Street";
 
             address = address.NewAddressLine("5432 One Street");
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewAddressLine_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address.NewAddressLine(null);
 
@@ -111,7 +111,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewCity()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newCity = "Oomapopalis";
 
             address = address.NewCity(newCity);
@@ -122,7 +122,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewCity_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address.NewCity(null);
 
@@ -132,7 +132,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewState()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newState = State.HI;
             address = address.NewState(newState);
 
@@ -142,7 +142,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewPostalCode()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newPostalCode = "55555";
 
             address = address.NewPostalCode(newPostalCode);
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewPostalCode_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address = address.NewPostalCode(null);
 

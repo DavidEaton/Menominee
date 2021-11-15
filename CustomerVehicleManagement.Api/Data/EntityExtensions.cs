@@ -1,6 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
-using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Api.Data
 {
@@ -19,7 +18,8 @@ namespace CustomerVehicleManagement.Api.Data
                     return EntityState.Modified;
                 case TrackingState.Deleted:
                     return EntityState.Deleted;
-
+                case TrackingState.Unchanged:
+                    return EntityState.Unchanged;
                 default:
                     return EntityState.Unchanged;
             }

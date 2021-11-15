@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class EmailsValidator : AbstractValidator<IList<EmailToAdd>>
+    public class EmailsToAddValidator : AbstractValidator<IList<EmailToAdd>>
     {
         private const string message = "Can have only one Primary email.";
-        public EmailsValidator()
+        public EmailsToAddValidator()
         {
             RuleFor(emails => emails)
+                .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
                 .WithMessage(message)
                 .ForEach(email =>
@@ -17,7 +18,6 @@ namespace CustomerVehicleManagement.Api.Validators
                     email.NotEmpty();
                     email.SetValidator(new EmailToAddValidator());
                 });
-
         }
 
         private bool HaveOnlyOnePrimaryEmail(IList<EmailToAdd> emails)
@@ -37,6 +37,5 @@ namespace CustomerVehicleManagement.Api.Validators
 
             return true;
         }
-
     }
 }

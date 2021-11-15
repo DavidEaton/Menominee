@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                                             organizationUpdateDto.Contact.Name.LastName,
                                             organizationUpdateDto.Contact.Name.FirstName,
                                             organizationUpdateDto.Contact.Name.MiddleName).Value,
-                                        organizationUpdateDto.Contact.Gender);
+                                            organizationUpdateDto.Contact.Gender);
 
                 contact.SetAddress(organizationUpdateDto.Contact.Address);
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
@@ -146,11 +146,11 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationAddDto)
+        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
-                [ApiController] attribute; applicatin controllers inherit from ApplicationController,
+                [ApiController] attribute; most of our controllers inherit from ApplicationController,
                 which has the [ApiController] attribute. With [ApiController] attribute applied,
                 an automatic HTTP 400 response containing error details is returned when model
                 state is invalid.*/
@@ -163,31 +163,29 @@ namespace CustomerVehicleManagement.Api.Organizations
                 5. Return to consumer */
 
             // 1. Convert dto to domain entity
-            var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
-            if (organizationNameOrError.IsFailure)
-                return BadRequest(organizationNameOrError.Error);
+            var organizationName = OrganizationName.Create(organizationToAdd.Name).Value;
 
-            var organization = new Organization(organizationNameOrError.Value);
+            var organization = new Organization(organizationName);
 
-            organization.SetNote(organizationAddDto.Note);
+            organization.SetNote(organizationToAdd.Note);
 
-            if (organizationAddDto?.Address != null)
-                organization.SetAddress(Address.Create(organizationAddDto.Address.AddressLine,
-                                                organizationAddDto.Address.City,
-                                                organizationAddDto.Address.State,
-                                                organizationAddDto.Address.PostalCode).Value);
+            if (organizationToAdd?.Address != null)
+                organization.SetAddress(Address.Create(organizationToAdd.Address.AddressLine,
+                                                organizationToAdd.Address.City,
+                                                organizationToAdd.Address.State,
+                                                organizationToAdd.Address.PostalCode).Value);
 
-            if (organizationAddDto?.Phones != null)
-                organization.SetPhones(organizationAddDto?.Phones
+            if (organizationToAdd?.Phones != null)
+                organization.SetPhones(organizationToAdd?.Phones
                                                           .Select(phone => PhoneToAdd.ConvertToEntity(phone))
                                                           .ToList());
 
-            if (organizationAddDto?.Emails != null)
-                organization.SetEmails(organizationAddDto?.Emails
+            if (organizationToAdd?.Emails != null)
+                organization.SetEmails(organizationToAdd?.Emails
                                                           .Select(email => EmailToAdd.ConvertToEntity(email))
                                                           .ToList());
 
-            organization.SetContact(PersonToAdd.ConvertToEntity(organizationAddDto?.Contact));
+            organization.SetContact(PersonToAdd.ConvertToEntity(organizationToAdd?.Contact));
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
@@ -203,7 +201,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     organizationToRead);
             }
 
-            return BadRequest($"Failed to add {organizationAddDto.Name}.");
+            return BadRequest($"Failed to add {organizationToAdd.Name}.");
         }
 
         [HttpDelete("{id:long}")]

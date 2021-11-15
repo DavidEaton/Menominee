@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models
             if (emails != null)
             {
                 foreach (var email in emails)
-                    emailEntities.Add(new Email(email.Address, email.IsPrimary));
+                    emailEntities.Add(Email.Create(email.Address, email.IsPrimary).Value);
             }
 
             return emailEntities;

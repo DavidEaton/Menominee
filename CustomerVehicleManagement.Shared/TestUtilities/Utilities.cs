@@ -18,19 +18,19 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static Organization CreateValidOrganization()
+        public static Organization CreateOrganization()
         {
-            var name = "jane's";
+            var name = LoremIpsum(10);
             Organization organization = null;
             var organizationNameOrError = OrganizationName.Create(name);
 
-            if (organizationNameOrError.IsSuccess)
+            if (!organizationNameOrError.IsFailure)
                 organization = new Organization(organizationNameOrError.Value);
 
             return organization;
         }
 
-        public static Customer CreateValidOrganizationCustomer()
+        public static Customer CreateOrganizationCustomer()
         {
             var name = "jane's";
             Organization organization = null;
@@ -44,16 +44,16 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return customer;
         }
 
-        public static Customer CreateValidPersonCustomer()
+        public static Customer CreatePersonCustomer()
         {
-            var person = CreateValidPerson();
+            var person = CreatePerson();
 
             var customer = new Customer(person);
 
             return customer;
         }
 
-        public static Person CreateValidPerson()
+        public static Person CreatePerson()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -62,21 +62,43 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return new Person(nameOrError.Value, Gender.Female);
         }
 
-        public static Person CreateValidPersonWithPhones()
+        public static Person CreatePersonWithPhones()
         {
-            var person = CreateValidPerson();
-            person.SetPhones(CreateValidPhones());
+            var person = CreatePerson();
+            person.SetPhones(CreatePhoneList());
             return person;
         }
 
-        public static Person CreateValidPersonWithEmails()
+        public static Person CreatePersonWithEmails()
         {
-            var person = CreateValidPerson();
-            person.SetEmails(CreateValidEmails());
+            var person = CreatePerson();
+            person.SetEmails(CreateEmailList());
             return person;
         }
+        
+        public static IList<PhoneToAdd> CreatePhoneToAddList()
+        {
+            var phones = new List<PhoneToAdd>();
 
-        public static IList<Phone> CreateValidPhones()
+            var number1 = "(555) 987-6543";
+            var phoneType1 = PhoneType.Mobile;
+            var isPrimary1 = true;
+            var phone1 = new PhoneToAdd
+            { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
+
+            var number2 = "(555) 123-4567";
+            var phoneType2 = PhoneType.Mobile;
+            var isPrimary2 = false;
+            var phone2 = new PhoneToAdd
+            { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
+
+            phones.Add(phone1);
+            phones.Add(phone2);
+
+            return phones;
+        }
+
+        public static IList<Phone> CreatePhoneList()
         {
             IList<Phone> phones = new List<Phone>();
 
@@ -96,17 +118,17 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return phones;
         }
 
-        public static IList<Domain.Entities.Email> CreateValidEmails()
+        public static IList<Email> CreateEmailList()
         {
-            var Emails = new List<Domain.Entities.Email>();
+            var Emails = new List<Email>();
 
             var address1 = "a@b.c";
             var isPrimary1 = true;
-            var Email1 = new Domain.Entities.Email(address1, isPrimary1);
+            var Email1 = Email.Create(address1, isPrimary1).Value;
 
             var address2 = "d@e.f";
             var isPrimary2 = false;
-            var Email2 = new Domain.Entities.Email(address2, isPrimary2);
+            var Email2 = Email.Create(address2, isPrimary2).Value;
 
             Emails.Add(Email1);
             Emails.Add(Email2);
@@ -114,7 +136,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return Emails;
         }
 
-        public static IReadOnlyList<EmailToRead> CreateValidEmailReadDtos()
+        public static IReadOnlyList<EmailToRead> CreateEmailToReadList()
         {
             List<EmailToRead> Emails = new();
 
@@ -141,7 +163,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return readOnlyEmails;
         }
 
-        public static Address CreateValidAddress()
+        public static Address CreateAddress()
         {
             string addressLine = "1234 Fifth Ave.";
             string city = "Traverse City";
@@ -152,5 +174,16 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return addressOrError.Value;
         }
 
+        public static string LoremIpsum(int characters)
+        {
+            return new string(Source().Take(characters).ToArray());
+        }
+
+        private static string Source()
+        {
+            string result = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolor";
+
+            return result;
+        }
     }
 }

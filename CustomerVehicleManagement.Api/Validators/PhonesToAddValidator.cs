@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class PhonesValidator : AbstractValidator<IList<PhoneToAdd>>
+    public class PhonesToAddValidator : AbstractValidator<IList<PhoneToAdd>>
     {
         private const string message = "Can have only one Primary phone.";
-        public PhonesValidator()
+        public PhonesToAddValidator()
         {
             RuleFor(phones => phones)
                 .Must(HaveOnlyOnePrimaryPhone)

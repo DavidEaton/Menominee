@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using Menominee.Common.Enums;
@@ -29,7 +30,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void HaveCreatedDateOnCreated()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
 
             var customer = new Customer(organization);
 
@@ -39,7 +40,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void CreateCustomerWithOrganizationEntity()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
 
             var customer = new Customer(organization);
             customer.EntityType.Should().Be(EntityType.Organization);
@@ -53,7 +54,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization);
@@ -73,7 +74,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             organization.SetContact(person);
 
             var customer = new Customer(organization);
@@ -86,7 +87,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddOrganizationPhones()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -103,7 +104,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveOrganizationPhones()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -123,10 +124,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddOrganizationEmails()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
-            var email0 = new Email("mary@moops.com", true);
-            var email1 = new Email("mikey@yikes.com", false);
+            var email0 = Email.Create("mary@moops.com", true).Value;
+            var email1 = Email.Create("mikey@yikes.com", false).Value;
 
             customer.Organization.AddEmail(email0);
             customer.Organization.AddEmail(email1);
@@ -138,10 +139,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveOrganizationEmails()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
-            var email0 = new Email("mary@moops.com", true);
-            var email1 = new Email("mikey@yikes.com", false);
+            var email0 = Email.Create("mary@moops.com", true).Value;
+            var email1 = Email.Create("mikey@yikes.com", false).Value;
 
             customer.Organization.AddEmail(email0);
             customer.Organization.AddEmail(email1);
@@ -156,7 +157,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPersonPhones()
         {
-            var organization = Helpers.CreateValidPerson();
+            var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -173,7 +174,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePersonPhones()
         {
-            var organization = Helpers.CreateValidPerson();
+            var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
             var phone0 = new Phone(number0, PhoneType.Mobile, true);
@@ -193,10 +194,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPersonEmails()
         {
-            var organization = Helpers.CreateValidPerson();
+            var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
-            var email0 = new Email("mary@moops.com", true);
-            var email1 = new Email("mikey@yikes.com", false);
+            var email0 = Email.Create("mary@moops.com", true).Value;
+            var email1 = Email.Create("mikey@yikes.com", false).Value;
 
             customer.Person.AddEmail(email0);
             customer.Person.AddEmail(email1);
@@ -208,10 +209,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePersonEmails()
         {
-            var organization = Helpers.CreateValidPerson();
+            var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
-            var email0 = new Email("mary@moops.com", true);
-            var email1 = new Email("mikey@yikes.com", false);
+            var email0 = Email.Create("mary@moops.com", true).Value;
+            var email1 = Email.Create("mikey@yikes.com", false).Value;
 
             customer.Person.AddEmail(email0);
             customer.Person.AddEmail(email1);
@@ -226,7 +227,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddVehicles()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
@@ -250,7 +251,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveVehicle()
         {
-            var organization = Helpers.CreateValidOrganization();
+            var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;

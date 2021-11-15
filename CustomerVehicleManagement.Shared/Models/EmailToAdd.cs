@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Models
         {
             if (email != null)
             {
-                return new Email(email.Address, email.IsPrimary);
+                return Email.Create(email.Address, email.IsPrimary).Value;
             }
 
             return null;

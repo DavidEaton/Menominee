@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
@@ -38,7 +39,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Have_Empty_Phones_On_Create()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
 
             person.Phones.Count.Should().Be(0);
         }
@@ -46,7 +47,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPhone()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -59,7 +60,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePhone()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phone0 = new Phone(number, phoneType, true);
@@ -79,7 +80,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetPhones()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
@@ -102,7 +103,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_Add_Greater_Than_One_PrimaryPhone()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -118,7 +119,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_AddPhone_Duplicate()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = new Phone(number, phoneType, true);
@@ -133,9 +134,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddEmail()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var address = "jane@doe.com";
-            var email = new Email(address, true);
+            var email = Email.Create(address, true).Value;
 
             person.AddEmail(email);
 
@@ -145,12 +146,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveEmail()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var address = "jane@doe.com";
-            var email0 = new Email(address, true);
+            var email0 = Email.Create(address, true).Value;
             person.AddEmail(email0);
             address = "june@doe.com";
-            var email1 = new Email(address, false);
+            var email1 = Email.Create(address, true).Value;
             person.AddEmail(email1);
 
             person.Emails.Count.Should().Be(2);
@@ -163,13 +164,13 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetEmails()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
-            var email0 = new Email(address, true);
+            var email0 = Email.Create(address, true).Value;
             emails.Add(email0);
             address = "june@done.com";
-            var email1 = new Email(address, false);
+            var email1 = Email.Create(address, true).Value;
             emails.Add(email1);
 
             person.SetEmails(emails);
@@ -181,13 +182,13 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_SetEmails_Having_GreaterThan_One_PrimaryEmail()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
-            var email = new Email(address, true);
+            var email = Email.Create(address, true).Value;
             emails.Add(email);
             address = "june@done.com";
-            email = new Email(address, true);
+            email = Email.Create(address, true).Value;
             emails.Add(email);
 
             Action action = () => person.SetEmails(emails);
@@ -198,10 +199,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_SetEmails_With_Duplicates()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var emails = new List<Email>();
             var address = "jane@doe.com";
-            var email = new Email(address, false);
+            var email = Email.Create(address, true).Value;
 
             emails.Add(email);
             emails.Add(email);
@@ -214,7 +215,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_SetEmails_To_Null()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             List<Email> emails = null;
 
             Action action = () => person.SetEmails(emails);
@@ -225,12 +226,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_Add_GreaterThan_One_Primary_Email()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var address = "jane@doe.com";
-            var email = new Email(address, true);
+            var email = Email.Create(address, true).Value;
             person.AddEmail(email);
             address = "june@done.com";
-            email = new Email(address, true);
+            email = Email.Create(address, true).Value;
 
             Action action = () => person.AddEmail(email);
 
@@ -240,11 +241,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_AddEmail_Duplicate()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var address = "jane@doe.com";
-            var email = new Email(address, false);
+            var email = Email.Create(address, true).Value;
             person.AddEmail(email);
-            email = new Email(address, true);
+            email = Email.Create(address, true).Value;
 
             Action action = () => person.AddEmail(email);
 
@@ -284,7 +285,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetGender()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
 
             person.Gender.Should().Be(Gender.Female);
             person.SetGender(Gender.Male);
@@ -295,7 +296,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetBirthday()
         {
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
@@ -310,7 +311,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
             var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
 
             person.SetDriversLicense(driversLicenseOrError.Value);
 
@@ -324,7 +325,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var person = Helpers.CreateValidPerson();
+            var person = Utilities.CreatePerson();
             var address = Address.Create(addressLine, city, state, postalCode);
 
             person.SetAddress(address.Value);

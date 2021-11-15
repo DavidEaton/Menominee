@@ -9,11 +9,12 @@ namespace CustomerVehicleManagement.Api.Validators
         {
             RuleFor(email => email.Address)
                 .NotEmpty()
-            // https://www.rfc-editor.org/rfc/rfc5321#section-4.5.3
+                 // https://www.rfc-editor.org/rfc/rfc5321#section-4.5.3
                 .Length(1, 254)
+                .When(email => email.Address != null, ApplyConditionTo.CurrentValidator) // Applies only to the immediately previous check
                 .EmailAddress()
-                .WithMessage("Please enter a valid email address.")
-                .When(email => email.Address != null);
+                .When(email => email.Address != null, ApplyConditionTo.CurrentValidator)
+                .WithMessage("Please enter a valid email address.");
         }
     }
 }

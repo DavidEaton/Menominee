@@ -1,19 +1,16 @@
-﻿using FluentValidation;
-using Menominee.Common.ValueObjects;
+﻿using CustomerVehicleManagement.Shared.Models;
+using FluentValidation;
 using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class AddressValidator : AbstractValidator<Address>
+    public class AddressToAddValidator : AbstractValidator<AddressToAdd>
     {
-        public AddressValidator()
+        public AddressToAddValidator()
         {
-            RuleFor(address => address)
-                .MustBeValueObject(address => Address.Create(address.AddressLine, address.City, address.State, address.PostalCode));
-
             RuleFor(address => address.AddressLine)
-                                      .NotEmpty()
-                                      .Length(2, 255);
+                          .NotEmpty()
+                          .Length(2, 255);
 
             RuleFor(address => address.City)
                                       .NotEmpty()
