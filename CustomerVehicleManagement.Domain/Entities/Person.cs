@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetDriversLicense(DriversLicense driversLicense)
         {
-            if (driversLicense != null) 
+            if (driversLicense != null)
                 DriversLicense = driversLicense;
         }
 

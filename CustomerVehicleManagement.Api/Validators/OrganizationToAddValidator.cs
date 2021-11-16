@@ -12,12 +12,14 @@ namespace CustomerVehicleManagement.Api.Validators
                                                 .MustBeValueObject(OrganizationName.Create);
 
             //RuleFor(organization => organization.Address)
-            //                                    .MustBeValueObject(x => Address.Create(x.AddressLine, x.City, x.State, x.PostalCode))
+            //                                    .MustBeValueObject(Address.Create)
             //                                    .When(address => address != null);
 
-            RuleFor(organization => organization.Note)
-                                                .Length(0, 10000)
-                                                .When(organization => organization.Note != null);
+            Transform(organization => organization.Note, organization => (organization ?? "")
+                                                  .Trim())
+                                                  .NotEmpty()
+                                                  .Length(0, 10000)
+                                                  .When(organization => organization.Note != null);
 
             RuleFor(organization => organization.Emails)
                 .SetValidator(new EmailsToAddValidator());

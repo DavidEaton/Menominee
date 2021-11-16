@@ -7,7 +7,6 @@ namespace CustomerVehicleManagement.Api.Validators
 {
     public static class ApplicationValidators
     {
-
         public static IRuleBuilderOptions<T, string> MustBeValueObject<T, TValueObject>(
             this IRuleBuilder<T, string> ruleBuilder,
             Func<string, Result<TValueObject>> factoryMethod)

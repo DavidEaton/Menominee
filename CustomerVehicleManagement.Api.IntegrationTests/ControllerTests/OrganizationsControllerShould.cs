@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -101,12 +100,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Name = "M"
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(OrganizationName.MinimumLengthMessage);
+            }
         }
 
         [Fact]
@@ -118,16 +120,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Name = Utilities.RandomCharacters(256)
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be(OrganizationName.MaximumLengthMessage);
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(OrganizationName.MaximumLengthMessage);
+            }
         }
 
         [Fact]
@@ -135,19 +136,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var organization = new OrganizationToAdd
             {
-                // RuleFor(organization => organization.Name).NotNull().Length(2, 255); OrganizationToAdd.Name has 256 characters:
                 Name = ""
             };
 
-            var actionResult = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
-            actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
-            result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Be(OrganizationName.RequiredMessage);
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(OrganizationName.RequiredMessage);
+            }
         }
 
         [Fact]
@@ -158,15 +158,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Name = null
             };
 
-            var actionResult = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
-            actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
-            result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Be(OrganizationName.RequiredMessage);
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(OrganizationName.RequiredMessage);
+            }
         }
 
         [Fact]
@@ -178,15 +178,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Note = Utilities.RandomCharacters(10001)
             };
 
-            var actionResult = await controller.AddOrganizationAsync(organization);
+            var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult result = (BadRequestObjectResult)actionResult.Result;
-            actionResult.Result.Should().BeOfType<BadRequestObjectResult>();
-            result.StatusCode.Should().Be(400);
-            result.Value.ToString().Should().Be(OrganizationName.MaximumLengthMessage);
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            badRequestObjectResult.StatusCode.Should().Be(400);
+            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
         }
 
         [Fact]
@@ -204,15 +201,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Address Line' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.AddressRequiredMessage);
+            }
         }
 
         [Fact]
@@ -235,10 +232,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Please select a valid State");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
         }
 
         [Fact]
@@ -256,15 +250,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Address Line' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.AddressRequiredMessage);
+            }
         }
 
         [Fact]
@@ -282,15 +276,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Address Line' must be between 2 and 255 characters. You entered 1 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.AddressMinimumLengthMessage);
+            }
         }
 
         [Fact]
@@ -308,15 +302,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Address Line' must be between 2 and 255 characters. You entered 256 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.AddressMaximumLengthMessage);
+            }
         }
 
         [Fact]
@@ -334,15 +328,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'City' must be between 2 and 255 characters. You entered 256 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.CityMaximumLengthMessage);
+            }
         }
 
         [Fact]
@@ -360,15 +354,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'City' must be between 2 and 255 characters. You entered 1 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.CityMinimumLengthMessage);
+            }
         }
 
         [Fact]
@@ -386,15 +380,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'City' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.CityRequiredMessage);
+            }
         }
 
         [Fact]
@@ -412,15 +406,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'City' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.CityRequiredMessage);
+            }
         }
 
         [Fact]
@@ -438,15 +432,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Postal Code' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.PostalCodeRequiredMessage);
+            }
         }
 
         [Fact]
@@ -464,15 +458,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Postal Code' must not be empty.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.PostalCodeRequiredMessage);
+            }
         }
 
         [Fact]
@@ -490,15 +484,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Postal Code' must be between 5 and 10 characters. You entered 1 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
+            }
         }
 
         [Fact]
@@ -516,15 +510,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("'Postal Code' must be between 5 and 10 characters. You entered 11 characters.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.PostalCodeMaximumLengthMessage);
+            }
         }
 
         [Fact]
@@ -542,15 +536,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 }
             };
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Must enter a valid Postal Code");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Address.PostalCodeInvalidMessage);
+            }
         }
 
         [Fact]
@@ -573,16 +567,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 IsPrimary = true
             });
 
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            var result = await controller.AddOrganizationAsync(organization);
-
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Can have only one Primary email.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (Exception ex)
+            {
+                ex.Message.Should().Be("Contactable already has primary email.");
+            }
         }
 
         [Fact]
@@ -600,15 +593,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             });
 
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Please enter a valid email address.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Email.EmailErrorMessage);
+            }
         }
 
         [Fact]
@@ -625,16 +618,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 IsPrimary = true
             });
 
-
             var result = await controller.AddOrganizationAsync(organization);
 
             BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Please enter a valid phone number");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
+
         }
 
         [Fact]
@@ -657,28 +647,32 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 IsPrimary = true
             });
 
-            var result = await controller.AddOrganizationAsync(organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be("Can have only one Primary phone.");
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (Exception ex)
+            {
+                ex.Message.Should().Be("Contactable already has primary phone.");
+            }
         }
 
         [Fact]
         public async Task Not_Save_On_AddOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var Organization = new OrganizationToAdd();
+            var organization = new OrganizationToAdd();
 
-            var result = await controller.AddOrganizationAsync(Organization);
+            try
+            {
+                var result = await controller.AddOrganizationAsync(organization);
 
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Never);
+            }
+            catch (CSharpFunctionalExtensions.ResultFailureException ex)
+            {
+                ex.Error.Should().Be(Organization.NameRequiredMessage);
+            }
         }
 
         [Fact]
@@ -770,8 +764,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                                 organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()));
 
-            var Organization = new OrganizationToAdd();
-            var result = await controller.AddOrganizationAsync(Organization);
+            var organization = Utilities.CreateOrganizationToAdd();
+            var result = await controller.AddOrganizationAsync(organization);
 
             result.Should().BeOfType<ActionResult<OrganizationToRead>>();
         }

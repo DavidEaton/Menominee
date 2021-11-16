@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
-using Menominee.Common.ValueObjects;
 using System;
 
 namespace CustomerVehicleManagement.Api.Validators
@@ -21,6 +20,10 @@ namespace CustomerVehicleManagement.Api.Validators
                 .Must(BeValidAge)
                 .WithMessage("Please enter a valid Birthday")
                 .When(person => person.Birthday != null);
+
+            //RuleFor(person => person.DriversLicense)
+            //                        .MustBeValueObject(DriversLicense.Create())
+            //                        .When(driversLicense => driversLicense != null);;
 
         }
         protected bool BeValidAge(DateTime? date)

@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
         }
 
         [Fact]

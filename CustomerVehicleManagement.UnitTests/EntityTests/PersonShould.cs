@@ -151,7 +151,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var email0 = Email.Create(address, true).Value;
             person.AddEmail(email0);
             address = "june@doe.com";
-            var email1 = Email.Create(address, true).Value;
+            var email1 = Email.Create(address, false).Value;
             person.AddEmail(email1);
 
             person.Emails.Count.Should().Be(2);
@@ -170,7 +170,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var email0 = Email.Create(address, true).Value;
             emails.Add(email0);
             address = "june@done.com";
-            var email1 = Email.Create(address, true).Value;
+            var email1 = Email.Create(address, false).Value;
             emails.Add(email1);
 
             person.SetEmails(emails);
@@ -276,7 +276,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var person = new Person(name, Gender.Female);
-            
+
             Action action = () => person.SetName(null);
 
             action.Should().Throw<ArgumentException>();

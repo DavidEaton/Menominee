@@ -8,6 +8,7 @@ namespace CustomerVehicleManagement.Domain.Entities
     {
         public static readonly int NoteMaximumLength = 10000;
         public static readonly string NoteMaximumLengthMessage = $"Organization note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string NameRequiredMessage = "Organization name is required.";
 
         public Organization(OrganizationName name)
         {

@@ -43,11 +43,16 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void NotCreateOrganizationWithEmptyName()
         {
             var name = "";
-            var organizationNameOrError = OrganizationName.Create(name);
 
-            Action action = () => new Organization(organizationNameOrError.Value);
+            try
+            {
+                var organizationNameOrError = OrganizationName.Create(name);
 
-            action.Should().Throw<InvalidOperationException>();
+            }
+            catch (ResultFailureException ex)
+            {
+                ex.Error.Should().Be(OrganizationName.RequiredMessage);
+            }
         }
 
         [Fact]
