@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         //{
         //    HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/11")).Content;
         //    string jsonContent = content.ReadAsStringAsync().Result;
-        //    CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
+        //    CustomerToRead customer = JsonSerializer.Deserialize<CustomerToRead>(jsonContent);
 
         //    customer.Should().NotBeNull();
         //}
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         //{
         //    HttpContent content = (await httpClient.GetAsync(CustomersControllerPath + "/10")).Content;
         //    string jsonContent = content.ReadAsStringAsync().Result;
-        //    CustomerReadDto customer = JsonSerializer.Deserialize<CustomerReadDto>(jsonContent);
+        //    CustomerToRead customer = JsonSerializer.Deserialize<CustomerToRead>(jsonContent);
 
         //    customer.Should().NotBeNull();
         //}

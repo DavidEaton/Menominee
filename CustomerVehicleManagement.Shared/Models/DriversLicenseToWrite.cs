@@ -4,14 +4,14 @@ using System;
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class DriversLicenseToEdit
+    public class DriversLicenseToWrite
     {
         public string Number { get; set; } = string.Empty;
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
         public State State { get; set; }
 
-        public static DriversLicense ConvertToEntity(DriversLicenseToEdit driversLicense)
+        public static DriversLicense ConvertToEntity(DriversLicenseToWrite driversLicense)
         {
             return driversLicense != null
                 ? DriversLicense.Create(

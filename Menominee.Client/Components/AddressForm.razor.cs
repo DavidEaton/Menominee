@@ -9,7 +9,7 @@ namespace Menominee.Client.Components
     public partial class AddressForm : ComponentBase
     {
         AddressProperties AddressValidators { get; set; } = new AddressProperties();
-        public AddressToAdd EntityAddress { get; set; }
+        public AddressToWrite EntityAddress { get; set; }
 
         [Parameter]
         public EventCallback<bool> CloseEventCallback { get; set; }
@@ -18,7 +18,7 @@ namespace Menominee.Client.Components
         {
             if (AddressValidators.IsValid)
             {
-                EntityAddress = new AddressToAdd
+                EntityAddress = new AddressToWrite
                 {
                     AddressLine = AddressValidators.AddressLine,
                     City = AddressValidators.City,

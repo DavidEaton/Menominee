@@ -32,20 +32,20 @@ namespace CustomerVehicleManagement.UnitTests
             return organization;
         }
 
-        public static IList<PhoneToAdd> CreatePhoneCreateDtos()
+        public static IList<PhoneToWrite> CreatePhonesToWrite()
         {
-            var phones = new List<PhoneToAdd>();
+            var phones = new List<PhoneToWrite>();
 
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneToAdd
+            var phone1 = new PhoneToWrite
             { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneToAdd
+            var phone2 = new PhoneToWrite
             { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
@@ -74,20 +74,20 @@ namespace CustomerVehicleManagement.UnitTests
             return phones;
         }
 
-        public static IList<PhoneToAdd> CreateValidPhoneCreateDtos()
+        public static IList<PhoneToWrite> CreateValidPhonesToWrite()
         {
-            var phones = new List<PhoneToAdd>();
+            var phones = new List<PhoneToWrite>();
 
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneToAdd
+            var phone1 = new PhoneToWrite
             { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneToAdd
+            var phone2 = new PhoneToWrite
             { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);
@@ -104,12 +104,12 @@ namespace CustomerVehicleManagement.UnitTests
             return new Phone(number, phoneType, isPrimary);
         }
 
-        public static PhoneToAdd CreateValidPrimaryPhoneCreateDto()
+        public static PhoneToWrite CreateValidPrimaryPhoneToWrite()
         {
             var number = "(555) 987-6543";
             var phoneType = PhoneType.Mobile;
             var isPrimary = true;
-            return new PhoneToAdd
+            return new PhoneToWrite
             { Number = number, PhoneType = phoneType, IsPrimary = isPrimary };
         }
 
@@ -150,19 +150,19 @@ namespace CustomerVehicleManagement.UnitTests
             return emails;
         }
 
-        public static IList<EmailToAdd> CreateValidEmailCreateDtos()
+        public static IList<EmailToWrite> CreateValidEmailsToWrite()
         {
-            var emails = new List<EmailToAdd>();
+            var emails = new List<EmailToWrite>();
 
             var address = "e@mail.com";
             var isPrimary = true;
 
-            emails.Add(new EmailToAdd { Address = address, IsPrimary = isPrimary });
+            emails.Add(new EmailToWrite { Address = address, IsPrimary = isPrimary });
 
             address = "i@pod.com";
             isPrimary = false;
 
-            emails.Add(new EmailToAdd { Address = address, IsPrimary = isPrimary });
+            emails.Add(new EmailToWrite { Address = address, IsPrimary = isPrimary });
 
             return emails;
         }
@@ -175,12 +175,12 @@ namespace CustomerVehicleManagement.UnitTests
             return new Email(address, isPrimary);
         }
 
-        public static EmailToAdd CreateValidPrimaryEmailCreateDto()
+        public static EmailToWrite CreateValidPrimaryEmailToWrite()
         {
             var address = "e@mail.com";
             var isPrimary = true;
 
-            return new EmailToAdd { Address = address, IsPrimary = isPrimary };
+            return new EmailToWrite { Address = address, IsPrimary = isPrimary };
         }
 
         public static string LoremIpsum(int characters)

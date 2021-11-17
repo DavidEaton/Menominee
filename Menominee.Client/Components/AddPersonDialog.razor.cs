@@ -11,7 +11,7 @@ namespace Menominee.Client.Components
     public partial class AddPersonDialog
     {
         private PersonAddProperties PersonAdd { get; set; }
-        private PersonToAdd Person { get; set; }
+        private PersonToWrite Person { get; set; }
         public string Message { get; set; }
         public EntityType EntityType { get; set; }
 
@@ -49,10 +49,10 @@ namespace Menominee.Client.Components
 
             if (FormIsValid())
             {
-                Person = new PersonToAdd
+                Person = new PersonToWrite
                 {
                     Name =
-                    new PersonNameToAdd
+                    new PersonNameToWrite
                     {
                         FirstName = PersonAdd.Name.FirstName,
                         MiddleName = PersonAdd.Name.MiddleName,
@@ -102,7 +102,7 @@ namespace Menominee.Client.Components
             internal PersonName Name { get; set; }
             public Gender Gender { get; set; }
             public DateTime? Birthday { get; set; }
-            internal AddressToAdd Address { get; set; }
+            internal AddressToWrite Address { get; set; }
         }
     }
 }

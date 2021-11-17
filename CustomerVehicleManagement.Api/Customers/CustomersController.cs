@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToEdit customerUpdateDto)
+        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
         {
             // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
             // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
@@ -93,22 +93,22 @@ namespace CustomerVehicleManagement.Api.Customers
             {
                 Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.Organization.Id);
 
-                var organizationNameOrError = OrganizationName.Create(customerUpdateDto.OrganizationUpdateDto.Name);
+                var organizationNameOrError = OrganizationName.Create(customerToWrite.OrganizationToWrite.Name);
                 if (organizationNameOrError.IsFailure)
                     return BadRequest(organizationNameOrError.Error);
 
                 organizationFromRepository.SetName(organizationNameOrError.Value);
 
-                if (customerUpdateDto.OrganizationUpdateDto?.Address != null)
-                    organizationFromRepository.SetAddress(Address.Create(customerUpdateDto.OrganizationUpdateDto.Address.AddressLine,
-                                                                         customerUpdateDto.OrganizationUpdateDto.Address.City,
-                                                                         customerUpdateDto.OrganizationUpdateDto.Address.State,
-                                                                         customerUpdateDto.OrganizationUpdateDto.Address.PostalCode).Value);
+                if (customerToWrite.OrganizationToWrite?.Address != null)
+                    organizationFromRepository.SetAddress(Address.Create(customerToWrite.OrganizationToWrite.Address.AddressLine,
+                                                                         customerToWrite.OrganizationToWrite.Address.City,
+                                                                         customerToWrite.OrganizationToWrite.Address.State,
+                                                                         customerToWrite.OrganizationToWrite.Address.PostalCode).Value);
 
-                organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
-                organizationFromRepository.SetContact(PersonToEdit.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
-                organizationFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
-                organizationFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
+                organizationFromRepository.SetNote(customerToWrite.OrganizationToWrite.Note);
+                organizationFromRepository.SetContact(PersonToWrite.ConvertToEntity(customerToWrite.OrganizationToWrite.Contact));
+                organizationFromRepository.SetPhones(PhoneToWrite.ConvertToEntities(customerToWrite.OrganizationToWrite.Phones));
+                organizationFromRepository.SetEmails(EmailToWrite.ConvertToEntities(customerToWrite.OrganizationToWrite.Emails));
 
                 organizationFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -119,15 +119,15 @@ namespace CustomerVehicleManagement.Api.Customers
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
 
                 personFromRepository.SetName(PersonName.Create(
-                                                customerUpdateDto.PersonUpdateDto.Name.LastName,
-                                                customerUpdateDto.PersonUpdateDto.Name.FirstName,
-                                                customerUpdateDto.PersonUpdateDto.Name.MiddleName).Value);
-                personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
-                personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
-                personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
-                personFromRepository.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
-                personFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
-                personFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
+                                                customerToWrite.PersonToWrite.Name.LastName,
+                                                customerToWrite.PersonToWrite.Name.FirstName,
+                                                customerToWrite.PersonToWrite.Name.MiddleName).Value);
+                personFromRepository.SetGender(customerToWrite.PersonToWrite.Gender);
+                personFromRepository.SetAddress(AddressToWrite.ConvertToEntity(customerToWrite.PersonToWrite.Address));
+                personFromRepository.SetBirthday(customerToWrite.PersonToWrite.Birthday);
+                personFromRepository.SetDriversLicense(DriversLicenseToWrite.ConvertToEntity(customerToWrite.PersonToWrite.DriversLicense));
+                personFromRepository.SetEmails(EmailToWrite.ConvertToEntities(customerToWrite.PersonToWrite.Emails));
+                personFromRepository.SetPhones(PhoneToWrite.ConvertToEntities(customerToWrite.PersonToWrite.Phones));
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -141,85 +141,85 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerToRead>> CreateCustomerAsync(CustomerToAdd customerCreateDto)
+        public async Task<ActionResult<CustomerToRead>> CreateCustomerAsync(CustomerToWrite customerToWrite)
         {
             // VK: here, the logic should be:
-            // 1. Look at customerCreateDto.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
+            // 1. Look at customerToWrite.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
             // 2. Save it to the DB
 
-            var entityType = customerCreateDto.EntityType;
+            var entityType = customerToWrite.EntityType;
             Customer customer = null;
 
             if (entityType == EntityType.Person)
-                customer = CreatePersonCustomer(customerCreateDto.PersonCreateDto);
+                customer = CreatePersonCustomer(customerToWrite.PersonToWrite);
 
             if (entityType == EntityType.Organization)
-                customer = AddOrganizationCustomer(customerCreateDto.OrganizationCreateDto);
+                customer = AddOrganizationCustomer(customerToWrite.OrganizationToWrite);
 
             if (customer != null)
                 await customerRepository.AddCustomerAsync(customer);
 
             if (!await customerRepository.SaveChangesAsync())
-                return BadRequest($"Failed to add {customerCreateDto}.");
+                return BadRequest($"Failed to add {customerToWrite}.");
 
             CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
 
             if (customerFromRepository == null)
-                return BadRequest($"Failed to add {customerCreateDto}.");
+                return BadRequest($"Failed to add {customerToWrite}.");
 
             return CreatedAtRoute("GetCustomerAsync",
                 new { id = customerFromRepository.Id },
                 customerFromRepository);
         }
 
-        private static Customer AddOrganizationCustomer(OrganizationToAdd organizationAddDto)
+        private static Customer AddOrganizationCustomer(OrganizationToWrite organizationToWrite)
         {
-            var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationToWrite.Name);
 
             if (organizationNameOrError.IsSuccess)
             {
                 var organization = new Organization(organizationNameOrError.Value);
 
-                if (organizationAddDto.Contact != null)
+                if (organizationToWrite.Contact != null)
                 {
                     var contact = new Person(
                         PersonName.Create(
-                            organizationAddDto.Contact.Name.LastName,
-                            organizationAddDto.Contact.Name.LastName,
-                            organizationAddDto.Contact.Name.MiddleName).Value,
-                        organizationAddDto.Contact.Gender);
+                            organizationToWrite.Contact.Name.LastName,
+                            organizationToWrite.Contact.Name.LastName,
+                            organizationToWrite.Contact.Name.MiddleName).Value,
+                        organizationToWrite.Contact.Gender);
 
-                    if (organizationAddDto?.Contact?.Address != null)
+                    if (organizationToWrite?.Contact?.Address != null)
                         contact.SetAddress(Address.Create(
-                            organizationAddDto.Contact.Address.AddressLine,
-                            organizationAddDto.Contact.Address.City,
-                            organizationAddDto.Contact.Address.State,
-                            organizationAddDto.Contact.Address.PostalCode).Value);
+                            organizationToWrite.Contact.Address.AddressLine,
+                            organizationToWrite.Contact.Address.City,
+                            organizationToWrite.Contact.Address.State,
+                            organizationToWrite.Contact.Address.PostalCode).Value);
 
-                    contact.SetBirthday(organizationAddDto.Contact?.Birthday);
+                    contact.SetBirthday(organizationToWrite.Contact?.Birthday);
 
-                    if (organizationAddDto.Contact.DriversLicense != null)
+                    if (organizationToWrite.Contact.DriversLicense != null)
                     {
-                        var dateTimeRange = DateTimeRange.Create(organizationAddDto.Contact.DriversLicense.Issued,
-                                                              organizationAddDto.Contact.DriversLicense.Expiry).Value;
+                        var dateTimeRange = DateTimeRange.Create(organizationToWrite.Contact.DriversLicense.Issued,
+                                                              organizationToWrite.Contact.DriversLicense.Expiry).Value;
 
-                        var driversLicense = DriversLicense.Create(organizationAddDto.Contact.DriversLicense.Number,
-                                                                organizationAddDto.Contact.DriversLicense.State,
+                        var driversLicense = DriversLicense.Create(organizationToWrite.Contact.DriversLicense.Number,
+                                                                organizationToWrite.Contact.DriversLicense.State,
                                                                 dateTimeRange).Value;
 
                         contact.SetDriversLicense(driversLicense);
                     }
 
-                    if (organizationAddDto?.Contact?.Phones?.Count > 0)
-                        foreach (var phone in organizationAddDto.Contact.Phones)
+                    if (organizationToWrite?.Contact?.Phones?.Count > 0)
+                        foreach (var phone in organizationToWrite.Contact.Phones)
                             contact.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
-                    if (organizationAddDto?.Contact?.Emails?.Count > 0)
-                        foreach (var email in organizationAddDto.Contact.Emails)
+                    if (organizationToWrite?.Contact?.Emails?.Count > 0)
+                        foreach (var email in organizationToWrite.Contact.Emails)
                             contact.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
                     organization.SetContact(contact);
-                    organization.SetNote(organizationAddDto.Note);
+                    organization.SetNote(organizationToWrite.Note);
                 }
 
                 Customer customer = new(organization);
@@ -230,39 +230,39 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
-        private static Customer CreatePersonCustomer(PersonToAdd personAddDto)
+        private static Customer CreatePersonCustomer(PersonToWrite personToWrite)
         {
             var person = new Person(
                 PersonName.Create(
-                    personAddDto.Name.LastName, personAddDto.Name.FirstName, personAddDto.Name.MiddleName).Value,
-                personAddDto.Gender);
+                    personToWrite.Name.LastName, personToWrite.Name.FirstName, personToWrite.Name.MiddleName).Value,
+                personToWrite.Gender);
 
-            if (personAddDto?.Address != null)
-                person.SetAddress(Address.Create(personAddDto.Address.AddressLine,
-                                                personAddDto.Address.City,
-                                                personAddDto.Address.State,
-                                                personAddDto.Address.PostalCode).Value);
+            if (personToWrite?.Address != null)
+                person.SetAddress(Address.Create(personToWrite.Address.AddressLine,
+                                                personToWrite.Address.City,
+                                                personToWrite.Address.State,
+                                                personToWrite.Address.PostalCode).Value);
 
-            person.SetBirthday(personAddDto?.Birthday);
+            person.SetBirthday(personToWrite?.Birthday);
 
-            if (personAddDto.DriversLicense != null)
+            if (personToWrite.DriversLicense != null)
             {
-                var dateTimeRange = DateTimeRange.Create(personAddDto.DriversLicense.Issued,
-                                                      personAddDto.DriversLicense.Expiry).Value;
+                var dateTimeRange = DateTimeRange.Create(personToWrite.DriversLicense.Issued,
+                                                      personToWrite.DriversLicense.Expiry).Value;
 
-                var driversLicense = DriversLicense.Create(personAddDto.DriversLicense.Number,
-                                                        personAddDto.DriversLicense.State,
+                var driversLicense = DriversLicense.Create(personToWrite.DriversLicense.Number,
+                                                        personToWrite.DriversLicense.State,
                                                         dateTimeRange).Value;
 
                 person.SetDriversLicense(driversLicense);
             }
 
-            if (personAddDto?.Phones?.Count > 0)
-                foreach (var phone in personAddDto.Phones)
+            if (personToWrite?.Phones?.Count > 0)
+                foreach (var phone in personToWrite.Phones)
                     person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
 
-            if (personAddDto?.Emails?.Count > 0)
-                foreach (var email in personAddDto.Emails)
+            if (personToWrite?.Emails?.Count > 0)
+                foreach (var email in personToWrite.Emails)
                     person.AddEmail(new Domain.Entities.Email(email.Address, email.IsPrimary));
 
             return new Customer(person);

@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Get***********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_GetOrganizationAsync()
+        public async Task Return_ActionResult_Of_OrganizationToRead_On_GetOrganizationAsync()
         {
             var result = await controller.GetOrganizationAsync(1);
 
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationToRead_On_GetOrganizationsAsync()
         {
             var result = await controller.GetOrganizationsAsync();
 
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationReadDto_On_GetOrganizationsListAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_OrganizationToRead_On_GetOrganizationsListAsync()
         {
             var result = await controller.GetOrganizationsListAsync();
 
@@ -63,9 +63,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Post**********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_OrganizationReadDto_On_CreateOrganizationAsync()
+        public async Task Return_ActionResult_Of_OrganizationToRead_On_CreateOrganizationAsync()
         {
-            var Organization = new OrganizationToAdd
+            var Organization = new OrganizationToWrite
             {
                 Name = "Doe"
             };
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_BadRequestObjectResult_On_CreateOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var organization = new OrganizationToAdd();
+            var organization = new OrganizationToWrite();
 
             var result = await controller.AddOrganizationAsync(organization);
 
@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Not_Save_On_CreateOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var Organization = new OrganizationToAdd();
+            var Organization = new OrganizationToWrite();
 
             var result = await controller.AddOrganizationAsync(Organization);
 
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                                     .Returns(Task.CompletedTask)
                                     .Callback<Organization>(organization => savedOrganization = organization);
 
-            var Organization = new OrganizationToAdd
+            var Organization = new OrganizationToWrite
             {
                 Name = "Moops"
             };
@@ -128,13 +128,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_OrganizationReadDto_On_CreateOrganizationAsync_When_ModelState_Valid()
+        public async Task Return_OrganizationToRead_On_CreateOrganizationAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(organizationRepository =>
                                 organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()));
 
-            var Organization = new OrganizationToAdd();
+            var Organization = new OrganizationToWrite();
             var result = await controller.AddOrganizationAsync(Organization);
 
             result.Should().BeOfType<ActionResult<OrganizationToRead>>();
@@ -148,7 +148,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_NotFoundObjectResult_On_UpdateOrganizationAsync_With_Invalid_Id()
         {
             var invaldId = 0;
-            var Organization = new OrganizationToEdit
+            var Organization = new OrganizationToWrite
             {
                 Note = "note"
             };
