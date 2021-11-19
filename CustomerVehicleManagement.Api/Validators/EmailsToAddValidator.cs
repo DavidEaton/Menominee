@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
 using System.Collections.Generic;
 
@@ -9,14 +10,14 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string message = "Can have only one Primary email.";
         public EmailsToAddValidator()
         {
-            RuleFor(emails => emails)
+            RuleFor(emails => emails).Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
                 .WithMessage(message)
                 .ForEach(email =>
                 {
                     email.NotEmpty();
-                    email.SetValidator(new EmailToAddValidator());
+                    email.MustBeEntity(x => Email.Create(x.Address, x.IsPrimary));
                 });
         }
 

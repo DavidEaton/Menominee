@@ -34,10 +34,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Person>()
             {
-                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female),
-                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female),
-                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male),
-                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female),
+                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null, null, null),
+                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null, null, null),
+                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null, null, null),
+                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null, null, null),
             };
         }
 

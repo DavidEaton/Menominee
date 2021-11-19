@@ -13,14 +13,5 @@ namespace CustomerVehicleManagement.Shared.Models
         {
             return Helper.FormatPhoneNumber(Number);
         }
-        public static Phone ConvertToEntity(PhoneToAdd phone)
-        {
-            if (phone != null)
-            {
-                return new Phone(phone.Number, phone.PhoneType, phone.IsPrimary);
-            }
-
-            return null;
-        }
     }
 }

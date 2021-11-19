@@ -108,9 +108,9 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .AnyAsync(o => o.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            await context.SaveChangesAsync();
         }
 
         public void FixTrackingState()

@@ -1,6 +1,6 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.BaseClasses;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.ValueObjects;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
@@ -10,9 +10,17 @@ namespace CustomerVehicleManagement.Domain.Entities
         public static readonly string NoteMaximumLengthMessage = $"Organization note cannot be over {NoteMaximumLength} characters in length.";
         public static readonly string NameRequiredMessage = "Organization name is required.";
 
-        public Organization(OrganizationName name)
+        public Organization(OrganizationName name,
+                            string note,
+                            Person contact,
+                            Address address = null,
+                            IList<Email> emails = null,
+                            IList<Phone> phones = null)
+            : base(address, phones, emails)
         {
             Name = name;
+            Note = note;
+            Contact = contact;
         }
 
         public OrganizationName Name { get; private set; }
@@ -30,24 +38,15 @@ namespace CustomerVehicleManagement.Domain.Entities
                 Contact = contact;
         }
 
-        public Result<string> SetNote(string note)
+        public void SetNote(string note)
         {
-            if (string.IsNullOrWhiteSpace(note))
-                return Result.Failure<string>("Can't add an empty note");
-
-            note = note.Trim();
-
-            if (note.Length > NoteMaximumLength)
-                return Result.Failure<string>(NoteMaximumLengthMessage);
-
-            Note = note;
-            return Result.Success(Note);
+            Note = note.Trim();
         }
 
         #region ORM
 
         // EF requires an empty constructor
-        protected Organization() { }
+        protected Organization() : base(null, null, null) { }
 
         #endregion
     }

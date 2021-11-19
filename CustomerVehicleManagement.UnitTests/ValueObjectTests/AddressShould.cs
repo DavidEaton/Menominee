@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_AddressLine()
+        public void Return_IsFailure_Result_On_Create_With_Null_AddressLine()
         {
             string addressLine = null;
             var city = "Gaylord";
@@ -38,7 +38,49 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_City()
+        public void Return_IsFailure_Result_On_Create_With_Empty_AddressLine()
+        {
+            string addressLine = string.Empty;
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_AddressLine_is_too_short()
+        {
+            string addressLine = "1";
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_AddressLine_is_too_long()
+        {
+            string addressLine = Utilities.RandomCharacters(256);
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Null_City()
         {
             var addressLine = "1234 Five Street";
             string city = null;
@@ -52,7 +94,49 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_PostalCode()
+        public void Return_IsFailure_Result_On_Create_With_Empty_City()
+        {
+            var addressLine = "1234 Five Street";
+            string city = string.Empty;
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_City_is_too_short()
+        {
+            var addressLine = "1234 Five Street";
+            string city = "c";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_City_is_too_long()
+        {
+            var addressLine = "1234 Five Street";
+            string city = Utilities.RandomCharacters(256);
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Null_PostalCode()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
@@ -63,6 +147,62 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             addressOrError.IsFailure.Should().BeTrue();
             addressOrError.Error.Should().Be(Address.PostalCodeRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Empty_PostalCode()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = string.Empty;
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_too_short()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "1";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_too_long()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "12345678910";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_invalid()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "Z4566";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeInvalidMessage);
         }
 
         [Fact]

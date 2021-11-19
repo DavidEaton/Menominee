@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -8,7 +7,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
     public class EmailShould
     {
         [Fact]
-        public void Create_Valid_Email()
+        public void Create_Email()
         {
             var address = "john@doe.com";
             var primary = true;
@@ -24,9 +23,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             string address = null;
             var primary = true;
 
-            var email = Email.Create(address, primary);
+            var result = Email.Create(address, primary);
 
-            email.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.EmptyMessage);
+
         }
 
         [Fact]
@@ -35,20 +36,22 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var address = string.Empty;
             var primary = true;
 
-            var email = Email.Create(address, primary);
+            var result = Email.Create(address, primary);
 
-            email.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.EmptyMessage);
         }
 
         [Fact]
-        public void Return_Failure_Result_With_Malformatted_Address()
+        public void Return_Failure_Result_With_Invalid_Address()
         {
             var address = "johnatdoedotcom";
             var primary = true;
 
-            var email = Email.Create(address, primary);
+            var result = Email.Create(address, primary);
 
-            email.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.InvalidMessage);
         }
 
         [Fact]

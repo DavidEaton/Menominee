@@ -1,23 +1,36 @@
-﻿using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Phone : Entity
+    public class Phone : Menominee.Common.Entity
     {
-        public static readonly string PhoneEmptyMessage = "Phone number cannot be empty";
+        public static readonly string InvalidMessage = "Email address and/or its format is invalid";
+        public static readonly string EmptyMessage = "Phone number cannot be empty";
 
-        public Phone(string number, PhoneType phoneType, bool isPrimary)
+        private Phone(string number, PhoneType phoneType, bool isPrimary)
         {
-            if (string.IsNullOrWhiteSpace(number))
-                throw new ArgumentNullException(PhoneEmptyMessage);
-
             Number = number;
             PhoneType = phoneType;
             IsPrimary = isPrimary;
+        }
+
+        public static Result<Phone> Create(string number, PhoneType phoneType, bool isPrimary)
+        {
+            if (string.IsNullOrWhiteSpace(number))
+                return Result.Failure<Phone>(EmptyMessage);
+
+            number = (number ?? "").Trim();
+
+            var phoneAttribute = new PhoneAttribute();
+
+            if (!phoneAttribute.IsValid(number))
+                return Result.Failure<Phone>(InvalidMessage);
+
+            return Result.Success(new Phone(number, phoneType, isPrimary));
         }
 
         public string Number { get; private set; }

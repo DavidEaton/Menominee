@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
 using System.Collections.Generic;
 
@@ -9,15 +10,15 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string message = "Can have only one Primary phone.";
         public PhonesToAddValidator()
         {
-            RuleFor(phones => phones)
+            RuleFor(phones => phones).Cascade(CascadeMode.Stop)
+                .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
                 .WithMessage(message)
                 .ForEach(phone =>
                 {
                     phone.NotEmpty();
-                    phone.SetValidator(new PhoneToAddValidator());
+                    phone.MustBeEntity(x => Phone.Create(x.Number, x.PhoneType, x.IsPrimary));
                 });
-
         }
 
         private bool HaveOnlyOnePrimaryPhone(IList<PhoneToAdd> phones)

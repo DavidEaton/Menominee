@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Post**********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_OrganizationToRead_On_AddOrganizationAsync()
+        public async Task Return_CreatedAtRouteResult_On_AddOrganizationAsync()
         {
             var Organization = new OrganizationToAdd
             {
@@ -78,18 +78,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 
             var result = await controller.AddOrganizationAsync(Organization);
 
-            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_On_AddOrganizationAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            OrganizationToAdd organizationToAdd = Utilities.CreateOrganizationToAdd();
-
-            var result = await controller.AddOrganizationAsync(organizationToAdd);
-
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
+            result.Should().BeOfType<CreatedAtRouteResult>();
         }
 
         [Fact]
@@ -170,384 +159,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_Note_is_too_long()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Note = Utilities.RandomCharacters(10001)
-            };
-
-            var result = await controller.AddOrganizationAsync(organization);
-
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_AddressLine_is_empty()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.AddressRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_State_is_invalid()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = (State)99,
-                    PostalCode = "49999"
-                }
-            };
-
-            var result = await controller.AddOrganizationAsync(organization);
-
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_AddressLine_is_null()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = null,
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.AddressRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_AddressLine_is_too_short()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.AddressMinimumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_AddressLine_is_too_long()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = Utilities.RandomCharacters(256),
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.AddressMaximumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_City_is_too_long()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = Utilities.RandomCharacters(256),
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.CityMaximumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_City_is_too_short()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "c",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.CityMinimumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_City_is_empty()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "",
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.CityRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_City_is_null()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = null,
-                    State = State.MI,
-                    PostalCode = "49999"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.CityRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_PostalCode_is_null()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = null
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.PostalCodeRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_PostalCode_is_empty()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = ""
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.PostalCodeRequiredMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_PostalCode_is_too_short()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "1"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_PostalCode_is_too_long()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "12345678910"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.PostalCodeMaximumLengthMessage);
-            }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_PostalCode_is_invalid()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "Z4566"
-                }
-            };
-
-            try
-            {
-                var result = await controller.AddOrganizationAsync(organization);
-
-            }
-            catch (CSharpFunctionalExtensions.ResultFailureException ex)
-            {
-                ex.Error.Should().Be(Address.PostalCodeInvalidMessage);
-            }
-        }
-
-        [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_Emails_collection_has_more_than_one_Primary()
         {
             var organization = new OrganizationToAdd
@@ -600,31 +211,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             }
             catch (CSharpFunctionalExtensions.ResultFailureException ex)
             {
-                ex.Error.Should().Be(Email.EmailErrorMessage);
+                ex.Error.Should().Be(Email.InvalidMessage);
             }
-        }
-
-        [Fact]
-        public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_Phones_collection_has_invalid_Number()
-        {
-            var organization = new OrganizationToAdd
-            {
-                Name = "Moops"
-            };
-
-            organization.Phones.Add(new PhoneToAdd
-            {
-                Number = "aa.a",
-                IsPrimary = true
-            });
-
-            var result = await controller.AddOrganizationAsync(organization);
-
-            BadRequestObjectResult badRequestObjectResult = (BadRequestObjectResult)result.Result;
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            badRequestObjectResult.StatusCode.Should().Be(400);
-            badRequestObjectResult.Value.Should().Be($"Failed to add {organization.Name}.");
-
         }
 
         [Fact]
@@ -758,7 +346,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_OrganizationToRead_On_AddOrganizationAsync_When_ModelState_Valid()
+        public async Task Return_CreatedAtRouteResult_On_AddOrganizationAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(organizationRepository =>
                                 organizationRepository
@@ -767,7 +355,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var organization = Utilities.CreateOrganizationToAdd();
             var result = await controller.AddOrganizationAsync(organization);
 
-            result.Should().BeOfType<ActionResult<OrganizationToRead>>();
+            result.Should().BeOfType<CreatedAtRouteResult>();
         }
 
         #endregion Post

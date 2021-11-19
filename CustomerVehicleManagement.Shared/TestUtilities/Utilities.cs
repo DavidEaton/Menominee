@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             var organizationNameOrError = OrganizationName.Create(name);
 
             if (!organizationNameOrError.IsFailure)
-                organization = new Organization(organizationNameOrError.Value);
+                organization = new Organization(organizationNameOrError.Value, null, null, null, null, null);
 
             return organization;
         }
@@ -45,7 +45,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             var organizationNameOrError = OrganizationName.Create(name);
 
             if (organizationNameOrError.IsSuccess)
-                organization = new Organization(organizationNameOrError.Value);
+                organization = new Organization(organizationNameOrError.Value, null, null);
 
             var customer = new Customer(organization);
 
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             var lastName = "Doe";
             var nameOrError = PersonName.Create(lastName, firstName);
 
-            return new Person(nameOrError.Value, Gender.Female);
+            return new Person(nameOrError.Value, Gender.Female, null, null, null, null, null);
         }
 
         public static Person CreatePersonWithPhones()
@@ -113,12 +113,12 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new Phone(number1, phoneType1, isPrimary1);
+            var phone1 = Phone.Create(number1, phoneType1, isPrimary1).Value;
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new Phone(number2, phoneType2, isPrimary2);
+            var phone2 = Phone.Create(number2, phoneType2, isPrimary2).Value;
 
             phones.Add(phone1);
             phones.Add(phone2);

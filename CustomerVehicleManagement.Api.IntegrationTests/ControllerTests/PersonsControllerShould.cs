@@ -72,29 +72,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task Return_BadRequestObjectResult_On_CreatePersonAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-
-            var result = await controller.CreatePersonAsync(person);
-
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-
-            var result = await controller.CreatePersonAsync(person);
-
-            moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
-        }
-
-        [Fact]
         public async Task Save_On_CreatePersonAsync_When_ModelState_Valid()
         {
             Person savedPerson = null;
@@ -107,7 +84,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var result = await controller.CreatePersonAsync(person);
 
-            moqRepository.Verify(repository => repository.AddPersonAsync(It.IsAny<Person>()), Times.Once);
+            moqRepository.Verify(organizationRepository =>
+                                 organizationRepository
+                                    .AddPersonAsync(It.IsAny<Person>()), Times.Once);
+
             person.Name.LastName.Should().Be(savedPerson.Name.LastName);
             person.Name.FirstName.Should().Be(savedPerson.Name.FirstName);
             person.Name.MiddleName.Should().Be(savedPerson.Name.MiddleName);

@@ -72,42 +72,47 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPut("{id:long}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToEdit customerUpdateDto)
         {
-            // VK: best not to use DtoHelpers. What happens if the incoming data is incorrect? How is this case handled?
-            // Looks like this use case needs validation. Check out my PS course for how this can be done: https://app.pluralsight.com/library/courses/fluentvalidation-fundamentals/table-of-contents
-            // You can skip the parts about FluentValidation and go straight to "Validating Input the DDD Way" module.
-            // Let me know if you need a code with 30-day access to Pluralsight
-
             CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
-            // VK: here, the logic should be:
-            // 1. Get the customer entity (not DTO) from the DB
-            // 2. Look at its type
-            // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
-            // 4. Save back to the DB
+            DriversLicense driversLicense = null;
+            List<Phone> phones = new();
+            List<Email> emails = new();
+            Address address = null;
 
             if (customerFromRepository.EntityType == EntityType.Organization)
             {
                 Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.Organization.Id);
 
+                if (organizationFromRepository == null)
+                    return NotFound($"Could not find Organization '{customerFromRepository.Organization.Name}' in the database to update.");
+
                 var organizationNameOrError = OrganizationName.Create(customerUpdateDto.OrganizationUpdateDto.Name);
                 if (organizationNameOrError.IsFailure)
                     return BadRequest(organizationNameOrError.Error);
 
-                organizationFromRepository.SetName(organizationNameOrError.Value);
 
                 if (customerUpdateDto.OrganizationUpdateDto?.Address != null)
-                    organizationFromRepository.SetAddress(Address.Create(customerUpdateDto.OrganizationUpdateDto.Address.AddressLine,
+                    address = Address.Create(customerUpdateDto.OrganizationUpdateDto.Address.AddressLine,
                                                                          customerUpdateDto.OrganizationUpdateDto.Address.City,
                                                                          customerUpdateDto.OrganizationUpdateDto.Address.State,
-                                                                         customerUpdateDto.OrganizationUpdateDto.Address.PostalCode).Value);
+                                                                         customerUpdateDto.OrganizationUpdateDto.Address.PostalCode).Value;
 
+                if (customerUpdateDto.OrganizationUpdateDto?.Phones.Count > 0)
+                    foreach (var phone in customerUpdateDto.OrganizationUpdateDto.Phones)
+                        phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+                if (customerUpdateDto.OrganizationUpdateDto?.Emails.Count > 0)
+                    foreach (var email in customerUpdateDto.OrganizationUpdateDto.Emails)
+                        emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+
+                organizationFromRepository.SetName(organizationNameOrError.Value);
                 organizationFromRepository.SetNote(customerUpdateDto.OrganizationUpdateDto.Note);
-                organizationFromRepository.SetContact(PersonToEdit.ConvertToEntity(customerUpdateDto.OrganizationUpdateDto.Contact));
-                organizationFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Phones));
-                organizationFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.OrganizationUpdateDto.Emails));
+                organizationFromRepository.SetAddress(address);
+                organizationFromRepository.SetEmails(emails);
+                organizationFromRepository.SetPhones(phones);
 
                 organizationFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -115,6 +120,12 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (customerFromRepository.EntityType == EntityType.Person)
             {
+                // VK: here, the logic should be:
+                // 1. Get the customer entity (not DTO) from the DB
+                // 2. Look at its type
+                // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
+                // 4. Save back to the DB
+
                 Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
 
                 personFromRepository.SetName(PersonName.Create(
@@ -124,9 +135,30 @@ namespace CustomerVehicleManagement.Api.Customers
                 personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
                 personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
                 personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
-                personFromRepository.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(customerUpdateDto.PersonUpdateDto.DriversLicense));
-                personFromRepository.SetEmails(EmailToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Emails));
-                personFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(customerUpdateDto.PersonUpdateDto.Phones));
+
+                if (customerUpdateDto.PersonUpdateDto?.Phones.Count > 0)
+                    foreach (var phone in customerUpdateDto.PersonUpdateDto.Phones)
+                        phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+                if (customerUpdateDto.PersonUpdateDto?.Emails.Count > 0)
+                    foreach (var email in customerUpdateDto.PersonUpdateDto.Emails)
+                        emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+
+                if (customerUpdateDto.PersonUpdateDto?.DriversLicense != null)
+                {
+                    DateTimeRange dateTimeRange = DateTimeRange.Create(
+                        customerUpdateDto.PersonUpdateDto.DriversLicense.Issued,
+                        customerUpdateDto.PersonUpdateDto.DriversLicense.Expiry).Value;
+
+                    driversLicense = DriversLicense.Create(customerUpdateDto.PersonUpdateDto.DriversLicense.Number,
+                        customerUpdateDto.PersonUpdateDto.DriversLicense.State,
+                        dateTimeRange).Value;
+
+                    personFromRepository.SetDriversLicense(driversLicense);
+                }
+
+                personFromRepository.SetEmails(emails);
+                personFromRepository.SetPhones(phones);
 
                 personFromRepository.SetTrackingState(TrackingState.Modified);
                 customerRepository.FixTrackingState();
@@ -177,7 +209,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (organizationNameOrError.IsSuccess)
             {
-                var organization = new Organization(organizationNameOrError.Value);
+                var organization = new Organization(organizationNameOrError.Value, null, null, null);
 
                 if (organizationAddDto.Contact != null)
                 {
@@ -186,7 +218,7 @@ namespace CustomerVehicleManagement.Api.Customers
                             organizationAddDto.Contact.Name.LastName,
                             organizationAddDto.Contact.Name.LastName,
                             organizationAddDto.Contact.Name.MiddleName).Value,
-                        organizationAddDto.Contact.Gender);
+                        organizationAddDto.Contact.Gender, null, null, null, null, null);
 
                     if (organizationAddDto?.Contact?.Address != null)
                         contact.SetAddress(Address.Create(
@@ -211,7 +243,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
                     if (organizationAddDto?.Contact?.Phones?.Count > 0)
                         foreach (var phone in organizationAddDto.Contact.Phones)
-                            contact.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+                            contact.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
                     if (organizationAddDto?.Contact?.Emails?.Count > 0)
                         foreach (var email in organizationAddDto.Contact.Emails)
@@ -234,7 +266,7 @@ namespace CustomerVehicleManagement.Api.Customers
             var person = new Person(
                 PersonName.Create(
                     personAddDto.Name.LastName, personAddDto.Name.FirstName, personAddDto.Name.MiddleName).Value,
-                personAddDto.Gender);
+                personAddDto.Gender, null, null, null, null, null);
 
             if (personAddDto?.Address != null)
                 person.SetAddress(Address.Create(personAddDto.Address.AddressLine,
@@ -258,7 +290,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             if (personAddDto?.Phones?.Count > 0)
                 foreach (var phone in personAddDto.Phones)
-                    person.AddPhone(new Phone(phone.Number, phone.PhoneType, phone.IsPrimary));
+                    person.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
             if (personAddDto?.Emails?.Count > 0)
                 foreach (var email in personAddDto.Emails)

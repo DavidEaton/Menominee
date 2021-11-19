@@ -21,7 +21,7 @@ namespace Menominee.Common.ValueObjects
         public static readonly string CityRequiredMessage = $"City is required";
 
         public static readonly int PostalCodeMinimumLength = 5;
-        public static readonly int PostalCodeMaximumLength = 32;
+        public static readonly int PostalCodeMaximumLength = 10;
         public static readonly string PostalCodeMinimumLengthMessage = $"Postal Code cannot be less than {PostalCodeMinimumLength} character(s) in length";
         public static readonly string PostalCodeMaximumLengthMessage = $"Postal Code cannot be over {PostalCodeMaximumLength} characters in length";
         public static readonly string PostalCodeRequiredMessage = $"Postal Code is required";

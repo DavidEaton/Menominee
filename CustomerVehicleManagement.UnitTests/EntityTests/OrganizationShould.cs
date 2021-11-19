@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Act
             if (!organizationNameOrError.IsFailure)
-                organization = new Organization(organizationNameOrError.Value);
+                organization = new Organization(organizationNameOrError.Value, null, null);
 
             // Assert
             organization.Should().NotBeNull();
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = new Person(personName, Gender.Female);
+            var contact = new Person(personName, Gender.Female, null, null, null, null, null);
 
             organization.SetContact(contact);
 
@@ -95,11 +95,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             phones.Add(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
+            phone = Phone.Create(number, phoneType, false).Value;
             phones.Add(phone);
 
             organization.SetPhones(phones);
@@ -131,7 +131,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             organization.Phones.Count.Should().Be(0);
 
@@ -145,7 +145,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             organization.AddPhone(phone);
 
@@ -158,11 +158,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             organization.AddPhone(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
+            phone = Phone.Create(number, phoneType, false).Value;
             organization.AddPhone(phone);
 
             organization.Phones.Count.Should().Be(2);
@@ -179,11 +179,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var phones = new List<Phone>();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             phones.Add(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            phone = new Phone(number, phoneType, false);
+            phone = Phone.Create(number, phoneType, false).Value;
             phones.Add(phone);
 
             organization.SetPhones(phones);
@@ -197,10 +197,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             organization.AddPhone(phone);
             number = "444.627.9206";
-            phone = new Phone(number, phoneType, true);
+            phone = Phone.Create(number, phoneType, true).Value;
 
             Action action = () => organization.AddPhone(phone);
 
@@ -213,9 +213,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             organization.AddPhone(phone);
-            phone = new Phone(number, phoneType, true);
+            phone = Phone.Create(number, phoneType, true).Value;
 
             Action action = () => organization.AddPhone(phone);
 
@@ -363,7 +363,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = new Person(personName, Gender.Female);
+            var contact = new Person(personName, Gender.Female, null, null, null, null, null);
 
             organization.SetContact(contact);
 

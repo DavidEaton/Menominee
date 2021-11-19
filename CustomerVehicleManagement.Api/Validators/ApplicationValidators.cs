@@ -7,15 +7,13 @@ namespace CustomerVehicleManagement.Api.Validators
 {
     public static class ApplicationValidators
     {
-        public static IRuleBuilderOptions<T, string> MustBeValueObject<T, TValueObject>(
-            this IRuleBuilder<T, string> ruleBuilder,
-            Func<string, Result<TValueObject>> factoryMethod)
+        public static IRuleBuilderOptions<T, TElement> MustBeValueObject<T, TValueObject, TElement>(
+            this IRuleBuilder<T, TElement> ruleBuilder,
+            Func<TElement, Result<TValueObject>> factoryMethod)
             where TValueObject : AppValueObject
         {
-            return (IRuleBuilderOptions<T, string>)ruleBuilder.Custom((value, context) =>
+            return (IRuleBuilderOptions<T, TElement>)ruleBuilder.Custom((value, context) =>
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    return;
 
                 Result<TValueObject> result = factoryMethod(value);
 

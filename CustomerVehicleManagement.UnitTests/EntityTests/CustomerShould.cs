@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female);
+            var person = new Person(name, Gender.Female, null, null, null, null, null);
 
             // Act
             var customer = new Customer(person);
@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female);
+            var person = new Person(name, Gender.Female, null, null, null, null, null);
             var organization = Utilities.CreateOrganization();
             organization.SetContact(person);
 
@@ -90,9 +90,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
-            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
-            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+            var phone1 = Phone.Create(number1, PhoneType.Mobile, false).Value;
 
             customer.Organization.AddPhone(phone0);
             customer.Organization.AddPhone(phone1);
@@ -107,9 +107,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
-            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
-            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+            var phone1 = Phone.Create(number1, PhoneType.Mobile, false).Value;
 
             customer.Organization.AddPhone(phone0);
             customer.Organization.AddPhone(phone1);
@@ -160,9 +160,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
-            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
-            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+            var phone1 = Phone.Create(number1, PhoneType.Mobile, false).Value;
 
             customer.Person.AddPhone(phone0);
             customer.Person.AddPhone(phone1);
@@ -177,9 +177,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreatePerson();
             var customer = new Customer(organization);
             var number0 = "(989) 627-9206";
-            var phone0 = new Phone(number0, PhoneType.Mobile, true);
+            var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
-            var phone1 = new Phone(number1, PhoneType.Mobile, false);
+            var phone1 = Phone.Create(number1, PhoneType.Mobile, false).Value;
 
             customer.Person.AddPhone(phone0);
             customer.Person.AddPhone(phone1);

@@ -114,11 +114,14 @@ namespace CustomerVehicleManagement.Api
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddScoped<UserContext, UserContext>();
+            // webHostBuilder.ConfigureServices in Test adds mock services
+            // TryAddScoped won't re-add or overwrite services already added
+            // to the container, but AddScoped will.
+            services.TryAddScoped<UserContext, UserContext>();
             services.AddDbContext<ApplicationDbContext>();
-            services.AddScoped<IPersonRepository, PersonRepository>();
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.TryAddScoped<IPersonRepository, PersonRepository>();
+            services.TryAddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.TryAddScoped<ICustomerRepository, CustomerRepository>();
 
             services.AddHealthChecks();
             services.AddCors();

@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female);
+            var person = new Person(name, Gender.Female, null, null, null);
 
             // Assert
             person.Should().NotBeNull();
@@ -31,9 +31,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void Throw_Exception_On_CreateWithNullName()
         {
-            Action action = () => new Person(null, Gender.Female);
+            var person = new Person(null, Gender.Female, null, null, null);
 
-            action.Should().Throw<ArgumentException>();
+            person.Should().NotBeNull();
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             person.AddPhone(phone);
 
@@ -63,11 +63,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
-            var phone0 = new Phone(number, phoneType, true);
+            var phone0 = Phone.Create(number, phoneType, true).Value;
             person.AddPhone(phone0);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            var phone1 = new Phone(number, phoneType, false);
+            var phone1 = Phone.Create(number, phoneType, false).Value;
             person.AddPhone(phone1);
 
             person.Phones.Count.Should().Be(2);
@@ -84,11 +84,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
-            var phone0 = new Phone(number, phoneType, true);
+            var phone0 = Phone.Create(number, phoneType, true).Value;
             phones.Add(phone0);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
-            var phone1 = new Phone(number, phoneType, false);
+            var phone1 = Phone.Create(number, phoneType, false).Value;
             phones.Add(phone1);
             person.SetPhones(phones);
 
@@ -106,10 +106,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var person = Utilities.CreatePerson();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             person.AddPhone(phone);
             number = "444.627.9206";
-            phone = new Phone(number, phoneType, true);
+            phone = Phone.Create(number, phoneType, true).Value;
 
             Action action = () => person.AddPhone(phone);
 
@@ -122,9 +122,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var person = Utilities.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
             person.AddPhone(phone);
-            phone = new Phone(number, phoneType, true);
+            phone = Phone.Create(number, phoneType, true).Value;
 
             Action action = () => person.AddPhone(phone);
 
@@ -258,7 +258,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female);
+            var person = new Person(name, Gender.Female, null, null, null);
             firstName = "Jill";
             lastName = "Done";
             name = PersonName.Create(lastName, firstName).Value;
@@ -275,7 +275,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female);
+            var person = new Person(name, Gender.Female, null, null, null);
 
             Action action = () => person.SetName(null);
 
