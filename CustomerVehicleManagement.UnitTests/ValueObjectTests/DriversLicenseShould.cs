@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
 
             driversLicenseOrError.IsFailure.Should().BeTrue();
-            driversLicenseOrError.Error.Should().Be(DriversLicense.DriversLicenseNumberUnderMinimumLengthMessage);
+            driversLicenseOrError.Error.Should().Be(DriversLicense.RequiredMessage);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
 
             driversLicenseOrError.IsFailure.Should().BeTrue();
-            driversLicenseOrError.Error.Should().Be(DriversLicense.DriversLicenseDateRangeInvalidMessage);
+            driversLicenseOrError.Error.Should().Be(DriversLicense.DateRangeInvalidMessage);
         }
 
         [Fact]
@@ -93,8 +93,8 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             driversLicense = driversLicense.NewValidRange(issued, expiry);
 
-            driversLicense.ValidRange.Start.Should().Be(issued);
-            driversLicense.ValidRange.End.Should().Be(expiry);
+            driversLicense.ValidDateRange.Start.Should().Be(issued);
+            driversLicense.ValidDateRange.End.Should().Be(expiry);
         }
 
         internal static DriversLicense Create_DriversLicense()

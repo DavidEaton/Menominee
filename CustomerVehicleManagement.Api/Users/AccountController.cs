@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +12,8 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Users
 {
-    [Route("api/[controller]")]
     [Authorize(Policy = Policies.CanManageUsers)]
-    public class AccountController : ControllerBase
+    public class AccountController : ApplicationController
     {
         private readonly IdentityUserDbContext Context;
         private readonly UserContext UserContext;

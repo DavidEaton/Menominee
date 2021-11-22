@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using Menominee.Common.Enums;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -9,29 +8,65 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
     public class PhoneShould
     {
         [Fact]
-        public void CreatePhone()
+        public void Create_Phone()
         {
             // Arrange
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
 
             // Act
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             // Assert
             phone.Should().NotBeNull();
         }
 
         [Fact]
-        public void NotCreatePhoneWithEmptyNumber()
+        public void Return_IsFailure_Result_On_Create_With_Null_Number()
         {
             string number = null;
             var phoneType = PhoneType.Home;
 
-            Action action = () => new Phone(number, phoneType, true);
+            var result = Phone.Create(number, phoneType, true);
 
-            action.Should().Throw<ArgumentNullException>()
-                           .WithMessage($"Value cannot be null. (Parameter '{Phone.PhoneEmptyMessage}')");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.EmptyMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Empty_Number()
+        {
+            string number = string.Empty;
+            var phoneType = PhoneType.Home;
+
+            var result = Phone.Create(number, phoneType, true);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.EmptyMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_Number()
+        {
+            var number = "989.627.9206?";
+            var phoneType = PhoneType.Home;
+
+            var result = Phone.Create(number, phoneType, true);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_PhoneType()
+        {
+            var number = "989.627.9206";
+            var phoneType = (PhoneType)99;
+
+            var result = Phone.Create(number, phoneType, true);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.PhoneTypeInvalidMessage);
         }
 
         [Fact]
@@ -39,8 +74,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var number = "989.627.9206";
 
-            var phone1 = new Phone(number, PhoneType.Home, true);
-            var phone2 = new Phone(number, PhoneType.Home, true);
+            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
+            var phone2 = Phone.Create(number, PhoneType.Home, true).Value;
 
             Phone.EqualsByProperty(phone1, phone2).Should().BeTrue();
         }
@@ -49,9 +84,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void NotEquateTwoPhoneInstancesHavingDifferentValuesOnEqualsByProperty()
         {
             var number = "989.627.9206";
-            var phone1 = new Phone(number, PhoneType.Home, true);
-            var phone2 = new Phone(number, PhoneType.Home, false);
-
+            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
+            var phone2 = Phone.Create(number, PhoneType.Home, false).Value;
             Phone.EqualsByProperty(phone1, phone2).Should().BeFalse();
         }
 
@@ -60,8 +94,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var number = "989.627.9206";
             var newNumber = "555-555-5555";
-            var phone1 = new Phone(number, PhoneType.Home, true);
-            var phone2 = new Phone(number, PhoneType.Home, false);
+            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
+            var phone2 = Phone.Create(number, PhoneType.Home, false).Value;
 
             phone2 = phone2.NewNumber(newNumber);
 
@@ -74,7 +108,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var number = "989.627.9206";
             var newNumber = "555-555-5555";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone = phone.NewNumber(newNumber);
 
@@ -86,7 +120,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone = phone.NewPhoneType(PhoneType.Mobile);
 
@@ -98,7 +132,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone.IsPrimary.Should().BeTrue();
             phone = phone.NewPrimary(false);
@@ -113,7 +147,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var numberFormatted = "(989) 627-9206";
             var phoneType = PhoneType.Home;
 
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone.ToString().Should().Be(numberFormatted);
         }
@@ -125,7 +159,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var numberFormatted = "627-9206";
             var phoneType = PhoneType.Home;
 
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone.ToString().Should().Be(numberFormatted);
         }
@@ -136,7 +170,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var number = "896279206";
             var phoneType = PhoneType.Home;
 
-            var phone = new Phone(number, phoneType, true);
+            var phone = Phone.Create(number, phoneType, true).Value;
 
             phone.ToString().Should().Be("896279206");
 
@@ -167,18 +201,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             phone = phone.NewNumber("6");
 
             phone.ToString().Should().Be("6");
-        }
-
-        [Fact]
-        public void RemoveNonNumericCharactersAndFormatOnToString()
-        {
-            var number = "989.627.9206?";
-            var numberFormatted = "(989) 627-9206";
-            var phoneType = PhoneType.Home;
-
-            var phone = new Phone(number, phoneType, true);
-
-            phone.ToString().Should().Be(numberFormatted);
         }
     }
 }

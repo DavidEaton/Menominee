@@ -1,14 +1,26 @@
 ﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Organization : Contactable
     {
-        public Organization(OrganizationName name)
+        public static readonly int NoteMaximumLength = 10000;
+        public static readonly string NoteMaximumLengthMessage = $"Organization note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string NameRequiredMessage = "Organization name is required.";
+
+        public Organization(OrganizationName name,
+                            string note,
+                            Person contact,
+                            Address address = null,
+                            IList<Email> emails = null,
+                            IList<Phone> phones = null)
+            : base(address, phones, emails)
         {
             Name = name;
+            Note = note;
+            Contact = contact;
         }
 
         public OrganizationName Name { get; private set; }
@@ -28,14 +40,13 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetNote(string note)
         {
-            if (note != null)
-                Note = note;
+            Note = note.Trim();
         }
 
         #region ORM
 
         // EF requires an empty constructor
-        protected Organization() { }
+        protected Organization() : base(null, null, null) { }
 
         #endregion
     }

@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_AddressLine()
+        public void Return_IsFailure_Result_On_Create_With_Null_AddressLine()
         {
             string addressLine = null;
             var city = "Gaylord";
@@ -34,11 +34,53 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.AddressUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.AddressRequiredMessage);
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_City()
+        public void Return_IsFailure_Result_On_Create_With_Empty_AddressLine()
+        {
+            string addressLine = string.Empty;
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_AddressLine_is_too_short()
+        {
+            string addressLine = "1";
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_AddressLine_is_too_long()
+        {
+            string addressLine = Utilities.RandomCharacters(256);
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Null_City()
         {
             var addressLine = "1234 Five Street";
             string city = null;
@@ -48,11 +90,67 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.CityUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.CityRequiredMessage);
         }
 
         [Fact]
-        public void Return_IsFailure_Result_On_Create_With_Empty_PostalCode()
+        public void Return_IsFailure_Result_On_Create_With_Empty_City()
+        {
+            var addressLine = "1234 Five Street";
+            string city = string.Empty;
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_City_is_too_short()
+        {
+            var addressLine = "1234 Five Street";
+            string city = "c";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_City_is_too_long()
+        {
+            var addressLine = "1234 Five Street";
+            string city = Utilities.RandomCharacters(256);
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.CityMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_State_is_invalid()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = (State)111;
+            string postalCode = "Z4566";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.StateInvalidMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Null_PostalCode()
         {
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
@@ -62,14 +160,70 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
 
             addressOrError.IsFailure.Should().BeTrue();
-            addressOrError.Error.Should().Be(Address.PostalCodeUnderMinimumLengthMessage);
+            addressOrError.Error.Should().Be(Address.PostalCodeRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Empty_PostalCode()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = string.Empty;
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeRequiredMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_too_short()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "1";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeMinimumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_too_long()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "12345678910";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_PostalCode_is_invalid()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            string postalCode = "Z4566";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.PostalCodeInvalidMessage);
         }
 
         [Fact]
         public void Equate_Two_Address_Instances_Having_Same_Values()
         {
-            var address1 = Utilities.CreateValidAddress();
-            var address2 = Utilities.CreateValidAddress();
+            var address1 = Utilities.CreateAddress();
+            var address2 = Utilities.CreateAddress();
 
             address1.Should().BeEquivalentTo(address2);
         }
@@ -77,20 +231,20 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Not_Equate_Two_Address_Instances_Having_Differing_Values()
         {
-            var address1 = Utilities.CreateValidAddress();
-            var address2 = Utilities.CreateValidAddress();
+            var address1 = Utilities.CreateAddress();
+            var address2 = Utilities.CreateAddress();
             var newAddressLine = "54321";
 
             address2 = address2.NewAddressLine(newAddressLine);
 
-            address1.Should().NotBeEquivalentTo(address2);
+            address1.Should().NotBeSameAs(address2);
         }
 
 
         [Fact]
         public void Return_New_Address_On_NewAddressLine()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newAddressLine = "5432 One Street";
 
             address = address.NewAddressLine("5432 One Street");
@@ -101,7 +255,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewAddressLine_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address.NewAddressLine(null);
 
@@ -111,7 +265,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewCity()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newCity = "Oomapopalis";
 
             address = address.NewCity(newCity);
@@ -122,7 +276,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewCity_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address.NewCity(null);
 
@@ -132,7 +286,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewState()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newState = State.HI;
             address = address.NewState(newState);
 
@@ -142,7 +296,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Return_New_Address_On_NewPostalCode()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
             var newPostalCode = "55555";
 
             address = address.NewPostalCode(newPostalCode);
@@ -153,7 +307,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         [Fact]
         public void Throw_Exception_On_NewPostalCode_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateValidAddress();
+            var address = Utilities.CreateAddress();
 
             Action action = () => address = address = address.NewPostalCode(null);
 

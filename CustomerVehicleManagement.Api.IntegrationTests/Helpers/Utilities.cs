@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,10 +34,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Person>()
             {
-                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female),
-                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female),
-                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male),
-                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female),
+                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null, null, null),
+                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null, null, null),
+                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null, null, null),
+                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null, null, null),
             };
         }
 
@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))
             {
-                customer = Helper.CreateValidOrganizationCustomer();
+                customer = Helper.CreateOrganizationCustomer();
                 context.Customers.Add(customer);
                 context.SaveChanges();
                 id = customer.Id;
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             long id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = Helper.CreateValidOrganization();
+                Organization organization = Helper.CreateOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             Organization organization;
             using (var context = new ApplicationDbContext(options))
             {
-                organization = Helper.CreateValidOrganization();
+                organization = Helper.CreateOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
             }
@@ -94,13 +94,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             // Create a new Person with Emails and Phones, and save
             using (var context = new ApplicationDbContext(options))
             {
-                person = Helper.CreateValidPersonWithEmails();
-                person.SetPhones(Helper.CreateValidPhones());
+                person = Helper.CreatePersonWithEmails();
+                person.SetPhones(Helper.CreatePhoneList());
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
             }
         }
-
     }
 }

@@ -63,11 +63,11 @@ namespace CustomerVehicleManagement.Data.Configurations
                         stringType => stringType.ToString(),
                         stringType => (State)Enum.Parse(typeof(State), stringType));
             builder.OwnsOne(person => person.DriversLicense)
-                .OwnsOne(driversLicense => driversLicense.ValidRange)
+                .OwnsOne(driversLicense => driversLicense.ValidDateRange)
                 .Property(dateTimeRange => dateTimeRange.Start)
                 .HasColumnName("DriversLicenseIssued");
             builder.OwnsOne(person => person.DriversLicense)
-                .OwnsOne(driversLicense => driversLicense.ValidRange)
+                .OwnsOne(driversLicense => driversLicense.ValidDateRange)
                 .Property(dateTimeRange => dateTimeRange.End)
                 .HasColumnName("DriversLicenseExpiry");
         }

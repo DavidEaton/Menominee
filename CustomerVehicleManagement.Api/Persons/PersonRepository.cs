@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Utilities;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.EntityFrameworkCore;

@@ -1,25 +1,27 @@
-﻿using Menominee.Common.Utilities;
-using System;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Utilities;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class PersonName : ValueObject
+    public class PersonName : AppValueObject
     {
-        public static readonly int LastNameMinimumLength = 1;
+        public static readonly int LastNameMinimumLength = 2;
         public static readonly int LastNameMaximumLength = 255;
-        public static readonly string LastNameUnderMinimumLengthMessage = $"Last name cannot be less than {LastNameMinimumLength} character(s) in length";
-        public static readonly string LastNameOverMaximumLengthMessage = $"Last name cannot be over {LastNameMaximumLength} characters in length";
+        public static readonly string LastNameMinimumLengthMessage = $"Last name cannot be less than {LastNameMinimumLength} character(s) in length";
+        public static readonly string LastNameMaximumLengthMessage = $"Last name cannot be over {LastNameMaximumLength} characters in length";
+        public static readonly string LastNameRequiredMessage = $"Last name is required";
 
         public static readonly int FirstNameMinimumLength = 1;
         public static readonly int FirstNameMaximumLength = 255;
-        public static readonly string FirstNameUnderMinimumLengthMessage = $"First name cannot be less than {FirstNameMinimumLength} character(s) in length";
-        public static readonly string FirstNameOverMaximumLengthMessage = $"First name cannot be over {FirstNameMaximumLength} characters in length";
+        public static readonly string FirstNameMinimumLengthMessage = $"First name cannot be less than {FirstNameMinimumLength} character(s) in length";
+        public static readonly string FirstNameMaximumLengthMessage = $"First name cannot be over {FirstNameMaximumLength} characters in length";
+        public static readonly string FirstNameRequiredMessage = $"First name is required";
 
         public static readonly int MiddleNameMinimumLength = 1;
         public static readonly int MiddleNameMaximumLength = 255;
-        public static readonly string MiddleNameUnderMinimumLengthMessage = $"Middle name cannot be less than {MiddleNameMinimumLength} character(s) in length";
-        public static readonly string MiddleNameOverMaximumLengthMessage = $"Middle name cannot be over {MiddleNameMaximumLength} characters in length";
+        public static readonly string MiddleNameMinimumLengthMessage = $"Middle name cannot be less than {MiddleNameMinimumLength} character(s) in length";
+        public static readonly string MiddleNameMaximumLengthMessage = $"Middle name cannot be over {MiddleNameMaximumLength} characters in length";
         private PersonName(string lastName, string firstName, string middleName = null)
         {
             LastName = lastName;
@@ -33,46 +35,56 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<PersonName> Create(string lastName, string firstName, string middleName = null)
         {
-            lastName = (lastName ?? string.Empty).Trim();
-            firstName = (firstName ?? string.Empty).Trim();
-            middleName = (middleName ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(lastName))
+                return Result.Failure<PersonName>(LastNameRequiredMessage);
+
+            if (string.IsNullOrWhiteSpace(firstName))
+                return Result.Failure<PersonName>(FirstNameRequiredMessage);
+
+
+            lastName = lastName.Trim();
+            firstName = firstName.Trim();
+            middleName = (middleName == null || middleName == string.Empty)? null : middleName.Trim();
 
             if (lastName.Length < LastNameMinimumLength)
-                return Result.Fail<PersonName>(LastNameUnderMinimumLengthMessage);
+                return Result.Failure<PersonName>(LastNameMinimumLengthMessage);
 
             if (lastName.Length > LastNameMaximumLength)
-                return Result.Fail<PersonName>(LastNameOverMaximumLengthMessage);
+                return Result.Failure<PersonName>(LastNameMaximumLengthMessage);
 
             if (firstName.Length < FirstNameMinimumLength)
-                return Result.Fail<PersonName>(FirstNameUnderMinimumLengthMessage);
+                return Result.Failure<PersonName>(FirstNameMinimumLengthMessage);
 
             if (firstName.Length > FirstNameMaximumLength)
-                return Result.Fail<PersonName>(FirstNameOverMaximumLengthMessage);
+                return Result.Failure<PersonName>(FirstNameMaximumLengthMessage);
 
-            if (middleName.Length > MiddleNameMaximumLength)
-                return Result.Fail<PersonName>(MiddleNameOverMaximumLengthMessage);
+            if (middleName?.Length < MiddleNameMinimumLength)
+                return Result.Failure<PersonName>(MiddleNameMinimumLengthMessage);
 
-            return Result.Ok(new PersonName(lastName, firstName, middleName));
+            if (middleName?.Length > MiddleNameMaximumLength)
+                return Result.Failure<PersonName>(MiddleNameMaximumLengthMessage);
+
+            return Result.Success(new PersonName(lastName, firstName, middleName));
         }
 
         public PersonName NewLastName(string newLastName)
         {
-            newLastName = (newLastName ?? string.Empty).Trim();
             Guard.ForNullOrEmpty(newLastName, "newLastName");
+            newLastName = (newLastName ?? string.Empty).Trim();
             return new PersonName(newLastName, FirstName, MiddleName);
         }
 
         public PersonName NewFirstName(string newFirstName)
         {
-            newFirstName = (newFirstName ?? string.Empty).Trim();
             Guard.ForNullOrEmpty(newFirstName, "newFirstName");
+            newFirstName = (newFirstName ?? string.Empty).Trim();
             return new PersonName(LastName, newFirstName, MiddleName);
         }
 
         public PersonName NewMiddleName(string newMiddleName)
         {
-            newMiddleName = (newMiddleName ?? string.Empty).Trim();
             Guard.ForNullOrEmpty(newMiddleName, "newMiddleName");
+            newMiddleName = (newMiddleName ?? string.Empty).Trim();
             return new PersonName(LastName, FirstName, newMiddleName);
         }
 

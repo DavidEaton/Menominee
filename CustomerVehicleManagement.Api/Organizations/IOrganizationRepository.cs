@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         Task DeleteOrganizationAsync(long id);
         void FixTrackingState();
         Task<bool> OrganizationExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         Task<Organization> GetOrganizationEntityAsync(long id);
     }
 }

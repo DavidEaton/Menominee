@@ -1,52 +1,56 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class DriversLicense : ValueObject
+    public class DriversLicense : AppValueObject
     {
-        public static readonly int DriversLicenseNumberMinimumLength = 3;
-        public static readonly int DriversLicenseNumberMaximumLength = 255;
-        public static readonly string DriversLicenseNumberUnderMinimumLengthMessage = $"Drivers License cannot be less than {DriversLicenseNumberMinimumLength} character(s) in length";
-        public static readonly string DriversLicenseNumberOverMaximumLengthMessage = $"Drivers License cannot be over {DriversLicenseNumberMaximumLength} characters in length";
-        public static readonly string DriversLicenseDateRangeInvalidMessage = $"Drivers License must have valid dates";
+        public static readonly int MinimumLength = 3;
+        public static readonly int MaximumLength = 255;
+        public static readonly string UnderMinimumLengthMessage = $"Drivers License cannot be less than {MinimumLength} character(s) in length";
+        public static readonly string OverMaximumLengthMessage = $"Drivers License cannot be over {MaximumLength} characters in length";
+        public static readonly string DateRangeInvalidMessage = $"Drivers License must have valid dates";
+        public static readonly string RequiredMessage = $"Drivers License number is required.";
 
-        public string Number { get; }
-        public DateTimeRange ValidRange { get; }
-        public State State { get; }
+        public string Number { get; private set; }
+        public DateTimeRange ValidDateRange { get; private set; }
+        public State State { get; private set; }
 
-        private DriversLicense(string number, State state, DateTimeRange validRange)
+        private DriversLicense(string number, State state, DateTimeRange validDateRange)
         {
             Number = number;
             State = state;
-            ValidRange = validRange;
+            ValidDateRange = validDateRange;
         }
 
         public static Result<DriversLicense> Create(string number, State state, DateTimeRange validRange)
         {
+            if (string.IsNullOrWhiteSpace(number))
+                return Result.Failure<DriversLicense>(RequiredMessage);
+
             number = (number ?? string.Empty).Trim();
 
             if (validRange == null)
-                return Result.Fail<DriversLicense>(DriversLicenseDateRangeInvalidMessage);
+                return Result.Failure<DriversLicense>(DateRangeInvalidMessage);
 
-            if (number.Length < DriversLicenseNumberMinimumLength)
-                return Result.Fail<DriversLicense>(DriversLicenseNumberUnderMinimumLengthMessage);
+            if (number.Length < MinimumLength)
+                return Result.Failure<DriversLicense>(UnderMinimumLengthMessage);
 
-            if (number.Length > DriversLicenseNumberMaximumLength)
-                return Result.Fail<DriversLicense>(DriversLicenseNumberOverMaximumLengthMessage);
+            if (number.Length > MaximumLength)
+                return Result.Failure<DriversLicense>(OverMaximumLengthMessage);
 
-            return Result.Ok(new DriversLicense(number, state, validRange));
+            return Result.Success(new DriversLicense(number, state, validRange));
         }
 
         public DriversLicense NewNumber(string newNumber)
         {
-            return new DriversLicense(newNumber, State, ValidRange);
+            return new DriversLicense(newNumber, State, ValidDateRange);
         }
         public DriversLicense NewState(State newState)
         {
-            return new DriversLicense(Number, newState, ValidRange);
+            return new DriversLicense(Number, newState, ValidDateRange);
         }
 
         public DriversLicense NewValidRange(DateTime start, DateTime end)
@@ -58,7 +62,7 @@ namespace Menominee.Common.ValueObjects
         {
             yield return Number;
             yield return State;
-            yield return ValidRange;
+            yield return ValidDateRange;
         }
 
         #region ORM

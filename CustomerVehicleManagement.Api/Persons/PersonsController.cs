@@ -1,8 +1,9 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,9 +11,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PersonsController : ControllerBase
+    public class PersonsController : ApplicationController
     {
         private readonly IPersonRepository repository;
 
@@ -69,17 +68,49 @@ namespace CustomerVehicleManagement.Api.Persons
             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
+            List<Phone> phones = new();
+            List<Email> emails = new();
+
             personFromRepository.SetName(PersonName.Create(
                                             personUpdateDto.Name.LastName,
                                             personUpdateDto.Name.FirstName,
                                             personUpdateDto.Name.MiddleName).Value);
 
             personFromRepository.SetGender(personUpdateDto.Gender);
-            personFromRepository.SetAddress(personUpdateDto.Address);
+
+            if (personUpdateDto?.Address != null)
+                personFromRepository.SetAddress(Address.Create(personUpdateDto.Address.AddressLine,
+                                                               personUpdateDto.Address.City,
+                                                               personUpdateDto.Address.State,
+                                                               personUpdateDto.Address.PostalCode).Value);
+
+
+
             personFromRepository.SetBirthday(personUpdateDto.Birthday);
-            personFromRepository.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(personUpdateDto.DriversLicense));
-            personFromRepository.SetEmails(EmailToEdit.ConvertToEntities(personUpdateDto.Emails));
-            personFromRepository.SetPhones(PhoneToEdit.ConvertToEntities(personUpdateDto.Phones));
+
+
+            if (personUpdateDto?.Phones.Count > 0)
+                foreach (var phone in personFromRepository.Phones)
+                {
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+                    personFromRepository.SetPhones(phones);
+                }
+
+            if (personUpdateDto?.Emails.Count > 0)
+                foreach (var email in personFromRepository.Emails)
+                {
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+                    personFromRepository.SetEmails(emails);
+                }
+
+            if (personUpdateDto?.DriversLicense != null)
+            {
+                personFromRepository.SetDriversLicense(DriversLicense.Create(personUpdateDto.DriversLicense.Number,
+                    personUpdateDto.DriversLicense.State,
+                    DateTimeRange.Create(
+                    personUpdateDto.DriversLicense.Issued,
+                    personUpdateDto.DriversLicense.Expiry).Value).Value);
+            }
 
             personFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
@@ -96,10 +127,36 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult<PersonToRead>> CreatePersonAsync(PersonToAdd personCreateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            Address address = null;
+            List<Phone> phones = new();
+            List<Email> emails = new();
+            DriversLicense driversLicense = null;
 
-            Person person = PersonToAdd.ConvertToEntity(personCreateDto);
+            var personName = PersonName.Create(personCreateDto.Name.LastName, personCreateDto.Name.FirstName, personCreateDto.Name.MiddleName).Value;
+
+            if (personCreateDto?.Address != null)
+                address = Address.Create(personCreateDto.Address.AddressLine, personCreateDto.Address.City, personCreateDto.Address.State, personCreateDto.Address.PostalCode).Value;
+
+            if (personCreateDto?.Phones.Count > 0)
+                foreach (var phone in personCreateDto.Phones)
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            if (personCreateDto?.Emails.Count > 0)
+                foreach (var email in personCreateDto.Emails)
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+
+            if (personCreateDto?.DriversLicense != null)
+            {
+                DateTimeRange dateTimeRange = DateTimeRange.Create(
+                    personCreateDto.DriversLicense.Issued,
+                    personCreateDto.DriversLicense.Expiry).Value;
+
+                driversLicense = DriversLicense.Create(personCreateDto.DriversLicense.Number,
+                    personCreateDto.DriversLicense.State,
+                    dateTimeRange).Value;
+            }
+
+            Person person = new(personName, personCreateDto.Gender, address, emails, phones, personCreateDto.Birthday, driversLicense);
 
             await repository.AddPersonAsync(person);
 

@@ -1,5 +1,6 @@
-﻿using FluentAssertions;
-using Menominee.Common.Utilities;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Shared.TestUtilities;
+using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using Xunit;
 
@@ -26,7 +27,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
         }
 
         [Fact]
@@ -37,30 +38,30 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
         }
 
         [Fact]
         public void Return_IsFailure_Result_On_Create_When_Exceeds_Maximum_Length()
         {
-            string name = Helpers.LoremIpsum(OrganizationName.MaximumLength + 1);
+            string name = Utilities.LoremIpsum(OrganizationName.MaximumLength + 1);
 
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.OverMaximumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MaximumLengthMessage);
 
         }
 
         [Fact]
         public void Return_IsFailure_Result_On_Create_When_Under_Minimum_Length()
         {
-            string name = Helpers.LoremIpsum(OrganizationName.MinimumLength - 1);
+            string name = Utilities.LoremIpsum(OrganizationName.MinimumLength - 1);
 
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.UnderMinimumLengthMessage);
+            organizationNameOrError.Error.Should().Be(OrganizationName.MinimumLengthMessage);
 
         }
 
@@ -95,7 +96,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var name = "jane's";
             Result<OrganizationName> organizationNameOrError = OrganizationName.Create(name);
             organizationNameOrError.Value.Name.Should().Be(name);
-            name  = "June's";
+            name = "June's";
 
             string newOrganizationName = OrganizationName.NewOrganizationName(name).Name;
 

@@ -38,10 +38,6 @@ namespace CustomerVehicleManagement.Data.Configurations
             builder.OwnsOne(organization => organization.Address)
                    .Property(address => address.State)
                    .HasColumnName("AddressState")
-                   .HasMaxLength(2);
-            builder.OwnsOne(organization => organization.Address)
-                   .Property(address => address.State)
-                   .HasColumnName("AddressState")
                    .HasMaxLength(2)
                    .HasConversion(
                         stringType => stringType.ToString(),

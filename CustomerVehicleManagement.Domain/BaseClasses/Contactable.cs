@@ -15,6 +15,18 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public virtual IList<Email> Emails { get; private set; } = new List<Email>();
         public Address Address { get; private set; }
 
+        public Contactable(Address address, IList<Phone> phones, IList<Email> emails)
+        {
+            if (address != null)
+                Address = address;
+
+            if (phones != null)
+                Phones = phones;
+
+            if (emails != null)
+                Emails = emails;
+        }
+
         public void AddPhone(Phone phone)
         {
             // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check.
@@ -90,8 +102,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public void SetAddress(Address address)
         {
             // Guard unnecessarily throws exception; we just need a null check.
+            // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
-            // Guard.ForNull(address, "address");
             if (address != null)
                 Address = address;
         }

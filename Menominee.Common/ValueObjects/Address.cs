@@ -2,25 +2,32 @@
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
+using System;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class Address : ValueObject
+    public class Address : AppValueObject
     {
         public static readonly int AddressMinimumLength = 3;
         public static readonly int AddressMaximumLength = 255;
-        public static readonly string AddressUnderMinimumLengthMessage = $"Address cannot be less than {AddressMinimumLength} character(s) in length";
-        public static readonly string AddressOverMaximumLengthMessage = $"Address cannot be over {AddressMaximumLength} characters in length";
+        public static readonly string AddressMinimumLengthMessage = $"Address cannot be less than {AddressMinimumLength} character(s) in length";
+        public static readonly string AddressMaximumLengthMessage = $"Address cannot be over {AddressMaximumLength} characters in length";
+        public static readonly string AddressRequiredMessage = $"Address is required";
 
         public static readonly int CityMinimumLength = 3;
         public static readonly int CityMaximumLength = 255;
-        public static readonly string CityUnderMinimumLengthMessage = $"City cannot be less than {CityMinimumLength} character(s) in length";
-        public static readonly string CityOverMaximumLengthMessage = $"City cannot be over {CityMaximumLength} characters in length";
+        public static readonly string CityMinimumLengthMessage = $"City cannot be less than {CityMinimumLength} character(s) in length";
+        public static readonly string CityMaximumLengthMessage = $"City cannot be over {CityMaximumLength} characters in length";
+        public static readonly string CityRequiredMessage = $"City is required";
+
+        public static readonly string StateInvalidMessage = $"Please enter a valid State";
 
         public static readonly int PostalCodeMinimumLength = 5;
-        public static readonly int PostalCodeMaximumLength = 32;
-        public static readonly string PostalCodeUnderMinimumLengthMessage = $"Postal Code cannot be less than {PostalCodeMinimumLength} character(s) in length";
-        public static readonly string PostalCodeOverMaximumLengthMessage = $"Postal Code cannot be over {PostalCodeMaximumLength} characters in length";
+        public static readonly int PostalCodeMaximumLength = 10;
+        public static readonly string PostalCodeMinimumLengthMessage = $"Postal Code cannot be less than {PostalCodeMinimumLength} character(s) in length";
+        public static readonly string PostalCodeMaximumLengthMessage = $"Postal Code cannot be over {PostalCodeMaximumLength} characters in length";
+        public static readonly string PostalCodeRequiredMessage = $"Postal Code is required";
         public static readonly string PostalCodeInvalidMessage = "Please enter a valid Postal Code";
 
         public string AddressLine { get; private set; }
@@ -41,32 +48,44 @@ namespace Menominee.Common.ValueObjects
             // from http://unicode.org/Public/cldr/26.0.1/
             var usPostalCodeRegEx = @"\d{5}([ \-]\d{4})?";
 
-            addressLine = (addressLine ?? string.Empty).Trim();
-            city = (city ?? string.Empty).Trim();
-            postalCode = (postalCode ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(addressLine))
+                return Result.Failure<Address>(AddressRequiredMessage);
+
+            if (string.IsNullOrWhiteSpace(city))
+                return Result.Failure<Address>(CityRequiredMessage);
+
+            if (!Enum.IsDefined(typeof(State), state))
+                return Result.Failure<Address>(StateInvalidMessage);
+
+            if (string.IsNullOrWhiteSpace(postalCode))
+                return Result.Failure<Address>(PostalCodeRequiredMessage);
+
+            addressLine = addressLine.Trim();
+            city = city.Trim();
+            postalCode = postalCode.Trim();
 
             if (addressLine.Length < AddressMinimumLength)
-                return Result.Fail<Address>(AddressUnderMinimumLengthMessage);
+                return Result.Failure<Address>(AddressMinimumLengthMessage);
 
             if (addressLine.Length > AddressMaximumLength)
-                return Result.Fail<Address>(AddressOverMaximumLengthMessage);
+                return Result.Failure<Address>(AddressMaximumLengthMessage);
 
             if (city.Length < CityMinimumLength)
-                return Result.Fail<Address>(CityUnderMinimumLengthMessage);
+                return Result.Failure<Address>(CityMinimumLengthMessage);
 
             if (city.Length > CityMaximumLength)
-                return Result.Fail<Address>(CityOverMaximumLengthMessage);
+                return Result.Failure<Address>(CityMaximumLengthMessage);
 
             if (postalCode.Length < PostalCodeMinimumLength)
-                return Result.Fail<Address>(PostalCodeUnderMinimumLengthMessage);
+                return Result.Failure<Address>(PostalCodeMinimumLengthMessage);
 
             if (postalCode.Length > PostalCodeMaximumLength)
-                return Result.Fail<Address>(PostalCodeOverMaximumLengthMessage);
+                return Result.Failure<Address>(PostalCodeMaximumLengthMessage);
 
             if (!Regex.Match(postalCode, usPostalCodeRegEx).Success)
-                return Result.Fail<Address>(PostalCodeInvalidMessage);
+                return Result.Failure<Address>(PostalCodeInvalidMessage);
 
-            return Result.Ok(new Address(addressLine, city, state, postalCode));
+            return Result.Success(new Address(addressLine, city, state, postalCode));
         }
 
         public Address NewAddressLine(string newAddressLine)

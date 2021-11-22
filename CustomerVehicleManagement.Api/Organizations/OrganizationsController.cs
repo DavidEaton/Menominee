@@ -1,20 +1,19 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrganizationsController : ControllerBase
+    public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
+        private readonly string BasePath = "/api/organizations/";
 
         public OrganizationsController(IOrganizationRepository repository)
         {
@@ -76,6 +75,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
 
+            DriversLicense driversLicense;
+            List<Phone> phones = new();
+            List<Email> emails = new();
+            Address address = null;
+
             //1) Get domain entity from repository
             var organization = repository.GetOrganizationEntityAsync(id).Result;
 
@@ -92,11 +96,19 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                                      organizationUpdateDto.Address.PostalCode).Value);
             organization.SetNote(organizationUpdateDto.Note);
 
-            if (organizationUpdateDto.Phones.Count > 0)
-                organization.SetPhones(PhoneToEdit.ConvertToEntities(organizationUpdateDto.Phones));
+            if (organizationUpdateDto?.Phones.Count > 0)
+                foreach (var phone in organizationUpdateDto.Phones)
+                {
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+                    organization.SetPhones(phones);
+                }
 
-            if (organizationUpdateDto.Emails.Count > 0)
-                organization.SetEmails(EmailToEdit.ConvertToEntities(organizationUpdateDto.Emails));
+            if (organizationUpdateDto?.Emails.Count > 0)
+                foreach (var email in organizationUpdateDto.Emails)
+                {
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+                    organization.SetEmails(emails);
+                }
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -104,13 +116,32 @@ namespace CustomerVehicleManagement.Api.Organizations
                                             organizationUpdateDto.Contact.Name.LastName,
                                             organizationUpdateDto.Contact.Name.FirstName,
                                             organizationUpdateDto.Contact.Name.MiddleName).Value,
-                                        organizationUpdateDto.Contact.Gender);
+                                            organizationUpdateDto.Contact.Gender,
+                                            address,
+                                            null, null);
 
-                contact.SetAddress(organizationUpdateDto.Contact.Address);
+                if (organizationUpdateDto.Contact?.DriversLicense != null)
+                {
+                    DateTimeRange dateTimeRange = DateTimeRange.Create(
+                        organizationUpdateDto.Contact.DriversLicense.Issued,
+                        organizationUpdateDto.Contact.DriversLicense.Expiry).Value;
+
+                    driversLicense = DriversLicense.Create(organizationUpdateDto.Contact.DriversLicense.Number,
+                        organizationUpdateDto.Contact.DriversLicense.State,
+                        dateTimeRange).Value;
+
+                    contact.SetDriversLicense(driversLicense);
+                }
+
+                if (organizationUpdateDto?.Contact?.Address != null)
+                    contact.SetAddress(Address.Create(organizationUpdateDto.Contact.Address.AddressLine,
+                                                           organizationUpdateDto.Contact.Address.City,
+                                                           organizationUpdateDto.Contact.Address.State,
+                                                           organizationUpdateDto.Contact.Address.PostalCode).Value);
+
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
-                contact.SetDriversLicense(DriversLicenseToEdit.ConvertToEntity(organizationUpdateDto.Contact.DriversLicense));
-                contact.SetPhones(PhoneToEdit.ConvertToEntities(organizationUpdateDto.Contact.Phones));
-                contact.SetEmails(EmailToEdit.ConvertToEntities(organizationUpdateDto.Contact.Emails));
+                contact.SetPhones(phones);
+                contact.SetEmails(emails);
 
                 organization.SetContact(contact);
             }
@@ -140,69 +171,97 @@ namespace CustomerVehicleManagement.Api.Organizations
             HTTP status code 400 Bad Request for an unsuccessful PUT
             */
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update {organizationUpdateDto.Name}.");
+            return NoContent();
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToAdd organizationAddDto)
+        public async Task<IActionResult> AddOrganizationAsync(OrganizationToAdd organizationToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
-                [ApiController] attribute. In that case, an automatic HTTP 400 response containing
-                error details is returned when model state is invalid.*/
+                [ApiController] attribute; most of our controllers inherit from ApplicationController,
+                which has the [ApiController] attribute. With [ApiController] attribute applied,
+                an automatic HTTP 400 response containing error details is returned when model
+                state is invalid.*/
 
             /* Controller Pattern:
-                1. Convert data transfer object (dto) to domain entity
+                1. Convert data contract/data transfer object (dto) to domain entity
                 2. Add domain entity to repository
                 3. Save changes on repository
-                4. Get ReadDto (with new Id) from database after save)
-                5. Return to consumer */
+                4. Return to consumer */
 
             // 1. Convert dto to domain entity
-            var organizationNameOrError = OrganizationName.Create(organizationAddDto.Name);
-            if (organizationNameOrError.IsFailure)
-                return BadRequest(organizationNameOrError.Error);
+            Address organizationAddress = null;
+            List<Phone> phones = new();
+            List<Email> emails = new();
 
-            var organization = new Organization(organizationNameOrError.Value);
+            // FluentValidation has already validated request; no need to validate Name again here
+            var organizationName = OrganizationName.Create(organizationToAdd.Name).Value;
 
-            organization.SetNote(organizationAddDto.Note);
+            if (organizationToAdd?.Address != null)
+                organizationAddress = Address.Create(
+                    organizationToAdd.Address.AddressLine,
+                    organizationToAdd.Address.City,
+                    organizationToAdd.Address.State,
+                    organizationToAdd.Address.PostalCode).Value;
 
-            if (organizationAddDto?.Address != null)
-                organization.SetAddress(Address.Create(organizationAddDto.Address.AddressLine,
-                                                organizationAddDto.Address.City,
-                                                organizationAddDto.Address.State,
-                                                organizationAddDto.Address.PostalCode).Value);
+            if (organizationToAdd?.Phones?.Count > 0)
+                // FluentValidation has already validated contactable collections
+                foreach (var phone in organizationToAdd.Phones)
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-            if (organizationAddDto?.Phones != null)
-                organization.SetPhones(organizationAddDto?.Phones
-                                                          .Select(phone => PhoneToAdd.ConvertToEntity(phone))
-                                                          .ToList());
+            if (organizationToAdd?.Emails?.Count > 0)
+                foreach (var email in organizationToAdd.Emails)
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
-            if (organizationAddDto?.Emails != null)
-                organization.SetEmails(organizationAddDto?.Emails
-                                                          .Select(email => EmailToAdd.ConvertToEntity(email))
-                                                          .ToList());
+            //Organization.Contact
+            Person person = null;
+            Address personAddress = null;
+            DriversLicense driversLicense = null;
 
-            organization.SetContact(PersonToAdd.ConvertToEntity(organizationAddDto?.Contact));
+            if (organizationToAdd?.Contact != null)
+            {
+                if (organizationToAdd?.Contact?.Address != null)
+                    personAddress = Address.Create(
+                        organizationToAdd.Contact.Address.AddressLine,
+                        organizationToAdd.Contact.Address.City,
+                        organizationToAdd.Contact.Address.State,
+                        organizationToAdd.Contact.Address.PostalCode).Value;
+
+                if (organizationToAdd?.Contact?.DriversLicense != null)
+                {
+                    DateTimeRange dateTimeRange = DateTimeRange.Create(
+                        organizationToAdd.Contact.DriversLicense.Issued,
+                        organizationToAdd.Contact.DriversLicense.Expiry).Value;
+
+                    driversLicense = DriversLicense.Create(organizationToAdd.Contact.DriversLicense.Number,
+                        organizationToAdd.Contact.DriversLicense.State,
+                        dateTimeRange).Value;
+                }
+
+                person = new Person(
+                PersonName.Create(
+                    organizationToAdd.Contact.Name.LastName,
+                    organizationToAdd.Contact.Name.FirstName,
+                    organizationToAdd.Contact.Name.MiddleName).Value,
+                organizationToAdd.Contact.Gender,
+                personAddress, emails, phones,
+                organizationToAdd.Contact.Birthday,
+                driversLicense);
+            }
+
+            var organization = new Organization(organizationName, organizationToAdd.Note, person, organizationAddress, emails, phones);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);
 
             // 3. Save changes on repository
-            if (await repository.SaveChangesAsync())
-            {
-                // 4. Get ReadDto (with new Id) from database after save)
-                OrganizationToRead result = repository.GetOrganizationAsync(organization.Id).Result;
-                // 5. Return to consumer
-                return CreatedAtRoute("GetOrganizationAsync",
-                new { id = result.Id },
-                    result);
-            }
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to add {organizationAddDto.Name}.");
+            // 4. Return new Id from database to consumer after save
+            return Created(new Uri($"{BasePath}/{organization.Id}", UriKind.Relative), new { id = organization.Id });
         }
 
         [HttpDelete("{id:long}")]
@@ -220,10 +279,9 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             await repository.DeleteOrganizationAsync(id);
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to delete Organization with Id: {id}.");
+            return NoContent();
         }
     }
 }

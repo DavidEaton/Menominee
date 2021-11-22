@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -8,88 +7,83 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
     public class EmailShould
     {
         [Fact]
-        public void CreateEmail()
+        public void Create_Email()
         {
             var address = "john@doe.com";
             var primary = true;
 
-            var email = new Email(address, primary);
+            var email = Email.Create(address, primary).Value;
 
             email.Should().BeOfType<Email>();
         }
 
         [Fact]
-        public void ThrowExceptionWithNullAddress()
+        public void Return_Failure_Result_With_Null_Address()
         {
             string address = null;
             var primary = true;
 
-            Action action = () => new Email(address, primary);
-            
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage($"{Email.EmailEmptyMessage} (Parameter 'address')")
-                           .And
-                           .ParamName.Should().Be("address");
+            var result = Email.Create(address, primary);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.EmptyMessage);
 
         }
 
         [Fact]
-        public void ThrowExceptionWithEmptyAddress()
+        public void Return_Failure_Result_With_Empty_Address()
         {
             var address = string.Empty;
             var primary = true;
 
-            Action action = () => new Email(address, primary);
+            var result = Email.Create(address, primary);
 
-            action.Should().Throw<ArgumentException>()
-                           .WithMessage($"{Email.EmailEmptyMessage} (Parameter 'address')")
-                           .And
-                           .ParamName.Should().Be("address");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.EmptyMessage);
         }
 
         [Fact]
-        public void ThrowExceptionWithMalformattedAddress()
+        public void Return_Failure_Result_With_Invalid_Address()
         {
             var address = "johnatdoedotcom";
             var primary = true;
 
-            Action action = () => new Email(address, primary);
+            var result = Email.Create(address, primary);
 
-            action.Should().Throw<ArgumentException>()
-                           .And
-                           .Message.Should().Be(Email.EmailErrorMessage);
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Email.InvalidMessage);
         }
 
         [Fact]
-        public void EquateEmailInstancesHavingSameValues()
+        public void Equate_Email_Instances_Having_Same_Values()
         {
             var address = "john@doe.com";
             var primary = true;
 
-            var address1 = new Email(address, primary);
-            var address2 = new Email(address, primary);
+            var email1 = Email.Create(address, primary).Value;
+            var email2 = Email.Create(address, primary).Value;
 
-            address1.Should().BeEquivalentTo(address2);
+            email1.Should().BeEquivalentTo(email2);
         }
 
         [Fact]
-        public void NotEquateEmailInstancesHavingDifferingValues()
+        public void Not_Equate_Email_Instances_Having_Differing_Values()
         {
             var address = "john@doe.com";
             var primary = true;
-            var email1 = new Email(address, primary);
+            var email1 = Email.Create(address, primary).Value;
             var newAddress = "jane@doe.com";
             primary = false;
 
-            var email2 = new Email(newAddress, primary);
+            var email2 = Email.Create(newAddress, primary).Value;
 
             email1.Should().NotBeEquivalentTo(email2);
         }
 
         [Fact]
-        public void ReturnNewEmailOnNewAddress()
+        public void Return_Failure_Result_On_New_Address_With_Null_Address()
         {
-            var email = CreatePrimaryEmail();
+            var email = Create_Primary_Email();
             var newAddress = "new@address.com";
 
             email = email.NewAddress(newAddress);
@@ -98,9 +92,20 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void ReturnNewEmailOnNewPrimary()
+        public void Return_New_Email_On_New_Address()
         {
-            var email = CreatePrimaryEmail();
+            var email = Create_Primary_Email();
+            var newAddress = "new@address.com";
+
+            email = email.NewAddress(newAddress);
+
+            email.Address.Should().Be(newAddress);
+        }
+
+        [Fact]
+        public void Return_New_Email_On_New_Primary()
+        {
+            var email = Create_Primary_Email();
             var newPrimary = false;
 
             email = email.NewPrimary(newPrimary);
@@ -108,12 +113,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             email.IsPrimary.Should().Be(newPrimary);
         }
 
-        internal static Email CreatePrimaryEmail()
+        internal static Email Create_Primary_Email()
         {
             var address = "john@doe.com";
             var primary = true;
 
-            return new Email(address, primary);
+            return Email.Create(address, primary).Value;
         }
     }
 }

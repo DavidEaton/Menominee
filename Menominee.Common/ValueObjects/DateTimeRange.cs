@@ -1,14 +1,15 @@
-﻿using Menominee.Common.Utilities;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
 {
-    public class DateTimeRange : ValueObject
+    public class DateTimeRange : AppValueObject
     {
         public static readonly string DateTimeRangeInvalidMessage = "End date cannot occur before Start date";
-        public DateTime Start { get; }
-        public DateTime End { get; }
+        public DateTime Start { get; private set; }
+        public DateTime End { get; private set; }
 
         private DateTimeRange(DateTime start, DateTime end)
         {
@@ -19,9 +20,9 @@ namespace Menominee.Common.ValueObjects
         public static Result<DateTimeRange> Create(DateTime start, DateTime end)
         {
             if (start >= end)
-                return Result.Fail<DateTimeRange>(DateTimeRangeInvalidMessage);
+                return Result.Failure<DateTimeRange>(DateTimeRangeInvalidMessage);
 
-            return Result.Ok(new DateTimeRange(start, end));
+            return Result.Success(new DateTimeRange(start, end));
         }
 
         public DateTimeRange(DateTime start, TimeSpan duration) : this(start, start.Add(duration))

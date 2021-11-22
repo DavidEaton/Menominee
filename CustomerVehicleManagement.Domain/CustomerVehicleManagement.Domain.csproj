@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\PhoneOfOrganization.cs" />
-    <Compile Remove="Entities\PhoneOfPerson.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.15.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
   </ItemGroup>
 

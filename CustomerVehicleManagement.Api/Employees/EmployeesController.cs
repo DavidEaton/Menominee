@@ -6,13 +6,12 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Employees
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize(Policies.CanManageHumanResources)]
-    public class EmployeesController : ControllerBase
+    public class EmployeesController :  ApplicationController
     {
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<EmployeeToRead>>> GetUsersAsync()

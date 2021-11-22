@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_CustomerReadDto_On_GetCustomerAsync()
+        public async Task Return_ActionResult_Of_CustomerToRead_On_GetCustomerAsync()
         {
             var result = await controller.GetCustomerAsync(10000);
 
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IReadOnlyList_Of_CustomerReadDto_On_GetCustomersAsync()
+        public async Task Return_ActionResult_Of_IReadOnlyList_Of_CustomerToRead_On_GetCustomersAsync()
         {
             var result = await controller.GetCustomersAsync();
 
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_CustomerReadDto_On_CreateCustomerAsync()
+        public async Task Return_ActionResult_Of_CustomerToRead_On_CreateCustomerAsync()
         {
             var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
             CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
@@ -106,7 +106,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_CustomerReadDto_On_CreateCustomerAsync_When_ModelState_Valid()
+        public async Task Return_CustomerToRead_On_CreateCustomerAsync_When_ModelState_Valid()
         {
             moqCustomerRepository.Setup(repo => repo.AddCustomerAsync(It.IsAny<Customer>()));
 

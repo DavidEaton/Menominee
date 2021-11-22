@@ -3,17 +3,29 @@ using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Contactable
     {
-        public Person(PersonName name, Gender gender)
+        public Person(PersonName name,
+                      Gender gender,
+                      Address address,
+                      IList<Email> emails,
+                      IList<Phone> phones,
+                      DateTime? birthday = null,
+                      DriversLicense driversLicense = null)
+             : base(address, phones, emails)
         {
-            Guard.ForNullOrEmpty(name, "PersonName");
-
             Name = name;
             Gender = gender;
+
+            if (birthday.HasValue)
+                Birthday = birthday;
+
+            if (driversLicense != null)
+                DriversLicense = driversLicense;
         }
 
         public PersonName Name { get; private set; }
@@ -40,7 +52,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetDriversLicense(DriversLicense driversLicense)
         {
-            if (driversLicense != null) 
+            if (driversLicense != null)
                 DriversLicense = driversLicense;
         }
 
@@ -50,7 +62,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         // is necessary for EntityFramework, makes our model <100% persistence ignorant.
 
         // EF requires an empty constructor
-        protected Person() { }
+        protected Person() : base(null, null, null) { }
 
         #endregion
 

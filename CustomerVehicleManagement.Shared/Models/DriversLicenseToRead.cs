@@ -18,8 +18,8 @@ namespace CustomerVehicleManagement.Shared.Models
                 var driversLicenseReadDto = new DriversLicenseToRead
                 {
                     Number = driversLicense.Number,
-                    Issued = driversLicense.ValidRange.Start,
-                    Expiry = driversLicense.ValidRange.End
+                    Issued = driversLicense.ValidDateRange.Start,
+                    Expiry = driversLicense.ValidDateRange.End
                 };
 
                 return driversLicenseReadDto;
