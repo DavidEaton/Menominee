@@ -5,14 +5,15 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class PhonesToAddValidator : AbstractValidator<IList<PhoneToAdd>>
+    public class PhonesValidator : AbstractValidator<IList<PhoneToAdd>>
     {
         private const string message = "Can have only one Primary phone.";
-        public PhonesToAddValidator()
+        public PhonesValidator()
         {
             RuleFor(phones => phones).Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
+                //.ListHasNoMoreThanOnePrimary()
                 .WithMessage(message)
                 .ForEach(phone =>
                 {

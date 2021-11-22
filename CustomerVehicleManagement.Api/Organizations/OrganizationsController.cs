@@ -86,22 +86,29 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 2) Update domain entity with data in data transfer object(DTO)
             var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
 
-            organization.SetName(organizationNameOrError.Value);
+            if (organizationNameOrError.IsSuccess)
+                organization.SetName(organizationNameOrError.Value);
 
             if (organizationUpdateDto?.Address != null)
-                address = Address.Create(organizationUpdateDto.Address.AddressLine,
+                organization.SetAddress(Address.Create(organizationUpdateDto.Address.AddressLine,
                                                                      organizationUpdateDto.Address.City,
                                                                      organizationUpdateDto.Address.State,
-                                                                     organizationUpdateDto.Address.PostalCode).Value;
+                                                                     organizationUpdateDto.Address.PostalCode).Value);
             organization.SetNote(organizationUpdateDto.Note);
 
             if (organizationUpdateDto?.Phones.Count > 0)
                 foreach (var phone in organizationUpdateDto.Phones)
+                {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+                    organization.SetPhones(phones);
+                }
 
             if (organizationUpdateDto?.Emails.Count > 0)
                 foreach (var email in organizationUpdateDto.Emails)
+                {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+                    organization.SetEmails(emails);
+                }
 
             if (organizationUpdateDto.Contact != null)
             {
@@ -126,7 +133,12 @@ namespace CustomerVehicleManagement.Api.Organizations
                     contact.SetDriversLicense(driversLicense);
                 }
 
-                contact.SetAddress(organizationUpdateDto.Contact.Address);
+                if (organizationUpdateDto?.Contact?.Address != null)
+                    contact.SetAddress(Address.Create(organizationUpdateDto.Contact.Address.AddressLine,
+                                                           organizationUpdateDto.Contact.Address.City,
+                                                           organizationUpdateDto.Contact.Address.State,
+                                                           organizationUpdateDto.Contact.Address.PostalCode).Value);
+
                 contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
                 contact.SetPhones(phones);
                 contact.SetEmails(emails);
@@ -195,12 +207,12 @@ namespace CustomerVehicleManagement.Api.Organizations
                     organizationToAdd.Address.State,
                     organizationToAdd.Address.PostalCode).Value;
 
-            if (organizationToAdd?.Phones.Count > 0)
+            if (organizationToAdd?.Phones?.Count > 0)
                 // FluentValidation has already validated contactable collections
                 foreach (var phone in organizationToAdd.Phones)
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-            if (organizationToAdd?.Emails.Count > 0)
+            if (organizationToAdd?.Emails?.Count > 0)
                 foreach (var email in organizationToAdd.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 

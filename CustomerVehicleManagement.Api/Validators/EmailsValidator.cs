@@ -5,14 +5,15 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class EmailsToAddValidator : AbstractValidator<IList<EmailToAdd>>
+    public class EmailsValidator : AbstractValidator<IList<EmailToAdd>>
     {
         private const string message = "Can have only one Primary email.";
-        public EmailsToAddValidator()
+        public EmailsValidator()
         {
             RuleFor(emails => emails).Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
+                //.ListHasNoMoreThanOnePrimary()
                 .WithMessage(message)
                 .ForEach(email =>
                 {

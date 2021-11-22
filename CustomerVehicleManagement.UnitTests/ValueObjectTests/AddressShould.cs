@@ -136,6 +136,20 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         }
 
         [Fact]
+        public void Return_IsFailure_Result_On_Create_When_State_is_invalid()
+        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = (State)111;
+            string postalCode = "Z4566";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.StateInvalidMessage);
+        }
+
+        [Fact]
         public void Return_IsFailure_Result_On_Create_With_Null_PostalCode()
         {
             var addressLine = "1234 Five Street";

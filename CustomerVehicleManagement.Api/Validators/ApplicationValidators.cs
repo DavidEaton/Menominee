@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Interfaces;
 using FluentValidation;
 using System;
+using System.Collections.Generic;
 using AppValueObject = Menominee.Common.ValueObjects.AppValueObject;
 
 namespace CustomerVehicleManagement.Api.Validators
@@ -38,6 +40,37 @@ namespace CustomerVehicleManagement.Api.Validators
                     context.AddFailure(result.Error);
                 }
             });
+        }
+
+        public static IRuleBuilderOptionsConditions<T, IList<IHasPrimary>> ListHasNoMoreThanOnePrimary<T, TElement>(
+            this IRuleBuilder<T, IList<IHasPrimary>> ruleBuilder)
+        {
+            return ruleBuilder.Custom((list, context) =>
+            {
+                if (HasOnlyOnePrimary(list))
+                    context.AddFailure(
+                        context.PropertyName,
+                        $"Only one Primary item allowed in list");
+
+            });
+        }
+
+        private static bool HasOnlyOnePrimary(IList<IHasPrimary> items)
+        {
+            int primaryCount = 0;
+
+            foreach (var item in items)
+            {
+                if (item.IsPrimary)
+                    primaryCount += 1;
+            }
+
+            if (primaryCount > 1)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -133,8 +133,14 @@ namespace CustomerVehicleManagement.Api.Customers
                                                 customerUpdateDto.PersonUpdateDto.Name.FirstName,
                                                 customerUpdateDto.PersonUpdateDto.Name.MiddleName).Value);
                 personFromRepository.SetGender(customerUpdateDto.PersonUpdateDto.Gender);
-                personFromRepository.SetAddress(customerUpdateDto.PersonUpdateDto.Address);
                 personFromRepository.SetBirthday(customerUpdateDto.PersonUpdateDto.Birthday);
+
+                if (customerUpdateDto.PersonUpdateDto?.Address != null)
+                    personFromRepository.SetAddress(Address.Create(customerUpdateDto.PersonUpdateDto.Address.AddressLine,
+                                                                   customerUpdateDto.PersonUpdateDto.Address.City,
+                                                                   customerUpdateDto.PersonUpdateDto.Address.State,
+                                                                   customerUpdateDto.PersonUpdateDto.Address.PostalCode).Value);
+
 
                 if (customerUpdateDto.PersonUpdateDto?.Phones.Count > 0)
                     foreach (var phone in customerUpdateDto.PersonUpdateDto.Phones)

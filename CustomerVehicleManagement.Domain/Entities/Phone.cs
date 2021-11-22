@@ -1,15 +1,18 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Phone : Menominee.Common.Entity
+    public class Phone : Menominee.Common.Entity, IHasPrimary
     {
         public static readonly string InvalidMessage = "Email address and/or its format is invalid";
         public static readonly string EmptyMessage = "Phone number cannot be empty";
+        public static readonly string PhoneTypeInvalidMessage = $"Please enter a valid Phone Type";
 
         private Phone(string number, PhoneType phoneType, bool isPrimary)
         {
@@ -22,6 +25,9 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(number))
                 return Result.Failure<Phone>(EmptyMessage);
+
+            if (!Enum.IsDefined(typeof(PhoneType), phoneType))
+                return Result.Failure<Phone>(PhoneTypeInvalidMessage);
 
             number = (number ?? "").Trim();
 

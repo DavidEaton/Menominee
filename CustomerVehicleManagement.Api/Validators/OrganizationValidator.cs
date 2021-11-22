@@ -4,9 +4,9 @@ using Menominee.Common.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class OrganizationToAddValidator : AbstractValidator<OrganizationToAdd>
+    public class OrganizationValidator : AbstractValidator<OrganizationToAdd>
     {
-        public OrganizationToAddValidator()
+        public OrganizationValidator()
         {
             RuleFor(organization => organization.Name)
                                                 .MustBeValueObject(OrganizationName.Create);
@@ -25,13 +25,15 @@ namespace CustomerVehicleManagement.Api.Validators
                                                   .When(organization => organization.Note != null);
 
             RuleFor(organization => organization.Emails)
-                .SetValidator(new EmailsToAddValidator());
+                .NotNull()
+                .SetValidator(new EmailsValidator());
 
             RuleFor(organization => organization.Phones)
-                .SetValidator(new PhonesToAddValidator());
+                .NotNull()
+                .SetValidator(new PhonesValidator());
 
             RuleFor(organization => organization.Contact)
-                .SetValidator(new PersonToAddValidator())
+                .SetValidator(new PersonValidator())
                 .When(organization => organization.Contact != null);
         }
     }

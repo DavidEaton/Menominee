@@ -1,13 +1,13 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Mvc;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using CustomerVehicleManagement.Api.Data;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
@@ -68,11 +68,8 @@ namespace CustomerVehicleManagement.Api.Persons
             if (personFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            Address address = null;
             List<Phone> phones = new();
             List<Email> emails = new();
-            DriversLicense driversLicense = null;
-
 
             personFromRepository.SetName(PersonName.Create(
                                             personUpdateDto.Name.LastName,
@@ -80,33 +77,40 @@ namespace CustomerVehicleManagement.Api.Persons
                                             personUpdateDto.Name.MiddleName).Value);
 
             personFromRepository.SetGender(personUpdateDto.Gender);
-            personFromRepository.SetAddress(personUpdateDto.Address);
+
+            if (personUpdateDto?.Address != null)
+                personFromRepository.SetAddress(Address.Create(personUpdateDto.Address.AddressLine,
+                                                               personUpdateDto.Address.City,
+                                                               personUpdateDto.Address.State,
+                                                               personUpdateDto.Address.PostalCode).Value);
+
+
+
             personFromRepository.SetBirthday(personUpdateDto.Birthday);
 
 
             if (personUpdateDto?.Phones.Count > 0)
                 foreach (var phone in personFromRepository.Phones)
+                {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+                    personFromRepository.SetPhones(phones);
+                }
 
             if (personUpdateDto?.Emails.Count > 0)
                 foreach (var email in personFromRepository.Emails)
+                {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+                    personFromRepository.SetEmails(emails);
+                }
 
             if (personUpdateDto?.DriversLicense != null)
             {
-                DateTimeRange dateTimeRange = DateTimeRange.Create(
-                    personUpdateDto.DriversLicense.Issued,
-                    personUpdateDto.DriversLicense.Expiry).Value;
-
-                driversLicense = DriversLicense.Create(personUpdateDto.DriversLicense.Number,
+                personFromRepository.SetDriversLicense(DriversLicense.Create(personUpdateDto.DriversLicense.Number,
                     personUpdateDto.DriversLicense.State,
-                    dateTimeRange).Value;
-
-                personFromRepository.SetDriversLicense(driversLicense);
+                    DateTimeRange.Create(
+                    personUpdateDto.DriversLicense.Issued,
+                    personUpdateDto.DriversLicense.Expiry).Value).Value);
             }
-
-            personFromRepository.SetEmails(emails);
-            personFromRepository.SetPhones(phones);
 
             personFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();

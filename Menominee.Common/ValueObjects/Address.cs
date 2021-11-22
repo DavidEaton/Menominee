@@ -3,6 +3,7 @@ using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using System;
 
 namespace Menominee.Common.ValueObjects
 {
@@ -19,6 +20,8 @@ namespace Menominee.Common.ValueObjects
         public static readonly string CityMinimumLengthMessage = $"City cannot be less than {CityMinimumLength} character(s) in length";
         public static readonly string CityMaximumLengthMessage = $"City cannot be over {CityMaximumLength} characters in length";
         public static readonly string CityRequiredMessage = $"City is required";
+
+        public static readonly string StateInvalidMessage = $"Please enter a valid State";
 
         public static readonly int PostalCodeMinimumLength = 5;
         public static readonly int PostalCodeMaximumLength = 10;
@@ -50,6 +53,9 @@ namespace Menominee.Common.ValueObjects
 
             if (string.IsNullOrWhiteSpace(city))
                 return Result.Failure<Address>(CityRequiredMessage);
+
+            if (!Enum.IsDefined(typeof(State), state))
+                return Result.Failure<Address>(StateInvalidMessage);
 
             if (string.IsNullOrWhiteSpace(postalCode))
                 return Result.Failure<Address>(PostalCodeRequiredMessage);

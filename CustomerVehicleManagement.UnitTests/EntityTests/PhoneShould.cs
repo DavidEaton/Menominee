@@ -58,6 +58,18 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_PhoneType()
+        {
+            var number = "989.627.9206";
+            var phoneType = (PhoneType)99;
+
+            var result = Phone.Create(number, phoneType, true);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.PhoneTypeInvalidMessage);
+        }
+
+        [Fact]
         public void EquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
         {
             var number = "989.627.9206";

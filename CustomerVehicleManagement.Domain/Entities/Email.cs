@@ -1,9 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Email : Menominee.Common.Entity
+    public class Email : Menominee.Common.Entity, IHasPrimary
     {
         public static readonly string InvalidMessage = "Email address and/or its format is invalid";
         public static readonly int MinimumLength = 1;
