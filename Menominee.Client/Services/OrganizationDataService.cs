@@ -20,7 +20,7 @@ namespace Menominee.Client.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<OrganizationToRead> AddOrganization(OrganizationToAdd organization)
+        public async Task<OrganizationToRead> AddOrganization(OrganizationToWrite organization)
         {
             var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);

@@ -24,7 +24,7 @@ namespace Menominee.OrganizationDataContracts.Services
             this.toastService = toastService;
         }
 
-        public async Task<OrganizationToRead> AddOrganization(OrganizationToAdd organization)
+        public async Task<OrganizationToRead> AddOrganization(OrganizationToWrite organization)
         {
             var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -66,7 +66,7 @@ namespace Menominee.OrganizationDataContracts.Services
             return null;
         }
 
-        public async Task UpdateOrganization(OrganizationToEdit organization, long id)
+        public async Task UpdateOrganization(OrganizationToWrite organization, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);

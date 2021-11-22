@@ -19,7 +19,7 @@ namespace Menominee.Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonToRead> AddPerson(PersonToAdd newPerson)
+        public async Task<PersonToRead> AddPerson(PersonToWrite newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);

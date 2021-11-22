@@ -18,7 +18,7 @@ namespace Menominee.UiExperiments.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<PersonToRead> AddPerson(PersonToAdd newPerson)
+        public async Task<PersonToRead> AddPerson(PersonToWrite newPerson)
         {
             var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -58,20 +58,9 @@ namespace Menominee.UiExperiments.Services
             return null;
         }
 
-        public async Task UpdatePerson(PersonToEdit person)
+        public async Task UpdatePerson(PersonToWrite person)
         {
-            //PersonUpdateDto personToUpdate = PersonUtilities.MapUpdatedPersonToDto(person);
-            //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
 
-            //try
-            //{
-            //    await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
-            //    //await httpClient.PutAsJsonAsync
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Message :{ex.Message}");
-            //}
         }
 
         public async Task DeletePerson(long id)

@@ -8,7 +8,7 @@ namespace Menominee.OrganizationDataContracts.Services
     {
         Task<IReadOnlyList<OrganizationToReadInList>> GetAllOrganizations();
         Task<OrganizationToRead> GetOrganization(long id);
-        Task<OrganizationToRead> AddOrganization(OrganizationToAdd organization);
-        Task UpdateOrganization(OrganizationToEdit organization, long id);
+        Task<OrganizationToRead> AddOrganization(OrganizationToWrite organization);
+        Task UpdateOrganization(OrganizationToWrite organization, long id);
     }
 }

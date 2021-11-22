@@ -3,10 +3,10 @@
     @if (FormMode == FormMode.Add)
     {
         // If there are phones, list them in a table. If adding phone, hide phones list
-        @if (((int)PhonesToAdd?.Count()) > 0 && !Adding)
+        @if (((int)PhonesToWrite?.Count()) > 0 && !Adding)
         {
-            <ContactableTemplate Items="PhonesToAdd"
-                                 TItem="PhoneToAdd"
+            <ContactableTemplate Items="PhonesToWrite"
+                                 TItem="PhoneToWrite"
                                  Context="phone">
                 <TableHeader>
                     <th>Number</th>
@@ -30,7 +30,7 @@
         @if (Adding)
         {
             // Show the add dialog
-            <EditForm Model="PhoneToAdd">
+            <EditForm Model="PhoneToWrite">
 
                 <TelerikWindow Visible="DialogVisible"
                                Modal="true">
@@ -41,7 +41,7 @@
                         <div class="container">
                             <div class="form-group row">
                                 <label class="form-control-label">Number</label>
-                                <TelerikMaskedTextBox @bind-Value="@PhoneToAdd.Number"
+                                <TelerikMaskedTextBox @bind-Value="@PhoneToWrite.Number"
                                                       Mask="(999) 000-0000"
                                                       Width="100%"
                                                       @ref="PhoneNumberControl">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="form-group row">
                                 <label class="form-control-label">Type</label>
-                                <TelerikDropDownList @bind-Value="@PhoneToAdd.PhoneType"
+                                <TelerikDropDownList @bind-Value="@PhoneToWrite.PhoneType"
                                                      Data="PhoneTypeEnumData"
                                                      Width="100%"
                                                      TextField="DisplayText"
@@ -58,12 +58,12 @@
                             </div>
                             <div class="form-group row">
                                 <label>
-                                    <TelerikCheckBox @bind-Value="@PhoneToAdd.IsPrimary"></TelerikCheckBox>
+                                    <TelerikCheckBox @bind-Value="@PhoneToWrite.IsPrimary"></TelerikCheckBox>
                                     <span class="form-control-label">Primary</span>
                                 </label>
                             </div>
                             <div>
-                                <TelerikButton OnClick='() => Save("PhoneToAdd")'
+                                <TelerikButton OnClick='() => Save("PhoneToWrite")'
                                                Icon="check"
                                                Primary="true"
                                                ButtonType="ButtonType.Button"
@@ -83,7 +83,7 @@
 
             </EditForm>
             <div class="pb-4">
-                <TelerikButton OnClick='() => Save("PhoneToAdd")'
+                <TelerikButton OnClick='() => Save("PhoneToWrite")'
                                Icon="save"
                                ButtonType="ButtonType.Button"
                                Primary="true"
@@ -100,7 +100,7 @@
         }
 
         <div>
-            <TelerikButton OnClick='() => AddAsync("PhoneToAdd")'
+            <TelerikButton OnClick='() => AddAsync("PhoneToWrite")'
                            Icon="plus"
                            ButtonType="ButtonType.Button"
                            Class="button-border-success"
@@ -113,12 +113,12 @@
 
     @if (FormMode == FormMode.Edit)
     {
-        @if (((int)PhonesToEdit?.Count()) > 0)
+        @if (((int)PhonesToWrite?.Count()) > 0)
         {
-            <ContactableTemplate Items="PhonesToEdit"
-                                 TItem="PhoneToEdit"
+            <ContactableTemplate Items="PhonesToWrite"
+                                 TItem="PhoneToWrite"
                                  Context="phone"
-                                 @key="PhoneToEdit"
+                                 @key="PhoneToWrite"
                                  OnRowClick="Edit">
                 <TableHeader>
                     <th>Number</th>
@@ -141,7 +141,7 @@
 
         @if (Adding || Editing)
         {
-            <EditForm Model="PhoneToEdit">
+            <EditForm Model="PhoneToWrite">
                 <TelerikWindow Visible="DialogVisible"
                                Modal="true">
                     <WindowTitle>
@@ -151,7 +151,7 @@
                         <div class="container">
                             <div class="form-group row">
                                 <label class="form-control-label">Number</label>
-                                <TelerikMaskedTextBox @bind-Value="@PhoneToEdit.Number"
+                                <TelerikMaskedTextBox @bind-Value="@PhoneToWrite.Number"
                                                       Mask="(999) 000-0000"
                                                       Width="100%"
                                                       @ref="PhoneNumberControl">
@@ -159,7 +159,7 @@
                             </div>
                             <div class="form-group row">
                                 <label class="form-control-label">Type</label>
-                                <TelerikDropDownList @bind-Value="@PhoneToEdit.PhoneType"
+                                <TelerikDropDownList @bind-Value="@PhoneToWrite.PhoneType"
                                                      Data="PhoneTypeEnumData"
                                                      Width="100%"
                                                      TextField="DisplayText"
@@ -169,13 +169,13 @@
                             <div class="form-group row">
                                 <div>
                                     <label>
-                                        <TelerikCheckBox @bind-Value="@PhoneToEdit.IsPrimary"></TelerikCheckBox>
+                                        <TelerikCheckBox @bind-Value="@PhoneToWrite.IsPrimary"></TelerikCheckBox>
                                         <span class="form-control-label">Primary</span>
                                     </label>
                                 </div>
                             </div>
                             <div>
-                                <TelerikButton OnClick='() => Save("PhoneToEdit")'
+                                <TelerikButton OnClick='() => Save("PhoneToWrite")'
                                                Icon="check"
                                                Primary="true"
                                                ButtonType="ButtonType.Button"
@@ -196,7 +196,7 @@
 
         }
         <div>
-            <TelerikButton OnClick='() => AddAsync("PhoneToEdit")'
+            <TelerikButton OnClick='() => AddAsync("PhoneToWrite")'
                            Icon="plus"
                            ButtonType="ButtonType.Button"
                            Class="button-border-success"

@@ -19,7 +19,7 @@ namespace Menominee.Client.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<CustomerToRead> AddCustomer(CustomerToAdd newCustomer)
+        public async Task<CustomerToRead> AddCustomer(CustomerToWrite newCustomer)
         {
             var content = new StringContent(JsonSerializer.Serialize(newCustomer), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -59,20 +59,8 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        //public async Task UpdateCustomer(CustomerUpdateDto person)
+        //public async Task UpdateCustomer(CustomerToWrite customer)
         //{
-            //CustomerUpdateDto personToUpdate = CustomerUtilities.MapUpdatedCustomerToDto(person);
-            //var content = new StringContent(JsonSerializer.Serialize(personToUpdate), Encoding.UTF8, "application/json");
-
-            //try
-            //{
-            //    await httpClient.PutAsync($"{UriSegment}/{personToUpdate.Id}", content);
-            //    //await httpClient.PutAsJsonAsync
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Message :{ex.Message}");
-            //}
         //}
 
         public async Task DeleteCustomer(long id)

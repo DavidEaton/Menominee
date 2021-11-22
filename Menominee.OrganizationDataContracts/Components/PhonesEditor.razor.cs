@@ -10,18 +10,15 @@ namespace Menominee.OrganizationDataContracts.Components
 {
     public partial class PhonesEditor : ComponentBase
     {
-        [Parameter]
-        public IList<PhoneToEdit> PhonesToEdit { get; set; }
-        public PhoneToEdit PhoneToEdit { get; set; }
+        public PhoneToWrite PhoneToWrite { get; set; }
 
         [Parameter]
-        public IList<PhoneToAdd> PhonesToAdd { get; set; }
-        public PhoneToAdd PhoneToAdd { get; set; }
+        public IList<PhoneToWrite> PhonesToWrite { get; set; }
 
         [Parameter]
         public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-        private bool DialogVisible => (PhoneToEdit != null && (Adding || Editing)) || (PhoneToAdd != null && (Adding || Editing));
+        private bool DialogVisible => (PhoneToWrite != null && (Adding || Editing)) || (PhoneToWrite != null && (Adding || Editing));
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }
@@ -35,19 +32,19 @@ namespace Menominee.OrganizationDataContracts.Components
             base.OnInitialized();
         }
 
-        private void Edit(PhoneToEdit item)
+        private void Edit(PhoneToWrite item)
         {
-            PhoneToEdit = item;
+            PhoneToWrite = item;
             Editing = true;
         }
 
         private async Task AddAsync(string type)
         {
-            if (type == "PhoneToAdd")
-                PhoneToAdd = new();
+            if (type == "PhoneToWrite")
+                PhoneToWrite = new();
 
-            if (type == "PhoneToEdit")
-                PhoneToEdit = new();
+            if (type == "PhoneToWrite")
+                PhoneToWrite = new();
 
             if (PhoneNumberControl != null)
                 await PhoneNumberControl.FocusAsync();
@@ -57,11 +54,11 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void Save(string type)
         {
-            if (type == "PhoneToAdd")
-                PhonesToAdd.Add(PhoneToAdd);
+            if (type == "PhoneToWrite")
+                PhonesToWrite.Add(PhoneToWrite);
 
-            if (type == "PhoneToEdit" && Adding)
-                PhonesToEdit.Add(PhoneToEdit);
+            if (type == "PhoneToWrite" && Adding)
+                PhonesToWrite.Add(PhoneToWrite);
 
             Adding = false;
             Editing = false;
@@ -72,8 +69,8 @@ namespace Menominee.OrganizationDataContracts.Components
             Adding = false;
             Editing = false;
 
-            if (PhoneToAdd != null)
-                PhoneToAdd = null;
+            if (PhoneToWrite != null)
+                PhoneToWrite = null;
         }
 
         private void CancelEditPhone()

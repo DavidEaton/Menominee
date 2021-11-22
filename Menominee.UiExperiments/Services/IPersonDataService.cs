@@ -8,8 +8,8 @@ namespace Menominee.UiExperiments.Services
     {
         Task<IReadOnlyList<PersonToRead>> GetAllPersons();
         Task<PersonToRead> GetPersonDetails(long id);
-        Task<PersonToRead> AddPerson(PersonToAdd person);
-        Task UpdatePerson(PersonToEdit person);
+        Task<PersonToRead> AddPerson(PersonToWrite person);
+        Task UpdatePerson(PersonToWrite person);
         Task DeletePerson(long id);
     }
 }

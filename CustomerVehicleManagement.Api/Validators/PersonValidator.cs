@@ -5,7 +5,7 @@ using System;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class PersonValidator : AbstractValidator<PersonToAdd>
+    public class PersonValidator : AbstractValidator<PersonToWrite>
     {
         public PersonValidator()
         {

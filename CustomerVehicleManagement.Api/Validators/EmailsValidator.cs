@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class EmailsValidator : AbstractValidator<IList<EmailToAdd>>
+    public class EmailsValidator : AbstractValidator<IList<EmailToWrite>>
     {
         private const string message = "Can have only one Primary email.";
         public EmailsValidator()
@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Api.Validators
                 });
         }
 
-        private bool HaveOnlyOnePrimaryEmail(IList<EmailToAdd> emails)
+        private bool HaveOnlyOnePrimaryEmail(IList<EmailToWrite> emails)
         {
             int primaryCount = 0;
 
