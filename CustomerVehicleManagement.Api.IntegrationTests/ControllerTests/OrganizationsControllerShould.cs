@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         #region ********************************Post**********************************
 
         [Fact]
-        public async Task Return_CreatedAtRouteResult_On_AddOrganizationAsync()
+        public async Task Return_CreatedResult_On_AddOrganizationAsync()
         {
             var Organization = new OrganizationToAdd
             {
@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 
             var result = await controller.AddOrganizationAsync(Organization);
 
-            result.Should().BeOfType<CreatedAtRouteResult>();
+            result.Should().BeOfType<CreatedResult>();
         }
 
         [Fact]
@@ -346,7 +346,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_CreatedAtRouteResult_On_AddOrganizationAsync_When_ModelState_Valid()
+        public async Task Return_CreatedResult_On_AddOrganizationAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(organizationRepository =>
                                 organizationRepository
@@ -355,7 +355,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var organization = Utilities.CreateOrganizationToAdd();
             var result = await controller.AddOrganizationAsync(organization);
 
-            result.Should().BeOfType<CreatedAtRouteResult>();
+            result.Should().BeOfType<CreatedResult>();
         }
 
         #endregion Post

@@ -13,6 +13,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
+        private readonly string BasePath = "/api/organizations/";
 
         public OrganizationsController(IOrganizationRepository repository)
         {
@@ -248,7 +249,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             await repository.SaveChangesAsync();
 
             // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{Request.Path}/{organization.Id}", UriKind.Relative), new { id = organization.Id });
+            return Created(new Uri($"{BasePath}/{organization.Id}", UriKind.Relative), new { id = organization.Id });
         }
 
         [HttpDelete("{id:long}")]
