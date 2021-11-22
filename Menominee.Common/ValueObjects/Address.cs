@@ -45,8 +45,8 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<Address> Create(string addressLine, string city, State state, string postalCode)
         {
-            // from http://unicode.org/Public/cldr/26.0.1/
-            var usPostalCodeRegEx = @"\d{5}([ \-]\d{4})?";
+            // from https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s14.html
+            var usPostalCodeRegEx = @"^[0-9]{5}(?:-[0-9]{4})?$";
 
             if (string.IsNullOrWhiteSpace(addressLine))
                 return Result.Failure<Address>(AddressRequiredMessage);
