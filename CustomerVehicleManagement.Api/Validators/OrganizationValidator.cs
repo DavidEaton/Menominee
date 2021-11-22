@@ -20,9 +20,8 @@ namespace CustomerVehicleManagement.Api.Validators
                                                 .When(organization => organization.Address != null);
 
             RuleFor(organization => organization.Note)
-                                                  .NotEmpty()
-                                                  .Length(0, 10000)
-                                                  .When(organization => organization.Note != null);
+                                                .Length(0, 10000)
+                                                .When(organization => organization.Note != null);
 
             RuleFor(organization => organization.Emails)
                 .NotNull()

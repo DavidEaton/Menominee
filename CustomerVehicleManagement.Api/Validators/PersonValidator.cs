@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.Validators
                                                                                                driversLicense.State,
                                                                                                DateTimeRange.Create(driversLicense.Issued,
                                                                                                                     driversLicense.Expiry).Value))
-                                    .When(driversLicense => driversLicense != null);
+                                    .When(person => person.DriversLicense != null);
 
             RuleFor(person => person.Emails)
                 .NotNull()
