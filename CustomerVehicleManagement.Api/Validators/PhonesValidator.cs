@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class PhonesValidator : AbstractValidator<IList<PhoneToAdd>>
+    public class PhonesValidator : AbstractValidator<IList<PhoneToWrite>>
     {
         private const string message = "Can have only one Primary phone.";
         public PhonesValidator()
@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Api.Validators
                 });
         }
 
-        private bool HaveOnlyOnePrimaryPhone(IList<PhoneToAdd> phones)
+        private bool HaveOnlyOnePrimaryPhone(IList<PhoneToWrite> phones)
         {
             int primaryCount = 0;
 

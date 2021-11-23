@@ -34,11 +34,11 @@ namespace Menominee.OrganizationDataContracts.Pages
         private bool EditingAddress { get; set; } = false;
         private bool AddingAddress { get; set; } = false;
         private bool isExporting { get; set; }
-        private bool AddressDialogVisible => (OrganizationToEdit?.Address != null && (AddingAddress || EditingAddress)) || (OrganizationToAdd?.Address != null && (AddingAddress || EditingAddress));
+        private bool AddressDialogVisible => (organizationToWrite?.Address != null && (AddingAddress || EditingAddress)) || (organizationToWrite?.Address != null && (AddingAddress || EditingAddress));
 
-        private OrganizationToAdd OrganizationToAdd { get; set; }
-        private OrganizationToEdit OrganizationToEdit { get; set; }
+        private OrganizationToWrite organizationToWrite { get; set; }
         private bool ExportAllPages { get; set; }
+
         private string UniqueStorageKey = new Guid().ToString();
 
         protected override async Task OnInitializedAsync()
@@ -57,13 +57,13 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private void AddAddressAddingOrganization()
         {
-            OrganizationToAdd.Address = new();
+            organizationToWrite.Address = new();
             AddingAddress = true;
         }
 
         private void AddAddressEditingOrganization()
         {
-            OrganizationToEdit.Address = new();
+            organizationToWrite.Address = new();
             EditingAddress = true;
         }
 
@@ -71,8 +71,8 @@ namespace Menominee.OrganizationDataContracts.Pages
         {
             AddingAddress = false;
 
-            if (OrganizationToAdd.Address != null)
-                OrganizationToAdd.Address = null;
+            if (organizationToWrite.Address != null)
+                organizationToWrite.Address = null;
         }
 
         private void CancelEditAddress()
@@ -92,7 +92,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = null;
 
             var readDto = await OrganizationDataService.GetOrganization(Id);
-            OrganizationToEdit = new OrganizationToEdit
+            organizationToWrite = new OrganizationToWrite
             {
                 Name = readDto.Name,
                 Note = readDto.Note
@@ -100,7 +100,7 @@ namespace Menominee.OrganizationDataContracts.Pages
 
             if (readDto.Address != null)
             {
-                OrganizationToEdit.Address = new AddressToEdit
+                organizationToWrite.Address = new AddressToWrite
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
@@ -113,7 +113,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var email in readDto.Emails)
                 {
-                    OrganizationToEdit.Emails.Add(new EmailToEdit
+                    organizationToWrite.Emails.Add(new EmailToWrite
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary
@@ -125,7 +125,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var phone in readDto.Phones)
                 {
-                    OrganizationToEdit.Phones.Add(new PhoneToEdit
+                    organizationToWrite.Phones.Add(new PhoneToWrite
                     {
                         Number = phone.Number,
                         PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
@@ -140,23 +140,23 @@ namespace Menominee.OrganizationDataContracts.Pages
         {
             AddingOrganization = true;
             OrganizationsList = null;
-            OrganizationToAdd = new();
+            organizationToWrite = new();
         }
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToAdd.Name))
+            if (!string.IsNullOrWhiteSpace(organizationToWrite.Name))
             {
-                await OrganizationDataService.AddOrganization(OrganizationToAdd);
+                await OrganizationDataService.AddOrganization(organizationToWrite);
                 await EndAddAsync();
             }
         }
 
         protected async Task HandleUpdateSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToEdit.Name))
+            if (!string.IsNullOrWhiteSpace(organizationToWrite.Name))
             {
-                await OrganizationDataService.UpdateOrganization(OrganizationToEdit, Id);
+                await OrganizationDataService.UpdateOrganization(organizationToWrite, Id);
                 await EndEditAsync();
             }
         }

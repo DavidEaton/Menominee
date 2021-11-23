@@ -30,9 +30,9 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return organization;
         }
 
-        public static OrganizationToAdd CreateOrganizationToAdd()
+        public static OrganizationToWrite CreateOrganizationToAdd()
         {
-            OrganizationToAdd organizationToAdd = new();
+            OrganizationToWrite organizationToAdd = new();
             organizationToAdd.Name = LoremIpsum(10);
 
             return organizationToAdd;
@@ -84,20 +84,20 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             return person;
         }
 
-        public static IList<PhoneToAdd> CreatePhoneToAddList()
+        public static IList<PhoneToWrite> CreatePhoneToAddList()
         {
-            var phones = new List<PhoneToAdd>();
+            var phones = new List<PhoneToWrite>();
 
             var number1 = "(555) 987-6543";
             var phoneType1 = PhoneType.Mobile;
             var isPrimary1 = true;
-            var phone1 = new PhoneToAdd
+            var phone1 = new PhoneToWrite
             { Number = number1, PhoneType = phoneType1, IsPrimary = isPrimary1 };
 
             var number2 = "(555) 123-4567";
             var phoneType2 = PhoneType.Mobile;
             var isPrimary2 = false;
-            var phone2 = new PhoneToAdd
+            var phone2 = new PhoneToWrite
             { Number = number2, PhoneType = phoneType2, IsPrimary = isPrimary2 };
 
             phones.Add(phone1);

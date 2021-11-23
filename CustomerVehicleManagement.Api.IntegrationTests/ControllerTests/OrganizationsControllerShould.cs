@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_CreatedResult_On_AddOrganizationAsync()
         {
-            var Organization = new OrganizationToAdd
+            var Organization = new OrganizationToWrite
             {
                 Name = "Doe"
             };
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_Name_is_too_short()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = "M"
             };
@@ -104,7 +104,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_Name_is_too_long()
         {
 
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = Utilities.RandomCharacters(256)
             };
@@ -123,7 +123,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_Name_is_empty()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = ""
             };
@@ -142,7 +142,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_organization_Name_is_null()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = null
             };
@@ -161,18 +161,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_Emails_collection_has_more_than_one_Primary()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = "Moops"
             };
 
-            organization.Emails.Add(new EmailToAdd
+            organization.Emails.Add(new EmailToWrite
             {
                 Address = "a@a.a",
                 IsPrimary = true
             });
 
-            organization.Emails.Add(new EmailToAdd
+            organization.Emails.Add(new EmailToWrite
             {
                 Address = "b@b.b",
                 IsPrimary = true
@@ -192,12 +192,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_Emails_collection_has_invalid_Address()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = "Moops"
             };
 
-            organization.Emails.Add(new EmailToAdd
+            organization.Emails.Add(new EmailToWrite
             {
                 Address = "aa.a",
                 IsPrimary = true
@@ -218,18 +218,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_BadRequestObjectResult_on_AddOrganizationAsync_when_Phones_collection_has_more_than_one_Primary()
         {
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
                 Name = "Moops"
             };
 
-            organization.Phones.Add(new PhoneToAdd
+            organization.Phones.Add(new PhoneToWrite
             {
                 Number = "9896279206",
                 IsPrimary = true
             });
 
-            organization.Phones.Add(new PhoneToAdd
+            organization.Phones.Add(new PhoneToWrite
             {
                 Number = "2315462102",
                 IsPrimary = true
@@ -250,7 +250,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Not_Save_On_AddOrganizationAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var organization = new OrganizationToAdd();
+            var organization = new OrganizationToWrite();
 
             try
             {
@@ -264,31 +264,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Save_On_AddOrganizationAsync_When_ModelState_Valid()
-        {
-            Organization savedOrganization = null;
-
-            moqRepository.Setup(organizationRepository =>
-                                organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()))
-                                    .Returns(Task.CompletedTask)
-                                    .Callback<Organization>(organization => savedOrganization = organization);
-
-            var Organization = new OrganizationToAdd
-            {
-                Name = "Moops"
-            };
-
-            var result = await controller.AddOrganizationAsync(Organization);
-
-            moqRepository.Verify(organizationRepository =>
-                                 organizationRepository
-                                    .AddOrganizationAsync(It.IsAny<Organization>()), Times.Once);
-
-            Organization.Name.Should().Be(savedOrganization.Name.Name.ToString());
-        }
-
-        [Fact]
         public async Task Save_object_graph_on_AddOrganizationAsync()
         {
             Organization savedOrganization = null;
@@ -299,38 +274,30 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                                     .Returns(Task.CompletedTask)
                                     .Callback<Organization>(organization => savedOrganization = organization);
 
-            var organization = new OrganizationToAdd
+            var organization = new OrganizationToWrite
             {
-                Name = "Moops",
-                Address = new AddressToAdd
-                {
-                    AddressLine = "1234 Five Ave.",
-                    City = "Traverse City",
-                    State = State.MI,
-                    PostalCode = "49999"
-                },
-                Note = "a note"
+                Name = "Moops"
             };
 
-            organization.Phones.Add(new PhoneToAdd
+            organization.Phones.Add(new PhoneToWrite
             {
                 Number = "9896279206",
                 IsPrimary = true
             });
 
-            organization.Phones.Add(new PhoneToAdd
+            organization.Phones.Add(new PhoneToWrite
             {
                 Number = "2315462102",
                 IsPrimary = false
             });
 
-            organization.Emails.Add(new EmailToAdd
+            organization.Emails.Add(new EmailToWrite
             {
                 Address = "a@a.a",
                 IsPrimary = true
             });
 
-            organization.Emails.Add(new EmailToAdd
+            organization.Emails.Add(new EmailToWrite
             {
                 Address = "b@b.b",
                 IsPrimary = false
@@ -346,13 +313,17 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_CreatedResult_On_AddOrganizationAsync_When_ModelState_Valid()
+        public async Task Return_CreatedResult_On_CreateOrganizationAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(organizationRepository =>
                                 organizationRepository
                                     .AddOrganizationAsync(It.IsAny<Organization>()));
 
-            var organization = Utilities.CreateOrganizationToAdd();
+            var organization = new OrganizationToWrite
+            {
+                Name = "Moops"
+            };
+
             var result = await controller.AddOrganizationAsync(organization);
 
             result.Should().BeOfType<CreatedResult>();
@@ -366,7 +337,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_NotFoundObjectResult_On_UpdateOrganizationAsync_With_Invalid_Id()
         {
             var invaldId = 0;
-            var Organization = new OrganizationToEdit
+            var Organization = new OrganizationToWrite
             {
                 Note = "note"
             };

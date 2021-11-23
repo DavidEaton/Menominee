@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         #region ********************************Get***********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_PersonReadDto_On_GetPersonAsync()
+        public async Task Return_ActionResult_Of_PersonToRead_On_GetPersonAsync()
         {
             var result = await controller.GetPersonAsync(1);
 
@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_PersonReadDto_On_GetPersonsAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_PersonToRead_On_GetPersonsAsync()
         {
             var result = await controller.GetPersonsAsync();
 
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task Return_ActionResult_Of_IEnumerable_Of_PersonReadDto_On_GetPersonsListAsync()
+        public async Task Return_ActionResult_Of_IEnumerable_Of_PersonToRead_On_GetPersonsListAsync()
         {
             var result = await controller.GetPersonsListAsync();
 
@@ -62,9 +62,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         #region ********************************Post**********************************
 
         [Fact]
-        public async Task Return_ActionResult_Of_PersonReadDto_On_CreatePersonAsync()
+        public async Task Return_ActionResult_Of_PersonToRead_On_CreatePersonAsync()
         {
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
                           .Returns(Task.CompletedTask)
                           .Callback<Person>(person => savedPerson = person);
 
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", MiddleName = "J.", FirstName = "Jane" }, Gender = Gender.Female };
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", MiddleName = "J.", FirstName = "Jane" }, Gender = Gender.Female };
 
             var result = await controller.CreatePersonAsync(person);
 
@@ -96,11 +96,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         }
 
         [Fact]
-        public async Task Return_PersonReadDto_On_CreatePersonAsync_When_ModelState_Valid()
+        public async Task Return_PersonToRead_On_CreatePersonAsync_When_ModelState_Valid()
         {
             moqRepository.Setup(repository => repository.AddPersonAsync(It.IsAny<Person>()));
 
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
             var result = await controller.CreatePersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
@@ -114,7 +114,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         public async Task Return_NotFoundObjectResult_On_UpdatePersonAsync_With_Invalid_Id()
         {
             var invaldId = 0;
-            var person = new PersonToEdit
+            var person = new PersonToWrite
             {
                 Gender = Gender.Female
             };

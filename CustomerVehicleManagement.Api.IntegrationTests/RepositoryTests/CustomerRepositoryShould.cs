@@ -30,12 +30,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         //    {
         //        // Arrange
         //        var repository = new CustomerRepository(context, mapper);
-        //        var personCreateDto = new PersonCreateDto(new PersonName("Moops", "Molly"), Gender.Female);
-        //        var customerCreateDto = new CustomerCreateDto(personCreateDto, null, CustomerType.Retail);
-        //        var customer = new Customer(customerCreateDto.PersonCreateDto)
+        //        var personToWrite = new PersonToWrite(new PersonName("Moops", "Molly"), Gender.Female);
+        //        var customerToWrite = new CustomerToWrite(personToWrite, null, CustomerType.Retail);
+        //        var customer = new Customer(customerToWrite.PersonToWrite)
 
         //        // Act
-        //        await repository.AddCustomerAsync(customerCreateDto);
+        //        await repository.AddCustomerAsync(customerToWrite);
         //        await repository.SaveChangesAsync();
         //        var Customers = await repository.GetCustomersAsync();
 
@@ -53,10 +53,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         //    {
         //        var repository = new CustomerRepository(context, mapper);
 
-        //        var organizationCreateDto = new OrganizationCreateDto("Jane's Automotive");
-        //        var customerCreateDto = new CustomerCreateDto(null, organizationCreateDto, CustomerType.Retail);
+        //        var organizationToWrite = new OrganizationToWrite("Jane's Automotive");
+        //        var customerToWrite = new CustomerToWrite(null, organizationToWrite, CustomerType.Retail);
 
-        //        await repository.CustomerAsync(customerCreateDto);
+        //        await repository.CustomerAsync(customerToWrite);
         //        await repository.SaveChangesAsync();
         //        var Customers = await repository.GetCustomersAsync();
 

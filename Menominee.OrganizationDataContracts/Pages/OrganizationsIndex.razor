@@ -76,11 +76,11 @@
         </TelerikWindow>
     }
 
-    @if (AddingOrganization && OrganizationToAdd != null)
+    @if (AddingOrganization && organizationToWrite != null)
     {
-        <EditForm Model="@OrganizationToAdd">
-            <OrganizationEditor TItem="OrganizationToAdd"
-                                Item="@OrganizationToAdd"
+        <EditForm Model="@organizationToWrite">
+            <OrganizationEditor TItem="OrganizationToWrite"
+                                Item="@organizationToWrite"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
 
@@ -96,7 +96,7 @@
                 <GridLayoutItems>
                     <GridLayoutItem>
                         <div class="h6">Address</div>
-                        @if (OrganizationToAdd?.Address != null)
+                        @if (organizationToWrite?.Address != null)
                         {
                             <TelerikWindow Visible="AddressDialogVisible"
                                            Modal="true">
@@ -104,8 +104,8 @@
                                     Address
                                 </WindowTitle>
                                 <WindowContent>
-                                    <AddressEditor TItem="AddressToAdd"
-                                                   Item="@OrganizationToAdd?.Address"
+                                    <AddressEditor TItem="AddressToWrite"
+                                                   Item="@organizationToWrite?.Address"
                                                    AddressLineProperty="AddressLine"
                                                    CityProperty="City"
                                                    StateProperty="State"
@@ -127,10 +127,10 @@
                                     </TelerikButton>
                                 </WindowContent>
                             </TelerikWindow>
-                            @if (OrganizationToAdd?.Address != null && !AddingAddress)
+                            @if (organizationToWrite?.Address != null && !AddingAddress)
                             {
-                                <AddressEditor TItem="AddressToAdd"
-                                               Item="@OrganizationToAdd?.Address"
+                                <AddressEditor TItem="AddressToWrite"
+                                               Item="@organizationToWrite?.Address"
                                                AddressLineProperty="AddressLine"
                                                CityProperty="City"
                                                StateProperty="State"
@@ -149,10 +149,10 @@
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <PhonesEditor PhonesToAdd="@OrganizationToAdd?.Phones" FormMode="FormMode.Add"></PhonesEditor>
+                        <PhonesEditor PhonesToWrite="@organizationToWrite?.Phones" FormMode="FormMode.Add"></PhonesEditor>
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <EmailsEditor EmailsToAdd="@OrganizationToAdd?.Emails" FormMode="FormMode.Add"></EmailsEditor>
+                        <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails" FormMode="FormMode.Add"></EmailsEditor>
                     </GridLayoutItem>
                 </GridLayoutItems>
             </TelerikGridLayout>
@@ -165,14 +165,14 @@
         </div>
     }
 
-    @if (EditingOrganization && OrganizationToEdit != null)
+    @if (EditingOrganization && organizationToWrite != null)
     {
         <EditForm class="ui form"
-                  Model="@OrganizationToEdit"
+                  Model="@organizationToWrite"
                   OnSubmit="HandleUpdateSubmit">
 
-            <OrganizationEditor TItem="OrganizationToEdit"
-                                Item="@OrganizationToEdit"
+            <OrganizationEditor TItem="OrganizationToWrite"
+                                Item="@organizationToWrite"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
 
@@ -192,22 +192,22 @@
                              @onclick="EditAddress">
                             Address
                             &nbsp &nbsp
-                            @if (OrganizationToEdit?.Address != null)
+                            @if (organizationToWrite?.Address != null)
                             {
                                 <TelerikIcon Icon="pencil" />
                             }
                         </div>
-                        @if (OrganizationToEdit?.Address != null)
+                        @if (organizationToWrite?.Address != null)
                         {
 
-                            <TelerikWindow Visible="OrganizationToEdit?.Address != null && EditingAddress"
+                            <TelerikWindow Visible="organizationToWrite?.Address != null && EditingAddress"
                                            Modal="true">
                                 <WindowTitle>
                                     Address
                                 </WindowTitle>
                                 <WindowContent>
-                                    <AddressEditor TItem="AddressToEdit"
-                                                   Item="@OrganizationToEdit?.Address"
+                                    <AddressEditor TItem="AddressToWrite"
+                                                   Item="@organizationToWrite?.Address"
                                                    AddressLineProperty="AddressLine"
                                                    CityProperty="City"
                                                    StateProperty="State"
@@ -240,11 +240,11 @@
                             </TelerikButton>
                         }
 
-                        @if (OrganizationToEdit?.Address != null && !EditingAddress)
+                        @if (organizationToWrite?.Address != null && !EditingAddress)
                         {
                             <div @onclick="EditAddress">
-                                <AddressEditor TItem="AddressToEdit"
-                                               Item="@OrganizationToEdit?.Address"
+                                <AddressEditor TItem="AddressToWrite"
+                                               Item="@organizationToWrite?.Address"
                                                AddressLineProperty="AddressLine"
                                                CityProperty="City"
                                                StateProperty="State"
@@ -254,10 +254,10 @@
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <PhonesEditor PhonesToEdit="@OrganizationToEdit?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
+                        <PhonesEditor PhonesToEdit="@organizationToWrite?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <EmailsEditor EmailsToEdit="@OrganizationToEdit?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
+                        <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
                     </GridLayoutItem>
                 </GridLayoutItems>
             </TelerikGridLayout>

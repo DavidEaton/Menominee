@@ -13,24 +13,21 @@ namespace Menominee.OrganizationDataContracts.Components
         public FormMode FormMode { get; set; }
 
         [Parameter]
-        public IList<EmailToAdd> EmailsToAdd { get; set; }
-        public EmailToAdd EmailToAdd { get; set; }
+        public IList<EmailToWrite> EmailsToWrite { get; set; }
+        public EmailToWrite EmailToWrite { get; set; }
 
-        [Parameter]
-        public IList<EmailToEdit> EmailsToEdit { get; set; }
-        public EmailToEdit EmailToEdit { get; set; }
-        private bool DialogVisible => (EmailToEdit != null && (Adding || Editing)) || (EmailToAdd != null && (Adding || Editing));
+        private bool DialogVisible => (EmailToWrite != null && (Adding || Editing)) || (EmailToWrite != null && (Adding || Editing));
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikTextBox EmailAddressControl { get; set; }
 
         private async Task AddAsync(string type)
         {
-            if (type == "EmailToAdd")
-                EmailToAdd = new();
+            if (type == "EmailToWrite")
+                EmailToWrite = new();
 
-            if (type == "EmailToEdit")
-                EmailToEdit = new();
+            if (type == "EmailToWrite")
+                EmailToWrite = new();
 
             if (EmailAddressControl != null)
                 await EmailAddressControl.FocusAsync();
@@ -38,19 +35,19 @@ namespace Menominee.OrganizationDataContracts.Components
             Adding = true;
         }
 
-        private void Edit(EmailToEdit item)
+        private void Edit(EmailToWrite item)
         {
-            EmailToEdit = item;
+            EmailToWrite = item;
             Editing = true;
         }
 
         private void Save(string type)
         {
-            if (type == "EmailToAdd")
-                EmailsToAdd.Add(EmailToAdd);
+            if (type == "EmailToWrite")
+                EmailsToWrite.Add(EmailToWrite);
 
-            if (type == "EmailToEdit" && Adding)
-                EmailsToEdit.Add(EmailToEdit);
+            if (type == "EmailToWrite" && Adding)
+                EmailsToWrite.Add(EmailToWrite);
 
             Adding = false;
             Editing = false;
@@ -63,8 +60,8 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void CancelAddEmail()
         {
-            if (EmailToAdd != null)
-                EmailToAdd = null;
+            if (EmailToWrite != null)
+                EmailToWrite = null;
 
             Adding = false;
             Editing = false;

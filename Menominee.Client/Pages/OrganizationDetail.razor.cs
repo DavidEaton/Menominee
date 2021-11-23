@@ -19,7 +19,7 @@ namespace Menominee.Client.Pages
         public long Id { get; set; }
         protected OrganizationNameForm OrganizationNameForm { get; set; }
         protected AddressForm AddressForm { get; set; }
-        public OrganizationToEdit OrganizationUpdateDto { get; set; } = new();
+        public OrganizationToWrite OrganizationToWrite { get; set; } = new();
         public OrganizationToRead Organization { get; set; } = new();
 
         // Screen state
@@ -36,12 +36,12 @@ namespace Menominee.Client.Pages
             if (Id > 0)
             {
                 Organization = await OrganizationDataService.GetOrganizationDetails(Id);
-                OrganizationUpdateDto = new();
+                OrganizationToWrite = new();
             }
         }
         public void OrganizationNameForm_OnOrganizationNameChanged()
         {
-            OrganizationUpdateDto.Name = OrganizationNameForm.OrganizationName.Name;
+            OrganizationToWrite.Name = OrganizationNameForm.OrganizationName.Name;
             StateHasChanged();
         }
 
@@ -71,25 +71,25 @@ namespace Menominee.Client.Pages
 
             if (Organization.Id == 0) // new Organization
             {
-                var phones = (IList<PhoneToAdd>)Organization.Phones
+                var phones = (IList<PhoneToWrite>)Organization.Phones
                     .Select(phone =>
-                            new PhoneToAdd {
+                            new PhoneToWrite {
                                 Number = phone.Number,
                                 PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
                                 IsPrimary = phone.IsPrimary
                             });
 
-                var emails = (IList<EmailToAdd>)Organization.Emails
+                var emails = (IList<EmailToWrite>)Organization.Emails
                     .Select(email =>
-                            new EmailToAdd {
+                            new EmailToWrite {
                                 Address = email.Address,
                                 IsPrimary = email.IsPrimary
                             });
 
-                var organization = new OrganizationToAdd
+                var organization = new OrganizationToWrite
                 {
                     Name = Organization.Name,
-                    Address = new AddressToAdd
+                    Address = new AddressToWrite
                     {
                         AddressLine = Organization.Address.AddressLine,
                         City = Organization.Address.City,

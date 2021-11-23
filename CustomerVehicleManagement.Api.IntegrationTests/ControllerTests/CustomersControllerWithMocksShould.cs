@@ -62,10 +62,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Return_ActionResult_Of_CustomerToRead_On_CreateCustomerAsync()
         {
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            CustomerToWrite customerToWrite = new()
+            {
+                Person = person,
+                CustomerType = CustomerType.Retail
+            };
 
-            var result = await controller.CreateCustomerAsync(customerCreateDto);
+            var result = await controller.CreateCustomerAsync(customerToWrite);
 
             result.Should().BeOfType<ActionResult<CustomerToRead>>();
         }
@@ -74,10 +78,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Return_BadRequestObjectResult_On_CreateCustomerAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            CustomerToWrite customerToWrite = new()
+            {
+                Person = person,
+                CustomerType = CustomerType.Retail
+            };
 
-            var result = await controller.CreateCustomerAsync(customerCreateDto);
+            var result = await controller.CreateCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -86,10 +94,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         public async Task Not_Save_On_CreateCustomerAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            CustomerToWrite customerToWrite = new()
+            {
+                Person = person,
+                CustomerType = CustomerType.Retail
+            };
 
-            var result = await controller.CreateCustomerAsync(customerCreateDto);
+            var result = await controller.CreateCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -97,10 +109,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         [Fact]
         public async Task Save_On_CreateCustomerAsync_When_ModelState_Valid()
         {
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            CustomerToWrite customerToWrite = new()
+            {
+                Person = person,
+                CustomerType = CustomerType.Retail
+            };
 
-            var result = await controller.CreateCustomerAsync(customerCreateDto);
+            var result = await controller.CreateCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -110,10 +126,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             moqCustomerRepository.Setup(repo => repo.AddCustomerAsync(It.IsAny<Customer>()));
 
-            var person = new PersonToAdd { Name = new PersonNameToAdd { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            CustomerToAdd customerCreateDto = new(person, null, CustomerType.Retail);
+            var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
+            CustomerToWrite customerToWrite = new()
+            {
+                Person = person,
+                CustomerType = CustomerType.Retail
+            };
 
-            var result = await controller.CreateCustomerAsync(customerCreateDto);
+            var result = await controller.CreateCustomerAsync(customerToWrite);
 
             result.Should().BeOfType<ActionResult<CustomerToRead>>();
         }
@@ -123,7 +143,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var invalidId = 0;
 
-            CustomerToEdit customer = new()
+            CustomerToWrite customer = new()
             {
                 CustomerType = CustomerType.Retail
             };

@@ -2,11 +2,12 @@
 
 namespace CustomerVehicleManagement.Shared.Models
 {
-    public class CustomerToEdit
+    public class CustomerToWrite
     {
+        public EntityType EntityType { get; set; }
         public CustomerType CustomerType { get; set; }
-        public PersonToEdit PersonUpdateDto { get; set; }
-        public OrganizationToEdit OrganizationUpdateDto { get; set; }
+        public PersonToWrite Person { get; set; }
+        public OrganizationToWrite Organization { get; set; }
         //public ContactPreferences ContactPreferences { get; set; }
     }
 }

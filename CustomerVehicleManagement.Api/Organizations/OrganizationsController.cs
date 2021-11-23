@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToEdit organizationUpdateDto)
+        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organizationToUpdate)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 3. Update the corresponding fields in the Organization
             // 4. Save back to the DB
 
-            var notFoundMessage = $"Could not find Organization to update: {organizationUpdateDto.Name}";
+            var notFoundMessage = $"Could not find Organization to update: {organizationToUpdate.Name}";
 
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
@@ -84,62 +84,62 @@ namespace CustomerVehicleManagement.Api.Organizations
             var organization = repository.GetOrganizationEntityAsync(id).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            var organizationNameOrError = OrganizationName.Create(organizationUpdateDto.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationToUpdate.Name);
 
             if (organizationNameOrError.IsSuccess)
                 organization.SetName(organizationNameOrError.Value);
 
-            if (organizationUpdateDto?.Address != null)
-                organization.SetAddress(Address.Create(organizationUpdateDto.Address.AddressLine,
-                                                                     organizationUpdateDto.Address.City,
-                                                                     organizationUpdateDto.Address.State,
-                                                                     organizationUpdateDto.Address.PostalCode).Value);
-            organization.SetNote(organizationUpdateDto.Note);
+            if (organizationToUpdate?.Address != null)
+                organization.SetAddress(Address.Create(organizationToUpdate.Address.AddressLine,
+                                                                     organizationToUpdate.Address.City,
+                                                                     organizationToUpdate.Address.State,
+                                                                     organizationToUpdate.Address.PostalCode).Value);
+            organization.SetNote(organizationToUpdate.Note);
 
-            if (organizationUpdateDto?.Phones.Count > 0)
-                foreach (var phone in organizationUpdateDto.Phones)
+            if (organizationToUpdate?.Phones.Count > 0)
+                foreach (var phone in organizationToUpdate.Phones)
                 {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
                     organization.SetPhones(phones);
                 }
 
-            if (organizationUpdateDto?.Emails.Count > 0)
-                foreach (var email in organizationUpdateDto.Emails)
+            if (organizationToUpdate?.Emails.Count > 0)
+                foreach (var email in organizationToUpdate.Emails)
                 {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
                     organization.SetEmails(emails);
                 }
 
-            if (organizationUpdateDto.Contact != null)
+            if (organizationToUpdate.Contact != null)
             {
                 var contact = new Person(PersonName.Create(
-                                            organizationUpdateDto.Contact.Name.LastName,
-                                            organizationUpdateDto.Contact.Name.FirstName,
-                                            organizationUpdateDto.Contact.Name.MiddleName).Value,
-                                            organizationUpdateDto.Contact.Gender,
+                                            organizationToUpdate.Contact.Name.LastName,
+                                            organizationToUpdate.Contact.Name.FirstName,
+                                            organizationToUpdate.Contact.Name.MiddleName).Value,
+                                            organizationToUpdate.Contact.Gender,
                                             address,
                                             null, null);
 
-                if (organizationUpdateDto.Contact?.DriversLicense != null)
+                if (organizationToUpdate.Contact?.DriversLicense != null)
                 {
                     DateTimeRange dateTimeRange = DateTimeRange.Create(
-                        organizationUpdateDto.Contact.DriversLicense.Issued,
-                        organizationUpdateDto.Contact.DriversLicense.Expiry).Value;
+                        organizationToUpdate.Contact.DriversLicense.Issued,
+                        organizationToUpdate.Contact.DriversLicense.Expiry).Value;
 
-                    driversLicense = DriversLicense.Create(organizationUpdateDto.Contact.DriversLicense.Number,
-                        organizationUpdateDto.Contact.DriversLicense.State,
+                    driversLicense = DriversLicense.Create(organizationToUpdate.Contact.DriversLicense.Number,
+                        organizationToUpdate.Contact.DriversLicense.State,
                         dateTimeRange).Value;
 
                     contact.SetDriversLicense(driversLicense);
                 }
 
-                if (organizationUpdateDto?.Contact?.Address != null)
-                    contact.SetAddress(Address.Create(organizationUpdateDto.Contact.Address.AddressLine,
-                                                           organizationUpdateDto.Contact.Address.City,
-                                                           organizationUpdateDto.Contact.Address.State,
-                                                           organizationUpdateDto.Contact.Address.PostalCode).Value);
+                if (organizationToUpdate?.Contact?.Address != null)
+                    contact.SetAddress(Address.Create(organizationToUpdate.Contact.Address.AddressLine,
+                                                           organizationToUpdate.Contact.Address.City,
+                                                           organizationToUpdate.Contact.Address.State,
+                                                           organizationToUpdate.Contact.Address.PostalCode).Value);
 
-                contact.SetBirthday(organizationUpdateDto.Contact.Birthday);
+                contact.SetBirthday(organizationToUpdate.Contact.Birthday);
                 contact.SetPhones(phones);
                 contact.SetEmails(emails);
 
@@ -177,7 +177,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrganizationAsync(OrganizationToAdd organizationToAdd)
+        public async Task<IActionResult> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the

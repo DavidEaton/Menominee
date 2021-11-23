@@ -4,7 +4,7 @@ using Menominee.Common.ValueObjects;
 
 namespace CustomerVehicleManagement.Api.Validators
 {
-    public class OrganizationValidator : AbstractValidator<OrganizationToAdd>
+    public class OrganizationValidator : AbstractValidator<OrganizationToWrite>
     {
         public OrganizationValidator()
         {
