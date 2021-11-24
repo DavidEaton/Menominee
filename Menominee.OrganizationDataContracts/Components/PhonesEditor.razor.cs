@@ -18,7 +18,7 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-        private bool DialogVisible => (PhoneToWrite != null && (Adding || Editing)) || (PhoneToWrite != null && (Adding || Editing));
+        private bool DialogVisible => PhoneToWrite != null && (Adding || Editing);
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }
@@ -38,12 +38,9 @@ namespace Menominee.OrganizationDataContracts.Components
             Editing = true;
         }
 
-        private async Task AddAsync(string type)
+        private async Task AddAsync()
         {
-            if (type == "PhoneToWrite")
-                PhoneToWrite = new();
-
-            if (type == "PhoneToWrite")
+            if (PhoneToWrite == null)
                 PhoneToWrite = new();
 
             if (PhoneNumberControl != null)
@@ -52,12 +49,9 @@ namespace Menominee.OrganizationDataContracts.Components
             Adding = true;
         }
 
-        private void Save(string type)
+        private void Save()
         {
-            if (type == "PhoneToWrite")
-                PhonesToWrite.Add(PhoneToWrite);
-
-            if (type == "PhoneToWrite" && Adding)
+            if (PhoneToWrite == null)
                 PhonesToWrite.Add(PhoneToWrite);
 
             Adding = false;
@@ -66,15 +60,18 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void CancelAddPhone()
         {
-            Adding = false;
-            Editing = false;
-
             if (PhoneToWrite != null)
                 PhoneToWrite = null;
+
+            Adding = false;
+            Editing = false;
         }
 
         private void CancelEditPhone()
         {
+            if (PhoneToWrite != null)
+                PhoneToWrite = null;
+
             Adding = false;
             Editing = false;
         }

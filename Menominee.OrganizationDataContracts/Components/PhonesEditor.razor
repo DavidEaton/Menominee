@@ -35,7 +35,7 @@
                 <TelerikWindow Visible="DialogVisible"
                                Modal="true">
                     <WindowTitle>
-                        Address
+                        Phone
                     </WindowTitle>
                     <WindowContent>
                         <div class="container">
@@ -63,7 +63,7 @@
                                 </label>
                             </div>
                             <div>
-                                <TelerikButton OnClick='() => Save("PhoneToWrite")'
+                                <TelerikButton OnClick="Save"
                                                Icon="check"
                                                Primary="true"
                                                ButtonType="ButtonType.Button"
@@ -83,7 +83,7 @@
 
             </EditForm>
             <div class="pb-4">
-                <TelerikButton OnClick='() => Save("PhoneToWrite")'
+                <TelerikButton OnClick="Save"
                                Icon="save"
                                ButtonType="ButtonType.Button"
                                Primary="true"
@@ -100,7 +100,7 @@
         }
 
         <div>
-            <TelerikButton OnClick='() => AddAsync("PhoneToWrite")'
+            <TelerikButton OnClick="AddAsync"
                            Icon="plus"
                            ButtonType="ButtonType.Button"
                            Class="button-border-success"
@@ -145,7 +145,7 @@
                 <TelerikWindow Visible="DialogVisible"
                                Modal="true">
                     <WindowTitle>
-                        Address
+                        Phone
                     </WindowTitle>
                     <WindowContent>
                         <div class="container">
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                             <div>
-                                <TelerikButton OnClick='() => Save("PhoneToWrite")'
+                                <TelerikButton OnClick="Save"
                                                Icon="check"
                                                Primary="true"
                                                ButtonType="ButtonType.Button"
@@ -196,7 +196,7 @@
 
         }
         <div>
-            <TelerikButton OnClick='() => AddAsync("PhoneToWrite")'
+            <TelerikButton OnClick="AddAsync"
                            Icon="plus"
                            ButtonType="ButtonType.Button"
                            Class="button-border-success"

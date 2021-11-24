@@ -26,9 +26,6 @@ namespace Menominee.OrganizationDataContracts.Components
             if (type == "EmailToWrite")
                 EmailToWrite = new();
 
-            if (type == "EmailToWrite")
-                EmailToWrite = new();
-
             if (EmailAddressControl != null)
                 await EmailAddressControl.FocusAsync();
 
@@ -44,9 +41,6 @@ namespace Menominee.OrganizationDataContracts.Components
         private void Save(string type)
         {
             if (type == "EmailToWrite")
-                EmailsToWrite.Add(EmailToWrite);
-
-            if (type == "EmailToWrite" && Adding)
                 EmailsToWrite.Add(EmailToWrite);
 
             Adding = false;
