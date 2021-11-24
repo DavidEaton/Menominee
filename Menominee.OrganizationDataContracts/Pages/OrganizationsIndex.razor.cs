@@ -29,12 +29,12 @@ namespace Menominee.OrganizationDataContracts.Pages
         public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
         public long Id { get; set; }
 
-        private bool EditingOrganization { get; set; } = false;
-        private bool AddingOrganization { get; set; } = false;
+        private bool Editing { get; set; } = false;
+        private bool Adding { get; set; } = false;
         private bool EditingAddress { get; set; } = false;
         private bool AddingAddress { get; set; } = false;
         private bool isExporting { get; set; }
-        private bool AddressDialogVisible => (organizationToWrite?.Address != null && (AddingAddress || EditingAddress)) || (organizationToWrite?.Address != null && (AddingAddress || EditingAddress));
+        private bool AddressDialogVisible => organizationToWrite?.Address != null && (AddingAddress || EditingAddress);
 
         private OrganizationToWrite organizationToWrite { get; set; }
         private bool ExportAllPages { get; set; }
@@ -46,12 +46,10 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 
-        private async Task ShowLoadingSign()
+        private void ShowLoadingSymbol()
         {
             isExporting = true;
             StateHasChanged();
-            // This won't work for server-side Blazor, the UI will render immediately after the delay and the loading sign will only flicker
-            await Task.Delay(3000);
             isExporting = false;
         }
 
@@ -88,7 +86,7 @@ namespace Menominee.OrganizationDataContracts.Pages
         private async Task EditAsync(GridRowClickEventArgs args)
         {
             Id = (args.Item as OrganizationToReadInList).Id;
-            EditingOrganization = true;
+            Editing = true;
             OrganizationsList = null;
 
             var readDto = await OrganizationDataService.GetOrganization(Id);
@@ -138,7 +136,7 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private void Add()
         {
-            AddingOrganization = true;
+            Adding = true;
             OrganizationsList = null;
             organizationToWrite = new();
         }
@@ -163,14 +161,14 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         protected async Task EndEditAsync()
         {
-            EditingOrganization = false;
+            Editing = false;
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
             EditingAddress = false;
         }
 
         protected async Task EndAddAsync()
         {
-            AddingOrganization = false;
+            Adding = false;
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 

@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,53 +9,46 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class EmailsEditor : ComponentBase
     {
         [Parameter]
-        public FormMode FormMode { get; set; }
-
-        [Parameter]
         public IList<EmailToWrite> EmailsToWrite { get; set; }
         public EmailToWrite EmailToWrite { get; set; }
 
-        private bool DialogVisible => (EmailToWrite != null && (Adding || Editing)) || (EmailToWrite != null && (Adding || Editing));
+        private bool DialogVisible => Adding || Editing;
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikTextBox EmailAddressControl { get; set; }
 
-        private async Task AddAsync(string type)
+        private async Task AddAsync()
         {
-            if (type == "EmailToWrite")
-                EmailToWrite = new();
+            EmailToWrite = new();
+            Adding = true;
 
             if (EmailAddressControl != null)
                 await EmailAddressControl.FocusAsync();
-
-            Adding = true;
         }
 
-        private void Edit(EmailToWrite item)
+        private async Task EditAsync(EmailToWrite item)
         {
             EmailToWrite = item;
             Editing = true;
+
+            if (EmailAddressControl != null)
+                await EmailAddressControl.FocusAsync();
         }
 
-        private void Save(string type)
+        private void Save()
         {
-            if (type == "EmailToWrite")
+            if (EmailToWrite != null && Adding)
+            {
                 EmailsToWrite.Add(EmailToWrite);
+                Adding = false;
+            }
 
-            Adding = false;
-            Editing = false;
-        }
-        private void CancelEditEmail()
-        {
-            Adding = false;
-            Editing = false;
+            if (EmailToWrite != null && Editing)
+                Editing = false;
         }
 
-        private void CancelAddEmail()
+        private void CancelEdit()
         {
-            if (EmailToWrite != null)
-                EmailToWrite = null;
-
             Adding = false;
             Editing = false;
         }

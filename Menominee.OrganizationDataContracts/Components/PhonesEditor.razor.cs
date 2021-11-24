@@ -15,10 +15,8 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public IList<PhoneToWrite> PhonesToWrite { get; set; }
 
-        [Parameter]
-        public FormMode FormMode { get; set; }
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-        private bool DialogVisible => PhoneToWrite != null && (Adding || Editing);
+        private bool DialogVisible => Adding || Editing;
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikMaskedTextBox PhoneNumberControl { get; set; }
@@ -32,46 +30,38 @@ namespace Menominee.OrganizationDataContracts.Components
             base.OnInitialized();
         }
 
-        private void Edit(PhoneToWrite item)
+        private async Task EditAsync(PhoneToWrite item)
         {
             PhoneToWrite = item;
             Editing = true;
+
+            if (PhoneNumberControl != null)
+                await PhoneNumberControl.FocusAsync();
         }
 
         private async Task AddAsync()
         {
-            if (PhoneToWrite == null)
-                PhoneToWrite = new();
+            PhoneToWrite = new();
+            Adding = true;
 
             if (PhoneNumberControl != null)
                 await PhoneNumberControl.FocusAsync();
-
-            Adding = true;
         }
 
         private void Save()
         {
-            if (PhoneToWrite == null)
+            if (PhoneToWrite != null && Adding)
+            {
                 PhonesToWrite.Add(PhoneToWrite);
+                Adding = false;
+            }
 
-            Adding = false;
-            Editing = false;
+            if (PhoneToWrite != null && Editing)
+                Editing = false;
         }
 
-        private void CancelAddPhone()
+        private void CancelEdit()
         {
-            if (PhoneToWrite != null)
-                PhoneToWrite = null;
-
-            Adding = false;
-            Editing = false;
-        }
-
-        private void CancelEditPhone()
-        {
-            if (PhoneToWrite != null)
-                PhoneToWrite = null;
-
             Adding = false;
             Editing = false;
         }
