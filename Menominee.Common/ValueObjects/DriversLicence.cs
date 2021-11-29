@@ -13,6 +13,7 @@ namespace Menominee.Common.ValueObjects
         public static readonly string OverMaximumLengthMessage = $"Drivers License cannot be over {MaximumLength} characters in length";
         public static readonly string DateRangeInvalidMessage = $"Drivers License must have valid dates";
         public static readonly string RequiredMessage = $"Drivers License number is required.";
+        public static readonly string StateInvalidMessage = $"Please enter a valid State";
 
         public string Number { get; private set; }
         public DateTimeRange ValidDateRange { get; private set; }
@@ -29,6 +30,9 @@ namespace Menominee.Common.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(number))
                 return Result.Failure<DriversLicense>(RequiredMessage);
+
+            if (!Enum.IsDefined(typeof(State), state))
+                return Result.Failure<DriversLicense>(StateInvalidMessage);
 
             number = (number ?? string.Empty).Trim();
 

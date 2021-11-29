@@ -10,7 +10,8 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string message = "Can have only one Primary email.";
         public EmailsValidator()
         {
-            RuleFor(emails => emails).Cascade(CascadeMode.Stop)
+            RuleFor(emails => emails)
+                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
                 //.ListHasNoMoreThanOnePrimary()

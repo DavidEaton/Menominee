@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Threading.Tasks;
@@ -29,10 +30,25 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         //    using (var context = new ApplicationDbContext(options))
         //    {
         //        // Arrange
-        //        var repository = new CustomerRepository(context, mapper);
-        //        var personToWrite = new PersonToWrite(new PersonName("Moops", "Molly"), Gender.Female);
-        //        var customerToWrite = new CustomerToWrite(personToWrite, null, CustomerType.Retail);
-        //        var customer = new Customer(customerToWrite.PersonToWrite)
+        //        var repository = new CustomerRepository(context);
+        //        var personToWrite = new PersonToWrite()
+        //        {
+        //            Name = new PersonNameToWrite()
+        //            {
+        //                LastName = "Moops",
+        //                FirstName = "Molly"
+        //            },
+        //            Gender = Gender.Female
+        //        };
+
+        //        var customerToWrite = new CustomerToWrite()
+        //        {
+        //            CustomerType = CustomerType.Retail,
+        //            EntityType = EntityType.Person,
+        //            Person = personToWrite
+        //        };
+
+        //        var customer = new Customer()
 
         //        // Act
         //        await repository.AddCustomerAsync(customerToWrite);
@@ -75,7 +91,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 if ((await context.SaveChangesAsync()) > 0)
                 {
-                    Customer customer = new(person);
+                    Customer customer = new(person, CustomerType.Retail);
                     if (customer != null)
                         await context.AddAsync(customer);
                     await context.SaveChangesAsync();
@@ -121,17 +137,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organization = Helper.CreateOrganization();
                 await context.AddAsync(organization);
 
-                var note = "notes are strings";
-
-                var contact = Helper.CreatePerson();
-                contact.SetEmails(Helper.CreateEmailList());
-                contact.SetPhones(Helper.CreatePhoneList());
-
-                organization.SetEmails(Helper.CreateEmailList());
-                organization.SetPhones(Helper.CreatePhoneList());
-                organization.SetNote(note);
-                organization.SetContact(contact);
-
                 Customer customer = new(organization);
                 await context.AddAsync(customer);
                 await context.SaveChangesAsync();
@@ -139,17 +144,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new CustomerRepository(context);
                 var customersFromRepo = await repository.GetCustomersInListAsync();
 
-                customersFromRepo.Should().NotBeNull();
-                customersFromRepo[0].Should().NotBeNull();
-                customersFromRepo[0].EntityType.Should().Be(EntityType.Organization);
-                customersFromRepo[0].Name.Should().NotBeNullOrEmpty();
-                customersFromRepo[0].Note.Should().NotBeNullOrEmpty();
-                customersFromRepo[0].PrimaryEmail.Should().NotBeNullOrEmpty();
-                customersFromRepo[0].PrimaryPhone.Should().NotBeNullOrEmpty();
-                customersFromRepo[0].PrimaryPhoneType.Should().NotBeNullOrEmpty();
-                //customersFromRepo[0].ContactName.Should().NotBeNullOrEmpty();
-                //customersFromRepo[0].ContactPrimaryPhone.Should().NotBeNullOrEmpty();
-                //customersFromRepo[0].ContactPrimaryPhoneType.Should().NotBeNullOrEmpty();
+                customersFromRepo.Count.Should().BeGreaterThan(0);
             }
         }
     }

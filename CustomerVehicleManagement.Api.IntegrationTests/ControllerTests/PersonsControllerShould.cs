@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         {
             var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
 
             var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", MiddleName = "J.", FirstName = "Jane" }, Gender = Gender.Female };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             moqRepository.Verify(organizationRepository =>
                                  organizationRepository
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
             moqRepository.Setup(repository => repository.AddPersonAsync(It.IsAny<Person>()));
 
             var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }

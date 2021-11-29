@@ -10,7 +10,8 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string message = "Can have only one Primary phone.";
         public PhonesValidator()
         {
-            RuleFor(phones => phones).Cascade(CascadeMode.Stop)
+            RuleFor(phones => phones)
+                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
                 //.ListHasNoMoreThanOnePrimary()

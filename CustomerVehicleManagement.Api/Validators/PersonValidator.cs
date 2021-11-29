@@ -10,11 +10,14 @@ namespace CustomerVehicleManagement.Api.Validators
         public PersonValidator()
         {
             RuleFor(person => person.Name)
+                                    .Cascade(CascadeMode.Stop)
+                                    .NotEmpty()
                                     .MustBeValueObject(person => PersonName.Create(person.LastName,
                                                                                    person.FirstName,
                                                                                    person.MiddleName));
 
             RuleFor(person => person.Address)
+                                    .Cascade(CascadeMode.Stop)
                                     .NotEmpty()
                                     .MustBeValueObject(address => Address.Create(address.AddressLine,
                                                                                  address.City,
@@ -28,11 +31,15 @@ namespace CustomerVehicleManagement.Api.Validators
                                     .WithMessage("Please select a valid Gender");
 
             RuleFor(person => person.Birthday)
-                .Must(BeValidAge)
-                .WithMessage("Please enter a valid Birthday")
-                .When(person => person.Birthday != null);
+                                    .Cascade(CascadeMode.Stop)
+                                    .NotEmpty()
+                                    .Must(BeValidAge)
+                                    .WithMessage("Please enter a valid Birthday")
+                                    .When(person => person.Birthday != null);
 
             RuleFor(person => person.DriversLicense)
+                                    .Cascade(CascadeMode.Stop)
+                                    .NotEmpty()
                                     .MustBeValueObject(driversLicense => DriversLicense.Create(driversLicense.Number,
                                                                                                driversLicense.State,
                                                                                                DateTimeRange.Create(driversLicense.Issued,
@@ -40,12 +47,12 @@ namespace CustomerVehicleManagement.Api.Validators
                                     .When(person => person.DriversLicense != null);
 
             RuleFor(person => person.Emails)
-                .NotNull()
-                .SetValidator(new EmailsValidator());
+                                    .NotNull()
+                                    .SetValidator(new EmailsValidator());
 
             RuleFor(person => person.Phones)
-                .NotNull()
-                .SetValidator(new PhonesValidator());
+                                    .NotNull()
+                                    .SetValidator(new PhonesValidator());
 
         }
         protected bool BeValidAge(DateTime? date)
