@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
         // POST: api/persons/
         [HttpPost]
-        public async Task<ActionResult<PersonToRead>> CreatePersonAsync(PersonToWrite personToAdd)
+        public async Task<ActionResult<PersonToRead>> AddPersonAsync(PersonToWrite personToAdd)
         {
             Address address = null;
             List<Phone> phones = new();

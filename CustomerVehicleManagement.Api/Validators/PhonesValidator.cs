@@ -11,7 +11,8 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string notEmptyMessage = "Phone must not be empty.";
         public PhonesValidator()
         {
-            RuleFor(phones => phones).Cascade(CascadeMode.Stop)
+            RuleFor(phones => phones)
+                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
                 .WithMessage(onePrimarymessage)

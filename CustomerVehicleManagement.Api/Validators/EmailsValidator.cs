@@ -11,7 +11,8 @@ namespace CustomerVehicleManagement.Api.Validators
         private const string notEmptyMessage = "Email must not be empty.";
         public EmailsValidator()
         {
-            RuleFor(emails => emails).Cascade(CascadeMode.Stop)
+            RuleFor(emails => emails)
+                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
                 .WithMessage(onePrimarymessage)

@@ -15,15 +15,13 @@ namespace CustomerVehicleManagement.Domain.Entities
         public EntityType EntityType => GetEntityType();
         public CustomerType CustomerType { get; private set; }
         public ContactPreferences ContactPreferences { get; private set; }
-        public DateTime Created { get; private set; }
         public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
-        public Customer(Person person)
+        public Customer(Person person, CustomerType customerType)
         {
             Guard.ForNull(person, "person == null");
 
             Person = person;
-            CustomerType = CustomerType.Retail;
-            Created = DateTime.UtcNow;
+            CustomerType = customerType;
         }
 
         public Customer(Organization organization)
@@ -32,7 +30,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             Organization = organization;
             CustomerType = CustomerType.Retail;
-            Created = DateTime.UtcNow;
         }
 
         private EntityType GetEntityType()
