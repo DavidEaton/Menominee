@@ -7,17 +7,18 @@ namespace CustomerVehicleManagement.Api.Validators
 {
     public class EmailsValidator : AbstractValidator<IList<EmailToWrite>>
     {
-        private const string message = "Can have only one Primary email.";
+        private const string onePrimarymessage = "Can have only one Primary email.";
+        private const string notEmptyMessage = "Email must not be empty.";
         public EmailsValidator()
         {
             RuleFor(emails => emails).Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
-                //.ListHasNoMoreThanOnePrimary()
-                .WithMessage(message)
+                .WithMessage(onePrimarymessage)
                 .ForEach(email =>
                 {
-                    email.NotEmpty();
+                    email.Cascade(CascadeMode.Stop);
+                    email.NotEmpty().WithMessage(notEmptyMessage);
                     email.MustBeEntity(x => Email.Create(x.Address, x.IsPrimary));
                 });
         }
@@ -28,6 +29,9 @@ namespace CustomerVehicleManagement.Api.Validators
 
             foreach (var email in emails)
             {
+                if (email is null)
+                    continue;
+
                 if (email.IsPrimary)
                     primaryCount += 1;
             }
