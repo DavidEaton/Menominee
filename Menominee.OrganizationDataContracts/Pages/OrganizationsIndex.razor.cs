@@ -1,14 +1,14 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
 using Menominee.OrganizationDataContracts.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using Menominee.Common.Enums;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
-using Microsoft.JSInterop;
 
 namespace Menominee.OrganizationDataContracts.Pages
 {
@@ -32,10 +32,7 @@ namespace Menominee.OrganizationDataContracts.Pages
         private bool Editing { get; set; } = false;
         private bool Adding { get; set; } = false;
         private bool EditingAddress { get; set; } = false;
-        private bool AddingAddress { get; set; } = false;
         private bool isExporting { get; set; }
-        private bool AddressDialogVisible => organizationToWrite?.Address != null && (AddingAddress || EditingAddress);
-
         private OrganizationToWrite organizationToWrite { get; set; }
         private bool ExportAllPages { get; set; }
 
@@ -56,21 +53,7 @@ namespace Menominee.OrganizationDataContracts.Pages
         private void AddAddressAddingOrganization()
         {
             organizationToWrite.Address = new();
-            AddingAddress = true;
-        }
-
-        private void AddAddressEditingOrganization()
-        {
-            organizationToWrite.Address = new();
             EditingAddress = true;
-        }
-
-        private void CancelAddAddress()
-        {
-            AddingAddress = false;
-
-            if (organizationToWrite.Address != null)
-                organizationToWrite.Address = null;
         }
 
         private void CancelEditAddress()
@@ -150,7 +133,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             }
         }
 
-        protected async Task HandleUpdateSubmit()
+        protected async Task HandleEditSubmit()
         {
             if (!string.IsNullOrWhiteSpace(organizationToWrite.Name))
             {
@@ -159,16 +142,30 @@ namespace Menominee.OrganizationDataContracts.Pages
             }
         }
 
+        protected async Task SubmitHandlerAsync()
+        {
+            if (!string.IsNullOrWhiteSpace(organizationToWrite.Name))
+            {
+                if (Adding)
+                    await HandleAddSubmit();
+
+                if (Editing)
+                    await HandleEditSubmit();
+            }
+        }
+
         protected async Task EndEditAsync()
         {
             Editing = false;
-            OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
             EditingAddress = false;
+            OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 
         protected async Task EndAddAsync()
         {
             Adding = false;
+            Editing = false;
+            EditingAddress = false;
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 
