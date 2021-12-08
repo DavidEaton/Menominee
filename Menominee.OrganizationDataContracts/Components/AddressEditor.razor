@@ -3,23 +3,25 @@
 <div class="container">
     <div class="form-group row">
         <label for="address" class="form-control-label">Street</label>
-        <TelerikTextBox @bind-Value="@AddressLine"
+        <TelerikTextBox @bind-Value="AddressLine"
                         Width="100%"
                         Enabled="EnableEditor">
         </TelerikTextBox>
+        @*<TelerikValidationMessage For="@(() => AddressLine)" />*@
     </div>
 
     <div class="form-group row">
         <label for="city" class="form-control-label">City</label>
-        <TelerikTextBox @bind-Value="@City"
+        <TelerikTextBox @bind-Value="City"
                         Width="100%"
                         Enabled="EnableEditor">
         </TelerikTextBox>
+        @*<TelerikValidationMessage For="@(() => City)" />*@
     </div>
 
     <div class="form-group row">
         <label for="state" class="form-control-label">State</label>
-        <TelerikComboBox Data="@StateEnumData"
+        <TelerikComboBox Data="StateEnumData"
                          TextField="DisplayText"
                          ValueField="Value"
                          @bind-Value="@State"
@@ -29,13 +31,15 @@
                          Placeholder="Select a State"
                          Enabled="EnableEditor">
         </TelerikComboBox>
+        @*<TelerikValidationMessage For="@(() => State)" />*@
     </div>
 
     <div class="form-group row">
         <label for="postalCode" class="form-control-label">Postal Code</label>
-        <TelerikTextBox @bind-Value="@PostalCode"
+        <TelerikTextBox @bind-Value="PostalCode"
                         Width="100%"
                         Enabled="EnableEditor">
         </TelerikTextBox>
+        @*<TelerikValidationMessage For="@(() => PostalCode)" />*@
     </div>
 </div>

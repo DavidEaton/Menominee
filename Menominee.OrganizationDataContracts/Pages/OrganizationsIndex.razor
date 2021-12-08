@@ -10,6 +10,7 @@
             <p><em>Loading...</em></p>
         }
     }
+
     @if (!EditingOrganization && !AddingOrganization && OrganizationsList != null)
     {
         <div class="pb-3">
@@ -21,69 +22,22 @@
             </TelerikButton>
         </div>
 
-        <TelerikGrid Data="OrganizationsList"
-                     OnRowClick="@EditAsync"
-                     Sortable="true"
-                     Pageable="true"
-                     FilterMode="GridFilterMode.FilterMenu"
-                     Resizable="true"
-                     Reorderable="true"
-                     ShowColumnMenu="true"
-                     OnStateInit="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateInitHandler(args))"
-                     OnStateChanged="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateChangedHandler(args))"
-                     @ref="@Grid">
-            <GridToolBar>
-                <TelerikButton OnClick="@ResetState"
-                               Icon="reset"
-                               Title="Reset grid to default layout/columns..."></TelerikButton>
-                <span class="k-toolbar-spacer"></span>
-                <GridCommandButton Command="ExcelExport"
-                                   Icon="file-excel"
-                                   Title="Export to Excel"
-                                   OnClick="@ShowLoadingSign">
-                </GridCommandButton>
-                <GridCommandButton Command="CsvExport"
-                                   OnClick="@ShowLoadingSign"
-                                   Title="Export to CSV"
-                                   Icon="file-csv">
-                </GridCommandButton>
-                <label class="k-checkbox-label"
-                       title="Export all: unchecking will export only rows currently visible in grid">
-                    <TelerikCheckBox @bind-Value="@ExportAllPages" /><span class="small">Export All</span>
-                </label>
-                <span class="k-toolbar-spacer"></span>
-                <GridSearchBox />
-            </GridToolBar>
-            <GridExport>
-                <GridExcelExport FileName="Organizations" AllPages="true" />
-            </GridExport>
-            <GridColumns>
-                <GridColumn Field="Name" Title="Name"></GridColumn>
-                <GridColumn Field="AddressFull" Title="Address"></GridColumn>
-                <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
-                <GridColumn Field="PrimaryPhoneType" Title="Type"></GridColumn>
-                <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
-                <GridColumn Field="Note" Title="Note"></GridColumn>
-            </GridColumns>
-        </TelerikGrid>
+        <OrganizationsGrid Organizations="OrganizationsList"
+                           OnSelected="HandleSelectedOrganizationAsync"></OrganizationsGrid>
 
-        <TelerikWindow Visible="@isExporting" Modal="true">
-            <WindowTitle>Please wait...</WindowTitle>
-            <WindowContent>
-                <TelerikLoader Size="LoaderSize.Large" />
-                We are exporting your data; your file will download shortly.
-            </WindowContent>
-        </TelerikWindow>
+
     }
+
 
     @if (AddingOrganization && organizationToWrite != null)
     {
-        <EditForm Model="@organizationToWrite">
+        <EditForm Model="@organizationToWrite"
+                  OnValidSubmit="HandleAddSubmit">
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organizationToWrite"
                                 NameProperty="Name"
                                 NoteProperty="Note" />
-
+            <FluentValidationValidator />
             <TelerikGridLayout>
                 <GridLayoutColumns>
                     <GridLayoutColumn Width="30%"></GridLayoutColumn>
@@ -95,7 +49,16 @@
                 </GridLayoutRows>
                 <GridLayoutItems>
                     <GridLayoutItem>
-                        <div class="h6">Address</div>
+                        <div class="h6"
+                             tabindex="-1"
+                             @onclick="() => EditingAddress = true">
+                            Address
+                            &nbsp &nbsp
+                            @if (organizationToWrite?.Address != null)
+                            {
+                                <TelerikIcon Icon="pencil" />
+                            }
+                        </div>
                         @if (organizationToWrite?.Address != null)
                         {
                             <TelerikWindow Visible="AddressDialogVisible"
@@ -156,13 +119,15 @@
                     </GridLayoutItem>
                 </GridLayoutItems>
             </TelerikGridLayout>
+            <button type="submit">Save</button>
         </EditForm>
 
-        <div class="pt-4">
-            <EditFormButtons CloseEventCallback="EndAddAsync"
-                             SaveEventCallback="HandleAddSubmit">
-            </EditFormButtons>
-        </div>
+
+        @*<div class="pt-4">
+                <EditFormButtons CloseEventCallback="EndAddAsync"
+                                 SaveEventCallback="HandleAddSubmit">
+                </EditFormButtons>
+            </div>*@
     }
 
     @if (EditingOrganization && organizationToWrite != null)
@@ -218,7 +183,7 @@
                                                    Icon="check"
                                                    Primary="true"
                                                    ButtonType="ButtonType.Button"
-                                                   title="Save New Address">
+                                                   title="Save Address">
                                         Ok
                                     </TelerikButton>
                                     <TelerikButton OnClick="CancelEditAddress"
@@ -254,7 +219,7 @@
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <PhonesEditor PhonesToEdit="@organizationToWrite?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
+                        <PhonesEditor PhonesToWrite="@organizationToWrite?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
                     </GridLayoutItem>
                     <GridLayoutItem>
                         <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
