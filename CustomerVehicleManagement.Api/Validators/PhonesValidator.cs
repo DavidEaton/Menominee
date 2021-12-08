@@ -7,18 +7,19 @@ namespace CustomerVehicleManagement.Api.Validators
 {
     public class PhonesValidator : AbstractValidator<IList<PhoneToWrite>>
     {
-        private const string message = "Can have only one Primary phone.";
+        private const string onePrimarymessage = "Can have only one Primary phone.";
+        private const string notEmptyMessage = "Phone must not be empty.";
         public PhonesValidator()
         {
             RuleFor(phones => phones)
                 .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
-                //.ListHasNoMoreThanOnePrimary()
-                .WithMessage(message)
+                .WithMessage(onePrimarymessage)
                 .ForEach(phone =>
                 {
-                    phone.NotEmpty();
+                    phone.Cascade(CascadeMode.Stop);
+                    phone.NotEmpty().WithMessage(notEmptyMessage);
                     phone.MustBeEntity(x => Phone.Create(x.Number, x.PhoneType, x.IsPrimary));
                 });
         }
@@ -29,6 +30,9 @@ namespace CustomerVehicleManagement.Api.Validators
 
             foreach (var phone in phones)
             {
+                if (phone is null)
+                    continue;
+
                 if (phone.IsPrimary)
                     primaryCount += 1;
             }
