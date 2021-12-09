@@ -24,11 +24,9 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private bool EditingOrganization { get; set; } = false;
         private bool AddingOrganization { get; set; } = false;
-        private bool EditingAddress { get; set; } = false;
-        private bool AddingAddress { get; set; } = false;
-        private bool AddressDialogVisible => organizationToWrite?.Address != null && (AddingAddress || EditingAddress);
+        private bool AddressEditorModal { get; set; } = false;
 
-        private OrganizationToWrite organizationToWrite { get; set; }
+        private OrganizationToWrite organization { get; set; }
         protected override async Task OnInitializedAsync()
         {
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
@@ -42,7 +40,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = null;
 
             var readDto = await OrganizationDataService.GetOrganization(Id);
-            organizationToWrite = new OrganizationToWrite
+            organization = new OrganizationToWrite
             {
                 Name = readDto.Name,
                 Note = readDto.Note
@@ -50,7 +48,7 @@ namespace Menominee.OrganizationDataContracts.Pages
 
             if (readDto.Address != null)
             {
-                organizationToWrite.Address = new AddressToWrite
+                organization.Address = new AddressToWrite
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
@@ -63,7 +61,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var email in readDto.Emails)
                 {
-                    organizationToWrite.Emails.Add(new EmailToWrite
+                    organization.Emails.Add(new EmailToWrite
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary
@@ -75,7 +73,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             {
                 foreach (var phone in readDto.Phones)
                 {
-                    organizationToWrite.Phones.Add(new PhoneToWrite
+                    organization.Phones.Add(new PhoneToWrite
                     {
                         Number = phone.Number,
                         PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
@@ -89,16 +87,16 @@ namespace Menominee.OrganizationDataContracts.Pages
         {
             AddingOrganization = true;
             OrganizationsList = null;
-            organizationToWrite = new();
+            organization = new();
         }
 
         protected async Task Save()
         {
             if (AddingOrganization)
-                await OrganizationDataService.AddOrganization(organizationToWrite);
+                await OrganizationDataService.AddOrganization(organization);
 
             if (EditingOrganization)
-                await OrganizationDataService.UpdateOrganization(organizationToWrite, Id);
+                await OrganizationDataService.UpdateOrganization(organization, Id);
 
             await CloseEditorAsync();
         }
@@ -112,23 +110,20 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private void AddAddress()
         {
-            organizationToWrite.Address = new();
-            AddingAddress = true;
+            organization.Address = new();
+            AddressEditorModal = true;
         }
 
         private void SaveAddress()
         {
-            AddingAddress = false;
-            EditingAddress = false;
+            AddressEditorModal = false;
         }
 
-        private void CancelEditAddress()
+        private void CancelAddress()
         {
-            if (organizationToWrite.Address != null && AddingAddress)
-                organizationToWrite.Address = null;
-
-            AddingAddress = false;
-            EditingAddress = false;
+            //if (organizationToWrite.Address != null && AddingAddress)
+            //    organizationToWrite.Address = null;
+            AddressEditorModal = false;
         }
     }
 }

@@ -1,123 +1,27 @@
-﻿using Menominee.Common.Enums;
+﻿using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 
 namespace Menominee.OrganizationDataContracts.Components
 {
-    public partial class AddressEditor<TItem> : ComponentBase
+    public partial class AddressEditor : ComponentBase
     {
         [Parameter]
-        public TItem Item { get; set; }
+        public AddressToWrite Address { get; set; }
 
         [Parameter]
-        public bool EnableEditor { get; set; }
+        public bool Enabled { get; set; }
 
         [Parameter]
-        public string AddressLineProperty { get; set; }
+        public EventCallback EditingAddress { get; set; }
 
         [Parameter]
-        public string CityProperty { get; set; }
+        public EventCallback Ok { get; set; }
 
         [Parameter]
-        public string StateProperty { get; set; }
-
-        [Parameter]
-        public string PostalCodeProperty { get; set; }
-
-        [Parameter]
-        public EventCallback Updated { get; set; }
-
-        public string ItemName
-        {
-            get
-            {
-                if (Item == null)
-                    return string.Empty;
-
-                return Item.GetType().Name;
-            }
-        }
-
-        public string AddressLine
-        {
-            get
-            {
-                if (Item == null)
-                    return string.Empty;
-
-                return Item.GetType()
-                    .GetProperty(AddressLineProperty)
-                    .GetValue(Item).ToString();
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(AddressLineProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
-
-        public string City
-        {
-            get
-            {
-                if (Item == null)
-                    return string.Empty;
-
-                return Item.GetType()
-                    .GetProperty(CityProperty)
-                    .GetValue(Item).ToString();
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(CityProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
-
-        public State State
-        {
-            get
-            {
-                if (Item == null)
-                    return State.MI;
-
-                return (State)Convert.ToInt32(Item.GetType()
-                    .GetProperty(StateProperty)
-                    .GetValue(Item));
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(StateProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
-
-        public string PostalCode
-        {
-            get
-            {
-                if (Item == null)
-                    return string.Empty;
-
-                return Item.GetType()
-                    .GetProperty(PostalCodeProperty)
-                    .GetValue(Item).ToString();
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(PostalCodeProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
+        public EventCallback Cancel { get; set; }
 
         protected override void OnInitialized()
         {
