@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,24 +9,17 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class EmailsEditor : ComponentBase
     {
         [Parameter]
-        public FormMode FormMode { get; set; }
-
-        [Parameter]
         public IList<EmailToWrite> EmailsToWrite { get; set; }
         public EmailToWrite EmailToWrite { get; set; }
 
-        private bool DialogVisible => (EmailToWrite != null && (Adding || Editing)) || (EmailToWrite != null && (Adding || Editing));
+        private bool DialogVisible => EmailToWrite != null && (Adding || Editing);
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikTextBox EmailAddressControl { get; set; }
 
-        private async Task AddAsync(string type)
+        private async Task AddAsync()
         {
-            if (type == "EmailToWrite")
-                EmailToWrite = new();
-
-            if (type == "EmailToWrite")
-                EmailToWrite = new();
+            EmailToWrite = new();
 
             if (EmailAddressControl != null)
                 await EmailAddressControl.FocusAsync();
@@ -41,26 +33,18 @@ namespace Menominee.OrganizationDataContracts.Components
             Editing = true;
         }
 
-        private void Save(string type)
+        private void Save()
         {
-            if (type == "EmailToWrite")
-                EmailsToWrite.Add(EmailToWrite);
-
-            if (type == "EmailToWrite" && Adding)
+            if (Adding)
                 EmailsToWrite.Add(EmailToWrite);
 
             Adding = false;
             Editing = false;
         }
-        private void CancelEditEmail()
-        {
-            Adding = false;
-            Editing = false;
-        }
 
-        private void CancelAddEmail()
+        private void Cancel()
         {
-            if (EmailToWrite != null)
+            if (EmailToWrite != null && Adding)
                 EmailToWrite = null;
 
             Adding = false;

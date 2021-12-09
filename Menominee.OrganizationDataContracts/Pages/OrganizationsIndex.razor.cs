@@ -34,12 +34,14 @@ namespace Menominee.OrganizationDataContracts.Pages
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
         }
 
+        //Edit
         private async Task HandleSelectedOrganizationAsync(GridRowClickEventArgs args)
         {
+            Id = (args.Item as OrganizationToReadInList).Id;
             EditingOrganization = true;
             OrganizationsList = null;
 
-            var readDto = await OrganizationDataService.GetOrganization((args.Item as OrganizationToReadInList).Id);
+            var readDto = await OrganizationDataService.GetOrganization(Id);
             organizationToWrite = new OrganizationToWrite
             {
                 Name = readDto.Name,
@@ -83,37 +85,6 @@ namespace Menominee.OrganizationDataContracts.Pages
             }
         }
 
-
-        private void AddAddressAddingOrganization()
-        {
-            organizationToWrite.Address = new();
-            AddingAddress = true;
-        }
-
-        private void AddAddressEditingOrganization()
-        {
-            organizationToWrite.Address = new();
-            EditingAddress = true;
-        }
-
-        private void CancelAddAddress()
-        {
-            AddingAddress = false;
-
-            if (organizationToWrite.Address != null)
-                organizationToWrite.Address = null;
-        }
-
-        private void CancelEditAddress()
-        {
-            EditingAddress = false;
-        }
-
-        public void EditAddress()
-        {
-            EditingAddress = true;
-        }
-
         private void Add()
         {
             AddingOrganization = true;
@@ -121,32 +92,43 @@ namespace Menominee.OrganizationDataContracts.Pages
             organizationToWrite = new();
         }
 
-        protected async Task HandleAddSubmit()
+        protected async Task Save()
         {
-            await OrganizationDataService.AddOrganization(organizationToWrite);
-            await EndAddAsync();
-        }
+            if (AddingOrganization)
+                await OrganizationDataService.AddOrganization(organizationToWrite);
 
-        protected async Task HandleUpdateSubmit()
-        {
-            if (!string.IsNullOrWhiteSpace(organizationToWrite.Name))
-            {
+            if (EditingOrganization)
                 await OrganizationDataService.UpdateOrganization(organizationToWrite, Id);
-                await EndEditAsync();
-            }
+
+            await CloseEditorAsync();
         }
 
-        protected async Task EndEditAsync()
+        private async Task CloseEditorAsync()
         {
             EditingOrganization = false;
+            AddingOrganization = false;
             OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
+        }
+
+        private void AddAddress()
+        {
+            organizationToWrite.Address = new();
+            AddingAddress = true;
+        }
+
+        private void SaveAddress()
+        {
+            AddingAddress = false;
             EditingAddress = false;
         }
 
-        protected async Task EndAddAsync()
+        private void CancelEditAddress()
         {
-            AddingOrganization = false;
-            OrganizationsList = (await OrganizationDataService.GetAllOrganizations()).ToList();
+            if (organizationToWrite.Address != null && AddingAddress)
+                organizationToWrite.Address = null;
+
+            AddingAddress = false;
+            EditingAddress = false;
         }
     }
 }

@@ -21,18 +21,15 @@
                 Add Organization
             </TelerikButton>
         </div>
-
         <OrganizationsGrid Organizations="OrganizationsList"
                            OnSelected="HandleSelectedOrganizationAsync"></OrganizationsGrid>
-
-
     }
 
 
-    @if (AddingOrganization && organizationToWrite != null)
+    @if ((AddingOrganization || EditingOrganization) && organizationToWrite != null)
     {
         <EditForm Model="@organizationToWrite"
-                  OnValidSubmit="HandleAddSubmit">
+                  OnValidSubmit="Save">
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organizationToWrite"
                                 NameProperty="Name"
@@ -75,14 +72,14 @@
                                                    PostalCodeProperty="PostalCode"
                                                    EnableEditor="true" />
 
-                                    <TelerikButton OnClick="() => AddingAddress = false"
+                                    <TelerikButton OnClick="SaveAddress"
                                                    Icon="check"
                                                    Primary="true"
                                                    ButtonType="ButtonType.Button"
                                                    title="Save New Address">
                                         Ok
                                     </TelerikButton>
-                                    <TelerikButton OnClick="CancelAddAddress"
+                                    <TelerikButton OnClick="CancelEditAddress"
                                                    ButtonType="ButtonType.Button"
                                                    Icon="x"
                                                    title="Cancel New Address">
@@ -103,7 +100,7 @@
                         }
                         else
                         {
-                            <TelerikButton OnClick="AddAddressAddingOrganization"
+                            <TelerikButton OnClick="AddAddress"
                                            Icon="plus"
                                            Class="button-border-success"
                                            title="Add New Address">
@@ -112,122 +109,14 @@
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <PhonesEditor PhonesToWrite="@organizationToWrite?.Phones" FormMode="FormMode.Add"></PhonesEditor>
+                        <PhonesEditor PhonesToWrite="@organizationToWrite?.Phones"></PhonesEditor>
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails" FormMode="FormMode.Add"></EmailsEditor>
+                        <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails"></EmailsEditor>
                     </GridLayoutItem>
                 </GridLayoutItems>
             </TelerikGridLayout>
-            <button type="submit">Save</button>
-        </EditForm>
-
-
-        @*<div class="pt-4">
-                <EditFormButtons CloseEventCallback="EndAddAsync"
-                                 SaveEventCallback="HandleAddSubmit">
-                </EditFormButtons>
-            </div>*@
-    }
-
-    @if (EditingOrganization && organizationToWrite != null)
-    {
-        <EditForm class="ui form"
-                  Model="@organizationToWrite"
-                  OnSubmit="HandleUpdateSubmit">
-
-            <OrganizationEditor TItem="OrganizationToWrite"
-                                Item="@organizationToWrite"
-                                NameProperty="Name"
-                                NoteProperty="Note" />
-
-            <TelerikGridLayout>
-                <GridLayoutColumns>
-                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
-                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                </GridLayoutColumns>
-                <GridLayoutRows>
-                    <GridLayoutRow></GridLayoutRow>
-                </GridLayoutRows>
-                <GridLayoutItems>
-                    <GridLayoutItem>
-                        <div class="h6"
-                             tabindex="-1"
-                             @onclick="EditAddress">
-                            Address
-                            &nbsp &nbsp
-                            @if (organizationToWrite?.Address != null)
-                            {
-                                <TelerikIcon Icon="pencil" />
-                            }
-                        </div>
-                        @if (organizationToWrite?.Address != null)
-                        {
-
-                            <TelerikWindow Visible="organizationToWrite?.Address != null && EditingAddress"
-                                           Modal="true">
-                                <WindowTitle>
-                                    Address
-                                </WindowTitle>
-                                <WindowContent>
-                                    <AddressEditor TItem="AddressToWrite"
-                                                   Item="@organizationToWrite?.Address"
-                                                   AddressLineProperty="AddressLine"
-                                                   CityProperty="City"
-                                                   StateProperty="State"
-                                                   PostalCodeProperty="PostalCode"
-                                                   EnableEditor="EditingAddress" />
-
-                                    <TelerikButton OnClick="() => EditingAddress = false"
-                                                   Icon="check"
-                                                   Primary="true"
-                                                   ButtonType="ButtonType.Button"
-                                                   title="Save Address">
-                                        Ok
-                                    </TelerikButton>
-                                    <TelerikButton OnClick="CancelEditAddress"
-                                                   ButtonType="ButtonType.Button"
-                                                   Icon="x"
-                                                   title="Cancel Edit Address">
-                                        Cancel
-                                    </TelerikButton>
-                                </WindowContent>
-                            </TelerikWindow>
-                        }
-                        else
-                        {
-                            <TelerikButton OnClick="AddAddressEditingOrganization"
-                                           Icon="plus"
-                                           Class="button-border-success"
-                                           title="Add New Address">
-                                Add Address
-                            </TelerikButton>
-                        }
-
-                        @if (organizationToWrite?.Address != null && !EditingAddress)
-                        {
-                            <div @onclick="EditAddress">
-                                <AddressEditor TItem="AddressToWrite"
-                                               Item="@organizationToWrite?.Address"
-                                               AddressLineProperty="AddressLine"
-                                               CityProperty="City"
-                                               StateProperty="State"
-                                               PostalCodeProperty="PostalCode"
-                                               EnableEditor="EditingAddress" />
-                            </div>
-                        }
-                    </GridLayoutItem>
-                    <GridLayoutItem>
-                        <PhonesEditor PhonesToWrite="@organizationToWrite?.Phones" FormMode="FormMode.Edit"></PhonesEditor>
-                    </GridLayoutItem>
-                    <GridLayoutItem>
-                        <EmailsEditor EmailsToWrite="@organizationToWrite?.Emails" FormMode="FormMode.Edit"></EmailsEditor>
-                    </GridLayoutItem>
-                </GridLayoutItems>
-            </TelerikGridLayout>
-
-            <EditFormButtons CloseEventCallback="EndEditAsync"></EditFormButtons>
+            <EditFormButtons Close="CloseEditorAsync"></EditFormButtons>
         </EditForm>
     }
 </div>

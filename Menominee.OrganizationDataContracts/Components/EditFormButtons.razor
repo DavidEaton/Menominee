@@ -1,4 +1,4 @@
-﻿<TelerikButton OnClick="SaveAsync"
+﻿<TelerikButton OnClick="Save"
                Primary="true"
                Icon="save"
                title="Save Address">
@@ -6,7 +6,15 @@
 </TelerikButton>
 
 <TelerikButton Icon="x"
-               OnClick="CloseAsync"
+               OnClick="Close"
                title="Cancel and Close">
     Close
 </TelerikButton>
+
+@code {
+    [Parameter]
+    public EventCallback Close { get; set; }
+
+    [Parameter]
+    public EventCallback Save { get; set; }
+}
