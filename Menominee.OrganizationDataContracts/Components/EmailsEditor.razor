@@ -1,11 +1,11 @@
 ﻿<div class="container">
     <div class="h6">Emails</div>
-    @if (((int)EmailsToWrite?.Count()) > 0)
+    @if (((int)Emails?.Count()) > 0)
     {
-        <ContactableTemplate Items="EmailsToWrite"
+        <ContactableTemplate Items="Emails"
                              TItem="EmailToWrite"
                              Context="email"
-                             @key="EmailToWrite"
+                             @key="Email"
                              OnRowClick="Edit">
             <TableHeader>
                 <th>Address</th>
@@ -24,7 +24,7 @@
 
     @if (Editing || Adding)
     {
-        <EmailEditor EmailToWrite="EmailToWrite"
+        <EmailEditor Email="Email"
                      DialogVisible="DialogVisible"
                      Saved="Save"
                      Cancelled="Cancel">

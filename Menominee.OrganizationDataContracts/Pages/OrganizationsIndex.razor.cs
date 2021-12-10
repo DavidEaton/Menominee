@@ -90,7 +90,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             organization = new();
         }
 
-        protected async Task Save()
+        protected async Task SubmitForm()
         {
             if (AddingOrganization)
                 await OrganizationDataService.AddOrganization(organization);

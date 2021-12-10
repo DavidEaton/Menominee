@@ -7,15 +7,17 @@ namespace CustomerVehicleManagement.Shared.Validators
     {
         public OrganizationToWriteValidator()
         {
-            RuleFor(organization => organization.Name)
+            RuleFor(_ => _.Name)
                 .NotEmpty()
-                .WithMessage("Organization name is required.");
+                .Length(2, 255);
 
-            RuleFor(organization => organization.Note)
+            RuleFor(_ => _.Note)
                 .Length(0, 10000)
-                .When(organization => organization.Note != null);
+                .When(_ => _.Note != null);
 
-            //RuleFor(organization => organization.Address
+            RuleFor(_ => _.Address)
+                .SetValidator(new AddressToWriteValidator())
+                .When(_ => _.Address != null);
         }
     }
 }

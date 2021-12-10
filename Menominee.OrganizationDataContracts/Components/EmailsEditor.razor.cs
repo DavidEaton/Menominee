@@ -9,17 +9,17 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class EmailsEditor : ComponentBase
     {
         [Parameter]
-        public IList<EmailToWrite> EmailsToWrite { get; set; }
-        public EmailToWrite EmailToWrite { get; set; }
+        public IList<EmailToWrite> Emails { get; set; }
+        public EmailToWrite Email { get; set; }
 
-        private bool DialogVisible => EmailToWrite != null && (Adding || Editing);
+        private bool DialogVisible => Email != null && (Adding || Editing);
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
         private TelerikTextBox EmailAddressControl { get; set; }
 
         private async Task AddAsync()
         {
-            EmailToWrite = new();
+            Email = new();
 
             if (EmailAddressControl != null)
                 await EmailAddressControl.FocusAsync();
@@ -29,14 +29,14 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void Edit(EmailToWrite item)
         {
-            EmailToWrite = item;
+            Email = item;
             Editing = true;
         }
 
         private void Save()
         {
             if (Adding)
-                EmailsToWrite.Add(EmailToWrite);
+                Emails.Add(Email);
 
             Adding = false;
             Editing = false;
@@ -44,8 +44,8 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void Cancel()
         {
-            if (EmailToWrite != null && Adding)
-                EmailToWrite = null;
+            if (Email != null && Adding)
+                Email = null;
 
             Adding = false;
             Editing = false;

@@ -6,7 +6,7 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class EmailEditor : ComponentBase
     {
         [Parameter]
-        public EmailToWrite EmailToWrite { get; set; }
+        public EmailToWrite Email { get; set; }
 
         [Parameter]
         public EventCallback Saved { get; set; }

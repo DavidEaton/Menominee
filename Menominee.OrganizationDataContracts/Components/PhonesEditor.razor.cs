@@ -6,30 +6,30 @@ namespace Menominee.OrganizationDataContracts.Components
 {
     public partial class PhonesEditor : ComponentBase
     {
-        public PhoneToWrite PhoneToWrite { get; set; }
+        public PhoneToWrite Phone { get; set; }
 
         [Parameter]
-        public IList<PhoneToWrite> PhonesToWrite { get; set; }
-        private bool DialogVisible => PhoneToWrite != null && (Adding || Editing);
+        public IList<PhoneToWrite> Phones { get; set; }
+        private bool DialogVisible => Phone != null && (Adding || Editing);
         private bool Adding { get; set; } = false;
         private bool Editing { get; set; } = false;
 
         private void Edit(PhoneToWrite item)
         {
-            PhoneToWrite = item;
+            Phone = item;
             Editing = true;
         }
 
         private void Add()
         {
-            PhoneToWrite = new();
+            Phone = new();
             Adding = true;
         }
 
         private void Save()
         {
             if (Adding)
-                PhonesToWrite.Add(PhoneToWrite);
+                Phones.Add(Phone);
 
             Adding = false;
             Editing = false;
@@ -37,8 +37,8 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private void Cancel()
         {
-            if (PhoneToWrite != null && Adding)
-                PhoneToWrite = null;
+            if (Phone != null && Adding)
+                Phone = null;
 
             Adding = false;
             Editing = false;

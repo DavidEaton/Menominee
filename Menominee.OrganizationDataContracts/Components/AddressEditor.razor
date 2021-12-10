@@ -1,18 +1,18 @@
 ﻿<div class="container">
     <div class="form-group row">
         <label for="address" class="form-control-label">Street</label>
-        <TelerikTextBox @bind-Value="@Address.AddressLine"
+        <TelerikTextBox @bind-Value="Address.AddressLine"
                         Width="100%"
                         Enabled="Enabled" />
-        @*<TelerikValidationMessage For="@(() => AddressToWrite.AddressLine)" />*@
+        <TelerikValidationMessage For="@(() => Address.AddressLine)" />
     </div>
 
     <div class="form-group row">
         <label for="city" class="form-control-label">City</label>
-        <TelerikTextBox @bind-Value="@Address.City"
+        <TelerikTextBox @bind-Value="Address.City"
                         Width="100%"
                         Enabled="Enabled" />
-        @*                <TelerikValidationMessage For="@(() => AddressToWrite.City)" />*@
+        <TelerikValidationMessage For="@(() => Address.City)" />
     </div>
 
     <div class="form-group row">
@@ -20,20 +20,20 @@
         <TelerikComboBox Data="StateEnumData"
                          TextField="DisplayText"
                          ValueField="Value"
-                         @bind-Value="@Address.State"
+                         @bind-Value="Address.State"
                          Width="100%"
                          Filterable="true"
                          ClearButton="false"
                          Placeholder="Select a State"
                          Enabled="Enabled" />
-        @*              <TelerikValidationMessage For="@(() => AddressToWrite.State)" />*@
+        <TelerikValidationMessage For="@(() => Address.State)" />
     </div>
 
     <div class="form-group row">
         <label for="postalCode" class="form-control-label">Postal Code</label>
-        <TelerikTextBox @bind-Value="@Address.PostalCode"
+        <TelerikTextBox @bind-Value="Address.PostalCode"
                         Width="100%"
                         Enabled="Enabled" />
-        @*            <TelerikValidationMessage For="@(() => AddressToWrite.PostalCode)" />*@
+        <TelerikValidationMessage For="@(() => Address.PostalCode)" />
     </div>
 </div>

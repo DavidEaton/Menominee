@@ -29,7 +29,7 @@
     @if ((AddingOrganization || EditingOrganization) && organization != null)
     {
         <EditForm Model="@organization"
-                  OnValidSubmit="Save">
+                  OnValidSubmit="SubmitForm">
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organization"
                                 NameProperty="Name"
@@ -67,7 +67,6 @@
                             <AddressDialog Address="organization?.Address"
                                            Cancel="CancelAddress"
                                            Ok="SaveAddress"
-                                           Visible="AddressEditorModal"
                                            Enabled="true" />
                         }
 
@@ -88,10 +87,10 @@
                         }
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <PhonesEditor PhonesToWrite="@organization?.Phones" />
+                        <PhonesEditor Phones="@organization?.Phones" />
                     </GridLayoutItem>
                     <GridLayoutItem>
-                        <EmailsEditor EmailsToWrite="@organization?.Emails" />
+                        <EmailsEditor Emails="@organization?.Emails" />
                     </GridLayoutItem>
                 </GridLayoutItems>
             </TelerikGridLayout>

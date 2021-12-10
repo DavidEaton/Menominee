@@ -1,11 +1,11 @@
 ﻿<div class="container">
     <div class="h6">Phones</div>
-    @if (((int)PhonesToWrite?.Count()) > 0)
+    @if (((int)Phones?.Count()) > 0)
     {
-        <ContactableTemplate Items="PhonesToWrite"
+        <ContactableTemplate Items="Phones"
                              TItem="PhoneToWrite"
                              Context="phone"
-                             @key="PhoneToWrite"
+                             @key="Phone"
                              OnRowClick="Edit">
             <TableHeader>
                 <th>Number</th>
@@ -27,7 +27,7 @@
     }
     @if (Adding || Editing)
     {
-        <PhoneEditor PhoneToWrite="PhoneToWrite"
+        <PhoneEditor Phone="Phone"
                      Saved="Save"
                      Cancelled="Cancel"
                      DialogVisible="DialogVisible">

@@ -11,7 +11,7 @@ namespace Menominee.OrganizationDataContracts.Components
     public partial class PhoneEditor : ComponentBase
     {
         [Parameter]
-        public PhoneToWrite PhoneToWrite { get; set; }
+        public PhoneToWrite Phone { get; set; }
 
         [Parameter]
         public EventCallback Saved { get; set; }

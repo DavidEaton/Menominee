@@ -15,6 +15,6 @@
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.29.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.30.0" />
   </ItemGroup>
 </Project>
