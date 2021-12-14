@@ -23,6 +23,12 @@ namespace Menominee.OrganizationDataContracts.Components
         [Parameter]
         public EventCallback Cancel { get; set; }
 
+        [Parameter]
+        public EventCallback Updated { get; set; }
+
+        //[CascadingParameter]
+        //BlazoredModalInstance BlazoredModal { get; set; }
+
         protected override void OnInitialized()
         {
             foreach (State item in Enum.GetValues(typeof(State)))

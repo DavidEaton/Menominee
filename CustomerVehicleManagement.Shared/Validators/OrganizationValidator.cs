@@ -2,7 +2,7 @@
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public class OrganizationValidator : AbstractValidator<OrganizationToWrite>
     {
@@ -11,6 +11,13 @@ namespace CustomerVehicleManagement.Api.Validators
             RuleFor(organization => organization.Name)
                                                 .MustBeValueObject(OrganizationName.Create);
 
+            //RuleFor(organization => organization.Name)
+            //        .NotEmpty()
+            //        .Length(2, 255);
+
+
+            //APPLICATION SHOULD USE MustBeValueObject TO VALIDATE ADDRESS VALUEOBJECT
+            // MustBeValueObject VALIDATOR WORKS GREAT WITH API BUT BLAZOR ValidationMessage IS MISSING
             RuleFor(organization => organization.Address)
                                                 .NotEmpty()
                                                 .MustBeValueObject(address => Address.Create(address.AddressLine,
@@ -19,9 +26,13 @@ namespace CustomerVehicleManagement.Api.Validators
                                                                                              address.PostalCode))
                                                 .When(organization => organization.Address != null);
 
+            //RuleFor(organization => organization.Address)
+            //    .SetValidator(new AddressToWriteValidator())
+            //    .When(organization => organization.Address != null);
+
             RuleFor(organization => organization.Note)
-                                                .Length(0, 10000)
-                                                .When(organization => organization.Note != null);
+                .Length(0, 10000)
+                .When(organization => organization.Note != null);
 
             RuleFor(organization => organization.Emails)
                 .NotNull()
@@ -36,4 +47,5 @@ namespace CustomerVehicleManagement.Api.Validators
                 .When(organization => organization.Contact != null);
         }
     }
+
 }

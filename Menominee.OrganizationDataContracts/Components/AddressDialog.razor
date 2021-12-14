@@ -8,7 +8,8 @@
         <AddressEditor Address="Address"
                        Cancel="Cancel"
                        Ok="Ok"
-                       Enabled="Enabled"/>
+                       Enabled="Enabled"
+                       Updated="Updated"/>
         @if (Enabled)
         {
             <TelerikButton OnClick="Ok"
@@ -41,5 +42,8 @@
 
     [Parameter]
     public bool Enabled { get; set; }
+
+    [Parameter]
+    public EventCallback Updated { get; set; }
 
 }

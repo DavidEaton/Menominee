@@ -3,7 +3,7 @@ using FluentValidation;
 using Menominee.Common.ValueObjects;
 using System;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public class PersonValidator : AbstractValidator<PersonToWrite>
     {

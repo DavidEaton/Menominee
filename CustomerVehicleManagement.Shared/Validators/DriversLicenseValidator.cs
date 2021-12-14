@@ -2,7 +2,7 @@
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public class DriversLicenseValidator : AbstractValidator<DriversLicenseToWrite>
     {

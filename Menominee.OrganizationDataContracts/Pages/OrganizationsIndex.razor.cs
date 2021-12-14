@@ -2,6 +2,7 @@
 using Menominee.Common.Enums;
 using Menominee.OrganizationDataContracts.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,13 @@ namespace Menominee.OrganizationDataContracts.Pages
         [Inject]
         public ILogger<OrganizationsIndex> Logger { get; set; }
 
+
         public IReadOnlyList<OrganizationToReadInList> OrganizationsList;
         public long Id { get; set; }
 
         private bool EditingOrganization { get; set; } = false;
         private bool AddingOrganization { get; set; } = false;
-        private bool AddressEditorModal { get; set; } = false;
+        private bool EnableEditor { get; set; } = false;
 
         private OrganizationToWrite organization { get; set; }
         protected override async Task OnInitializedAsync()
@@ -111,19 +113,32 @@ namespace Menominee.OrganizationDataContracts.Pages
         private void AddAddress()
         {
             organization.Address = new();
-            AddressEditorModal = true;
+            EnableEditor = true;
+            //Modal.Show<AddressEditor>("Welcome to Blazored Modal");
         }
 
         private void SaveAddress()
         {
-            AddressEditorModal = false;
+            EnableEditor = false;
         }
-
         private void CancelAddress()
         {
             //if (organizationToWrite.Address != null && AddingAddress)
             //    organizationToWrite.Address = null;
-            AddressEditorModal = false;
+            EnableEditor = false;
         }
+
+        private void OrganizationEditorUpdated()
+        {
+            //var editContext = new EditContext(organization);
+            //editContext.Validate();
+        }
+        private void AddressEditorUpdated()
+        {
+            var editContext = new EditContext(organization);
+            editContext.Validate();
+
+        }
+
     }
 }

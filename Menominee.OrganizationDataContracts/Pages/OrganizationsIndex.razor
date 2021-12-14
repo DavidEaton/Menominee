@@ -33,7 +33,8 @@
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organization"
                                 NameProperty="Name"
-                                NoteProperty="Note" />
+                                NoteProperty="Note"
+                                Updated="OrganizationEditorUpdated" />
             <FluentValidationValidator />
             <TelerikGridLayout>
                 <GridLayoutColumns>
@@ -48,27 +49,36 @@
                     <GridLayoutItem>
                         @if (organization?.Address != null)
                         {
-                            <div class="h6"
-                                 tabindex="-1"
-                                 @onclick="() => AddressEditorModal = true">
-                                Address
-                                &nbsp &nbsp
-                                <TelerikIcon Icon="pencil" />
+                            <div class="row">
+                                <div class="h6"
+                                     tabindex="-1"
+                                     @onclick="@(() => EnableEditor = true)"
+                                     title="Edit Address">
+                                    Address
+                                    &nbsp &nbsp
+                                    <TelerikIcon Icon="pencil" />
+                                </div>
+                                <div class="pl-4"></div>
+                                <div tabindex="-1"
+                                     @onclick="@(() => organization.Address = null)"
+                                     title="Delete Address">
+                                    <TelerikIcon Icon="trash" />
+                                </div>
                             </div>
+
                             <AddressEditor Address="organization?.Address"
                                            Cancel="CancelAddress"
                                            Ok="SaveAddress"
-                                           Enabled="AddressEditorModal" />
+                                           Enabled="EnableEditor"
+                                           Updated="AddressEditorUpdated" />
                         }
 
-                        @if (AddressEditorModal)
-                        {
 
-                            <AddressDialog Address="organization?.Address"
-                                           Cancel="CancelAddress"
-                                           Ok="SaveAddress"
-                                           Enabled="true" />
-                        }
+                        @*<AddressDialog Address="organization?.Address"
+                            Cancel="CancelAddress"
+                            Ok="SaveAddress"
+                            Enabled="true"
+                            Updated="AddressEditorUpdated" />*@
 
 
                         @if (organization?.Address == null)
@@ -95,7 +105,8 @@
                 </GridLayoutItems>
             </TelerikGridLayout>
             <div class="pt-4">
-                <EditFormButtons Close="CloseEditorAsync" />
+                <EditFormButtons Close="CloseEditorAsync"
+                                 EnableSave="@(context.Validate())"/>
             </div>
         </EditForm>
     }

@@ -3,7 +3,7 @@ using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public class PhonesValidator : AbstractValidator<IList<PhoneToWrite>>
     {

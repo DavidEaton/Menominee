@@ -96,7 +96,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             }
             catch (CSharpFunctionalExtensions.ResultFailureException ex)
             {
-                ex.Error.Should().Be(OrganizationName.MinimumLengthMessage);
+                ex.Error.Should().Contain(OrganizationName.MinimumLengthMessage);
             }
         }
 
@@ -116,7 +116,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             }
             catch (CSharpFunctionalExtensions.ResultFailureException ex)
             {
-                ex.Error.Should().Be(OrganizationName.MaximumLengthMessage);
+                ex.Error.Should().Contain(OrganizationName.MaximumLengthMessage);
             }
         }
 
@@ -259,7 +259,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             }
             catch (CSharpFunctionalExtensions.ResultFailureException ex)
             {
-                ex.Error.Should().Be(Organization.NameRequiredMessage);
+                ex.Error.Should().Contain(OrganizationName.RequiredMessage);
             }
         }
 

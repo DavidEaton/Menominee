@@ -28,12 +28,6 @@ namespace Menominee.OrganizationDataContracts.Shared
                     Url = "organizations",
                     Icon = "building-blocks"
                 },
-                new MenuModel()
-                {
-                    Text = "Organizations sans Telerik",
-                    Url = "OrganizationsIndexSansTelerik",
-                    Icon = "building-blocks"
-                },
             };
         }
         public class MenuModel

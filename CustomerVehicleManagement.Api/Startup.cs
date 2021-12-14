@@ -4,7 +4,7 @@ using CustomerVehicleManagement.Api.Handlers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
-using CustomerVehicleManagement.Api.Validators;
+using CustomerVehicleManagement.Shared.Validators;
 using CustomerVehicleManagement.Shared;
 using FluentValidation.AspNetCore;
 using Menominee.Idp.Areas.Identity.Data;
@@ -39,7 +39,6 @@ namespace CustomerVehicleManagement.Api
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = HostEnvironment.IsDevelopment();

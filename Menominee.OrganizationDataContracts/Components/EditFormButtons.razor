@@ -1,7 +1,8 @@
 ﻿<TelerikButton OnClick="Save"
                Primary="true"
                Icon="save"
-               title="Save Address">
+               Enabled="EnableSave"
+               title="Save">
     Save
 </TelerikButton>
 
@@ -17,4 +18,7 @@
 
     [Parameter]
     public EventCallback Save { get; set; }
+
+    [Parameter]
+    public bool EnableSave { get; set; }
 }
