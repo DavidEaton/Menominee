@@ -11,11 +11,6 @@ namespace CustomerVehicleManagement.Shared.Validators
             RuleFor(organization => organization.Name)
                                                 .MustBeValueObject(OrganizationName.Create);
 
-            //RuleFor(organization => organization.Name)
-            //        .NotEmpty()
-            //        .Length(2, 255);
-
-
             //APPLICATION SHOULD USE MustBeValueObject TO VALIDATE ADDRESS VALUEOBJECT
             // MustBeValueObject VALIDATOR WORKS GREAT WITH API BUT BLAZOR ValidationMessage IS MISSING
             RuleFor(organization => organization.Address)

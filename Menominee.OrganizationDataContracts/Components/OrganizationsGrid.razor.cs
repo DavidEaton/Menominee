@@ -15,7 +15,7 @@ namespace Menominee.OrganizationDataContracts.Components
         public IReadOnlyList<OrganizationToReadInList> Organizations { get; set; }
 
         [Parameter]
-        public RenderFragment? ChildContent { get; set; } // Parent component fails to build at OnSelected="HandleSelectedOrganizationAsync" without this line.
+        public RenderFragment ChildContent { get; set; } // Parent component fails to build at OnSelected="HandleSelectedOrganizationAsync" without this property.
 
         [Parameter]
         public EventCallback<GridRowClickEventArgs> OnSelected { get; set; }
@@ -31,7 +31,6 @@ namespace Menominee.OrganizationDataContracts.Components
 
         private async Task GridRowClicked(GridRowClickEventArgs args)
         {
-            //SelectedOrganization = args.Item as OrganizationToReadInList;
             await OnSelected.InvokeAsync(args);
         }
         private bool isExporting { get; set; }

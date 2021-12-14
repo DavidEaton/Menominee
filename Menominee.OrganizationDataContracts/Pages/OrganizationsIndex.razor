@@ -33,8 +33,7 @@
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organization"
                                 NameProperty="Name"
-                                NoteProperty="Note"
-                                Updated="OrganizationEditorUpdated" />
+                                NoteProperty="Note" />
             <FluentValidationValidator />
             <TelerikGridLayout>
                 <GridLayoutColumns>
@@ -66,11 +65,16 @@
                                 </div>
                             </div>
 
-                            <AddressEditor Address="organization?.Address"
+                            <AddressEditor TItem="AddressToWrite"
+                                           Item="@organization.Address"
                                            Cancel="CancelAddress"
                                            Ok="SaveAddress"
                                            Enabled="EnableEditor"
-                                           Updated="AddressEditorUpdated" />
+                                           AddressLineProperty="AddressLine"
+                                           CityProperty="City"
+                                           StateProperty="State"
+                                           PostalCodeProperty="PostalCode"
+                                           Updated="AddressEditorUpdated"/>
                         }
 
 
@@ -106,7 +110,7 @@
             </TelerikGridLayout>
             <div class="pt-4">
                 <EditFormButtons Close="CloseEditorAsync"
-                                 EnableSave="@(context.Validate())"/>
+                                 EnableSave="@(ValidateContext())"/>
             </div>
         </EditForm>
     }

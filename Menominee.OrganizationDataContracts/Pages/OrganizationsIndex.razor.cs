@@ -130,15 +130,24 @@ namespace Menominee.OrganizationDataContracts.Pages
 
         private void OrganizationEditorUpdated()
         {
-            //var editContext = new EditContext(organization);
+            // Organization Validation WILL occur without this call:
             //editContext.Validate();
         }
         private void AddressEditorUpdated()
         {
+            // Organization Address Validation will not occur without this call:
             var editContext = new EditContext(organization);
             editContext.Validate();
-
         }
 
+        private bool ValidateContext()
+        {
+            // Direct button attribute assignment:
+            // @(context.Validate());
+            var editContext = new EditContext(organization);
+            var isValid = editContext.Validate();
+            return isValid;
+
+        }
     }
 }
