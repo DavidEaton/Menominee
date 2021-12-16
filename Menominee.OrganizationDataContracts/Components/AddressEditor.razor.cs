@@ -1,5 +1,6 @@
 ﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +10,9 @@ namespace Menominee.OrganizationDataContracts.Components
     {
         [Parameter]
         public TItem Item { get; set; }
+
+        [CascadingParameter]
+        private EditContext EditContext { get; set; }
 
         [Parameter]
         public bool Enabled { get; set; }

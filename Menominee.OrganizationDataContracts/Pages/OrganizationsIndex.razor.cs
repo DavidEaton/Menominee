@@ -139,15 +139,5 @@ namespace Menominee.OrganizationDataContracts.Pages
             var editContext = new EditContext(organization);
             editContext.Validate();
         }
-
-        private bool ValidateContext()
-        {
-            // Direct button attribute assignment:
-            // @(context.Validate());
-            var editContext = new EditContext(organization);
-            var isValid = editContext.Validate();
-            return isValid;
-
-        }
     }
 }

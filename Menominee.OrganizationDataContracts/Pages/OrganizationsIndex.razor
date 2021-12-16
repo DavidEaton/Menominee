@@ -110,7 +110,7 @@
             </TelerikGridLayout>
             <div class="pt-4">
                 <EditFormButtons Close="CloseEditorAsync"
-                                 EnableSave="@(ValidateContext())"/>
+                                 EnableSave="@(context.Validate())"/>
             </div>
         </EditForm>
     }
