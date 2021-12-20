@@ -133,7 +133,7 @@ namespace Menominee.OrganizationDataContracts.Pages
             // Organization Validation WILL occur without this call:
             //editContext.Validate();
         }
-        private void AddressEditorUpdated()
+        private void EditorUpdated()
         {
             // Organization Address Validation will not occur without this call:
             var editContext = new EditContext(organization);

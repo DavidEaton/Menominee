@@ -37,7 +37,8 @@
                              ClearButton="false"
                              Placeholder="Select a State"
                              Enabled="Enabled"
-                             OnBlur="@(() => Updated.InvokeAsync())" />
+                             OnBlur="@(() => Updated.InvokeAsync())"
+                             OnChange="StateChanged"/>
             <TelerikValidationMessage For="@(() => State)" />
         </div>
     </div>

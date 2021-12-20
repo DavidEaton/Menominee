@@ -142,6 +142,12 @@ namespace Menominee.OrganizationDataContracts.Components
             base.OnInitialized();
         }
 
+        public void StateChanged()
+        {
+            var editContext = new EditContext(Item);
+            editContext.Validate();
+        }
+
         List<StateEnumModel> StateEnumData { get; set; } = new List<StateEnumModel>();
     }
     public class StateEnumModel

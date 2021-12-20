@@ -33,7 +33,8 @@
             <OrganizationEditor TItem="OrganizationToWrite"
                                 Item="@organization"
                                 NameProperty="Name"
-                                NoteProperty="Note" />
+                                NoteProperty="Note"
+                                Updated="EditorUpdated"/>
             <FluentValidationValidator />
             <TelerikGridLayout>
                 <GridLayoutColumns>
@@ -74,7 +75,7 @@
                                            CityProperty="City"
                                            StateProperty="State"
                                            PostalCodeProperty="PostalCode"
-                                           Updated="AddressEditorUpdated"/>
+                                           Updated="EditorUpdated"/>
                         }
 
 
