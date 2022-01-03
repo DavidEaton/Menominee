@@ -44,10 +44,14 @@ namespace Menominee.Idp
 
             if (Environment.IsDevelopment())
             {
-                // not recommended for production - you need to store your key material somewhere secure
                 builder.AddDeveloperSigningCredential();
                 services.AddTransient<IEmailSender, DummyEmailSender>();
             }
+
+            if (Environment.IsProduction())
+                // not recommended for production - you need to store your key material somewhere secure
+                builder.AddDeveloperSigningCredential();
+
 
             ConfigureCors(services);
         }
@@ -60,11 +64,9 @@ namespace Menominee.Idp
                 builder =>
                 {
                     builder.WithOrigins(
-                           "https://menominee.net",
-                           "https://www.menominee.net",
                            "https://menominee.azurewebsites.net",
-                           "https://menominee-testing.net",
-                           "https://menominee-testing.azurewebsites.net")
+                           "https://menominee-test.azurewebsites.net",
+                           "https://menominee-staging.azurewebsites.net")
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();

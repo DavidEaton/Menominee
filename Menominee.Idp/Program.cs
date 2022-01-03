@@ -7,6 +7,8 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Menominee.Idp
 {
@@ -52,6 +54,11 @@ namespace Menominee.Idp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+                    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+                })
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
