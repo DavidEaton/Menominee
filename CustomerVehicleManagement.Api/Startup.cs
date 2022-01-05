@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
+using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
 using Menominee.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
