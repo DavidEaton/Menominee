@@ -74,20 +74,20 @@ For example, a method converting to Int64 should be named `ToInt64`, not `ToLong
 
 ## This application was designed with <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles in mind.
 
-The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus the most of our effort, keeping it fully encapsulated, covered well by unit tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated.
+The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus most of our efforts, keeping it fully encapsulated, covered well by tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated. We adhere to the Always-Valid Domain Model philosophy. 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
 In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Person domain aggregate class enforces the business rule, "Person can have only one Primary Phone", via ValidationAttribute named PersonCanHaveOnlyOnePrimaryPhoneAttribute.
 ### Implement validations in the domain model layer
 Validations are usually implemented in domain entity constructors or in methods that can update the entity. There are multiple ways to implement validations, such as verifying data and raising exceptions if the validation fails. There are also more advanced patterns such as using the Specification pattern for validations, and the Notification pattern to return a collection of errors instead of returning an exception for each validation as it occurs.
 
-The domain model is best kept lean with the use of exceptions in your entity's behavior methods, or by implementing the Specification and Notification patterns to enforce validation rules.
+Domain model methods are kept honest by returning a result object instead of throwing exceptions. As a reesult, it's easier to deal with validation errors, and track down bugs when they do creep in.
 
-We use field-level validation on our command Data Transfer Objects (DTOs) and domain-level validation inside our entities. We will do this by returning a result object instead of exceptions in order to make it easier to deal with the validation errors.
+We use field-level validation on our command and query Data Transfer Objects (DTOs), and domain-level validation inside our entities and value objects. We do this by adding the FluentValidation library to the ASP.NET processing pipeline in our api, and FluentValidation integrates with our value objects and entities. Controllers can therefore become much lighter, focused, readable and maintainable, removing all validation responsibility out of controllers and into the domain model where they belong.
 
 
 ### Value Objects
 
-Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn’t be able to instantiate a value object in an invalid state.
+Encapsulation is an important part of any domain class, value objects included. Encapsulation protects application invariants: you shouldn’t be able to instantiate a value object in an invalid state (Always-Valid domain model).
 
 In practice it means that value objects are immutable, and public setters are not used. For example, methods like NewNumber on the Phone class return a NEW Phone object, rather than mutating the existing Phone object:
 
@@ -104,8 +104,8 @@ In practice it means that value objects are immutable, and public setters are no
         /// we don’t ever have to expose it outside of the aggregate (Organization).
 
 ### [ApiController] Attribute
-... makes the next two checks unnecessary :)
-We used to have include these checks in MANY controller methods. No more!
+... makes the next two checks in Controllers unnecessary. 
+We used to have to include these checks in MANY controller methods. No more!
             
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -119,7 +119,7 @@ Helps avoid partially initialized entities (which can lead to subtle bugs), so t
 More performant in some scenarios
 Code simplicity (no need to remember to load explicitly via Include statements)
 
-Cons: Possible to introduce the N+1 problemm which is bad for performance. For a given page view, there should be only one database trip, not N+1.
+Cons: Possible to introduce the N+1 problem which is bad for performance. For a given page view, there should be only one database trip, not N+1.
 
 N+1 problem ONLY HAPPENS IN READS.
 
@@ -183,4 +183,4 @@ Test projects include unit tests, integration tests.
 ### Code Readability and Comments
 
 Code should be as self-documenting as possible, and we strive to write clear, focused code that is human-readable, and attempts to adhere to the Single Responsibility Principle.
-That said, some comments have been included in our source code for further explanation. We've tried to limit those comments to the Person class, its Data Transfer Objects (DTOs), repository, controller, mapping profile, and associated helper methods, which contain comments that are applicable to most other domain types and their related classes.
+That said, some comments have been included in our source code for further explanation. We've tried to limit those comments to the Organization class, its Data Transfer Objects (DTOs), repository, controller, which contain comments that are applicable to most other domain types and their related classes.
