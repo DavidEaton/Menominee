@@ -58,11 +58,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         #region ORM
 
-        // Code that pollutes our domain class (very minor impact in this case), but
-        // is necessary for EntityFramework, makes our model <100% persistence ignorant.
-
         // EF requires an empty constructor
-        protected Person() : base(null, null, null) { }
+        protected Person() { }
 
         #endregion
 

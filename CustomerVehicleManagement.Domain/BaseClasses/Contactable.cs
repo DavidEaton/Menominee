@@ -129,5 +129,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         {
             return Emails.Any(x => x.Address == email.Address);
         }
+
+        // EF requires empty constructor
+        public Contactable() {}
     }
 }

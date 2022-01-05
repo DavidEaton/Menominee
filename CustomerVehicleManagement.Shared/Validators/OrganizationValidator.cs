@@ -20,13 +20,6 @@ namespace CustomerVehicleManagement.Shared.Validators
                                                                                              address.PostalCode))
                                                 .When(organization => organization.Address != null);
 
-            // Move this rule into the value object factory method
-            RuleFor(organization => organization.Address.State)
-                                                        .NotEmpty()
-                                                        .IsInEnum()
-                                                        .WithMessage("Please select a valid State")
-                                                        .When(organization => organization.Address != null);
-
             RuleFor(organization => organization.Note)
                 .Length(0, 10000)
                 .When(organization => organization.Note != null);
