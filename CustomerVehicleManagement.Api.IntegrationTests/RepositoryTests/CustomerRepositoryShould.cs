@@ -5,7 +5,7 @@ using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Threading.Tasks;
 using Xunit;
-using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.Utilities;
+using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
 using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories

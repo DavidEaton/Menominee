@@ -1,46 +1,33 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
+using FluentAssertions;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
+namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class CustomersControllerShould : IClassFixture<WebApplicationFactory<Startup>>
+    public class CustomersControllerShould : SharedInstanceTestFixture
     {
-        private const string CustomersControllerPath = "https://localhost/api/customers";
+        private const string Path = "https://localhost/api/customers/";
         private readonly HttpClient httpClient;
 
-        public CustomersControllerShould(WebApplicationFactory<Startup> factory)
+        public CustomersControllerShould(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
         {
-            httpClient = factory.CreateDefaultClient(new Uri(CustomersControllerPath));
+            httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
         [Fact]
-        public async Task Return_Success_Status_On_GetCustomers()
+        public async Task Return_Success_And_Expected_MediaType_For_Regular_User_On_Get()
         {
-            var response = await httpClient.GetAsync(string.Empty);
-
-            // Confirm that endpoint exists at, and returns success code from the expected uri
-            response.EnsureSuccessStatusCode();
-        }
-
-        [Fact]
-        public async Task Return_Expected_MediaType_On_GetCustomers()
-        {
+            var provider = TestClaimsProvider.WithUserClaims();
+            var client = Factory.CreateClientWithTestAuth(provider);
             var mediaType = "application/json";
-            var response = await httpClient.GetAsync(string.Empty);
 
-            // Confirm that endpoint returns JSON ContentType
+            var response = await client.GetAsync(Path);
+
+            response.EnsureSuccessStatusCode();
             response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
-        }
-
-        [Fact]
-        public async Task Return_Content_On_GetCustomers()
-        {
-            var response = await httpClient.GetAsync(string.Empty);
-
             response.Content.Should().NotBeNull();
             response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
         }
@@ -65,8 +52,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Controllers
         //    string jsonContent = content.ReadAsStringAsync().Result;
         //    CustomerToRead customer = JsonSerializer.Deserialize<CustomerToRead>(jsonContent);
 
-        //    customer.Should().NotBeNull();
-        //}
+        //    // hits controller action
+        //    var response = await client.GetAsync(url);
 
+        //    response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+        //    response.Headers.Location.LocalPath.Should().Be("/auth/login");
+        //}
     }
 }

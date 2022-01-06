@@ -25,10 +25,11 @@ namespace Menominee.Idp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddTransient<IProfileService, CustomProfileService>();
+            services.AddTransient<IProfileService, LocalUserProfileService>();
 
             var builder = services.AddIdentityServer(options =>
             {
+                // additional startup in Areas/Identity/IdentityHostingStartup.cs
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                 options.EmitStaticAudienceClaim = true;
             })
@@ -39,7 +40,7 @@ namespace Menominee.Idp
 
                 // Configure IdentityServer to use AspNetCore Identity membership
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddProfileService<CustomProfileService>();
+                .AddProfileService<LocalUserProfileService>();
 
 
             if (Environment.IsDevelopment())
@@ -93,10 +94,9 @@ namespace Menominee.Idp
                 app.UseDeveloperExceptionPage();
                 app.UseCors(CorsPolicyDevelopment);
             }
-            else
-            {
+
+            if (Environment.IsProduction())
                 app.UseCors(CorsPolicyProduction);
-            }
 
             app.UseStaticFiles();
             app.UseRouting();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Menominee.Common.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Menominee.Idp.Areas.Identity.Data
@@ -15,5 +16,6 @@ namespace Menominee.Idp.Areas.Identity.Data
         public string TenantName { get; set; }
 
         public ShopRole ShopRole { get; set; }
+        public ICollection<UserClaim> Claims { get; set; } = new List<UserClaim>();
     }
 }

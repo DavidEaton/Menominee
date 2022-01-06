@@ -10,34 +10,49 @@ using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
-    public static class Utilities
+    public static class TestUtilities
     {
         public static void InitializeDbForTests(ApplicationDbContext db)
         {
-            Task<bool> personsHasRows = db.Persons.AnyAsync();
+            Task<bool> customersHasRows = db.Customers.AnyAsync();
 
-            if (!personsHasRows.Result)
+            if (!customersHasRows.Result)
             {
-                db.Persons.AddRange(GetSeedPersons());
+                db.Customers.AddRange(SeedCustomers());
+                db.Persons.AddRange(SeedPersons());
+                db.Organizations.AddRange(SeedOrganizations());
                 db.SaveChanges();
             }
 
         }
 
-        public static void ReinitializeDbForTests(ApplicationDbContext db)
+        private static List<Organization> SeedOrganizations()
         {
-            db.Persons.RemoveRange(db.Persons);
-            InitializeDbForTests(db);
+            return new List<Organization>()
+            {
+                new Organization(OrganizationName.Create("Koops, Inc.").Value, null, null),
+                new Organization(OrganizationName.Create("Loops, Intl.").Value, null, null),
+                new Organization(OrganizationName.Create("Noops Brothers").Value, null, null),
+            };
         }
 
-        public static List<Person> GetSeedPersons()
+        public static List<Person> SeedPersons()
         {
             return new List<Person>()
             {
-                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null, null, null),
-                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null, null, null),
-                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null, null, null),
-                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null, null, null),
+                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null),
+                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null),
+                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null),
+                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null),
+            };
+        }
+
+        public static List<Customer> SeedCustomers()
+        {
+            return new List<Customer>()
+            {
+                new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null)),
+                new Customer(new Organization(OrganizationName.Create("Moops & Co.").Value, null, null))
             };
         }
 

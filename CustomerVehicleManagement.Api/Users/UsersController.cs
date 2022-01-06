@@ -1,8 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,75 +11,46 @@ namespace CustomerVehicleManagement.Api.Users
     //[Authorize(Policies.CanManageUsers)]
     public class UsersController : ApplicationController
     {
-        private readonly IConfiguration Configuration;
-        private readonly UserContext UserContext;
-        public UsersController(IConfiguration configuration,
-                               UserContext userContext)
+        private readonly IdentityUserDbContext dbContext;
+        private readonly UserContext userContext;
+
+        public UsersController(IdentityUserDbContext dbContext, UserContext userContext)
         {
-            Configuration = configuration;
-            UserContext = userContext;
+            this.dbContext = dbContext;
+            this.userContext = userContext;
         }
 
-        [HttpGet]
-        public ActionResult<IReadOnlyList<UserToReadInList>> GetUsers()
+        public ActionResult<IReadOnlyList<UserToRead>> GetUsers()
         {
             var tenantId = GetTenantId();
-
-            var users = new List<UserToReadInList>();
-
-            using SqlConnection connection = new(Configuration[$"IDPSettings:Connection"]);
-            try
+            var users = dbContext.ApplicationUsers.Where(x => x.TenantId == tenantId).Select(x => new UserToRead()
             {
-                connection.Open();
-                string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers];";
-                //string query = $"SELECT [Id], [UserName], [Email], [ShopRole] FROM [dbo].[AspNetUsers] WHERE [TenantId] = '{tenantId}';";
-                using SqlCommand command = new(query, connection);
-                using SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        users.Add(
-                        new UserToReadInList()
-                        {
-                            Id = (string)reader["Id"],
-                            Username = reader["Username"].ToString(),
-                            Name = reader["Username"].ToString(),
-                            Email = reader["Email"].ToString(),
-                            ShopRole = (string)reader["ShopRole"]
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //Logger.LogError($"Exception message from GetUsersAsync(): {ex.Message}");
-                return null;
-            }
+                Id = x.Id,
+                Email = x.Email,
+                Name = x.UserName,
+                Username = x.UserName
+            }).ToList();
 
             return Ok(users);
         }
 
         public Guid GetTenantId()
         {
-            if (UserContext == null)
+            if (userContext == null)
                 return new Guid();
 
-            var claims = UserContext.Claims;
-            Guid tenantId;
+            var claims = userContext.Claims;
 
             try
             {
-                tenantId = Guid.Parse(claims.First(claim => claim.Type == "tenantId").Value);
+                return Guid.Parse(claims.First(claim => claim.Type == "tenantId").Value);
             }
             catch (Exception ex)
             {
                 //Logger.LogError($"Exception message from GetTenantId(): {ex.Message}");
                 return new Guid();
             }
-
-            return tenantId;
         }
     }
 }
+

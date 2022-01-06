@@ -17,11 +17,11 @@ namespace Menominee.Client.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<IReadOnlyList<UserToReadInList>> GetAllUsers()
+        public async Task<IReadOnlyList<UserToRead>> GetAllUsers()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToReadInList>>($"{UriSegment}");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToRead>>($"{UriSegment}");
             }
             catch (Exception ex)
             {

@@ -6,7 +6,7 @@ namespace CustomerVehicleManagement.Shared
     // removed ".Policies" from namespace to avoid drilling into it twice
     public static class Policies
     {
-        // Settle on a naming convention
+        // TODO: Settle on a naming convention
         public const string AdminOnly = "AdminPolicy";
         public const string CanManageHumanResources = "CanManageHumanResourcesPolicy";
         public const string CanManageUsers = "CanManageUsersPolicy";

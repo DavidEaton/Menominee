@@ -16,7 +16,7 @@ namespace Menominee.Client.Pages
         [Inject]
         public ILogger<Users> Logger { get; set; }
 
-        public IReadOnlyList<UserToReadInList> UsersList;
+        public IReadOnlyList<UserToRead> UsersList;
         protected string SelectedId;
 
         protected override async Task OnInitializedAsync()

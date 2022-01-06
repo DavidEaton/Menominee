@@ -1,5 +1,6 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
+using Menominee.Common.Enums;
 using Menominee.Idp.Configuration;
 using System.Collections.Generic;
 
@@ -31,17 +32,17 @@ namespace Menominee.Idp
 
                 new IdentityResource(
                     "shopRole",
-                    "Shop Role",
+                    ClaimType.ShopRole.ToString(),
                     new List<string>() { "shopRole" }),
 
                 new IdentityResource(
                     "subscriptionLevel",
-                    "User's Subsription Level",
+                    ClaimType.SubscriptionLevel.ToString(),
                     new List<string>() { "subscriptionLevel" }),
 
                 new IdentityResource(
                     "subscribedProducts",
-                    "User's subscribed Products",
+                    ClaimType.SubscribedProducts.ToString(),
                     new List<string>() { "subscribedProducts" })
             };
 
@@ -51,24 +52,25 @@ namespace Menominee.Idp
                 new ApiResource(
                     "menominee-api",
                     "Menominee API",
-                    new List<string>() { "tenantId" }),
-
-                new ApiResource(
-                    "ddc-api",
-                    "Dynamic Database Conection API",
-                    new List<string>() { "role" }) // include role scope in access token
+                    new[] { "role" })
+                    {
+                        Scopes = {
+                            "menominee-api",
+                            "tenantId",
+                            "tenantName",
+                            "role",
+                            "shopRole",
+                            "subscriptionLevel",
+                            "subscribedProducts"
+                        },
+                        ApiSecrets = { new Secret("apisecret".Sha256())}
+                    }
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope(name: "menominee-api", displayName: "Menominee API"),
-                new ApiScope(name: "ddc-api", displayName: "Dynamic Database Conection API")
-                //new ApiScope(name: "tenantId", displayName: "Id of User's Tenant"),
-                //new ApiScope(name: "tenantName", displayName: "Name of User's Tenant"),
-                //new ApiScope(name: "roles", displayName: "User's Shop Role(s)"),
-                //new ApiScope(name: "subscriptionLevel", displayName: "User's Subsription Level"),
-                //new ApiScope(name: "subscribedProducts", displayName: "User's subscribed Products")
+                new ApiScope(name: "menominee-api", displayName: "Menominee API")
             };
 
         public static IEnumerable<Client> Clients =>
@@ -95,13 +97,16 @@ namespace Menominee.Idp
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "menominee-api",
-                        "ddc-api",
                         "tenantId",
                         "tenantName",
                         "role",
                         "shopRole",
                         "subscriptionLevel",
                         "subscribedProducts"
+                    },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
                     },
                     AllowedCorsOrigins = new List<string>()
                     {

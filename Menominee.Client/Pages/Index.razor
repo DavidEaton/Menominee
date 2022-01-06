@@ -14,7 +14,11 @@
 <h3>ClaimsPrincipal Data</h3>
 
 <button @onclick="GetClaimsPrincipalData">Get ClaimsPrincipal Data</button>
-
+<div class="top-row pl-4 navbar navbar-dark">
+    <button class="" @onclick="WriteTokenAsync">
+        <span>Write Token</span>
+    </button>
+</div>
 <p>@_authMessage</p>
 
 @if (_claims.Count() > 0)
@@ -48,6 +52,25 @@
         else
         {
             _authMessage = "The user is NOT authenticated.";
+        }
+
+
+    }
+
+    private async Task WriteTokenAsync()
+    {
+        string accessToken;
+
+        var tokenResult = await TokenProvider.RequestAccessToken();
+        if (tokenResult.TryGetToken(out var token))
+        {
+            accessToken = token.Value;
+            Console.WriteLine(accessToken);
+
+            foreach (var item in token.GrantedScopes)
+            {
+                Console.WriteLine(item.ToString());
+            }
         }
     }
 }
