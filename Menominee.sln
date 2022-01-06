@@ -25,7 +25,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.OrganizationDataContracts", "Menominee.OrganizationDataContracts\Menominee.OrganizationDataContracts.csproj", "{22FF9BCE-0DB9-4E8F-81C5-BD7209C1F68F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menominee.Common", "Menominee.Common\Menominee.Common.csproj", "{4ED3B2BF-C725-4711-8488-C678FB9AF910}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Common", "Menominee.Common\Menominee.Common.csproj", "{4ED3B2BF-C725-4711-8488-C678FB9AF910}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{71AA1B17-85C6-4BD6-A656-D0D05F3BF051}"
+	ProjectSection(SolutionItems) = preProject
+		DevelopmentProcess.md = DevelopmentProcess.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

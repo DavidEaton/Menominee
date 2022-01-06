@@ -1,8 +1,8 @@
-﻿Policy files will be maintained in the \DevelopmentProcess folder of this solution repository, where they will act as standards for our development process, and application design guidance.
+﻿Our Development Process policies are described here, and will act as standards for our application design guidance.
 
 The benefits of versioned policies are:
 
-- All policy changes will go through the change control board (TBD/TBA), so everyone will be on board with the baseline, and when policy changes
+- All policy changes will go through code review so everyone will be on board with the baseline, and when policy changes
   happen, they can be systematically communicated to all affected stakeholders.
 
 - Reduce the waste of making and recalling process decisions over and over again.  We can recall a decision by consulting the
