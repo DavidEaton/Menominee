@@ -20,21 +20,25 @@ namespace CustomerVehicleManagement.Api.Users
             this.userContext = userContext;
         }
 
+        [HttpGet]
         public ActionResult<IReadOnlyList<UserToRead>> GetUsers()
         {
             var tenantId = GetTenantId();
-            var users = dbContext.ApplicationUsers.Where(x => x.TenantId == tenantId).Select(x => new UserToRead()
+
+            var users = dbContext.ApplicationUsers.Where(appUser => appUser.TenantId == tenantId).Select(user => new UserToRead()
             {
-                Id = x.Id,
-                Email = x.Email,
-                Name = x.UserName,
-                Username = x.UserName
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.UserName,
+                Username = user.UserName,
+                ShopRole = user.ShopRole
+
             }).ToList();
 
             return Ok(users);
         }
 
-        public Guid GetTenantId()
+        private Guid GetTenantId()
         {
             if (userContext == null)
                 return new Guid();

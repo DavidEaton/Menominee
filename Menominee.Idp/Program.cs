@@ -7,8 +7,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
-using Azure.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace Menominee.Idp
 {
@@ -30,6 +28,7 @@ namespace Menominee.Idp
                 //    rollOnFileSizeLimit: true,
                 //    shared: true,
                 //    flushToDiskInterval: TimeSpan.FromSeconds(1))
+                .WriteTo.File(@"menominee-idp-log-.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
@@ -54,11 +53,11 @@ namespace Menominee.Idp
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-                    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
-                })
+                //.ConfigureAppConfiguration((context, config) =>
+                //{
+                //    var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+                //    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+                //})
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

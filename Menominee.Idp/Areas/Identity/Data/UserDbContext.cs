@@ -33,11 +33,11 @@ namespace Menominee.Idp.Data.Contexts
                 .IsUnique();
 
             modelBuilder.Entity<ApplicationUser>()
-                .ToTable("AspNetUsers", "dbo")
-                .Property(user => user.ShopRole)
-                .HasConversion(
-                    stringType => stringType.ToString(),
-                    stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
+                .ToTable("AspNetUsers", "dbo");
+                //.Property(user => user.ShopRole)
+                //.HasConversion(
+                //    stringType => stringType.ToString(),
+                //    stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
 
             modelBuilder.Entity<UserClaim>()
                 .ToTable("AspNetUserClaims", "dbo")
