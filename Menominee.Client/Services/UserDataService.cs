@@ -17,7 +17,7 @@ namespace Menominee.Client.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<IReadOnlyList<UserToRead>> GetAllUsers()
+        public async Task<IReadOnlyList<UserToRead>> GetAll()
         {
             try
             {
@@ -30,5 +30,11 @@ namespace Menominee.Client.Services
 
             return null;
         }
+        public async Task<RegisterUserResult> Register(RegisterUser registerModel)
+        {
+            var response = await httpClient.PostAsJsonAsync($"{UriSegment}", registerModel);
+            return await response.Content.ReadFromJsonAsync<RegisterUserResult>();
+        }
+
     }
 }

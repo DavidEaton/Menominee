@@ -1,19 +1,26 @@
 ﻿@page "/users"
-@*@attribute [Microsoft.AspNetCore.Authorization.Authorize
-    (CustomerVehicleManagement.Shared.Policies.CanManageUsers)]*@
-@*Policies work everywhere but here. Even tho logged-in user meets CanManageUsers requirements, Authorization fails in client
-    but grabbing that user's token and hitting the api endpoint works :/*@
+@attribute [Microsoft.AspNetCore.Authorization.Authorize
+(CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
 
 <div class="h4">Registered Users</div>
-<button class="btn btn-primary ">
-    <span class="oi oi-plus" title="Register User" aria-hidden="true"></span> Register User
-</button>
+
+
+@*<button class="btn btn-primary ">
+        <span class="oi oi-plus" title="Register User" aria-hidden="true"></span> Register User
+    </button>*@
 @if (UsersList == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <div class="d-flex flex-row w-25">
+        <a href="Register"
+           class="btn btn-primary"
+           title="Add new application user">
+            <span class="oi oi-plus" aria-hidden="true"></span>
+        </a>
+    </div>
     <div class="d-flex flex-row">
         <table class="table table-responsive table-striped small">
             <thead>

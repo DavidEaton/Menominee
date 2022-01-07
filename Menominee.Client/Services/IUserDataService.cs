@@ -6,6 +6,8 @@ namespace Menominee.Client.Services
 {
     public interface IUserDataService
     {
-        Task<IReadOnlyList<UserToRead>> GetAllUsers();
+        Task<IReadOnlyList<UserToRead>> GetAll();
+        Task<RegisterUserResult> Register(RegisterUser registerModel);
+
     }
 }

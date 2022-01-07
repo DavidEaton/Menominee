@@ -1,5 +1,4 @@
-﻿using Menominee.Common.Enums;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerVehicleManagement.Shared.Models
@@ -28,6 +27,6 @@ namespace CustomerVehicleManagement.Shared.Models
 
         public string TenantName { get; set; }
 
-        public ShopRole ShopRole { get; set; }
+        public string ShopRole { get; set; }
     }
 }

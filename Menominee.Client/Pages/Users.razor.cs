@@ -21,7 +21,7 @@ namespace Menominee.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            UsersList = (await UserDataService.GetAllUsers()).ToList();
+            UsersList = (await UserDataService.GetAll()).ToList();
         }
         private void SetSelectedId(string id)
         {
