@@ -16,6 +16,8 @@
 # Menominee logs
 menominee-idp-log*.txt
 menominee-api-log*.txt
+menominee-idp-log*.json
+menominee-api-log*.json
 
 # Build results
 [Dd]ebug/

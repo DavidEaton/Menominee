@@ -2,25 +2,28 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
 
-<div class="h4">Registered Users</div>
+<div class="h4">@TenantName Users</div>
 
-
-@*<button class="btn btn-primary ">
-        <span class="oi oi-plus" title="Register User" aria-hidden="true"></span> Register User
-    </button>*@
 @if (UsersList == null)
 {
-    <p><em>Loading...</em></p>
+    @if (!Editing && !Adding)
+    {
+        <p><em>Loading...</em></p>
+    }
 }
 else
 {
-    <div class="d-flex flex-row w-25">
-        <a href="Register"
-           class="btn btn-primary"
-           title="Add new application user">
-            <span class="oi oi-plus" aria-hidden="true"></span>
-        </a>
+
+    <div class="pb-3">
+        <TelerikButton OnClick="Add"
+                       Primary="true"
+                       Icon="plus"
+                       title="Add new application User">
+            Add Organization
+        </TelerikButton>
     </div>
+
+
     <div class="d-flex flex-row">
         <table class="table table-responsive table-striped small">
             <thead>
@@ -33,7 +36,7 @@ else
             <tbody>
                 @foreach (var user in UsersList)
                 {
-                    <tr @onclick="@(e => SetSelectedId(user.Id))">
+                    <tr>
                         <td>@user.Username</td>
                         <td>@user.Email</td>
                         <td>@user.ShopRole</td>
@@ -42,4 +45,36 @@ else
             </tbody>
         </table>
     </div>
+}
+
+
+@if ((Editing || Adding) && registerUser != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="registerUser" OnValidSubmit="HandleRegistration">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" class="form-control" @bind-Value="registerUser.Email" />
+                    <ValidationMessage For="@(() => registerUser.Email)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.Password" />
+                    <ValidationMessage For="@(() => registerUser.Password)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Confirm Password</label>
+                    <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.ConfirmPassword" />
+                    <ValidationMessage For="@(() => registerUser.ConfirmPassword)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+        </div>
+    </div>
+
 }

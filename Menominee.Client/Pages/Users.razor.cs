@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Pages
 {
@@ -17,15 +18,37 @@ namespace Menominee.Client.Pages
         public ILogger<Users> Logger { get; set; }
 
         public IReadOnlyList<UserToRead> UsersList;
-        protected string SelectedId;
-
+        public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
+        public long Id { get; set; }
+        private string TenantName { get; set; } = "Jane's Automotive";
+        private bool Editing { get; set; } = false;
+        private bool Adding { get; set; } = false;
         protected override async Task OnInitializedAsync()
         {
             UsersList = (await UserDataService.GetAll()).ToList();
+            //TenantName = Context.User.First(claim => claim.Type == "tenantName").Value;
         }
-        private void SetSelectedId(string id)
+
+        private RegisterUser registerUser { get; set; }
+
+        private void Add()
         {
-            SelectedId = id;
+            Adding = true;
+            UsersList = null;
+            registerUser = new();
+        }
+
+        private async Task HandleRegistration()
+        {
+            registerUser.ShopRole = "Technician";
+            var result = await UserDataService.Register(registerUser);
+
+            if (result.Successful)
+            {
+                Adding = false;
+                Editing = false;
+                UsersList = (await UserDataService.GetAll()).ToList();
+            }
         }
     }
 }
