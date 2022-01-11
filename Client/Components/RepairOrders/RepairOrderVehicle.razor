@@ -1,0 +1,72 @@
+﻿<form>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="vehicle">Vehicle</label>
+            <input type="text" class="form-control" id="vehicle">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-12 col-md-6">
+            <label for="plate">Plate</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="plate">
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col">
+            <label for="unitNumber">Unit Number</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="unitNumber">
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="vin">VIN</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="vin">
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-12 col-lg-6">
+            <label for="engine">Engine</label>
+            <input type="text" class="form-control" id="engine">
+        </div>
+        <div class="form-group col-12 col-lg-6">
+            <label for="color">Color</label>
+            <input type="text" class="form-control" id="color">
+        </div>
+    </div>
+    <div class="form-row m-align-bottoms">
+        <div class="form-group col-6">
+            <label for="odomIn">Odometer In</label>
+            <input type="text" class="form-control" id="odomIn">
+        </div>
+        <div class="form-group col-6">
+            <label for="odomOut">Odometer Out</label>
+            <input type="text" class="form-control" id="odomOut">
+        </div>
+    </div>
+</form>
+
+<hr class="m-btn-divider-top">
+
+<div class="row m-btn-row m-btn-gap">
+    <button class="btn m-edit-btn m-button" aria-pressed="false" @onclick="EditVehicle"><i class="fas fa-edit"></i> Edit</button>
+    <button class="btn m-add-btn m-button" @onclick="AddVehicle"><i class="fas fa-plus"></i> Add</button>
+    <button class="btn btn-secondary m-button" @onclick="ViewNotes">Notes</button>
+    <button class="btn btn-secondary m-button">History</button>
+    <button class="btn btn-secondary m-button">Tires <span class="badge badge-danger">1</span></button>
+</div>
+
+<style>
+</style>

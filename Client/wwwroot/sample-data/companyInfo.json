@@ -1,0 +1,12 @@
+{
+  "name": "My Car Repair",
+  "street1": "123 First St",
+  "street2": "Suite 101",
+  "city": "Traverse City",
+  "state": "MI",
+  "postalCode":  "49686",
+  "country": "US",
+  "phone": "123-456-7890",
+  "email": "somebody@somewhere.com",
+  "franchise": "1"
+}

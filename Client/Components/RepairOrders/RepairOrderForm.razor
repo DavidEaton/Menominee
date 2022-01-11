@@ -1,0 +1,181 @@
+﻿<div class="form m-form">
+    <ContentHeader Header="@Title" />
+
+    <div class="m-pad-bottom m-tab-button-group">
+        <TelerikButtonGroup SelectionMode="@ButtonGroupSelectionMode.Single" Class="m-tab-button-group">
+            <ButtonGroupToggleButton @bind-Selected="@CustSelected" Class="@(CustSelected ? "m-button-selected" : "m-button-not-selected")">Customer & Vehicle</ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@ServiceRequestSelected" Class="@(ServiceRequestSelected ? "m-button-selected" : "m-button-not-selected")">Service Request</ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@InspectionsSelected" Class="@(InspectionsSelected ? "m-button-selected" : "m-button-not-selected")">Inspections</ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@ServicesSelected" Class="@(ServicesSelected ? "m-button-selected" : "m-button-not-selected")">Services</ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@PurchasesSelected" Enabled="@HavePurchases()" Class="@(PurchasesSelected ? "m-button-selected" : "m-button-not-selected")">
+                Purchases
+                @if (PurchaseInfoNeededCount > 0)
+                {
+                    <span class="badge badge-danger">@PurchaseInfoNeededCount</span>
+                }
+            </ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@WarrantiesSelected" Enabled="@HaveWarranties()" Class="@(WarrantiesSelected ? "m-button-selected" : "m-button-not-selected")">
+                Warranties
+                @if (WarrantyInfoNeededCount > 0)
+                {
+                    <span class="badge badge-danger">@WarrantyInfoNeededCount</span>
+                }
+            </ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@SerialNumbersSelected" Enabled="@HaveSerialNumbers()" Class="@(SerialNumbersSelected ? "m-button-selected" : "m-button-not-selected")">
+                Serial Numbers
+                @if (SerialNumberInfoNeededCount > 0)
+                {
+                    <span class="badge badge-danger">@SerialNumberInfoNeededCount</span>
+                }
+            </ButtonGroupToggleButton>
+            <ButtonGroupToggleButton @bind-Selected="@PaymentSelected" Class="@(PaymentSelected ? "m-button-selected" : "m-button-not-selected")">Payments</ButtonGroupToggleButton>
+        </TelerikButtonGroup>
+    </div>
+
+    <div class="row m-no-row-margin">
+        <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
+            @if (CustSelected)
+            {
+                <RepairOrderCustomerVehicleTab />
+            }
+
+            @if (FleetSelected)
+            {
+            }
+
+            @if (ServicesSelected)
+            {
+                <RepairOrderServicesTab />
+            }
+
+            @if (InspectionsSelected)
+            {
+                <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
+            }
+
+            @if (PurchasesSelected)
+            {
+                <RepairOrderPurchasesTab Purchases="Purchases" />
+            }
+
+            @if (WarrantiesSelected)
+            {
+                <RepairOrderWarrantiesTab Warranties="Warranties"/>
+            }
+
+            @if (SerialNumbersSelected)
+            {
+                <RepairOrderSerialNumbersTab SerialNumbers="SerialNumbers" />
+            }
+
+            @if (PaymentSelected)
+            {
+                <RepairOrderPaymentsTab Payments="Payments" />
+            }
+
+        </div>
+        <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
+            <RepairOrderTotals OnDiscard="@OnDiscard" />
+        </div>
+    </div>
+</div>
+
+<style>
+    .k-button-group button.k-button.m-button-selected {
+        background-color: #274c77;
+    }
+
+    .k-button-group button.k-button.m-button-not-selected {
+        background-color: #d4d6d9;
+    }
+
+        .k-button-group button.k-button.m-button-not-selected:hover {
+            background-color: #bcbec2;
+        }
+
+    .k-tilelayout-item-header .k-card-header, .m-card-header {
+        color: white !important;
+        background-color: #274c77 !important;
+        padding: .5rem .5rem !important;
+        font-weight: 500;
+    }
+
+    .k-card-header .m-card-header, .k-card-title {
+        color: white !important;
+        background-color: #274c77 !important;
+        padding: .5rem .5rem !important;
+        font-weight: 500;
+    }
+
+    .m-card-header {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        margin-bottom: 0;
+        font-weight: bold;
+        height: 36px;
+    }
+
+    .k-card-header {
+        padding: 0px !important;
+    }
+
+    .k-grid-header {
+        background-color: #6096ba;
+        color: white;
+    }
+
+    .m-tile-layout {
+        padding: 0px !important;
+        background-color: white !important;
+    }
+
+    .m-tab-button-group {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .m-no-row-margin {
+        margin-left: 0;
+        margin-right: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .m-no-pad-left {
+        padding-left: 0 !important;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 1rem;
+    }
+
+    @@media (max-width:768px) {
+        .cards {
+            grid-template-columns: repeat(1, 1fr);
+        }
+
+        .m-no-pad-left {
+            padding-right: 0 !important;
+            margin-bottom: 1rem;
+        }
+    }
+
+    @@media (max-width:575px) {
+        .m-no-pad-left {
+            padding-right: 0 !important;
+            margin-bottom: 1rem;
+        }
+    }
+
+    #totalsCol {
+        padding: 0;
+        grid-gap: 0;
+    }
+</style>

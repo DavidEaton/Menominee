@@ -1,0 +1,71 @@
+﻿<EditForm Model="Item">
+
+    <TelerikWindow Visible="DialogVisible"
+                   Modal="true"
+                   Class="popupWindowClass">
+        <WindowTitle>
+            @Title
+        </WindowTitle>
+        <WindowContent>
+            @*<div class="container">*@
+            <div>
+                <label class="form-control-label">Part Number</label>
+                <div class="m-form-control-group" for="partNum">
+                    <TelerikTextBox @bind-Value="@Item.PartNumber"
+                                    Width="100%"
+                                    Id="partNum">
+                    </TelerikTextBox>
+                </div>
+                <label class="form-control-label" for="description">Description</label>
+                <div class="m-form-control-group">
+                    <TelerikTextBox @bind-Value="@Item.Description"
+                                    Width="100%"
+                                    Id="description">
+                    </TelerikTextBox>
+                </div>
+                <label class="form-control-label" for="qty">Quantity</label>
+                <div class="m-form-control-group">
+                    <TelerikNumericTextBox @bind-Value="@Item.Quantity"
+                                           Width="50%"
+                                           Id="qty">
+                    </TelerikNumericTextBox>
+                </div>
+            </div>
+            <hr id="divider">
+            <div>
+                <TelerikButton OnClick="OnSave"
+                               ButtonType="ButtonType.Button"
+                               Primary="true"
+                               Class="dialog-button">
+                    <i class="fas fa-check"></i> OK
+                </TelerikButton>
+                <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               Class="dialog-button">
+                    <i class="fas fa-times"></i> Cancel
+                </TelerikButton>
+            </div>
+        </WindowContent>
+    </TelerikWindow>
+
+</EditForm>
+
+<style>
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+</style>

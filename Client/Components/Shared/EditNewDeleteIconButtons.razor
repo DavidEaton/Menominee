@@ -1,0 +1,31 @@
+﻿<div>
+    @if (ShowDivider)
+    {
+        <hr class="m-icon-button-divider">
+    }
+    <div class="m-icon-button-group">
+        @if (ShowEdit)
+        {
+            <button class="btn m-icon-button m-edit-btn" @onclick="OnEdit" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i></button>
+        }
+        @if (ShowNew)
+        {
+            <button class="btn m-icon-button m-add-btn" @onclick="OnNew" disabled="@(CanAdd ? false : true)"><i class="fas fa-plus"></i></button>
+        }
+        @if (ShowDelete)
+        {
+            <button class="btn m-icon-button m-delete-btn" @onclick="OnDelete" disabled="@(CanDelete ? false : true)"><i class="fas fa-trash"></i></button>
+        }
+    </div>
+</div>
+
+<style>
+    .m-icon-button-divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .m-icon-button-group {
+        margin-top: .5em;
+    }
+</style>

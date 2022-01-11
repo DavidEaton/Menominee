@@ -1,0 +1,74 @@
+﻿@page "/payables/returns/listing"
+@using MenomineePlayWASM.Shared.Entities.Payables
+@using MenomineePlayWASM.Client.Components.Payables
+
+<PayablesMenu />
+
+<div class="m-main-content">
+    <div class="ui form">
+        <div class="m-form m-fixed-height">
+            <div>
+                <ContentHeader Header="Credit Returns" />
+                @*<div>
+                    <SfGrid DataSource="@CreditReturns"
+                            AllowPaging="true"
+                            AllowSorting="true"
+                            AllowFiltering="true"
+                            AllowTextWrap="true"
+                            AllowResizing="true"
+                            AllowReordering="true"
+                            Width="100%"
+                            ID="m-invoice-grid"
+                            GridLines="GridLine.None"
+                            Height="calc(100vh - 386px)"
+                            RowHeight="25">
+                        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="200"></GridFilterSettings>
+                        <GridEvents RowSelected="OnRowSelected"
+                                    TValue="CreditReturn">
+                        </GridEvents>
+                        <GridColumns>
+                            <GridColumn Field=@nameof(VendorInvoice.Vendor.VendorId)
+                                        HeaderText="Vendor ID"
+                                        Width="15%"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                           
+                            <GridColumn Field=@nameof(VendorInvoice.Name)
+                                        HeaderText="Vendor Name"
+                                        Width="25%"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                            <GridColumn Field=@nameof(VendorInvoice.Date)
+                                        HeaderText="Date"
+                                        Width="15%"
+                                        Format="d"
+                                        TextAlign="TextAlign.Right"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                            <GridColumn Field=@nameof(VendorInvoice.Status)
+                                        HeaderText="Status"
+                                        Width="15%"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                            <GridColumn Field=@nameof(VendorInvoice.InvoiceNumber)
+                                        HeaderText="Invoice #"
+                                        Width="15%"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                            <GridColumn Field=@nameof(VendorInvoice.Total)
+                                        HeaderText="Total"
+                                        Width="15%"
+                                        Format="C2"
+                                        TextAlign="TextAlign.Right"
+                                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                            </GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>*@
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditReturn" OnNew="@OnNewReturn" OnDelete="@OnDeleteReturn" />
+            </div>
+        </div>
+    </div>
+</div>
+

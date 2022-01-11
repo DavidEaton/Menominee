@@ -1,0 +1,57 @@
+﻿@page "/payables/invoices/listing"
+@page "/payables/invoices/listing/{ItemToSelect:long}"
+
+@using MenomineePlayWASM.Shared.Dtos.Payables.Invoices
+@using MenomineePlayWASM.Client.Components.Payables
+@using MenomineePlayWASM.Client.Components.Shared
+
+<PayablesMenu />
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Invoices" />
+            @if (InvoiceList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (InvoiceList != null)
+            {
+                <TelerikGrid Data="InvoiceList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEdit"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.FilterMenu"
+                             ShowColumnMenu="true"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<VendorInvoiceToReadInList> invoiceList) => OnSelect(invoiceList))"
+                             SelectedItems="@SelectedInvoices"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridToolBar>
+                        <span class="k-toolbar-spacer"></span>
+                        <GridSearchBox />
+                    </GridToolBar>
+                    <GridColumns>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.VendorCode)" Title="Vendor Code"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(VendorInvoiceToReadInList.Name)" Title="Vendor Name"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.DateCreated)" Title="Date" DisplayFormat="{0:yyyy MM dd}"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Status)" Title="Status"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.InvoiceNumber)" Title="Invoice #"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Total)" Title="Total" DisplayFormat="{0:C}"></Telerik.Blazor.Components.GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

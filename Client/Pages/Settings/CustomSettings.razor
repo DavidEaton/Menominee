@@ -1,0 +1,131 @@
+﻿@page "/settings/customsettings"
+@using MenomineePlayWASM.Client.Components.Settings
+
+<SettingsMenu />
+
+@if (customSettings != null)
+{
+    <div class="m-main-content">
+        <div class="ui form">
+            <EditForm Model="@customSettings">
+                <h3 class="m-bordered-form-header">Custom Settings</h3>
+                <div class="m-bordered-form">
+                    @*<div class="ui grid">
+                            <div class="two wide column">
+                                <div class="ui vertical fluid tabular menu">
+                                    <a class="item active">
+                                        Bio
+                                    </a>
+                                    <a class="item">
+                                        Pics
+                                    </a>
+                                    <a class="item">
+                                        Companies
+                                    </a>
+                                    <a class="item">
+                                        Links1
+                                    </a>
+                                    <a class="item">
+                                        Links2
+                                    </a>
+                                    <a class="item">
+                                        Links3
+                                    </a>
+                                    <a class="item">
+                                        Links4
+                                    </a>
+                                    <a class="item">
+                                        Links5
+                                    </a>
+                                    <a class="item">
+                                        Links6
+                                    </a>
+                                    <a class="item">
+                                        Links7
+                                    </a>
+                                    <a class="item">
+                                        Links8
+                                    </a>
+                                    <a class="item">
+                                        Links9
+                                    </a>
+                                    <a class="item">
+                                        Links10
+                                    </a>
+                                    <a class="item">
+                                        Links11
+                                    </a>
+                                    <a class="item">
+                                        Links12
+                                    </a>
+                                    <a class="item">
+                                        Links13
+                                    </a>
+                                    <a class="item">
+                                        Links14
+                                    </a>
+                                    <a class="item">
+                                        Links15
+                                    </a>
+                                    <a class="item">
+                                        Links16
+                                    </a>
+                                    <a class="item">
+                                        Links17
+                                    </a>
+                                    <a class="item">
+                                        Links18
+                                    </a>
+                                    <a class="item">
+                                        Links19
+                                    </a>
+                                    <a class="item">
+                                        Links20
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="fourteen wide stretched column">
+                                <div class="ui segment">
+                                    This is an stretched grid column. This segment will always match the tab height
+                                </div>
+                            </div>
+                        </div>*@
+                    <SaveDiscardButtons OnSave="@SaveChanges" OnDiscard="@DiscardChanges" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<style>
+
+    .m-no-pad-top-left {
+        padding-top: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .e-content .e-item {
+        font-size: 12px;
+        padding: 10px;
+        text-align: justify;
+    }
+
+    @@media screen and (max-width: 425px) {
+        .tab-adaptive {
+            overflow: hidden;
+        }
+
+            .tab-adaptive .e-content {
+                height: inherit !important;
+            }
+
+            .tab-adaptive .e-item.e-active {
+                overflow: scroll;
+            }
+    }
+
+    .ui.segment {
+        border: 1px solid grey;
+    }
+</style>

@@ -1,0 +1,114 @@
+﻿<div class="m-header m-view" role="banner">
+    <div class="m-header-left m-left m-table">
+        @*<div class="m-header-item m-table-cell">
+            <div id="m-toggle-left" role="button" tabindex="0" class="m-slide-nav m-icons toggle-active m-icon-hamburger" aria-label="toggle all controls navigation" title="toggle leftpane"></div>
+        </div>*@
+        <div class="m-header-item m-table-cell" id="m-header-text" style="padding-left:20px">
+            <span>Essential Studio for Blazor</span>
+        </div>
+    </div>
+    <div class="m-banner-links">
+        <a href="/">
+            <div class="m-banner-link">About</div>
+        </a>
+        <a href="/">
+            <div class="m-banner-link">Sign Out</div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .m-header {
+        height: 60px;
+        background: #2d323e;
+        box-shadow: 0 8px 11px -6px rgb(0 0 0 / 12%);
+        z-index: 20;
+        overflow: visible;
+    }
+
+    .m-view {
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .m-header div, .m-header span {
+        outline: none;
+        outline-color: initial;
+        outline-style: none;
+        outline-width: initial;
+    }
+
+    .m-header div, .m-header span {
+        outline: none;
+    }
+
+    .m-header-left, .m-header-right {
+        height: 100%;
+    }
+
+    .m-table {
+        display: table;
+    }
+
+    .m-left {
+        float: left;
+    }
+
+    .m-table-cell {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .m-right {
+        float: right;
+    }
+
+    #m-header-text {
+        padding-left: 22px;
+        font-size: 20px;
+        color: white;
+        font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif";
+        opacity: 87%;
+    }
+
+    /*    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }*/
+
+
+    .m-banner-links {
+        float: right;
+        /*width: 200px;*/
+        height: 60px;
+        margin-right: 1rem;
+    }
+
+        .m-banner-links a {
+            justify-content: end;
+        }
+
+    .m-banner-link {
+        float: left;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 21px 5px 18px 15px;
+        cursor: pointer;
+        color: #c0c2c5;
+    }
+
+        .m-banner-link:hover {
+            color: white;
+        }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+</style>

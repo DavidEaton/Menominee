@@ -1,0 +1,54 @@
+﻿@page "/repairorders/worklog"
+@page "/repairorders/worklog/{ROToSelect:long}"
+
+@using MenomineePlayWASM.Client.Components.RepairOrders
+@using MenomineePlayWASM.Shared.Dtos.RepairOrders
+
+<RepairOrdersMenu />
+
+<div class="m-main-content">
+    @*<div class="m-form m-fixed-height">*@
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Work Log" />
+            @if (ROList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (ROList != null)
+            {
+                <TelerikGrid Data="ROList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEdit"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.FilterMenu"
+                             ShowColumnMenu="true"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<RepairOrderToReadInList> roList) => OnSelect(roList))"
+                             SelectedItems="@SelectedList"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <Telerik.Blazor.Components.GridColumn Width="18%" Field="@nameof(RepairOrderToReadInList.RepairOrderNumber)" Title="RO Number"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="18%" Field="@nameof(RepairOrderToReadInList.InvoiceNumber)" Title="Invoice Number"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(RepairOrderToReadInList.CustomerName)" Title="Customer"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(RepairOrderToReadInList.Vehicle)" Title="Vehicle"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="14%" Field="@nameof(RepairOrderToReadInList.Total)" Title="Total"></Telerik.Blazor.Components.GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" CanEdit="@CanEdit" />
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /*.m-grid-container, */
+    .m-grid {
+        /*height: calc(100vh - 265px);*/
+        /*min-height: 150px !important;*/
+        min-height: calc(100vh - 248px);
+    }
+</style>

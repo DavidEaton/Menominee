@@ -1,0 +1,59 @@
+﻿@page "/customers/listing"
+@using MenomineePlayWASM.Client.Components.Customers
+@using MenomineePlayWASM.Shared.Entities.Customers
+@using Syncfusion.Blazor.Grids
+
+<CustomersMenu />
+
+<div class="m-main-content">
+    <div class="ui form">
+        <h3 class="m-bordered-form-header">Customers</h3>
+        <div class="m-bordered-form m-fixed-height">
+            <div>
+                <SfGrid DataSource="@Customers"
+                        AllowPaging="true"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowTextWrap="true"
+                        AllowResizing="true"
+                        AllowReordering="true"
+                        EnablePersistence
+                        Width="100%"
+                        ID="m-invoice-grid"
+                        GridLines="GridLine.None"
+                        Height="calc(100vh - 362px)"
+                        RowHeight="25">
+                    <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="200"></GridFilterSettings>
+                    <GridEvents RowSelected="OnRowSelected"
+                                OnRecordDoubleClick="OnEditCustomer"
+                                TValue="Customer">
+                    </GridEvents>
+                    <GridColumns>
+                        <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(Customer.FirstName)
+                                    HeaderText="First Name"
+                                    Width="20%"
+                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                        </Syncfusion.Blazor.Grids.GridColumn>
+                        <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(Customer.LastName)
+                                    HeaderText="Last Name"
+                                    Width="30%"
+                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                        </Syncfusion.Blazor.Grids.GridColumn>
+                        <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(Customer.Phone)
+                                    HeaderText="Phone"
+                                    Width="15%"
+                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                        </Syncfusion.Blazor.Grids.GridColumn>
+                        <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(Customer.City)
+                                    HeaderText="City"
+                                    Width="35%"
+                                    FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
+                        </Syncfusion.Blazor.Grids.GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+
+            <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditCustomer" OnNew="@OnNewCustomer" OnDelete="@OnDeleteCustomer" />
+        </div>
+    </div>
+</div>

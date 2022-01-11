@@ -1,0 +1,12 @@
+﻿@page "/inventory/items/{ItemId:long}"
+
+@using MenomineePlayWASM.Client.Components.Inventory
+
+<InventoryMenu />
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryItemForm Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

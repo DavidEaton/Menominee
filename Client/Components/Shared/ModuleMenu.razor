@@ -1,0 +1,162 @@
+﻿@using Syncfusion.Blazor.Navigations
+
+<div class="sb-header e-view">
+    <div class="sb-header-left sb-left sb-table">
+        <div class="sb-header-item sb-table-cell m-brand" id="sb-header-text">
+            <span class="e-icons @(ModuleIconCss)"></span>
+            <span>@ModuleName</span>
+        </div>
+    </div>
+    <div class="sb-table sb-header-right">
+        <div class="sb-table-cell m-hover-white" id="menu-items">
+            <div>
+                <SfMenu Items="@MenuItems" TValue="MenuItem">
+                    <MenuEvents TValue="MenuItem" ItemSelected="@OnMenuItemSelected"></MenuEvents>
+                </SfMenu>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sb-header {
+        height: 50px;
+        background: var(--bg-color-medium);
+        box-shadow: 0 8px 11px -6px rgb(0 0 0 / 12%);
+        z-index: 20;
+        overflow: visible;
+    }
+
+    .e-view {
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        display: block;
+        right: 0;
+        top: 0;
+    }
+
+    .sb-header div, .sb-header span {
+        outline: none;
+        outline-color: initial;
+        outline-style: none;
+        outline-width: initial;
+    }
+
+    .sb-header div, .sb-header span {
+        outline: none;
+    }
+
+    .sb-header-left, .sb-header-right {
+        height: 100%;
+    }
+
+    .sb-table {
+        display: table;
+    }
+
+    .sb-left {
+        float: left;
+    }
+
+    .sb-table-cell {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .sb-right {
+        float: right;
+    }
+
+    #sb-header-text {
+        padding-left: 22px;
+        /*font-size: 18px;*/
+        font-size: 1.25rem;
+        color: white;
+        font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif";
+        opacity: 87%;
+    }
+
+    .e-icons::before {
+        font-size: 1rem;/*16px;*/
+    }
+
+    .m-settings-icon::before {
+        content: '\e10b';
+    }
+
+    .m-schedule-icon::before {
+        content: '\e72f';
+    }
+
+    .m-reports-icon::before {
+        content: '\e7dd';
+    }
+
+    .m-customers-icon::before {
+        content: '\e7d3';
+    }
+
+    .m-placeholder-icon::before {
+        content: '\e7a4';
+    }
+
+    .m-empty-icon::before {
+        content: '\e7a0';
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu-control {
+        margin: 45px auto 0;
+        text-align: center;
+        opacity: 100%;
+    }
+
+    .e-menu-wrapper .e-menu, .e-menu-container .e-menu {
+        background-color: var(--bg-color-medium);
+        /* background-color: #fff; */
+        color: #007bff;
+    }
+
+    .e-menu-wrapper ul, .e-menu-container ul {
+        background-color: var(--bg-color-medium);
+        color: white;
+        /*opacity: 87%;*/
+    }
+
+    .e-menu-container {
+        vertical-align: middle;
+    }
+
+    .m-brand {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .m-hover-white:hover {
+        color: white !important;
+    }
+
+    .m-menu-item, .m-menu-item .e-caret {
+        color: #dedede !important;
+    }
+
+        .m-menu-item:hover, .m-menu-item .e-caret:hover {
+            color: white !important;
+        }
+
+    .m-menu-sub-item {
+        color: black;
+    }
+
+/*    #menu-items {
+        font-size: 1rem !important;
+    }
+*/
+</style>

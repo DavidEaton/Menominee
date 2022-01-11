@@ -1,0 +1,12 @@
+﻿@*@page "/payables/vendors/{VendorId:long}"*@
+@*@page "/payables/vendors/create/"*@
+@*@using MenomineePlayWASM.Client.Components.Payables*@
+
+@*<PayablesMenu />*@
+
+@*@if (vendor != null)
+{
+    <div class="m-main-content">
+        <VendorForm Vendor="vendor" OnValidSubmit="Create" OnDiscard="Discard" Title="New Vendor" />
+    </div>
+}*@

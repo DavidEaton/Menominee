@@ -1,0 +1,144 @@
+﻿@*<div class="card">
+        <div class="m-card-header">
+            Totals
+        </div>
+        <div class="card-body">
+            <form>
+                <table class="w-100 table table-sm" id="totalsTable">
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Parts</td>
+                        <td class="m-totals-data text-right" colspan="4">618.77</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Labor</td>
+                        <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Supplies</td>
+                        <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data m-row-divider" colspan="8">Sub-Total</td>
+                        <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Discounts</td>
+                        <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">HazMat</td>
+                        <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Taxes</td>
+                        <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    </tr>
+                    <tr id="totalsLine">
+                        <td class="m-totals-data m-row-divider" colspan="8">Total</td>
+                        <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="m-totals-data" colspan="8">Cash Back</td>
+                        <td class="m-totals-data text-right" colspan="4">37.12</td>
+                    </tr>
+                </table>
+            </form>
+
+            <hr class="m-btn-divider-top">
+            <div class="row m-btn-row m-btn-gap">
+                <button class="btn btn-primary m-totals-button">Print / Save</button>
+                <button class="btn btn-secondary m-totals-button" onclick="@OnDiscard">Discard</button>
+            </div>
+        </div>
+    </div>*@
+
+<div>
+    <Card Title="Totals">
+        <Content>
+            <table class="w-100 table table-sm" id="totalsTable">
+                <tr>
+                    <td class="m-totals-data" colspan="8">Parts</td>
+                    <td class="m-totals-data text-right" colspan="4">618.77</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">Labor</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">Supplies</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data m-row-divider" colspan="8">Sub-Total</td>
+                    <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">Discounts</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">HazMat</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">Taxes</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                </tr>
+                <tr id="totalsLine">
+                    <td class="m-totals-data m-row-divider" colspan="8">Total</td>
+                    <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                </tr>
+                <tr>
+                    <td class="m-totals-data" colspan="8">Cash Back</td>
+                    <td class="m-totals-data text-right" colspan="4">37.12</td>
+                </tr>
+            </table>
+
+            <hr class="m-btn-divider-top">
+            <div class="row m-btn-row m-btn-gap">
+                <button class="btn btn-primary m-totals-button m-button">Print / Save</button>
+                <button class="btn btn-secondary m-totals-button m-button" onclick="@OnDiscard">Discard</button>
+            </div>
+        </Content>
+    </Card>
+</div>
+
+<style>
+    #totalsTable {
+        margin: 0;
+        line-height: 1.25rem;
+    }
+
+    .m-totals-data, .m-totals-data:last-child {
+        border: 0 !important;
+        padding: 0 0 .25rem 0 !important;
+    }
+
+    #totalsLine {
+        font-weight: 600;
+    }
+
+    td.m-row-divider, td.m-row-divider:last-child {
+        border-top: 1px solid black !important;
+        padding-top: .25rem !important;
+    }
+
+    .m-totals-button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    #printSave {
+        /*background-color: Highlight;*/
+    }
+
+    #discard {
+        background-color: var(--delete-btn-bg-color);
+        opacity: 0.8;
+        color: white;
+    }
+
+        #discard:hover {
+            opacity: unset;
+        }
+</style>

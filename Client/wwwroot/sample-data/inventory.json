@@ -1,0 +1,42 @@
+[
+  {
+    "id":  1,
+    "partNumber": "BP1001",
+    "mfrId": "1000",
+    "description": "Brake Pads",
+    "retail": 29.95,
+    "onHand": 2
+  },
+  {
+    "id": 2,
+    "partNumber": "EX2019",
+    "mfrId": "1001",
+    "description": "Exhaust Pipe",
+    "retail": 59.95,
+    "onHand": 0
+  },
+  {
+    "id": 3,
+    "partNumber": "WB993311-18",
+    "mfrId": "4491",
+    "description": "Wiper Blades (18)",
+    "retail": 12.99,
+    "onHand": 10
+  },
+  {
+    "id": 4,
+    "partNumber": "ST94RX44M",
+    "mfrId": "9108",
+    "description": "Starter",
+    "retail": 224.95,
+    "onHand": 3
+  },
+  {
+    "id": 5,
+    "partNumber": "B550CW",
+    "mfrId": "1447",
+    "description": "Battery - 550 Amp",
+    "retail": 99.98,
+    "onHand": 8
+  }
+]

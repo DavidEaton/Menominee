@@ -1,0 +1,40 @@
+﻿@if (Inspections == null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@if (Inspections != null)
+{
+    <TelerikGrid Data="Inspections"
+                 OnRowClick="@OnRowSelected"
+                 OnRowDoubleClick="@OnEdit"
+                 SelectionMode="GridSelectionMode.Single"
+                 SelectedItemsChanged="@((IEnumerable<Inspection> inspectionList) => OnSelect(inspectionList))"
+                 SelectedItems="@SelectedInspections"
+                 Class="">
+        <GridColumns>
+            @if (IsCurrent)
+            {
+                <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(Inspection.Title)" Title="Inspection"></Telerik.Blazor.Components.GridColumn>
+                <Telerik.Blazor.Components.GridColumn Width="35%" Field="@nameof(Inspection.Status)" Title="Status"></Telerik.Blazor.Components.GridColumn>
+                <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(Inspection.Tech)" Title="Tech"></Telerik.Blazor.Components.GridColumn>
+            }
+            else
+            {
+                <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(Inspection.Date)" Title="Date" DisplayFormat="{0:yyyy-MM-dd}"></Telerik.Blazor.Components.GridColumn>
+                <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(Inspection.Odometer)" Title="Odometer"></Telerik.Blazor.Components.GridColumn>
+                <Telerik.Blazor.Components.GridColumn Width="40%" Field="@nameof(Inspection.Title)" Title="Inspection"></Telerik.Blazor.Components.GridColumn>
+                <Telerik.Blazor.Components.GridColumn Width="30%" Field="@nameof(Inspection.Status)" Title="Status"></Telerik.Blazor.Components.GridColumn>
+            }
+        </GridColumns>
+    </TelerikGrid>
+
+    @if (IsCurrent)
+    {
+        <EditNewDeleteButtons OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" OnPrint="@OnPrint" CanEdit="@CanEdit" CanDelete="@CanDelete" CanPrint="@CanPrint" />
+    }
+    else
+    {
+        <EditNewDeleteButtons OnEdit="@OnEdit" OnPrint="@OnPrint" CanEdit="@CanEdit" CanPrint="@CanPrint" />
+    }
+}

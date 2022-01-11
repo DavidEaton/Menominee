@@ -1,0 +1,124 @@
+﻿@page "/settings/shopinfo"
+@using MenomineePlayWASM.Client.Components.Settings
+
+<SettingsMenu />
+
+@if (Company != null)
+{
+    <div class="m-main-content">
+        <div class="ui form">
+            <EditForm Model="@Company">
+                @*<h3 class="m-bordered-form-header">Shop Information</h3>*@
+                <div class="m-bordered-form">
+                    <ContentHeader Header="Shop Information" />
+
+                    <div class="m-pad-bottom">
+                        <label for="name">Shop Name</label>
+                        <InputText class="m-form-field" id="name" @bind-Value="@Company.Name" placeholder="Enter name"></InputText>
+                    </div>
+
+                    @*<div class="m-pad-bottom">
+                            <label for="name2">Shop Name</label>
+                            <input class="m-form-field" type="text" id="name2" @bind-value="@Company.Name" placeholder="Enter shop name">
+                        </div>*@
+
+                    <div class="m-pad-bottom">
+                        <label for="street1">Street</label>
+                        <InputText class="m-form-field" id="street1" @bind-Value="@Company.Street1" placeholder="Enter street 1"></InputText>
+                    </div>
+
+                    <div class="m-pad-bottom">
+                        <label for="street2">Street 2</label>
+                        <InputText class="m-form-field" id="street2" @bind-Value="@Company.Street2" placeholder="Enter street 2"></InputText>
+                    </div>
+
+                    <div class="ui grid">
+
+                        @*<div class="eight wide column m-no-pad-top-left">*@
+                        <div class="m-no-pad-top-left">
+                            <label for="city">City</label>
+                            <InputText class="m-form-field m-pad-bottom" id="city" @bind-Value="@Company.City" placeholder="Enter city"></InputText>
+                        </div>
+
+                        @*<div class="two wide column m-no-pad-top-left">
+                            <label for="state">State/Prov</label>*@
+                        <div class="m-no-pad-top-left">
+                            <label>State/Prov</label>
+                            <InputSelect id="state" class="form-control selectpicker m-form-field m-pad-bottom" @bind-Value=Company.State>
+                                <option>--select state--</option>
+                                @foreach (var state in States)
+                                    {
+                                    <option value="@state.Abbreviation">@state.Name</option>
+                                    }
+                            </InputSelect>
+                        </div>
+
+                        @*<div class="two wide column m-no-pad-top-left">
+                            <label for="postalCode">Postal</label>*@
+                        <div class="m-no-pad-top-left">
+                            <div><label>Postal</label></div>
+                            <InputText class="m-form-field m-pad-bottom" id="postalCode" @bind-Value="@Company.PostalCode" placeholder="Enter postal code"></InputText>
+                        </div>
+                    </div>
+
+                    <div class="m-pad-bottom">
+                        <div><label>Phone</label></div>
+                        <input class="m-form-field" type="text" id="phone" @bind-value="@Company.Phone" placeholder="Enter phone">
+                    </div>
+
+                    <SaveDiscardButtons OnSave="@SaveChanges" OnDiscard="@DiscardChanges" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<style>
+    .ui.grid {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*    .m-form {
+                border: 1px solid grey;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+                margin: 0rem .4rem .4rem .4rem;
+                padding: .6rem;
+                background: #f2f4f7;
+            }
+
+            .m-form-header {
+                color: white;
+                padding: .1rem .1rem 0 .6rem;
+                margin: 0rem .4rem;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                background: #274c77;
+            }
+
+            .m-no-margin-bottom {
+                margin-bottom: 0;
+            }*/
+
+
+    .m-form-field-label {
+        padding-top: 5px;
+    }
+
+    .m-form-row {
+        padding: 0 !important;
+    }
+
+    #phone {
+        max-width: 8rem;
+    }
+
+    #postalCode {
+        max-width: 5rem;
+    }
+
+    #state {
+        max-width: 11rem;
+    }
+</style>

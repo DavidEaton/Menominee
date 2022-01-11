@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\Receivables\Receivables.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\Shared\ModuleMenu.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Shared\ModuleMenu.razor.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Receivables\Receivables.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="6.0.1" />
+    <PackageReference Include="Blazored.Toast" Version="3.2.2" />
+    <PackageReference Include="Font.Awesome" Version="5.15.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.11" PrivateAssets="all" />
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Cards" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Core" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Data" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.InPlaceEditor" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Kanban" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Layouts" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Lists" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Popups" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="19.3.0.57" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="19.3.0.57" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.29.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\MenomineePlayWASM.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
