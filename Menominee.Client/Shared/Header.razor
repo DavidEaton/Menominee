@@ -1,44 +1,42 @@
-﻿<header class="mainHeader flex-container">
-    <div class="links ml-3 mt-3">
+﻿<header class="header">
+    @*<div class="header-list ml-3 mt-3">
         <img src="/assets/logo-image.jpg"
              class="header-logo"
-             title="Jane's Automotive"/>
-    </div>
-    <div class="login-links">
+             title="Jane's Automotive" />
+    </div>*@
+    <TelerikMenu Data="@MenuData"
+                 Orientation="MenuOrientation.Horizontal"
+                 Class="header-list"></TelerikMenu>
+    <div class="login-display">
         <LoginDisplay />
     </div>
 </header>
-
 <style>
-    .flex-container {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .mainHeader {
-        height: 4em;
-        align-items: center;
-        background-color: khaki;
-    }
-
-    .links {
-        display: flex;
-        flex-grow: 1;
-        flex-wrap: wrap;
-
-    }
-
-    .login-links {
-        display: flex;
-        justify-content: flex-end;
-        flex-grow: 1;
-        flex-wrap: wrap;
-        margin-inline-end: 10px;
-    }
-
     .header-logo {
         height: 48px;
         width: 48px;
         align-items: flex-start;
+    }
+
+    .header {
+        background-color: khaki;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        min-width: 100vw;
+        border: 1px solid red;
+    }
+
+    .header-list {
+        flex-grow: 1;
+        flex-shrink: 0;
+    }
+
+    .login-display {
+        float: right;
+        padding-left: 1em;
+        padding-right: 1em;
+        margin-left: 1em;
+        margin-right: 1em;
     }
 </style>
