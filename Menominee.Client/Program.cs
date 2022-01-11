@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using CustomerVehicleManagement.Shared;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
@@ -22,6 +23,8 @@ namespace Menominee.Client
             builder.RootComponents.Add<App>("#app");
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
             builder.Services.AddSyncfusionBlazor();
+            builder.Services.AddBlazoredToast();
+
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 
 

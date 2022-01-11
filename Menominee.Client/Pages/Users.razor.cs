@@ -1,7 +1,9 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Menominee.Client.Services;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,15 +20,20 @@ namespace Menominee.Client.Pages
         public ILogger<Users> Logger { get; set; }
 
         public IReadOnlyList<UserToRead> UsersList;
-        public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
+        public TelerikGrid<UserToRead> Grid { get; set; }
         public long Id { get; set; }
-        private string TenantName { get; set; } = "Jane's Automotive";
         private bool Editing { get; set; } = false;
         private bool Adding { get; set; } = false;
         protected override async Task OnInitializedAsync()
         {
             UsersList = (await UserDataService.GetAll()).ToList();
-            //TenantName = Context.User.First(claim => claim.Type == "tenantName").Value;
+
+            foreach (ShopRole item in Enum.GetValues(typeof(ShopRole)))
+            {
+                ShopRoleEnumData.Add(new ShopRoleEnumModel { DisplayText = item.ToString(), Value = item });
+            }
+
+            base.OnInitialized();
         }
 
         private RegisterUser registerUser { get; set; }
@@ -36,6 +43,39 @@ namespace Menominee.Client.Pages
             Adding = true;
             UsersList = null;
             registerUser = new();
+        }
+
+        protected async Task HandleAddSubmit()
+        {
+            await HandleRegistration();
+        }
+
+        protected async Task HandleEditSubmit()
+        {
+                await UserDataService.UpdateUser(registerUser, Id);
+                await EndEditAsync();
+        }
+
+        protected async Task EndAddAsync()
+        {
+            Adding = false;
+            Editing = false;
+            UsersList = (await UserDataService.GetAll()).ToList();
+        }
+
+        protected async Task EndEditAsync()
+        {
+            Editing = false;
+            UsersList = (await UserDataService.GetAll()).ToList();
+        }
+
+        protected async Task SubmitHandlerAsync()
+        {
+            if (Adding)
+                await HandleAddSubmit();
+
+            if (Editing)
+                await HandleEditSubmit();
         }
 
         private async Task HandleRegistration()
@@ -50,5 +90,13 @@ namespace Menominee.Client.Pages
                 UsersList = (await UserDataService.GetAll()).ToList();
             }
         }
+
+        List<ShopRoleEnumModel> ShopRoleEnumData { get; set; } = new List<ShopRoleEnumModel>();
+
+    }
+    public class ShopRoleEnumModel
+    {
+        public ShopRole Value { get; set; }
+        public string DisplayText { get; set; }
     }
 }

@@ -1,0 +1,36 @@
+﻿/*
+    Sadly this .css file is ignored. Not sure why, spent some
+    time troubleshooting this issue a while back with no success.
+    Hoping next release of .net will fix it.
+*/
+
+
+/*.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.mainHeader {
+    height: 3em;
+    align-items: center;
+    background-color: khaki;
+}
+
+.links {
+    display: flex;
+    flex-grow: 1;
+    flex-wrap: wrap;
+}
+
+.login-links {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    flex-wrap: wrap;
+}
+
+.header-logo {
+    height: 48px;
+    width: 48px;
+    align-items: flex-start;
+}*/

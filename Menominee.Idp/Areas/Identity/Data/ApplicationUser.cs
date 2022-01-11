@@ -7,6 +7,8 @@ namespace Menominee.Idp.Areas.Identity.Data
 {
     public class ApplicationUser : IdentityUser
     {
+        // TODO: Move validation values to centralized setting or service; improve encapsulation
+
         [MaxLength(255)]
         public string Role { get; set; }
         public Guid TenantId { get; set; }

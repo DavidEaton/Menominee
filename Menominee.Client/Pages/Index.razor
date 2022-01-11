@@ -8,32 +8,34 @@
 @inject IAccessTokenProvider TokenProvider
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<div>
-    <p>Index page of <strong>Menominee</strong></p>
-</div>
+<div class="">
+    <div>
+        <p>Index page of <strong>Menominee</strong></p>
+    </div>
 
-<h3>ClaimsPrincipal Data</h3>
+    <h3>ClaimsPrincipal Data</h3>
 
-<TelerikButton OnClick="GetClaimsPrincipalData"
-               Primary="true">
-    Get ClaimsPrincipal Data
-</TelerikButton>
-<div class="top-row pl-4 navbar navbar-dark">
-    <TelerikButton OnClick="WriteTokenAsync">
-        Write Token
+    <TelerikButton OnClick="GetClaimsPrincipalData"
+                   Primary="true">
+        Get ClaimsPrincipal Data
     </TelerikButton>
-</div>
-<p>@_authMessage</p>
+    <div class="top-row pl-4 navbar navbar-dark">
+        <TelerikButton OnClick="WriteTokenAsync">
+            Write Token
+        </TelerikButton>
+    </div>
+    <p>@_authMessage</p>
 
-@if (_claims.Count() > 0)
-{
-    <ul>
-        @foreach (var claim in _claims)
-        {
-            <li>@claim.Type: @claim.Value</li>
-        }
-    </ul>
-}
+    @if (_claims.Count() > 0)
+    {
+        <ul>
+            @foreach (var claim in _claims)
+            {
+                <li>@claim.Type: @claim.Value</li>
+            }
+        </ul>
+    }
+</div>
 
 <p>@_surnameMessage</p>
 @code {

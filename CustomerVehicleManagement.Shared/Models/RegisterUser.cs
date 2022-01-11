@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        // TODO: Move validation values to centralized setting or service.
+        // TODO: Move validation values to centralized setting or service; improve encapsulation
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 8)]
@@ -27,6 +27,7 @@ namespace CustomerVehicleManagement.Shared.Models
 
         public string TenantName { get; set; }
 
+        [Required]
         public string ShopRole { get; set; }
     }
 }

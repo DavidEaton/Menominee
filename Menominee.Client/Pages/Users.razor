@@ -2,79 +2,98 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
 
-<div class="h4">@TenantName Users</div>
+<div class="">
+    <div class="h5">Users</div>
 
-@if (UsersList == null)
-{
-    @if (!Editing && !Adding)
+    @if (UsersList == null)
     {
-        <p><em>Loading...</em></p>
+        @if (!Editing && !Adding)
+        {
+            <p><em>Loading...</em></p>
+        }
     }
-}
-else
-{
+    else
+    {
 
-    <div class="pb-3">
-        <TelerikButton OnClick="Add"
-                       Primary="true"
-                       Icon="plus"
-                       title="Add new application User">
-            Add Organization
-        </TelerikButton>
-    </div>
-
-
-    <div class="d-flex flex-row">
-        <table class="table table-responsive table-striped small">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in UsersList)
-                {
-                    <tr>
-                        <td>@user.Username</td>
-                        <td>@user.Email</td>
-                        <td>@user.ShopRole</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-
-
-@if ((Editing || Adding) && registerUser != null)
-{
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Please enter your details</h5>
-            <EditForm Model="registerUser" OnValidSubmit="HandleRegistration">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="form-group">
-                    <label for="email">Email address</label>
-                    <InputText Id="email" class="form-control" @bind-Value="registerUser.Email" />
-                    <ValidationMessage For="@(() => registerUser.Email)" />
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.Password" />
-                    <ValidationMessage For="@(() => registerUser.Password)" />
-                </div>
-                <div class="form-group">
-                    <label for="password">Confirm Password</label>
-                    <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.ConfirmPassword" />
-                    <ValidationMessage For="@(() => registerUser.ConfirmPassword)" />
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </EditForm>
+        <div class="pb-3">
+            <TelerikButton OnClick="Add"
+                           Primary="true"
+                           Icon="plus"
+                           title="Add new application User">
+                Add Organization
+            </TelerikButton>
         </div>
-    </div>
 
-}
+
+        <div class="d-flex flex-row">
+            <table class="table table-responsive table-striped small">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in UsersList)
+                    {
+                        <tr>
+                            <td>@user.Username</td>
+                            <td>@user.ShopRole</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+
+    @if ((Editing || Adding) && registerUser != null)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Please enter your details</h5>
+                <EditForm Model="registerUser" OnValidSubmit="HandleRegistration">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <InputText Id="email" class="form-control" @bind-Value="registerUser.Email" />
+                        <ValidationMessage For="@(() => registerUser.Email)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.Password" />
+                        <ValidationMessage For="@(() => registerUser.Password)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Confirm Password</label>
+                        <InputText Id="password" type="password" class="form-control" @bind-Value="registerUser.ConfirmPassword" />
+                        <ValidationMessage For="@(() => registerUser.ConfirmPassword)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shopRole" class="form-control-label">State</label>
+                        <TelerikComboBox Data="@ShopRoleEnumData"
+                                         TextField="DisplayText"
+                                         ValueField="Value"
+                                         @bind-Value="registerUser.ShopRole"
+                                         Width="100%"
+                                         Filterable="true"
+                                         ClearButton="false"
+                                         Placeholder="Select a State"
+                                         Enabled="true">
+                        </TelerikComboBox>
+                    </div>
+
+                    <div class="pt-4">
+                        <EditFormButtons CloseEventCallback="EndAddAsync"
+                                         SaveEventCallback="SubmitHandlerAsync">
+                        </EditFormButtons>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+
+    }
+</div>

@@ -1,0 +1,44 @@
+﻿<header class="mainHeader flex-container">
+    <div class="links ml-3 mt-3">
+        <img src="/assets/logo-image.jpg"
+             class="header-logo"
+             title="Jane's Automotive"/>
+    </div>
+    <div class="login-links">
+        <LoginDisplay />
+    </div>
+</header>
+
+<style>
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .mainHeader {
+        height: 4em;
+        align-items: center;
+        background-color: khaki;
+    }
+
+    .links {
+        display: flex;
+        flex-grow: 1;
+        flex-wrap: wrap;
+
+    }
+
+    .login-links {
+        display: flex;
+        justify-content: flex-end;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        margin-inline-end: 10px;
+    }
+
+    .header-logo {
+        height: 48px;
+        width: 48px;
+        align-items: flex-start;
+    }
+</style>

@@ -8,6 +8,6 @@ namespace Menominee.Client.Services
     {
         Task<IReadOnlyList<UserToRead>> GetAll();
         Task<RegisterUserResult> Register(RegisterUser registerModel);
-
+        Task UpdateUser(RegisterUser registerUser, long id);
     }
 }
