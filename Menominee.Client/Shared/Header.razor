@@ -1,12 +1,13 @@
 ﻿<header class="header">
-    @*<div class="header-list ml-3 mt-3">
+    <div class="header-list">
         <img src="/assets/logo-image.jpg"
-             class="header-logo"
+             class="header-logo rounded"
              title="Jane's Automotive" />
-    </div>*@
+    </div>
     <TelerikMenu Data="@MenuData"
                  Orientation="MenuOrientation.Horizontal"
-                 Class="header-list"></TelerikMenu>
+                 Class="header-list">
+    </TelerikMenu>
     <div class="login-display">
         <LoginDisplay />
     </div>
@@ -15,22 +16,23 @@
     .header-logo {
         height: 48px;
         width: 48px;
-        align-items: flex-start;
     }
 
     .header {
-        background-color: khaki;
+        background-color: #899BC4;
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         min-width: 100vw;
-        border: 1px solid red;
     }
 
     .header-list {
         flex-grow: 1;
         flex-shrink: 0;
     }
+        .header-list.k-menu .k-item {
+            color: #EDE8DC;
+        }
 
     .login-display {
         float: right;

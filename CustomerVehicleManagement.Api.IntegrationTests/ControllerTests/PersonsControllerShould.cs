@@ -46,7 +46,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var provider = TestClaimsProvider.WithUserClaims();
             var client = Factory.CreateClientWithTestAuth(provider);
             var mediaType = "application/json";
+
             var result = await controller.GetPersonAsync(1);
+
             result.Result.Should().BeOfType<NotFoundResult>();
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }

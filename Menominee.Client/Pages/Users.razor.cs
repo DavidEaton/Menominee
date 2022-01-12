@@ -21,7 +21,7 @@ namespace Menominee.Client.Pages
 
         public IReadOnlyList<UserToRead> UsersList;
         public TelerikGrid<UserToRead> Grid { get; set; }
-        public long Id { get; set; }
+        public string Id { get; set; }
         private bool Editing { get; set; } = false;
         private bool Adding { get; set; } = false;
         protected override async Task OnInitializedAsync()
@@ -44,6 +44,24 @@ namespace Menominee.Client.Pages
             UsersList = null;
             registerUser = new();
         }
+
+        private async Task EditAsync(GridRowClickEventArgs args)
+        {
+            //var user = args.Item as UserToRead;
+            //Id = user.Id;
+
+            //registerUser = new RegisterUser
+            //{
+            //    Id = user.Id,
+            //    Email = user.Email,
+            //    ShopRole = user.ShopRole
+            //};
+
+            //Editing = true;
+            //UsersList = null;
+        }
+
+
 
         protected async Task HandleAddSubmit()
         {
@@ -80,10 +98,7 @@ namespace Menominee.Client.Pages
 
         private async Task HandleRegistration()
         {
-            registerUser.ShopRole = "Technician";
-            var result = await UserDataService.Register(registerUser);
-
-            if (result.Successful)
+            if (await UserDataService.Register(registerUser))
             {
                 Adding = false;
                 Editing = false;

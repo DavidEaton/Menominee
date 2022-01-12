@@ -4,19 +4,22 @@
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 
-<AuthorizeView>
-    <Authorized>
-        @context.User.Identity.Name
-        <button class="btn btn-link"
-                @onclick="BeginSignOut"
-                title="Log out user">
-            Log out
-        </button>
-    </Authorized>
-    <NotAuthorized>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+<div class="pt-3">
+    <AuthorizeView>
+        <Authorized>
+            <p class="log-link">@context.User.Identity.Name</p>
+            <a class="log-link"
+               @onclick="BeginSignOut"
+               title="Log out user"
+               style="color: #EDE8DC">&nbsp; | &nbsp; Log out</a>
+        </Authorized>
+        <NotAuthorized>
+            <a href="authentication/login"
+               class="log-link"
+               title="Log in to Menominee">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
 @code{
     private async Task BeginSignOut(MouseEventArgs args)
@@ -25,3 +28,9 @@
         Navigation.NavigateTo("authentication/logout");
     }
 }
+<style>
+    .log-link {
+        color: #EDE8DC;
+        display: inline;
+    }
+</style>

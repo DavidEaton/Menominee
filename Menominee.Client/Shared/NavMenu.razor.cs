@@ -27,19 +27,23 @@ namespace Menominee.Client.Shared
                 new MenuModel()
                 {
                     Text = "Products",
-                    Url = "/",
+                    Url = "products",
                     Icon = "list-unordered"
                 },
                 new MenuModel()
                 {
                     Text = "About",
-                    Url = "/",
+                    Url = "about",
                     Icon = "info-circle"
                 },
             };
         }
         public void GetAuthorizedMenuData()
         {
+
+            // Get the currently logged-in user ShopRole
+            // Build list of authorized links
+
             AuthorizedMenuData = new List<MenuModel>()
             {
                 new MenuModel()

@@ -36,7 +36,21 @@ namespace Menominee.Client.Services
 
             return null;
         }
-        public async Task<RegisterUserResult> Register(RegisterUser registerModel)
+
+        public async Task<UserToRead> GetUser(string id)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<UserToRead>(UriSegment + $"/{id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message :{ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task<bool> Register(RegisterUser registerModel)
         {
             var content = new StringContent(JsonSerializer.Serialize(registerModel), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -44,11 +58,11 @@ namespace Menominee.Client.Services
             if (response.IsSuccessStatusCode)
             {
                 toastService.ShowSuccess($"{registerModel.Email} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<RegisterUserResult>(await response.Content.ReadAsStreamAsync());
+                return true;
             }
 
             toastService.ShowError($"{registerModel.Email} failed to add. {response.ReasonPhrase}.", "Add Failed");
-            return null;
+            return false;
         }
 
         public async Task UpdateUser(RegisterUser registerUser, long id)
@@ -63,6 +77,11 @@ namespace Menominee.Client.Services
             }
 
             toastService.ShowError($"{registerUser.Email} failed to update", "Save Failed");
+        }
+
+        public Task UpdateUser(RegisterUser registerUser, string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

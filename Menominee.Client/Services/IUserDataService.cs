@@ -7,7 +7,8 @@ namespace Menominee.Client.Services
     public interface IUserDataService
     {
         Task<IReadOnlyList<UserToRead>> GetAll();
-        Task<RegisterUserResult> Register(RegisterUser registerModel);
-        Task UpdateUser(RegisterUser registerUser, long id);
+        Task<bool> Register(RegisterUser registerModel);
+        Task UpdateUser(RegisterUser registerUser, string id);
+        Task<UserToRead> GetUser(string id);
     }
 }

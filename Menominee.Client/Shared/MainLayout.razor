@@ -1,15 +1,18 @@
 ﻿@layout TelerikLayout
 @inherits LayoutComponentBase
+<BlazoredToasts />
 <TelerikRootComponent>
     <div class="site">
         <div class="flex-container">
             <Header />
         </div>
-        <div class="flex-container">
-            <NavMenu />
-        </div>
-        <div class="flex-container">
-            @Body
+        <div class="flex-container column-container">
+            <div class="side-nav">
+                <NavMenu />
+            </div>
+            <div class="body pt-2">
+                @Body
+            </div>
         </div>
     </div>
 </TelerikRootComponent>
@@ -19,11 +22,24 @@
         display: flex;
         min-height: 100vh;
         flex-direction: column;
-        background-color: powderblue;
+        background-color: #F9F7F3;
     }
 
     .flex-container {
         display: flex;
-        flex-wrap: wrap;
+    }
+
+    .column-container {
+        flex-direction: row;
+    }
+
+    .side-nav {
+        display: flex;
+        flex-grow: 1;
+        min-height: 90vh;
+    }
+
+    .body {
+        flex-grow: 9;
     }
 </style>

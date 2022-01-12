@@ -5,6 +5,8 @@ namespace CustomerVehicleManagement.Shared.Models
 {
     public class RegisterUser
     {
+        public string Id { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
