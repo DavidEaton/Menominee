@@ -78,19 +78,20 @@ namespace Menominee.Idp
             {
                 new Client
                 {
+                    // Client application’s identifier registered within this IDP
                     ClientId = "menominee-client",
                     ClientName = "Menominee",
+
+                    // How Client interacts with IDP.
                     AllowedGrantTypes = GrantTypes.Code,
                     RequireClientSecret = false,
                     RequirePkce = true,
-                    RedirectUris = new List<string>()
-                    {
-                        "https://localhost:44307/authentication/login-callback"
-                    },
-                    PostLogoutRedirectUris = new List<string>()
-                    {
-                        "https://localhost:44307/authentication/logout-callback"
-                    },
+
+                    // URIs that this IDP can redirect a user to once they log in
+                    RedirectUris = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:RedirectUri") },
+
+                    // URIs that this IDP can redirect a user to once they log out
+                    PostLogoutRedirectUris = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:PostLogoutRedirectUri") },
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -108,11 +109,8 @@ namespace Menominee.Idp
                     {
                         new Secret("secret".Sha256())
                     },
-                    AllowedCorsOrigins = new List<string>()
-                    {
-                        "https://localhost:44307"
-                    },
-                    AccessTokenLifetime = int.Parse(StaticConfigurationHelper.AppSetting("AccessTokenLifetime"))
+                    AllowedCorsOrigins = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:AllowedCorsOrigin") },
+                    AccessTokenLifetime = int.Parse( StaticConfigurationHelper.AppSetting("AccessTokenLifetime"))
                 }
             };
     }
