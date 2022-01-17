@@ -17,7 +17,7 @@ namespace Menominee.Client.Services
         public async Task<Tenant> GetTenantAsync()
         {
             return await JsonSerializer.DeserializeAsync<Tenant>
-                (await httpClient.GetStreamAsync($"tenants/"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                (await httpClient.GetStreamAsync($"api/tenants/"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
     }
 }

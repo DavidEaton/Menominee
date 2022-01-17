@@ -5,7 +5,6 @@ using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Syncfusion.Blazor;
 using System;
 using System.Threading.Tasks;
@@ -21,12 +20,11 @@ namespace Menominee.Client
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-            builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
             builder.Services.AddSyncfusionBlazor();
             builder.Services.AddBlazoredToast();
 
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
-
 
             builder.Services.AddOidcAuthentication(options =>
             {
@@ -65,7 +63,6 @@ namespace Menominee.Client
                     Policies.TechnicianUserPolicy());
             });
 
-
             var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(
@@ -90,13 +87,6 @@ namespace Menominee.Client
 
             await builder.Build().RunAsync();
 
-        }
-
-        private static void ConfigureLogging(
-          WebAssemblyHostBuilder builder,
-          string section = "Logging")
-        {
-            builder.Logging.AddConfiguration(builder.Configuration.GetSection(section));
         }
     }
 }

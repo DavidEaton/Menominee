@@ -15,15 +15,11 @@ namespace Menominee.Client.Pages
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
 
-        [Inject]
-        public ILogger<Persons> Logger { get; set; }
-
         public IReadOnlyList<PersonToReadInList> PersonsList;
         public long SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
         protected AddPersonDialog AddPersonDialog { get; set; }
-        //protected PersonDetail PersonDetail { get; set; }
         protected override async Task OnInitializedAsync()
         {
             PersonsList = (await PersonDataService.GetAllPersons()).ToList();
@@ -31,7 +27,6 @@ namespace Menominee.Client.Pages
 
         protected void AddPerson()
         {
-            //PersonDetail?.Close();
             AddPersonDialog.Show();
         }
 

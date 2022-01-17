@@ -10,7 +10,7 @@ namespace Menominee.Client.Services
     public class EmployeeDataService : IEmployeeDataService
     {
         private readonly HttpClient httpClient;
-        private const string UriSegment = "employees";
+        private const string UriSegment = "api/employees";
 
         public EmployeeDataService(HttpClient httpClient)
         {

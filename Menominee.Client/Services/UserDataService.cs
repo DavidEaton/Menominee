@@ -13,7 +13,7 @@ namespace Menominee.Client.Services
     public class UserDataService : IUserDataService
     {
         private readonly HttpClient httpClient;
-        private const string UriSegment = "users";
+        private const string UriSegment = "api/users";
         private const string MediaType = "application/json";
         private readonly IToastService toastService;
 

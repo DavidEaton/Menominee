@@ -13,7 +13,7 @@ namespace Menominee.Client.Services
     {
         private readonly HttpClient httpClient;
         private const string MediaType = "application/json";
-        private const string UriSegment = "persons";
+        private const string UriSegment = "api/persons";
 
         public PersonDataService(HttpClient httpClient)
         {
