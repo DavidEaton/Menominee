@@ -1,4 +1,4 @@
-﻿namespace Menominee.Idp.Areas.Identity.Data
+﻿namespace Janco.Idp.Areas.Identity.Data
 {
     public interface IConcurrencyAware
     {

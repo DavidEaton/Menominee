@@ -1,4 +1,4 @@
-﻿using Menominee.Idp.Areas.Identity.Data;
+﻿using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Entities;

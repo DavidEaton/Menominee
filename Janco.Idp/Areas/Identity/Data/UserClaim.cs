@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Menominee.Idp.Areas.Identity.Data
+namespace Janco.Idp.Areas.Identity.Data
 {
     public class UserClaim : IConcurrencyAware
     {

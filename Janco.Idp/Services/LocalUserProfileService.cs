@@ -1,14 +1,14 @@
 ﻿using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
-using Menominee.Idp.Areas.Identity.Data;
+using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Menominee.Idp.Services
+namespace Janco.Idp.Services
 {
     public class LocalUserProfileService : IProfileService
     {

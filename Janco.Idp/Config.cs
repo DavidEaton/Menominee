@@ -1,10 +1,10 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
 using Menominee.Common.Enums;
-using Menominee.Idp.Configuration;
+using Janco.Idp.Configuration;
 using System.Collections.Generic;
 
-namespace Menominee.Idp
+namespace Janco.Idp
 {
     public static class Config
     {

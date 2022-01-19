@@ -1,6 +1,6 @@
 ﻿using Menominee.Common.Entities;
 using Menominee.Common.Enums;
-using Menominee.Idp.Areas.Identity.Data;
+using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Menominee.Idp.Data.Contexts
+namespace Janco.Idp.Data.Contexts
 {
     public class UserDbContext : IdentityDbContext<ApplicationUser>
     {

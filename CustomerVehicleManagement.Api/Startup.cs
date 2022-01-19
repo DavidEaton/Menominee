@@ -7,7 +7,7 @@ using CustomerVehicleManagement.Api.Validators;
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
 using FluentValidation.AspNetCore;
-using Menominee.Idp.Areas.Identity.Data;
+using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

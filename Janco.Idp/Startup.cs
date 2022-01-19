@@ -2,15 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using IdentityServer4.Services;
-using Menominee.Idp.Areas.Identity.Data;
-using Menominee.Idp.Services;
+using Janco.Idp.Areas.Identity.Data;
+using Janco.Idp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Menominee.Idp
+namespace Janco.Idp
 {
     public class Startup
     {

@@ -1,5 +1,5 @@
-﻿using Menominee.Idp.Areas.Identity.Data;
-using Menominee.Idp.Data.Contexts;
+﻿using Janco.Idp.Areas.Identity.Data;
+using Janco.Idp.Data.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -8,8 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
-[assembly: HostingStartup(typeof(Menominee.Idp.Areas.Identity.IdentityHostingStartup))]
-namespace Menominee.Idp.Areas.Identity
+[assembly: HostingStartup(typeof(Janco.Idp.Areas.Identity.IdentityHostingStartup))]
+namespace Janco.Idp.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {

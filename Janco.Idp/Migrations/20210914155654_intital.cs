@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Menominee.Idp.Migrations
+namespace Janco.Idp.Migrations
 {
     public partial class intital : Migration
     {

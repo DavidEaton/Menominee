@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace Menominee.Idp.Configuration
+namespace Janco.Idp.Configuration
 {
     public class StaticConfigurationHelper
     {

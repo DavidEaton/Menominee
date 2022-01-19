@@ -20,7 +20,6 @@ namespace CustomerVehicleManagement.Api
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.File(new JsonFormatter(), @"menominee-api-log-.json", rollingInterval: RollingInterval.Day)
-                //.WriteTo.File(@"menominee-api-log-.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 

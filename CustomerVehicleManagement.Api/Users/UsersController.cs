@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models;
-using Menominee.Idp.Areas.Identity.Data;
+using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

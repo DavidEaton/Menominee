@@ -9,7 +9,7 @@ using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 
-namespace Menominee.Idp
+namespace Janco.Idp
 {
     public class Program
     {

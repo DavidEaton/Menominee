@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Threading.Tasks;
 
-namespace Menominee.Idp
+namespace Janco.Idp
 {
     public class DummyEmailSender : IEmailSender
     {
