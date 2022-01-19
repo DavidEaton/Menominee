@@ -6,8 +6,10 @@
                          Class="nav-left-items"></TelerikMenu>
 
         </NotAuthorized>
+    </AuthorizeView>
+    <AuthorizeView Policy="@Policies.CanManageUsers">
         <Authorized>
-            <TelerikMenu Data="@AuthorizedMenuData"
+            <TelerikMenu Data="@AdminMenuData"
                          Orientation="MenuOrientation.Vertical"
                          Class="nav-left-items"></TelerikMenu>
         </Authorized>

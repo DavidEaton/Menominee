@@ -1,0 +1,18 @@
+﻿@typeparam TItem
+
+<table class="table table-hover table-borderless table-sm table-responsive">
+    <thead>
+        <tr>
+            @TableHeader
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            <tr @key="item"
+                @onclick="() => EditAsync(item)">
+                @RowTemplate(item)
+            </tr>
+        }
+    </tbody>
+</table>

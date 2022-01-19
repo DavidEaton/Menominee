@@ -19,7 +19,6 @@ namespace Menominee.Client.Pages
         public long SelectedId { get; set; }
         public Tenant Tenant { get; set; }
 
-        protected AddPersonDialog AddPersonDialog { get; set; }
         protected override async Task OnInitializedAsync()
         {
             PersonsList = (await PersonDataService.GetAllPersons()).ToList();
@@ -27,7 +26,6 @@ namespace Menominee.Client.Pages
 
         protected void AddPerson()
         {
-            AddPersonDialog.Show();
         }
 
         public async void AddPersonDialog_OnDialogClose()

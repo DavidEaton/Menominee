@@ -1,8 +1,10 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
+    [Authorize(Policies.PaidUser)]
     public class PersonsController : ApplicationController
     {
         private readonly IPersonRepository repository;

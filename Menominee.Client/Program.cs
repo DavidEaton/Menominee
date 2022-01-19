@@ -23,6 +23,7 @@ namespace Menominee.Client
 
             builder.Services.AddSyncfusionBlazor();
             builder.Services.AddBlazoredToast();
+            builder.Services.AddScoped<LocalStorage>();
 
             builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
 

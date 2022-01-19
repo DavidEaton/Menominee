@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Shared
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser() // Free users have extremely limited features, but still need an account
-                .RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.Free.ToString() })
+                //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.Free.ToString() })
                 .Build();
         }
 
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Shared
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
+                //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
                 .Build();
         }
 

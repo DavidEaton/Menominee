@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Components\PersonDetail.razor" />
   </ItemGroup>
 
   <ItemGroup>

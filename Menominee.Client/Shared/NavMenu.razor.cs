@@ -6,7 +6,7 @@ namespace Menominee.Client.Shared
     public partial class NavMenu : ComponentBase
     {
         public List<MenuModel> NotAuthorizedMenuData { get; set; }
-        public List<MenuModel> AuthorizedMenuData { get; set; }
+        public List<MenuModel> AdminMenuData { get; set; }
 
         protected override void OnInitialized()
         {
@@ -29,13 +29,7 @@ namespace Menominee.Client.Shared
                     Text = "Products",
                     Url = "products",
                     Icon = "list-unordered"
-                },
-                new MenuModel()
-                {
-                    Text = "About",
-                    Url = "about",
-                    Icon = "info-circle"
-                },
+                }
             };
         }
         public void GetAuthorizedMenuData()
@@ -44,13 +38,19 @@ namespace Menominee.Client.Shared
             // Get the currently logged-in user ShopRole
             // Build list of authorized links
 
-            AuthorizedMenuData = new List<MenuModel>()
+            AdminMenuData = new List<MenuModel>()
             {
                 new MenuModel()
                 {
                     Text = "Home",
                     Url = "/",
                     Icon = "home"
+                },
+                new MenuModel()
+                {
+                    Text = "Customers",
+                    Url = "customers",
+                    Icon = "user"
                 },
                 new MenuModel()
                 {
@@ -69,12 +69,6 @@ namespace Menominee.Client.Shared
                     Text = "Users",
                     Url = "users",
                     Icon = "lock"
-                },
-                new MenuModel()
-                {
-                    Text = "Technicians",
-                    Url = "technicians",
-                    Icon = "wrench"
                 },
                 new MenuModel()
                 {
