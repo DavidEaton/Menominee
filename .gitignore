@@ -14,9 +14,7 @@
 *.userprefs
 
 # Menominee logs
-menominee-idp-log*.txt
-menominee-api-log*.txt
-menominee-idp-log*.json
+janco-idp-log*.json
 menominee-api-log*.json
 
 # Build results

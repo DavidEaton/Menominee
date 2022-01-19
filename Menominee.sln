@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menominee.Client\Menominee.Client.csproj", "{10BDCF4B-4155-46BE-8106-F776FCF27127}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Idp", "Menominee.Idp\Menominee.Idp.csproj", "{B9C023A9-2785-46E2-926E-7BBDD99EA549}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Common", "Menominee.Common\Menominee.Common.csproj", "{4ED3B2BF-C725-4711-8488-C678FB9AF910}"
@@ -64,10 +62,6 @@ Global
 		{10BDCF4B-4155-46BE-8106-F776FCF27127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10BDCF4B-4155-46BE-8106-F776FCF27127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10BDCF4B-4155-46BE-8106-F776FCF27127}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9C023A9-2785-46E2-926E-7BBDD99EA549}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9}.Release|Any CPU.ActiveCfg = Release|Any CPU

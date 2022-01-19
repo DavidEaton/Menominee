@@ -29,8 +29,7 @@ namespace Menominee.Idp
                 //    rollOnFileSizeLimit: true,
                 //    shared: true,
                 //    flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .WriteTo.File(new JsonFormatter(), @"menominee-idp-log-.json", rollingInterval: RollingInterval.Day)
-                //.WriteTo.File(@"menominee-idp-log-.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File(new JsonFormatter(), @"janco-idp-log.json", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
