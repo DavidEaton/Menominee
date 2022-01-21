@@ -2,6 +2,8 @@ using Blazored.Toast;
 using CustomerVehicleManagement.Shared;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
+using Menominee.Client.Services.Payables.Invoices;
+using Menominee.Client.Services.Payables.Vendors;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +18,7 @@ namespace Menominee.Client
         public static async Task Main(string[] args)
         {
             // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDU2NDQ2QDMxMzkyZTMxMmUzMFhtMXY2TG1wdTFsc1RlQmpvTXV4NEhWMisrTmEyUEZ3TVhPeEpqaEFGcGc9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
@@ -83,6 +85,14 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEmployeeDataService, EmployeeDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IVendorDataService, VendorDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

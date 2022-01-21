@@ -3,6 +3,8 @@
     public enum FormMode
     {
         Add,
-        Edit
+        Edit,
+        View,
+        Unknown
     }
 }
