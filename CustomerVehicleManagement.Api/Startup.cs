@@ -36,6 +36,7 @@ namespace CustomerVehicleManagement.Api
 
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
+        private const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -111,7 +112,6 @@ namespace CustomerVehicleManagement.Api
             // TryAddScoped won't re-add or overwrite services already added
             // to the container, but AddScoped will.
             services.TryAddScoped<UserContext, UserContext>();
-            services.AddDbContext<ApplicationDbContext>();
             services.TryAddScoped<IPersonRepository, PersonRepository>();
             services.TryAddScoped<IOrganizationRepository, OrganizationRepository>();
             services.TryAddScoped<ICustomerRepository, CustomerRepository>();
@@ -123,11 +123,14 @@ namespace CustomerVehicleManagement.Api
             {
                 // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
+                services.AddDbContext<ApplicationDbContext>(); // Move this line out if if check to enable db routing during development
             }
 
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
+
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 
