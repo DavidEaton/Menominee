@@ -332,8 +332,8 @@ namespace MenomineePlayWASM.Server.Controllers.Payables.Vendors.Invoices
         ////}
 
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteInvoiceAsync(int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteInvoiceAsync(long id)
         {
             var invoiceFromRepository = await repository.GetInvoiceAsync(id);
 

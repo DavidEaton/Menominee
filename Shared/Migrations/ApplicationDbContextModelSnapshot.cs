@@ -405,6 +405,15 @@ namespace MenomineePlayWASM.Shared.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateInvoiced")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("InvoiceNumber")
                         .HasColumnType("bigint");
 
@@ -420,6 +429,359 @@ namespace MenomineePlayWASM.Shared.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RepairOrders", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Core")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCounterSale")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeclined")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("LaborEach")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ManufacturerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PartType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("QuantitySold")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SaleCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SaleType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<double>("SellingPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.ToTable("RepairOrderItems", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItemTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderItemTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderPayment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PaymentMethod")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderPayments", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderPurchase", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("PONumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("VendorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("VendorInvoiceNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VendorPartNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RepairOrderPurchases", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderSerialNumber", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderSerialNumbers", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsCounterSale")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeclined")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("LaborTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartsTotal")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SaleCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ShopSuppliesTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TaxTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderServices", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderServiceTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.ToTable("RepairOrderServiceTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderTech", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TechnicianId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.ToTable("RepairOrderTechs", "dbo");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderWarranty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("NewWarranty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("OriginalInvoiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalWarranty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderWarranties", "dbo");
                 });
 
             modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.Inventory.InventoryItem", b =>
@@ -472,6 +834,87 @@ namespace MenomineePlayWASM.Shared.Migrations
                         .HasForeignKey("VendorInvoiceId");
                 });
 
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Items")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItemTax", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderPayment", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderSerialNumber", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("SerialNumbers")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Services")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderServiceTax", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderTax", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderTech", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Techs")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderWarranty", b =>
+                {
+                    b.HasOne("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("Warranties")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.Payables.CreditReturns.CreditReturn", b =>
                 {
                     b.Navigation("LineItems");
@@ -484,6 +927,33 @@ namespace MenomineePlayWASM.Shared.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Taxes");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrder", b =>
+                {
+                    b.Navigation("Payments");
+
+                    b.Navigation("Services");
+
+                    b.Navigation("Taxes");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.Navigation("SerialNumbers");
+
+                    b.Navigation("Taxes");
+
+                    b.Navigation("Warranties");
+                });
+
+            modelBuilder.Entity("MenomineePlayWASM.Shared.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Taxes");
+
+                    b.Navigation("Techs");
                 });
 #pragma warning restore 612, 618
         }

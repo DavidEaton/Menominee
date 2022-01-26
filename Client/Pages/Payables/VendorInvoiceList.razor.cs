@@ -1,7 +1,4 @@
-﻿using Blazored.Modal;
-using Blazored.Modal.Services;
-using MenomineePlayWASM.Client.Components.Shared;
-using MenomineePlayWASM.Shared.Dtos.Payables.Invoices;
+﻿using MenomineePlayWASM.Shared.Dtos.Payables.Invoices;
 using MenomineePlayWASM.Shared.Services.Payables.Invoices;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;

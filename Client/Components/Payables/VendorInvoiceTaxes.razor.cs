@@ -2,12 +2,8 @@
 using Blazored.Modal.Services;
 using MenomineePlayWASM.Client.Components.Shared;
 using MenomineePlayWASM.Shared.Dtos.Payables.Invoices.Taxes;
-using MenomineePlayWASM.Shared.Entities.Payables.Invoices;
 using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Grids;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace MenomineePlayWASM.Client.Components.Payables

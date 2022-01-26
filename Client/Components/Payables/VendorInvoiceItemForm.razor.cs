@@ -1,11 +1,6 @@
 ﻿using MenomineePlayWASM.Shared.Dtos.Payables.Invoices.Items;
 using MenomineePlayWASM.Shared.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Telerik.Blazor.Components;
 
 namespace MenomineePlayWASM.Client.Components.Payables
 {

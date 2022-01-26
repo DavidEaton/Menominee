@@ -35,6 +35,16 @@ namespace MenomineePlayWASM.Shared
 
             // Repair Orders
             modelBuilder.ApplyConfiguration(new RepairOrderConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderItemTaxConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderPaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderPurchaseConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderSerialNumberConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderServiceConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderServiceTaxConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderTaxConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderTechConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderWarrantyConfiguration());
 
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
@@ -63,5 +73,15 @@ namespace MenomineePlayWASM.Shared
 
         // Repair Orders
         public DbSet<RepairOrder> RepairOrders { get; set; }
+        public DbSet<RepairOrderService> RepairOrderServices { get; set; }
+        public DbSet<RepairOrderItem> RepairOrderItems { get; set; }
+        public DbSet<RepairOrderItemTax> RepairOrderItemTaxes { get; set; }
+        public DbSet<RepairOrderSerialNumber> RepairOrderSerialNumbers { get; set; }
+        public DbSet<RepairOrderPurchase> RepairOrderPurchases { get; set; }
+        public DbSet<RepairOrderWarranty> RepairOrderWarranties { get; set; }
+        public DbSet<RepairOrderServiceTax> RepairOrderServiceTaxes { get; set; }
+        public DbSet<RepairOrderTech> RepairOrderTechs { get; set; }
+        public DbSet<RepairOrderTax> RepairOrderTaxes { get; set; }
+        public DbSet<RepairOrderPayment> RepairOrderPayments { get; set; }
     }
 }

@@ -40,54 +40,74 @@ namespace MenomineePlayWASM.Server.Repository.RepairOrders
 
         public async Task<RepairOrderToRead> GetRepairOrderAsync(long id)
         {
-            var roFromContext = await context.RepairOrders.FirstOrDefaultAsync(ro => ro.Id == id);
+            var roFromContext = await context.RepairOrders
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(t => t.Taxes)
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(s => s.SerialNumbers)
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(w => w.Warranties)
+                .Include(ro => ro.Services)
+                    .ThenInclude(t => t.Techs)
+                .Include(ro => ro.Services)
+                    .ThenInclude(t => t.Taxes)
+                .Include(ro => ro.Taxes)
+                .Include(ro => ro.Payments)
+                .FirstOrDefaultAsync(ro => ro.Id == id);
 
-            return new RepairOrderToRead()
-            {
-                Id = roFromContext.Id,
-                RepairOrderNumber = roFromContext.RepairOrderNumber,
-                InvoiceNumber = roFromContext.InvoiceNumber,
-                CustomerName = roFromContext.CustomerName,
-                Vehicle = roFromContext.Vehicle,
-                Total = roFromContext.Total
-            };
+            return RepairOrderToRead.ConvertToDto(roFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
         {
-            return await context.RepairOrders.FirstOrDefaultAsync(ro => ro.Id == id);
+            var roFromContext = await context.RepairOrders
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(t => t.Taxes)
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(s => s.SerialNumbers)
+                .Include(ro => ro.Services)
+                    .ThenInclude(i => i.Items)
+                        .ThenInclude(w => w.Warranties)
+                .Include(ro => ro.Services)
+                    .ThenInclude(t => t.Techs)
+                .Include(ro => ro.Services)
+                    .ThenInclude(t => t.Taxes)
+                .Include(ro => ro.Taxes)
+                .Include(ro => ro.Payments)
+                .FirstOrDefaultAsync(ro => ro.Id == id);
+
+            return roFromContext;
         }
 
         public async Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync()
         {
-            IReadOnlyList<RepairOrder> ros = await context.RepairOrders.ToListAsync();
+            IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
 
-            return ros
-                .Select(ro => new RepairOrderToReadInList
-                {
-                    Id = ro.Id,
-                    RepairOrderNumber = ro.RepairOrderNumber,
-                    InvoiceNumber = ro.InvoiceNumber,
-                    CustomerName = ro.CustomerName,
-                    Vehicle = ro.Vehicle,
-                    Total = ro.Total
-                }).ToList();
+            return repairOrders.
+                Select(repairOrder =>
+                       RepairOrderToReadInList.ConvertToDto(repairOrder))
+                .ToList();
         }
 
-        public async Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync()
-        {
-            IReadOnlyList<RepairOrder> ros = await context.RepairOrders.ToListAsync();
+        //public async Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync()
+        //{
+        //    IReadOnlyList<RepairOrder> ros = await context.RepairOrders.ToListAsync();
 
-            return ros.Select(ro => new RepairOrderToRead()
-            {
-                Id = ro.Id,
-                RepairOrderNumber = ro.RepairOrderNumber,
-                InvoiceNumber = ro.InvoiceNumber,
-                CustomerName = ro.CustomerName,
-                Vehicle = ro.Vehicle,
-                Total = ro.Total
-            }).ToList();
-        }
+        //    return ros.Select(ro => new RepairOrderToRead()
+        //    {
+        //        Id = ro.Id,
+        //        RepairOrderNumber = ro.RepairOrderNumber,
+        //        InvoiceNumber = ro.InvoiceNumber,
+        //        CustomerName = ro.CustomerName,
+        //        Vehicle = ro.Vehicle,
+        //        Total = ro.Total
+        //    }).ToList();
+        //}
 
         public async Task<bool> RepairOrderExistsAsync(long id)
         {

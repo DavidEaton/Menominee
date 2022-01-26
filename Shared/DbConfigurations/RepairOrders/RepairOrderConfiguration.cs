@@ -13,7 +13,7 @@ namespace MenomineePlayWASM.Shared.DbConfigurations.RepairOrders
     {
         public override void Configure(EntityTypeBuilder<RepairOrder> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("RepairOrders", "dbo");
 
             builder.Ignore(item => item.TrackingState);

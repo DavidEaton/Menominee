@@ -1,15 +1,8 @@
-﻿using Blazored.Modal;
-using Blazored.Modal.Services;
-using MenomineePlayWASM.Client.Components.Shared;
-using MenomineePlayWASM.Shared.Dtos.Payables.Vendors;
+﻿using MenomineePlayWASM.Shared.Dtos.Payables.Vendors;
 using MenomineePlayWASM.Shared.Services.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using Syncfusion.Blazor.Grids;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 

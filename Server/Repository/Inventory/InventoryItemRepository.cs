@@ -1,5 +1,4 @@
-﻿using MenomineePlayWASM.Client.Helpers;
-using MenomineePlayWASM.Shared;
+﻿using MenomineePlayWASM.Shared;
 using MenomineePlayWASM.Shared.Dtos.Inventory;
 using MenomineePlayWASM.Shared.Entities.Inventory;
 using MenomineePlayWASM.Utilities;
