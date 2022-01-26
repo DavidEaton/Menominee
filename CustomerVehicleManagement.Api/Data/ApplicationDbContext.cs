@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Users;
-using CustomerVehicleManagement.Api.Configurations;
+﻿using CustomerVehicleManagement.Api.Configurations;
+using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
@@ -20,13 +20,15 @@ namespace CustomerVehicleManagement.Api.Data
         readonly ILogger<ApplicationDbContext> Logger;
         private string Connection = string.Empty;
 
+        public ApplicationDbContext() { }
+
         public ApplicationDbContext(string connection)
         {
-            Connection = connection;
+            Connection = connection;  // Database integration tests pass in connection
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options) { } // Unit tests pass in options
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
             IConfiguration configuration,
