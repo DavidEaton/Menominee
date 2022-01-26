@@ -38,7 +38,6 @@ namespace CustomerVehicleManagement.Api
 
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment HostEnvironment { get; }
-        private const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -123,18 +122,21 @@ namespace CustomerVehicleManagement.Api
             services.AddHealthChecks();
             services.AddCors();
 
+            services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
+                                                           // if check to enable tenant database routing during development
+
             if (HostEnvironment.IsProduction())
             {
                 // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
-                services.AddDbContext<ApplicationDbContext>(); // Move this line out if if check to enable db routing during development
             }
 
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
 
-                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                // Uncomment next line to route all requests to a single tenant database during development
+                // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 
