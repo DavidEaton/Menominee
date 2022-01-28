@@ -24,9 +24,11 @@ namespace Janco.Idp.Configuration
         // Pass in a key like TestArea:TestKey to get TestValue
         public static StaticConfigurationHelper GetCurrentSettings(string Key)
         {
+            var Environment = "Development";
+
             var builder = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
+                            .AddJsonFile($"appsettings.{Environment}.json", optional: false, reloadOnChange: true)
                             .AddEnvironmentVariables();
 
             IConfigurationRoot configuration = builder.Build();

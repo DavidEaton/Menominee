@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Shared.Models
                 {
                     customerReadDto.Person = PersonToRead.ConvertToDto(customer.Person);
                     customerReadDto.Address = AddressToRead.ConvertToDto(customer.Person?.Address);
-                    customerReadDto.Name = customerReadDto.Person.Name;
+                    customerReadDto.Name = customerReadDto.Person.Name.LastFirstMiddle;
                     customerReadDto.Phones = customerReadDto.Person?.Phones;
                     customerReadDto.Emails = customerReadDto.Person?.Emails;
                 }

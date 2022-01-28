@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         {
             var person = new PersonToWrite { Name = new PersonNameToWrite { LastName = "Doe", FirstName = "Jane" }, Gender = Gender.Female };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }

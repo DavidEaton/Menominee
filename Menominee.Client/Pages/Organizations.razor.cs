@@ -27,7 +27,7 @@ namespace Menominee.Client.Pages
 
         public IReadOnlyList<OrganizationToReadInList> OrganizationsList;
         public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
-        public long Id { get; set; }
+        private long Id { get; set; }
 
         private bool Editing { get; set; } = false;
         private bool Adding { get; set; } = false;

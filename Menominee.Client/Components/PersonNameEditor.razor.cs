@@ -2,16 +2,19 @@
 
 namespace Menominee.Client.Components
 {
-    public partial class OrganizationEditor<TItem> : ComponentBase
+    public partial class PersonNameEditor<TItem> : ComponentBase
     {
         [Parameter]
         public TItem Item { get; set; }
 
         [Parameter]
-        public string NameProperty { get; set; }
+        public string FirstNameProperty { get; set; }
 
         [Parameter]
-        public string NoteProperty { get; set; }
+        public string MiddleNameProperty { get; set; }
+
+        [Parameter]
+        public string LastNameProperty { get; set; }
 
         [Parameter]
         public EventCallback Updated { get; set; }
@@ -24,7 +27,7 @@ namespace Menominee.Client.Components
             }
         }
 
-        public string Name
+        public string FirstName
         {
             get
             {
@@ -32,19 +35,19 @@ namespace Menominee.Client.Components
                     return string.Empty;
 
                 return Item.GetType()
-                    .GetProperty(NameProperty)
+                    .GetProperty(FirstNameProperty)
                     .GetValue(Item).ToString();
             }
             set
             {
                 Item.GetType()
-                    .GetProperty(NameProperty)
+                    .GetProperty(FirstNameProperty)
                     .SetValue(Item, value);
                 Updated.InvokeAsync();
             }
         }
 
-        public string Note
+        public string MiddleName
         {
             get
             {
@@ -52,16 +55,37 @@ namespace Menominee.Client.Components
                     return string.Empty;
 
                 return Item.GetType()
-                    .GetProperty(NoteProperty)
+                    .GetProperty(MiddleNameProperty)
                     .GetValue(Item).ToString();
             }
             set
             {
                 Item.GetType()
-                    .GetProperty(NoteProperty)
+                    .GetProperty(MiddleNameProperty)
+                    .SetValue(Item, value);
+                Updated.InvokeAsync();
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                if (Item == null)
+                    return string.Empty;
+
+                return Item.GetType()
+                    .GetProperty(LastNameProperty)
+                    .GetValue(Item).ToString();
+            }
+            set
+            {
+                Item.GetType()
+                    .GetProperty(LastNameProperty)
                     .SetValue(Item, value);
                 Updated.InvokeAsync();
             }
         }
     }
+
 }

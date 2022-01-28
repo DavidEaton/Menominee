@@ -1,49 +1,187 @@
 ﻿@page "/persons"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
-    <h4>Persons</h4>
+<div class="container">
+    <div class="h5">Persons</div>
 
     @if (PersonsList == null)
     {
-        <p><em>Loading...</em></p>
+        @if (!Editing && !Adding)
+        {
+            <p><em>Loading...</em></p>
+        }
     }
-    else
+    @if (!Editing && !Adding && PersonsList != null)
     {
-        <div class="d-flex flex-row pt-5">
-            <div class="d-flex flex-row">
-                <table class="table table-responsive table-striped small">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th>Birthday</th>
-                            <th>Primary Phone</th>
-                            <th>Type</th>
-                            <th>Primary Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var person in PersonsList)
-                        {
-                            <tr @onclick="@(e => SetSelectedId(person.Id))">
-                                <td>@person.Name</td>
-                                <td>@person.AddressFull</td>
-                                <td>@(person.Birthday.HasValue ? person.Birthday.Value.ToString("MMMM dd, yyyy") : "")</td>
-                                <td>@person.PrimaryPhone</td>
-                                <td>@person.PrimaryPhoneType</td>
-                                <td>@person.PrimaryEmail</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="flex-fill">
-                @*<PersonDetail @ref="PersonDetail" Id="@SelectedId"></PersonDetail>*@
-            </div>
+        <div class="pb-3">
+            <TelerikButton OnClick="Add"
+                           Primary="true"
+                           Icon="plus"
+                           title="Add New Person">
+                Add Person
+            </TelerikButton>
         </div>
-        <div class="d-flex flex-row w-25">
-            <button @onclick="AddPerson" class="btn btn-primary">
-                <span class="oi oi-plus" aria-hidden="true"></span>
-            </button>
-        </div>
+
+        <TelerikWindow Visible="@isExporting" Modal="true">
+            <WindowTitle>Please wait...</WindowTitle>
+            <WindowContent>
+                <TelerikLoader Size="LoaderSize.Large" />
+                We are exporting your data; your file will download shortly.
+            </WindowContent>
+        </TelerikWindow>
+
+        <TelerikGrid Data="PersonsList"
+                     OnRowClick="@EditAsync"
+                     Sortable="true"
+                     Pageable="true"
+                     FilterMode="GridFilterMode.FilterMenu"
+                     Resizable="true"
+                     Reorderable="true"
+                     ShowColumnMenu="true"
+                     OnStateInit="@((GridStateEventArgs<PersonToReadInList> args) => OnStateInitHandler(args))"
+                     OnStateChanged="@((GridStateEventArgs<PersonToReadInList> args) => OnStateChangedHandler(args))"
+                     @ref="@Grid">
+            <GridToolBar>
+                <TelerikButton OnClick="@ResetState"
+                               Icon="reset"
+                               Title="Reset grid to default layout/columns..."></TelerikButton>
+                <span class="k-toolbar-spacer"></span>
+                <GridCommandButton Command="ExcelExport"
+                                   Icon="file-excel"
+                                   Title="Export to Excel"
+                                   OnClick="@ShowLoadingSymbol">
+                </GridCommandButton>
+                <GridCommandButton Command="CsvExport"
+                                   OnClick="@ShowLoadingSymbol"
+                                   Title="Export to CSV"
+                                   Icon="file-csv">
+                </GridCommandButton>
+                <label class="k-checkbox-label"
+                       title="Export all: unchecking will export only rows currently visible in grid">
+                    <TelerikCheckBox @bind-Value="@ExportAllPages" /><span class="small">Export All</span>
+                </label>
+                <span class="k-toolbar-spacer"></span>
+                <GridSearchBox />
+            </GridToolBar>
+            <GridExport>
+                <GridExcelExport FileName="Persons" AllPages="true" />
+            </GridExport>
+            <GridColumns>
+                <GridColumn Field="Name" Title="Name"></GridColumn>
+                <GridColumn Field="Gender" Title="Gender"></GridColumn>
+                <GridColumn Field="Birthday" Title="Birthday"></GridColumn>
+                <GridColumn Field="AddressFull" Title="Address"></GridColumn>
+                <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
+                <GridColumn Field="PrimaryPhoneType" Title="Type"></GridColumn>
+                <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
+            </GridColumns>
+        </TelerikGrid>
     }
+
+    @if ((Editing || Adding) && PersonToWrite != null)
+    {
+        <EditForm Model="@PersonToWrite">
+
+            <PersonNameEditor TItem="PersonNameToWrite"
+                              Item="@PersonToWrite.Name"
+                              FirstNameProperty="FirstName"
+                              MiddleNameProperty="MiddleName"
+                              LastNameProperty="LastName" />
+
+            <PersonEditor TItem="PersonToWrite"
+                          Item="@PersonToWrite"
+                          BirthdayProperty="Birthday"
+                          GenderProperty="Gender" />
+
+            <TelerikGridLayout>
+                <GridLayoutColumns>
+                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                </GridLayoutColumns>
+                <GridLayoutRows>
+                    <GridLayoutRow></GridLayoutRow>
+                </GridLayoutRows>
+                <GridLayoutItems>
+                    <GridLayoutItem>
+                        <div class="h6">
+                            Address
+                            &nbsp &nbsp
+                            @if (PersonToWrite?.Address != null && !Adding)
+                            {
+                                <div @onclick="EditAddress" tabindex="-1"><TelerikIcon Icon="pencil" /></div>
+                            }
+                        </div>
+                        @if (PersonToWrite?.Address != null)
+                        {
+
+                            <TelerikWindow Visible="PersonToWrite?.Address != null && EditingAddress"
+                                           Modal="true">
+                                <WindowTitle>
+                                    Address
+                                </WindowTitle>
+                                <WindowContent>
+                                    <AddressEditor TItem="AddressToWrite"
+                                                   Item="@PersonToWrite?.Address"
+                                                   AddressLineProperty="AddressLine"
+                                                   CityProperty="City"
+                                                   StateProperty="State"
+                                                   PostalCodeProperty="PostalCode"
+                                                   EnableEditor="EditingAddress" />
+
+                                    <TelerikButton OnClick="() => EditingAddress = false"
+                                                   Icon="check"
+                                                   Primary="true"
+                                                   ButtonType="ButtonType.Button"
+                                                   title="Save New Address">
+                                        Ok
+                                    </TelerikButton>
+                                    <TelerikButton OnClick="CancelEditAddress"
+                                                   ButtonType="ButtonType.Button"
+                                                   Icon="x"
+                                                   title="Cancel Edit Address">
+                                        Cancel
+                                    </TelerikButton>
+                                </WindowContent>
+                            </TelerikWindow>
+                        }
+
+                        @if (PersonToWrite?.Address != null)
+                        {
+                            <div @onclick="EditAddress">
+                                <AddressEditor TItem="AddressToWrite"
+                                               Item="@PersonToWrite?.Address"
+                                               AddressLineProperty="AddressLine"
+                                               CityProperty="City"
+                                               StateProperty="State"
+                                               PostalCodeProperty="PostalCode"
+                                               EnableEditor="EditingAddress" />
+                            </div>
+                        }
+                        else
+                        {
+                            <TelerikButton OnClick="AddAddressAddingPerson"
+                                           Icon="plus"
+                                           Class="button-border-success"
+                                           title="Add New Address">
+                                Add Address
+                            </TelerikButton>
+                        }
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <PhonesEditor PhonesToWrite="@PersonToWrite?.Phones"></PhonesEditor>
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <EmailsEditor EmailsToWrite="@PersonToWrite?.Emails"></EmailsEditor>
+                    </GridLayoutItem>
+                </GridLayoutItems>
+            </TelerikGridLayout>
+
+            <div class="pt-4">
+                <EditFormButtons CloseEventCallback="EndAddAsync"
+                                 SaveEventCallback="SubmitHandlerAsync">
+                </EditFormButtons>
+            </div>
+        </EditForm>
+    }
+</div>

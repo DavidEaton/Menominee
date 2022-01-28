@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenomineePlayWASM.Server", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janco.Idp", "Janco.Idp\Janco.Idp.csproj", "{246904EB-2524-4BA3-8C7E-2F25E8AD981E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Menominee.ModelDiagram", "Menominee.ModelDiagram\Menominee.ModelDiagram.csproj", "{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.ModelDiagram", "Menominee.ModelDiagram\Menominee.ModelDiagram.csproj", "{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

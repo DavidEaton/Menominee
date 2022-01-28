@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Gender = Gender.Female
             };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Gender = Gender.Female
             };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
             moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
@@ -114,7 +114,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Gender = Gender.Female
             };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
         }
@@ -138,7 +138,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 Gender = Gender.Female
             };
 
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             moqRepository.Verify(repository => repository.AddPersonAsync(It.IsAny<Person>()), Times.Once);
             person.Name.Should().Be(savedPerson.Name);
@@ -160,7 +160,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 },
                 Gender = Gender.Female
             };
-            var result = await controller.CreatePersonAsync(person);
+            var result = await controller.AddPersonAsync(person);
 
             result.Should().BeOfType<ActionResult<PersonToRead>>();
         }
