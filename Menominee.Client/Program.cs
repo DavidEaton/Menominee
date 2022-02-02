@@ -4,6 +4,7 @@ using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
+using Menominee.Client.Services.RepairOrders;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -93,6 +94,10 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IRepairOrderDataService, RepairOrderDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

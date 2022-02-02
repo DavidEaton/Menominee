@@ -1,0 +1,27 @@
+﻿<div class="m-inspection-tab" >
+
+    <div>
+        <Card Title="Current Inspections">
+            <Content>
+                <RepairOrderInspections IsCurrent="true" Inspections="@CurrentInspections" />
+            </Content>
+        </Card>
+    </div>
+    <div>
+        <Card Title="Previous Inspections">
+            <Content>
+                <RepairOrderInspections IsCurrent="false" Inspections="@PreviousInspections" />
+            </Content>
+        </Card>
+    </div>
+</div>
+
+<style>
+
+    .m-inspection-tab {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 1rem;
+    }
+
+</style>

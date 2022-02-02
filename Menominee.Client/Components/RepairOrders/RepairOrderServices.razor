@@ -1,0 +1,205 @@
+﻿<TelerikGrid Data="Services"
+             SelectionMode="GridSelectionMode.Single">
+    <DetailTemplate>
+        @{
+            var service = context as Service;
+            <div class="m-job-items-top-spacer"></div>
+            <TelerikGrid Data="service.Items"
+                         SelectionMode="GridSelectionMode.Single">
+                <GridColumns>
+                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(ServiceItem.PartNumber)" Title="Part Number">
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row">Job Total</div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(ServiceItem.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.QuantitySold)" Title="Qty"></Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Each)" Title="Each">
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row m-job-total-value">
+                                @((context as Service).Parts.ToString("C"))
+                            </div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Labor)" Title="Labor">
+                        @*<Template Context="ServiceItem">
+                                @ValueOrBlank(context.Labor)
+                            </Template>*@
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row m-job-total-value">
+                                @((context as Service).Labor.ToString("C"))
+                            </div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.HazMat)" Title="HazMat">
+                        @*<Template Context="ServiceItem">
+                                @ValueOrBlank(ServiceItem.HazMat)
+                            </Template>*@
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row m-job-total-value">
+                                @((context as Service).HazMat.ToString("C"))
+                            </div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Discount)" Title="Discount">
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row m-job-total-value">
+                                @((context as Service).Discount.ToString("C"))
+                            </div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Total)" Title="Total">
+                        <FooterTemplate Context="Service">
+                            <div class="m-job-total-row m-job-total-value">
+                                @((context as Service).Total.ToString("C"))
+                            </div>
+                        </FooterTemplate>
+                    </Telerik.Blazor.Components.GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+            <div class="m-job-items-bottom-spacer"></div>
+        }
+    </DetailTemplate>
+    <GridColumns>
+        <Telerik.Blazor.Components.GridColumn Width="100%" Field="@nameof(Service.Name)" Title="Service">
+            <Template>
+                <div class="m-job-row-height">
+                    <ul class="m-no-margin-bottom m-job-row m-job-detail">
+                        <li class="m-job-row-float-left m-job-row m-job-detail">
+                            <span>
+                                <b>@((context as Service).Name)</b>
+                            </span>
+                        </li>
+                        <li class="m-job-row-float-right m-job-row m-job-detail">
+                            <div class="m-job-row-detail m-job-total">
+                                <b>Job Total: @((context as Service).Total.ToString("C"))</b>
+                            </div>
+                        </li>
+                        <li class="m-job-row-float-right m-job-row m-job-detail">
+                            <button class="btn btn-outline-secondary btn-sm" id="techGroup">
+                                <span class="btn btn-secondary btn-sm" id="techButton" type="button">Techs</span>
+                                <span class="btn btn-secondary btn-sm" id="techNumbers">101, 241</span>
+                            </button>
+                        </li>
+                        @*<li class="m-job-row-float-right m-job-row m-job-detail">
+                                <button class="btn btn-outline-secondary btn-sm">Techs: 101, 241</button>
+                            </li>*@
+                    </ul>
+                </div>
+            </Template>
+        </Telerik.Blazor.Components.GridColumn>
+        @*<Telerik.Blazor.Components.GridColumn Width="16%" Field="@nameof(Service.Techs)" Title="Techs"></Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Width="10%" Field="@nameof(Service.Total)" Title="Total"></Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Width="2.75rem" Field="@nameof(Service.Techs)" Title="PM"></Telerik.Blazor.Components.GridColumn>*@
+    </GridColumns>
+</TelerikGrid>
+
+<style>
+    table tbody td {
+        border-left: 1px solid #dee2e6 !important;
+        padding: 0 .25rem 0 .25rem !important;
+    }
+
+        table tbody td:last-of-type {
+            border-right: 1px solid #dee2e6 !important;
+        }
+
+        /*    .k-grid-header {
+        background-color: #6096ba;
+        color: white;
+    }*/
+
+        table tbody td .m-job-total-row {
+            padding: 0 !important;
+        }
+
+    .k-grid-footer {
+        font-weight: 500;
+        background-color: darkgrey;
+    }
+
+    .m-job-total-value {
+        width: 100%;
+        text-align: right;
+    }
+
+    .m-job-total {
+        margin-left: 2rem;
+    }
+
+    .m-job-row {
+        /*        display: inline-flex;
+        width: 100%;*/
+        list-style: none;
+        height: 100%;
+    }
+
+    .m-job-row-height {
+        min-height: 2.5rem;
+        padding-top: .475rem;
+    }
+
+    /*    .m-job-detail {
+        min-height: 2.25rem;
+    }*/
+
+    .m-job-row-float-left {
+        float: left;
+    }
+
+    .m-job-row-float-right {
+        float: right;
+    }
+
+/*    .btn.btn-outline-secondary.btn-sm {
+        color: black;
+    }
+
+        .btn.btn-outline-secondary.btn-sm:hover {
+            color: white;
+        }*/
+
+
+    /*    .m-job-row-detail {
+            display:
+        }
+    */
+
+    #techGroup {
+        padding: 0;
+        margin-top: -0.179rem;
+        background-color: darkgray;
+    }
+
+        #techGroup:hover, #techGroup:hover > * {
+            background-color: var(--edit-btn-bg-color); /*#1b6ec2;*/
+            color: black;
+        }
+
+    #techButton {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-width: 0;
+        background-color: darkgray;
+    }
+
+    #techNumbers {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-width: 0;
+        background-color: white;
+        color: black;
+    }
+
+    .m-job-items-top-spacer {
+        min-height: 1rem;
+    }
+
+    .m-job-items-bottom-spacer {
+        min-height: 1.25rem;
+    }
+
+    .k-master-row .k-state-selected {
+        background-color: lightgray !important;
+    }
+</style>

@@ -1,0 +1,12 @@
+﻿@page "/repairorders/ro/{id:long}"
+
+@using Menominee.Client.Components.RepairOrders
+
+<RepairOrderEditMenu />
+
+@if (RepairOrder != null)
+{
+    <div class="m-main-content">
+        <RepairOrderForm RepairOrder="RepairOrder" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

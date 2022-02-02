@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Payables.Invoices;
 using CustomerVehicleManagement.Api.Payables.Vendors;
 using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.RepairOrders;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Api.Validators;
 using CustomerVehicleManagement.Data;
@@ -118,6 +119,7 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<ICustomerRepository, CustomerRepository>();
             services.TryAddScoped<IVendorRepository, VendorRepository>();
             services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();
+            services.TryAddScoped<IRepairOrderRepository, RepairOrderRepository>();
 
             services.AddHealthChecks();
             services.AddCors();
