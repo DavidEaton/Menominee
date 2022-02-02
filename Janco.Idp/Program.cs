@@ -9,6 +9,8 @@ using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Janco.Idp
 {
@@ -60,6 +62,7 @@ namespace Janco.Idp
                 //    var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
                 //    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
                 //})
+
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
