@@ -1,7 +1,5 @@
-﻿using IdentityServer4;
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using Menominee.Common.Enums;
-using Janco.Idp.Configuration;
 using System.Collections.Generic;
 
 namespace Janco.Idp
