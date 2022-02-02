@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models
     public class PersonToRead
     {
         public long Id { get; set; }
-        public string Name { get; set; }
+        public PersonName Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
         public DriversLicenseToRead DriversLicense { get; set; }
@@ -22,7 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models
                 ? new PersonToRead()
                 {
                     Id = person.Id,
-                    Name = person.Name.LastFirstMiddle,
+                    Name = person.Name,
                     DriversLicense = DriversLicenseToRead.ConvertToDto(person.DriversLicense),
                     Address = person?.Address != null
                         ? AddressToRead.ConvertToDto(person.Address)

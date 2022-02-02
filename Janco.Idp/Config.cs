@@ -1,7 +1,5 @@
-﻿using IdentityServer4;
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using Menominee.Common.Enums;
-using Janco.Idp.Configuration;
 using System.Collections.Generic;
 
 namespace Janco.Idp
@@ -71,47 +69,6 @@ namespace Janco.Idp
             new ApiScope[]
             {
                 new ApiScope(name: "menominee-api", displayName: "Menominee API")
-            };
-
-        public static IEnumerable<Client> Clients =>
-            new Client[]
-            {
-                new Client
-                {
-                    // Client application’s identifier registered within this IDP
-                    ClientId = "menominee-client",
-                    ClientName = "Menominee",
-
-                    // How Client interacts with IDP.
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequireClientSecret = false,
-                    RequirePkce = true,
-
-                    // URIs that this IDP can redirect a user to once they log in
-                    RedirectUris = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:RedirectUri") },
-
-                    // URIs that this IDP can redirect a user to once they log out
-                    PostLogoutRedirectUris = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:PostLogoutRedirectUri") },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
-                        "menominee-api",
-                        "tenantId",
-                        "tenantName",
-                        "role",
-                        "shopRole",
-                        "subscriptionLevel",
-                        "subscribedProducts"
-                    },
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-                    AllowedCorsOrigins = new List<string>(){ StaticConfigurationHelper.AppSetting("Clients:AllowedCorsOrigin") },
-                    AccessTokenLifetime = int.Parse( StaticConfigurationHelper.AppSetting("AccessTokenLifetime"))
-                }
             };
     }
 }

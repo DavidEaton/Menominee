@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Api.Validators
                                                                                  address.City,
                                                                                  address.State,
                                                                                  address.PostalCode))
-                                    .When(organization => organization.Address != null);
+                                    .When(person => person.Address != null);
 
             RuleFor(person => person.Gender)
                                     .NotEmpty()
@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.Validators
                                                                                                driversLicense.State,
                                                                                                DateTimeRange.Create(driversLicense.Issued,
                                                                                                                     driversLicense.Expiry).Value))
-                                    .When(driversLicense => driversLicense != null);
+                                    .When(person => person.DriversLicense != null);
 
             RuleFor(person => person.Emails)
                 .NotNull()

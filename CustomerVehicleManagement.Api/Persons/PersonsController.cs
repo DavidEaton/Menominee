@@ -126,9 +126,8 @@ namespace CustomerVehicleManagement.Api.Persons
             return BadRequest($"Failed to update {personToUpdate.Name.LastFirstMiddle}.");
         }
 
-        // POST: api/persons/
         [HttpPost]
-        public async Task<ActionResult<PersonToRead>> CreatePersonAsync(PersonToWrite personToAdd)
+        public async Task<ActionResult<PersonToRead>> AddPersonAsync(PersonToWrite personToAdd)
         {
             Address address = null;
             List<Phone> phones = new();

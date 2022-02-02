@@ -9,9 +9,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Components\Shared\ModuleMenu.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Components\Shared\ModuleMenu.razor.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="6.0.1" />
     <PackageReference Include="Blazored.Toast" Version="3.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.9" />
@@ -22,6 +31,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.12.0" />
     <PackageReference Include="Syncfusion.Blazor.InPlaceEditor" Version="19.1.0.69" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.3.0.57" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
+    <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

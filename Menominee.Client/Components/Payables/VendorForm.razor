@@ -1,0 +1,60 @@
+﻿@using Menominee.Client.Components.Shared
+@*<DataAnnotationsValidator />*@
+
+
+<div class="form m-form">
+    <ContentHeader Header="@Title" />
+
+    <div class="field">
+        <div>
+            <label class="col-form-label" for="vendorCode">ID</label>
+        </div>
+        <TelerikTextBox @bind-Value="Vendor.VendorCode"
+                        MaxLength="10"
+                        Width="175px"
+                        Id="vendorCode">
+        </TelerikTextBox>
+    </div>
+    <div class="field">
+        <label class="col-form-label">Name</label>
+        <TelerikTextBox @bind-Value="Vendor.Name"
+                        Width="100%">
+        </TelerikTextBox>
+    </div>
+
+    <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+</div>
+
+
+@*<div class="field">
+        <label for="name">Vendor ID</label>
+        <InputText id="vendorId" class="ui input" @bind-Value="VendorId" />
+    </div>
+
+
+    <div class="field">
+        <label for="note">Name</label>
+        <InputText id="name" class="ui input" @bind-Value="Name" />
+    </div>*@
+
+@*<div class="ui form">
+        <EditForm Model="@Vendor" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="m-form">
+                <div>
+                    <ContentHeader Header="@Title" />
+
+                    <label for="vendorId">Vendor ID</label>
+                    <div class="m-pad-bottom">
+                        <InputText class="m-form-field m-uppercase" id="vendorId" @bind-Value="@Vendor.VendorId" />
+                    </div>
+                    <label for="vendorName">Name</label>
+                    <div class="m-pad-bottom">
+                        <InputText class="m-form-field" id="vendorName" @bind-Value="@Vendor.Name" />
+                    </div>
+                </div>
+
+                <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+            </div>
+        </EditForm>
+    </div>*@

@@ -1,0 +1,11 @@
+﻿@page "/payables/invoices/{id:long}"
+@using Menominee.Client.Components.Payables
+
+@*<PayablesMenu />*@
+
+@if (Invoice != null)
+{
+    <div class="m-main-content">
+        <VendorInvoiceForm Invoice="Invoice" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

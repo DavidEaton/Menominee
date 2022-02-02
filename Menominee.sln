@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerVehicleManagement",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Domain", "CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj", "{EACCA922-3516-439B-BCE9-24ACC8DE914F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Data", "CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj", "{5CDD6DF2-2522-4875-BA7E-664384EE46F1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api", "CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj", "{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api.IntegrationTests", "CustomerVehicleManagement.Api.IntegrationTests\CustomerVehicleManagement.Api.IntegrationTests.csproj", "{1E6810F2-097A-4214-9663-5650306E5EA2}"
@@ -34,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenomineePlayWASM.Server", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janco.Idp", "Janco.Idp\Janco.Idp.csproj", "{246904EB-2524-4BA3-8C7E-2F25E8AD981E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.ModelDiagram", "Menominee.ModelDiagram\Menominee.ModelDiagram.csproj", "{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,10 +44,6 @@ Global
 		{EACCA922-3516-439B-BCE9-24ACC8DE914F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EACCA922-3516-439B-BCE9-24ACC8DE914F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EACCA922-3516-439B-BCE9-24ACC8DE914F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CDD6DF2-2522-4875-BA7E-664384EE46F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -88,13 +84,16 @@ Global
 		{246904EB-2524-4BA3-8C7E-2F25E8AD981E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{246904EB-2524-4BA3-8C7E-2F25E8AD981E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{246904EB-2524-4BA3-8C7E-2F25E8AD981E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345ADDCD-4219-4DDA-8893-5C60BB2A8EB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EACCA922-3516-439B-BCE9-24ACC8DE914F} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
-		{5CDD6DF2-2522-4875-BA7E-664384EE46F1} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 		{D16C3A14-1260-425B-BEF3-AF04D1FEFC78} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 		{1E6810F2-097A-4214-9663-5650306E5EA2} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 		{1C4F199D-AC75-4339-8156-5FFAED3FC230} = {3D28A673-921E-4D25-BDAC-7619F93B4151}

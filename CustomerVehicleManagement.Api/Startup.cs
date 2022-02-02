@@ -1,6 +1,8 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Api.Payables.Invoices;
+using CustomerVehicleManagement.Api.Payables.Vendors;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Api.Validators;
@@ -111,13 +113,17 @@ namespace CustomerVehicleManagement.Api
             // TryAddScoped won't re-add or overwrite services already added
             // to the container, but AddScoped will.
             services.TryAddScoped<UserContext, UserContext>();
-            services.AddDbContext<ApplicationDbContext>();
             services.TryAddScoped<IPersonRepository, PersonRepository>();
             services.TryAddScoped<IOrganizationRepository, OrganizationRepository>();
             services.TryAddScoped<ICustomerRepository, CustomerRepository>();
+            services.TryAddScoped<IVendorRepository, VendorRepository>();
+            services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();
 
             services.AddHealthChecks();
             services.AddCors();
+
+            services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
+                                                           // if check to enable tenant database routing during development
 
             if (HostEnvironment.IsProduction())
             {
@@ -128,6 +134,9 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
+
+                // Uncomment next line to route all requests to a single tenant database during development
+                // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 

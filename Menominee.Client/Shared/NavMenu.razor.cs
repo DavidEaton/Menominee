@@ -75,7 +75,13 @@ namespace Menominee.Client.Shared
                     Text = "Employees",
                     Url = "employees",
                     Icon = "anchor"
-                }
+                },
+                new MenuModel()
+                {
+                    Text = "Invoices",
+                    Url = "/payables/invoices/listing",
+                    Icon = "list"
+                },
             };
         }
     }

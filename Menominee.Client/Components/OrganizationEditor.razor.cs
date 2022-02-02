@@ -28,6 +28,9 @@ namespace Menominee.Client.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(NameProperty)
                     .GetValue(Item).ToString();
@@ -45,6 +48,9 @@ namespace Menominee.Client.Components
         {
             get
             {
+                if (Item == null)
+                    return string.Empty;
+
                 return Item.GetType()
                     .GetProperty(NoteProperty)
                     .GetValue(Item).ToString();

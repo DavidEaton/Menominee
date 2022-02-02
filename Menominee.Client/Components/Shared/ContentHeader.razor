@@ -1,0 +1,25 @@
+﻿<div>
+    @switch (HeaderSize)
+    {
+        case 1: <h1 id="header">@Header</h1> break;
+        case 2: <h2 id="header">@Header</h2> break;
+        case 3: <h3 id="header">@Header</h3> break;
+        case 4: <h4 id="header">@Header</h4> break;
+        case 5:
+        default: <h5 id="header">@Header</h5> break;
+    }
+    <hr id="header-divider">
+</div>
+
+<style>
+
+    #header {
+        margin-bottom: 0;
+    }
+
+    #header-divider {
+        margin-top: .5em;
+        margin-bottom: 1em;
+        border-color: darkgrey;
+    }
+</style>

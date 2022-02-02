@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Users;
-using CustomerVehicleManagement.Data.Configurations;
+﻿using CustomerVehicleManagement.Api.Configurations;
+using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
@@ -20,13 +20,15 @@ namespace CustomerVehicleManagement.Api.Data
         readonly ILogger<ApplicationDbContext> Logger;
         private string Connection = string.Empty;
 
+        public ApplicationDbContext() { }
+
         public ApplicationDbContext(string connection)
         {
-            Connection = connection;
+            Connection = connection;  // Database integration tests pass in connection
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options) { } // Unit tests pass in options
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
             IConfiguration configuration,
@@ -62,11 +64,17 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.Ignore<Entity>();
 
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
-            modelBuilder.ApplyConfiguration(new PersonConfiguration());
-            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
-            modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-            modelBuilder.ApplyConfiguration(new PhoneConfiguration());
             modelBuilder.ApplyConfiguration(new EmailConfiguration());
+            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
+            modelBuilder.ApplyConfiguration(new PersonConfiguration());
+            modelBuilder.ApplyConfiguration(new PhoneConfiguration());
+            modelBuilder.ApplyConfiguration(new VehicleConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceItemConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoicePaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoicePaymentMethodConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
         }
 
         private string GetTenantConnection()
@@ -137,6 +145,12 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<VendorInvoice> VendorInvoices { get; set; }
+        public DbSet<VendorInvoiceItem> VendorInvoiceItems { get; set; }
+        public DbSet<VendorInvoicePayment> VendorInvoicePayments { get; set; }
+        public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }
+        public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }
 
         #endregion
     }

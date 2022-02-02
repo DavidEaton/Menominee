@@ -39,8 +39,6 @@ namespace Janco.Idp.Areas.Identity
 
                 Log.Logger.Information($"Environment: {Environment}");
 
-                Log.Logger.Information($"MinimumPasswordLength: {int.Parse(context.Configuration.GetValue<string>("ApplicationSettings:MinimumPasswordLength"))}");
-
                 services.AddDbContext<UserDbContext>(options =>
                     options.UseSqlServer(Connection));
 

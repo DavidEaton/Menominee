@@ -1,0 +1,62 @@
+﻿<form>
+    <div class="form-row m-flex-form">
+
+        <div class="form-group">
+            <label for="vendorName">Vendor</label>
+            <div class="k-form-field-wrap">
+                <TelerikDropDownList Id="vendorName" Data="@Vendors" TextField="Name" ValueField="Id" Width="240px" PopupHeight="auto" DefaultText="Select Vendor" @bind-Value="@Invoice.VendorId"></TelerikDropDownList>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="invNum">Invoice Number</label>
+            <div class="k-form-field-wrap">
+                <TelerikTextBox Class="m-uppercase" Id="invNum" Width="140px" @bind-Value="@Invoice.InvoiceNumber" PlaceHolder="Enter invoice number" AutoComplete="off" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="date">Created</label>
+            <div class="k-form-field-wrap">
+                <TelerikDatePicker Id="date" Width="140px" @bind-Value="@Invoice.Date" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="datePosted">Posted</label>
+            <div class="k-form-field-wrap">
+                <TelerikDateInput Id="datePosted" Width="120px" Placeholder=" " Enabled="false" @bind-Value="@Invoice.DatePosted" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <div class="k-form-field-wrap">
+                <TelerikTextBox Id="status" Width="140px" AutoComplete="off" @bind-Value="@Invoice.InvoiceNumber" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="total">Total</label>
+            <div class="k-form-field-wrap">
+                <TelerikNumericTextBox Id="total" Width="140px" @bind-Value="@Invoice.Total" Enabled="false" Arrows="false" Format="C" />
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<style>
+    .form-group:last-of-type {
+        margin-bottom: 0;
+    }
+
+    #total {
+        text-align: right;
+    }
+
+    #invNum {
+        width: 140px;
+    }
+
+</style>

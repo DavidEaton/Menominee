@@ -7,6 +7,7 @@ using Janco.Idp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -14,11 +15,14 @@ namespace Janco.Idp
 {
     public class Startup
     {
-        public IWebHostEnvironment Environment { get; }
+        private IConfiguration Configuration { get; }
+        private IWebHostEnvironment Environment { get; }
+
         private readonly string CorsPolicyProduction = "CorsPolicyProduction";
         private readonly string CorsPolicyDevelopment = "CorsPolicyDevelopment";
-        public Startup(IWebHostEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
+            Configuration = configuration;
             Environment = environment;
         }
 
@@ -36,7 +40,7 @@ namespace Janco.Idp
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients)
+                .AddInMemoryClients(Configuration.GetSection("ApplicationSettings:Clients"))
 
                 // Configure IdentityServer to use AspNetCore Identity membership
                 .AddAspNetIdentity<ApplicationUser>()

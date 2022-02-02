@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using Blazored.Toast.Services;
+using CustomerVehicleManagement.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,23 +13,29 @@ namespace Menominee.Client.Services
     public class PersonDataService : IPersonDataService
     {
         private readonly HttpClient httpClient;
+        private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/persons";
 
-        public PersonDataService(HttpClient httpClient)
+        public PersonDataService(HttpClient httpClient,
+                                 IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.toastService = toastService;
         }
-        public async Task<PersonToRead> AddPerson(PersonToWrite newPerson)
+
+        public async Task<PersonToRead> AddPerson(PersonToWrite person)
         {
-            var content = new StringContent(JsonSerializer.Serialize(newPerson), Encoding.UTF8, MediaType);
+            var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
+                toastService.ShowSuccess($"{person.Name.LastFirstMiddle} added successfully", "Added");
                 return await JsonSerializer.DeserializeAsync<PersonToRead>(await response.Content.ReadAsStreamAsync());
             }
 
+            toastService.ShowError($"{person.Name.LastFirstMiddle} failed to add. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 
@@ -70,6 +77,35 @@ namespace Menominee.Client.Services
                 Console.WriteLine($"Message :{ex.Message}");
             }
         }
+
+        public async Task UpdatePerson(PersonToWrite organization, long id)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
+            var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                toastService.ShowSuccess($"{organization.Name} updated successfully", "Saved");
+                return;
+            }
+
+            toastService.ShowError($"{organization.Name} failed to update", "Save Failed");
+        }
+
+        public async Task<PersonToRead> GetPerson(long id)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message :{ex.Message}");
+            }
+            return null;
+        }
+
+
     }
 
 }
