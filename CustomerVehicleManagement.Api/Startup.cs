@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api
             services.AddHealthChecks();
             services.AddCors();
 
-            services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
+//            services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
                                                            // if check to enable tenant database routing during development
 
             if (HostEnvironment.IsProduction())
@@ -138,7 +138,7 @@ namespace CustomerVehicleManagement.Api
                 AddControllersWithOptions(services, false);
 
                 // Uncomment next line to route all requests to a single tenant database during development
-                // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 

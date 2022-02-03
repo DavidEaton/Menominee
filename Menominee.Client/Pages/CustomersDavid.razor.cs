@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages
 {
-    public partial class Customers : ComponentBase
+    public partial class CustomersDavid : ComponentBase
     {
         [Inject]
         public ICustomerDataService CustomerDataService { get; set; }
 
         [Inject]
-        public ILogger<Customers> Logger { get; set; }
+        public ILogger<CustomersDavid> Logger { get; set; }
 
         public IReadOnlyList<CustomerToReadInList> CustomersList;
         public long SelectedId { get; set; }

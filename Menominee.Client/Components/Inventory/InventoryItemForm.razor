@@ -1,0 +1,311 @@
+﻿@using Telerik.Blazor.Components
+
+<div class="m-form">
+    <Card Title="Edit Item">
+        <Content>
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="mfrName">Manufacturer</label>
+                    <input type="text" class="form-control" id="mfrName">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="partNumber">Part Number</label>
+                    <input type="text" class="form-control" id="partNumber" @bind-value="Item.PartNumber">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" @bind-value="Item.Description">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tab-height m-tabs">
+                        <TabAnimationSettings>
+                            <TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+                            <TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+                        </TabAnimationSettings>
+                        <TabItems>
+                            <TabItem CssClass="m-tab-item">
+                                <ChildContent>
+                                    <TabHeader Text="Pricing"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <div class="m-tab-content-border">
+                                        @*<div class="m-form-sub-header">AllData</div>*@
+                                        <div class="m-tab-content">
+                                            <div class="field">
+                                                <div>
+                                                    <label class="col-form-label">Retail</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="Item.Retail"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="20%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                            <div class="field">
+                                                <div>
+                                                    <label class="col-form-label">Cost</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="Item.Cost"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="20%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                            <div class="field">
+                                                <div>
+                                                    <label class="col-form-label">Core</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="Item.Core"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="20%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                            <div class="field">
+                                                <div>
+                                                    <label class="col-form-label">On Hand</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="Item.OnHand"
+                                                                       Decimals="2"
+                                                                       Arrows="false"
+                                                                       Width="20%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem CssClass="m-tab-item">
+                                <ChildContent>
+                                    <TabHeader Text="Usage"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                </ContentTemplate>
+                            </TabItem>
+                        </TabItems>
+                    </SfTab>
+                </div>
+            </div>
+
+            <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+
+        </Content>
+    </Card>
+</div>
+
+<!--<div class="form m-form">
+
+    <ContentHeader Header="@Title" />
+
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="mfrName">Manufacturer</label>
+            <input type="text" class="form-control" id="mfrName">
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="partNumber">Part Number</label>
+            <input type="text" class="form-control" id="partNumber" @bind-value="Item.PartNumber">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" @bind-value="Item.Description">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col">
+            <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tab-height">
+                <TabAnimationSettings>
+                    <TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+                    <TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+                </TabAnimationSettings>
+                <TabItems>
+                    <TabItem CssClass="m-tab-item">
+                        <ChildContent>
+                            <TabHeader Text="Pricing"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <div class="m-tab-content-border">
+                                <div class="m-form-sub-header">AllData</div>
+                                <div class="m-tab-content">
+                                    <div class="field">
+                                        <div>
+                                            <label class="col-form-label">Retail</label>
+                                        </div>
+                                        <TelerikNumericTextBox @bind-Value="Item.Retail"
+                                                               Format="C"
+                                                               Arrows="false"
+                                                               Width="20%">
+                                        </TelerikNumericTextBox>
+                                    </div>
+                                    <div class="field">
+                                        <div>
+                                            <label class="col-form-label">Cost</label>
+                                        </div>
+                                        <TelerikNumericTextBox @bind-Value="Item.Cost"
+                                                               Format="C"
+                                                               Arrows="false"
+                                                               Width="20%">
+                                        </TelerikNumericTextBox>
+                                    </div>
+                                    <div class="field">
+                                        <div>
+                                            <label class="col-form-label">Core</label>
+                                        </div>
+                                        <TelerikNumericTextBox @bind-Value="Item.Core"
+                                                               Format="C"
+                                                               Arrows="false"
+                                                               Width="20%">
+                                        </TelerikNumericTextBox>
+                                    </div>
+                                    <div class="field">
+                                        <div>
+                                            <label class="col-form-label">On Hand</label>
+                                        </div>
+                                        <TelerikNumericTextBox @bind-Value="Item.OnHand"
+                                                               Decimals="2"
+                                                               Arrows="false"
+                                                               Width="20%">
+                                        </TelerikNumericTextBox>
+                                    </div>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </TabItem>
+                    <TabItem CssClass="m-tab-item">
+                        <ChildContent>
+                            <TabHeader Text="Usage"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                        </ContentTemplate>
+                    </TabItem>
+                </TabItems>
+            </SfTab>-->
+@*<TelerikTabStrip TabPosition="Telerik.Blazor.TabPosition.Top">
+        <TabStripTab Title="Pricing">
+            <div class="field">
+                <div>
+                    <label class="col-form-label">Retail</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="Item.Retail"
+                                       Format="C"
+                                       Arrows="false"
+                                       Width="20%">
+                </TelerikNumericTextBox>
+            </div>
+            <div class="field">
+                <div>
+                    <label class="col-form-label">Cost</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="Item.Cost"
+                                       Format="C"
+                                       Arrows="false"
+                                       Width="20%">
+                </TelerikNumericTextBox>
+            </div>
+            <div class="field">
+                <div>
+                    <label class="col-form-label">Core</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="Item.Core"
+                                       Format="C"
+                                       Arrows="false"
+                                       Width="20%">
+                </TelerikNumericTextBox>
+            </div>
+            <div class="field">
+                <div>
+                    <label class="col-form-label">On Hand</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="Item.OnHand"
+                                       Decimals="2"
+                                       Arrows="false"
+                                       Width="20%">
+                </TelerikNumericTextBox>
+            </div>
+        </TabStripTab>
+        <TabStripTab Title="Second" Disabled="false">
+            Second tab content. This tab is disabled and you cannot select it.
+        </TabStripTab>
+        <TabStripTab Title="Third">
+            Third tab content.
+        </TabStripTab>
+    </TelerikTabStrip>*@
+<!--</div>
+    </div>
+
+    <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+</div>-->
+
+<style>
+    .m-tabs {
+        font-size: 1rem;
+    }
+
+    .m-tab-height {
+        /*height: calc(100vh - 230px) !important;*/
+    }
+
+    .m-tab-content {
+        padding: 10px;
+    }
+
+    .m-tab-content-header {
+        margin-bottom: .25em;
+    }
+
+    .m-tab-content-border {
+        /*margin-left: 10px;
+        margin-right: 6px;*/
+        border: 1px solid darkgrey;
+        background: white;
+        /*border-radius: 5px;*/
+        /*font-size: 14px;*/
+        border-radius: 0 0.25rem 0.25rem 0.25rem
+    }
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item .e-tab-text {
+        color: black !important;
+        font-size: 1rem !important;
+    }
+
+/*    .e-tab.e-background .e-tab-header .e-toolbar-item.e-active .e-tab-text {
+        background: #6096ba !important;
+        color: white !important;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }*/
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item.e-active .e-tab-wrap {
+        background: var(--bg-color-medium) !important;
+        color: white !important;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+
+/*    .e-tab-text {
+        color: black !important;
+    }*/
+
+    .m-tab-item {
+        color: black !important;
+    }
+
+    .e-tab .e-tab-header.e-vertical {
+        max-width: unset;
+    }
+</style>

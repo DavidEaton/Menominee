@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages
 {
-    public partial class Employees : ComponentBase
+    public partial class EmployeesDavid : ComponentBase
     {
         [Inject]
         public IEmployeeDataService EmployeeDataService { get; set; }
 
         [Inject]
-        public ILogger<Employees> Logger { get; set; }
+        public ILogger<EmployeesDavid> Logger { get; set; }
 
         public IReadOnlyList<EmployeeToRead> EmployeesList;
         public long SelectedId { get; set; }

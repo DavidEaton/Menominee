@@ -1,0 +1,52 @@
+﻿@page "/inventory/items/listing"
+@page "/inventory/items/listing/{ItemToSelect:long}"
+
+@using Menominee.Client.Components.Inventory
+
+<InventoryMenu />
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Items" />
+
+            @*@if (ItemsList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (ItemsList != null)
+            {
+                <TelerikGrid Data="ItemsList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEdit"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.FilterMenu"
+                             ShowColumnMenu="true"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<InventoryItemToReadInList> itemList) => OnSelect(itemList))"
+                             SelectedItems="@SelectedList"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.PartNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.Retail)" Title="Retail"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.OnHand)" Title="On Hand"></Telerik.Blazor.Components.GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }*@
+        </div>
+    </div>
+</div>
+
+<style>
+    .m-gid-container, .m-grid {
+        /*height: calc(100vh - 265px);*/
+        /*min-height: 150px !important;*/
+        min-height: calc(100vh - 248px);
+    }
+</style>

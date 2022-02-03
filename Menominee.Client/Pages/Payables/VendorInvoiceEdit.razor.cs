@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Components.Payables
+namespace Menominee.Client.Pages.Payables
 {
     public partial class VendorInvoiceEdit : ComponentBase
     {

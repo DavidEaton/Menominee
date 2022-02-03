@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.RepairOrders
+namespace Menominee.Client.Pages.PartsOrders
 {
-    public class Class
+    public partial class PartsOrders
     {
     }
 }
