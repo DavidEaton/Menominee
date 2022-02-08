@@ -12,18 +12,19 @@ namespace CustomerVehicleManagement.Shared.Validators
         public PhonesValidator()
         {
             RuleFor(phones => phones)
-                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
                 .WithMessage(onePrimarymessage)
                 .ForEach(phone =>
                 {
-                    phone.Cascade(CascadeMode.Stop);
                     phone.NotEmpty().WithMessage(notEmptyMessage);
                     phone.MustBeEntity(x => Phone.Create(x.Number, x.PhoneType, x.IsPrimary));
                 });
         }
 
+        // This business rule should reside in the domain layer
+        // rather than here in the application layer. However,
+        // refactoring will have to wait for now...
         private bool HaveOnlyOnePrimaryPhone(IList<PhoneToWrite> phones)
         {
             int primaryCount = 0;

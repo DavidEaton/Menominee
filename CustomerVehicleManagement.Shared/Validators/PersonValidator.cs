@@ -55,6 +55,10 @@ namespace CustomerVehicleManagement.Shared.Validators
                                     .SetValidator(new PhonesValidator());
 
         }
+
+        // This business rule should reside in the domain layer
+        // rather than here in the application layer. However,
+        // refactoring will have to wait for now...
         protected bool BeValidAge(DateTime? date)
         {
             int currentYear = DateTime.Now.Year;

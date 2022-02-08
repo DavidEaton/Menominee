@@ -12,18 +12,19 @@ namespace CustomerVehicleManagement.Shared.Validators
         public EmailsValidator()
         {
             RuleFor(emails => emails)
-                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryEmail)
                 .WithMessage(onePrimarymessage)
                 .ForEach(email =>
                 {
-                    email.Cascade(CascadeMode.Stop);
                     email.NotEmpty().WithMessage(notEmptyMessage);
                     email.MustBeEntity(x => Email.Create(x.Address, x.IsPrimary));
                 });
         }
 
+        // This business rule should reside in the domain layer
+        // rather than here in the application layer. However,
+        // refactoring will have to wait for now...
         private bool HaveOnlyOnePrimaryEmail(IList<EmailToWrite> emails)
         {
             int primaryCount = 0;
