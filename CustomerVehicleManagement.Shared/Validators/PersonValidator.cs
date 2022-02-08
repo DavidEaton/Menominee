@@ -10,14 +10,12 @@ namespace CustomerVehicleManagement.Shared.Validators
         public PersonValidator()
         {
             RuleFor(person => person.Name)
-                                    .Cascade(CascadeMode.Stop)
                                     .NotEmpty()
                                     .MustBeValueObject(person => PersonName.Create(person.LastName,
                                                                                    person.FirstName,
                                                                                    person.MiddleName));
 
             RuleFor(person => person.Address)
-                                    .Cascade(CascadeMode.Stop)
                                     .NotEmpty()
                                     .MustBeValueObject(address => Address.Create(address.AddressLine,
                                                                                  address.City,
@@ -31,20 +29,31 @@ namespace CustomerVehicleManagement.Shared.Validators
                                     .WithMessage("Please select a valid Gender");
 
             RuleFor(person => person.Birthday)
-                                    .Cascade(CascadeMode.Stop)
                                     .NotEmpty()
                                     .Must(BeValidAge)
                                     .WithMessage("Please enter a valid Birthday")
                                     .When(person => person.Birthday != null);
 
-            RuleFor(person => person.DriversLicense)
-                                    .Cascade(CascadeMode.Stop)
-                                    .NotEmpty()
-                                    .MustBeValueObject(driversLicense => DriversLicense.Create(driversLicense.Number,
-                                                                                               driversLicense.State,
-                                                                                               DateTimeRange.Create(driversLicense.Issued,
-                                                                                                                    driversLicense.Expiry).Value))
+            RuleFor(person => person.DriversLicense.Issued)
+                                    .Must(PreceedToday)
+                                    .WithMessage("Issued date must not occur in the future")
                                     .When(person => person.DriversLicense != null);
+
+            RuleFor(person => person.DriversLicense.Expiry)
+                                    .GreaterThan(DateTime.Today)
+                                    .WithMessage("Expiry date must not occur in the past")
+                                    .GreaterThan(person => person.DriversLicense.Issued)
+                                    .WithMessage("Expiry date must not occur before Issued date")
+
+                                    .DependentRules(() =>
+                                    {
+                                        RuleFor(person => person.DriversLicense).NotEmpty()
+                                            .MustBeValueObject(driversLicense => DriversLicense.Create(driversLicense.Number,
+                                                                                                        driversLicense.State,
+                                                                                                        DateTimeRange.Create(driversLicense.Issued,
+                                                                                                                             driversLicense.Expiry).Value));
+
+                                    }).When(person => person.DriversLicense != null); ;
 
             RuleFor(person => person.Emails)
                                     .NotNull()
@@ -53,7 +62,11 @@ namespace CustomerVehicleManagement.Shared.Validators
             RuleFor(person => person.Phones)
                                     .NotNull()
                                     .SetValidator(new PhonesValidator());
+        }
 
+        private bool PreceedToday(DateTime arg)
+        {
+            return arg < DateTime.Today;
         }
 
         // This business rule should reside in the domain layer
