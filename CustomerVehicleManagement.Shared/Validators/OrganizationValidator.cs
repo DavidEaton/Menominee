@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Shared.Validators
             RuleFor(organization => organization.Name)
                                                 .MustBeValueObject(OrganizationName.Create);
 
-            // MustBeValueObject VALIDATOR WORKS GREAT WITH API BUT BLAZOR ValidationMessage IS MISSING
             RuleFor(organization => organization.Address)
                                                 .NotEmpty()
                                                 .MustBeValueObject(address => Address.Create(address.AddressLine,
@@ -19,13 +18,6 @@ namespace CustomerVehicleManagement.Shared.Validators
                                                                                              address.State,
                                                                                              address.PostalCode))
                                                 .When(organization => organization.Address != null);
-
-            // Move this rule into the value object factory method
-            RuleFor(organization => organization.Address.State)
-                                                        .NotEmpty()
-                                                        .IsInEnum()
-                                                        .WithMessage("Please select a valid State")
-                                                        .When(organization => organization.Address != null);
 
             RuleFor(organization => organization.Note)
                 .Length(0, 10000)
@@ -44,5 +36,4 @@ namespace CustomerVehicleManagement.Shared.Validators
                 .When(organization => organization.Contact != null);
         }
     }
-
 }
