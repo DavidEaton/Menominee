@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
 using FluentValidation;
+using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
-using AppValueObject = Menominee.Common.ValueObjects.AppValueObject;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public static class ApplicationValidators
     {
@@ -73,4 +73,5 @@ namespace CustomerVehicleManagement.Api.Validators
             return true;
         }
     }
+
 }

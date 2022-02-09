@@ -1,0 +1,49 @@
+﻿<TelerikWindow Modal="true"
+               Visible="true">
+    <WindowTitle>
+        Address
+    </WindowTitle>
+    <WindowContent>
+
+        @*<AddressEditor Address="Address"
+                       Cancel="Cancel"
+                       Ok="Ok"
+                       Enabled="Enabled"
+                       Updated="Updated"/>*@
+        @if (Enabled)
+        {
+            <TelerikButton OnClick="Ok"
+                           Icon="check"
+                           Primary="true"
+                           ButtonType="ButtonType.Button"
+                           title="Save Address">
+                Ok
+            </TelerikButton>
+            <TelerikButton OnClick="Cancel"
+                           ButtonType="ButtonType.Button"
+                           Icon="x"
+                           title="Cancel Edits">
+                Cancel
+            </TelerikButton>
+        }
+    </WindowContent>
+</TelerikWindow>
+
+@code {
+
+    [Parameter]
+    public AddressToWrite Address { get; set; }
+
+    [Parameter]
+    public EventCallback Ok { get; set; }
+
+    [Parameter]
+    public EventCallback Cancel { get; set; }
+
+    [Parameter]
+    public bool Enabled { get; set; }
+
+    [Parameter]
+    public EventCallback Updated { get; set; }
+
+}

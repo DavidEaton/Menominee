@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenomineePlayWASM.Client", "Client\MenomineePlayWASM.Client.csproj", "{63B2F356-CD19-49AD-B80D-C09E506939F6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Common", "Menominee.Common\Menominee.Common.csproj", "{4ED3B2BF-C725-4711-8488-C678FB9AF910}"
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenomineePlayWASM.Shared", "Shared\MenomineePlayWASM.Shared.csproj", "{01F4AEB1-AB66-4266-8B5F-A21A39C1AB94}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenomineePlayWASM.Server", "Server\MenomineePlayWASM.Server.csproj", "{5C06E1B4-EFE5-4D58-BB51-A5C0EB0B4680}"

@@ -181,131 +181,80 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerToRead>> CreateCustomerAsync(CustomerToWrite customerToWrite)
+        public async Task<ActionResult<CustomerToRead>> AddCustomerAsync(CustomerToWrite customerToAdd, CustomerType customerType)
         {
             // VK: here, the logic should be:
             // 1. Look at customerToWrite.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
             // 2. Save it to the DB
 
-            var entityType = customerToWrite.EntityType;
+            var entityType = customerToAdd.EntityType;
             Customer customer = null;
 
             if (entityType == EntityType.Person)
-                customer = CreatePersonCustomer(customerToWrite.Person);
+                customer = CreatePersonCustomer(customerToAdd.Person, customerType);
 
             if (entityType == EntityType.Organization)
-                customer = AddOrganizationCustomer(customerToWrite.Organization);
+                customer = AddOrganizationCustomer(customerToAdd.Organization, customerType);
 
             if (customer != null)
                 await customerRepository.AddCustomerAsync(customer);
 
             if (!await customerRepository.SaveChangesAsync())
-                return BadRequest($"Failed to add {customerToWrite}.");
+                return BadRequest($"Failed to add {customerToAdd}.");
 
             CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
 
             if (customerFromRepository == null)
-                return BadRequest($"Failed to add {customerToWrite}.");
+                return BadRequest($"Failed to add {customerToAdd}.");
 
             return CreatedAtRoute("GetCustomerAsync",
                 new { id = customerFromRepository.Id },
                 customerFromRepository);
         }
 
-        private static Customer AddOrganizationCustomer(OrganizationToWrite organizationToWrite)
+        private static Customer AddOrganizationCustomer(OrganizationToWrite organizationToAdd, CustomerType customerType)
         {
-            var organizationNameOrError = OrganizationName.Create(organizationToWrite.Name);
+            Organization organization = Shared.CreateOrganizationToAdd(organizationToAdd);
 
-            if (organizationNameOrError.IsSuccess)
-            {
-                var organization = new Organization(organizationNameOrError.Value, null, null, null);
+            Customer customer = new(organization);
 
-                if (organizationToWrite.Contact != null)
-                {
-                    var contact = new Person(
-                        PersonName.Create(
-                            organizationToWrite.Contact.Name.LastName,
-                            organizationToWrite.Contact.Name.LastName,
-                            organizationToWrite.Contact.Name.MiddleName).Value,
-                        organizationToWrite.Contact.Gender, null, null, null, null, null);
-
-                    if (organizationToWrite?.Contact?.Address != null)
-                        contact.SetAddress(Address.Create(
-                            organizationToWrite.Contact.Address.AddressLine,
-                            organizationToWrite.Contact.Address.City,
-                            organizationToWrite.Contact.Address.State,
-                            organizationToWrite.Contact.Address.PostalCode).Value);
-
-                    contact.SetBirthday(organizationToWrite.Contact?.Birthday);
-
-                    if (organizationToWrite.Contact.DriversLicense != null)
-                    {
-                        var dateTimeRange = DateTimeRange.Create(organizationToWrite.Contact.DriversLicense.Issued,
-                                                              organizationToWrite.Contact.DriversLicense.Expiry).Value;
-
-                        var driversLicense = DriversLicense.Create(organizationToWrite.Contact.DriversLicense.Number,
-                                                                organizationToWrite.Contact.DriversLicense.State,
-                                                                dateTimeRange).Value;
-
-                        contact.SetDriversLicense(driversLicense);
-                    }
-
-                    if (organizationToWrite?.Contact?.Phones?.Count > 0)
-                        foreach (var phone in organizationToWrite.Contact.Phones)
-                            contact.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-                    if (organizationToWrite?.Contact?.Emails?.Count > 0)
-                        foreach (var email in organizationToWrite.Contact.Emails)
-                            contact.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
-
-                    organization.SetContact(contact);
-                    organization.SetNote(organizationToWrite.Note);
-                }
-
-                Customer customer = new(organization);
-
-                return customer;
-            }
-
-            return null;
+            return customer;
         }
 
-        private static Customer CreatePersonCustomer(PersonToWrite personToWrite)
+        private static Customer CreatePersonCustomer(PersonToWrite personToAdd, CustomerType customerType)
         {
-            var person = new Person(
-                PersonName.Create(
-                    personToWrite.Name.LastName, personToWrite.Name.FirstName, personToWrite.Name.MiddleName).Value,
-                personToWrite.Gender, null, null, null, null, null);
+            Address address = null;
+            List<Phone> phones = new();
+            List<Email> emails = new();
+            DriversLicense driversLicense = null;
 
-            if (personToWrite?.Address != null)
-                person.SetAddress(Address.Create(personToWrite.Address.AddressLine,
-                                                personToWrite.Address.City,
-                                                personToWrite.Address.State,
-                                                personToWrite.Address.PostalCode).Value);
+            var personName = PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value;
 
-            person.SetBirthday(personToWrite?.Birthday);
+            if (personToAdd?.Address != null)
+                address = Address.Create(personToAdd.Address.AddressLine, personToAdd.Address.City, personToAdd.Address.State, personToAdd.Address.PostalCode).Value;
 
-            if (personToWrite.DriversLicense != null)
+            if (personToAdd?.Phones.Count > 0)
+                foreach (var phone in personToAdd.Phones)
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            if (personToAdd?.Emails.Count > 0)
+                foreach (var email in personToAdd.Emails)
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+
+            if (personToAdd?.DriversLicense != null)
             {
-                var dateTimeRange = DateTimeRange.Create(personToWrite.DriversLicense.Issued,
-                                                      personToWrite.DriversLicense.Expiry).Value;
+                DateTimeRange dateTimeRange = DateTimeRange.Create(
+                    personToAdd.DriversLicense.Issued,
+                    personToAdd.DriversLicense.Expiry).Value;
 
-                var driversLicense = DriversLicense.Create(personToWrite.DriversLicense.Number,
-                                                        personToWrite.DriversLicense.State,
-                                                        dateTimeRange).Value;
-
-                person.SetDriversLicense(driversLicense);
+                driversLicense = DriversLicense.Create(personToAdd.DriversLicense.Number,
+                    personToAdd.DriversLicense.State,
+                    dateTimeRange).Value;
             }
 
-            if (personToWrite?.Phones?.Count > 0)
-                foreach (var phone in personToWrite.Phones)
-                    person.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+            Person person = new(personName, personToAdd.Gender, address, emails, phones, personToAdd.Birthday, driversLicense);
 
-            if (personToWrite?.Emails?.Count > 0)
-                foreach (var email in personToWrite.Emails)
-                    person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
-
-            return new Customer(person);
+            return new Customer(person, customerType);
         }
 
         [HttpDelete("{id:long}")]

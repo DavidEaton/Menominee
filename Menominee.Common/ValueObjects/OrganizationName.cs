@@ -12,6 +12,7 @@ namespace Menominee.Common.ValueObjects
         public static readonly string MinimumLengthMessage = $"Organization name cannot be less than {MinimumLength} character(s) in length.";
         public static readonly string MaximumLengthMessage = $"Organization name cannot be over {MaximumLength} characters in length.";
         public static readonly string RequiredMessage = $"Organization name is required.";
+        public static readonly string YouEntered = $"You entered";
         private OrganizationName(string name)
         {
             Name = name;
@@ -25,19 +26,20 @@ namespace Menominee.Common.ValueObjects
             name = name.Trim();
 
             if (name.Length < MinimumLength)
-                return Result.Failure<OrganizationName>(MinimumLengthMessage);
+                return Result.Failure<OrganizationName>($"{MinimumLengthMessage} {YouEntered} {name.Length} character(s).");
 
             if (name.Length > MaximumLength)
-                return Result.Failure<OrganizationName>(MaximumLengthMessage);
+                return Result.Failure<OrganizationName>($"{MaximumLengthMessage} {YouEntered} {name.Length} character(s).");
 
             return Result.Success(new OrganizationName(name));
         }
 
-        public static OrganizationName NewOrganizationName(string newOrganizationName)
+        public static OrganizationName NewOrganizationName(string name)
         {
-            newOrganizationName = (newOrganizationName ?? string.Empty).Trim();
-            Guard.ForNullOrEmpty(newOrganizationName, "newOrganizationName");
-            return Create(newOrganizationName).Value;
+            name = (name ?? string.Empty).Trim();
+            Guard.ForNullOrEmpty(name, "name");
+            //VK: Are the previous two lines necessary?
+            return Create(name).Value;
         }
 
         public override string ToString()

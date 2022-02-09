@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using System;
+using System.Collections.Generic;
 
 namespace Menominee.Client.Components
 {
@@ -10,8 +13,23 @@ namespace Menominee.Client.Components
         [Parameter]
         public TItem Item { get; set; }
 
+        [CascadingParameter]
+        private EditContext EditContext { get; set; }
+
         [Parameter]
-        public bool EnableEditor { get; set; }
+        public bool Enabled { get; set; }
+
+        [Parameter]
+        public EventCallback EditingAddress { get; set; }
+
+        [Parameter]
+        public EventCallback Ok { get; set; }
+
+        [Parameter]
+        public EventCallback Cancel { get; set; }
+
+        [Parameter]
+        public EventCallback Updated { get; set; }
 
         [Parameter]
         public string AddressLineProperty { get; set; }
@@ -24,9 +42,6 @@ namespace Menominee.Client.Components
 
         [Parameter]
         public string PostalCodeProperty { get; set; }
-
-        [Parameter]
-        public EventCallback Updated { get; set; }
 
         public string ItemName
         {
@@ -127,6 +142,12 @@ namespace Menominee.Client.Components
             }
 
             base.OnInitialized();
+        }
+
+        public void StateChanged()
+        {
+            var editContext = new EditContext(Item);
+            editContext.Validate();
         }
 
         List<StateEnumModel> StateEnumData { get; set; } = new List<StateEnumModel>();
