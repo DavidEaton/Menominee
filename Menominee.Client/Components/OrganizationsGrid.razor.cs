@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
-using Menominee.OrganizationDataContracts.Services;
+using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.OrganizationDataContracts.Components
+namespace Menominee.Client.Components
 {
     public partial class OrganizationsGrid : ComponentBase
     {

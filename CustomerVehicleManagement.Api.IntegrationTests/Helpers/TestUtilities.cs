@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Customer>()
             {
-                new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null)),
+                new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null), CustomerType.Retail),
                 new Customer(new Organization(OrganizationName.Create("Moops & Co.").Value, null, null))
             };
         }

@@ -1,12 +1,12 @@
 ﻿<div class="container">
     <div class="h6">Phones</div>
-    @if (((int)PhonesToWrite?.Count()) > 0)
+    @if (((int)Phones?.Count()) > 0)
     {
-        <ContactableTemplate Items="PhonesToWrite"
+        <ContactableTemplate Items="Phones"
                              TItem="PhoneToWrite"
                              Context="phone"
-                             @key="PhoneToWrite"
-                             OnRowClick="EditAsync">
+                             @key="Phone"
+                             OnRowClick="Edit">
             <TableHeader>
                 <th>Number</th>
                 <th>Type</th>
@@ -28,7 +28,7 @@
 
     @if (Adding || Editing)
     {
-        <EditForm Model="PhoneToWrite">
+        <EditForm Model="Phone">
             <TelerikWindow Visible="DialogVisible"
                            Modal="true">
                 <WindowTitle>
@@ -38,15 +38,14 @@
                     <div class="container">
                         <div class="form-group row">
                             <label class="form-control-label">Number</label>
-                            <TelerikMaskedTextBox @bind-Value="@PhoneToWrite.Number"
+                            <TelerikMaskedTextBox @bind-Value="@Phone.Number"
                                                   Mask="(999) 000-0000"
-                                                  Width="100%"
-                                                  @ref="PhoneNumberControl">
+                                                  Width="100%">
                             </TelerikMaskedTextBox>
                         </div>
                         <div class="form-group row">
                             <label class="form-control-label">Type</label>
-                            <TelerikDropDownList @bind-Value="@PhoneToWrite.PhoneType"
+                            <TelerikDropDownList @bind-Value="@Phone.PhoneType"
                                                  Data="PhoneTypeEnumData"
                                                  Width="100%"
                                                  TextField="DisplayText"
@@ -56,7 +55,7 @@
                         <div class="form-group row">
                             <div>
                                 <label>
-                                    <TelerikCheckBox @bind-Value="@PhoneToWrite.IsPrimary"></TelerikCheckBox>
+                                    <TelerikCheckBox @bind-Value="@Phone.IsPrimary"></TelerikCheckBox>
                                     <span class="form-control-label">Primary</span>
                                 </label>
                             </div>
@@ -69,7 +68,7 @@
                                            title="Save New Phone">
                                 Ok
                             </TelerikButton>
-                            <TelerikButton OnClick="CancelEdit"
+                            <TelerikButton OnClick="Cancel"
                                            ButtonType="ButtonType.Button"
                                            Icon="x"
                                            title="Cancel New Phone">
@@ -83,7 +82,7 @@
 
     }
     <div>
-        <TelerikButton OnClick="AddAsync"
+        <TelerikButton OnClick="Add"
                        Icon="plus"
                        ButtonType="ButtonType.Button"
                        Class="button-border-success"

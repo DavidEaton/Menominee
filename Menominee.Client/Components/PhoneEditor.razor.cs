@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.OrganizationDataContracts.Components
+namespace Menominee.Client.Components
 {
     public partial class PhoneEditor : ComponentBase
     {

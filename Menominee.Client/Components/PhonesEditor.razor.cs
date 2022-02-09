@@ -10,19 +10,21 @@ namespace Menominee.Client.Components
 
         [Parameter]
         public IList<PhoneToWrite> Phones { get; set; }
+        private bool Adding { get; set; }
+        private bool Editing { get; set; }
+
         private bool DialogVisible => Phone != null && (Adding || Editing);
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
-        private bool DialogVisible => (PhoneToWrite != null && (Adding || Editing)) || (PhoneToWrite != null && (Adding || Editing));
-        List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
         private void Edit(PhoneToWrite item)
-            base.OnInitialized();
+        {
+            Editing = true;
         }
 
-            Editing = true;
-
         private void Add()
+        {
             Phone = new();
             Adding = true;
+        }
 
         private void Save()
         {
@@ -37,7 +39,6 @@ namespace Menominee.Client.Components
         {
             if (Phone != null && Adding)
                 Phone = null;
-
         }
 
         private void CancelEditPhone()

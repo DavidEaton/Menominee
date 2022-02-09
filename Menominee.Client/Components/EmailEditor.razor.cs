@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace Menominee.OrganizationDataContracts.Components
+namespace Menominee.Client.Components
 {
     public partial class EmailEditor : ComponentBase
     {
