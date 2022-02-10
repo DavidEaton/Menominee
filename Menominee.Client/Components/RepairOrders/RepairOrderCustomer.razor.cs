@@ -1,22 +1,33 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderCustomer : ComponentBase
     {
-        public string CustName { get; set; }
+        [Parameter]
+        public string CustomerName { get; set; }    // customer name as it was when repair order was saved
 
-        private bool CanEditCust { get; set; } = true;
-        private bool CanAddCust { get; set; } = true;
+        [Parameter]
+        public Customer Customer { get; set; }      // customer record as it exists now
 
-        private void OnAddCust()
-        {
-            CustName = "Add Customer";
-        }
+        [Parameter]
+        public RepairOrderToWrite RepairOrder { get; set; }
 
-        private void OnEditCust()
-        {
-            CustName = "Edit Customer";
-        }
+        //private string CustName { get; set; }
+
+        //private bool CanEditCust { get; set; } = true;
+        //private bool CanAddCust { get; set; } = true;
+
+        //private void OnAddCust()
+        //{
+        //    CustName = "Add Customer";
+        //}
+
+        //private void OnEditCust()
+        //{
+        //    CustName = "Edit Customer";
+        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿<div class="form m-form">
+﻿@using CustomerVehicleManagement.Shared.Models.RepairOrders
+
+<div class="form m-form">
     <ContentHeader Header="@Title" />
 
     <div class="m-pad-bottom m-tab-button-group">
@@ -37,7 +39,7 @@
         <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
             @if (CustSelected)
             {
-                <RepairOrderCustomerVehicleTab />
+                <RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />
             }
 
             @if (FleetSelected)
@@ -46,7 +48,7 @@
 
             @if (ServicesSelected)
             {
-                <RepairOrderServicesTab />
+                <RepairOrderServicesTab Services="@RepairOrder.Services"/>
             }
 
             @if (InspectionsSelected)
@@ -61,7 +63,7 @@
 
             @if (WarrantiesSelected)
             {
-                <RepairOrderWarrantiesTab Warranties="Warranties"/>
+                <RepairOrderWarrantiesTab Warranties="Warranties" />
             }
 
             @if (SerialNumbersSelected)
@@ -71,12 +73,12 @@
 
             @if (PaymentSelected)
             {
-                <RepairOrderPaymentsTab Payments="Payments" />
+                <RepairOrderPaymentsTab Payments="@RepairOrder.Payments" />
             }
 
         </div>
         <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
-            <RepairOrderTotals OnDiscard="@OnDiscard" />
+            <RepairOrderTotals OnDiscard="@OnDiscard" OnSave="@OnSave" />
         </div>
     </div>
 </div>

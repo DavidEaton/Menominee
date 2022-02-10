@@ -1,8 +1,12 @@
-﻿<div class="cust-veh-cards">
+﻿@using CustomerVehicleManagement.Shared.Models.RepairOrders
+
+<div class="cust-veh-cards">
     <div>
         <Card Title="Customer">
             <Content>
-                <RepairOrderCustomer />
+                @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" Customer="@RepairOrder.Customer" />*@
+                @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" />*@
+                <RepairOrderCustomer RepairOrder="@RepairOrder" />
             </Content>
         </Card>
     </div>

@@ -7,9 +7,9 @@
 
 <div class="m-main-content">
     @*    <div class="ui form">*@
-    <div class="m-form m-fixed-height">
+    <div class="m-form">
         <div>
-            <ContentHeader Header="Vendors" HeaderSize="5" />
+            <ContentHeader Header="Vendors" />
 
             @if (VendorsList == null)
             {
@@ -28,7 +28,7 @@
                              SelectionMode="GridSelectionMode.Single"
                              SelectedItemsChanged="@((IEnumerable<VendorToReadInList> vendorList) => OnSelect(vendorList))"
                              SelectedItems="@SelectedList"
-                             Height="calc(100vh - 265px)"
+                             Class="m-grid"
                              @ref="@Grid">
                     <GridToolBar>
                         <TelerikCheckBox Id="myCheckBox" @bind-Value="@showInactive" />
@@ -98,3 +98,9 @@
     </div>
     @*    </div>  *@
 </div>
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

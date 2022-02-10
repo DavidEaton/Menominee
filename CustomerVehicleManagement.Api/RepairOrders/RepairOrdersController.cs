@@ -120,9 +120,12 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             ro.CustomerName = roToUpdate.CustomerName;
             ro.Vehicle = roToUpdate.Vehicle;
             ro.Total = roToUpdate.Total;
-            ro.DateCreated = (DateTime)roToUpdate.DateCreated;
-            ro.DateModified = (DateTime)roToUpdate.DateModified;
-            ro.DateInvoiced = (DateTime)roToUpdate.DateInvoiced;
+            if (roToUpdate?.DateCreated != null)
+                ro.DateCreated = (DateTime)roToUpdate.DateCreated;
+            if (roToUpdate?.DateModified != null)
+                ro.DateModified = (DateTime)roToUpdate.DateModified;
+            if (roToUpdate?.DateInvoiced != null)
+                ro.DateInvoiced = (DateTime)roToUpdate.DateInvoiced;
 
             List<RepairOrderService> services = new();
             List<RepairOrderPayment> payments = new();

@@ -1,78 +1,121 @@
-﻿<TelerikGrid Data="Services"
+﻿@using CustomerVehicleManagement.Shared.Models.RepairOrders.Services
+@using CustomerVehicleManagement.Shared.Models.RepairOrders.Items
+
+<TelerikGrid Data="Services"
              SelectionMode="GridSelectionMode.Single">
     <DetailTemplate>
         @{
-            var service = context as Service;
+            var service = context as RepairOrderServiceToWrite;
             <div class="m-job-items-top-spacer"></div>
+            @*<TelerikGrid Data="service.Items"
+                SelectionMode="GridSelectionMode.Single"
+                OnRowClick="@OnItemRowSelected"
+                OnRowDoubleClick="@OnEditItem"
+                SelectedItemsChanged="@((IEnumerable<RepairOrderItemToWrite> itemList) => OnSelect(itemList))"
+                SelectedItems="@SelectedItems">*@
             <TelerikGrid Data="service.Items"
                          SelectionMode="GridSelectionMode.Single">
                 <GridColumns>
-                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(ServiceItem.PartNumber)" Title="Part Number">
+                    <GridColumn Width="15%"
+                                Field="@nameof(RepairOrderItemToWrite.PartNumber)"
+                                Title="Part Number">
                         <FooterTemplate Context="Service">
                             <div class="m-job-total-row">Job Total</div>
                         </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(ServiceItem.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.QuantitySold)" Title="Qty"></Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Each)" Title="Each">
+                    </GridColumn>
+                    <GridColumn Width="20%"
+                                Field="@nameof(RepairOrderItemToWrite.Description)"
+                                Title="Description">
+                    </GridColumn>
+                    <GridColumn Width="10%"
+                                TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
+                                Field="@nameof(RepairOrderItemToWrite.QuantitySold)"
+                                Title="Qty">
+                    </GridColumn>
+                    <GridColumn Width="10%"
+                                TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
+                                Field="@nameof(RepairOrderItemToWrite.SellingPrice)"
+                                DisplayFormat="{0:C}"
+                                Title="Each">
                         <FooterTemplate Context="Service">
                             <div class="m-job-total-row m-job-total-value">
-                                @((context as Service).Parts.ToString("C"))
+                                @((context as RepairOrderServiceToWrite).PartsTotal.ToString("C"))
                             </div>
                         </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Labor)" Title="Labor">
-                        @*<Template Context="ServiceItem">
-                                @ValueOrBlank(context.Labor)
-                            </Template>*@
+                    </GridColumn>
+                    <GridColumn Width="10%"
+                                TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
+                                Field="@nameof(RepairOrderItemToWrite.LaborEach)"
+                                DisplayFormat="{0:C}"
+                                Title="Labor">
                         <FooterTemplate Context="Service">
                             <div class="m-job-total-row m-job-total-value">
-                                @((context as Service).Labor.ToString("C"))
+                                @((context as RepairOrderServiceToWrite).LaborTotal.ToString("C"))
                             </div>
                         </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.HazMat)" Title="HazMat">
-                        @*<Template Context="ServiceItem">
-                                @ValueOrBlank(ServiceItem.HazMat)
-                            </Template>*@
+                    </GridColumn>
+
+                    @*<GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(RepairOrderItemToWrite.HazMat)" Title="HazMat">
+            <FooterTemplate Context="Service">
+                <div class="m-job-total-row m-job-total-value">
+                    @((context as RepairOrderServiceToWrite).HazMat.ToString("C"))
+                </div>
+            </FooterTemplate>
+        </GridColumn>*@
+                    @*<GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(RepairOrderItemToWrite.Discount)" Title="Discount">
+            <FooterTemplate Context="Service">
+                <div class="m-job-total-row m-job-total-value">
+                    @((context as Service).Discount.ToString("C"))
+                </div>
+            </FooterTemplate>
+        </GridColumn>*@
+                    <GridColumn Width="10%"
+                                TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
+                                Field="@nameof(RepairOrderItemToWrite.Total)"
+                                DisplayFormat="{0:C}"
+                                Title="Total">
                         <FooterTemplate Context="Service">
                             <div class="m-job-total-row m-job-total-value">
-                                @((context as Service).HazMat.ToString("C"))
+                                @((context as RepairOrderServiceToWrite).Total.ToString("C"))
                             </div>
                         </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Discount)" Title="Discount">
-                        <FooterTemplate Context="Service">
-                            <div class="m-job-total-row m-job-total-value">
-                                @((context as Service).Discount.ToString("C"))
-                            </div>
-                        </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn TextAlign="Telerik.Blazor.ColumnTextAlign.Right" Width="10%" Field="@nameof(ServiceItem.Total)" Title="Total">
-                        <FooterTemplate Context="Service">
-                            <div class="m-job-total-row m-job-total-value">
-                                @((context as Service).Total.ToString("C"))
-                            </div>
-                        </FooterTemplate>
-                    </Telerik.Blazor.Components.GridColumn>
+                    </GridColumn>
+                    @*<GridColumn>
+            <Template Context="Service">
+                <div>
+                    <button class="btn m-icon-button m-edit-btn"><i class="fas fa-edit"></i></button>
+                    <button class="btn m-icon-button m-edit-btn"><i class="fas fa-edit"></i></button>
+                    <button class="btn m-icon-button m-edit-btn"><i class="fas fa-edit"></i></button>
+                </div>
+            </Template>
+        </GridColumn>*@
+                    @*<GridCommandColumn Width="10%"
+                                       Context="Service">
+                        <GridCommandButton Command="Edit" Icon="edit"></GridCommandButton>
+                        <GridCommandButton Command="Delete" Icon="delete"></GridCommandButton>
+                    </GridCommandColumn>*@
                 </GridColumns>
             </TelerikGrid>
+
             <div class="m-job-items-bottom-spacer"></div>
         }
     </DetailTemplate>
+
     <GridColumns>
-        <Telerik.Blazor.Components.GridColumn Width="100%" Field="@nameof(Service.Name)" Title="Service">
+        <GridColumn Width="100%"
+                    Field="@nameof(RepairOrderServiceToWrite.ServiceName)"
+                    Title="Service">
             <Template>
                 <div class="m-job-row-height">
                     <ul class="m-no-margin-bottom m-job-row m-job-detail">
                         <li class="m-job-row-float-left m-job-row m-job-detail">
                             <span>
-                                <b>@((context as Service).Name)</b>
+                                <b>@((context as RepairOrderServiceToWrite).ServiceName)</b>
                             </span>
                         </li>
                         <li class="m-job-row-float-right m-job-row m-job-detail">
                             <div class="m-job-row-detail m-job-total">
-                                <b>Job Total: @((context as Service).Total.ToString("C"))</b>
+                                <b>Job Total: @((context as RepairOrderServiceToWrite).Total.ToString("C"))</b>
                             </div>
                         </li>
                         <li class="m-job-row-float-right m-job-row m-job-detail">
@@ -82,17 +125,22 @@
                             </button>
                         </li>
                         @*<li class="m-job-row-float-right m-job-row m-job-detail">
-                                <button class="btn btn-outline-secondary btn-sm">Techs: 101, 241</button>
-                            </li>*@
+                            <button class="btn btn-outline-secondary btn-sm">Techs: 101, 241</button>
+                        </li>*@
                     </ul>
                 </div>
             </Template>
-        </Telerik.Blazor.Components.GridColumn>
+        </GridColumn>
         @*<Telerik.Blazor.Components.GridColumn Width="16%" Field="@nameof(Service.Techs)" Title="Techs"></Telerik.Blazor.Components.GridColumn>
-            <Telerik.Blazor.Components.GridColumn Width="10%" Field="@nameof(Service.Total)" Title="Total"></Telerik.Blazor.Components.GridColumn>
-            <Telerik.Blazor.Components.GridColumn Width="2.75rem" Field="@nameof(Service.Techs)" Title="PM"></Telerik.Blazor.Components.GridColumn>*@
+        <Telerik.Blazor.Components.GridColumn Width="10%" Field="@nameof(Service.Total)" Title="Total"></Telerik.Blazor.Components.GridColumn>
+        <Telerik.Blazor.Components.GridColumn Width="2.75rem" Field="@nameof(Service.Techs)" Title="PM"></Telerik.Blazor.Components.GridColumn>*@
     </GridColumns>
 </TelerikGrid>
+
+@if (ItemToModify != null)
+{
+    @*<RepairOrderItemEdit Item="@ItemToModify" DialogVisible="@EditItemDialogVisible" Mode="@ItemFormMode" OnSave="@OnSaveItemEdit" OnCancel="@OnCancelItemEdit" />*@
+}
 
 <style>
     table tbody td {
@@ -151,7 +199,7 @@
         float: right;
     }
 
-/*    .btn.btn-outline-secondary.btn-sm {
+    /*    .btn.btn-outline-secondary.btn-sm {
         color: black;
     }
 

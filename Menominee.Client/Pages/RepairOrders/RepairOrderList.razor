@@ -31,13 +31,31 @@
                              Class="m-grid"
                              @ref="@Grid">
                     <GridColumns>
-                        <Telerik.Blazor.Components.GridColumn Width="18%" Field="@nameof(RepairOrderToReadInList.RepairOrderNumber)" Title="RO Number"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="18%" Field="@nameof(RepairOrderToReadInList.InvoiceNumber)" Title="Invoice Number"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(RepairOrderToReadInList.CustomerName)" Title="Customer"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(RepairOrderToReadInList.Vehicle)" Title="Vehicle"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="14%" Field="@nameof(RepairOrderToReadInList.Total)" Title="Total"></Telerik.Blazor.Components.GridColumn>
+                        <GridColumn Width="18%"
+                                    Field="@nameof(RepairOrderToReadInList.RepairOrderNumber)"
+                                    Title="RO Number">
+                        </GridColumn>
+                        <GridColumn Width="18%"
+                                    Field="@nameof(RepairOrderToReadInList.InvoiceNumber)"
+                                    Title="Invoice Number">
+                        </GridColumn>
+                        <GridColumn Width="25%"
+                                    Field="@nameof(RepairOrderToReadInList.CustomerName)"
+                                    Title="Customer">
+                        </GridColumn>
+                        <GridColumn Width="25%"
+                                    Field="@nameof(RepairOrderToReadInList.Vehicle)"
+                                    Title="Vehicle">
+                        </GridColumn>
+                        <GridColumn Width="14%"
+                                    Field="@nameof(RepairOrderToReadInList.Total)"
+                                    Title="Total"
+                                    TextAlign="ColumnTextAlign.Right"
+                                    DisplayFormat="{0:C}">
+                        </GridColumn>
                     </GridColumns>
                 </TelerikGrid>
+
                 <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" CanEdit="@CanEdit" />
             }
         </div>

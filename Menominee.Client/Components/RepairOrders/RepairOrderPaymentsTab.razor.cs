@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using Telerik.Blazor.Components;
@@ -8,16 +10,15 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderPaymentsTab : ComponentBase
     {
         [Parameter]
-        public List<Payment> Payments { get; set; }
+        public IList<RepairOrderPaymentToWrite> Payments { get; set; }
 
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
-        private bool CanAdd { get; set; } = false;
+        //private bool CanAdd { get; set; } = false;
 
-        // FIX ME - replace Payment with DTO
-        public IEnumerable<Payment> SelectedPayments { get; set; } = Enumerable.Empty<Payment>();
-        public Payment SelectedPayment { get; set; }
-        public Payment PaymentToModify { get; set; } = null;
+        public IEnumerable<RepairOrderPaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<RepairOrderPaymentToWrite>();
+        public RepairOrderPaymentToWrite SelectedPayment { get; set; }
+        public RepairOrderPaymentToWrite PaymentToModify { get; set; } = null;
 
         public long SelectedId
         {
@@ -27,13 +28,17 @@ namespace Menominee.Client.Components.RepairOrders
                 selectedId = value;
                 CanEdit = selectedId != 0;
                 CanDelete = selectedId != 0 && Payments.Count > 0;
-                CanAdd = true;
+                //CanAdd = true;
             }
         }
 
         private long itemToSelect { get; set; } = 0;
         private long selectedId = 0;
         private int selectedItemIndex = 0;
+        private long nextId = 0;
+        private bool editDialogVisible = false;
+        private bool shouldRender = true;
+        private FormMode PaymentFormMode = FormMode.Unknown;
 
         protected override void OnInitialized()
         {
@@ -49,11 +54,16 @@ namespace Menominee.Client.Components.RepairOrders
                 }
                 selectedItemIndex = Payments.IndexOf(SelectedPayment);
                 SelectedId = SelectedPayment.Id;
-                SelectedPayments = new List<Payment> { SelectedPayment };
+                SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
             }
         }
 
-        protected void OnSelect(IEnumerable<Payment> payment)
+        protected override bool ShouldRender()
+        {
+            return shouldRender;
+        }
+
+        protected void OnSelect(IEnumerable<RepairOrderPaymentToWrite> payment)
         {
             //SelectedItem = ros.FirstOrDefault();
             //SelectedList = new List<RepairOrderToReadInList> { SelectedItem };
@@ -61,25 +71,93 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedPayment = args.Item as Payment;
+            SelectedPayment = args.Item as RepairOrderPaymentToWrite;
             SelectedId = SelectedPayment.Id;
             selectedItemIndex = Payments.IndexOf(SelectedPayment);
-            SelectedPayments = new List<Payment> { SelectedPayment };
+            SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
+        }
+
+        private bool EditDialogVisible
+        {
+            get => editDialogVisible;
+            set
+            {
+                if (value == true)
+                {
+                    if (PaymentFormMode == FormMode.Add)
+                    {
+                        PaymentToModify = new RepairOrderPaymentToWrite()
+                        {
+                            Id = --nextId
+                        };
+                    }
+                    if (PaymentFormMode == FormMode.Edit || PaymentFormMode == FormMode.View)
+                    {
+                        PaymentToModify = new RepairOrderPaymentToWrite();
+                        CopyPayment(SelectedPayment, PaymentToModify);
+                    }
+                }
+                else
+                {
+                    if (PaymentToModify != null)
+                        PaymentToModify = null;
+                    PaymentFormMode = FormMode.Unknown;
+                }
+
+                editDialogVisible = value;
+            }
         }
 
         private void OnEdit()
         {
-
+            PaymentFormMode = FormMode.Edit;
+            EditDialogVisible = true;
         }
 
         private void OnAdd()
         {
-
+            PaymentFormMode = FormMode.Add;
+            EditDialogVisible = true;
         }
 
         private void OnDelete()
         {
+        }
 
+        private void OnSaveEdit()
+        {
+            if (PaymentFormMode != FormMode.Add && PaymentFormMode != FormMode.Edit)
+                return;
+
+            if (PaymentFormMode == FormMode.Add)
+            {
+                Payments.Add(PaymentToModify);
+                selectedItemIndex = Payments.IndexOf(PaymentToModify);
+                SelectedPayment = Payments[selectedItemIndex];
+                SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
+            }
+            else if (PaymentFormMode == FormMode.Edit)
+            {
+                CopyPayment(PaymentToModify, Payments[selectedItemIndex]);
+            }
+            SelectedId = SelectedPayment.Id;
+            EditDialogVisible = false;
+            shouldRender = true;
+            StateHasChanged();
+        }
+
+        private void OnCancelEdit()
+        {
+            PaymentFormMode = FormMode.Unknown;
+            EditDialogVisible = false;
+        }
+
+        private static void CopyPayment(RepairOrderPaymentToWrite src, RepairOrderPaymentToWrite dst)
+        {
+            dst.Id = src.Id;
+            dst.RepairOrderId = src.RepairOrderId;
+            dst.PaymentMethod = src.PaymentMethod;
+            dst.Amount = src.Amount;
         }
     }
 }

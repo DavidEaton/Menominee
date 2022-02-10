@@ -6,6 +6,8 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [Parameter]
         public EventCallback OnDiscard { get; set; }
+        [Parameter]
+        public EventCallback OnSave { get; set; }
 
     }
 }

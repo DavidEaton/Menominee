@@ -15,17 +15,17 @@ namespace Menominee.Client.Components.RepairOrders
         public string Title { get; set; } = "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
 
         [Parameter]
-        public EventCallback OnValidSubmit { get; set; }
+        public EventCallback OnDiscard { get; set; }
 
         [Parameter]
-        public EventCallback OnDiscard { get; set; }
+        public EventCallback OnSave { get; set; }
 
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
         List<Purchase> Purchases { get; set; }
         List<SerialNumber> SerialNumbers { get; set; }
         List<Warranty> Warranties { get; set; }
-        List<Payment> Payments { get; set; }
+        //List<Payment> Payments { get; set; }
 
         protected override void OnInitialized()
         {
@@ -33,7 +33,7 @@ namespace Menominee.Client.Components.RepairOrders
             Purchase purchase;
             SerialNumber serialNumber;
             Warranty warranty;
-            Payment payment;
+            //Payment payment;
 
             CurrentInspections = new List<Inspection>();
 
@@ -155,21 +155,21 @@ namespace Menominee.Client.Components.RepairOrders
             warranty.WarrantyNumber = "DFG01386";
             Warranties.Add(warranty);
 
-            Payments = new List<Payment>();
+            //Payments = new List<Payment>();
 
-            payment = new Payment();
-            payment.Id = 1;
-            payment.SequenceNumber = 1;
-            payment.Method = "Cash";
-            payment.Amount = 100.0;
-            Payments.Add(payment);
+            //payment = new Payment();
+            //payment.Id = 1;
+            //payment.SequenceNumber = 1;
+            //payment.Method = "Cash";
+            //payment.Amount = 100.0;
+            //Payments.Add(payment);
 
-            payment = new Payment();
-            payment.Id = 2;
-            payment.SequenceNumber = 2;
-            payment.Method = "MasterCard";
-            payment.Amount = 44.67;
-            Payments.Add(payment);
+            //payment = new Payment();
+            //payment.Id = 2;
+            //payment.SequenceNumber = 2;
+            //payment.Method = "MasterCard";
+            //payment.Amount = 44.67;
+            //Payments.Add(payment);
         }
 
         //private RepairOrderTab SelectedTab { get; set; }
@@ -274,11 +274,11 @@ namespace Menominee.Client.Components.RepairOrders
         }
     }
 
-    public class Payment
-    {
-        public long Id { get; set; }
-        public long SequenceNumber { get; set; }
-        public string Method { get; set; }
-        public double Amount { get; set; }
-    }
+    //public class Payment
+    //{
+    //    public long Id { get; set; }
+    //    public long SequenceNumber { get; set; }
+    //    public string Method { get; set; }
+    //    public double Amount { get; set; }
+    //}
 }
