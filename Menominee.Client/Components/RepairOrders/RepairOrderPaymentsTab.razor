@@ -12,19 +12,21 @@
                 @if (Payments != null)
                 {
                     <TelerikGrid Data="Payments"
+                                 TItem="RepairOrderPaymentToWrite"
                                  OnRowClick="@OnRowSelected"
-                                 OnRowDoubleClick="@OnEdit"
+                                 OnRowDoubleClick="@OnRowDoubleClickHandler"
                                  SelectionMode="GridSelectionMode.Single"
                                  SelectedItemsChanged="@((IEnumerable<RepairOrderPaymentToWrite> paymentList) => OnSelect(paymentList))"
                                  SelectedItems="@SelectedPayments"
+                                 @ref="@Grid"
                                  Class="">
                         <GridColumns>
                             <GridColumn Width="75%"
                                         Field="@nameof(RepairOrderPaymentToWrite.PaymentMethod)"
                                         Title="Payment Method">
                                 @*<Template>
-                                        convert method to method name
-                                    </Template>*@
+                            convert method to method name
+                        </Template>*@
                             </GridColumn>
                             <GridColumn Width="25%"
                                         Field="@nameof(RepairOrderPaymentToWrite.Amount)"
@@ -35,7 +37,8 @@
                         </GridColumns>
                     </TelerikGrid>
 
-                    <EditNewDeleteButtons OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                    @*<EditNewDeleteButtons OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />*@
+                    <EditNewDeleteButtons OnNew="@OnAdd"/>
                 }
             </Content>
         </Card>

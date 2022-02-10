@@ -12,6 +12,8 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public IList<RepairOrderPaymentToWrite> Payments { get; set; }
 
+        public TelerikGrid<RepairOrderPaymentToWrite> Grid { get; set; }
+
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
         //private bool CanAdd { get; set; } = false;
@@ -44,17 +46,17 @@ namespace Menominee.Client.Components.RepairOrders
         {
             if (Payments.Count > 0)
             {
-                if (itemToSelect == 0)
-                {
-                    SelectedPayment = Payments.FirstOrDefault();
-                }
-                else
-                {
-                    SelectedPayment = Payments.Where(x => x.Id == itemToSelect).FirstOrDefault();
-                }
-                selectedItemIndex = Payments.IndexOf(SelectedPayment);
-                SelectedId = SelectedPayment.Id;
-                SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
+                //if (itemToSelect == 0)
+                //{
+                //    SelectedPayment = Payments.FirstOrDefault();
+                //}
+                //else
+                //{
+                //    SelectedPayment = Payments.Where(x => x.Id == itemToSelect).FirstOrDefault();
+                //}
+                //selectedItemIndex = Payments.IndexOf(SelectedPayment);
+                //SelectedId = SelectedPayment.Id;
+                //SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
             }
         }
 
@@ -71,10 +73,10 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedPayment = args.Item as RepairOrderPaymentToWrite;
-            SelectedId = SelectedPayment.Id;
-            selectedItemIndex = Payments.IndexOf(SelectedPayment);
-            SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
+            //SelectedPayment = args.Item as RepairOrderPaymentToWrite;
+            //SelectedId = SelectedPayment.Id;
+            //selectedItemIndex = Payments.IndexOf(SelectedPayment);
+            //SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
         }
 
         private bool EditDialogVisible
@@ -86,21 +88,21 @@ namespace Menominee.Client.Components.RepairOrders
                 {
                     if (PaymentFormMode == FormMode.Add)
                     {
-                        PaymentToModify = new RepairOrderPaymentToWrite()
-                        {
-                            Id = --nextId
-                        };
+                        //PaymentToModify = new RepairOrderPaymentToWrite()
+                        //{
+                        //    Id = --nextId
+                        //};
                     }
                     if (PaymentFormMode == FormMode.Edit || PaymentFormMode == FormMode.View)
                     {
-                        PaymentToModify = new RepairOrderPaymentToWrite();
-                        CopyPayment(SelectedPayment, PaymentToModify);
+                        //PaymentToModify = new RepairOrderPaymentToWrite();
+                        //CopyPayment(SelectedPayment, PaymentToModify);
                     }
                 }
                 else
                 {
-                    if (PaymentToModify != null)
-                        PaymentToModify = null;
+                    //if (PaymentToModify != null)
+                    //    PaymentToModify = null;
                     PaymentFormMode = FormMode.Unknown;
                 }
 
@@ -108,14 +110,20 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        private void OnEdit()
+        //private void OnEdit()
+        void OnRowDoubleClickHandler(GridRowClickEventArgs args)
         {
+            //PaymentToModify = args.Item as RepairOrderPaymentToWrite;
+            SelectedPayment = args.Item as RepairOrderPaymentToWrite;
+            PaymentToModify = new();
+            CopyPayment(SelectedPayment, PaymentToModify);
             PaymentFormMode = FormMode.Edit;
             EditDialogVisible = true;
         }
 
         private void OnAdd()
         {
+            PaymentToModify = new();
             PaymentFormMode = FormMode.Add;
             EditDialogVisible = true;
         }
@@ -132,15 +140,16 @@ namespace Menominee.Client.Components.RepairOrders
             if (PaymentFormMode == FormMode.Add)
             {
                 Payments.Add(PaymentToModify);
-                selectedItemIndex = Payments.IndexOf(PaymentToModify);
-                SelectedPayment = Payments[selectedItemIndex];
-                SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
+                //selectedItemIndex = Payments.IndexOf(PaymentToModify);
+                //SelectedPayment = Payments[selectedItemIndex];
+                //SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
             }
             else if (PaymentFormMode == FormMode.Edit)
             {
-                CopyPayment(PaymentToModify, Payments[selectedItemIndex]);
+                //CopyPayment(PaymentToModify, Payments[selectedItemIndex]);
+                CopyPayment(PaymentToModify, SelectedPayment);
             }
-            SelectedId = SelectedPayment.Id;
+            //SelectedId = SelectedPayment.Id;
             EditDialogVisible = false;
             shouldRender = true;
             StateHasChanged();
