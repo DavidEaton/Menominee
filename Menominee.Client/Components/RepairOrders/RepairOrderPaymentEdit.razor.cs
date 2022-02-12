@@ -10,7 +10,8 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [Parameter]
         public RepairOrderPaymentToWrite Payment { get; set; }
-        private RepairOrderPaymentToWrite PaymentOriginal { get; set; } = new();
+        private PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
+        private double Amount { get; set; } = 0.0;
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -38,12 +39,22 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        private void Save()
+        {
+            OnSave.InvokeAsync();
+
+            if (formMode == FormMode.Edit)
+            {
+                PaymentMethod = PaymentMethod.Cash;
+                Amount = 0.0;
+            }
+        }
         private void Cancel()
         {
             if (formMode == FormMode.Edit)
             {
-                Payment.PaymentMethod = PaymentOriginal.PaymentMethod;
-                Payment.Amount = PaymentOriginal.Amount;
+                Payment.PaymentMethod = PaymentMethod;
+                Payment.Amount = Amount;
             }
 
             OnCancel.InvokeAsync();
@@ -56,10 +67,15 @@ namespace Menominee.Client.Components.RepairOrders
                 PayTypeEnumData.Add(new PayTypeEnumModel { DisplayText = item.ToString(), Value = item });
             }
 
-            PaymentOriginal.PaymentMethod = Payment.PaymentMethod;
-            PaymentOriginal.Amount = Payment.Amount;
-
             base.OnInitialized();
+        }
+
+        protected override void OnParametersSet()
+        {
+            PaymentMethod = Payment.PaymentMethod;
+            Amount = Payment.Amount;
+
+            base.OnParametersSet();
         }
 
         private FormMode formMode;
