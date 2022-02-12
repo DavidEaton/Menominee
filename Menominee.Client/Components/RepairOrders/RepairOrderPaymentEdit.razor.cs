@@ -3,8 +3,6 @@ using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
@@ -12,6 +10,7 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [Parameter]
         public RepairOrderPaymentToWrite Payment { get; set; }
+        private RepairOrderPaymentToWrite PaymentOriginal { get; set; } = new();
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -39,12 +38,26 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        private void Cancel()
+        {
+            if (formMode == FormMode.Edit)
+            {
+                Payment.PaymentMethod = PaymentOriginal.PaymentMethod;
+                Payment.Amount = PaymentOriginal.Amount;
+            }
+
+            OnCancel.InvokeAsync();
+        }
+
         protected override void OnInitialized()
         {
             foreach (PaymentMethod item in Enum.GetValues(typeof(PaymentMethod)))
             {
                 PayTypeEnumData.Add(new PayTypeEnumModel { DisplayText = item.ToString(), Value = item });
             }
+
+            PaymentOriginal.PaymentMethod = Payment.PaymentMethod;
+            PaymentOriginal.Amount = Payment.Amount;
 
             base.OnInitialized();
         }

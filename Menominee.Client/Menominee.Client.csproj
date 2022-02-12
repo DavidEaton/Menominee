@@ -41,7 +41,7 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.29.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />

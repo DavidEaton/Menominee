@@ -16,17 +16,17 @@
                                  OnRowClick="@OnRowSelected"
                                  OnRowDoubleClick="@OnRowDoubleClickHandler"
                                  SelectionMode="GridSelectionMode.Single"
+                                 @ref="@PaymentsGrid"
                                  SelectedItemsChanged="@((IEnumerable<RepairOrderPaymentToWrite> paymentList) => OnSelect(paymentList))"
                                  SelectedItems="@SelectedPayments"
-                                 @ref="@Grid"
                                  Class="">
                         <GridColumns>
                             <GridColumn Width="75%"
                                         Field="@nameof(RepairOrderPaymentToWrite.PaymentMethod)"
                                         Title="Payment Method">
                                 @*<Template>
-                            convert method to method name
-                        </Template>*@
+                                        convert method to method name
+                                    </Template>*@
                             </GridColumn>
                             <GridColumn Width="25%"
                                         Field="@nameof(RepairOrderPaymentToWrite.Amount)"
@@ -38,15 +38,15 @@
                     </TelerikGrid>
 
                     @*<EditNewDeleteButtons OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />*@
-                    <EditNewDeleteButtons OnNew="@OnAdd"/>
+                    <EditNewDeleteButtons OnNew="@OnAdd" />
                 }
             </Content>
         </Card>
     </div>
 
-    @if (PaymentToModify != null)
+    @if (SelectedPayment != null)
     {
-        <RepairOrderPaymentEdit Payment="@PaymentToModify" DialogVisible="@EditDialogVisible" Mode="@PaymentFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
+        <RepairOrderPaymentEdit Payment="@SelectedPayment" DialogVisible="@EditDialogVisible" Mode="@PaymentFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
     }
 
 </div>

@@ -12,7 +12,7 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public IList<RepairOrderPaymentToWrite> Payments { get; set; }
 
-        public TelerikGrid<RepairOrderPaymentToWrite> Grid { get; set; }
+        public TelerikGrid<RepairOrderPaymentToWrite> PaymentsGrid { get; set; }
 
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
@@ -20,7 +20,6 @@ namespace Menominee.Client.Components.RepairOrders
 
         public IEnumerable<RepairOrderPaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<RepairOrderPaymentToWrite>();
         public RepairOrderPaymentToWrite SelectedPayment { get; set; }
-        public RepairOrderPaymentToWrite PaymentToModify { get; set; } = null;
 
         public long SelectedId
         {
@@ -115,15 +114,14 @@ namespace Menominee.Client.Components.RepairOrders
         {
             //PaymentToModify = args.Item as RepairOrderPaymentToWrite;
             SelectedPayment = args.Item as RepairOrderPaymentToWrite;
-            PaymentToModify = new();
-            CopyPayment(SelectedPayment, PaymentToModify);
             PaymentFormMode = FormMode.Edit;
             EditDialogVisible = true;
         }
 
         private void OnAdd()
         {
-            PaymentToModify = new();
+            SelectedPayment = new();
+
             PaymentFormMode = FormMode.Add;
             EditDialogVisible = true;
         }
@@ -139,7 +137,7 @@ namespace Menominee.Client.Components.RepairOrders
 
             if (PaymentFormMode == FormMode.Add)
             {
-                Payments.Add(PaymentToModify);
+                Payments.Add(SelectedPayment);
                 //selectedItemIndex = Payments.IndexOf(PaymentToModify);
                 //SelectedPayment = Payments[selectedItemIndex];
                 //SelectedPayments = new List<RepairOrderPaymentToWrite> { SelectedPayment };
@@ -147,26 +145,18 @@ namespace Menominee.Client.Components.RepairOrders
             else if (PaymentFormMode == FormMode.Edit)
             {
                 //CopyPayment(PaymentToModify, Payments[selectedItemIndex]);
-                CopyPayment(PaymentToModify, SelectedPayment);
             }
             //SelectedId = SelectedPayment.Id;
             EditDialogVisible = false;
             shouldRender = true;
             StateHasChanged();
+            PaymentsGrid?.Rebind();
         }
 
         private void OnCancelEdit()
         {
             PaymentFormMode = FormMode.Unknown;
             EditDialogVisible = false;
-        }
-
-        private static void CopyPayment(RepairOrderPaymentToWrite src, RepairOrderPaymentToWrite dst)
-        {
-            dst.Id = src.Id;
-            dst.RepairOrderId = src.RepairOrderId;
-            dst.PaymentMethod = src.PaymentMethod;
-            dst.Amount = src.Amount;
         }
     }
 }

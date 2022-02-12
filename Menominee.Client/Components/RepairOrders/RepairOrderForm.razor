@@ -1,6 +1,4 @@
-﻿@using CustomerVehicleManagement.Shared.Models.RepairOrders
-
-<div class="form m-form">
+﻿<div class="form m-form">
     <ContentHeader Header="@Title" />
 
     <div class="m-pad-bottom m-tab-button-group">
@@ -48,7 +46,7 @@
 
             @if (ServicesSelected)
             {
-                <RepairOrderServicesTab Services="@RepairOrder.Services"/>
+                <RepairOrderServicesTab Services="@RepairOrder.Services" />
             }
 
             @if (InspectionsSelected)

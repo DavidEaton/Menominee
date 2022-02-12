@@ -4,7 +4,9 @@
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <Authorizing>
                     <div class="h-100 row align-items-center w-50 mx-auto">
-                        <TelerikLoader Size="@LoaderSize.Large" Type="@LoaderType.ConvergingSpinner" ThemeColor="@ThemeColors.Tertiary" />
+                        <TelerikLoader Type="@LoaderType.ConvergingSpinner"
+                                       Size="@ThemeConstants.Loader.Size.Large"
+                                       ThemeColor="@ThemeConstants.Loader.ThemeColor.Tertiary" />
                     </div>
                 </Authorizing>
                 <NotAuthorized>

@@ -1,5 +1,4 @@
-﻿
-<EditForm Model="Payment">
+﻿<EditForm Model="Payment">
     <TelerikWindow Visible="DialogVisible"
                    Modal="true"
                    Class="popupWindowClass">
@@ -35,11 +34,11 @@
             <div>
                 <TelerikButton OnClick="OnSave"
                                ButtonType="ButtonType.Button"
-                               Primary="true"
+                               ThemeColor="primary"
                                Class="dialog-button">
                     <i class="fas fa-check"></i> OK
                 </TelerikButton>
-                <TelerikButton OnClick="OnCancel"
+                <TelerikButton OnClick="Cancel"
                                ButtonType="ButtonType.Button"
                                Class="dialog-button">
                     <i class="fas fa-times"></i> Cancel
