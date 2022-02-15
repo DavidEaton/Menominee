@@ -9,15 +9,15 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public IList<RepairOrderServiceToWrite> Services { get; set; }
 
-        private bool CanAddPart { get; set; } = true;
-        private bool CanAddLabor { get; set; } = true;
+        //private bool CanAddPart { get; set; } = true;
+        //private bool CanAddLabor { get; set; } = true;
 
-        private void OnAddPart()
-        {
-        }
+        //private void OnAddPart()
+        //{
+        //}
 
-        private void OnAddLabor()
-        {
-        }
+        //private void OnAddLabor()
+        //{
+        //}
     }
 }

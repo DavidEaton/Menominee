@@ -60,7 +60,7 @@ namespace Menominee.Client.Pages.RepairOrders
                 Total = repairOrderToRead.Total
             };
 
-            if (repairOrderToRead?.Services.Count > 0)
+            if (repairOrderToRead?.Services?.Count > 0)
             {
                 foreach (var service in repairOrderToRead.Services)
                 {
@@ -217,30 +217,21 @@ namespace Menominee.Client.Pages.RepairOrders
         {
             if (Valid())
             {
-                //if (Invoice.LineItems != null)
+                //if (RepairOrder?.Services?.Count > 0)
                 //{
-                //    foreach (var item in Invoice.LineItems)
+                //    foreach (var service in RepairOrder.Services)
                 //    {
-                //        if (item.Id < 0)
-                //            item.Id = 0;
-                //    }
-                //}
-
-                //if (Invoice.Taxes != null)
-                //{
-                //    foreach (var tax in Invoice.Taxes)
-                //    {
-                //        if (tax.Id < 0)
-                //            tax.Id = 0;
-                //    }
-                //}
-
-                //if (Invoice.Payments != null)
-                //{
-                //    foreach (var payment in Invoice.Payments)
-                //    {
-                //        if (payment.Id < 0)
-                //            payment.Id = 0;
+                //        if (service.Id < 0)
+                //            service.Id = 0;
+                //        if (service.Items?.Count > 0)
+                //        {
+                //            foreach (var item in service.Items)
+                //            {
+                //                if (item.Id < 0)
+                //                    item.Id = 0;
+                //                item.RepairOrderServiceId = service.Id;
+                //            }
+                //        }
                 //    }
                 //}
 

@@ -12,7 +12,7 @@ namespace Menominee.Client.Components.RepairOrders
         public RepairOrderToWrite RepairOrder { get; set; }
 
         [Parameter]
-        public string Title { get; set; } = "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
+        public string Title { get; set; } //= "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
 
         [Parameter]
         public EventCallback OnDiscard { get; set; }
@@ -172,17 +172,29 @@ namespace Menominee.Client.Components.RepairOrders
             //Payments.Add(payment);
         }
 
+        protected override void OnParametersSet()
+        {
+            // replaced these once correct fields are in place
+            string title = $"RO #{RepairOrder.Id}";
+            if (RepairOrder.CustomerName.Length > 0)
+                title += $"   ~   {RepairOrder.CustomerName}";
+            if (RepairOrder.Vehicle.Length > 0)
+                title += $"   ~   {RepairOrder.Vehicle}";
+            Title = title;
+        }
+
         //private RepairOrderTab SelectedTab { get; set; }
 
-        bool CustSelected { get; set; } = true;
-        bool FleetSelected { get; set; }
-        bool ServiceRequestSelected { get; set; }
-        bool InspectionsSelected { get; set; }
-        bool ServicesSelected { get; set; }
-        bool PurchasesSelected { get; set; }
-        bool WarrantiesSelected { get; set; }
-        bool SerialNumbersSelected { get; set; }
-        bool PaymentSelected { get; set; }
+        private bool CustSelected { get; set; } = true;
+        private bool FleetSelected { get; set; }
+        private bool FleetVisible { get; set; } = false;
+        private bool ServiceRequestSelected { get; set; }
+        private bool InspectionsSelected { get; set; }
+        private bool ServicesSelected { get; set; }
+        private bool PurchasesSelected { get; set; }
+        private bool WarrantiesSelected { get; set; }
+        private bool SerialNumbersSelected { get; set; }
+        private bool PaymentSelected { get; set; }
 
         private int PurchaseInfoNeededCount { get; set; } = 1;
         private int WarrantyInfoNeededCount { get; set; } = 0;

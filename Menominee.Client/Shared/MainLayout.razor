@@ -27,55 +27,57 @@
                         <span class="e-text" title="menu">Menu</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowHome">
-                        <span class="e-icons m-home"></span>
+                        @*<span class="e-icons m-home"></span>*@
+                        <span class="material-icons">home</span>
                         <span class="e-text" title="home">Home</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowDispatch">
-                        <span class="e-icons m-empty"></span>
+                        @*<span class="e-icons m-empty"></span>*@
+                        <span class="material-icons">support_agent</span>
                         <span class="e-text" title="dispatch">Dispatch</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowRepairOrders">
-                        <span class="e-icons m-empty"></span>
+                        <span class="material-icons">car_repair</span>
                         <span class="e-text" title="tickets">Repair Orders</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowInspections">
-                        <span class="e-icons m-empty"></span>
-                        <span class="e-text" title="tickets">Inspections</span>
+                        <span class="material-icons">content_paste_search</span>
+                        <span class="e-text" title="inspections">Inspections</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowSchedule">
-                        <span class="e-icons m-schedule"></span>
+                        <span class="material-icons">date_range</span>
                         <span class="e-text" title="schedule">Schedule</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowPartOrders">
-                        <span class="e-icons m-empty"></span>
+                        <span class="material-icons">shopping_cart</span>
                         <span class="e-text" title="orders">Parts Orders</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowInventory">
-                        <span class="e-icons m-placeholder"></span>
-                        <span class="e-text" title="settings">Inventory</span>
+                        <span class="material-icons">warehouse</span>
+                        <span class="e-text" title="inventory">Inventory</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowReports">
-                        <span class="e-icons m-reports"></span>
+                        <span class="material-icons">bar_chart</span>
                         <span class="e-text" title="reports">Reports</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowCustomers">
-                        <span class="e-icons m-customers"></span>
-                        <span class="e-text" title="inventory">Customers</span>
+                        <span class="material-icons">people</span>
+                        <span class="e-text" title="customers">Customers</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowReceivables">
-                        <span class="e-icons m-placeholder"></span>
+                        <span class="material-icons">savings</span>
                         <span class="e-text" title="receivables">Receivables</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowPayables">
-                        <span class="e-icons m-placeholder"></span>
+                        <span class="material-icons">payments</span>
                         <span class="e-text" title="payables">Payables</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowEmployees">
-                        <span class="e-icons m-empty"></span>
+                        <span class="material-icons">assignment_ind</span>
                         <span class="e-text" title="employees">Employees</span>
                     </li>
                     <li class="sidebar-item" @onclick="ShowSettings">
-                        <span class="e-icons m-settings"></span>
+                        <span class="material-icons">settings</span>
                         <span class="e-text" title="settings">Settings</span>
                     </li>
                 </ul>
@@ -359,6 +361,7 @@
 
     .dockSidebar.e-dock.e-open span.e-text {
         display: inline-block;
+        padding-top: 13px;
     }
 
     .dockSidebar li {
@@ -382,7 +385,15 @@
         line-height: 2
     }
 
-    .e-open .e-icons {
+    .dockSidebar span.material-icons {
+        color: #c0c2c5;
+    }
+
+    .material-icons {
+        padding-top: 13px;
+    }
+
+    .e-open .e-icons, .e-open span.material-icons {
         margin-right: 16px;
     }
 
@@ -396,6 +407,8 @@
     .sidebar-item {
         text-align: center;
         border-bottom: 1px solid rgba(229, 229, 229, 0.54);
+        height: 50px;
+        vertical-align: middle !important;
     }
 
     .e-sidebar.e-open .sidebar-item {
@@ -592,4 +605,9 @@
         border-radius: 20px;
         /*border: 3px solid grey;*/
     }
+
+    .dockSidebar .material-icons::before {
+        font-size: 25px;
+    }
+
 </style>

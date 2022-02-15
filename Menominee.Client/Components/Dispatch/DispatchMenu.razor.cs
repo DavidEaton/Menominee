@@ -34,14 +34,35 @@ namespace Menominee.Client.Components.Dispatch
         {
             new MenuItem
             {
-                Text = "Placeholder",
+                Text = "Technician",
                 Items = new List<MenuItem>
                 {
-                    new MenuItem { Text= "Item 1", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" },
-                    new MenuItem { Text= "Item 2", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" }
+                    new MenuItem { Text= "All Technicians", HtmlAttributes=SubItemHtmlAttribute, Id="*" },
+                    new MenuItem { Text= "101 - Bobby Brakedude", HtmlAttributes=SubItemHtmlAttribute, Id="101" },
+                    new MenuItem { Text= "215 - Sammy Shocker", HtmlAttributes=SubItemHtmlAttribute, Id="215" },
+                    new MenuItem { Text= "216 - Tony Tireman", HtmlAttributes=SubItemHtmlAttribute, Id="216" },
+                    new MenuItem { Text= "385 - Ed Exhauster", HtmlAttributes=SubItemHtmlAttribute, Id="385" },
+                    new MenuItem { Text= "447 - Al Aligner", HtmlAttributes=SubItemHtmlAttribute, Id="447" }
                 },
                 HtmlAttributes=ItemHtmlAttribute
+            },
+            new MenuItem
+            {
+                Text = "Advisor",
+                Items = new List<MenuItem>
+                {
+                    new MenuItem { Text= "All Advisors", HtmlAttributes=SubItemHtmlAttribute, Id="*" },
+                    new MenuItem { Text= "882 - Bill Bossman", HtmlAttributes=SubItemHtmlAttribute, Id="882" },
+                    new MenuItem { Text= "937 - Levi Leaderman", HtmlAttributes=SubItemHtmlAttribute, Id="937" }
+                },
+                HtmlAttributes=ItemHtmlAttribute
+            },
+            new MenuItem
+            {
+                Text = "Manager",
+                HtmlAttributes=ItemHtmlAttribute
             }
+
          };
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()

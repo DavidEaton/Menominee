@@ -3,14 +3,6 @@
         <Card Title="Services">
             <Content>
                 <RepairOrderServices Services="@Services" />
-                <div>
-                    <hr class="m-btn-group-divider">
-
-                    <div>
-                        <button class="btn m-button m-add-btn" @onclick="OnAddPart" disabled="@(CanAddPart ? false : true)"><i class="fas fa-plus"></i> Add Part</button>
-                        <button class="btn m-button m-add-btn" @onclick="OnAddLabor" disabled="@(CanAddLabor ? false : true)"><i class="fas fa-plus"></i> Add Labor</button>
-                    </div>
-                </div>
             </Content>
         </Card>
     </div>

@@ -64,7 +64,7 @@ namespace Menominee.Client.Shared
 
         public void ShowRepairOrders()
         {
-            GotoModule("repairorders");
+            GotoModule("repairorders/worklog");
         }
 
         public void ShowInspections()

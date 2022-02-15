@@ -4,7 +4,10 @@
     <div class="m-pad-bottom m-tab-button-group">
         <TelerikButtonGroup SelectionMode="@ButtonGroupSelectionMode.Single" Class="m-tab-button-group">
             <ButtonGroupToggleButton @bind-Selected="@CustSelected" Class="@(CustSelected ? "m-button-selected" : "m-button-not-selected")">Customer & Vehicle</ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+            @if (FleetVisible)
+            {
+                <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+            }
             <ButtonGroupToggleButton @bind-Selected="@ServiceRequestSelected" Class="@(ServiceRequestSelected ? "m-button-selected" : "m-button-not-selected")">Service Request</ButtonGroupToggleButton>
             <ButtonGroupToggleButton @bind-Selected="@InspectionsSelected" Class="@(InspectionsSelected ? "m-button-selected" : "m-button-not-selected")">Inspections</ButtonGroupToggleButton>
             <ButtonGroupToggleButton @bind-Selected="@ServicesSelected" Class="@(ServicesSelected ? "m-button-selected" : "m-button-not-selected")">Services</ButtonGroupToggleButton>
