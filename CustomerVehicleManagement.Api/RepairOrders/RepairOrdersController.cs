@@ -163,7 +163,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
                             item.RepairOrderServiceId = itemToUpdate.RepairOrderServiceId;
                             item.SequenceNumber = itemToUpdate.SequenceNumber;
-                            item.ManufacturerId = itemToUpdate.ManufacturerId;
+                            item.Manufacturer = itemToUpdate.Manufacturer;
                             item.PartNumber = itemToUpdate.PartNumber;
                             item.Description = itemToUpdate.Description;
                             item.SaleCode = itemToUpdate.SaleCode;
@@ -174,7 +174,10 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                             item.IsCounterSale = itemToUpdate.IsDeclined;
                             item.QuantitySold = itemToUpdate.QuantitySold;
                             item.SellingPrice = itemToUpdate.SellingPrice;
+                            item.LaborType = itemToUpdate.LaborType;
                             item.LaborEach = itemToUpdate.LaborEach;
+                            item.DiscountType = itemToUpdate.DiscountType;
+                            item.DiscountEach = itemToUpdate.DiscountEach;
                             item.Cost = itemToUpdate.Cost;
                             item.Core = itemToUpdate.Core;
                             item.Total = itemToUpdate.Total;

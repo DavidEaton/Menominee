@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void SetTaxes(IList<RepairOrderTax> taxes)
         {
-            Services.Clear();
+            Taxes.Clear();
             if (taxes.Count > 0)
             {
                 foreach (var tax in taxes)

@@ -60,7 +60,7 @@ namespace Menominee.Client.Components.RepairOrders
             dst.Id = src.Id;
             dst.RepairOrderServiceId = src.RepairOrderServiceId;
             dst.SequenceNumber = src.SequenceNumber;
-            dst.ManufacturerId = src.ManufacturerId;
+            dst.Manufacturer = src.Manufacturer;
             dst.PartNumber = src.PartNumber;
             dst.Description = src.Description;
             dst.SaleCode = src.SaleCode;
@@ -71,7 +71,10 @@ namespace Menominee.Client.Components.RepairOrders
             dst.IsCounterSale = src.IsCounterSale;
             dst.QuantitySold = src.QuantitySold;
             dst.SellingPrice = src.SellingPrice;
+            dst.LaborType = src.LaborType;
             dst.LaborEach = src.LaborEach;
+            dst.DiscountType = src.DiscountType;
+            dst.DiscountEach = src.DiscountEach;
             dst.Cost = src.Cost;
             dst.Core = src.Core;
             dst.Total = src.Total;
@@ -138,17 +141,17 @@ namespace Menominee.Client.Components.RepairOrders
             RepairOrderServiceToWrite service = null;
             if (ItemFormMode == FormMode.Add)
             {
-                service = FindService(ItemToModify.SaleCode);
+                service = FindService(ItemToModify.SaleCode.Code);
                 if (service == null)
                 {
-                    service = AddService(ItemToModify.SaleCode);
+                    service = AddService(ItemToModify.SaleCode.Code);
                 }
 
                 service.Items.Add(ItemToModify);
             }
             else if (ItemFormMode == FormMode.Edit)
             {
-                service = FindService(ItemToModify.SaleCode);
+                service = FindService(ItemToModify.SaleCode.Code);
                 CopyItem(ItemToModify, SelectedItem);
             }
             RecalcService(service);
@@ -246,7 +249,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void RecalcItem(RepairOrderItemToWrite item)
         {
-            item.Total = (item.SellingPrice + item.LaborEach) * item.QuantitySold;
+            item.Total = (item.SellingPrice + item.LaborEach - item.DiscountEach) * item.QuantitySold;
         }
     }
 }

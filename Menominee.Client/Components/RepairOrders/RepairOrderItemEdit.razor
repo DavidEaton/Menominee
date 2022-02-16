@@ -11,7 +11,7 @@
         <div class="form-row">
             <div class="form-group col-6">
                 <label class="k-label" for="category">Manufacturer</label>
-                <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+                <TelerikDropDownList @bind-Value="@Item.Manufacturer"
                                      Width="100%"
                                      Data="@Manufacturers"
                                      TextField="DisplayText"
@@ -81,7 +81,7 @@
             </div>
             <div id="buyoutButton" class="form-group col-2">
                 <label class="k-label" for="buyout">Buyout</label>
-                <TelerikCheckBox Id="buyout" @bind-Value="@PlaceholderIsDeclined" />
+                <TelerikCheckBox Id="buyout" @bind-Value="@Item.IsDeclined" />
             </div>
             <div class="form-group col-6">
                 <label class="k-label" for="rfr">Reason For Replacement</label>
@@ -151,7 +151,7 @@
         <div class="form-row">
             <div class="form-group col-3">
                 <label for="laborType">Labor</label>
-                <TelerikDropDownList @bind-Value="@PlaceholderLaborType"
+                <TelerikDropDownList @bind-Value="@Item.LaborType"
                                      Width="100%"
                                      Data="@LaborTypeEnumData"
                                      TextField="DisplayText"
@@ -162,7 +162,7 @@
                     </DropDownListSettings>
                 </TelerikDropDownList>
             </div>
-            @if (PlaceholderLaborType != LaborType.None)
+            @if (Item.LaborType != ItemLaborType.None)
             {
                 <div class="form-group col-3">
                     <label for="laborEach">Labor Each</label>
@@ -179,7 +179,7 @@
         <div class="form-row">
             <div class="form-group col-3">
                 <label for="discType">Discount</label>
-                <TelerikDropDownList @bind-Value="@PlaceholderDiscountType"
+                <TelerikDropDownList @bind-Value="@Item.DiscountType"
                                      Width="100%"
                                      Data="@DiscountTypeEnumData"
                                      TextField="DisplayText"
@@ -190,11 +190,11 @@
                     </DropDownListSettings>
                 </TelerikDropDownList>
             </div>
-            @if (PlaceholderDiscountType != DiscountType.None)
+            @if (Item.DiscountType != ItemDiscountType.None)
             {
                 <div class="form-group col-3">
                     <label for="discountEach">Discount Each</label>
-                    <TelerikNumericTextBox @bind-Value="@PlaceholderDiscountEach"
+                    <TelerikNumericTextBox @bind-Value="@Item.DiscountEach"
                                            Width="100%"
                                            Format="C"
                                            Decimals="2"

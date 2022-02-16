@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+﻿using CustomerVehicleManagement.Domain.Enums;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using Menominee.Common.Enums;
 //using MenomineePlayWASM.Shared.Entities.RepairOrders.Enums;
 using Microsoft.AspNetCore.Components;
@@ -49,11 +50,11 @@ namespace Menominee.Client.Components.RepairOrders
                 //SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = item.ToString(), Value = item });
                 SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(item), Value = item });
             }
-            foreach (LaborType item in Enum.GetValues(typeof(LaborType)))
+            foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
             {
                 LaborTypeEnumData.Add(new LaborTypeEnumModel { DisplayText = item.ToString(), Value = item });
             }
-            foreach (DiscountType item in Enum.GetValues(typeof(DiscountType)))
+            foreach (ItemDiscountType item in Enum.GetValues(typeof(ItemDiscountType)))
             {
                 DiscountTypeEnumData.Add(new DiscountTypeEnumModel { DisplayText = item.ToString(), Value = item });
             }
@@ -70,12 +71,12 @@ namespace Menominee.Client.Components.RepairOrders
         private bool CanChangePart { get; set; } = true;    // will eventually stop them from changing part #, salecode, etc. as needed
 
         // replace the following when able
-        private LaborType PlaceholderLaborType { get; set; } = 0;
-        private DiscountType PlaceholderDiscountType { get; set; } = 0;
+        //private ItemLaborType PlaceholderLaborType { get; set; } = 0;
+        //private ItemDiscountType PlaceholderDiscountType { get; set; } = 0;
         private string PlaceholderReasonForReplacement { get; set; } = string.Empty;
-        private double PlaceholderDiscountEach { get; set; } = 0.0;
+        //private double PlaceholderDiscountEach { get; set; } = 0.0;
         private int PlaceholderQuantityOnHand { get; set; } = 0;
-        private bool PlaceholderIsDeclined { get; set; } = false;
+        //private bool PlaceholderIsDeclined { get; set; } = false;
 
         // placeholder list of manufacturers
         public List<ManufacturerX> Manufacturers = new List<ManufacturerX>()
@@ -175,30 +176,30 @@ namespace Menominee.Client.Components.RepairOrders
             public string DisplayText { get; set; }
         }
 
-        public enum LaborType
-        {
-            None,
-            Flat,
-            Time
-        }
+        //public enum LaborType
+        //{
+        //    None,
+        //    Flat,
+        //    Time
+        //}
 
         public class LaborTypeEnumModel
         {
-            public LaborType Value { get; set; }
+            public ItemLaborType Value { get; set; }
             public string DisplayText { get; set; }
         }
 
-        public enum DiscountType
-        {
-            None,
-            Percent,
-            Dollar,
-            Predefined
-        }
+        //public enum DiscountType
+        //{
+        //    None,
+        //    Percent,
+        //    Dollar,
+        //    Predefined
+        //}
 
         public class DiscountTypeEnumModel
         {
-            public DiscountType Value { get; set; }
+            public ItemDiscountType Value { get; set; }
             public string DisplayText { get; set; }
         }
 

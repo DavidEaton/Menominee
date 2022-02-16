@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MenomineePlayWASM.Shared.DbConfigurations.Inventory
 {
-    public class ManufacturerConfiguration : EntityConfiguration<Manufacturer>
+    public class ManufacturerConfiguration : EntityConfiguration<ManufacturerOld>
     {
-        public override void Configure(EntityTypeBuilder<Manufacturer> builder)
+        public override void Configure(EntityTypeBuilder<ManufacturerOld> builder)
         {
             base.Configure(builder); // <--
             builder.ToTable("Manufacturers", "dbo");
