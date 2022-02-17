@@ -17,8 +17,8 @@ namespace CustomerVehicleManagement.Api.Configurations
 
             builder.Ignore(pc => pc.TrackingState);
 
-            builder.Property(pc => pc.Manufacturer)
-                .IsRequired();
+            //builder.Property(pc => pc.Manufacturer)
+            //    .IsRequired();
             builder.Property(pc => pc.Code)
                 .IsRequired();
             builder.Property(pc => pc.Name)

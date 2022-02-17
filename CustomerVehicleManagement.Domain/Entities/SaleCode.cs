@@ -11,5 +11,12 @@ namespace CustomerVehicleManagement.Domain.Entities
     {
         public string Code { get; set; }
         public string Name { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public SaleCode() { }
+
+        #endregion 
     }
 }

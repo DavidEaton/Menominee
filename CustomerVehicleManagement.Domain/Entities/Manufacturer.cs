@@ -14,5 +14,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         public string Name { get; set; }
         //public xxx Country { get; set; }
         //public xxx Franchise { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public Manufacturer() { }
+
+        #endregion    }
     }
 }
