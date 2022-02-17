@@ -3,31 +3,37 @@ using CustomerVehicleManagement.Shared.Models;
 using FluentValidation;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Api.Validators
+namespace CustomerVehicleManagement.Shared.Validators
 {
     public class PhonesValidator : AbstractValidator<IList<PhoneToWrite>>
     {
-        private const string message = "Can have only one Primary phone.";
+        private const string onePrimarymessage = "Can have only one Primary phone.";
+        private const string notEmptyMessage = "Phone must not be empty.";
         public PhonesValidator()
         {
-            RuleFor(phones => phones).Cascade(CascadeMode.Stop)
+            RuleFor(phones => phones)
                 .NotNull()
                 .Must(HaveOnlyOnePrimaryPhone)
-                //.ListHasNoMoreThanOnePrimary()
-                .WithMessage(message)
+                .WithMessage(onePrimarymessage)
                 .ForEach(phone =>
                 {
-                    phone.NotEmpty();
+                    phone.NotEmpty().WithMessage(notEmptyMessage);
                     phone.MustBeEntity(x => Phone.Create(x.Number, x.PhoneType, x.IsPrimary));
                 });
         }
 
+        // This business rule should reside in the domain layer
+        // rather than here in the application layer. However,
+        // refactoring will have to wait for now...
         private bool HaveOnlyOnePrimaryPhone(IList<PhoneToWrite> phones)
         {
             int primaryCount = 0;
 
             foreach (var phone in phones)
             {
+                if (phone is null)
+                    continue;
+
                 if (phone.IsPrimary)
                     primaryCount += 1;
             }

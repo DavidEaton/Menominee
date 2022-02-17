@@ -21,20 +21,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var person = new Person(name, Gender.Female, null, null, null, null, null);
 
             // Act
-            var customer = new Customer(person);
+            var customer = new Customer(person, CustomerType.Retail);
 
             // Assert
             customer.EntityType.Should().Be(EntityType.Person);
-        }
-
-        [Fact]
-        public void HaveCreatedDateOnCreated()
-        {
-            var organization = Utilities.CreateOrganization();
-
-            var customer = new Customer(organization);
-
-            customer.Created.Should().BeCloseTo(DateTime.UtcNow, 1.Minutes());
         }
 
         [Fact]
@@ -158,7 +148,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void AddPersonPhones()
         {
             var organization = Utilities.CreatePerson();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
@@ -175,7 +165,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void RemovePersonPhones()
         {
             var organization = Utilities.CreatePerson();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
@@ -195,7 +185,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void AddPersonEmails()
         {
             var organization = Utilities.CreatePerson();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
 
@@ -210,7 +200,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void RemovePersonEmails()
         {
             var organization = Utilities.CreatePerson();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
 

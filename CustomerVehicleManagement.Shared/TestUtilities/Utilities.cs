@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
         {
             var person = CreatePerson();
 
-            var customer = new Customer(person);
+            var customer = new Customer(person, CustomerType.Retail);
 
             return customer;
         }

@@ -1,0 +1,53 @@
+﻿<TelerikWindow Visible="DialogVisible"
+               Modal="true">
+    <WindowTitle>
+        Phone
+    </WindowTitle>
+    <WindowContent>
+        <div class="container">
+            <div class="form-group row">
+                <label for="number" class="form-control-label">Number</label>
+                <TelerikMaskedTextBox @bind-Value="@Phone.Number"
+                                      Id="number"
+                                      Mask="(999) 000-0000"
+                                      Width="100%"
+                                      @ref="PhoneNumberControl">
+                </TelerikMaskedTextBox>
+                <TelerikValidationMessage For="@(() => Phone.Number)" />
+            </div>
+            <div class="form-group row">
+                <label for="phoneType" class="form-control-label">Type</label>
+                <TelerikDropDownList @bind-Value="@Phone.PhoneType"
+                                     Id="phoneType"
+                                     Data="PhoneTypeEnumData"
+                                     Width="100%"
+                                     TextField="DisplayText"
+                                     ValueField="Value">
+                </TelerikDropDownList>
+            </div>
+            <div class="form-group row">
+                <div>
+                    <label for="IsPrimary">
+                        <TelerikCheckBox @bind-Value="@Phone.IsPrimary" Id="IsPrimary"></TelerikCheckBox>
+                        <span class="form-control-label">Primary</span>
+                    </label>
+                </div>
+            </div>
+            <div>
+                <TelerikButton OnClick="Saved"
+                               Icon="check"
+                               Primary="true"
+                               ButtonType="ButtonType.Button"
+                               title="Save New Phone">
+                    Ok
+                </TelerikButton>
+                <TelerikButton OnClick="Cancelled"
+                               ButtonType="ButtonType.Button"
+                               Icon="x"
+                               title="Cancel New Phone">
+                    Cancel
+                </TelerikButton>
+            </div>
+        </div>
+    </WindowContent>
+</TelerikWindow>

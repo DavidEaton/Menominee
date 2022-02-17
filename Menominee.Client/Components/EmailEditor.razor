@@ -1,0 +1,39 @@
+﻿<TelerikWindow Visible="true"
+               Modal="true">
+    <WindowTitle>
+        Email
+    </WindowTitle>
+    <WindowContent>
+        <div class="container">
+            <div class="form-group row">
+                <label for="address" class="form-control-label">Address</label>
+                <TelerikTextBox @bind-Value="@Email.Address"
+                                Id="address"
+                                Width="100%">
+                </TelerikTextBox>
+                @*<TelerikValidationMessage For="@(() => Email.Address)" />*@
+            </div>
+            <div class="form-group row">
+                <label for="isPrimary">
+                    <TelerikCheckBox @bind-Value="@Email.IsPrimary" Id="isPrimary"></TelerikCheckBox>
+                    <span class="form-control-label">Primary</span>
+                </label>
+            </div>
+            <div>
+                <TelerikButton OnClick="Saved"
+                               Icon="check"
+                               ButtonType="ButtonType.Button"
+                               Primary="true"
+                               title="Save New Email">
+                    Ok
+                </TelerikButton>
+                <TelerikButton OnClick="Cancelled"
+                               Icon="x"
+                               ButtonType="ButtonType.Button"
+                               title="Cancel Edit Email">
+                    Cancel
+                </TelerikButton>
+            </div>
+        </div>
+    </WindowContent>
+</TelerikWindow>

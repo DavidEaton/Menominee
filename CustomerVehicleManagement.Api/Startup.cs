@@ -6,9 +6,9 @@ using CustomerVehicleManagement.Api.Payables.Vendors;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.RepairOrders;
 using CustomerVehicleManagement.Api.Users;
-using CustomerVehicleManagement.Api.Validators;
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
+using CustomerVehicleManagement.Shared.Validators;
 using FluentValidation.AspNetCore;
 using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -191,9 +191,7 @@ namespace CustomerVehicleManagement.Api
                     {
                         // Global exception handling. If a production exception gets thrown,
                         // middleware configuration will handle sending the correct response.
-                        // So each and every controller method can shed their try/catch blocks:
-                        //    try...catch (Exception ex)
-                        //      return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                        // So each and every controller method can shed their try/catch blocks.
                         context.Response.StatusCode = 500;
                         //logMessage = context.Response.StatusCode.ToString();
                         //logger.LogError(logMessage);

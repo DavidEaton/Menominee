@@ -1,0 +1,46 @@
+﻿<div class="container">
+    <div class="h6">Phones</div>
+    @if (((int)Phones?.Count()) > 0)
+    {
+        <ContactableTemplate Items="Phones"
+                             TItem="PhoneToWrite"
+                             Context="phone"
+                             @key="Phone"
+                             OnRowClick="Edit">
+            <TableHeader>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Primary</th>
+            </TableHeader>
+            <RowTemplate>
+                <td>
+                    @phone.ToString()
+                </td>
+                <td>
+                    @phone.PhoneType
+                </td>
+                <td>
+                    <TelerikCheckBox @bind-Value="@phone.IsPrimary" Enabled="false"></TelerikCheckBox>
+                </td>
+            </RowTemplate>
+        </ContactableTemplate>
+    }
+    @if (Adding || Editing)
+    {
+        <PhoneEditor Phone="Phone"
+                     Saved="Save"
+                     Cancelled="Cancel"
+                     DialogVisible="DialogVisible">
+        </PhoneEditor>
+    }
+    <div>
+        <TelerikButton OnClick="Add"
+                       Icon="plus"
+                       ButtonType="ButtonType.Button"
+                       Class="button-border-success"
+                       title="Add New Phone"
+                       Enabled="!Adding">
+            Add Phone
+        </TelerikButton>
+    </div>
+</div>
