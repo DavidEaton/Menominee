@@ -223,11 +223,29 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("DiscountTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HazMatTotal")
+                        .HasColumnType("float");
+
                     b.Property<long>("InvoiceNumber")
                         .HasColumnType("bigint");
 
+                    b.Property<double>("LaborTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartsTotal")
+                        .HasColumnType("float");
+
                     b.Property<long>("RepairOrderNumber")
                         .HasColumnType("bigint");
+
+                    b.Property<double>("ShopSuppliesTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TaxTotal")
+                        .HasColumnType("float");
 
                     b.Property<double>("Total")
                         .HasColumnType("float");
@@ -274,7 +292,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<int>("LaborType")
                         .HasColumnType("int");
 
-                    b.Property<long?>("ManufacturerId")
+                    b.Property<long>("ManufacturerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("PartNumber")
@@ -285,7 +303,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<long?>("ProductCodeId")
+                    b.Property<long>("ProductCodeId")
                         .HasColumnType("bigint");
 
                     b.Property<double>("QuantitySold")
@@ -294,7 +312,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<long>("RepairOrderServiceId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("SaleCodeId")
+                    b.Property<long>("SaleCodeId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("SaleType")
@@ -440,6 +458,9 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("DiscountTotal")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsCounterSale")
                         .HasColumnType("bit");
@@ -1126,11 +1147,15 @@ namespace CustomerVehicleManagement.Api.Migrations
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Manufacturer", "Manufacturer")
                         .WithMany()
-                        .HasForeignKey("ManufacturerId");
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.ProductCode", "ProductCode")
                         .WithMany()
-                        .HasForeignKey("ProductCodeId");
+                        .HasForeignKey("ProductCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", null)
                         .WithMany("Items")
@@ -1140,7 +1165,9 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
                         .WithMany()
-                        .HasForeignKey("SaleCodeId");
+                        .HasForeignKey("SaleCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Manufacturer");
 

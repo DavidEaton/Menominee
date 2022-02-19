@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         //}
 
         // api/manufacturers/xyz
-        [HttpGet("{code:string}")]
+        [HttpGet("{code}")]
         public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(string code)
         {
             var result = await repository.GetManufacturerAsync(code);
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         }
 
         // api/manufacturers/xyz
-        [HttpPut("{code:string}")]
+        [HttpPut("{code}")]
         public async Task<IActionResult> UpdateManufacturerAsync(string code, ManufacturerToWrite mfrDto)
         {
             var notFoundMessage = $"Could not find Manufacturer to update: {mfrDto.Name}";
@@ -100,10 +100,10 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { Code = mfr.Code });
+            return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { mfr.Code });
         }
 
-        [HttpDelete("{code:string}")]
+        [HttpDelete("{code}")]
         public async Task<IActionResult> DeleteManufacturerAsync(string code)
         {
             var mfrFromRepository = await repository.GetManufacturerAsync(code);

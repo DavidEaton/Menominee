@@ -69,11 +69,6 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        //protected override bool ShouldRender()
-        //{
-        //    return shouldRender;
-        //}
-
         private void SelectPayment(RepairOrderPaymentToWrite payment)
         {
             SelectedPayment = payment;

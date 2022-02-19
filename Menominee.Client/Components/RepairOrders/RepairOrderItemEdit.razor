@@ -10,26 +10,34 @@
     <WindowContent>
         <div class="form-row">
             <div class="form-group col-6">
-                <label class="k-label" for="category">Manufacturer</label>
-                <TelerikDropDownList @bind-Value="@Item.Manufacturer"
-                                     Width="100%"
-                                     Data="@Manufacturers"
-                                     TextField="DisplayText"
-                                     ValueField="Id"
-                                     Enabled="@CanChangePart"
-                                     Id="category">
-                </TelerikDropDownList>
+                @if (Manufacturers != null)
+                {
+                    <label class="k-label" for="category">Manufacturer</label>
+                    <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+                                         Width="100%"
+                                         Data="@ManufacturerList"
+                                         TextField="DisplayText"
+                                         ValueField="Id"
+                                         Enabled="@CanChangePart"
+                                         Id="category">
+                    </TelerikDropDownList>
+
+                }
             </div>
             <div class="form-group col-6">
-                <label class="k-label" for="saleCode">Sale Code</label>
-                <TelerikDropDownList @bind-Value="@Item.SaleCode"
-                                     Width="100%"
-                                     Data="@SaleCodes"
-                                     TextField="DisplayText"
-                                     ValueField="Code"
-                                     Enabled="@CanChangePart"
-                                     Id="saleCode">
-                </TelerikDropDownList>
+                @if (SaleCodes != null)
+                {
+                    <label class="k-label" for="saleCode">Sale Code</label>
+                    <TelerikDropDownList @bind-Value="@Item.SaleCodeId"
+                                         Width="100%"
+                                         Data="@SaleCodeList"
+                                         TextField="DisplayText"
+                                         ValueField="Id"
+                                         Enabled="@CanChangePart"
+                                         Id="saleCode">
+                    </TelerikDropDownList>
+
+                }
             </div>
         </div>
         <div class="form-row">
@@ -38,19 +46,24 @@
                 <TelerikTextBox @bind-Value="@Item.PartNumber"
                                 Width="100%"
                                 Enabled="@CanChangePart"
+                                AutoComplete="off"
                                 Id="partNumber">
                 </TelerikTextBox>
             </div>
             <div class="form-group col-6">
-                <label class="k-label" for="productCode">Product Code</label>
-                <TelerikDropDownList @bind-Value="@Item.ProductCode"
-                                     Width="100%"
-                                     Data="@ProductCodes"
-                                     TextField="DisplayText"
-                                     ValueField="Code"
-                                     Enabled="@CanChangePart"
-                                     Id="productCode">
-                </TelerikDropDownList>
+                @if (ProductCodes != null)
+                {
+                    <label class="k-label" for="productCode">Product Code</label>
+                    <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
+                                         Width="100%"
+                                         Data="@ProductCodeList"
+                                         TextField="DisplayText"
+                                         ValueField="Id"
+                                         Enabled="@CanChangePart"
+                                         Id="productCode">
+                    </TelerikDropDownList>
+
+                }
             </div>
         </div>
         <div class="form-row">
@@ -58,6 +71,7 @@
                 <label class="k-label" for="description">Description</label>
                 <TelerikTextBox @bind-Value="@Item.Description"
                                 Width="100%"
+                                AutoComplete="off"
                                 Id="description">
                 </TelerikTextBox>
             </div>
@@ -109,6 +123,7 @@
                 <label class="k-label" for="onHand">On Hand</label>
                 <TelerikNumericTextBox @bind-Value="@PlaceholderQuantityOnHand"
                                        Arrows="false"
+                                       Enabled="false"
                                        Id="onHand">
                 </TelerikNumericTextBox>
             </div>
@@ -140,7 +155,7 @@
                                            Format="C"
                                            Decimals="2"
                                            Arrows="false"
-                                           Id="selling">
+                                           Id="">
                     </TelerikNumericTextBox>
                     <div class="input-group-append">
                         <button class="btn btn-secondary" type="button"><i class="fas fa-table"></i></button>
@@ -186,7 +201,7 @@
                                      ValueField="Value"
                                      Id="discType">
                     <DropDownListSettings>
-                        <DropDownListPopupSettings Height="calc(32px * 4)"/>
+                        <DropDownListPopupSettings Height="calc(32px * 4)" />
                     </DropDownListSettings>
                 </TelerikDropDownList>
             </div>

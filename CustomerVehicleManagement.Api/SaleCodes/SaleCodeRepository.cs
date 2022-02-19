@@ -45,10 +45,26 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return SaleCodeToRead.ConvertToDto(scFromContext);
         }
 
+        public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
+        {
+            var scFromContext = await context.SaleCodes
+                .FirstOrDefaultAsync(sc => sc.Id == id);
+
+            return SaleCodeToRead.ConvertToDto(scFromContext);
+        }
+
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
         {
             var scFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
+
+            return scFromContext;
+        }
+
+        public async Task<SaleCode> GetSaleCodeEntityAsync(long id)
+        {
+            var scFromContext = await context.SaleCodes
+                .FirstOrDefaultAsync(sc => sc.Id == id);
 
             return scFromContext;
         }

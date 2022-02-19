@@ -1,8 +1,11 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +17,14 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
         public long Id { get; set; }
         public long RepairOrderServiceId { get; set; }
         public int SequenceNumber { get; set; }
-        public Manufacturer Manufacturer { get; set; }
+        public ManufacturerToRead Manufacturer { get; set; }
+        public long ManufacturerId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public SaleCode SaleCode { get; set; }
-        public ProductCode ProductCode { get; set; }
+        public SaleCodeToRead SaleCode { get; set; }
+        public long SaleCodeId { get; set; }
+        public ProductCodeToRead ProductCode { get; set; }
+        public long ProductCodeId { get; set; }
         public SaleType SaleType { get; set; }
         public PartType PartType { get; set; }
         public bool IsDeclined { get; set; }
@@ -54,11 +60,14 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
                     Id = item.Id,
                     RepairOrderServiceId = item.RepairOrderServiceId,
                     SequenceNumber = item.SequenceNumber,
-                    Manufacturer = item.Manufacturer,
+                    Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
+                    ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     Description = item.Description,
-                    SaleCode = item.SaleCode,
-                    ProductCode = item.ProductCode,
+                    SaleCode = SaleCodeToRead.ConvertToDto(item.SaleCode),
+                    SaleCodeId = item.SaleCodeId,
+                    ProductCode = ProductCodeToRead.ConvertToDto(item.ProductCode),
+                    ProductCodeId = item.ProductCodeId,
                     SaleType = item.SaleType,
                     PartType = item.PartType,
                     IsDeclined = item.IsDeclined,

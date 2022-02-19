@@ -57,6 +57,12 @@ namespace Menominee.Client.Pages.RepairOrders
                 InvoiceNumber = repairOrderToRead.InvoiceNumber,
                 CustomerName = repairOrderToRead.CustomerName,
                 Vehicle = repairOrderToRead.Vehicle,
+                PartsTotal = repairOrderToRead.PartsTotal,
+                LaborTotal = repairOrderToRead.LaborTotal,
+                DiscountTotal = repairOrderToRead.DiscountTotal,
+                HazMatTotal = repairOrderToRead.HazMatTotal,
+                TaxTotal = repairOrderToRead.TaxTotal,
+                ShopSuppliesTotal = repairOrderToRead.ShopSuppliesTotal,
                 Total = repairOrderToRead.Total
             };
 
@@ -75,6 +81,7 @@ namespace Menominee.Client.Pages.RepairOrders
                         IsDeclined = service.IsDeclined,
                         PartsTotal = service.PartsTotal,
                         LaborTotal = service.LaborTotal,
+                        DiscountTotal = service.DiscountTotal,
                         TaxTotal = service.TaxTotal,
                         ShopSuppliesTotal = service.ShopSuppliesTotal,
                         Total = service.Total
@@ -89,11 +96,14 @@ namespace Menominee.Client.Pages.RepairOrders
                                 Id = item.Id,
                                 RepairOrderServiceId = item.RepairOrderServiceId,
                                 SequenceNumber = item.SequenceNumber,
-                                Manufacturer = item.Manufacturer,
+                                //Manufacturer = item.Manufacturer,
+                                ManufacturerId = item.ManufacturerId,
                                 PartNumber = item.PartNumber,
                                 Description = item.Description,
-                                SaleCode = item.SaleCode,
-                                ProductCode = item.ProductCode,
+                                //SaleCode = item.SaleCode,
+                                SaleCodeId = item.SaleCodeId,
+                                //ProductCode = item.ProductCode,
+                                ProductCodeId = item.ProductCodeId,
                                 SaleType = item.SaleType,
                                 PartType = item.PartType,
                                 IsDeclined = item.IsDeclined,

@@ -155,21 +155,6 @@ namespace Menominee.Client.Components.RepairOrders
             warranty.WarrantyNumber = "DFG01386";
             Warranties.Add(warranty);
 
-            //Payments = new List<Payment>();
-
-            //payment = new Payment();
-            //payment.Id = 1;
-            //payment.SequenceNumber = 1;
-            //payment.Method = "Cash";
-            //payment.Amount = 100.0;
-            //Payments.Add(payment);
-
-            //payment = new Payment();
-            //payment.Id = 2;
-            //payment.SequenceNumber = 2;
-            //payment.Method = "MasterCard";
-            //payment.Amount = 44.67;
-            //Payments.Add(payment);
         }
 
         protected override void OnParametersSet()
@@ -199,10 +184,6 @@ namespace Menominee.Client.Components.RepairOrders
         private int PurchaseInfoNeededCount { get; set; } = 1;
         private int WarrantyInfoNeededCount { get; set; } = 0;
         private int SerialNumberInfoNeededCount { get; set; } = 1;
-
-        //public string Value1 { get; set; }
-        //public string Value2 { get; set; }
-        //public string Value3 { get; set; }
 
         public bool HavePurchases()
         {

@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         }
 
         // api/salecodes/a
-        [HttpGet("{code:string}")]
+        [HttpGet("{code}")]
         public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(string code)
         {
             var result = await repository.GetSaleCodeAsync(code);
@@ -43,8 +43,20 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return result;
         }
 
+        // api/salecodes/1
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(long id)
+        {
+            var result = await repository.GetSaleCodeAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            return result;
+        }
+
         // api/salecodes/a
-        [HttpPut("{code:string}")]
+        [HttpPut("{code}")]
         public async Task<IActionResult> UpdateSaleCodeAsync(string code, SaleCodeToWrite scDto)
         {
             var notFoundMessage = $"Could not find Sale Code to update: {scDto.Name}";
@@ -90,10 +102,10 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{sc.Code}", UriKind.Relative), new { Code = sc.Code });
+            return Created(new Uri($"{BasePath}/{sc.Code}", UriKind.Relative), new { sc.Code });
         }
 
-        [HttpDelete("{code:string}")]
+        [HttpDelete("{code}")]
         public async Task<IActionResult> DeleteSaleCodeAsync(string code)
         {
             var scFromRepository = await repository.GetSaleCodeAsync(code);

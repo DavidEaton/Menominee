@@ -9,6 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
     public class ManufacturerToRead
     {
+        public long Id { get; set; }
         public string Code { get; set; }
         public string Prefix { get; set; }
         public string Name { get; set; }
@@ -21,6 +22,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
             {
                 return new ManufacturerToRead()
                 {
+                    Id = mfr.Id,
                     Code = mfr.Code,
                     Prefix = mfr.Prefix,
                     Name = mfr.Name

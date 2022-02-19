@@ -10,10 +10,13 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public long RepairOrderServiceId { get; set; }
         public int SequenceNumber { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
+        public long ManufacturerId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public virtual SaleCode SaleCode { get; set; }
+        public long SaleCodeId { get; set; }
         public virtual ProductCode ProductCode { get; set; }
+        public long ProductCodeId { get; set; }
         public SaleType SaleType { get; set; }
         public PartType PartType { get; set; }
         public bool IsDeclined { get; set; }
@@ -91,6 +94,13 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
                     AddTax(tax);
             }
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderItem() { }
+
+        #endregion
 
     }
 }

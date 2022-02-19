@@ -20,6 +20,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         // EF requires an empty constructor
         public Manufacturer() { }
 
-        #endregion    }
+        #endregion
+
     }
 }

@@ -9,6 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {
     public class ProductCodeToReadInList
     {
+        public long Id { get; set; }
         public Manufacturer Manufacturer { get; set; }
         public string Code { get; set; }
         public SaleCode SaleCode { get; set; }
@@ -20,6 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             {
                 return new ProductCodeToReadInList
                 {
+                    Id = pc.Id,
                     Manufacturer = pc.Manufacturer,
                     Code = pc.Code,
                     SaleCode = pc.SaleCode,

@@ -10,6 +10,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public long InvoiceNumber { get; set; }
         public string CustomerName { get; set; }
         public string Vehicle { get; set; }
+        public double PartsTotal { get; set; }
+        public double LaborTotal { get; set; }
+        public double DiscountTotal { get; set; }
+        public double TaxTotal { get; set; }
+        public double HazMatTotal { get; set; }
+        public double ShopSuppliesTotal { get; set; }
         public double Total { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateModified { get; set; }
@@ -79,5 +85,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
                     AddPayment(payment);
             }
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrder() { }
+
+        #endregion
     }
 }

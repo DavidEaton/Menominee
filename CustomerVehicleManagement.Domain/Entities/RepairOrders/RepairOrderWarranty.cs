@@ -12,5 +12,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public string NewWarranty { get; set; }
         public string OriginalWarranty { get; set; }
         public long OriginalInvoiceId { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderWarranty() { }
+
+        #endregion
     }
 }

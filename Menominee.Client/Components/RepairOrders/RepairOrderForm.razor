@@ -36,52 +36,55 @@
         </TelerikButtonGroup>
     </div>
 
-    <div class="row m-no-row-margin">
-        <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-            @if (CustSelected)
-            {
-                <RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />
-            }
+    <CascadingValue Value="@RepairOrder">
+        <div class="row m-no-row-margin">
+            <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
+                @if (CustSelected)
+                {
+                    @*<RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />*@
+                    <RepairOrderCustomerVehicleTab />
+                }
 
-            @if (FleetSelected)
-            {
-            }
+                @if (FleetSelected)
+                {
+                }
 
-            @if (ServicesSelected)
-            {
-                <RepairOrderServicesTab Services="@RepairOrder.Services" />
-            }
+                @if (ServicesSelected)
+                {
+                    <RepairOrderServicesTab Services="@RepairOrder.Services" />
+                }
 
-            @if (InspectionsSelected)
-            {
-                <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
-            }
+                @if (InspectionsSelected)
+                {
+                    <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
+                }
 
-            @if (PurchasesSelected)
-            {
-                <RepairOrderPurchasesTab Purchases="Purchases" />
-            }
+                @if (PurchasesSelected)
+                {
+                    <RepairOrderPurchasesTab Purchases="Purchases" />
+                }
 
-            @if (WarrantiesSelected)
-            {
-                <RepairOrderWarrantiesTab Warranties="Warranties" />
-            }
+                @if (WarrantiesSelected)
+                {
+                    <RepairOrderWarrantiesTab Warranties="Warranties" />
+                }
 
-            @if (SerialNumbersSelected)
-            {
-                <RepairOrderSerialNumbersTab SerialNumbers="SerialNumbers" />
-            }
+                @if (SerialNumbersSelected)
+                {
+                    <RepairOrderSerialNumbersTab SerialNumbers="SerialNumbers" />
+                }
 
-            @if (PaymentSelected)
-            {
-                <RepairOrderPaymentsTab Payments="@RepairOrder.Payments" />
-            }
+                @if (PaymentSelected)
+                {
+                    <RepairOrderPaymentsTab Payments="@RepairOrder.Payments" />
+                }
 
+            </div>
+            <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
+                <RepairOrderTotals OnDiscard="@OnDiscard" OnSave="@OnSave" />
+            </div>
         </div>
-        <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
-            <RepairOrderTotals OnDiscard="@OnDiscard" OnSave="@OnSave" />
-        </div>
-    </div>
+    </CascadingValue>
 </div>
 
 <style>

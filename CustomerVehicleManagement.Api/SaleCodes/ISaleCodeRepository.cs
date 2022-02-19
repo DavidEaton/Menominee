@@ -11,7 +11,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
     {
         Task AddSaleCodeAsync(SaleCode saleCode);
         Task<SaleCode> GetSaleCodeEntityAsync(string code);
+        Task<SaleCode> GetSaleCodeEntityAsync(long id);
         Task<SaleCodeToRead> GetSaleCodeAsync(string code);
+        Task<SaleCodeToRead> GetSaleCodeAsync(long id);
         Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync();
         void UpdateSaleCodeAsync(SaleCode saleCode);
         Task DeleteSaleCodeAsync(string code);
