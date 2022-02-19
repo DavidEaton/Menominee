@@ -200,6 +200,4 @@ namespace Menominee.Client.Pages
             await LocalStorage.RemoveItem(UniqueStorageKey);
         }
     }
-
-
 }
