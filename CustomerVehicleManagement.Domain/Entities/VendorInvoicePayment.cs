@@ -8,6 +8,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         public int PaymentMethod { get; set; }
         public string PaymentMethodName { get; set; }
         public double Amount { get; set; }
-    }
 
+        #region ORM
+
+        // EF requires an empty constructor
+        public VendorInvoicePayment() { }
+
+        #endregion
+    }
 }

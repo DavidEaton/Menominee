@@ -22,7 +22,7 @@
                     <GridColumn Width="20%"
                                 Field="@nameof(RepairOrderItemToWrite.PartNumber)"
                                 Title="Part Number">
-                        <FooterTemplate Context="Service">
+                        <FooterTemplate Context="service">
                             <div class="m-job-total-row">Job Total</div>
                         </FooterTemplate>
                     </GridColumn>
@@ -40,7 +40,7 @@
                                 Field="@nameof(RepairOrderItemToWrite.SellingPrice)"
                                 DisplayFormat="{0:C}"
                                 Title="Each">
-                        <FooterTemplate Context="Service">
+                        <FooterTemplate Context="service">
                             <div class="m-job-total-row m-job-total-value">
                                 @((context as RepairOrderServiceToWrite).PartsTotal.ToString("C"))
                             </div>
@@ -51,7 +51,7 @@
                                 Field="@nameof(RepairOrderItemToWrite.LaborEach)"
                                 DisplayFormat="{0:C}"
                                 Title="Labor">
-                        <FooterTemplate Context="Service">
+                        <FooterTemplate Context="service">
                             <div class="m-job-total-row m-job-total-value">
                                 @((context as RepairOrderServiceToWrite).LaborTotal.ToString("C"))
                             </div>
@@ -137,7 +137,7 @@
                             </div>
                         </li>
                         <li class="m-job-row-float-right m-job-row m-job-detail">
-                            <button class="btn btn-outline-secondary btn-sm" id="techGroup">
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="@(e => EditTechs(context as RepairOrderServiceToWrite))" id="techGroup">
                                 <span class="btn btn-secondary btn-sm" id="techButton" type="button">Techs</span>
                                 <span class="btn btn-secondary btn-sm" id="techNumbers">101, 241</span>
                             </button>

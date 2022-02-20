@@ -65,7 +65,7 @@ namespace MenomineePlayWASM.Shared
         public DbSet<CreditReturnItem> CreditReturnItems { get; set; }
 
         // Inventory
-        public DbSet<Manufacturer> Manufacturers { get; set; }
+        public DbSet<ManufacturerOld> Manufacturers { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
 
         // Customers

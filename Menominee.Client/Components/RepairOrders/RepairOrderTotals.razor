@@ -58,39 +58,39 @@
             <table class="w-100 table table-sm" id="totalsTable">
                 <tr>
                     <td class="m-totals-data" colspan="8">Parts</td>
-                    <td class="m-totals-data text-right" colspan="4">618.77</td>
+                    <td class="m-totals-data text-right"  colspan="4">@RepairOrder.PartsTotal.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">Labor</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right" colspan="4">@RepairOrder.LaborTotal.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">Supplies</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right" colspan="4">@RepairOrder.ShopSuppliesTotal.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data m-row-divider" colspan="8">Sub-Total</td>
-                    <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right m-row-divider" colspan="4">@SubTotal().ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">Discounts</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right" colspan="4">@RepairOrder.DiscountTotal.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">HazMat</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right" colspan="4">@RepairOrder.HazMatTotal.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">Taxes</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right" colspan="4">@RepairOrder.TaxTotal.ToString("C")</td>
                 </tr>
                 <tr id="totalsLine">
                     <td class="m-totals-data m-row-divider" colspan="8">Total</td>
-                    <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
+                    <td class="m-totals-data text-right m-row-divider" colspan="4">@RepairOrder.Total.ToString("C")</td>
                 </tr>
                 <tr>
                     <td class="m-totals-data" colspan="8">Cash Back</td>
-                    <td class="m-totals-data text-right" colspan="4">37.12</td>
+                    <td class="m-totals-data text-right" colspan="4">0.00</td>
                 </tr>
             </table>
 

@@ -115,10 +115,20 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         private void WriteDtoToEntity(RepairOrderToWrite roToUpdate, RepairOrder ro)
         {
+            // -------------------------------------------------------------------------------
+            // FIX ME -- should all detail records get new Ids every time they get resaved????
+            // -------------------------------------------------------------------------------
+
             ro.RepairOrderNumber = roToUpdate.RepairOrderNumber;
             ro.InvoiceNumber = roToUpdate.InvoiceNumber;
             ro.CustomerName = roToUpdate.CustomerName;
             ro.Vehicle = roToUpdate.Vehicle;
+            ro.PartsTotal = roToUpdate.PartsTotal;
+            ro.LaborTotal = roToUpdate.LaborTotal;
+            ro.DiscountTotal = roToUpdate.DiscountTotal;
+            ro.HazMatTotal = roToUpdate.HazMatTotal;
+            ro.TaxTotal = roToUpdate.TaxTotal;
+            ro.ShopSuppliesTotal = roToUpdate.ShopSuppliesTotal;
             ro.Total = roToUpdate.Total;
             if (roToUpdate?.DateCreated != null)
                 ro.DateCreated = (DateTime)roToUpdate.DateCreated;
@@ -140,7 +150,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                     List<RepairOrderTech> techs = new();
                     List<RepairOrderServiceTax> serviceTaxes = new();
 
-                    service.RepairOrderId = serviceToUpdate.RepairOrderId;
+                    //service.RepairOrderId = serviceToUpdate.RepairOrderId;
                     service.SequenceNumber = serviceToUpdate.SequenceNumber;
                     service.ServiceName = serviceToUpdate.ServiceName;
                     service.SaleCode = serviceToUpdate.SaleCode;
@@ -148,6 +158,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                     service.IsDeclined = serviceToUpdate.IsDeclined;
                     service.PartsTotal = serviceToUpdate.PartsTotal;
                     service.LaborTotal = serviceToUpdate.LaborTotal;
+                    service.DiscountTotal = serviceToUpdate.DiscountTotal;
                     service.TaxTotal = serviceToUpdate.TaxTotal;
                     service.ShopSuppliesTotal = serviceToUpdate.ShopSuppliesTotal;
                     service.Total = serviceToUpdate.Total;
@@ -161,20 +172,26 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                             List<RepairOrderWarranty> warranties = new();
                             List<RepairOrderItemTax> itemTaxes = new();
 
-                            item.RepairOrderServiceId = itemToUpdate.RepairOrderServiceId;
+                            //item.RepairOrderServiceId = itemToUpdate.RepairOrderServiceId;
                             item.SequenceNumber = itemToUpdate.SequenceNumber;
+                            //item.Manufacturer = itemToUpdate.Manufacturer;
                             item.ManufacturerId = itemToUpdate.ManufacturerId;
                             item.PartNumber = itemToUpdate.PartNumber;
                             item.Description = itemToUpdate.Description;
-                            item.SaleCode = itemToUpdate.SaleCode;
-                            item.ProductCode = itemToUpdate.ProductCode;
+                            //item.SaleCode = itemToUpdate.SaleCode;
+                            item.SaleCodeId = itemToUpdate.SaleCodeId;
+                            //item.ProductCode = itemToUpdate.ProductCode;
+                            item.ProductCodeId = itemToUpdate.ProductCodeId;
                             item.SaleType = itemToUpdate.SaleType;
                             item.PartType = itemToUpdate.PartType;
                             item.IsDeclined = itemToUpdate.IsDeclined;
                             item.IsCounterSale = itemToUpdate.IsDeclined;
                             item.QuantitySold = itemToUpdate.QuantitySold;
                             item.SellingPrice = itemToUpdate.SellingPrice;
+                            item.LaborType = itemToUpdate.LaborType;
                             item.LaborEach = itemToUpdate.LaborEach;
+                            item.DiscountType = itemToUpdate.DiscountType;
+                            item.DiscountEach = itemToUpdate.DiscountEach;
                             item.Cost = itemToUpdate.Cost;
                             item.Core = itemToUpdate.Core;
                             item.Total = itemToUpdate.Total;
@@ -184,7 +201,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                 foreach (var serialNumberToUpdate in itemToUpdate.SerialNumbers)
                                 {
                                     RepairOrderSerialNumber serialNumber = new();
-                                    serialNumber.RepairOrderItemId = serialNumberToUpdate.RepairOrderItemId;
+                                    //serialNumber.RepairOrderItemId = serialNumberToUpdate.RepairOrderItemId;
                                     serialNumber.SerialNumber = serialNumberToUpdate.SerialNumber;
 
                                     serialNumbers.Add(serialNumber);
@@ -197,7 +214,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                 foreach (var warrantyToUpdate in itemToUpdate.Warranties)
                                 {
                                     RepairOrderWarranty warranty = new();
-                                    warranty.RepairOrderItemId = warrantyToUpdate.RepairOrderItemId;
+                                    //warranty.RepairOrderItemId = warrantyToUpdate.RepairOrderItemId;
                                     warranty.SequenceNumber = warrantyToUpdate.SequenceNumber;
                                     warranty.Quantity = warrantyToUpdate.Quantity;
                                     warranty.Type = warrantyToUpdate.Type;
@@ -215,7 +232,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                 foreach (var taxToUpdate in itemToUpdate.Taxes)
                                 {
                                     RepairOrderItemTax tax = new();
-                                    tax.RepairOrderItemId = taxToUpdate.RepairOrderItemId;
+                                    //tax.RepairOrderItemId = taxToUpdate.RepairOrderItemId;
                                     tax.SequenceNumber = taxToUpdate.SequenceNumber;
                                     tax.TaxId = taxToUpdate.TaxId;
                                     tax.PartTaxRate = taxToUpdate.PartTaxRate;
@@ -238,7 +255,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                         foreach (var techToUpdate in serviceToUpdate.Techs)
                         {
                             RepairOrderTech tech = new();
-                            tech.RepairOrderServiceId = techToUpdate.RepairOrderServiceId;
+                            //tech.RepairOrderServiceId = techToUpdate.RepairOrderServiceId;
                             tech.TechnicianId = techToUpdate.TechnicianId;
 
                             techs.Add(tech);
@@ -251,7 +268,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                         foreach (var taxToUpdate in serviceToUpdate.Taxes)
                         {
                             RepairOrderServiceTax tax = new();
-                            tax.RepairOrderServiceId = taxToUpdate.RepairOrderServiceId;
+                            //tax.RepairOrderServiceId = taxToUpdate.RepairOrderServiceId;
                             tax.SequenceNumber = taxToUpdate.SequenceNumber;
                             tax.TaxId = taxToUpdate.TaxId;
                             tax.PartTaxRate = taxToUpdate.PartTaxRate;
@@ -274,7 +291,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 foreach (var taxToUpdate in roToUpdate.Taxes)
                 {
                     RepairOrderTax tax = new();
-                    tax.RepairOrderId = taxToUpdate.RepairOrderId;
+                    //tax.RepairOrderId = taxToUpdate.RepairOrderId;
                     tax.SequenceNumber = taxToUpdate.SequenceNumber;
                     tax.TaxId = taxToUpdate.TaxId;
                     tax.PartTaxRate = taxToUpdate.PartTaxRate;
@@ -292,7 +309,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 foreach (var paymentToUpdate in roToUpdate.Payments)
                 {
                     RepairOrderPayment payment = new();
-                    payment.RepairOrderId = paymentToUpdate.RepairOrderId;
+                    //payment.RepairOrderId = paymentToUpdate.RepairOrderId;
                     payment.PaymentMethod = paymentToUpdate.PaymentMethod;
                     payment.Amount = paymentToUpdate.Amount;
 

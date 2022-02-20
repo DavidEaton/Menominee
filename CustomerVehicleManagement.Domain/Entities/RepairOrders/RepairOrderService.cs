@@ -17,6 +17,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public bool IsDeclined { get; set; }
         public double PartsTotal { get; set; }
         public double LaborTotal { get; set; }
+        public double DiscountTotal { get; set; }
         public double TaxTotal { get; set; }
         public double ShopSuppliesTotal { get; set; }
         public double Total { get; set; }
@@ -84,5 +85,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
                     AddTax(tax);
             }
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderService() { }
+
+        #endregion
     }
 }

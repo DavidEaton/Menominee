@@ -9,5 +9,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         public int TaxId { get; set; }
         public string TaxName { get; set; }
         public double Amount { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public VendorInvoiceTax() { }
+
+        #endregion
     }
 }

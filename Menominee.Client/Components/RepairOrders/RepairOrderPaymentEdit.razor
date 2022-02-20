@@ -8,8 +8,8 @@
         <WindowContent>
             @*<div class="container">*@
             <div>
-                <label class="form-control-label">Payment Method</label>
-                <div class="m-form-control-group" for="paymentMethod">
+                <div class="form-group">
+                    <label class="k-label" for="paymentMethod">Payment Method</label>
                     <TelerikDropDownList @bind-Value="@Payment.PaymentMethod"
                                          Data="PayTypeEnumData"
                                          Width="100%"
@@ -19,8 +19,8 @@
                     </TelerikDropDownList>
                 </div>
 
-                <label class="form-control-label" for="amount">Amount</label>
-                <div class="m-form-control-group">
+                <div class="form-group">
+                    <label class="k-label" for="amount">Amount</label>
                     <TelerikNumericTextBox @bind-Value="@Payment.Amount"
                                            Width="100%"
                                            Format="C"

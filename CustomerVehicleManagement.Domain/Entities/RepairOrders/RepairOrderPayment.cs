@@ -8,5 +8,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public long RepairOrderId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public double Amount { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderPayment() { }
+
+        #endregion
     }
 }

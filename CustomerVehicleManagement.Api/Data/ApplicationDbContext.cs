@@ -93,6 +93,15 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new RepairOrderTechConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderWarrantyConfiguration());
 
+            // Manufacturers
+            modelBuilder.ApplyConfiguration(new ManufacturerConfiguration());
+
+            // Sale Codes
+            modelBuilder.ApplyConfiguration(new SaleCodeConfiguration());
+
+            // Product Codes
+            modelBuilder.ApplyConfiguration(new ProductCodeConfiguration());
+
         }
 
         private string GetTenantConnection()
@@ -182,6 +191,15 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<RepairOrderTech> RepairOrderTechs { get; set; }
         public DbSet<RepairOrderTax> RepairOrderTaxes { get; set; }
         public DbSet<RepairOrderPayment> RepairOrderPayments { get; set; }
+
+        // Manufacturers
+        public DbSet<Manufacturer> Manufacturers { get; set; }
+
+        // Sale Codes
+        public DbSet<SaleCode> SaleCodes { get; set; }
+
+        // Product Codes
+        public DbSet<ProductCode> ProductCodes { get; set; }
 
         #endregion
     }

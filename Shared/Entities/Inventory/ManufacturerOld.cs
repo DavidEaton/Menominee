@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MenomineePlayWASM.Shared.Entities.Inventory
 {
-    public class Manufacturer : Entity
+    public class ManufacturerOld : Entity
     {
         //public long Id { get; set; }
         public string MfrId { get; set; }

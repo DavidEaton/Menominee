@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerVehicleManagement.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220121222149_IgnoreTrackingVendorInvoicePaymentMethod")]
-    partial class IgnoreTrackingVendorInvoicePaymentMethod
+    [Migration("20220218121103_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -79,6 +79,29 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("Email", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Manufacturer", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prefix")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Manufacturer", "dbo");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
@@ -151,6 +174,460 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("Phone", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.ProductCode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ManufacturerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("SaleCodeId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("SaleCodeId");
+
+                    b.ToTable("ProductCode", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateInvoiced")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("InvoiceNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RepairOrderNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Vehicle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RepairOrders", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Core")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("DiscountEach")
+                        .HasColumnType("float");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCounterSale")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeclined")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("LaborEach")
+                        .HasColumnType("float");
+
+                    b.Property<int>("LaborType")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("ManufacturerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("PartNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PartType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<long?>("ProductCodeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("QuantitySold")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SaleCodeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SaleType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<double>("SellingPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("ProductCodeId");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.HasIndex("SaleCodeId");
+
+                    b.ToTable("RepairOrderItems", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItemTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderItemTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderPayment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PaymentMethod")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderPayments", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderPurchase", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("PONumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("VendorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("VendorInvoiceNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VendorPartNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RepairOrderPurchases", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderSerialNumber", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderSerialNumbers", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsCounterSale")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeclined")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("LaborTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartsTotal")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SaleCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ShopSuppliesTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TaxTotal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderServices", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderServiceTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.ToTable("RepairOrderServiceTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderTax", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LaborTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PartTaxRate")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("TaxId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
+
+                    b.ToTable("RepairOrderTaxes", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderTech", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("RepairOrderServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TechnicianId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderServiceId");
+
+                    b.ToTable("RepairOrderTechs", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderWarranty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("NewWarranty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("OriginalInvoiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalWarranty")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<long>("RepairOrderItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderItemId");
+
+                    b.ToTable("RepairOrderWarranties", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.SaleCode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SaleCode", "dbo");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
@@ -330,12 +807,14 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("PaymentName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TrackingState")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("VendorInvoicePaymentMethod", "dbo");
+                    b.ToTable("VendorInvoicePaymentMethods");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.VendorInvoiceTax", b =>
@@ -630,6 +1109,120 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasForeignKey("PersonId");
                 });
 
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.ProductCode", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
+                        .WithMany()
+                        .HasForeignKey("SaleCodeId");
+
+                    b.Navigation("Manufacturer");
+
+                    b.Navigation("SaleCode");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.ProductCode", "ProductCode")
+                        .WithMany()
+                        .HasForeignKey("ProductCodeId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Items")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
+                        .WithMany()
+                        .HasForeignKey("SaleCodeId");
+
+                    b.Navigation("Manufacturer");
+
+                    b.Navigation("ProductCode");
+
+                    b.Navigation("SaleCode");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItemTax", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderPayment", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderSerialNumber", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("SerialNumbers")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Services")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderServiceTax", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderTax", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderTech", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", null)
+                        .WithMany("Techs")
+                        .HasForeignKey("RepairOrderServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderWarranty", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("Warranties")
+                        .HasForeignKey("RepairOrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Customer", "Customer")
@@ -690,6 +1283,33 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Navigation("Emails");
 
                     b.Navigation("Phones");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", b =>
+                {
+                    b.Navigation("Payments");
+
+                    b.Navigation("Services");
+
+                    b.Navigation("Taxes");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", b =>
+                {
+                    b.Navigation("SerialNumbers");
+
+                    b.Navigation("Taxes");
+
+                    b.Navigation("Warranties");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderService", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Taxes");
+
+                    b.Navigation("Techs");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.VendorInvoice", b =>

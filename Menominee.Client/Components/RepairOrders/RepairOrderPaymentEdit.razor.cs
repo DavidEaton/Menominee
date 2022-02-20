@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -10,8 +11,9 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [Parameter]
         public RepairOrderPaymentToWrite Payment { get; set; }
-        private PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
-        private double Amount { get; set; } = 0.0;
+
+        [CascadingParameter]
+        public RepairOrderToWrite RepairOrder { get; set; }
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -39,6 +41,9 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        private PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
+        private double Amount { get; set; } = 0.0;
+
         private void Save()
         {
             OnSave.InvokeAsync();
@@ -49,6 +54,7 @@ namespace Menominee.Client.Components.RepairOrders
                 Amount = 0.0;
             }
         }
+
         private void Cancel()
         {
             if (formMode == FormMode.Edit)
@@ -74,6 +80,9 @@ namespace Menominee.Client.Components.RepairOrders
         {
             PaymentMethod = Payment.PaymentMethod;
             Amount = Payment.Amount;
+
+            if (formMode == FormMode.Add)
+                Payment.Amount = RepairOrder.Total;
 
             base.OnParametersSet();
         }

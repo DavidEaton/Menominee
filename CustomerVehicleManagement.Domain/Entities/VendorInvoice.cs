@@ -77,6 +77,12 @@ namespace CustomerVehicleManagement.Domain.Entities
                     AddTax(tax);
             }
         }
-    }
 
+        #region ORM
+
+        // EF requires an empty constructor
+        public VendorInvoice() { }
+
+        #endregion
+    }
 }
