@@ -166,28 +166,37 @@
     </div>
 </div>
 
-@if (ItemToModify != null)
+@if (ItemToModify != null && EditItemDialogVisible)
 {
-    <RepairOrderItemEdit Item="@ItemToModify" 
-                         DialogVisible="@EditItemDialogVisible" 
-                         Mode="@ItemFormMode" 
-                         OnSave="@OnSaveItemEdit" 
+    <RepairOrderItemEdit Item="@ItemToModify"
+                         DialogVisible="@EditItemDialogVisible"
+                         Mode="@ItemFormMode"
+                         OnSave="@OnSaveItemEdit"
+                         OnCancel="@OnCancelItemEdit" />
+}
+
+@if (ItemToModify != null && EditLaborDialogVisible)
+{
+    <RepairOrderLaborEdit Item="@ItemToModify"
+                         DialogVisible="@EditLaborDialogVisible"
+                         Mode="@ItemFormMode"
+                         OnSave="@OnSaveItemEdit"
                          OnCancel="@OnCancelItemEdit" />
 }
 
 @if (EditTechDialogVisible)
 {
-    <RepairOrderTechEdit Service="@ServiceToEdit" 
-                         DialogVisible="@EditTechDialogVisible" 
+    <RepairOrderTechEdit Service="@ServiceToEdit"
+                         DialogVisible="@EditTechDialogVisible"
                          OnDone="@OnDoneTechEdit" />
 }
 
 @if (SelectInventoryItemDialogVisible)
 {
-    <InventoryItemSelectForm DialogVisible="@SelectInventoryItemDialogVisible" 
-                             @bind-SelectedItem="@SelectedInventoryItem" 
-                             OnSelect="@AddItem" 
-                             OnCancel="@OnCancelInventoryItemSelect"/>
+    <InventoryItemSelectForm DialogVisible="@SelectInventoryItemDialogVisible"
+                             @bind-SelectedItem="@SelectedInventoryItem"
+                             OnSelect="@AddItem"
+                             OnCancel="@OnCancelInventoryItemSelect" />
 }
 
 <style>
