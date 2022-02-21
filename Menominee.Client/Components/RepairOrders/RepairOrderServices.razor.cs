@@ -62,6 +62,7 @@ namespace Menominee.Client.Components.RepairOrders
         //private bool shouldRender = true;
         private FormMode ItemFormMode = FormMode.Unknown;
         private bool EditItemDialogVisible { get; set; } = false;
+        private bool EditLaborDialogVisible { get; set; } = false;
         private bool SelectInventoryItemDialogVisible { get; set; } = false;
         private long SelectedInventoryItemId { get; set; } = 0;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
@@ -167,9 +168,10 @@ namespace Menominee.Client.Components.RepairOrders
             ItemToModify.ManufacturerId = 1;
             ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
             ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.PartNumber = "INSTALLATION";
             ItemToModify.PartType = PartType.Labor;
             ItemFormMode = FormMode.Add;
-            EditItemDialogVisible = true;
+            EditLaborDialogVisible = true;
         }
 
         private void EditItem(RepairOrderItemToWrite item)
@@ -181,7 +183,10 @@ namespace Menominee.Client.Components.RepairOrders
             ItemToModify.ProductCode = new ProductCodeToWrite();
             CopyItem(SelectedItem, ItemToModify);
             ItemFormMode = FormMode.Edit;
-            EditItemDialogVisible = true;
+            if (ItemToModify.PartType == PartType.Labor)
+                EditLaborDialogVisible = true;
+            else
+                EditItemDialogVisible = true;
         }
 
         void EditTechs(RepairOrderServiceToWrite service)
@@ -244,6 +249,7 @@ namespace Menominee.Client.Components.RepairOrders
             RepairOrder?.Recalculate();
 
             EditItemDialogVisible = false;
+            EditLaborDialogVisible = false;
             if (ItemFormMode == FormMode.Add)
                 ServicesGrid?.Rebind();
             StateHasChanged();
@@ -253,6 +259,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             ItemFormMode = FormMode.Unknown;
             EditItemDialogVisible = false;
+            EditLaborDialogVisible = false;
         }
 
         private void OnCancelInventoryItemSelect()

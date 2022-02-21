@@ -1,0 +1,175 @@
+﻿@using Menominee.Common.Enums
+
+<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Width="500px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label class="k-label" for="partNumber">Item Number</label>
+                <TelerikTextBox @bind-Value="@Item.PartNumber"
+                                Width="100%"
+                                Enabled="@CanChangePart"
+                                AutoComplete="off"
+                                Id="partNumber">
+                </TelerikTextBox>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label class="k-label" for="description">Description</label>
+                <TelerikTextBox @bind-Value="@Item.Description"
+                                Width="100%"
+                                AutoComplete="off"
+                                Id="description">
+                </TelerikTextBox>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+                @if (SaleCodes != null)
+                {
+                    <label class="k-label" for="saleCode">Sale Code</label>
+                    <TelerikDropDownList @bind-Value="@Item.SaleCodeId"
+                                         Width="100%"
+                                         Data="@SaleCodeList"
+                                         TextField="DisplayText"
+                                         ValueField="Id"
+                                         Enabled="@CanChangePart"
+                                         Id="saleCode">
+                    </TelerikDropDownList>
+                }
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-12">
+                @if (ProductCodes != null)
+                {
+                    <label class="k-label" for="productCode">Product Code</label>
+                    <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
+                                         Width="100%"
+                                         Data="@ProductCodeList"
+                                         TextField="DisplayText"
+                                         ValueField="Id"
+                                         Enabled="@CanChangePart"
+                                         Id="productCode">
+                    </TelerikDropDownList>
+                }
+            </div>
+        </div>
+
+        <hr class="m-section-divider">
+
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label class="k-label" for="qtySold">Quantity Sold</label>
+                <TelerikNumericTextBox @bind-Value="@Item.QuantitySold"
+                                       Width="100%"
+                                       Id="qtySold">
+                </TelerikNumericTextBox>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label for="laborType">Labor</label>
+                <TelerikDropDownList @bind-Value="@Item.LaborType"
+                                     Width="100%"
+                                     Data="@LaborTypeEnumData"
+                                     TextField="DisplayText"
+                                     ValueField="Value"
+                                     Id="laborType">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="calc(32px * 3)" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+            @if (Item.LaborType != ItemLaborType.None)
+            {
+                <div class="form-group col-3">
+                    <label for="laborEach">Labor Each</label>
+                    <TelerikNumericTextBox @bind-Value="@Item.LaborEach"
+                                           Width="100%"
+                                           Format="C"
+                                           Decimals="2"
+                                           Arrows="false"
+                                           Id="laborEach">
+                    </TelerikNumericTextBox>
+                </div>
+            }
+        </div>
+
+        <hr class="m-button-divider">
+
+        <div>
+            <TelerikButton OnClick="OnSave"
+                           ButtonType="ButtonType.Button"
+                           ThemeColor="primary"
+                           Class="dialog-button">
+                <i class="fas fa-check"></i> OK
+            </TelerikButton>
+            <TelerikButton OnClick="OnCancel"
+                           ButtonType="ButtonType.Button"
+                           Class="dialog-button">
+                <i class="fas fa-times"></i> Cancel
+            </TelerikButton>
+        </div>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    .m-button-divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .m-section-divider {
+        margin-top: .5rem !important;
+        margin-bottom: .5rem !important;
+        /*border-color: darkgrey;*/
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: .5rem !important;
+    }
+
+    .m-col-margin-right-16 {
+        /*margin-right: 16px;*/
+        /*column-gap: 16px;*/
+    }
+
+    .m-no-row-padding {
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-inline: 12px;
+    }
+
+    .m-grid-form {
+        display: grid;
+    }
+
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+
+    #buyoutButton {
+        margin-top: 30px;
+    }
+</style>
