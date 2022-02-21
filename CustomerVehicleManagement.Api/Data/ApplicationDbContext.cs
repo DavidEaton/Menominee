@@ -102,6 +102,8 @@ namespace CustomerVehicleManagement.Api.Data
             // Product Codes
             modelBuilder.ApplyConfiguration(new ProductCodeConfiguration());
 
+            // Inventory
+            modelBuilder.ApplyConfiguration(new InventoryItemConfiguration());
         }
 
         private string GetTenantConnection()
@@ -200,6 +202,9 @@ namespace CustomerVehicleManagement.Api.Data
 
         // Product Codes
         public DbSet<ProductCode> ProductCodes { get; set; }
+
+        // Inventory
+        public DbSet<InventoryItem> InventoryItems { get; set; }
 
         #endregion
     }

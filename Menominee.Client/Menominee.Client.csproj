@@ -46,6 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
     <ProjectReference Include="..\Menominee.Common\Menominee.Common.csproj" />
+    <ProjectReference Include="..\Shared\MenomineePlayWASM.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

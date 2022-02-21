@@ -1,29 +1,29 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using Menominee.Client.Services.Inventory;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace MenomineePlayWASM.Client.Pages.Inventory
+namespace Menominee.Client.Pages.Inventory
 {
     public partial class InventoryItemList : ComponentBase
     {
         [Inject]
         private NavigationManager NavigationManager { get; set; }
 
-        // FIX ME - Add code back in when the DataService & Dtos are implemented
-
-        //[Inject]
-        //public IInventoryItemDataService DataService { get; set; }
+        [Inject]
+        public IInventoryItemDataService DataService { get; set; }
 
         [Parameter]
         public long ItemToSelect { get; set; } = 0;
 
-        //public IReadOnlyList<InventoryItemToReadInList> ItemsList;
-        //public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
-        //public InventoryItemToReadInList SelectedItem { get; set; }
+        public IReadOnlyList<InventoryItemToReadInList> ItemsList;
+        public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
+        public InventoryItemToReadInList SelectedItem { get; set; }
 
-        //public TelerikGrid<InventoryItemToReadInList> Grid { get; set; }
+        public TelerikGrid<InventoryItemToReadInList> Grid { get; set; }
 
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
@@ -42,25 +42,25 @@ namespace MenomineePlayWASM.Client.Pages.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            //ItemsList = (await DataService.GetAllItems()).ToList();
+            ItemsList = (await DataService.GetAllItems()).ToList();
 
-            //if (ItemsList.Count > 0)
-            //{
-            //    if (ItemToSelect == 0)
-            //    {
-            //        SelectedItem = ItemsList.FirstOrDefault();
-            //    }
-            //    else
-            //    {
-            //        SelectedItem = ItemsList.Where(x => x.Id == ItemToSelect).FirstOrDefault();
-            //    }
-            //    SelectedId = SelectedItem.Id;
-            //    SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
-            //}
-            //else
-            //{
-            //    SelectedId = 0;
-            //}
+            if (ItemsList.Count > 0)
+            {
+                if (ItemToSelect == 0)
+                {
+                    SelectedItem = ItemsList.FirstOrDefault();
+                }
+                else
+                {
+                    SelectedItem = ItemsList.Where(x => x.Id == ItemToSelect).FirstOrDefault();
+                }
+                SelectedId = SelectedItem.Id;
+                SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
+            }
+            else
+            {
+                SelectedId = 0;
+            }
         }
 
         private void OnAdd()
@@ -82,15 +82,15 @@ namespace MenomineePlayWASM.Client.Pages.Inventory
             NavigationManager.NavigateTo("inventory");
         }
 
-        //protected void OnSelect(IEnumerable<InventoryItemToReadInList> items)
-        //{
-        //    SelectedItem = items.FirstOrDefault();
-        //    SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
-        //}
+        protected void OnSelect(IEnumerable<InventoryItemToReadInList> items)
+        {
+            SelectedItem = items.FirstOrDefault();
+            SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
+        }
 
-        //private void OnRowSelected(GridRowClickEventArgs args)
-        //{
-        //    SelectedId = (args.Item as InventoryItemToReadInList).Id;
-        //}
+        private void OnRowSelected(GridRowClickEventArgs args)
+        {
+            SelectedId = (args.Item as InventoryItemToReadInList).Id;
+        }
     }
 }

@@ -1,0 +1,99 @@
+﻿@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Lists
+
+<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Class="popupWindowClass">
+    <WindowTitle>
+        Select Technicians
+    </WindowTitle>
+    <WindowContent>
+        @*<TelerikGrid Data="@Technicians" Height="400px"
+                         Pageable="false" Sortable="false" Groupable="false"
+                         FilterMode="Telerik.Blazor.GridFilterMode.None"
+                         Resizable="false" Reorderable="false">
+                <GridColumns>
+                    <GridColumn Field="@(nameof(Technician.Checked))" Width="6rem" Title="Selected">
+                        <EditorTemplate>
+                            <TelerikCheckBox Value="@((context as Technician).Checked)"
+                                             ValueChanged="@((bool value) => (context as Technician).Checked = value)">
+                            </TelerikCheckBox>
+                        </EditorTemplate>
+                    </GridColumn>
+                    <GridColumn Field="@(nameof(Technician.Name))" Title="Name" />
+                </GridColumns>
+            </TelerikGrid>*@
+
+        <SfListView DataSource="@Technicians" ShowCheckBox="true" CssClass="tech-list">
+            <ListViewFieldSettings TValue="Technician" Id="Id" Text="DisplayText" IsChecked="Checked"></ListViewFieldSettings>
+        </SfListView>
+
+        @*<hr id="divider">*@
+        <div>
+            <TelerikButton OnClick="Save"
+                           ButtonType="ButtonType.Button"
+                           ThemeColor="primary"
+                           Class="dialog-button">
+                <i class="fas fa-check"></i> OK
+            </TelerikButton>
+            <TelerikButton OnClick="Cancel"
+                           ButtonType="ButtonType.Button"
+                           Class="dialog-button">
+                <i class="fas fa-times"></i> Cancel
+            </TelerikButton>
+        </div>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    li.e-list-item {
+        border: 0 !important;
+    }
+
+    span.e-frame.e-icons, span.e-frame.e-icons.e-check {
+        height: 18px !important;
+        width: 18px !important;
+    }
+
+    div.e-checkbox-wrapper.e-css {
+        height: 18px !important;
+        width: 18px !important;
+        background-color: white !important;
+        color: #007bff !important;
+    }
+
+    .e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+        background-color: white !important;
+        color: #007bff !important;
+        border-color: white !important;
+    }
+
+    .e-listview .e-list-item.e-focused {
+        background-color: white;
+        color: black;
+    }
+
+    .tech-list {
+        max-height: 400px;
+        min-width: 300px;
+        margin-bottom: 1em;
+    }
+
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+</style>

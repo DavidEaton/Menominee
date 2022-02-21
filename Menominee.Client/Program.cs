@@ -2,6 +2,7 @@ using Blazored.Toast;
 using CustomerVehicleManagement.Shared;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
+using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
@@ -115,6 +116,10 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IProductCodeDataService, ProductCodeDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IInventoryItemDataService, InventoryItemDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
