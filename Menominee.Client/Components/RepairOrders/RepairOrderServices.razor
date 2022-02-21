@@ -1,5 +1,6 @@
 ﻿@using CustomerVehicleManagement.Shared.Models.RepairOrders.Services
 @using CustomerVehicleManagement.Shared.Models.RepairOrders.Items
+@using Menominee.Client.Components.Inventory
 
 <TelerikGrid Data="Services"
              SelectionMode="GridSelectionMode.Single"
@@ -139,7 +140,7 @@
                         <li class="m-job-row-float-right m-job-row m-job-detail">
                             <button class="btn btn-outline-secondary btn-sm" @onclick="@(e => EditTechs(context as RepairOrderServiceToWrite))" id="techGroup">
                                 <span class="btn btn-secondary btn-sm" id="techButton" type="button">Techs</span>
-                                <span class="btn btn-secondary btn-sm" id="techNumbers">101, 241</span>
+                                <span class="btn btn-secondary btn-sm" id="techNumbers">@TechDisplayList(context as RepairOrderServiceToWrite)</span>
                             </button>
                         </li>
                         @*<li class="m-job-row-float-right m-job-row m-job-detail">
@@ -159,14 +160,34 @@
     <hr class="m-btn-group-divider">
 
     <div>
-        <button class="btn m-button m-add-btn" @onclick="@AddItem" disabled="@(CanAddPart ? false : true)"><i class="fas fa-plus"></i> Add Part</button>
-        @*<button class="btn m-button m-add-btn" @onclick="OnAddLabor" disabled="@(CanAddLabor ? false : true)"><i class="fas fa-plus"></i> Add Labor</button>*@
+        <button class="btn m-button m-add-btn" @onclick="@SelectInventoryItem" disabled="@(CanAddPart ? false : true)"><i class="fas fa-plus"></i> Add Item From Inventory</button>
+        <button class="btn m-button m-add-btn" @onclick="@AddCustomItem" disabled="@(CanAddPart ? false : true)"><i class="fas fa-plus"></i> Add Custom Part</button>
+        <button class="btn m-button m-add-btn" @onclick="@AddCustomLabor" disabled="@(CanAddPart ? false : true)"><i class="fas fa-plus"></i> Add Custom Labor</button>
     </div>
 </div>
 
 @if (ItemToModify != null)
 {
-    <RepairOrderItemEdit Item="@ItemToModify" DialogVisible="@EditItemDialogVisible" Mode="@ItemFormMode" OnSave="@OnSaveItemEdit" OnCancel="@OnCancelItemEdit" />
+    <RepairOrderItemEdit Item="@ItemToModify" 
+                         DialogVisible="@EditItemDialogVisible" 
+                         Mode="@ItemFormMode" 
+                         OnSave="@OnSaveItemEdit" 
+                         OnCancel="@OnCancelItemEdit" />
+}
+
+@if (EditTechDialogVisible)
+{
+    <RepairOrderTechEdit Service="@ServiceToEdit" 
+                         DialogVisible="@EditTechDialogVisible" 
+                         OnDone="@OnDoneTechEdit" />
+}
+
+@if (SelectInventoryItemDialogVisible)
+{
+    <InventoryItemSelectForm DialogVisible="@SelectInventoryItemDialogVisible" 
+                             @bind-SelectedItem="@SelectedInventoryItem" 
+                             OnSelect="@AddItem" 
+                             OnCancel="@OnCancelInventoryItemSelect"/>
 }
 
 <style>

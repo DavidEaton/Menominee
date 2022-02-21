@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MenomineePlayWASM.Client.Pages.Inventory
+namespace Menominee.Client.Pages.Inventory
 {
     public partial class Inventory
     {

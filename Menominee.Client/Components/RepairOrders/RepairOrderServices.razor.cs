@@ -1,9 +1,11 @@
-﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
+using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -18,9 +20,11 @@ namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderServices
     {
-
         [Inject]
         public ISaleCodeDataService saleCodeDataService { get; set; }
+
+        //[Inject]
+        //public IInventoryItemDataService inventoryItemDataService { get; set; }
 
         [Parameter]
         public IList<RepairOrderServiceToWrite> Services { get; set; }
@@ -58,10 +62,15 @@ namespace Menominee.Client.Components.RepairOrders
         //private bool shouldRender = true;
         private FormMode ItemFormMode = FormMode.Unknown;
         private bool EditItemDialogVisible { get; set; } = false;
+        private bool SelectInventoryItemDialogVisible { get; set; } = false;
+        private long SelectedInventoryItemId { get; set; } = 0;
+        public InventoryItemToReadInList SelectedInventoryItem { get; set; }
+        private bool EditTechDialogVisible { get; set; } = false;
         //private bool CanEditItem { get; set; } = false;
         //private bool CanDeleteItem { get; set; } = false;
         private bool CanAddPart { get; set; } = true;
         //private bool CanAddLabor { get; set; } = true;
+        public RepairOrderServiceToWrite ServiceToEdit { get; set; }
 
         protected override void OnInitialized()
         {
@@ -106,12 +115,59 @@ namespace Menominee.Client.Components.RepairOrders
             dst.Total = src.Total;
         }
 
+        private void SelectInventoryItem()
+        {
+            SelectInventoryItemDialogVisible = true;
+        }
+
         private void AddItem()
+        {
+            SelectInventoryItemDialogVisible = false;
+            if (SelectedInventoryItem != null)
+            {
+                ItemToModify = new();
+                ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+                ItemToModify.ManufacturerId = SelectedInventoryItem.ManufacturerId;
+                ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
+                //ItemToModify.SaleCodeId = (long)(SelectedInventoryItem.ProductCode?.SaleCode?.Id);
+                ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+                ItemToModify.ProductCodeId = SelectedInventoryItem.ProductCodeId;
+                ItemToModify.PartNumber = SelectedInventoryItem.PartNumber;
+                ItemToModify.Description = SelectedInventoryItem.Description;
+                ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
+                if (SelectedInventoryItem.Labor > 0)
+                {
+                    ItemToModify.LaborType = ItemLaborType.Flat;
+                    ItemToModify.LaborEach = SelectedInventoryItem.Labor;
+                }
+                ItemToModify.Cost = SelectedInventoryItem.Cost;
+                //ItemToModify.Core = SelectedInventoryItem.Core;
+
+                ItemFormMode = FormMode.Add;
+                EditItemDialogVisible = true;
+            }
+        }
+
+        private void AddCustomItem()
         {
             ItemToModify = new();
             ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.ManufacturerId = 1;
             ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
             ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.PartType = PartType.Part;
+            ItemFormMode = FormMode.Add;
+            EditItemDialogVisible = true;
+        }
+
+        private void AddCustomLabor()
+        {
+            ItemToModify = new();
+            ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.ManufacturerId = 1;
+            ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
+            ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.PartType = PartType.Labor;
             ItemFormMode = FormMode.Add;
             EditItemDialogVisible = true;
         }
@@ -130,6 +186,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         void EditTechs(RepairOrderServiceToWrite service)
         {
+            ServiceToEdit = service;
+            EditTechDialogVisible = true;
         }
 
         void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
@@ -197,9 +255,37 @@ namespace Menominee.Client.Components.RepairOrders
             EditItemDialogVisible = false;
         }
 
+        private void OnCancelInventoryItemSelect()
+        {
+            SelectInventoryItemDialogVisible = false;
+        }
+
+        private void OnDoneTechEdit()
+        {
+            EditTechDialogVisible = false;
+            StateHasChanged();
+        }
+
         public async Task<bool> ShowItemDeleteConfirm(string partNumber)
         {
             return await Dialogs.ConfirmAsync($"Are you sure you want to delete {partNumber}?", "Delete Item");
+        }
+
+        private string TechDisplayList(RepairOrderServiceToWrite service)
+        {
+            string techs = string.Empty;
+
+            if (service.Techs?.Count > 0)
+            {
+                foreach (var tech in service.Techs)
+                {
+                    if (techs.Length > 0)
+                        techs += ", ";
+                    techs += tech.TechnicianId;
+                }
+            }
+
+            return techs;
         }
 
         private async Task<(string sc, string name)> GetSaleCode(long id)
@@ -230,5 +316,15 @@ namespace Menominee.Client.Components.RepairOrders
 
             return service;
         }
+
+        //private InventoryItemToRead GetInventoryItem(long id)
+        //{
+        //    //return RepairOrder.Services?. .Items?.Where(x => x.Id == id).FirstOrDefault();
+        //    InventoryItemToRead itemToRead = await inventoryItemDataService.GetSaleCode(id);
+        //    if (saleCodeToRead != null)
+        //        return (saleCodeToRead.Code, saleCodeToRead.Name);
+
+        //    return ("", "");
+        //}
     }
 }

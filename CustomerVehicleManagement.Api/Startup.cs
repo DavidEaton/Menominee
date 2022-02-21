@@ -1,5 +1,6 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Inventory;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Payables.Invoices;
@@ -126,6 +127,7 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.TryAddScoped<ISaleCodeRepository, SaleCodeRepository>();
             services.TryAddScoped<IProductCodeRepository, ProductCodeRepository>();
+            services.TryAddScoped<IInventoryItemRepository, InventoryItemRepository>();
 
             services.AddHealthChecks();
             services.AddCors();
