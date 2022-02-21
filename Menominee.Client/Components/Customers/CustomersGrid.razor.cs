@@ -18,6 +18,9 @@ namespace Menominee.Client.Components.Customers
         [Parameter]
         public EventCallback<GridRowClickEventArgs> OnEditAsync { get; set; }
 
+        [Parameter]
+        public EventCallback OnAddAsync { get; set; }
+
         [Inject]
         public LocalStorage LocalStorage { get; set; }
 
@@ -31,11 +34,9 @@ namespace Menominee.Client.Components.Customers
             await OnEditAsync.InvokeAsync(args);
         }
 
-        private void Add()
+        private async Task AddAsync()
         {
-            //Adding = true;
-            //CustomersList = null;
-            //CustomerToWrite = new();
+            await OnAddAsync.InvokeAsync();
         }
 
         protected async void OnStateChangedHandler(GridStateEventArgs<CustomerToReadInList> args)

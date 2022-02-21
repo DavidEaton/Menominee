@@ -1,6 +1,11 @@
 ﻿<EditForm Model="Person">
-    @Title Person
-    <div class="form-group row">
+    <PersonNameEditor TItem="PersonNameToWrite"
+                      Item="@Person.Name"
+                      FirstNameProperty="FirstName"
+                      MiddleNameProperty="MiddleName"
+                      LastNameProperty="LastName" />
+
+    <div class="m-form-control-group">
         <label for="state" class="form-control-label">Gender</label>
         <TelerikComboBox Data="GenderEnumData"
                          TextField="DisplayText"
@@ -12,8 +17,8 @@
                          Enabled="EnableEditor">
         </TelerikComboBox>
     </div>
-    <div class="form-group row">
-        <label for="note" class="col-form-label">Birthday</label>
+    <div class="m-form-control-group">
+        <label for="note" class="form-control-label">Birthday</label>
         <TelerikDateInput @bind-Value="@Person.Birthday"
                           Width="100%">
         </TelerikDateInput>

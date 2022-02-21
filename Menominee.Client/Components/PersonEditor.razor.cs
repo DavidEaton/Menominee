@@ -17,27 +17,27 @@ namespace Menominee.Client.Components
         [Parameter]
         public EventCallback Updated { get; set; }
 
-        [Parameter]
-        public FormMode Mode
-        {
-            get => formMode;
-            set
-            {
-                formMode = value;
-                if (formMode == FormMode.Add)
-                    Title = "Add";
-                else if (formMode == FormMode.Edit)
-                    Title = "Edit";
-                else
-                    Title = "View";
-                Title += " Person";
-            }
-        }
+        //[Parameter]
+        //public FormMode Mode
+        //{
+        //    get => formMode;
+        //    set
+        //    {
+        //        formMode = value;
+        //        if (formMode == FormMode.Add)
+        //            Title = "Add";
+        //        else if (formMode == FormMode.Edit)
+        //            Title = "Edit";
+        //        else
+        //            Title = "View";
+        //        Title += " Person";
+        //    }
+        //}
 
         //private Gender Gender { get; set; } = Gender.Male;
 
         private FormMode formMode;
-        private string Title { get; set; }
+        //private string Title { get; set; }
 
         protected override void OnInitialized()
         {

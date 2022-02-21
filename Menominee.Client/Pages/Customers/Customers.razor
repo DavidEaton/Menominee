@@ -17,31 +17,44 @@
             @if (!Editing && !Adding && CustomersList != null)
             {
                 <CustomersGrid CustomersList="CustomersList"
+                               OnAddAsync="Add"
                                OnEditAsync="EditAsync"></CustomersGrid>
             }
             @if ((Editing || Adding) && CustomerToWrite != null)
             {
-        <EditForm Model="@CustomerToWrite">
+                <p><em>@Caption</em></p>
+                <EditForm Model="@CustomerToWrite">
 
-            <label class="form-control-label">Customer Type</label>
-            <div class="m-form-control-group" for="customerType">
-                <TelerikDropDownList @bind-Value="@CustomerToWrite.CustomerType"
-                                     Data="CustomerTypeEnumData"
-                                     Width="100%"
-                                     TextField="DisplayText"
-                                     ValueField="Value"
-                                     Id="customerType">
-                </TelerikDropDownList>
-            </div>
+                    <label class="form-control-label">Customer Type</label>
+                    <div class="m-form-control-group" for="customerType">
+                        <TelerikDropDownList @bind-Value="@CustomerToWrite.CustomerType"
+                                             Data="CustomerTypeEnumData"
+                                             Width="100%"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Id="customerType">
+                        </TelerikDropDownList>
+                    </div>
 
-            <EntityTypeSelector EntityType="@CustomerToWrite.EntityType" />
+                    <EntityTypeSelector EntityType="@CustomerToWrite.EntityType"
+                                        OnEntityTypeChanged="EntityTypeChanged"/>
 
-            <div class="pt-4">
-                <EditFormButtons CloseEventCallback="Close"
-                                 SaveEventCallback="Submit">
-                </EditFormButtons>
-            </div>
-        </EditForm>
+                    @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Person)
+                    {
+                        <PersonEditor Person="@CustomerToWrite.Person"/>
+                    }
+
+                    @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Organization)
+                    {
+                        <OrganizationEditor Item="@CustomerToWrite.Organization"/>
+                    }
+
+                    <div class="pt-4">
+                        <EditFormButtons CloseEventCallback="Close"
+                                         SaveEventCallback="Submit">
+                        </EditFormButtons>
+                    </div>
+                </EditForm>
             }
 
         </Content>

@@ -81,16 +81,7 @@
     {
         <EditForm Model="@PersonToWrite">
 
-            <PersonNameEditor TItem="PersonNameToWrite"
-                              Item="@PersonToWrite.Name"
-                              FirstNameProperty="FirstName"
-                              MiddleNameProperty="MiddleName"
-                              LastNameProperty="LastName" />
-
-            <PersonEditor TItem="PersonToWrite"
-                          Item="@PersonToWrite"
-                          BirthdayProperty="Birthday"
-                          GenderProperty="Gender" />
+            <PersonEditor Person="PersonToWrite" />
 
             <TelerikGridLayout>
                 <GridLayoutColumns>

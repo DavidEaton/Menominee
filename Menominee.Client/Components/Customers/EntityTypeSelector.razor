@@ -1,12 +1,11 @@
-﻿@*<EditForm Model="EntityType">*@
-    <label class="form-control-label">Customer Class</label>
-    <div class="m-form-control-group" for="entityType">
-        <TelerikDropDownList @bind-Value="@EntityType"
-                             Data="EntityTypeEnumData"
-                             Width="100%"
-                             TextField="DisplayText"
-                             ValueField="Value"
-                             Id="entityType">
-        </TelerikDropDownList>
-    </div>
-@*</EditForm>*@
+﻿<label class="form-control-label">Customer Class</label>
+<div class="m-form-control-group" for="entityType">
+    <TelerikDropDownList @bind-Value="@EntityType"
+                         OnChange="@EntityTypeChanged"
+                         Data="EntityTypeEnumData"
+                         Width="100%"
+                         TextField="DisplayText"
+                         ValueField="Value"
+                         Id="entityType">
+    </TelerikDropDownList>
+</div>

@@ -11,6 +11,15 @@ namespace Menominee.Client.Components.Customers
         public EntityType EntityType { get; set; }
 
         List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
+
+        [Parameter]
+        public EventCallback<string> OnEntityTypeChanged { get; set; }
+
+        private void EntityTypeChanged(object arg)
+        {
+            OnEntityTypeChanged.InvokeAsync(arg as string);
+        }
+
         protected override void OnInitialized()
         {
             foreach (EntityType item in Enum.GetValues(typeof(EntityType)))
