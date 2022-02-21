@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api
 
             services.AddDbContext<IdentityUserDbContext>(options =>
                                                          options
-                                                        .UseSqlServer(Configuration[$"IDPSettings:Connection"])
+                                                        .UseSqlServer(Configuration.GetConnectionString("Idp"))
                                                         );
 
             services.AddIdentityCore<ApplicationUser>()
