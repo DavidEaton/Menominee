@@ -1,181 +1,330 @@
-﻿using System.Collections.Generic;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
+using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
+using Menominee.Client.Services.Inventory;
+using Menominee.Client.Services.SaleCodes;
+using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using Telerik.Blazor;
+using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderServices
     {
-        List<Service> Services { get; set; }
+        [Inject]
+        public ISaleCodeDataService saleCodeDataService { get; set; }
+
+        //[Inject]
+        //public IInventoryItemDataService inventoryItemDataService { get; set; }
+
+        [Parameter]
+        public IList<RepairOrderServiceToWrite> Services { get; set; }
+
+        [CascadingParameter]
+        public DialogFactory Dialogs { get; set; }
+
+        [CascadingParameter]
+        public RepairOrderToWrite RepairOrder { get; set; }
+
+        public TelerikGrid<RepairOrderServiceToWrite> ServicesGrid { get; set; }
+
+        public IEnumerable<RepairOrderItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<RepairOrderItemToWrite>();
+        public RepairOrderItemToWrite SelectedItem { get; set; }
+        public RepairOrderItemToWrite ItemToModify { get; set; } = null;
+
+        //public long SelectedItemId
+        //{
+        //    get => selectedItemId;
+        //    set
+        //    {
+        //        selectedItemId = value;
+        //        CanEditItem = selectedItemId != 0;
+        //        CanDeleteItem = selectedItemId != 0 && Services[selectedServiceIndex].Items.Count > 0;
+        //        //CanAddItem = true;
+        //    }
+        //}
+
+        //private long itemToSelect { get; set; } = 0;
+        //private long selectedItemId = 0;
+        //private int selectedItemIndex = 0;
+        //private int selectedServiceIndex = 0;
+        //private long nextItemId = 0;
+        //private long nextServiceId = 0;
+        //private bool shouldRender = true;
+        private FormMode ItemFormMode = FormMode.Unknown;
+        private bool EditItemDialogVisible { get; set; } = false;
+        private bool SelectInventoryItemDialogVisible { get; set; } = false;
+        private long SelectedInventoryItemId { get; set; } = 0;
+        public InventoryItemToReadInList SelectedInventoryItem { get; set; }
+        private bool EditTechDialogVisible { get; set; } = false;
+        //private bool CanEditItem { get; set; } = false;
+        //private bool CanDeleteItem { get; set; } = false;
+        private bool CanAddPart { get; set; } = true;
+        //private bool CanAddLabor { get; set; } = true;
+        public RepairOrderServiceToWrite ServiceToEdit { get; set; }
 
         protected override void OnInitialized()
         {
-            Services = GenerateData();
+            base.OnInitialized();
         }
 
-        public string ValueOrBlank(double val)
+        protected override void OnParametersSet()
         {
-            if (val == 0.0)
-                return "";
-            return val.ToString("C");// string.Format("C", Convert.ToString(val));
+            base.OnParametersSet();
         }
 
-        private List<Service> GenerateData()
+        //protected override bool ShouldRender()
+        //{
+        //    return true;
+        //}
+
+        private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
         {
-            List<Service> data = new List<Service>();
-            Service service;
-            ServiceItem item;
-
-            service = new Service();
-            service.Items = new List<ServiceItem>();
-            service.Id = 1;
-            service.Order = 1;
-            service.SaleCode = "B";
-            service.Name = "Brakes";
-            service.Parts = 100.00;
-            service.Labor = 50.00;
-            service.HazMat = 3.0;
-            service.Discount = 0.0;
-            service.Supplies = 2.99;
-            service.Tax = 10.0;
-            service.Total = 162.99;
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 2.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 0.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 1.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 0.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            data.Add(service);
-
-            service = new Service();
-            service.Items = new List<ServiceItem>();
-            service.Id = 2;
-            service.Order = 2;
-            service.SaleCode = "L";
-            service.Name = "Lube/Oil/Filter";
-            service.Parts = 100.00;
-            service.Labor = 50.00;
-            service.HazMat = 0.0;
-            service.Discount = 0.0;
-            service.Supplies = 2.99;
-            service.Tax = 10.0;
-            service.Total = 162.99;
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 0.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            item = new ServiceItem();
-            item.PartNumber = "BP1000";
-            item.Description = "Brake Pads";
-            item.SaleType = "R";
-            item.QuantitySold = 2.0;
-            item.Each = 10.99;
-            item.Labor = 0.0;
-            item.HazMat = 0.0;
-            item.Discount = 0.0;
-            item.Total = 21.98;
-            service.Items.Add(item);
-
-            data.Add(service);
-
-            return data;
+            dst.Id = src.Id;
+            dst.RepairOrderServiceId = src.RepairOrderServiceId;
+            dst.SequenceNumber = src.SequenceNumber;
+            dst.Manufacturer = src.Manufacturer;
+            dst.ManufacturerId = src.ManufacturerId;
+            dst.PartNumber = src.PartNumber;
+            dst.Description = src.Description;
+            dst.SaleCode = src.SaleCode;
+            dst.SaleCodeId = src.SaleCodeId;
+            dst.ProductCode = src.ProductCode;
+            dst.ProductCodeId = src.ProductCodeId;
+            dst.SaleType = src.SaleType;
+            dst.PartType = src.PartType;
+            dst.IsDeclined = src.IsDeclined;
+            dst.IsCounterSale = src.IsCounterSale;
+            dst.QuantitySold = src.QuantitySold;
+            dst.SellingPrice = src.SellingPrice;
+            dst.LaborType = src.LaborType;
+            dst.LaborEach = src.LaborEach;
+            dst.DiscountType = src.DiscountType;
+            dst.DiscountEach = src.DiscountEach;
+            dst.Cost = src.Cost;
+            dst.Core = src.Core;
+            dst.Total = src.Total;
         }
 
-        public class Service
+        private void SelectInventoryItem()
         {
-            public long Id { get; set; }
-            public int Order { get; set; }
-            public string SaleCode { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public string Name { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Parts { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Labor { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double HazMat { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Discount { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Supplies { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Tax { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Total { get; set; }
-            public string Techs { get; set; }
-            public List<ServiceItem> Items { get; set; }
+            SelectInventoryItemDialogVisible = true;
         }
 
-        public class ServiceItem
+        private void AddItem()
         {
-            public long Id { get; set; }
-            public long JobId { get; set; }
-            public string PartNumber { get; set; }
-            public string Description { get; set; }
-            public string SaleType { get; set; }
-            public double QuantitySold { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Each { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Labor { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double HazMat { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Discount { get; set; }
-            [DisplayFormat(DataFormatString = "{0:C}")]
-            public double Total { get; set; }
+            SelectInventoryItemDialogVisible = false;
+            if (SelectedInventoryItem != null)
+            {
+                ItemToModify = new();
+                ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+                ItemToModify.ManufacturerId = SelectedInventoryItem.ManufacturerId;
+                ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
+                //ItemToModify.SaleCodeId = (long)(SelectedInventoryItem.ProductCode?.SaleCode?.Id);
+                ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+                ItemToModify.ProductCodeId = SelectedInventoryItem.ProductCodeId;
+                ItemToModify.PartNumber = SelectedInventoryItem.PartNumber;
+                ItemToModify.Description = SelectedInventoryItem.Description;
+                ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
+                if (SelectedInventoryItem.Labor > 0)
+                {
+                    ItemToModify.LaborType = ItemLaborType.Flat;
+                    ItemToModify.LaborEach = SelectedInventoryItem.Labor;
+                }
+                ItemToModify.Cost = SelectedInventoryItem.Cost;
+                //ItemToModify.Core = SelectedInventoryItem.Core;
 
+                ItemFormMode = FormMode.Add;
+                EditItemDialogVisible = true;
+            }
         }
+
+        private void AddCustomItem()
+        {
+            ItemToModify = new();
+            ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.ManufacturerId = 1;
+            ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
+            ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.PartType = PartType.Part;
+            ItemFormMode = FormMode.Add;
+            EditItemDialogVisible = true;
+        }
+
+        private void AddCustomLabor()
+        {
+            ItemToModify = new();
+            ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.ManufacturerId = 1;
+            ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
+            ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.PartType = PartType.Labor;
+            ItemFormMode = FormMode.Add;
+            EditItemDialogVisible = true;
+        }
+
+        private void EditItem(RepairOrderItemToWrite item)
+        {
+            SelectedItem = item;
+            ItemToModify = new();
+            ItemToModify.Manufacturer = new ManufacturerToWrite();
+            ItemToModify.SaleCode = new SaleCodeToWrite();
+            ItemToModify.ProductCode = new ProductCodeToWrite();
+            CopyItem(SelectedItem, ItemToModify);
+            ItemFormMode = FormMode.Edit;
+            EditItemDialogVisible = true;
+        }
+
+        void EditTechs(RepairOrderServiceToWrite service)
+        {
+            ServiceToEdit = service;
+            EditTechDialogVisible = true;
+        }
+
+        void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
+        {
+            EditItem(args.Item as RepairOrderItemToWrite);
+        }
+
+        private void OnEditItemClick(GridCommandEventArgs args)
+        {
+            EditItem(args.Item as RepairOrderItemToWrite);
+        }
+
+        private async Task OnDeleteItemClick(GridCommandEventArgs args)
+        {
+            SelectedItem = args.Item as RepairOrderItemToWrite;
+            if (await ShowItemDeleteConfirm(SelectedItem.PartNumber))
+            {
+                RepairOrderServiceToWrite service = FindServiceById(SelectedItem.RepairOrderServiceId);
+                if (service != null)
+                {
+                    service.Items.Remove(SelectedItem);
+                    if (service.Items.Count == 0)
+                    {
+                        RepairOrder.Services.Remove(service);
+                    }
+                    else
+                    {
+                        service.Recalculate();
+                    }
+                    ServicesGrid?.Rebind();
+                }
+
+                RepairOrder?.Recalculate();
+            }
+        }
+
+        private async Task OnSaveItemEdit()
+        {
+            if (ItemFormMode != FormMode.Add && ItemFormMode != FormMode.Edit)
+                return;
+
+            ItemToModify.Recalculate();
+
+            (string scCode, string scName) = await GetSaleCode(ItemToModify.SaleCodeId);
+            RepairOrderServiceToWrite service = FindServiceByCode(scCode); //FindService(ItemToModify.SaleCode.Code);
+            if (service == null)
+                service = AddService(scCode, scName);   //AddService(ItemToModify.SaleCode.Code);
+
+            if (ItemFormMode == FormMode.Add)
+                service.Items.Add(ItemToModify);
+            else
+                CopyItem(ItemToModify, SelectedItem);
+            service.Recalculate();
+            RepairOrder?.Recalculate();
+
+            EditItemDialogVisible = false;
+            if (ItemFormMode == FormMode.Add)
+                ServicesGrid?.Rebind();
+            StateHasChanged();
+        }
+
+        private void OnCancelItemEdit()
+        {
+            ItemFormMode = FormMode.Unknown;
+            EditItemDialogVisible = false;
+        }
+
+        private void OnCancelInventoryItemSelect()
+        {
+            SelectInventoryItemDialogVisible = false;
+        }
+
+        private void OnDoneTechEdit()
+        {
+            EditTechDialogVisible = false;
+            StateHasChanged();
+        }
+
+        public async Task<bool> ShowItemDeleteConfirm(string partNumber)
+        {
+            return await Dialogs.ConfirmAsync($"Are you sure you want to delete {partNumber}?", "Delete Item");
+        }
+
+        private string TechDisplayList(RepairOrderServiceToWrite service)
+        {
+            string techs = string.Empty;
+
+            if (service.Techs?.Count > 0)
+            {
+                foreach (var tech in service.Techs)
+                {
+                    if (techs.Length > 0)
+                        techs += ", ";
+                    techs += tech.TechnicianId;
+                }
+            }
+
+            return techs;
+        }
+
+        private async Task<(string sc, string name)> GetSaleCode(long id)
+        {
+            SaleCodeToRead saleCodeToRead = await saleCodeDataService.GetSaleCode(id);
+            if (saleCodeToRead != null)
+                return (saleCodeToRead.Code, saleCodeToRead.Name);
+
+            return ("", "");
+        }
+
+        private RepairOrderServiceToWrite FindServiceByCode(string saleCode)
+        {
+            return RepairOrder.Services?.Where(x => x.SaleCode == saleCode).FirstOrDefault();
+        }
+
+        private RepairOrderServiceToWrite FindServiceById(long id)
+        {
+            return RepairOrder.Services?.Where(x => x.Id == id).FirstOrDefault();
+        }
+
+        private RepairOrderServiceToWrite AddService(string saleCode, string name)
+        {
+            RepairOrderServiceToWrite service = new();
+            service.SaleCode = saleCode;
+            service.ServiceName = name;
+            RepairOrder.Services.Add(service);
+
+            return service;
+        }
+
+        //private InventoryItemToRead GetInventoryItem(long id)
+        //{
+        //    //return RepairOrder.Services?. .Items?.Where(x => x.Id == id).FirstOrDefault();
+        //    InventoryItemToRead itemToRead = await inventoryItemDataService.GetSaleCode(id);
+        //    if (saleCodeToRead != null)
+        //        return (saleCodeToRead.Code, saleCodeToRead.Name);
+
+        //    return ("", "");
+        //}
     }
 }

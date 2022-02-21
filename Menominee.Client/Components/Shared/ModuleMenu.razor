@@ -2,8 +2,9 @@
 
 <div class="sb-header e-view">
     <div class="sb-header-left sb-left sb-table">
-        <div class="sb-header-item sb-table-cell m-brand" id="sb-header-text">
-            <span class="e-icons @(ModuleIconCss)"></span>
+        <div class="sb-header-item m-brand" id="sb-header-text">
+            @*<span class="e-icons @(ModuleIconCss)"></span>*@
+            <span class="material-icons">@ModuleIconCss</span>
             <span>@ModuleName</span>
         </div>
     </div>
@@ -74,8 +75,16 @@
         /*font-size: 18px;*/
         font-size: 1.25rem;
         color: white;
+        height: 100%;
         font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif";
         opacity: 87%;
+        vertical-align: middle;
+    }
+
+    #sb-header-text .material-icons {
+        padding-top: 13px;
+        vertical-align: middle;
+        height: 100%;
     }
 
     .e-icons::before {

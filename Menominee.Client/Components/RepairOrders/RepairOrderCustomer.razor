@@ -3,7 +3,7 @@
         <div class="form-group col">
             <label for="custName">Name</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="custName">
+                <input type="text" class="form-control" @bind-value="@RepairOrder.CustomerName" id="custName">
                 <div class="input-group-append">
                     <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
                 </div>
@@ -45,29 +45,29 @@
                 </div>
             </div>
         </div>
-            <div class="form-group col-12 col-lg-5">
-                <label for="custId">Customer ID</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="custId">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
-                    </div>
+        <div class="form-group col-12 col-lg-5">
+            <label for="custId">Customer ID</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="custId">
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
                 </div>
             </div>
         </div>
+    </div>
 
     <div class="form-row m-align-bottoms">
         <div class="form-group col-md-6 col-lg-4">
             <label for="lastInvDate">Last Invoice Date</label>
-            <input type="text" class="form-control" id="lastInvDate">
+            <input type="text" class="form-control" id="lastInvDate" disabled>
         </div>
         <div class="form-group col-md-6 col-lg-4">
             <label for="invCount">Lifetime Invoices</label>
-            <input type="text" class="form-control" id="invCount">
+            <input type="text" class="form-control" id="invCount" disabled>
         </div>
         <div class="form-group col-md-6 col-lg-4">
             <label for="avgInv">Average Invoice</label>
-            <input type="text" class="form-control" id="avgInv">
+            <input type="text" class="form-control" id="avgInv" disabled>
         </div>
     </div>
 </form>

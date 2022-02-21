@@ -11,5 +11,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     {
         public long RepairOrderItemId { get; set; }
         public string SerialNumber { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderSerialNumber() { }
+
+        #endregion
     }
 }

@@ -12,20 +12,20 @@ namespace Menominee.Client.Components.RepairOrders
         public RepairOrderToWrite RepairOrder { get; set; }
 
         [Parameter]
-        public string Title { get; set; } = "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
-
-        [Parameter]
-        public EventCallback OnValidSubmit { get; set; }
+        public string Title { get; set; } //= "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
 
         [Parameter]
         public EventCallback OnDiscard { get; set; }
+
+        [Parameter]
+        public EventCallback OnSave { get; set; }
 
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
         List<Purchase> Purchases { get; set; }
         List<SerialNumber> SerialNumbers { get; set; }
         List<Warranty> Warranties { get; set; }
-        List<Payment> Payments { get; set; }
+        //List<Payment> Payments { get; set; }
 
         protected override void OnInitialized()
         {
@@ -33,7 +33,7 @@ namespace Menominee.Client.Components.RepairOrders
             Purchase purchase;
             SerialNumber serialNumber;
             Warranty warranty;
-            Payment payment;
+            //Payment payment;
 
             CurrentInspections = new List<Inspection>();
 
@@ -155,42 +155,35 @@ namespace Menominee.Client.Components.RepairOrders
             warranty.WarrantyNumber = "DFG01386";
             Warranties.Add(warranty);
 
-            Payments = new List<Payment>();
+        }
 
-            payment = new Payment();
-            payment.Id = 1;
-            payment.SequenceNumber = 1;
-            payment.Method = "Cash";
-            payment.Amount = 100.0;
-            Payments.Add(payment);
-
-            payment = new Payment();
-            payment.Id = 2;
-            payment.SequenceNumber = 2;
-            payment.Method = "MasterCard";
-            payment.Amount = 44.67;
-            Payments.Add(payment);
+        protected override void OnParametersSet()
+        {
+            // replaced these once correct fields are in place
+            string title = $"RO #{RepairOrder.Id}";
+            if (RepairOrder.CustomerName.Length > 0)
+                title += $"   ~   {RepairOrder.CustomerName}";
+            if (RepairOrder.Vehicle.Length > 0)
+                title += $"   ~   {RepairOrder.Vehicle}";
+            Title = title;
         }
 
         //private RepairOrderTab SelectedTab { get; set; }
 
-        bool CustSelected { get; set; } = true;
-        bool FleetSelected { get; set; }
-        bool ServiceRequestSelected { get; set; }
-        bool InspectionsSelected { get; set; }
-        bool ServicesSelected { get; set; }
-        bool PurchasesSelected { get; set; }
-        bool WarrantiesSelected { get; set; }
-        bool SerialNumbersSelected { get; set; }
-        bool PaymentSelected { get; set; }
+        private bool CustSelected { get; set; } = true;
+        private bool FleetSelected { get; set; }
+        private bool FleetVisible { get; set; } = false;
+        private bool ServiceRequestSelected { get; set; }
+        private bool InspectionsSelected { get; set; }
+        private bool ServicesSelected { get; set; }
+        private bool PurchasesSelected { get; set; }
+        private bool WarrantiesSelected { get; set; }
+        private bool SerialNumbersSelected { get; set; }
+        private bool PaymentSelected { get; set; }
 
         private int PurchaseInfoNeededCount { get; set; } = 1;
         private int WarrantyInfoNeededCount { get; set; } = 0;
         private int SerialNumberInfoNeededCount { get; set; } = 1;
-
-        //public string Value1 { get; set; }
-        //public string Value2 { get; set; }
-        //public string Value3 { get; set; }
 
         public bool HavePurchases()
         {
@@ -274,11 +267,11 @@ namespace Menominee.Client.Components.RepairOrders
         }
     }
 
-    public class Payment
-    {
-        public long Id { get; set; }
-        public long SequenceNumber { get; set; }
-        public string Method { get; set; }
-        public double Amount { get; set; }
-    }
+    //public class Payment
+    //{
+    //    public long Id { get; set; }
+    //    public long SequenceNumber { get; set; }
+    //    public string Method { get; set; }
+    //    public double Amount { get; set; }
+    //}
 }

@@ -1,6 +1,12 @@
-﻿namespace Menominee.Client.Components.RepairOrders
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using Microsoft.AspNetCore.Components;
+
+namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderCustomerVehicleTab
     {
+        //[Parameter]
+        [CascadingParameter]
+        public RepairOrderToWrite RepairOrder { get; set; }
     }
 }

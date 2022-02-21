@@ -9,7 +9,7 @@ namespace MenomineePlayWASM.Shared.Entities.Inventory
 {
     public class InventoryItem : Entity
     {
-        public virtual Manufacturer Manufacturer {get; set;}
+        public virtual ManufacturerOld Manufacturer {get; set;}
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public InventoryItemType PartType { get; set; }

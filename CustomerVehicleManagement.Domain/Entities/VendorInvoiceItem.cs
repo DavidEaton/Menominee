@@ -19,5 +19,12 @@ namespace CustomerVehicleManagement.Domain.Entities
         public DateTime? TransactionDate { get; set; }
 
         public virtual VendorInvoice Invoice { get; set; }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public VendorInvoiceItem() { }
+
+        #endregion
     }
 }

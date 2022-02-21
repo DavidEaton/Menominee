@@ -18,6 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
         public bool IsDeclined { get; set; }
         public double PartsTotal { get; set; }
         public double LaborTotal { get; set; }
+        public double DiscountTotal { get; set; }
         public double TaxTotal { get; set; }
         public double ShopSuppliesTotal { get; set; }
         public double Total { get; set; }
@@ -40,6 +41,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
             {
                 return new RepairOrderServiceToRead()
                 {
+                    Id = service.Id,
                     RepairOrderId = service.RepairOrderId,
                     SequenceNumber = service.SequenceNumber,
                     ServiceName = service.ServiceName,
@@ -48,6 +50,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
                     IsDeclined = service.IsDeclined,
                     PartsTotal = service.PartsTotal,
                     LaborTotal = service.LaborTotal,
+                    DiscountTotal = service.DiscountTotal,
                     TaxTotal = service.TaxTotal,
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     Total = service.Total,

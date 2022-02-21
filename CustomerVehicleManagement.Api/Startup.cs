@@ -1,10 +1,14 @@
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Inventory;
+using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Payables.Invoices;
 using CustomerVehicleManagement.Api.Payables.Vendors;
 using CustomerVehicleManagement.Api.Persons;
+using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Api.RepairOrders;
+using CustomerVehicleManagement.Api.SaleCodes;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
@@ -120,11 +124,15 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<IVendorRepository, VendorRepository>();
             services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();
             services.TryAddScoped<IRepairOrderRepository, RepairOrderRepository>();
+            services.TryAddScoped<IManufacturerRepository, ManufacturerRepository>();
+            services.TryAddScoped<ISaleCodeRepository, SaleCodeRepository>();
+            services.TryAddScoped<IProductCodeRepository, ProductCodeRepository>();
+            services.TryAddScoped<IInventoryItemRepository, InventoryItemRepository>();
 
             services.AddHealthChecks();
             services.AddCors();
 
-            services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
+            //services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
                                                            // if check to enable tenant database routing during development
 
             if (HostEnvironment.IsProduction())
@@ -138,7 +146,7 @@ namespace CustomerVehicleManagement.Api
                 AddControllersWithOptions(services, false);
 
                 // Uncomment next line to route all requests to a single tenant database during development
-                // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 

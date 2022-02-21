@@ -17,5 +17,11 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double PartTax { get; set; }
         public double LaborTax { get; set; }
 
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderTax() { }
+
+        #endregion
     }
 }

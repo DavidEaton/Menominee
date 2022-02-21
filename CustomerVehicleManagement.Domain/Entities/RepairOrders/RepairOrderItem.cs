@@ -1,4 +1,5 @@
-﻿using Menominee.Common;
+﻿using CustomerVehicleManagement.Domain.Enums;
+using Menominee.Common;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 
@@ -8,20 +9,26 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     {
         public long RepairOrderServiceId { get; set; }
         public int SequenceNumber { get; set; }
-        public string ManufacturerId { get; set; }
+        public virtual Manufacturer Manufacturer { get; set; }
+        public long ManufacturerId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public string SaleCode { get; set; }
-        public string ProductCode { get; set; }
+        public virtual SaleCode SaleCode { get; set; }
+        public long SaleCodeId { get; set; }
+        public virtual ProductCode ProductCode { get; set; }
+        public long ProductCodeId { get; set; }
         public SaleType SaleType { get; set; }
         public PartType PartType { get; set; }
         public bool IsDeclined { get; set; }
         public bool IsCounterSale { get; set; }
         public double QuantitySold { get; set; }
         public double SellingPrice { get; set; }
+        public ItemLaborType LaborType { get; set; }
         public double LaborEach { get; set; }
         public double Cost { get; set; }
         public double Core { get; set; }
+        public ItemDiscountType DiscountType { get; set; }
+        public double DiscountEach { get; set; }
         public double Total { get; set; }
 
         public virtual IList<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
@@ -87,6 +94,13 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
                     AddTax(tax);
             }
         }
+
+        #region ORM
+
+        // EF requires an empty constructor
+        public RepairOrderItem() { }
+
+        #endregion
 
     }
 }

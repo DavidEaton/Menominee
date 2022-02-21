@@ -1,0 +1,74 @@
+﻿@using CustomerVehicleManagement.Shared.Models.Inventory
+
+<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Class="popupWindowClass">
+    <WindowTitle>
+        Select Item
+    </WindowTitle>
+    <WindowContent>
+        @if (ItemsList == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+
+        @if (ItemsList != null)
+        {
+            <TelerikGrid Data="ItemsList"
+                         OnRowClick="@OnRowSelectedAsync"
+                         OnRowDoubleClick="@OnSelect"
+                         Sortable="true"
+                         Pageable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         ShowColumnMenu="true"
+                         SelectionMode="GridSelectionMode.Single"
+                         SelectedItemsChanged="@((IEnumerable<InventoryItemToReadInList> itemList) => OnSelectItemAsync(itemList))"
+                         SelectedItems="@SelectedList"
+                         Class="m-grid">
+                <GridColumns>
+                    <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.PartNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.SuggestedPrice)" Title="Retail"></Telerik.Blazor.Components.GridColumn>
+                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.QuantityOnHand)" Title="On Hand"></Telerik.Blazor.Components.GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+
+            @*<EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />*@
+        }
+
+        <hr id="divider">
+        <div>
+            <TelerikButton OnClick="@OnSelect"
+                           ButtonType="ButtonType.Button"
+                           ThemeColor="primary"
+                           Class="dialog-button">
+                <i class="fas fa-check"></i> OK
+            </TelerikButton>
+            <TelerikButton OnClick="@OnCancel"
+                           ButtonType="ButtonType.Button"
+                           Class="dialog-button">
+                <i class="fas fa-times"></i> Cancel
+            </TelerikButton>
+        </div>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+</style>

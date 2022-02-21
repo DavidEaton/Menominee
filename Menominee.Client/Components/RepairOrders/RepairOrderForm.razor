@@ -4,7 +4,10 @@
     <div class="m-pad-bottom m-tab-button-group">
         <TelerikButtonGroup SelectionMode="@ButtonGroupSelectionMode.Single" Class="m-tab-button-group">
             <ButtonGroupToggleButton @bind-Selected="@CustSelected" Class="@(CustSelected ? "m-button-selected" : "m-button-not-selected")">Customer & Vehicle</ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+            @if (FleetVisible)
+            {
+                <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+            }
             <ButtonGroupToggleButton @bind-Selected="@ServiceRequestSelected" Class="@(ServiceRequestSelected ? "m-button-selected" : "m-button-not-selected")">Service Request</ButtonGroupToggleButton>
             <ButtonGroupToggleButton @bind-Selected="@InspectionsSelected" Class="@(InspectionsSelected ? "m-button-selected" : "m-button-not-selected")">Inspections</ButtonGroupToggleButton>
             <ButtonGroupToggleButton @bind-Selected="@ServicesSelected" Class="@(ServicesSelected ? "m-button-selected" : "m-button-not-selected")">Services</ButtonGroupToggleButton>
@@ -33,52 +36,55 @@
         </TelerikButtonGroup>
     </div>
 
-    <div class="row m-no-row-margin">
-        <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-            @if (CustSelected)
-            {
-                <RepairOrderCustomerVehicleTab />
-            }
+    <CascadingValue Value="@RepairOrder">
+        <div class="row m-no-row-margin">
+            <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
+                @if (CustSelected)
+                {
+                    @*<RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />*@
+                    <RepairOrderCustomerVehicleTab />
+                }
 
-            @if (FleetSelected)
-            {
-            }
+                @if (FleetSelected)
+                {
+                }
 
-            @if (ServicesSelected)
-            {
-                <RepairOrderServicesTab />
-            }
+                @if (ServicesSelected)
+                {
+                    <RepairOrderServicesTab Services="@RepairOrder.Services" />
+                }
 
-            @if (InspectionsSelected)
-            {
-                <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
-            }
+                @if (InspectionsSelected)
+                {
+                    <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
+                }
 
-            @if (PurchasesSelected)
-            {
-                <RepairOrderPurchasesTab Purchases="Purchases" />
-            }
+                @if (PurchasesSelected)
+                {
+                    <RepairOrderPurchasesTab Purchases="Purchases" />
+                }
 
-            @if (WarrantiesSelected)
-            {
-                <RepairOrderWarrantiesTab Warranties="Warranties"/>
-            }
+                @if (WarrantiesSelected)
+                {
+                    <RepairOrderWarrantiesTab Warranties="Warranties" />
+                }
 
-            @if (SerialNumbersSelected)
-            {
-                <RepairOrderSerialNumbersTab SerialNumbers="SerialNumbers" />
-            }
+                @if (SerialNumbersSelected)
+                {
+                    <RepairOrderSerialNumbersTab SerialNumbers="SerialNumbers" />
+                }
 
-            @if (PaymentSelected)
-            {
-                <RepairOrderPaymentsTab Payments="Payments" />
-            }
+                @if (PaymentSelected)
+                {
+                    <RepairOrderPaymentsTab Payments="@RepairOrder.Payments" />
+                }
 
+            </div>
+            <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
+                <RepairOrderTotals OnDiscard="@OnDiscard" OnSave="@OnSave" />
+            </div>
         </div>
-        <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
-            <RepairOrderTotals OnDiscard="@OnDiscard" />
-        </div>
-    </div>
+    </CascadingValue>
 </div>
 
 <style>

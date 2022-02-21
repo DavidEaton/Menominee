@@ -1,0 +1,39 @@
+﻿@page "/employeesdavid"
+
+@attribute [Microsoft.AspNetCore.Authorization.Authorize
+(CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
+
+<h4>Employees</h4>
+
+@if (EmployeesList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="d-flex flex-row">
+        <table class="table table-responsive table-striped small">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Hired</th>
+                    <th>Shop Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in EmployeesList)
+                {
+                    <tr @onclick="@(e => SetSelectedId(employee.Id))">
+                        <td>@employee.Id</td>
+                        <td>@employee.Name</td>
+                        <td>@employee.Gender</td>
+                        <td>@employee.Hired</td>
+                        <td>@employee.ShopRole</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
