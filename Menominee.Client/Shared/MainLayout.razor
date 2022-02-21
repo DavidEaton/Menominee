@@ -7,13 +7,16 @@
         <ul class="header-list">
             @*<li class="float-left header-style icon-menu" id="hamburger" @onclick="@Toggle"></li>*@
             <li class="float-left header-style nav-pane"><span class="red-text">Stock</span><span class="white-text">Trac</span><span class="sms">Shop Management System</span></li>
-            <a href="/">
+            @*<a href="/">
             <li class="header-style header-style-link float-right">Sign Out</li>
             </a>
             <a href="/">
             <li class="header-style header-style-link float-right">About</li>
-            </a>
+            </a>*@
         </ul>
+        <div class="login-display">
+            <LoginDisplay />
+        </div>
     </div>
     <!-- end of header-section       -->
     <!-- --------------------------- -->
@@ -100,6 +103,13 @@
 <BlazoredToasts />
 
 <style>
+    .login-display {
+        float: right;
+        padding-left: 1em;
+        padding-right: 1em;
+        margin-left: 1em;
+        margin-right: 1em;
+    }
     .red-text {
         color: #f5535e;
         font-weight: 800;
@@ -609,5 +619,4 @@
     .dockSidebar .material-icons::before {
         font-size: 25px;
     }
-
 </style>
