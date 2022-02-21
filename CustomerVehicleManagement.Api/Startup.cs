@@ -132,11 +132,10 @@ namespace CustomerVehicleManagement.Api
             services.AddHealthChecks();
             services.AddCors();
 
-            //services.AddDbContext<ApplicationDbContext>(); // Move this line out of HostEnvironment.IsProduction()
-                                                           // if check to enable tenant database routing during development
-
             if (HostEnvironment.IsProduction())
             {
+                services.AddDbContext<ApplicationDbContext>();
+
                 // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
             }
@@ -144,9 +143,9 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
-
-                // Uncomment next line to route all requests to a single tenant database during development
-                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                services.AddDbContext<ApplicationDbContext>();
+                // Uncomment next line and comment previous line to route all requests to a single tenant database during development
+                //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 
