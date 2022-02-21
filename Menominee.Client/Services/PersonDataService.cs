@@ -78,18 +78,18 @@ namespace Menominee.Client.Services
             }
         }
 
-        public async Task UpdatePerson(PersonToWrite organization, long id)
+        public async Task UpdatePerson(PersonToWrite person, long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(organization), Encoding.UTF8, MediaType);
+            var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                toastService.ShowSuccess($"{organization.Name} updated successfully", "Saved");
+                toastService.ShowSuccess($"{person.Name.LastFirstMiddle} updated successfully", "Saved");
                 return;
             }
 
-            toastService.ShowError($"{organization.Name} failed to update", "Save Failed");
+            toastService.ShowError($"{person.Name.LastFirstMiddle} failed to update", "Save Failed");
         }
 
         public async Task<PersonToRead> GetPerson(long id)

@@ -143,8 +143,6 @@ namespace CustomerVehicleManagement.Api.Customers
                                                                    customerToWrite.Person.Address.City,
                                                                    customerToWrite.Person.Address.State,
                                                                    customerToWrite.Person.Address.PostalCode).Value);
-
-
                 if (customerToWrite.Person?.Phones.Count > 0)
                     foreach (var phone in customerToWrite.Person.Phones)
                         phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
@@ -191,7 +189,7 @@ namespace CustomerVehicleManagement.Api.Customers
             Customer customer = null;
 
             if (entityType == EntityType.Person)
-                customer = CreatePersonCustomer(customerToAdd.Person, customerType);
+                customer = AddPersonCustomer(customerToAdd.Person, customerType);
 
             if (entityType == EntityType.Organization)
                 customer = AddOrganizationCustomer(customerToAdd.Organization, customerType);
@@ -221,7 +219,7 @@ namespace CustomerVehicleManagement.Api.Customers
             return customer;
         }
 
-        private static Customer CreatePersonCustomer(PersonToWrite personToAdd, CustomerType customerType)
+        private static Customer AddPersonCustomer(PersonToWrite personToAdd, CustomerType customerType)
         {
             Address address = null;
             List<Phone> phones = new();

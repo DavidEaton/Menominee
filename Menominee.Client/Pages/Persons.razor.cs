@@ -72,9 +72,9 @@ namespace Menominee.Client.Pages
             {
                 Name = new PersonNameToWrite
                 {
-                    FirstName = readDto.Name.FirstName,
-                    MiddleName = readDto.Name.MiddleName,
-                    LastName = readDto.Name.LastName
+                    FirstName = readDto.FirstName,
+                    MiddleName = readDto.MiddleName,
+                    LastName = readDto.LastName
                 },
                 Gender = readDto.Gender,
                 Birthday = readDto.Birthday
@@ -200,6 +200,4 @@ namespace Menominee.Client.Pages
             await LocalStorage.RemoveItem(UniqueStorageKey);
         }
     }
-
-
 }

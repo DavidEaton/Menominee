@@ -15,7 +15,7 @@
     {
         <div class="pb-3">
             <TelerikButton OnClick="Add"
-                           Primary="true"
+                           ThemeColor="primary"
                            Icon="plus"
                            title="Add New Person">
                 Add Person
@@ -25,7 +25,7 @@
         <TelerikWindow Visible="@isExporting" Modal="true">
             <WindowTitle>Please wait...</WindowTitle>
             <WindowContent>
-                <TelerikLoader Size="LoaderSize.Large" />
+                <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" />
                 We are exporting your data; your file will download shortly.
             </WindowContent>
         </TelerikWindow>
@@ -68,7 +68,6 @@
             </GridExport>
             <GridColumns>
                 <GridColumn Field="Name" Title="Name"></GridColumn>
-                <GridColumn Field="Gender" Title="Gender"></GridColumn>
                 <GridColumn Field="Birthday" Title="Birthday"></GridColumn>
                 <GridColumn Field="AddressFull" Title="Address"></GridColumn>
                 <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
@@ -82,16 +81,7 @@
     {
         <EditForm Model="@PersonToWrite">
 
-            <PersonNameEditor TItem="PersonNameToWrite"
-                              Item="@PersonToWrite.Name"
-                              FirstNameProperty="FirstName"
-                              MiddleNameProperty="MiddleName"
-                              LastNameProperty="LastName" />
-
-            <PersonEditor TItem="PersonToWrite"
-                          Item="@PersonToWrite"
-                          BirthdayProperty="Birthday"
-                          GenderProperty="Gender" />
+            <PersonEditor Person="PersonToWrite" />
 
             <TelerikGridLayout>
                 <GridLayoutColumns>
@@ -131,7 +121,7 @@
 
                                     <TelerikButton OnClick="() => EditingAddress = false"
                                                    Icon="check"
-                                                   Primary="true"
+                                                   ThemeColor="primary"
                                                    ButtonType="ButtonType.Button"
                                                    title="Save New Address">
                                         Ok

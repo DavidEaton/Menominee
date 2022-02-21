@@ -16,7 +16,7 @@
     {
         <div class="pb-3">
             <TelerikButton OnClick="Add"
-                           Primary="true"
+                           ThemeColor="primary"
                            Icon="plus"
                            title="Add New Organization">
                 Add Organization
@@ -26,7 +26,7 @@
         <TelerikWindow Visible="@isExporting" Modal="true">
             <WindowTitle>Please wait...</WindowTitle>
             <WindowContent>
-                <TelerikLoader Size="LoaderSize.Large" />
+                <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" />
                 We are exporting your data; your file will download shortly.
             </WindowContent>
         </TelerikWindow>
@@ -125,7 +125,7 @@
 
                                     <TelerikButton OnClick="() => EditingAddress = false"
                                                    Icon="check"
-                                                   Primary="true"
+                                                   ThemeColor="primary"
                                                    ButtonType="ButtonType.Button"
                                                    title="Save New Address">
                                         Ok

@@ -1,74 +1,43 @@
-﻿using Menominee.Common.Enums;
+﻿using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components
 {
-    public partial class PersonEditor<TItem> : ComponentBase
+    public partial class PersonEditor : ComponentBase
     {
         [Parameter]
-        public TItem Item { get; set; }
+        public PersonToWrite Person { get; set; }
 
         [Parameter]
         public bool EnableEditor { get; set; }
 
         [Parameter]
-        public string GenderProperty { get; set; }
-
-        [Parameter]
-        public string BirthdayProperty { get; set; }
-
-        [Parameter]
         public EventCallback Updated { get; set; }
 
-        public string ItemName
-        {
-            get
-            {
-                return Item.GetType().Name;
-            }
-        }
+        //[Parameter]
+        //public FormMode Mode
+        //{
+        //    get => formMode;
+        //    set
+        //    {
+        //        formMode = value;
+        //        if (formMode == FormMode.Add)
+        //            Title = "Add";
+        //        else if (formMode == FormMode.Edit)
+        //            Title = "Edit";
+        //        else
+        //            Title = "View";
+        //        Title += " Person";
+        //    }
+        //}
 
-        public Gender Gender
-        {
-            get
-            {
-                if (Item == null)
-                    return Gender.Male;
+        //private Gender Gender { get; set; } = Gender.Male;
 
-                return (Gender)Convert.ToInt32(Item.GetType()
-                    .GetProperty(GenderProperty)
-                    .GetValue(Item));
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(GenderProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
-
-        public DateTime? Birthday
-        {
-            get
-            {
-                if (Item == null)
-                    return null;
-
-                return Convert.ToDateTime(Item.GetType()
-                    .GetProperty(BirthdayProperty)
-                    .GetValue(Item));
-            }
-            set
-            {
-                Item.GetType()
-                    .GetProperty(BirthdayProperty)
-                    .SetValue(Item, value);
-                Updated.InvokeAsync();
-            }
-        }
+        private FormMode formMode;
+        //private string Title { get; set; }
 
         protected override void OnInitialized()
         {
@@ -82,11 +51,10 @@ namespace Menominee.Client.Components
 
         List<GenderEnumModel> GenderEnumData { get; set; } = new List<GenderEnumModel>();
 
+        private class GenderEnumModel
+        {
+            public Gender Value { get; set; }
+            public string DisplayText { get; set; }
+        }
     }
-    public class GenderEnumModel
-    {
-        public Gender Value { get; set; }
-        public string DisplayText { get; set; }
-    }
-
 }

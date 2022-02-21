@@ -1,0 +1,37 @@
+﻿<TelerikGrid Data="CustomersList"
+             OnRowClick="@EditAsync"
+             Sortable="true"
+             Pageable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true"
+             Reorderable="true"
+             ShowColumnMenu="true"
+             OnStateInit="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateInitHandler(args))"
+             OnStateChanged="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateChangedHandler(args))"
+             @ref="@Grid">
+    <GridToolBar>
+        <GridCommandButton Command=""
+                           Icon="add"
+                           Title="Add New Customer"
+                           OnClick="@AddAsync">
+            Add Customer
+        </GridCommandButton>
+        <span class="k-toolbar-spacer"></span>
+        <TelerikButton OnClick="@ResetState"
+                       Icon="reset"
+                       Title="Reset grid to default layout/columns..."></TelerikButton>
+        <GridSearchBox />
+    </GridToolBar>
+    <GridExport>
+        <GridExcelExport FileName="Customers" AllPages="true" />
+    </GridExport>
+    <GridColumns>
+        <GridColumn Field="EntityType" Title="Class"></GridColumn>
+        <GridColumn Field="Name" Title="Name"></GridColumn>
+        <GridColumn Field="CustomerType" Title="Type"></GridColumn>
+        <GridColumn Field="AddressFull" Title="Address"></GridColumn>
+        <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
+        <GridColumn Field="PrimaryPhoneType" Title="Type"></GridColumn>
+        <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
+    </GridColumns>
+</TelerikGrid>

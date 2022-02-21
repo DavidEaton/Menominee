@@ -8,6 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public CustomerType CustomerType { get; set; }
         public PersonToWrite Person { get; set; }
         public OrganizationToWrite Organization { get; set; }
+
         //public ContactPreferences ContactPreferences { get; set; }
     }
 }

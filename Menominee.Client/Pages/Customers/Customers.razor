@@ -1,4 +1,67 @@
 ﻿@page "/customers"
-@using Menominee.Client.Components.Customers
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@*<div class="m-pad-bottom-20">
+        <CustomersMenu />
+    </div>*@
 
-<CustomersMenu />
+<div class="grid-display">
+    <Card Title="Customers">
+        <Content>
+            @if (CustomersList == null)
+            {
+                @if (!Editing && !Adding)
+                {
+                    <p><em>Loading...</em></p>
+                }
+            }
+            @if (!Editing && !Adding && CustomersList != null)
+            {
+                <CustomersGrid CustomersList="CustomersList"
+                               OnAddAsync="Add"
+                               OnEditAsync="EditAsync"></CustomersGrid>
+            }
+            @if ((Editing || Adding) && CustomerToWrite != null)
+            {
+                <p><em>@Caption</em></p>
+                <EditForm Model="@CustomerToWrite">
+
+                    <label class="form-control-label">Customer Type</label>
+                    <div class="m-form-control-group" for="customerType">
+                        <TelerikDropDownList @bind-Value="@CustomerToWrite.CustomerType"
+                                             Data="CustomerTypeEnumData"
+                                             Width="100%"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Id="customerType">
+                        </TelerikDropDownList>
+                    </div>
+
+                    <EntityTypeSelector EntityType="@CustomerToWrite.EntityType"
+                                        OnEntityTypeChanged="EntityTypeChanged"/>
+
+                    @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Person)
+                    {
+                        <PersonEditor Person="@CustomerToWrite.Person"/>
+                    }
+
+                    @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Organization)
+                    {
+                        <OrganizationEditor Item="@CustomerToWrite.Organization"/>
+                    }
+
+                    <div class="pt-4">
+                        <EditFormButtons CloseEventCallback="Close"
+                                         SaveEventCallback="Submit">
+                        </EditFormButtons>
+                    </div>
+                </EditForm>
+            }
+
+        </Content>
+    </Card>
+</div>
+<style>
+    .grid-display {
+        display: grid;
+    }
+</style>

@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using Blazored.Toast.Services;
+using CustomerVehicleManagement.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -6,18 +7,22 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Menominee.Common.Enums.EntityType;
 
 namespace Menominee.Client.Services
 {
     public class CustomerDataService : ICustomerDataService
     {
         private readonly HttpClient httpClient;
+        private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/customers";
 
-        public CustomerDataService(HttpClient httpClient)
+        public CustomerDataService(HttpClient httpClient,
+                                 IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.toastService = toastService;
         }
         public async Task<CustomerToRead> AddCustomer(CustomerToWrite newCustomer)
         {
@@ -46,7 +51,7 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        public async Task<CustomerToRead> GetCustomerDetails(long id)
+        public async Task<CustomerToRead> GetCustomer(long id)
         {
             try
             {
@@ -59,9 +64,20 @@ namespace Menominee.Client.Services
             return null;
         }
 
-        //public async Task UpdateCustomer(CustomerToWrite customer)
-        //{
-        //}
+        public async Task UpdateCustomer(CustomerToWrite customer, long id)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
+            var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+            var name = customer.EntityType == Person ? customer.Person.Name.LastFirstMiddle : customer.Organization.Name;
+
+            if (response.IsSuccessStatusCode)
+            {
+                toastService.ShowSuccess($"{name} updated successfully", "Saved");
+                return;
+            }
+
+            toastService.ShowError($"{name} failed to update", "Save Failed");
+        }
 
         public async Task DeleteCustomer(long id)
         {
