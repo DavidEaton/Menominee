@@ -41,6 +41,7 @@ namespace Menominee.Client.Shared
         //    public string Url { get; set; }
         //}
 
+        private ModuleId SelectedModule { get; set; } = ModuleId.Home;
 
         Dictionary<string, object> HtmlAttribute = new Dictionary<string, object>()
         {
@@ -54,67 +55,67 @@ namespace Menominee.Client.Shared
 
         public void ShowHome()
         {
-            GotoModule("");
+            GotoModule(ModuleId.Home);
         }
 
         public void ShowDispatch()
         {
-            GotoModule("dispatch");
+            GotoModule(ModuleId.Dispatch);
         }
 
         public void ShowRepairOrders()
         {
-            GotoModule("repairorders/worklog");
+            GotoModule(ModuleId.RepairOrders);
         }
 
         public void ShowInspections()
         {
-            GotoModule("inspections");
+            GotoModule(ModuleId.Inspections);
         }
 
         public void ShowSchedule()
         {
-            GotoModule("schedule");
+            GotoModule(ModuleId.Schedule);
         }
 
         public void ShowPartOrders()
         {
-            GotoModule("partsorders");
+            GotoModule(ModuleId.PartOrders);
         }
 
         public void ShowInventory()
         {
-            GotoModule("inventory");
+            GotoModule(ModuleId.Inventory);
         }
 
         public void ShowReports()
         {
-            GotoModule("reports");
+            GotoModule(ModuleId.Reports);
         }
 
         public void ShowCustomers()
         {
-            GotoModule("customers");
+            GotoModule(ModuleId.Customers);
         }
 
         public void ShowReceivables()
         {
-            GotoModule("receivables");
+            GotoModule(ModuleId.Receivables);
         }
 
         public void ShowPayables()
         {
-            GotoModule("payables");
+            GotoModule(ModuleId.Payables);
         }
 
         public void ShowEmployees()
         {
-            GotoModule("employees");
+            GotoModule(ModuleId.Employees);
         }
 
         public void ShowSettings()
         {
-            GotoModule("settings");
+            GotoModule(ModuleId.Settings);
         }
 
         //public void ShowSchedule2()
@@ -122,14 +123,94 @@ namespace Menominee.Client.Shared
         //    GotoModule("telerikschedule");
         //}
 
-        private void GotoModule(string url)
+        public void GotoModule(ModuleId moduleId)
         {
             if (SidebarExpanded)
             {
                 Toggle();
             }
 
+            SelectedModule = moduleId;
+
+            string url = string.Empty;
+
+            switch (moduleId) 
+            {
+                case ModuleId.Home:
+                    url = string.Empty;
+                    break;
+                case ModuleId.Dispatch:
+                    url = "dispatch";
+                    break;
+                case ModuleId.RepairOrders:
+                    url = "repairorders/worklog";
+                    break;
+                case ModuleId.Inspections:
+                    url = "inspections";
+                    break;
+                case ModuleId.Schedule:
+                    url = "schedule";
+                    break;
+                case ModuleId.PartOrders:
+                    url = "partsorders";
+                    break;
+                case ModuleId.Inventory:
+                    url = "inventory";
+                    break;
+                case ModuleId.Reports:
+                    url = "reports";
+                    break;
+                case ModuleId.Customers:
+                    url = "customers";
+                    break;
+                case ModuleId.Receivables:
+                    url = "receivables";
+                    break;
+                case ModuleId.Payables:
+                    url = "payables";
+                    break;
+                case ModuleId.Employees:
+                    url = "employees";
+                    break;
+                case ModuleId.Settings:
+                    url = "settings";
+                    break;
+                default:
+                    url = string.Empty;
+                    break;
+            };
+
             navigationManager.NavigateTo($"/{url}");
+        }
+
+        private string MenuItemClass(ModuleId moduleId)
+        {
+            string _class = "sidebar-item";
+            if (moduleId == ModuleId.Dispatch && SelectedModule == ModuleId.Dispatch)
+                _class += " mi-dispatch";
+            else if (moduleId == ModuleId.RepairOrders && SelectedModule == ModuleId.RepairOrders)
+                _class += " mi-repairorders";
+            else if (moduleId == ModuleId.Inspections && SelectedModule == ModuleId.Inspections)
+                _class += " mi-inspections";
+            else if (moduleId == ModuleId.Schedule && SelectedModule == ModuleId.Schedule)
+                _class += " mi-schedule";
+            else if (moduleId == ModuleId.PartOrders && SelectedModule == ModuleId.PartOrders)
+                _class += " mi-partorders";
+            else if (moduleId == ModuleId.Inventory && SelectedModule == ModuleId.Inventory)
+                _class += " mi-inventory";
+            else if (moduleId == ModuleId.Reports && SelectedModule == ModuleId.Reports)
+                _class += " mi-reports";
+            else if (moduleId == ModuleId.Customers && SelectedModule == ModuleId.Customers)
+                _class += " mi-customers";
+            else if (moduleId == ModuleId.Receivables && SelectedModule == ModuleId.Receivables)
+                _class += " mi-receivables";
+            else if (moduleId == ModuleId.Payables && SelectedModule == ModuleId.Payables)
+                _class += " mi-payables";
+            else if (moduleId == ModuleId.Employees && SelectedModule == ModuleId.Employees)
+                _class += " mi-employees";
+            else if (moduleId == ModuleId.Settings && SelectedModule == ModuleId.Settings)
+                _class += " mi-settings";
+            return _class;
         }
     }
 }
