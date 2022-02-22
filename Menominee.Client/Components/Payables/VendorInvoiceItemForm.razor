@@ -8,34 +8,44 @@
         </WindowTitle>
         <WindowContent>
             @*<div class="container">*@
-            <div>
-                <label class="form-control-label">Part Number</label>
-                <div class="m-form-control-group" for="partNum">
-                    <TelerikTextBox @bind-Value="@Item.PartNumber"
-                                    Width="100%"
-                                    Id="partNum">
-                    </TelerikTextBox>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label">Part Number</label>
+                    <div class="m-form-control-group" for="partNum">
+                        <TelerikTextBox @bind-Value="@Item.PartNumber"
+                                        Width="100%"
+                                        Id="partNum">
+                        </TelerikTextBox>
+                    </div>
                 </div>
-                <label class="form-control-label" for="description">Description</label>
-                <div class="m-form-control-group">
-                    <TelerikTextBox @bind-Value="@Item.Description"
-                                    Width="100%"
-                                    Id="description">
-                    </TelerikTextBox>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label" for="description">Description</label>
+                    <div class="m-form-control-group">
+                        <TelerikTextBox @bind-Value="@Item.Description"
+                                        Width="100%"
+                                        Id="description">
+                        </TelerikTextBox>
+                    </div>
                 </div>
-                <label class="form-control-label" for="qty">Quantity</label>
-                <div class="m-form-control-group">
-                    <TelerikNumericTextBox @bind-Value="@Item.Quantity"
-                                           Width="50%"
-                                           Id="qty">
-                    </TelerikNumericTextBox>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label" for="qty">Quantity</label>
+                    <div class="m-form-control-group">
+                        <TelerikNumericTextBox @bind-Value="@Item.Quantity"
+                                               Width="50%"
+                                               Id="qty">
+                        </TelerikNumericTextBox>
+                    </div>
                 </div>
             </div>
             <hr id="divider">
             <div>
                 <TelerikButton OnClick="OnSave"
                                ButtonType="ButtonType.Button"
-                               Primary="true"
+                               ThemeColor="primary"
                                Class="dialog-button">
                     <i class="fas fa-check"></i> OK
                 </TelerikButton>
@@ -68,4 +78,9 @@
     .m-form-control-group {
         margin-bottom: 1rem;
     }
+
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+
 </style>

@@ -52,6 +52,20 @@ namespace Menominee.Client.Services.ProductCodes
             return null;
         }
 
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodes(long mfrId, long saleCodeId)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing/{mfrId}/{saleCodeId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message: {ex.Message}");
+            }
+
+            return null;
+        }
+
         public async Task<ProductCodeToRead> GetProductCode(long id)
         {
             try

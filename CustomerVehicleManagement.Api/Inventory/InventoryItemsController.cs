@@ -31,6 +31,15 @@ namespace CustomerVehicleManagement.Api.Inventory
             return Ok(results);
         }
 
+        // api/inventoryitems/listing/1
+        [Route("listing")]
+        [HttpGet("listing/{mfrid:long}")]
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long mfrId)
+        {
+            var results = await repository.GetInventoryItemListAsync(mfrId);
+            return Ok(results);
+        }
+
         // api/inventoryitems/1/ABC123
         [HttpGet("{mfrid:long}/{partnumber}")]
         public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long mfrId, string partNumber)

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Microsoft.AspNetCore.Components;
@@ -35,6 +36,11 @@ namespace Menominee.Client.Components.Inventory
 
         public IReadOnlyList<InventoryItemToReadInList> ItemsList;
         public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
+        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
+        private List<ManufacturerX> ManufacturerList = new List<ManufacturerX>();
+        private List<string> SearchFields = new List<string>();
+        private long SelectedMfrId { get; set; } = 0;
+        private long ViewingMfrId { get; set; } = 0;
 
         private bool CanSelect { get; set; } = false;
 
@@ -51,21 +57,78 @@ namespace Menominee.Client.Components.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            ItemsList = (await DataService.GetAllItems()).ToList();
+            SearchFields.Add("PartNumber");
+            SearchFields.Add("Description");
+
+            await FilterItemsList(0);
+            //ItemsList = (await DataService.GetAllItems()).ToList();
+
+            //if (ItemsList.Count > 0)
+            //{
+            //    SelectedItem = ItemsList.FirstOrDefault();
+            //    await SelectedItemChanged.InvokeAsync(SelectedItem);
+            //    //SelectedId = SelectedItem.Id;
+            //    SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
+            //}
+            //else
+            //{
+            //    //SelectedId = 0;
+            //}
+
+            //CanSelect = ItemsList.Count > 0;
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            Manufacturers = (await MfrDataService.GetAllManufacturers()).ToList();
+
+            ManufacturerList = new();
+            ManufacturerList.Add(new ManufacturerX
+            {
+                Id = 0,
+                Code = "",
+                Prefix = "",
+                Name = "<< All >>"
+            });
+            foreach (var mfr in Manufacturers)
+            {
+                if (mfr.Code != "0" && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
+                {
+                    ManufacturerList.Add(new ManufacturerX
+                    {
+                        Id = mfr.Id,
+                        Code = mfr.Code,
+                        Prefix = mfr.Prefix,
+                        Name = mfr.Name
+                    });
+                }
+            }
+        }
+
+        private async Task FilterItemsList(long mfrId)
+        {
+            if (mfrId > 0)
+                ItemsList = (await DataService.GetAllItems(mfrId)).ToList();
+            else
+                ItemsList = (await DataService.GetAllItems()).ToList();
 
             if (ItemsList.Count > 0)
             {
                 SelectedItem = ItemsList.FirstOrDefault();
                 await SelectedItemChanged.InvokeAsync(SelectedItem);
-                //SelectedId = SelectedItem.Id;
                 SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
-            }
-            else
-            {
-                //SelectedId = 0;
             }
 
             CanSelect = ItemsList.Count > 0;
+        }
+
+        private async Task OnSelectMfr()
+        {
+            if (SelectedMfrId != ViewingMfrId)
+            {
+                ViewingMfrId = SelectedMfrId;
+                await FilterItemsList(ViewingMfrId);
+            }
         }
 
         protected async Task OnSelectItemAsync(IEnumerable<InventoryItemToReadInList> items)
@@ -81,6 +144,22 @@ namespace Menominee.Client.Components.Inventory
             //SelectedId = (args.Item as InventoryItemToReadInList).Id;
             SelectedItem = args.Item as InventoryItemToReadInList;
             await SelectedItemChanged.InvokeAsync(SelectedItem);
+        }
+
+        public class ManufacturerX
+        {
+            public long Id { get; set; }
+            public string Code { get; set; }
+            public string Prefix { get; set; }
+            public string Name { get; set; }
+            public string DisplayText
+            {
+                get
+                {
+
+                    return (Prefix.Length > 0) ? (Prefix + " - " + Name) : Name;
+                }
+            }
         }
     }
 }

@@ -48,13 +48,16 @@ namespace Menominee.Client.Components.Inventory
             ManufacturerList = new();
             foreach (var mfr in Manufacturers)
             {
-                ManufacturerList.Add(new ManufacturerX
+                if (mfr.Code != "0" && mfr.Prefix.Length > 0)
                 {
-                    Id = mfr.Id,
-                    Code = mfr.Code,
-                    Prefix = mfr.Prefix,
-                    Name = mfr.Name
-                });
+                    ManufacturerList.Add(new ManufacturerX
+                    {
+                        Id = mfr.Id,
+                        Code = mfr.Code,
+                        Prefix = mfr.Prefix,
+                        Name = mfr.Name
+                    });
+                }
             }
 
             SaleCodeList = new();

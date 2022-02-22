@@ -90,18 +90,21 @@ namespace Menominee.Client.Components.RepairOrders
         {
             Manufacturers = (await manufacturerDataService.GetAllManufacturers()).ToList();
             SaleCodes = (await saleCodeDataService.GetAllSaleCodes()).ToList();
-            ProductCodes = (await productCodeDataService.GetAllProductCodes()).ToList();
+            ProductCodes = (await productCodeDataService.GetAllProductCodes()).ToList();    // FIX ME - need to restrict list to mfr, salecode
 
             ManufacturerList = new();
             foreach (var mfr in Manufacturers)
             {
-                ManufacturerList.Add(new ManufacturerX
+                if (mfr.Prefix.Length > 0)
                 {
-                    Id = mfr.Id,
-                    Code = mfr.Code,
-                    Prefix = mfr.Prefix,
-                    Name = mfr.Name
-                });
+                    ManufacturerList.Add(new ManufacturerX
+                    {
+                        Id = mfr.Id,
+                        Code = mfr.Code,
+                        Prefix = mfr.Prefix,
+                        Name = mfr.Name
+                    });
+                }
             }
 
             SaleCodeList = new();

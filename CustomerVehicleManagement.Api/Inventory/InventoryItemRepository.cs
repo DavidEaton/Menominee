@@ -78,6 +78,15 @@ namespace CustomerVehicleManagement.Api.Inventory
                 .ToList();
         }
 
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId)
+        {
+            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == mfrId).ToListAsync();
+
+            return items.
+                Select(item => InventoryItemToReadInList.ConvertToDto(item))
+                .ToList();
+        }
+
         public async Task<bool> InventoryItemExistsAsync(long mfrId, string partNumber)
         {
             return await context.InventoryItems.AnyAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));

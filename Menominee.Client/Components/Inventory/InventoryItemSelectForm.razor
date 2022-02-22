@@ -14,24 +14,42 @@
 
         @if (ItemsList != null)
         {
-            <TelerikGrid Data="ItemsList"
-                         OnRowClick="@OnRowSelectedAsync"
-                         OnRowDoubleClick="@OnSelect"
-                         Sortable="true"
-                         Pageable="true"
-                         FilterMode="GridFilterMode.FilterMenu"
-                         ShowColumnMenu="true"
-                         SelectionMode="GridSelectionMode.Single"
-                         SelectedItemsChanged="@((IEnumerable<InventoryItemToReadInList> itemList) => OnSelectItemAsync(itemList))"
-                         SelectedItems="@SelectedList"
-                         Class="m-grid">
-                <GridColumns>
-                    <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.PartNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.SuggestedPrice)" Title="Retail"></Telerik.Blazor.Components.GridColumn>
-                    <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.QuantityOnHand)" Title="On Hand"></Telerik.Blazor.Components.GridColumn>
-                </GridColumns>
-            </TelerikGrid>
+    <TelerikGrid Data="ItemsList"
+                 OnRowClick="@OnRowSelectedAsync"
+                 OnRowDoubleClick="@OnSelect"
+                 ScrollMode="@GridScrollMode.Virtual"
+                 Height="480px" 
+                 RowHeight="30" 
+                 PageSize="20"
+                 Sortable="true"
+                 FilterMode="GridFilterMode.FilterMenu"
+                 SelectionMode="GridSelectionMode.Single"
+                 SelectedItemsChanged="@((IEnumerable<InventoryItemToReadInList> itemList) => OnSelectItemAsync(itemList))"
+                 SelectedItems="@SelectedList"
+                 Class="m-grid">
+        <GridToolBar>
+            @if (Manufacturers != null)
+            {
+                <label class="m-no-margin-bottom" for="category">Manufacturer:</label>
+                <TelerikDropDownList @bind-Value="@SelectedMfrId"
+                                     Width="50%"
+                                     Data="@ManufacturerList"
+                                     TextField="DisplayText"
+                                     ValueField="Id"
+                                     OnChange="@OnSelectMfr"
+                                     Id="category">
+                </TelerikDropDownList>
+            }
+            @*<span class="k-toolbar-spacer"></span>*@
+            <GridSearchBox Fields="@SearchFields" />
+        </GridToolBar>
+        <GridColumns>
+            <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.PartNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.SuggestedPrice)" Title="Retail"></Telerik.Blazor.Components.GridColumn>
+            <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.QuantityOnHand)" Title="On Hand"></Telerik.Blazor.Components.GridColumn>
+        </GridColumns>
+    </TelerikGrid>
 
             @*<EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />*@
         }
