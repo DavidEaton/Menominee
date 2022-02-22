@@ -62,14 +62,25 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodeListAsync(string manufacturerCode)
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodeListAsync(long mfrId, long saleCodeId)
         {
-            IReadOnlyList<ProductCode> pcs = await context.ProductCodes.Where(pc => pc.Manufacturer.Code == manufacturerCode).ToListAsync();
+            IReadOnlyList<ProductCode> pcs = await context.ProductCodes
+                .Where(pc => (pc.Manufacturer.Id == mfrId && pc.SaleCode.Id == saleCodeId))
+                .ToListAsync();
 
             return pcs.
                 Select(pc => ProductCodeToReadInList.ConvertToDto(pc))
                 .ToList();
         }
+
+        //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodeListAsync(string manufacturerCode)
+        //{
+        //    IReadOnlyList<ProductCode> pcs = await context.ProductCodes.Where(pc => pc.Manufacturer.Code == manufacturerCode).ToListAsync();
+
+        //    return pcs.
+        //        Select(pc => ProductCodeToReadInList.ConvertToDto(pc))
+        //        .ToList();
+        //}
 
         public async Task<bool> ProductCodeExistsAsync(string manufacturerCode, string code)
         {

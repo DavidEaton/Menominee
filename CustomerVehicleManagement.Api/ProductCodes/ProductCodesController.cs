@@ -31,6 +31,15 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return Ok(results);
         }
 
+        // api/productcodes/listing/1/1
+        [Route("listing")]
+        [HttpGet("listing/{mfrid:long}/{scId:long}")]
+        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId, long saleCodeId)
+        {
+            var results = await repository.GetProductCodeListAsync(mfrId, saleCodeId);
+            return Ok(results);
+        }
+
         // api/productcodes/xyz/123
         [HttpGet("{mfrcode}/{code}")]
         public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string mfrCode, string productCode)

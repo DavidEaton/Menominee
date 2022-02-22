@@ -34,7 +34,7 @@ namespace Menominee.Client.Components.Inventory
         {
             new MenuItem
             {
-                Text = "Inventory",
+                Text = "Items",
                 Id = "inventoryList",
                 HtmlAttributes=ItemHtmlAttribute
             },

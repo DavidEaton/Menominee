@@ -52,6 +52,20 @@ namespace Menominee.Client.Services.Inventory
             return null;
         }
 
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItems(long mfrId)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing/{mfrId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message: {ex.Message}");
+            }
+
+            return null;
+        }
+
         public async Task<InventoryItemToRead> GetItem(long id)
         {
             try

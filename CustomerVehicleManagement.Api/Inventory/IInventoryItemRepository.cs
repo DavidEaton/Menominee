@@ -15,6 +15,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task<InventoryItemToRead> GetInventoryItemAsync(long mfrId, string partNumber);
         Task<InventoryItemToRead> GetInventoryItemAsync(long id);
         Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId);
         void UpdateInventoryItemAsync(InventoryItem item);
         Task DeleteInventoryItemAsync(long id);
         Task<bool> InventoryItemExistsAsync(long mfrId, string partNumber);

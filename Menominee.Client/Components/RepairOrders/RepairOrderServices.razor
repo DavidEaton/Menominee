@@ -140,7 +140,10 @@
                         <li class="m-job-row-float-right m-job-row m-job-detail">
                             <button class="btn btn-outline-secondary btn-sm" @onclick="@(e => EditTechs(context as RepairOrderServiceToWrite))" id="techGroup">
                                 <span class="btn btn-secondary btn-sm" id="techButton" type="button">Techs</span>
-                                <span class="btn btn-secondary btn-sm" id="techNumbers">@TechDisplayList(context as RepairOrderServiceToWrite)</span>
+                                @if (TechDisplayList(context as RepairOrderServiceToWrite).Length > 0)
+                                {
+                                    <span class="btn btn-secondary btn-sm" id="techNumbers">@TechDisplayList(context as RepairOrderServiceToWrite)</span>
+                                }
                             </button>
                         </li>
                         @*<li class="m-job-row-float-right m-job-row m-job-detail">
