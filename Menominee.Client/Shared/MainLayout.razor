@@ -34,52 +34,52 @@
                         <span class="material-icons" title="Home">home</span>
                         <span class="e-text">Home</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowDispatch">
+                    <li class="@MenuItemClass(ModuleId.Dispatch)" id="menuitem-dispatch" @onclick="ShowDispatch">
                         @*<span class="e-icons m-empty"></span>*@
                         <span class="material-icons" title="Dispatch">support_agent</span>
                         <span class="e-text">Dispatch</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowRepairOrders">
+                    <li class="@MenuItemClass(ModuleId.RepairOrders)" id="menuitem-repairorders" @onclick="ShowRepairOrders">
                         <span class="material-icons" title="Repair Orders">car_repair</span>
                         <span class="e-text">Repair Orders</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowInspections">
+                    <li class="@MenuItemClass(ModuleId.Inspections)" id="menuitem-inspections" @onclick="ShowInspections">
                         <span class="material-icons" title="Inspections">content_paste_search</span>
                         <span class="e-text">Inspections</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowSchedule">
+                    <li class="@MenuItemClass(ModuleId.Schedule)" id="menuitem-schedule" @onclick="ShowSchedule">
                         <span class="material-icons" title="Schedule">date_range</span>
                         <span class="e-text">Schedule</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowPartOrders">
+                    <li class="@MenuItemClass(ModuleId.PartOrders)" id="menuitem-partorders" @onclick="ShowPartOrders">
                         <span class="material-icons" title="Parts Orders">shopping_cart</span>
                         <span class="e-text">Parts Orders</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowInventory">
+                    <li class="@MenuItemClass(ModuleId.Inventory)" id="menuitem-inventory" @onclick="ShowInventory">
                         <span class="material-icons" title="Inventory">warehouse</span>
                         <span class="e-text">Inventory</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowReports">
+                    <li class="@MenuItemClass(ModuleId.Reports)" id="menuitem-reports" @onclick="ShowReports">
                         <span class="material-icons" title="Reports">bar_chart</span>
                         <span class="e-text">Reports</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowCustomers">
+                    <li class="@MenuItemClass(ModuleId.Customers)" id="menuitem-customers" @onclick="ShowCustomers">
                         <span class="material-icons" title="Customers">people</span>
                         <span class="e-text">Customers</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowReceivables">
+                    <li class="@MenuItemClass(ModuleId.Receivables)" id="menuitem-receivables" @onclick="ShowReceivables">
                         <span class="material-icons" title="Receivables">savings</span>
                         <span class="e-text">Receivables</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowPayables">
+                    <li class="@MenuItemClass(ModuleId.Payables)" id="menuitem-payables" @onclick="ShowPayables">
                         <span class="material-icons" title="Payables">payments</span>
                         <span class="e-text">Payables</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowEmployees">
+                    <li class="@MenuItemClass(ModuleId.Employees)" id="menuitem-employees" @onclick="ShowEmployees">
                         <span class="material-icons" title="Employees">assignment_ind</span>
                         <span class="e-text">Employees</span>
                     </li>
-                    <li class="sidebar-item" @onclick="ShowSettings">
+                    <li class="@MenuItemClass(ModuleId.Settings)" id="menuitem-settings" @onclick="ShowSettings">
                         <span class="material-icons" title="Settings">settings</span>
                         <span class="e-text">Settings</span>
                     </li>
@@ -619,4 +619,9 @@
     .dockSidebar .material-icons::before {
         font-size: 25px;
     }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> repair-order-items
 </style>
