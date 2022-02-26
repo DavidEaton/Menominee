@@ -1,10 +1,8 @@
 ﻿@page "/customers"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
-@*<div class="m-pad-bottom-20">
-        <CustomersMenu />
-    </div>*@
+<CustomersMenu />
 
-<div class="grid-display">
+<div class="grid-display pt-5">
     <Card Title="Customers">
         <Content>
             @if (CustomersList == null)
@@ -18,7 +16,7 @@
             {
                 <CustomersGrid CustomersList="CustomersList"
                                OnAddAsync="Add"
-                               OnEditAsync="EditAsync"></CustomersGrid>
+                               OnRowClicked="EditAsync"></CustomersGrid>
             }
             @if ((Editing || Adding) && CustomerToWrite != null)
             {
@@ -36,22 +34,36 @@
                         </TelerikDropDownList>
                     </div>
 
-                    <EntityTypeSelector EntityType="@CustomerToWrite.EntityType"
-                                        OnEntityTypeChanged="EntityTypeChanged"/>
+                    @*<EntityTypeSelector EntityType="@CustomerToWrite.EntityType"
+                        OnEntityTypeChanged="EntityTypeChanged" />*@
+
+                    <label class="form-control-label">Customer Class</label>
+                    <div class="m-form-control-group" for="entityType">
+                        <TelerikDropDownList @bind-Value="@CustomerToWrite.EntityType"
+                                             Data="EntityTypeEnumData"
+                                             OnChange="@EntityTypeChanged"
+                                             Width="100%"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Id="entityType">
+                        </TelerikDropDownList>
+                    </div>
 
                     @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Person)
                     {
-                        <PersonEditor Person="@CustomerToWrite.Person"/>
+                        <PersonEditor Person="@CustomerToWrite.Person" />
                     }
 
                     @if (CustomerToWrite.EntityType == Common.Enums.EntityType.Organization)
                     {
-                        <OrganizationEditor Item="@CustomerToWrite.Organization"/>
+                        @*<OrganizationEditor Item="@CustomerToWrite.Organization" />*@
+                        <p>OrganizationEditor GOES HERE</p>
                     }
 
                     <div class="pt-4">
-                        <EditFormButtons CloseEventCallback="Close"
-                                         SaveEventCallback="Submit">
+                        <EditFormButtons Close="Close"
+                                         Save="Submit"
+                                         EnableSave="true">
                         </EditFormButtons>
                     </div>
                 </EditForm>

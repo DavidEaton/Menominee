@@ -81,26 +81,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
         }
 
         [Fact]
-        public async Task Return_BadRequestObjectResult_On_CreatePersonAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToWrite()
-            {
-                Name = new PersonNameToWrite()
-                {
-                    LastName = "Doe",
-                    FirstName = "Jane"
-                },
-                Gender = Gender.Female
-            };
-
-            var result = await controller.AddPersonAsync(person);
-
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
-        }
-
-        [Fact]
         public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
         {
             controller.ModelState.AddModelError("x", "Test Error Message");

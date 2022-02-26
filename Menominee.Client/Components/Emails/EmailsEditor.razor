@@ -1,13 +1,13 @@
 ﻿<div class="container">
     <div class="h6">Emails</div>
     @*If there are emails, list them in a table and show.*@
-    @if (((int)EmailsToWrite?.Count()) > 0)
+    @if (((int)Emails?.Count()) > 0)
     {
-        <ContactableTemplate Items="EmailsToWrite"
+        <ContactableTemplate Items="Emails"
                              TItem="EmailToWrite"
                              Context="email"
-                             @key="EmailToWrite"
-                             OnRowClick="EditAsync">
+                             @key="Email"
+                             OnRowClick="Edit">
             <TableHeader>
                 <th>Address</th>
                 <th>Primary</th>
@@ -26,7 +26,7 @@
     @*If adding or editing email, show the edit form in modal dialog*@
     @if (Adding || Editing)
     {
-        <EditForm Model="EmailToWrite">
+        <EditForm Model="Email">
             <TelerikWindow Visible="DialogVisible"
                            Modal="true">
                 <WindowTitle>
@@ -35,16 +35,15 @@
                 <WindowContent>
                     <div class="container">
                         <div class="form-group row">
-                            <label class="form-control-label">Address</label>
-                            <TelerikTextBox @bind-Value="@EmailToWrite.Address"
-                                            Width="100%"
-                                            @ref="EmailAddressControl">
+                            <label class="k-label">Address</label>
+                            <TelerikTextBox @bind-Value="@Email.Address"
+                                            Width="100%">
                             </TelerikTextBox>
                         </div>
                         <div class="form-group row">
                             <label>
-                                <TelerikCheckBox @bind-Value="@EmailToWrite.IsPrimary"></TelerikCheckBox>
-                                <span class="form-control-label">Primary</span>
+                                <TelerikCheckBox @bind-Value="@Email.IsPrimary"></TelerikCheckBox>
+                                <span class="k-label">Primary</span>
                             </label>
                         </div>
                         <div>
@@ -52,11 +51,13 @@
                                            Icon="check"
                                            ThemeColor="primary"
                                            ButtonType="ButtonType.Button"
+                                           Class="dialog-button"
                                            title="Save New Email">
                                 Ok
                             </TelerikButton>
                             <TelerikButton OnClick="CancelEdit"
                                            ButtonType="ButtonType.Button"
+                                           Class="dialog-button"
                                            Icon="x"
                                            title="Cancel New Email">
                                 Cancel
@@ -69,7 +70,7 @@
 
     }
     <div>
-        <TelerikButton OnClick="AddAsync"
+        <TelerikButton OnClick="Add"
                        Icon="plus"
                        ButtonType="ButtonType.Button"
                        Class="button-border-success"
@@ -78,3 +79,12 @@
         </TelerikButton>
     </div>
 </div>
+<style>
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+</style>

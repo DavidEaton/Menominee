@@ -1,0 +1,132 @@
+﻿@page "/persons"
+
+@attribute [Microsoft.AspNetCore.Authorization.Authorize
+    (CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
+
+<div class="container">
+    <div class="h5">Persons</div>
+
+    @if (PersonFormMode != FormMode.Add && PersonFormMode != FormMode.Edit)
+    {
+        @if (Persons == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        @if (Persons != null)
+        {
+            <div class="pb-3">
+                <TelerikButton OnClick="Add"
+                               ThemeColor="primary"
+                               Icon="plus"
+                               title="Add New Person">
+                    Add Person
+                </TelerikButton>
+            </div>
+
+            <PersonsGrid Persons="Persons"
+                         OnRowClicked="@EditAsync" />
+        }
+    }
+
+    @if ((PersonFormMode == FormMode.Add || PersonFormMode == FormMode.Edit) && PersonToWrite != null)
+    {
+        <EditForm Model="@PersonToWrite">
+
+            <PersonEditor Person="@PersonToWrite"
+                          Enabled="true"
+                          FormMode="PersonFormMode" />
+
+            <TelerikGridLayout>
+                <GridLayoutColumns>
+                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
+                </GridLayoutColumns>
+                <GridLayoutRows>
+                    <GridLayoutRow></GridLayoutRow>
+                </GridLayoutRows>
+                <GridLayoutItems>
+                    <GridLayoutItem>
+                        <div class="h6">
+                            Address
+                            &nbsp &nbsp
+                            @if (PersonToWrite?.Address != null)
+                            {
+                                <div @onclick="EditAddress" tabindex="-1"><TelerikIcon Icon="pencil" /></div>
+                            }
+                        </div>
+                        @if (PersonToWrite?.Address != null)
+                        {
+
+                            <TelerikWindow Visible="PersonToWrite?.Address != null && AddressFormMode == FormMode.Add"
+                                           Modal="true">
+                                <WindowTitle>
+                                    Address
+                                </WindowTitle>
+                                <WindowContent>
+                                    <AddressEditor Address="@PersonToWrite?.Address"
+                                                   Enabled="AddressFormMode == FormMode.Add"
+                                                   FormMode="AddressFormMode"
+                                                   @ref="addressEditor" />
+
+                                    <TelerikButton OnClick="() => AddressFormMode = FormMode.Unknown"
+                                                   Icon="check"
+                                                   ThemeColor="primary"
+                                                   ButtonType="ButtonType.Button"
+                                                   Class="dialog-button"
+                                                   title="Save New Address">
+                                        Ok
+                                    </TelerikButton>
+                                    <TelerikButton OnClick="CancelEditAddress"
+                                                   ButtonType="ButtonType.Button"
+                                                   Icon="x"
+                                                   Class="dialog-button"
+                                                   title="Cancel Edit Address">
+                                        Cancel
+                                    </TelerikButton>
+                                </WindowContent>
+                            </TelerikWindow>
+                        }
+
+                        @if (PersonToWrite?.Address != null)
+                        {
+                            <div @onclick="EditAddress">
+                                <AddressEditor Address="@PersonToWrite?.Address"
+                                               Enabled="AddressFormMode == FormMode.Edit"
+                                               FormMode="AddressFormMode"
+                                               @ref="addressEditor" />
+                            </div>
+                        }
+                        else
+                        {
+                            <TelerikButton OnClick="AddAddress"
+                                           Icon="plus"
+                                           Class="button-border-success"
+                                           title="Add New Address">
+                                Add Address
+                            </TelerikButton>
+                        }
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <PhonesEditor Phones="@PersonToWrite?.Phones"></PhonesEditor>
+                    </GridLayoutItem>
+                    <GridLayoutItem>
+                        <EmailsEditor Emails="@PersonToWrite?.Emails"></EmailsEditor>
+                    </GridLayoutItem>
+                </GridLayoutItems>
+            </TelerikGridLayout>
+
+            <div class="pt-4">
+                <EditFormButtons Close="EndAddEditAsync"
+                                 Save="SubmitHandlerAsync"
+                                 EnableSave="true">
+                </EditFormButtons>
+            </div>
+        </EditForm>
+    }
+</div>
+<style>
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+</style>

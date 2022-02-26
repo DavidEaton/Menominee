@@ -28,6 +28,7 @@ namespace Menominee.Client.Services
         {
             var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
+            var result = response.Content.ReadAsStringAsync().Result;
 
             if (response.IsSuccessStatusCode)
             {
@@ -82,6 +83,7 @@ namespace Menominee.Client.Services
         {
             var content = new StringContent(JsonSerializer.Serialize(person), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+            var result = response.Content.ReadAsStringAsync().Result;
 
             if (response.IsSuccessStatusCode)
             {

@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
-        private readonly string BasePath = "/api/organizations/";
+        private readonly string BasePath = "/api/organizations";
 
         public OrganizationsController(IOrganizationRepository repository)
         {
@@ -84,33 +84,33 @@ namespace CustomerVehicleManagement.Api.Organizations
             Address address = null;
 
             //1) Get domain entity from repository
-            var organization = repository.GetOrganizationEntityAsync(id).Result;
+            var organizationFromRepository = repository.GetOrganizationEntityAsync(id).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
             var organizationNameOrError = OrganizationName.Create(organizationToUpdate.Name);
 
             if (organizationNameOrError.IsSuccess)
-                organization.SetName(organizationNameOrError.Value);
+                organizationFromRepository.SetName(organizationNameOrError.Value);
 
             if (organizationToUpdate?.Address != null)
-                organization.SetAddress(Address.Create(organizationToUpdate.Address.AddressLine,
+                organizationFromRepository.SetAddress(Address.Create(organizationToUpdate.Address.AddressLine,
                                                                      organizationToUpdate.Address.City,
                                                                      organizationToUpdate.Address.State,
                                                                      organizationToUpdate.Address.PostalCode).Value);
-            organization.SetNote(organizationToUpdate.Note);
+            organizationFromRepository.SetNote(organizationToUpdate.Note);
 
             if (organizationToUpdate?.Phones.Count > 0)
                 foreach (var phone in organizationToUpdate.Phones)
                 {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-                    organization.SetPhones(phones);
+                    organizationFromRepository.SetPhones(phones);
                 }
 
             if (organizationToUpdate?.Emails.Count > 0)
                 foreach (var email in organizationToUpdate.Emails)
                 {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-                    organization.SetEmails(emails);
+                    organizationFromRepository.SetEmails(emails);
                 }
 
             if (organizationToUpdate.Contact != null)
@@ -146,16 +146,16 @@ namespace CustomerVehicleManagement.Api.Organizations
                 contact.SetPhones(phones);
                 contact.SetEmails(emails);
 
-                organization.SetContact(contact);
+                organizationFromRepository.SetContact(contact);
             }
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
-            organization.SetTrackingState(TrackingState.Modified);
+            organizationFromRepository.SetTrackingState(TrackingState.Modified);
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            repository.UpdateOrganizationAsync(organization);
+            repository.UpdateOrganizationAsync(organizationFromRepository);
 
             /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);
@@ -196,7 +196,66 @@ namespace CustomerVehicleManagement.Api.Organizations
                 4. Return to consumer */
 
             // 1. Convert dto to domain entity
-            Organization organization = Shared.CreateOrganizationToAdd(organizationToAdd);
+            Address organizationAddress = null;
+            List<Phone> phones = new();
+            List<Email> emails = new();
+
+            // FluentValidation has already validated request; no need to validate Name again here
+            var organizationName = OrganizationName.Create(organizationToAdd.Name).Value;
+
+            if (organizationToAdd?.Address != null)
+                organizationAddress = Address.Create(
+                    organizationToAdd.Address.AddressLine,
+                    organizationToAdd.Address.City,
+                    organizationToAdd.Address.State,
+                    organizationToAdd.Address.PostalCode).Value;
+
+            if (organizationToAdd?.Phones?.Count > 0)
+                // FluentValidation has already validated contactable collections
+                foreach (var phone in organizationToAdd.Phones)
+                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            if (organizationToAdd?.Emails?.Count > 0)
+                foreach (var email in organizationToAdd.Emails)
+                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+
+            //Organization.Contact
+            Person person = null;
+            Address personAddress = null;
+            DriversLicense driversLicense = null;
+
+            if (organizationToAdd?.Contact != null)
+            {
+                if (organizationToAdd?.Contact?.Address != null)
+                    personAddress = Address.Create(
+                        organizationToAdd.Contact.Address.AddressLine,
+                        organizationToAdd.Contact.Address.City,
+                        organizationToAdd.Contact.Address.State,
+                        organizationToAdd.Contact.Address.PostalCode).Value;
+
+                if (organizationToAdd?.Contact?.DriversLicense != null)
+                {
+                    DateTimeRange dateTimeRange = DateTimeRange.Create(
+                        organizationToAdd.Contact.DriversLicense.Issued,
+                        organizationToAdd.Contact.DriversLicense.Expiry).Value;
+
+                    driversLicense = DriversLicense.Create(organizationToAdd.Contact.DriversLicense.Number,
+                        organizationToAdd.Contact.DriversLicense.State,
+                        dateTimeRange).Value;
+                }
+
+                person = new Person(
+                PersonName.Create(
+                    organizationToAdd.Contact.Name.LastName,
+                    organizationToAdd.Contact.Name.FirstName,
+                    organizationToAdd.Contact.Name.MiddleName).Value,
+                organizationToAdd.Contact.Gender,
+                personAddress, emails, phones,
+                organizationToAdd.Contact.Birthday,
+                driversLicense);
+            }
+
+            var organization = new Organization(organizationName, organizationToAdd.Note, person, organizationAddress, emails, phones);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);

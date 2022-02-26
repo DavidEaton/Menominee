@@ -17,6 +17,7 @@ namespace CustomerVehicleManagement.Api.Persons
     public class PersonsController : ApplicationController
     {
         private readonly IPersonRepository repository;
+        private readonly string BasePath = "/api/persons/";
 
         public PersonsController(IPersonRepository repository)
         {
@@ -93,14 +94,14 @@ namespace CustomerVehicleManagement.Api.Persons
 
 
             if (personToUpdate?.Phones.Count > 0)
-                foreach (var phone in personFromRepository.Phones)
+                foreach (var phone in personToUpdate.Phones)
                 {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
                     personFromRepository.SetPhones(phones);
                 }
 
             if (personToUpdate?.Emails.Count > 0)
-                foreach (var email in personFromRepository.Emails)
+                foreach (var email in personToUpdate.Emails)
                 {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
                     personFromRepository.SetEmails(emails);
@@ -127,7 +128,7 @@ namespace CustomerVehicleManagement.Api.Persons
         }
 
         [HttpPost]
-        public async Task<ActionResult<PersonToRead>> AddPersonAsync(PersonToWrite personToAdd)
+        public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
             Address address = null;
             List<Phone> phones = new();
@@ -162,16 +163,9 @@ namespace CustomerVehicleManagement.Api.Persons
 
             await repository.AddPersonAsync(person);
 
-            if (await repository.SaveChangesAsync())
-            {
-                var personFromRepository = repository.GetPersonAsync(person.Id).Result;
+            await repository.SaveChangesAsync();
 
-                return CreatedAtRoute("GetPersonAsync",
-                    new { id = person.Id },
-                    personFromRepository);
-            }
-
-            return BadRequest($"Failed to add {personToAdd.Name}.");
+            return Created(new Uri($"{BasePath}/{person.Id}", UriKind.Relative), new { id = person.Id });
         }
 
         [HttpDelete("{id:long}")]

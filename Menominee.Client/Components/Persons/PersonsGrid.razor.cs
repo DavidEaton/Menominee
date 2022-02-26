@@ -7,31 +7,29 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Components
+namespace Menominee.Client.Components.Persons
 {
-    public partial class OrganizationsGrid : ComponentBase
+    public partial class PersonsGrid : ComponentBase
     {
         [Parameter]
-        public IReadOnlyList<OrganizationToReadInList> Organizations { get; set; }
+        public IReadOnlyList<PersonToReadInList> Persons { get; set; }
 
         [Parameter]
-        public RenderFragment ChildContent { get; set; } // Parent component fails to build at OnSelected="HandleSelectedOrganizationAsync" without this property.
+        public EventCallback<GridRowClickEventArgs> OnRowClicked { get; set; }
 
-        [Parameter]
-        public EventCallback<GridRowClickEventArgs> OnSelected { get; set; }
-
-        public OrganizationToReadInList SelectedOrganization { get; set; }
+        public PersonToReadInList SelectedPerson { get; set; }
 
         [Inject]
         public LocalStorage LocalStorage { get; set; }
+
         [Inject]
         IJSRuntime JsInterop { get; set; }
 
-        public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
+        public TelerikGrid<PersonToReadInList> Grid { get; set; }
 
         private async Task GridRowClicked(GridRowClickEventArgs args)
         {
-            await OnSelected.InvokeAsync(args);
+            await OnRowClicked.InvokeAsync(args);
         }
         private bool isExporting { get; set; }
 
@@ -39,18 +37,18 @@ namespace Menominee.Client.Components
 
         private string UniqueStorageKey = new Guid().ToString();
 
-        private void ShowLoadingSign()
+        private void ShowLoadingSymbol()
         {
             isExporting = true;
             StateHasChanged();
             isExporting = false;
         }
 
-        protected async Task OnStateInitHandler(GridStateEventArgs<OrganizationToReadInList> args)
+        protected async Task OnStateInitHandler(GridStateEventArgs<PersonToReadInList> args)
         {
             try
             {
-                var state = await LocalStorage.GetItem<GridState<OrganizationToReadInList>>(UniqueStorageKey);
+                var state = await LocalStorage.GetItem<GridState<PersonToReadInList>>(UniqueStorageKey);
                 if (state != null)
                 {
                     args.GridState = state;
@@ -64,7 +62,7 @@ namespace Menominee.Client.Components
             }
         }
 
-        protected async void OnStateChangedHandler(GridStateEventArgs<OrganizationToReadInList> args)
+        protected async void OnStateChangedHandler(GridStateEventArgs<PersonToReadInList> args)
         {
             await LocalStorage.SetItem(UniqueStorageKey, args.GridState);
         }

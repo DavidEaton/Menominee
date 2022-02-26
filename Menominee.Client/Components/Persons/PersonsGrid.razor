@@ -1,0 +1,45 @@
+﻿<TelerikGrid Data="Persons"
+             OnRowClick="GridRowClicked"
+             Sortable="true"
+             Pageable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true"
+             Reorderable="true"
+             ShowColumnMenu="true"
+             OnStateInit="@((GridStateEventArgs<PersonToReadInList> args) => OnStateInitHandler(args))"
+             OnStateChanged="@((GridStateEventArgs<PersonToReadInList> args) => OnStateChangedHandler(args))"
+             @ref="@Grid">
+    <GridToolBar>
+        <TelerikButton OnClick="@ResetState"
+                       Icon="reset"
+                       Title="Reset grid to default layout/columns..."></TelerikButton>
+        <span class="k-toolbar-spacer"></span>
+        <GridCommandButton Command="ExcelExport"
+                           Icon="file-excel"
+                           Title="Export to Excel"
+                           OnClick="@ShowLoadingSymbol">
+        </GridCommandButton>
+        <GridCommandButton Command="CsvExport"
+                           OnClick="@ShowLoadingSymbol"
+                           Title="Export to CSV"
+                           Icon="file-csv">
+        </GridCommandButton>
+        <label class="k-checkbox-label"
+               title="Export all: unchecking will export only rows currently visible in grid">
+            <TelerikCheckBox @bind-Value="@ExportAllPages" /><span class="small">Export All</span>
+        </label>
+        <span class="k-toolbar-spacer"></span>
+        <GridSearchBox />
+    </GridToolBar>
+    <GridExport>
+        <GridExcelExport FileName="Persons" AllPages="true" />
+    </GridExport>
+    <GridColumns>
+        <GridColumn Field="Name" Title="Name"></GridColumn>
+        <GridColumn Field="Birthday" Title="Birthday"></GridColumn>
+        <GridColumn Field="AddressFull" Title="Address"></GridColumn>
+        <GridColumn Field="PrimaryPhone" Title="Primary Phone"></GridColumn>
+        <GridColumn Field="PrimaryPhoneType" Title="Type"></GridColumn>
+        <GridColumn Field="PrimaryEmail" Title="Primary Email"></GridColumn>
+    </GridColumns>
+</TelerikGrid>

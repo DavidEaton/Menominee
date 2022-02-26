@@ -45,6 +45,7 @@ namespace CustomerVehicleManagement.Shared.Models
                     FirstName = person.Name.FirstName,
                     MiddleName = person.Name.MiddleName,
                     LastName = person.Name.LastName,
+                    Gender = person.Gender,
                     DriversLicense = DriversLicenseToRead.ConvertToDto(person.DriversLicense),
                     Address = person?.Address != null
                         ? AddressToRead.ConvertToDto(person.Address)

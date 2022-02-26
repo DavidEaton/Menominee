@@ -15,9 +15,25 @@ namespace Menominee.Client.Components.Customers
         [Parameter]
         public EventCallback<string> OnEntityTypeChanged { get; set; }
 
-        private void EntityTypeChanged(object arg)
+        public void EntityTypeChanged(object arg)
         {
-            OnEntityTypeChanged.InvokeAsync(arg as string);
+            //string entityType = (string)arg;
+
+            try
+            {
+                string entityType = Convert.ToString(arg);
+
+                if (entityType == EntityType.Organization.ToString())
+                    OnEntityTypeChanged.InvokeAsync(EntityType.Organization.ToString());
+
+                if (entityType == EntityType.Person.ToString())
+                    OnEntityTypeChanged.InvokeAsync(EntityType.Person.ToString());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         protected override void OnInitialized()

@@ -19,6 +19,7 @@ namespace Menominee.Client.Pages.Customers
         List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
 
         private CustomerToWrite CustomerToWrite { get; set; }
+        List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
 
         private long Id { get; set; }
         private bool Editing { get; set; } = false;
@@ -29,10 +30,10 @@ namespace Menominee.Client.Pages.Customers
             CustomersList = (await CustomerDataService.GetAllCustomers()).ToList();
 
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
-            {
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
-            }
 
+            foreach (EntityType item in Enum.GetValues(typeof(EntityType)))
+                EntityTypeEnumData.Add(new EntityTypeEnumModel { DisplayText = item.ToString(), Value = item });
         }
 
         private async Task EditAsync(GridRowClickEventArgs args)
@@ -200,22 +201,22 @@ namespace Menominee.Client.Pages.Customers
             };
         }
 
-        private void EntityTypeChanged(string entityType)
+        private void EntityTypeChanged()
         {
-            if (entityType == EntityType.Person.ToString())
-            {
-                if (CustomerToWrite.Person is null)
-                    CustomerToWrite.Person = new();
-
-                CustomerToWrite.Organization = null;
-            }
-
-            if (entityType == EntityType.Organization.ToString())
+            if (CustomerToWrite.EntityType == EntityType.Organization)
             {
                 if (CustomerToWrite.Organization is null)
                     CustomerToWrite.Organization = new();
 
                 CustomerToWrite.Person = null;
+            }
+
+            if (CustomerToWrite.EntityType == EntityType.Person)
+            {
+                if (CustomerToWrite.Person is null)
+                    CustomerToWrite.Person = new();
+
+                CustomerToWrite.Organization = null;
             }
         }
 
@@ -280,6 +281,12 @@ namespace Menominee.Client.Pages.Customers
         private class CustomerTypeEnumModel
         {
             public CustomerType Value { get; set; }
+            public string DisplayText { get; set; }
+        }
+
+        private class EntityTypeEnumModel
+        {
+            public EntityType Value { get; set; }
             public string DisplayText { get; set; }
         }
 

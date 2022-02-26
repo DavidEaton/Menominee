@@ -212,11 +212,11 @@ namespace CustomerVehicleManagement.Api.Customers
 
         private static Customer AddOrganizationCustomer(OrganizationToWrite organizationToAdd, CustomerType customerType)
         {
-            Organization organization = Shared.CreateOrganizationToAdd(organizationToAdd);
+            //Organization organization = Shared.CreateOrganizationToAdd(organizationToAdd);
 
-            Customer customer = new(organization);
+            //Customer customer = new(organization);
 
-            return customer;
+            return null;
         }
 
         private static Customer AddPersonCustomer(PersonToWrite personToAdd, CustomerType customerType)

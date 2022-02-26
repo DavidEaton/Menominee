@@ -36,8 +36,8 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizationFromContext =
                 await context.Organizations
-                             .Include(organization => organization.Phones)
-                             .Include(organization => organization.Emails)
+                             .Include(organization => organization.Phones.OrderByDescending(phone => phone.IsPrimary))
+                             .Include(organization => organization.Emails.OrderByDescending(email => email.IsPrimary))
                              .Include(organization => organization.Contact)
                                  .ThenInclude(contact => contact.Phones)
                              .Include(organization => organization.Contact)

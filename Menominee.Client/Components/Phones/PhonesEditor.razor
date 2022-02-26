@@ -37,14 +37,14 @@
                 <WindowContent>
                     <div class="container">
                         <div class="form-group row">
-                            <label class="form-control-label">Number</label>
+                            <label class="k-label">Number</label>
                             <TelerikMaskedTextBox @bind-Value="@Phone.Number"
                                                   Mask="(999) 000-0000"
                                                   Width="100%">
                             </TelerikMaskedTextBox>
                         </div>
                         <div class="form-group row">
-                            <label class="form-control-label">Type</label>
+                            <label class="k-label">Type</label>
                             <TelerikDropDownList @bind-Value="@Phone.PhoneType"
                                                  Data="PhoneTypeEnumData"
                                                  Width="100%"
@@ -56,7 +56,7 @@
                             <div>
                                 <label>
                                     <TelerikCheckBox @bind-Value="@Phone.IsPrimary"></TelerikCheckBox>
-                                    <span class="form-control-label">Primary</span>
+                                    <span class="k-label">Primary</span>
                                 </label>
                             </div>
                         </div>
@@ -65,12 +65,14 @@
                                            Icon="check"
                                            ThemeColor="primary"
                                            ButtonType="ButtonType.Button"
+                                           Class="dialog-button"
                                            title="Save New Phone">
                                 Ok
                             </TelerikButton>
                             <TelerikButton OnClick="Cancel"
                                            ButtonType="ButtonType.Button"
                                            Icon="x"
+                                           Class="dialog-button"
                                            title="Cancel New Phone">
                                 Cancel
                             </TelerikButton>
@@ -91,3 +93,11 @@
         </TelerikButton>
     </div>
 </div>
+<style>
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+</style>

@@ -17,10 +17,10 @@
         <GridCommandButton Command="ExcelExport"
                            Icon="file-excel"
                            Title="Export to Excel"
-                           OnClick="@ShowLoadingSign">
+                           OnClick="@ShowLoadingSymbol">
         </GridCommandButton>
         <GridCommandButton Command="CsvExport"
-                           OnClick="@ShowLoadingSign"
+                           OnClick="@ShowLoadingSymbol"
                            Title="Export to CSV"
                            Icon="file-csv">
         </GridCommandButton>
@@ -47,7 +47,14 @@
 <TelerikWindow Visible="@isExporting" Modal="true">
     <WindowTitle>Please wait...</WindowTitle>
     <WindowContent>
-        <TelerikLoader Size="LoaderSize.Large" />
+        <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" />
+        We are exporting your data; your file will download shortly.
+    </WindowContent>
+</TelerikWindow>
+<TelerikWindow Visible="@isExporting" Modal="true">
+    <WindowTitle>Please wait...</WindowTitle>
+    <WindowContent>
+        <TelerikLoader Size="@ThemeConstants.Loader.Size.Large" />
         We are exporting your data; your file will download shortly.
     </WindowContent>
 </TelerikWindow>

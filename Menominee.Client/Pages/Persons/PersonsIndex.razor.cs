@@ -1,71 +1,71 @@
 ﻿using CustomerVehicleManagement.Shared.Models;
+using Menominee.Client.Components.Address;
 using Menominee.Client.Services;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages
+namespace Menominee.Client.Pages.Persons
 {
-    public partial class Persons : ComponentBase
+    public partial class PersonsIndex : ComponentBase
     {
         [Inject]
         public IPersonDataService PersonDataService { get; set; }
 
-        public IReadOnlyList<PersonToReadInList> PersonsList;
+        public IReadOnlyList<PersonToReadInList> Persons;
 
-        [Inject]
-        public LocalStorage LocalStorage { get; set; }
-
-        [Inject]
-        IJSRuntime JsInterop { get; set; }
-        private PersonToWrite PersonToWrite { get; set; }
+        public PersonToWrite PersonToWrite { get; set; }
         public TelerikGrid<PersonToReadInList> Grid { get; set; }
         private long Id { get; set; }
-        private bool Editing { get; set; } = false;
-        private bool Adding { get; set; } = false;
-        private bool EditingAddress { get; set; } = false;
-        private bool isExporting { get; set; }
-        private bool ExportAllPages { get; set; }
 
-        private string UniqueStorageKey = new Guid().ToString();
+        private FormMode PersonFormMode = FormMode.Unknown;
+
+        private FormMode AddressFormMode = FormMode.Unknown;
+
+        private AddressEditor addressEditor;
 
         protected override async Task OnInitializedAsync()
         {
-            PersonsList = (await PersonDataService.GetAllPersons()).ToList();
+            Persons = (await PersonDataService.GetAllPersons()).ToList();
         }
 
-        private void ShowLoadingSymbol()
-        {
-            isExporting = true;
-            StateHasChanged();
-            isExporting = false;
-        }
-
-        private void AddAddressAddingPerson()
+        private void AddAddress()
         {
             PersonToWrite.Address = new();
-            EditingAddress = true;
-        }
-
-        private void CancelEditAddress()
-        {
-            EditingAddress = false;
+            AddressFormMode = FormMode.Add;
         }
 
         public void EditAddress()
         {
-            EditingAddress = true;
+            AddressFormMode = FormMode.Edit;
         }
+
+        private void CancelEditAddress()
+        {
+            if (AddressFormMode == FormMode.Edit)
+            {
+                addressEditor.Cancel();
+                AddressFormMode = FormMode.Unknown;
+            }
+
+            if (AddressFormMode == FormMode.Add && PersonToWrite.Address is not null)
+            {
+                AddressFormMode = FormMode.Unknown;
+                StateHasChanged();  //TODO: When Person is new and Address is new, how to cancel?
+                                    //Dialog does not close, console error: null reference exception
+                PersonToWrite.Address = null;
+            }
+        }
+
         private async Task EditAsync(GridRowClickEventArgs args)
         {
             Id = (args.Item as PersonToReadInList).Id;
-            Editing = true;
-            PersonsList = null;
+            PersonFormMode = FormMode.Edit;
+            Persons = null;
 
             var readDto = await PersonDataService.GetPerson(Id);
             PersonToWrite = new PersonToWrite
@@ -120,8 +120,8 @@ namespace Menominee.Client.Pages
 
         private void Add()
         {
-            Adding = true;
-            PersonsList = null;
+            PersonFormMode = FormMode.Add;
+            Persons = null;
             PersonToWrite = new();
             PersonToWrite.Name = new();
         }
@@ -131,7 +131,7 @@ namespace Menominee.Client.Pages
             if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
             {
                 await PersonDataService.AddPerson(PersonToWrite);
-                await EndAddAsync();
+                await EndAddEditAsync();
             }
         }
 
@@ -140,7 +140,7 @@ namespace Menominee.Client.Pages
             if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
             {
                 await PersonDataService.UpdatePerson(PersonToWrite, Id);
-                await EndEditAsync();
+                await EndAddEditAsync();
             }
         }
 
@@ -148,56 +148,19 @@ namespace Menominee.Client.Pages
         {
             if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
             {
-                if (Adding)
+                if (PersonFormMode == FormMode.Add)
                     await HandleAddSubmit();
 
-                if (Editing)
+                if (PersonFormMode == FormMode.Edit)
                     await HandleEditSubmit();
             }
         }
 
-        protected async Task EndEditAsync()
+        protected async Task EndAddEditAsync()
         {
-            Editing = false;
-            EditingAddress = false;
-            PersonsList = (await PersonDataService.GetAllPersons()).ToList();
-        }
-
-        protected async Task EndAddAsync()
-        {
-            Adding = false;
-            Editing = false;
-            EditingAddress = false;
-            PersonsList = (await PersonDataService.GetAllPersons()).ToList();
-        }
-
-        protected async Task OnStateInitHandler(GridStateEventArgs<PersonToReadInList> args)
-        {
-            try
-            {
-                var state = await LocalStorage.GetItem<GridState<PersonToReadInList>>(UniqueStorageKey);
-                if (state != null)
-                {
-                    args.GridState = state;
-                }
-
-            }
-            catch (InvalidOperationException e)
-            {
-                // the JS Interop for the local storage cannot be used during pre-rendering
-                // so the code above will throw. Once the app initializes, it will work fine - Telerik docs
-            }
-        }
-
-        protected async void OnStateChangedHandler(GridStateEventArgs<PersonToReadInList> args)
-        {
-            await LocalStorage.SetItem(UniqueStorageKey, args.GridState);
-        }
-
-        async void ResetState()
-        {
-            await Grid.SetState(null);
-            await LocalStorage.RemoveItem(UniqueStorageKey);
+            PersonFormMode = FormMode.Unknown;
+            AddressFormMode = FormMode.Unknown;
+            Persons = (await PersonDataService.GetAllPersons()).ToList();
         }
     }
 }

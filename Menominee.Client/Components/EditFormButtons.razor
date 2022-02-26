@@ -1,24 +1,21 @@
-﻿<TelerikButton OnClick="Save"
+﻿<TelerikButton OnClick="@(() => Save.InvokeAsync())"
                ThemeColor="primary"
-               Icon="save"
+               ButtonType="ButtonType.Button"
+               Icon="check"
                Enabled="EnableSave"
+               Class="dialog-button"
                title="Save">
     Save
 </TelerikButton>
 
 <TelerikButton Icon="x"
-               OnClick="Close"
-               title="Cancel and Close">
+               OnClick="@(() => Close.InvokeAsync())"
+               Class="dialog-button"
+               title="Cancel/Close">
     Close
 </TelerikButton>
-
-@code {
-    [Parameter]
-    public EventCallback Close { get; set; }
-
-    [Parameter]
-    public EventCallback Save { get; set; }
-
-    [Parameter]
-    public bool EnableSave { get; set; }
-}
+<style>
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+</style>

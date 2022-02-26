@@ -16,7 +16,7 @@ namespace Menominee.Client.Components.Customers
         public TelerikGrid<CustomerToReadInList> Grid { get; set; }
 
         [Parameter]
-        public EventCallback<GridRowClickEventArgs> OnEditAsync { get; set; }
+        public EventCallback<GridRowClickEventArgs> OnRowClicked { get; set; }
 
         [Parameter]
         public EventCallback OnAddAsync { get; set; }
@@ -29,9 +29,9 @@ namespace Menominee.Client.Components.Customers
 
         private string UniqueStorageKey = new Guid().ToString();
 
-        private async Task EditAsync(GridRowClickEventArgs args)
+        private async Task RowClicked(GridRowClickEventArgs args)
         {
-            await OnEditAsync.InvokeAsync(args);
+            await OnRowClicked.InvokeAsync(args);
         }
 
         private async Task AddAsync()

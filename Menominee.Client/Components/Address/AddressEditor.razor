@@ -1,0 +1,36 @@
+﻿<div class="form-group">
+    <label for="address" class="k-label">Street</label>
+    <TelerikTextBox @bind-Value="@Address.AddressLine"
+                    Id="address"
+                    Width="100%"
+                    Enabled="Enabled" />
+</div>
+<div class="form-group">
+    <label for="city" class="k-label">City</label>
+    <TelerikTextBox @bind-Value="@Address.City"
+                    Id="city"
+                    Width="100%"
+                    Enabled="Enabled" />
+</div>
+
+<div class="form-group">
+    <label for="state" class="k-label">State</label>
+    <TelerikComboBox Data="StateEnumData"
+                     Id="state"
+                     TextField="DisplayText"
+                     ValueField="Value"
+                     @bind-Value="@Address.State"
+                     Width="100%"
+                     Filterable="true"
+                     ClearButton="false"
+                     Placeholder="Select a State"
+                     Enabled="Enabled" />
+</div>
+
+<div class="form-group">
+    <label for="postalCode" class="k-label">Postal Code</label>
+    <TelerikTextBox @bind-Value="@Address.PostalCode"
+                    Id="postalCode"
+                    Width="100%"
+                    Enabled="Enabled" />
+</div>

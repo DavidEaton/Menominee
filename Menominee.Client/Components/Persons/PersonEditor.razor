@@ -1,0 +1,29 @@
+﻿<PersonNameEditor TItem="PersonNameToWrite"
+                  Item="@Person.Name"
+                  FirstNameProperty="FirstName"
+                  MiddleNameProperty="MiddleName"
+                  LastNameProperty="LastName" />
+
+<div class="form-group row">
+    <label for="gender" class="k-label">Gender</label>
+    <TelerikComboBox Data="GenderEnumData"
+                     TextField="DisplayText"
+                     ValueField="Value"
+                     @bind-Value="@Person.Gender"
+                     Width="100%"
+                     ClearButton="false"
+                     Placeholder="Select a Gender"
+                     Enabled="Enabled">
+    </TelerikComboBox>
+</div>
+<div class="form-group row">
+    <label for="birthday" class="k-label">Birthday</label>
+    <TelerikDateInput @bind-Value="@Person.Birthday"
+                      Width="100%">
+    </TelerikDateInput>
+</div>
+<style>
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+</style>
