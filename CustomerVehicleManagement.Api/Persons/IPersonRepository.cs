@@ -16,6 +16,6 @@ namespace CustomerVehicleManagement.Api.Persons
         Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync();
         Task<PersonToRead> GetPersonAsync(long id);
         Task<Person> GetPersonEntityAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }

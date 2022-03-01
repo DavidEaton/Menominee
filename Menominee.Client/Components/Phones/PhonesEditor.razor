@@ -1,5 +1,17 @@
 ﻿<div class="container">
-    <div class="h6">Phones</div>
+    <TelerikButton ButtonType="ButtonType.Button"
+                   Icon="plus"
+                   Size="@ThemeConstants.Button.Size.Small"
+                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                   Rounded="@ThemeConstants.Button.Rounded.Full"
+                   Class="add-item"
+                   OnClick="Add"
+                   Id="addPhone" />
+    <label for="addPhone"
+           class="k-label"
+           title="Add phone">
+        add Phone
+    </label>
     @if (((int)Phones?.Count()) > 0)
     {
         <ContactableTemplate Items="Phones"
@@ -26,10 +38,10 @@
         </ContactableTemplate>
     }
 
-    @if (Adding || Editing)
+    @if (FormMode == FormMode.Add || FormMode == FormMode.Edit)
     {
         <EditForm Model="Phone">
-            <TelerikWindow Visible="DialogVisible"
+            <TelerikWindow Visible="true"
                            Modal="true">
                 <WindowTitle>
                     Phone
@@ -76,6 +88,13 @@
                                            title="Cancel New Phone">
                                 Cancel
                             </TelerikButton>
+                            <TelerikButton OnClick="RemoveAsync"
+                                           ButtonType="ButtonType.Button"
+                                           Icon="trash"
+                                           Class="dialog-button bg-danger text-white"
+                                           Enabled="FormMode == FormMode.Edit"
+                                           title="Remove Phone">
+                            </TelerikButton>
                         </div>
                     </div>
                 </WindowContent>
@@ -83,7 +102,7 @@
         </EditForm>
 
     }
-    <div>
+    @*<div>
         <TelerikButton OnClick="Add"
                        Icon="plus"
                        ButtonType="ButtonType.Button"
@@ -91,13 +110,20 @@
                        title="Add New Phone">
             Add Phone
         </TelerikButton>
-    </div>
+    </div>*@
 </div>
 <style>
     .k-label {
         margin-bottom: .2rem !important;
     }
-    .dialog-button {
-        margin-right: 0.7rem;
+
+    .add-item {
+        color: white;
+        background-color: #5cb85c;
+    }
+
+    .remove-item {
+        color: white;
+        background-color: #d9534f;
     }
 </style>

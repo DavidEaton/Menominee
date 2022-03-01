@@ -23,10 +23,11 @@ namespace CustomerVehicleManagement.Shared.Validators
                                                                                  address.PostalCode))
                                     .When(organization => organization.Address != null);
 
-            RuleFor(person => person.Gender)
-                                    .NotEmpty()
-                                    .IsInEnum()
-                                    .WithMessage("Please select a valid Gender");
+            // TODO: FIX THIS RULE; FAILS WHEN MODEL IS VALID
+            //RuleFor(person => person.Gender)
+            //                        .NotEmpty()
+            //                        .IsInEnum()
+            //                        .WithMessage("Please select a valid Gender");
 
             RuleFor(person => person.Birthday)
                                     .NotEmpty()

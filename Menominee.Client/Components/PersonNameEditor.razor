@@ -1,20 +1,28 @@
 ﻿@typeparam TItem
 
-<div class="m-form-control-group">
-    <label for="name" class="form-control-label">First Name</label>
+<div class="form-group row">
+    <label for="firstName" class="k-label">First Name</label>
     <TelerikTextBox @bind-Value="FirstName"
+                    Id="firstName"
                     Width="100%">
     </TelerikTextBox>
 </div>
-<div class="m-form-control-group">
-    <label for="note" class="form-control-label">Middle Name</label>
+<div class="form-group row">
+    <label for="middleName" class="k-label">Middle Name</label>
     <TelerikTextBox @bind-Value="MiddleName"
+                    Id="middleName"
                     Width="100%">
     </TelerikTextBox>
 </div>
-<div class="m-form-control-group">
-    <label for="note" class="form-control-label">Last Name</label>
+<div class="form-group row">
+    <label for="lastName" class="k-label">Last Name</label>
     <TelerikTextBox @bind-Value="LastName"
+                    Id="lastName"
                     Width="100%">
     </TelerikTextBox>
 </div>
+<style>
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+</style>

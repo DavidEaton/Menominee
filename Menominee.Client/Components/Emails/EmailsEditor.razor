@@ -1,5 +1,17 @@
 ﻿<div class="container">
-    <div class="h6">Emails</div>
+    <TelerikButton ButtonType="ButtonType.Button"
+                   Icon="plus"
+                   Size="@ThemeConstants.Button.Size.Small"
+                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                   Rounded="@ThemeConstants.Button.Rounded.Full"
+                   Class="add-item"
+                   OnClick="Add"
+                   Id="addEmail" />
+    <label for="addEmail"
+           class="k-label"
+           title="Add Email">
+        add Email
+    </label>
     @*If there are emails, list them in a table and show.*@
     @if (((int)Emails?.Count()) > 0)
     {
@@ -24,10 +36,10 @@
     }
 
     @*If adding or editing email, show the edit form in modal dialog*@
-    @if (Adding || Editing)
+    @if (FormMode == FormMode.Add || FormMode == FormMode.Edit)
     {
         <EditForm Model="Email">
-            <TelerikWindow Visible="DialogVisible"
+            <TelerikWindow Visible="true"
                            Modal="true">
                 <WindowTitle>
                     Email
@@ -55,12 +67,19 @@
                                            title="Save New Email">
                                 Ok
                             </TelerikButton>
-                            <TelerikButton OnClick="CancelEdit"
+                            <TelerikButton OnClick="Cancel"
                                            ButtonType="ButtonType.Button"
                                            Class="dialog-button"
                                            Icon="x"
                                            title="Cancel New Email">
                                 Cancel
+                            </TelerikButton>
+                            <TelerikButton OnClick="RemoveAsync"
+                                           ButtonType="ButtonType.Button"
+                                           Icon="trash"
+                                           Class="dialog-button bg-danger text-white"
+                                           Enabled="FormMode == FormMode.Edit"
+                                           title="Remove Email">
                             </TelerikButton>
                         </div>
                     </div>
@@ -69,22 +88,16 @@
         </EditForm>
 
     }
-    <div>
-        <TelerikButton OnClick="Add"
-                       Icon="plus"
-                       ButtonType="ButtonType.Button"
-                       Class="button-border-success"
-                       title="Add New Email">
-            Add Email
-        </TelerikButton>
-    </div>
 </div>
 <style>
     .k-label {
         margin-bottom: .2rem !important;
     }
-
     .dialog-button {
         margin-right: 0.7rem;
+    }
+    .add-item {
+        color: white;
+        background-color: forestgreen;
     }
 </style>

@@ -53,8 +53,6 @@ namespace Menominee.Client.Components.Persons
             {
                 GenderEnumData.Add(new GenderEnumModel { DisplayText = item.ToString(), Value = item });
             }
-
-            base.OnInitialized();
         }
 
         List<GenderEnumModel> GenderEnumData { get; set; } = new List<GenderEnumModel>();

@@ -77,9 +77,9 @@ namespace CustomerVehicleManagement.Api.Persons
                 .ToList();
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            await context.SaveChangesAsync();
         }
 
         public void FixTrackingState()

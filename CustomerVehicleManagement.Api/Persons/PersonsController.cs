@@ -69,11 +69,9 @@ namespace CustomerVehicleManagement.Api.Persons
             var notFoundMessage = $"Could not find Person to update";
 
             Person personFromRepository = await repository.GetPersonEntityAsync(id);
-            if (personFromRepository == null)
+            if (personFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            List<Phone> phones = new();
-            List<Email> emails = new();
 
             personFromRepository.SetName(PersonName.Create(
                                             personToUpdate.Name.LastName,
@@ -82,23 +80,30 @@ namespace CustomerVehicleManagement.Api.Persons
 
             personFromRepository.SetGender(personToUpdate.Gender);
 
-            if (personToUpdate?.Address != null)
+            if (personToUpdate?.Address is not null)
                 personFromRepository.SetAddress(Address.Create(personToUpdate.Address.AddressLine,
                                                                personToUpdate.Address.City,
                                                                personToUpdate.Address.State,
                                                                personToUpdate.Address.PostalCode).Value);
 
 
+            if (personToUpdate?.Address is null)
+                personFromRepository.SetAddress(null);
 
             personFromRepository.SetBirthday(personToUpdate.Birthday);
 
+            List<Phone> phones = new();
 
-            if (personToUpdate?.Phones.Count > 0)
-                foreach (var phone in personToUpdate.Phones)
-                {
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-                    personFromRepository.SetPhones(phones);
-                }
+            foreach (var phone in personToUpdate?.Phones)
+                phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            if (personToUpdate?.Phones is null || personToUpdate?.Phones.Count == 0)
+                phones = null;
+
+            personFromRepository.SetPhones(phones);
+
+
+            List<Email> emails = new();
 
             if (personToUpdate?.Emails.Count > 0)
                 foreach (var email in personToUpdate.Emails)
@@ -107,7 +112,7 @@ namespace CustomerVehicleManagement.Api.Persons
                     personFromRepository.SetEmails(emails);
                 }
 
-            if (personToUpdate?.DriversLicense != null)
+            if (personToUpdate?.DriversLicense is not null)
             {
                 personFromRepository.SetDriversLicense(DriversLicense.Create(personToUpdate.DriversLicense.Number,
                     personToUpdate.DriversLicense.State,
@@ -121,33 +126,21 @@ namespace CustomerVehicleManagement.Api.Persons
 
             repository.UpdatePersonAsync(personFromRepository);
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update {personToUpdate.Name.LastFirstMiddle}.");
+            return NoContent();
         }
 
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            Address address = null;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-            DriversLicense driversLicense = null;
-
             var personName = PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value;
 
+            Address address = null;
             if (personToAdd?.Address != null)
                 address = Address.Create(personToAdd.Address.AddressLine, personToAdd.Address.City, personToAdd.Address.State, personToAdd.Address.PostalCode).Value;
 
-            if (personToAdd?.Phones.Count > 0)
-                foreach (var phone in personToAdd.Phones)
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (personToAdd?.Emails.Count > 0)
-                foreach (var email in personToAdd.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
+            DriversLicense driversLicense = null;
             if (personToAdd?.DriversLicense != null)
             {
                 DateTimeRange dateTimeRange = DateTimeRange.Create(
@@ -158,6 +151,14 @@ namespace CustomerVehicleManagement.Api.Persons
                     personToAdd.DriversLicense.State,
                     dateTimeRange).Value;
             }
+
+            List<Phone> phones = new();
+            foreach (var phone in personToAdd?.Phones)
+                phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            List<Email> emails = new();
+            foreach (var email in personToAdd?.Emails)
+                emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
             Person person = new(personName, personToAdd.Gender, address, emails, phones, personToAdd.Birthday, driversLicense);
 
@@ -178,10 +179,9 @@ namespace CustomerVehicleManagement.Api.Persons
 
             repository.DeletePerson(personFromRepository);
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to delete Person with Id: {id}.");
+            return NoContent();
         }
     }
 }

@@ -46,7 +46,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetBirthday(DateTime? birthday)
         {
-            if (birthday.HasValue)
                 Birthday = birthday;
         }
 

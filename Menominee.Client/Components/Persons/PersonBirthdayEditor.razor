@@ -1,0 +1,57 @@
+﻿<div hidden="@(Person.Birthday.HasValue)">
+    <TelerikButton ButtonType="ButtonType.Button"
+                   Icon="plus"
+                   Size="@ThemeConstants.Button.Size.Small"
+                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                   Rounded="@ThemeConstants.Button.Rounded.Full"
+                   Class="add-item"
+                   OnClick="ToggleBirthday"
+                   Id="addBirthday" />
+    <label for="addBirthday"
+           class="k-label"
+           title="Add birthday">
+        add Birthday
+    </label>
+</div>
+<div class="form-group"
+     hidden="@(!Person.Birthday.HasValue)">
+    <div>
+        <TelerikButton ButtonType="ButtonType.Button"
+                       Icon="minus"
+                       Size="@ThemeConstants.Button.Size.Small"
+                       Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                       Rounded="@ThemeConstants.Button.Rounded.Full"
+                       Class="remove-item"
+                       OnClick="ToggleBirthday"
+                       Id="removeBirthday"
+                       title="Remove birthday" />
+        <span hidden="@(!Person.Birthday.HasValue)">
+            <label for="removeBirthday"
+                   class="k-label"
+                   title="Remove birthday">
+                Birthday
+            </label>
+            <TelerikDatePicker @bind-Value="@Person.Birthday"
+                               Width="100%"
+                               Class="mt-2">
+            </TelerikDatePicker>
+        </span>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public PersonToWrite Person { get; set; }
+
+    private void ToggleBirthday()
+    {
+        if (Person.Birthday.HasValue)
+        {
+            Person.Birthday = null;
+            return;
+        }
+
+        if (!Person.Birthday.HasValue)
+            Person.Birthday = DateTime.Today;
+    }
+}

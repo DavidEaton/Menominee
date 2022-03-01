@@ -52,12 +52,15 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
         public void SetPhones(IList<Phone> phones)
         {
-            Guard.ForNull(phones, "phones");
+            // Client may send an empty or null phones collection, signifying removal/replacement
+            if (phones is null || phones?.Count == 0)
+                Phones = phones;
 
-            if (phones.Count > 0)
+            if (phones?.Count > 0)
             {
                 Phones.Clear();
                 var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
+
                 foreach (var phone in sortedPhones)
                     AddPhone(phone);
             }
@@ -104,8 +107,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             // Guard unnecessarily throws exception; we just need a null check.
             // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
-            if (address != null)
-                Address = address;
+            // BTW, if user removes Address, it will be null here so use it.
+            Address = address;
         }
 
         // VK: no need to make these methods public, they are just for the Contactable class
@@ -131,6 +134,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         }
 
         // EF requires empty constructor
-        public Contactable() {}
+        public Contactable() { }
     }
 }

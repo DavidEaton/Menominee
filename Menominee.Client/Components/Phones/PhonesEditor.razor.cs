@@ -3,6 +3,9 @@ using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Telerik.Blazor;
 
 namespace Menominee.Client.Components.Phones
 {
@@ -17,14 +20,13 @@ namespace Menominee.Client.Components.Phones
         public bool Enabled { get; set; }
 
         [Parameter]
-        public FormMode FormMode { get; set; }
+        public FormMode FormMode { get; set; } = FormMode.Unknown;
+
+        [CascadingParameter]
+        public DialogFactory Dialogs { get; set; }
 
         private PhoneToWrite phoneOriginal;
 
-        private bool Adding { get; set; }
-        private bool Editing { get; set; }
-
-        private bool DialogVisible => Phone != null && (Adding || Editing);
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
 
         protected override void OnInitialized()
@@ -33,23 +35,21 @@ namespace Menominee.Client.Components.Phones
             {
                 PhoneTypeEnumData.Add(new PhoneTypeEnumModel { DisplayText = item.ToString(), Value = item });
             }
-
-            base.OnInitialized();
         }
 
-       public void Reset()
+        public void Reset()
         {
             Phone.Number = phoneOriginal.Number;
             Phone.PhoneType = phoneOriginal.PhoneType;
             Phone.IsPrimary = phoneOriginal.IsPrimary;
         }
 
-        private void Edit(PhoneToWrite item)
+        private void Edit(PhoneToWrite phone)
         {
-            if (item is not null)
+            if (phone is not null)
             {
-                Phone = item;
-                Editing = true;
+                Phone = phone;
+                FormMode = FormMode.Edit;
 
                 phoneOriginal = new PhoneToWrite
                 {
@@ -63,33 +63,44 @@ namespace Menominee.Client.Components.Phones
         private void Add()
         {
             Phone = new();
-            Adding = true;
+            FormMode = FormMode.Add;
         }
 
         private void Save()
         {
-            if (Phone != null && Adding)
-            {
+            if (Phone != null && FormMode == FormMode.Add)
                 Phones.Add(Phone);
-                Adding = false;
-            }
 
-            if (Phone != null && Editing)
-                Editing = false;
+            FormMode = FormMode.Unknown;
         }
 
         private void Cancel()
         {
-            if (Phone != null && Adding)
+            if (Phone != null && FormMode == FormMode.Add)
                 Phone = new();
 
-            if (Phone != null && Editing)
+            if (Phone != null && FormMode == FormMode.Edit)
                 Reset();
 
-            Adding = false;
-            Editing = false;
+            FormMode = FormMode.Unknown;
         }
+
+        private async Task RemoveAsync()
+        {
+            if (await RemoveConfirm())
+            {
+                Phones.Remove(Phone);
+                FormMode = FormMode.Unknown;
+            }
+        }
+
+        public async Task<bool> RemoveConfirm()
+        {
+            return await Dialogs.ConfirmAsync($"Are you sure you want to remove phone number {Regex.Replace(Phone.Number, @"(\d{3})(\d{3})(\d{4})", "$1-$2-$3")}?", "Remove Phone");
+        }
+
     }
+
     internal class PhoneTypeEnumModel
     {
         public PhoneType Value { get; set; }

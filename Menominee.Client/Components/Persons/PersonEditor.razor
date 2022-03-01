@@ -13,17 +13,25 @@
                      Width="100%"
                      ClearButton="false"
                      Placeholder="Select a Gender"
+                     Id="gender"
                      Enabled="Enabled">
     </TelerikComboBox>
 </div>
-<div class="form-group row">
-    <label for="birthday" class="k-label">Birthday</label>
-    <TelerikDateInput @bind-Value="@Person.Birthday"
-                      Width="100%">
-    </TelerikDateInput>
-</div>
+
+<PersonBirthdayEditor Person="@Person"/>
+
 <style>
     .k-label {
         margin-bottom: .2rem !important;
+    }
+
+    .add-item {
+        color: white;
+        background-color: forestgreen;
+    }
+
+    .remove-item {
+        color: white;
+        background-color: indianred;
     }
 </style>

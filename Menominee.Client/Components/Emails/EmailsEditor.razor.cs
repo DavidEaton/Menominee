@@ -2,6 +2,8 @@
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Telerik.Blazor;
 
 namespace Menominee.Client.Components.Emails
 {
@@ -15,13 +17,12 @@ namespace Menominee.Client.Components.Emails
         public bool Enabled { get; set; }
 
         [Parameter]
-        public FormMode FormMode { get; set; }
+        public FormMode FormMode { get; set; } = FormMode.Unknown;
+
+        [CascadingParameter]
+        public DialogFactory Dialogs { get; set; }
 
         private EmailToWrite emailOriginal;
-
-        private bool DialogVisible => Email != null && (Adding || Editing);
-        private bool Adding { get; set; } = false;
-        private bool Editing { get; set; } = false;
 
         public void Reset()
         {
@@ -32,15 +33,15 @@ namespace Menominee.Client.Components.Emails
         private void Add()
         {
             Email = new();
-            Adding = true;
+            FormMode = FormMode.Add;
         }
 
-        private void Edit(EmailToWrite item)
+        private void Edit(EmailToWrite email)
         {
-            if (item is not null)
+            if (email is not null)
             {
-                Email = item;
-                Editing = true;
+                Email = email;
+                FormMode = FormMode.Edit;
 
                 emailOriginal = new EmailToWrite
                 {
@@ -52,26 +53,35 @@ namespace Menominee.Client.Components.Emails
 
         private void Save()
         {
-            if (Email != null && Adding)
-            {
+            if (Email != null && FormMode == FormMode.Add)
                 Emails.Add(Email);
-                Adding = false;
-            }
 
-            if (Email != null && Editing)
-                Editing = false;
+            FormMode = FormMode.Unknown;
         }
 
-        private void CancelEdit()
+        private void Cancel()
         {
-            if (Email != null && Adding)
+            if (Email != null && FormMode == FormMode.Add)
                 Email = new();
 
-            if (Email != null && Editing)
+            if (Email != null && FormMode == FormMode.Edit)
                 Reset();
 
-            Adding = false;
-            Editing = false;
+            FormMode = FormMode.Unknown;
+        }
+
+        private async Task RemoveAsync()
+        {
+            if (await RemoveConfirm())
+            {
+                Emails.Remove(Email);
+                FormMode = FormMode.Unknown;
+            }
+        }
+
+        public async Task<bool> RemoveConfirm()
+        {
+            return await Dialogs.ConfirmAsync($"Are you sure you want to remove email address {Email.Address}?", "Remove Email");
         }
     }
 }
