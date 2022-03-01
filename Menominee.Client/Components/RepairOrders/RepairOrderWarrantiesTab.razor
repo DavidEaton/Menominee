@@ -13,14 +13,14 @@
                                  OnRowClick="@OnRowSelected"
                                  OnRowDoubleClick="@OnEdit"
                                  SelectionMode="GridSelectionMode.Single"
-                                 SelectedItemsChanged="@((IEnumerable<Warranty> warrantyList) => OnSelect(warrantyList))"
+                                 SelectedItemsChanged="@((IEnumerable<WarrantyListItem> warrantyList) => OnSelect(warrantyList))"
                                  SelectedItems="@SelectedWarranties"
                                  Class="">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
                                     @{
-                                        var war = context as Warranty;
+                                        var war = context as WarrantyListItem;
                                         if (war.IsComplete())
                                         {
                                             <i class="fas fa-check m-green-check"></i>
@@ -32,16 +32,16 @@
                                     }
                                 </Template>
                             </GridColumn>
-                            <GridColumn Width="20%" Field="@nameof(Warranty.PartNumber)" Title="Part Number"></GridColumn>
-                            <GridColumn Width="25%" Field="@nameof(Warranty.Description)" Title="Description"></GridColumn>
-                            <GridColumn Width="10%" Field="@nameof(Warranty.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
-                            <GridColumn Width="20%" Field="@nameof(Warranty.Type)" Title="Type">
+                            <GridColumn Width="20%" Field="@nameof(WarrantyListItem.PartNumber)" Title="Part Number"></GridColumn>
+                            <GridColumn Width="25%" Field="@nameof(WarrantyListItem.Description)" Title="Description"></GridColumn>
+                            <GridColumn Width="10%" Field="@nameof(WarrantyListItem.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
+                            <GridColumn Width="20%" Field="@nameof(WarrantyListItem.Type)" Title="Type">
                                 <Template>
-                                    @(Enum.GetName(typeof(WarrantyType), (context as Warranty).Type))
+                                    @(Enum.GetName(typeof(WarrantyType), (context as WarrantyListItem).Type))
                                 </Template>
                             </GridColumn>
 
-                            <GridColumn Width="25%" Field="@nameof(Warranty.WarrantyNumber)" Title="Warranty Number"></GridColumn>
+                            <GridColumn Width="25%" Field="@nameof(WarrantyListItem.WarrantyNumber)" Title="Warranty Number"></GridColumn>
                         </GridColumns>
                     </TelerikGrid>
 

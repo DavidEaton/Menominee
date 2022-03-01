@@ -1,0 +1,80 @@
+﻿<EditForm Model="SerialNumber">
+    <TelerikWindow Visible="DialogVisible"
+                   Modal="true"
+                   Class="popupWindowClass">
+        <WindowTitle>
+            @Title
+        </WindowTitle>
+        <WindowContent>
+            <div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="partNumber">Part Number</label>
+                        <TelerikTextBox @bind-Value="@SerialNumber.PartNumber"
+                                        Width="100%"
+                                        Enabled="false"
+                                        Id="partNumber">
+                        </TelerikTextBox>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="description">Description</label>
+                        <TelerikTextBox @bind-Value="@SerialNumber.Description"
+                                        Width="100%"
+                                        Enabled="false"
+                                        Id="description">
+                        </TelerikTextBox>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="amount">Serial Number</label>
+                        <TelerikTextBox @bind-Value="@SerialNumber.SerialNum"
+                                        Width="100%"
+                                        AutoComplete="off"
+                                        Id="amount">
+                        </TelerikTextBox>
+                    </div>
+                </div>
+            </div>
+            <hr id="divider">
+            <div>
+                <TelerikButton OnClick="OnSave"
+                               ButtonType="ButtonType.Button"
+                               ThemeColor="primary"
+                               Class="dialog-button">
+                    <i class="fas fa-check"></i> OK
+                </TelerikButton>
+                <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               Class="dialog-button">
+                    <i class="fas fa-times"></i> Cancel
+                </TelerikButton>
+            </div>
+        </WindowContent>
+    </TelerikWindow>
+
+</EditForm>
+
+<style>
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+</style>

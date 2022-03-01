@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
-    public partial class RepairOrderTechEdit : ComponentBase
+    public partial class RepairOrderTechEditor : ComponentBase
     {
         [Parameter]
         public RepairOrderServiceToWrite Service { get; set; }

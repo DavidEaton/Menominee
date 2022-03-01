@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telerik.Blazor.Components;
@@ -7,17 +8,23 @@ namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderSerialNumbersTab : ComponentBase
     {
+        [CascadingParameter]
+        public List<SerialNumberListItem> SerialNumberList { get; set; }
+
         [Parameter]
-        public List<SerialNumber> SerialNumbers { get; set; } = null;
+        public EventCallback OnChangeSerialNumber { get; set; } // An unsuccessful attempt to get the grid to update immediately
 
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
         private bool CanClear { get; set; } = false;
+        private bool EditDialogVisible { get; set; } = false;
 
-        // FIX ME - replace SerialNumber with DTO
-        public IEnumerable<SerialNumber> SelectedSerialNumbers { get; set; } = Enumerable.Empty<SerialNumber>();
-        public SerialNumber SelectedSerialNumber { get; set; }
-        public SerialNumber SerialNumberToModify { get; set; } = null;
+        // FIX ME - resolve Id==0 issue with new records with detail records
+        public IEnumerable<SerialNumberListItem> SelectedSerialNumbers { get; set; } = Enumerable.Empty<SerialNumberListItem>();
+        public SerialNumberListItem SelectedSerialNumber { get; set; }
+        public SerialNumberListItem SerialNumberToModify { get; set; } = null;
+
+        public TelerikGrid<SerialNumberListItem> SerialNumberGrid { get; set; }
 
         public long SelectedId
         {
@@ -26,34 +33,34 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 selectedId = value;
                 CanEdit = selectedId != 0;
-                CanCopy = selectedId != 0 && SerialNumbers.Count > 0;
+                CanCopy = selectedId != 0 && SerialNumberList.Count > 0;
                 CanClear = selectedId != 0;
             }
         }
 
         private long itemToSelect { get; set; } = 0;
         private long selectedId = 0;
-        private int selectedItemIndex = 0;
+        //private int selectedItemIndex = 0;
 
         protected override void OnInitialized()
         {
-            if (SerialNumbers.Count > 0)
+            if (SerialNumberList.Count > 0)
             {
                 if (itemToSelect == 0)
                 {
-                    SelectedSerialNumber = SerialNumbers.FirstOrDefault();
+                    SelectedSerialNumber = SerialNumberList.FirstOrDefault();
                 }
                 else
                 {
-                    SelectedSerialNumber = SerialNumbers.Where(x => x.Id == itemToSelect).FirstOrDefault();
+                    SelectedSerialNumber = SerialNumberList.Where(x => x.Id == itemToSelect).FirstOrDefault();
                 }
-                selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
+                //selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
                 SelectedId = SelectedSerialNumber.Id;
-                SelectedSerialNumbers = new List<SerialNumber> { SelectedSerialNumber };
+                SelectedSerialNumbers = new List<SerialNumberListItem> { SelectedSerialNumber };
             }
         }
 
-        protected void OnSelect(IEnumerable<SerialNumber> serialNumber)
+        protected void OnSelect(IEnumerable<SerialNumberListItem> serialNumber)
         {
             //SelectedItem = ros.FirstOrDefault();
             //SelectedList = new List<RepairOrderToReadInList> { SelectedItem };
@@ -61,22 +68,61 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedSerialNumber = args.Item as SerialNumber;
+            SelectedSerialNumber = args.Item as SerialNumberListItem;
             SelectedId = SelectedSerialNumber.Id;
-            selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
-            SelectedSerialNumbers = new List<SerialNumber> { SelectedSerialNumber };
+            //selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
+            SelectedSerialNumbers = new List<SerialNumberListItem> { SelectedSerialNumber };
         }
 
         private void OnEdit()
         {
+            SerialNumberToModify = new();
+            CopySerialNumber(SelectedSerialNumber, SerialNumberToModify);
+            //ItemFormMode = FormMode.Edit;
+            EditDialogVisible = true;
         }
 
         private void OnCopy()
         {
         }
 
+        private void OnSaveEdit()
+        {
+            //if (ItemFormMode != FormMode.Add && ItemFormMode != FormMode.Edit)
+            //    return;   // may need to add this back in if we end up using FormMode.View
+
+            var index = SerialNumberList.IndexOf(SelectedSerialNumber);
+            CopySerialNumber(SerialNumberToModify, SelectedSerialNumber);
+
+            if (index >= 0)
+                CopySerialNumber(SelectedSerialNumber, SerialNumberList[index]);
+
+            EditDialogVisible = false;
+            // FIX ME - trying to get the grid to reflect the changes immediately but this isn't working
+            StateHasChanged();
+            SerialNumberGrid?.Rebind();
+            StateHasChanged();
+            OnChangeSerialNumber.InvokeAsync();
+            SerialNumberGrid?.Rebind();
+        }
+
+        private void OnCancelEdit()
+        {
+            //ItemFormMode = FormMode.Unknown;
+            EditDialogVisible = false;
+        }
+
         private void OnClear()
         {
+        }
+
+        private static void CopySerialNumber(SerialNumberListItem src, SerialNumberListItem dst)
+        {
+            dst.Id = src.Id;
+            dst.ItemId = src.ItemId;
+            dst.PartNumber = src.PartNumber;
+            dst.Description = src.Description;
+            dst.SerialNum = src.SerialNum;
         }
     }
 }

@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
-    public partial class RepairOrderLaborEdit : ComponentBase
+    public partial class RepairOrderLaborEditor : ComponentBase
     {
         [Inject]
         public ISaleCodeDataService saleCodeDataService { get; set; }
@@ -33,13 +34,7 @@ namespace Menominee.Client.Components.RepairOrders
             set
             {
                 formMode = value;
-                if (formMode == FormMode.Add)
-                    Title = "Add";
-                else if (formMode == FormMode.Edit)
-                    Title = "Edit";
-                else
-                    Title = "View";
-                Title += " Labor";
+                Title = FormTitle.BuildTitle(formMode, "Labor");
             }
         }
 
