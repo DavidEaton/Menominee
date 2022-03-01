@@ -28,7 +28,7 @@ namespace Menominee.Client.Pages.Organizations
         private FormMode OrganizationFormMode = FormMode.Unknown;
 
         private FormMode AddressFormMode = FormMode.Unknown;
-        private OrganizationToWrite OrganizationToWrite { get; set; }
+        private OrganizationToWrite Organization { get; set; }
 
         private AddressEditor addressEditor;
         protected override async Task OnInitializedAsync()
@@ -38,7 +38,7 @@ namespace Menominee.Client.Pages.Organizations
 
         private void AddAddress()
         {
-            OrganizationToWrite.Address = new();
+            Organization.Address = new();
             AddressFormMode = FormMode.Add;
         }
 
@@ -54,12 +54,12 @@ namespace Menominee.Client.Pages.Organizations
                 AddressFormMode = FormMode.Unknown;
             }
 
-            if (OrganizationFormMode == FormMode.Add && OrganizationToWrite.Address is not null)
+            if (OrganizationFormMode == FormMode.Add && Organization.Address is not null)
             {
                 AddressFormMode = FormMode.Unknown;
                 StateHasChanged();  //TODO: When Organization is new and Address is new, how to cancel?
                                     //Dialog does not close, console error: null reference exception
-                OrganizationToWrite.Address = null;
+                Organization.Address = null;
             }
         }
 
@@ -70,7 +70,7 @@ namespace Menominee.Client.Pages.Organizations
             Organizations = null;
 
             var readDto = await OrganizationDataService.GetOrganization(Id);
-            OrganizationToWrite = new OrganizationToWrite
+            Organization = new OrganizationToWrite
             {
                 Name = readDto.Name,
                 Note = readDto.Note
@@ -78,7 +78,7 @@ namespace Menominee.Client.Pages.Organizations
 
             if (readDto.Address != null)
             {
-                OrganizationToWrite.Address = new AddressToWrite
+                Organization.Address = new AddressToWrite
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
@@ -91,7 +91,7 @@ namespace Menominee.Client.Pages.Organizations
             {
                 foreach (var email in readDto.Emails)
                 {
-                    OrganizationToWrite.Emails.Add(new EmailToWrite
+                    Organization.Emails.Add(new EmailToWrite
                     {
                         Address = email.Address,
                         IsPrimary = email.IsPrimary
@@ -103,7 +103,7 @@ namespace Menominee.Client.Pages.Organizations
             {
                 foreach (var phone in readDto.Phones)
                 {
-                    OrganizationToWrite.Phones.Add(new PhoneToWrite
+                    Organization.Phones.Add(new PhoneToWrite
                     {
                         Number = phone.Number,
                         PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
@@ -118,30 +118,30 @@ namespace Menominee.Client.Pages.Organizations
         {
             OrganizationFormMode = FormMode.Add;
             Organizations = null;
-            OrganizationToWrite = new();
+            Organization = new();
         }
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToWrite.Name))
+            if (!string.IsNullOrWhiteSpace(Organization.Name))
             {
-                await OrganizationDataService.AddOrganization(OrganizationToWrite);
+                await OrganizationDataService.AddOrganization(Organization);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task HandleEditSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToWrite.Name))
+            if (!string.IsNullOrWhiteSpace(Organization.Name))
             {
-                await OrganizationDataService.UpdateOrganization(OrganizationToWrite, Id);
+                await OrganizationDataService.UpdateOrganization(Organization, Id);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task SubmitHandlerAsync()
         {
-            if (!string.IsNullOrWhiteSpace(OrganizationToWrite.Name))
+            if (!string.IsNullOrWhiteSpace(Organization.Name))
             {
                 if (OrganizationFormMode == FormMode.Add)
                     await HandleAddSubmit();

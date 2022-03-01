@@ -26,43 +26,10 @@
 
     @if ((PersonFormMode == FormMode.Add || PersonFormMode == FormMode.Edit) && PersonToWrite != null)
     {
-        <EditForm Model="@PersonToWrite">
-
-            <PersonEditor Person="@PersonToWrite"
-                          Enabled="true"
-                          FormMode="PersonFormMode" />
-
-            <TelerikGridLayout Class="mt-2">
-                <GridLayoutColumns>
-                    <GridLayoutColumn Width="30%"></GridLayoutColumn>
-                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                    <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                </GridLayoutColumns>
-                <GridLayoutRows>
-                    <GridLayoutRow></GridLayoutRow>
-                </GridLayoutRows>
-                <GridLayoutItems>
-                    <GridLayoutItem>
-
-                        <PersonAddressEditor Person="@PersonToWrite"/>
-
-                    </GridLayoutItem>
-                    <GridLayoutItem>
-                        <PhonesEditor Phones="@PersonToWrite?.Phones"></PhonesEditor>
-                    </GridLayoutItem>
-                    <GridLayoutItem>
-                        <EmailsEditor Emails="@PersonToWrite?.Emails"></EmailsEditor>
-                    </GridLayoutItem>
-                </GridLayoutItems>
-            </TelerikGridLayout>
-
-            <div class="pt-4">
-                <EditFormButtons Close="EndAddEditAsync"
+        <PersonContactableEditor Person="PersonToWrite"
+                                 FormMode="PersonFormMode"
                                  Save="SubmitHandlerAsync"
-                                 EnableSave="true">
-                </EditFormButtons>
-            </div>
-        </EditForm>
+                                 Close="EndAddEditAsync"/>
     }
 </div>
 <style>

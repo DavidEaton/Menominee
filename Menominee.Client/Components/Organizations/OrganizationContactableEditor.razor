@@ -1,0 +1,46 @@
+﻿<EditForm Model="@Organization">
+
+    <OrganizationEditor Organization="@Organization"
+                        Enabled="true"
+                        FormMode="FormMode" />
+
+    <TelerikGridLayout>
+        <GridLayoutColumns>
+            <GridLayoutColumn Width="30%"></GridLayoutColumn>
+            <GridLayoutColumn Width="35%"></GridLayoutColumn>
+            <GridLayoutColumn Width="35%"></GridLayoutColumn>
+        </GridLayoutColumns>
+        <GridLayoutRows>
+            <GridLayoutRow></GridLayoutRow>
+        </GridLayoutRows>
+        <GridLayoutItems>
+            <GridLayoutItem>
+
+                <OrganizationAddressEditor Organization="@Organization" />
+
+            </GridLayoutItem>
+            <GridLayoutItem>
+                <PhonesEditor Phones="@Organization?.Phones"></PhonesEditor>
+            </GridLayoutItem>
+            <GridLayoutItem>
+                <EmailsEditor Emails="@Organization?.Emails"></EmailsEditor>
+            </GridLayoutItem>
+        </GridLayoutItems>
+    </TelerikGridLayout>
+
+    <div class="pt-4">
+        <EditFormButtons Close="Close"
+                         Save="Save"
+                         EnableSave="true">
+        </EditFormButtons>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter] public OrganizationToWrite Organization { get; set; }
+    [Parameter] public FormMode FormMode { get; set; }
+    [Parameter] public EventCallback Close { get; set; }
+    [Parameter] public EventCallback Save { get; set; }
+
+}

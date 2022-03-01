@@ -1,0 +1,65 @@
+﻿<div hidden="@(Organization?.Address is not null)">
+    <TelerikButton ButtonType="ButtonType.Button"
+                   Icon="plus"
+                   Size="@ThemeConstants.Button.Size.Small"
+                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                   Rounded="@ThemeConstants.Button.Rounded.Full"
+                   Class="add-item"
+                   OnClick="AddAddress"
+                   Id="addAddress" />
+    <label for="addAddress"
+           class="k-label"
+           title="Add address">
+        add Address
+    </label>
+</div>
+
+@if (Organization?.Address is not null)
+{
+    <div class="form-group">
+        <div>
+            <TelerikButton ButtonType="ButtonType.Button"
+                           Icon="minus"
+                           Size="@ThemeConstants.Button.Size.Small"
+                           Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
+                           Rounded="@ThemeConstants.Button.Rounded.Full"
+                           Class="remove-item"
+                           OnClick="RemoveAddress"
+                           Id="removeAddress"
+                           title="Remove address" />
+            <span>
+                <label for="removeAddress"
+                       class="k-label"
+                       title="Remove address">
+                    Address
+                </label>
+                <div @onclick="EditAddress">
+                    <AddressEditor Address="@Organization?.Address"
+                                   Enabled="FormMode == FormMode.Edit || FormMode == FormMode.Add"
+                                   FormMode="FormMode" />
+                </div>
+            </span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public OrganizationToWrite Organization { get; set; }
+    public FormMode FormMode { get; set; } = FormMode.Unknown;
+
+    private void AddAddress()
+    {
+        Organization.Address = new();
+        FormMode = FormMode.Add;
+    }
+
+    public void EditAddress()
+    {
+        FormMode = FormMode.Edit;
+    }
+
+    private void RemoveAddress()
+    {
+        Organization.Address = null;
+    }
+}

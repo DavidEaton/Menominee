@@ -1,131 +1,42 @@
 ﻿@page "/organizations"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
-    (CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
+(CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
 
-    <div class="container">
-        <div class="h5">Organizations</div>
+<div class="container">
+    <div class="h5">Organizations</div>
 
-        @if (OrganizationFormMode != FormMode.Add && OrganizationFormMode != FormMode.Edit)
+    @if (OrganizationFormMode != FormMode.Add && OrganizationFormMode != FormMode.Edit)
+    {
+        @if (Organizations == null)
         {
-            @if (Organizations == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            @if (Organizations != null)
-            {
-                <div class="pb-3">
-                    <TelerikButton OnClick="Add"
-                                   ThemeColor="primary"
-                                   Icon="plus"
-                                   title="Add New Organization">
-                        Add Organization
-                    </TelerikButton>
-                </div>
-
-                <OrganizationsGrid Organizations="Organizations"
-                                   OnRowClicked="@EditAsync" />
-            }
+            <p><em>Loading...</em></p>
         }
-
-        @if ((OrganizationFormMode == FormMode.Add || OrganizationFormMode == FormMode.Edit) && OrganizationToWrite != null)
+        @if (Organizations != null)
         {
-            <EditForm Model="@OrganizationToWrite">
+            <div class="pb-3">
+                <TelerikButton OnClick="Add"
+                               ThemeColor="primary"
+                               Icon="plus"
+                               title="Add New Organization">
+                    Add Organization
+                </TelerikButton>
+            </div>
 
-                <OrganizationEditor Organization="@OrganizationToWrite"
-                                    Enabled="true"
-                                    FormMode="OrganizationFormMode" />
-
-                <TelerikGridLayout>
-                    <GridLayoutColumns>
-                        <GridLayoutColumn Width="30%"></GridLayoutColumn>
-                        <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                        <GridLayoutColumn Width="35%"></GridLayoutColumn>
-                    </GridLayoutColumns>
-                    <GridLayoutRows>
-                        <GridLayoutRow></GridLayoutRow>
-                    </GridLayoutRows>
-                    <GridLayoutItems>
-                        <GridLayoutItem>
-                            <div class="h6">
-                                Address
-                                &nbsp &nbsp
-                                @if (OrganizationToWrite?.Address != null)
-                                {
-                                    <div @onclick="EditAddress" tabindex="-1"><TelerikIcon Icon="pencil" /></div>
-                                }
-                            </div>
-                            @if (OrganizationToWrite?.Address != null)
-                            {
-
-                                <TelerikWindow Visible="OrganizationToWrite?.Address != null && AddressFormMode == FormMode.Add"
-                                               Modal="true">
-                                    <WindowTitle>
-                                        Address
-                                    </WindowTitle>
-                                    <WindowContent>
-                                        <AddressEditor Address="@OrganizationToWrite?.Address"
-                                                       Enabled="AddressFormMode == FormMode.Add"
-                                                       FormMode="AddressFormMode"
-                                                       @ref="addressEditor" />
-
-                                        <TelerikButton OnClick="() => AddressFormMode = FormMode.Unknown"
-                                                       Icon="check"
-                                                       ThemeColor="primary"
-                                                       ButtonType="ButtonType.Button"
-                                                       Class="dialog-button"
-                                                       title="Save New Address">
-                                            Ok
-                                        </TelerikButton>
-                                        <TelerikButton OnClick="CancelEditAddress"
-                                                       ButtonType="ButtonType.Button"
-                                                       Icon="x"
-                                                       Class="dialog-button"
-                                                       title="Cancel Edit Address">
-                                            Cancel
-                                        </TelerikButton>
-                                    </WindowContent>
-                                </TelerikWindow>
-                            }
-
-                            @if (OrganizationToWrite?.Address != null)
-                            {
-                                <div @onclick="EditAddress">
-                                    <AddressEditor Address="@OrganizationToWrite?.Address"
-                                                   Enabled="AddressFormMode == FormMode.Edit"
-                                                   FormMode="AddressFormMode"
-                                                   @ref="addressEditor" />
-                                </div>
-                            }
-                            else
-                            {
-                                <TelerikButton OnClick="AddAddress"
-                                               Icon="plus"
-                                               Class="button-border-success"
-                                               title="Add New Address">
-                                    Add Address
-                                </TelerikButton>
-                            }
-                        </GridLayoutItem>
-                        <GridLayoutItem>
-                            <PhonesEditor Phones="@OrganizationToWrite?.Phones"></PhonesEditor>
-                        </GridLayoutItem>
-                        <GridLayoutItem>
-                            <EmailsEditor Emails="@OrganizationToWrite?.Emails"></EmailsEditor>
-                        </GridLayoutItem>
-                    </GridLayoutItems>
-                </TelerikGridLayout>
-
-                <div class="pt-4">
-                    <EditFormButtons Close="EndAddEditAsync"
-                                     Save="SubmitHandlerAsync"
-                                     EnableSave="true">
-                    </EditFormButtons>
-                </div>
-            </EditForm>
+            <OrganizationsGrid Organizations="Organizations"
+                               OnRowClicked="@EditAsync" />
         }
-    </div>
-    <style>
-        .dialog-button {
-            margin-right: 0.7rem;
-        }
-    </style>
+    }
+
+    @if ((OrganizationFormMode == FormMode.Add || OrganizationFormMode == FormMode.Edit) && Organization != null)
+    {
+        <OrganizationContactableEditor Organization="Organization"
+                                       FormMode="OrganizationFormMode"
+                                       Save="EndAddEditAsync"
+                                       Close="SubmitHandlerAsync"/>
+    }
+</div>
+<style>
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+</style>
