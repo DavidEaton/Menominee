@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             if (organizationNameOrError.IsSuccess)
                 organization = new Organization(organizationNameOrError.Value, null, null);
 
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
 
             return customer;
         }

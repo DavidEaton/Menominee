@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Services
+namespace Menominee.Client.Services.Customers
 {
     public interface ICustomerDataService
     {

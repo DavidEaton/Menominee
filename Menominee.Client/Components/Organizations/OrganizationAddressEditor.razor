@@ -33,11 +33,11 @@
                        title="Remove address">
                     Address
                 </label>
-                <div @onclick="EditAddress">
+                <span @onclick="EditAddress">
                     <AddressEditor Address="@Organization?.Address"
                                    Enabled="FormMode == FormMode.Edit || FormMode == FormMode.Add"
                                    FormMode="FormMode" />
-                </div>
+                </span>
             </span>
         </div>
     </div>

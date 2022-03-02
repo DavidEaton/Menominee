@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 CustomerType = CustomerType.Retail
             };
 
-            var result = await controller.AddCustomerAsync(customerToWrite, CustomerType.Retail);
+            var result = await controller.AddCustomerAsync(customerToWrite);
 
             result.Should().BeOfType<ActionResult<CustomerToRead>>();
         }
@@ -85,7 +85,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 CustomerType = CustomerType.Retail
             };
 
-            var result = await controller.AddCustomerAsync(customerToWrite, CustomerType.Retail);
+            var result = await controller.AddCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 CustomerType = CustomerType.Retail
             };
 
-            var result = await controller.AddCustomerAsync(customerToWrite, CustomerType.Retail);
+            var result = await controller.AddCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -116,7 +116,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 CustomerType = CustomerType.Retail
             };
 
-            var result = await controller.AddCustomerAsync(customerToWrite, CustomerType.Retail);
+            var result = await controller.AddCustomerAsync(customerToWrite);
 
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -133,7 +133,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
                 CustomerType = CustomerType.Retail
             };
 
-            var result = await controller.AddCustomerAsync(customerToWrite, CustomerType.Retail);
+            var result = await controller.AddCustomerAsync(customerToWrite);
 
             result.Should().BeOfType<ActionResult<CustomerToRead>>();
         }

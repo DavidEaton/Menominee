@@ -1,5 +1,6 @@
 ﻿using Blazored.Toast.Services;
 using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,7 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using static Menominee.Common.Enums.EntityType;
 
-namespace Menominee.Client.Services
+namespace Menominee.Client.Services.Customers
 {
     public class CustomerDataService : ICustomerDataService
     {
@@ -24,13 +25,18 @@ namespace Menominee.Client.Services
             this.httpClient = httpClient;
             this.toastService = toastService;
         }
-        public async Task<CustomerToRead> AddCustomer(CustomerToWrite newCustomer)
+        public async Task<CustomerToRead> AddCustomer(CustomerToWrite customer)
         {
-            var content = new StringContent(JsonSerializer.Serialize(newCustomer), Encoding.UTF8, MediaType);
+            var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
+                var customerName = customer.EntityType == EntityType.Person
+                                              ? customer.Person.Name.FirstMiddleLast
+                                              : customer.Organization.Name;
+
+                toastService.ShowSuccess($"{customerName} added successfully", "Added");
                 return await JsonSerializer.DeserializeAsync<CustomerToRead>(await response.Content.ReadAsStreamAsync());
             }
 

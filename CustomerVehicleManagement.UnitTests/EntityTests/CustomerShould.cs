@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var organization = Utilities.CreateOrganization();
 
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             customer.EntityType.Should().Be(EntityType.Organization);
         }
 
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var janes = customer.Organization;
 
             customer.EntityType.Should().Be(EntityType.Organization);
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
             organization.SetContact(person);
 
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var janes = customer.Organization;
 
             janes.Contact.Should().BeOfType<Person>();
@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void AddOrganizationPhones()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
@@ -95,7 +95,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void RemoveOrganizationPhones()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
             var number1 = "(231) 675-1922";
@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void AddOrganizationEmails()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
 
@@ -130,7 +130,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void RemoveOrganizationEmails()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
 
@@ -218,7 +218,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void AddVehicles()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
             var make0 = "Honda";
@@ -242,7 +242,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void RemoveVehicle()
         {
             var organization = Utilities.CreateOrganization();
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
             var make0 = "Honda";

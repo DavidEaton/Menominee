@@ -1,9 +1,9 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
-using Menominee.Common.Utilities;
 using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -16,6 +16,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public CustomerType CustomerType { get; private set; }
         public ContactPreferences ContactPreferences { get; private set; }
         public virtual IList<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
+
         public Customer(Person person, CustomerType customerType)
         {
             Guard.ForNull(person, "person == null");
@@ -24,12 +25,12 @@ namespace CustomerVehicleManagement.Domain.Entities
             CustomerType = customerType;
         }
 
-        public Customer(Organization organization)
+        public Customer(Organization organization, CustomerType customerType)
         {
             Guard.ForNull(organization, "organization == null");
 
             Organization = organization;
-            CustomerType = CustomerType.Retail;
+            CustomerType = customerType;
         }
 
         private EntityType GetEntityType()

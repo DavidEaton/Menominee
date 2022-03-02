@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
+using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
@@ -179,23 +180,17 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerToRead>> AddCustomerAsync(CustomerToWrite customerToAdd, CustomerType customerType)
+        public async Task<ActionResult<CustomerToRead>> AddCustomerAsync(CustomerToWrite customerToAdd)
         {
-            // VK: here, the logic should be:
-            // 1. Look at customerToWrite.EntityType and create a customer of the corresponding type (you can introduce a factory method for this)
-            // 2. Save it to the DB
-
-            var entityType = customerToAdd.EntityType;
             Customer customer = null;
 
-            if (entityType == EntityType.Person)
-                customer = AddPersonCustomer(customerToAdd.Person, customerType);
+            if (customerToAdd.EntityType == EntityType.Person)
+                customer = new(PersonHelper.CreateEntityFromWriteDto(customerToAdd.Person), customerToAdd.CustomerType);
 
-            if (entityType == EntityType.Organization)
-                customer = AddOrganizationCustomer(customerToAdd.Organization, customerType);
+            if (customerToAdd.EntityType == EntityType.Organization)
+                customer = new(OrganizationHelper.CreateEntityFromWriteDto(customerToAdd.Organization), customerToAdd.CustomerType);
 
-            if (customer != null)
-                await customerRepository.AddCustomerAsync(customer);
+            await customerRepository.AddCustomerAsync(customer);
 
             if (!await customerRepository.SaveChangesAsync())
                 return BadRequest($"Failed to add {customerToAdd}.");
@@ -208,51 +203,6 @@ namespace CustomerVehicleManagement.Api.Customers
             return CreatedAtRoute("GetCustomerAsync",
                 new { id = customerFromRepository.Id },
                 customerFromRepository);
-        }
-
-        private static Customer AddOrganizationCustomer(OrganizationToWrite organizationToAdd, CustomerType customerType)
-        {
-            //Organization organization = Shared.CreateOrganizationToAdd(organizationToAdd);
-
-            //Customer customer = new(organization);
-
-            return null;
-        }
-
-        private static Customer AddPersonCustomer(PersonToWrite personToAdd, CustomerType customerType)
-        {
-            Address address = null;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-            DriversLicense driversLicense = null;
-
-            var personName = PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value;
-
-            if (personToAdd?.Address != null)
-                address = Address.Create(personToAdd.Address.AddressLine, personToAdd.Address.City, personToAdd.Address.State, personToAdd.Address.PostalCode).Value;
-
-            if (personToAdd?.Phones.Count > 0)
-                foreach (var phone in personToAdd.Phones)
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (personToAdd?.Emails.Count > 0)
-                foreach (var email in personToAdd.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-            if (personToAdd?.DriversLicense != null)
-            {
-                DateTimeRange dateTimeRange = DateTimeRange.Create(
-                    personToAdd.DriversLicense.Issued,
-                    personToAdd.DriversLicense.Expiry).Value;
-
-                driversLicense = DriversLicense.Create(personToAdd.DriversLicense.Number,
-                    personToAdd.DriversLicense.State,
-                    dateTimeRange).Value;
-            }
-
-            Person person = new(personName, personToAdd.Gender, address, emails, phones, personToAdd.Birthday, driversLicense);
-
-            return new Customer(person, customerType);
         }
 
         [HttpDelete("{id:long}")]

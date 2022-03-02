@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = Utilities.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
-            var customer = new Customer(organization);
+            var customer = new Customer(organization, CustomerType.Retail);
             var janes = customer.Organization;
 
             customer.EntityType.Should().Be(EntityType.Organization);

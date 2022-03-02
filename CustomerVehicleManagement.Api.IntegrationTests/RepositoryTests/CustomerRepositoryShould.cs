@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 if ((await context.SaveChangesAsync()) > 0)
                 {
-                    Customer customer = new(organization);
+                    Customer customer = new(organization, CustomerType.Retail);
                     if (customer != null)
                         await context.AddAsync(customer);
                     await context.SaveChangesAsync();
@@ -137,7 +137,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organization = Helper.CreateOrganization();
                 await context.AddAsync(organization);
 
-                Customer customer = new(organization);
+                Customer customer = new(organization, CustomerType.Retail);
                 await context.AddAsync(customer);
                 await context.SaveChangesAsync();
 

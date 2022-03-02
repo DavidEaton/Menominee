@@ -1,0 +1,81 @@
+﻿@page "/customers"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+<CustomersMenu />
+
+<div class="grid-display pt-5">
+    <Card Title="Customers">
+        <Content>
+            @if (Customers == null && FormMode != FormMode.Add && FormMode != FormMode.Edit)
+            {
+                <p><em>Loading...</em></p>
+            }
+            @if (FormMode == FormMode.View && Customers != null)
+            {
+                <CustomersGrid CustomersList="Customers"
+                               OnAddAsync="Add"
+                               OnRowClicked="EditAsync"></CustomersGrid>
+            }
+            @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit) && Customer != null)
+            {
+                <p><em>@Caption</em></p>
+                <EditForm Model="Customer">
+
+                    <label class="form-control-label">Customer Type</label>
+                    <div class="m-form-control-group" for="customerType">
+                        <TelerikDropDownList @bind-Value="Customer.CustomerType"
+                                             Data="CustomerTypeEnumData"
+                                             Width="100%"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Id="customerType">
+                        </TelerikDropDownList>
+                    </div>
+
+                    <label class="form-control-label">Customer Class</label>
+                    <div class="m-form-control-group" for="entityType">
+
+                        <TelerikDropDownList @bind-Value="Customer.EntityType"
+                                             Data="EntityTypeEnumData"
+                                             OnChange="EntityTypeChanged"
+                                             Width="100%"
+                                             TextField="DisplayText"
+                                             ValueField="Value"
+                                             Id="entityType">
+                        </TelerikDropDownList>
+                    </div>
+
+                    <div class="container">
+                        @if (Customer.EntityType == Common.Enums.EntityType.Person)
+                        {
+                            <PersonContactableEditor Person="Customer.Person"
+                                                     FormMode="FormMode"
+                                                     Save="Submit"
+                                                     Close="Close" />
+                        }
+
+                        @if (Customer.EntityType == Common.Enums.EntityType.Organization)
+                        {
+                            <OrganizationContactableEditor Organization="Customer.Organization"
+                                                           FormMode="FormMode"
+                                                           Save="Submit"
+                                                           Close="Close" />
+                        }
+                    </div>
+
+                    @*<div class="pt-4">
+                            <EditFormButtons Close="Close"
+                                             Save="Submit"
+                                             EnableSave="true">
+                            </EditFormButtons>
+                        </div>*@
+                </EditForm>
+            }
+
+        </Content>
+    </Card>
+</div>
+<style>
+    .grid-display {
+        display: grid;
+    }
+</style>

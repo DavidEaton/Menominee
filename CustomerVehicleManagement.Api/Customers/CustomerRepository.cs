@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -132,9 +134,54 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .ToArrayAsync();
 
             return customersFromContext
-                .Select(customer =>
-                        CustomerToReadInList.ConvertToDto(customer))
+                .Select(customer => ConvertToDto(customer))
                 .ToList();
         }
+
+        private static CustomerToReadInList ConvertToDto(Customer customer)
+        {
+            if (customer != null)
+            {
+                if (customer.EntityType == EntityType.Person)
+                {
+                    return new CustomerToReadInList()
+                    {
+                        Id = customer.Id,
+                        EntityType = customer.EntityType,
+                        EntityId = customer.Person.Id,
+                        CustomerType = customer.CustomerType.ToString(),
+                        Name = customer.Person.Name.LastFirstMiddle,
+                        AddressFull = customer.Person?.Address?.AddressFull,
+                        PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Person),
+                        PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Person),
+                        PrimaryEmail = EmailHelper.GetPrimaryEmail(customer.Person)
+                    };
+                }
+
+                if (customer.EntityType == EntityType.Organization)
+                {
+                    return new CustomerToReadInList()
+                    {
+                        Id = customer.Id,
+                        EntityType = customer.EntityType,
+                        EntityId = customer.Organization.Id,
+                        CustomerType = customer.CustomerType.ToString(),
+                        Name = customer.Organization.Name.Name,
+                        AddressFull = customer.Organization?.Address?.AddressFull,
+                        Note = customer.Organization?.Note,
+                        PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Organization),
+                        PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Organization),
+                        PrimaryEmail = EmailHelper.GetPrimaryEmail(customer.Organization),
+                        ContactName = customer?.Organization?.Contact?.Name.LastFirstMiddle,
+                        ContactPrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Organization?.Contact),
+                        ContactPrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Organization?.Contact)
+                    };
+
+                }
+            }
+
+            return null;
+        }
+
     }
 }
