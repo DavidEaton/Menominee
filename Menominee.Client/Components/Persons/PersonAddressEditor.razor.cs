@@ -2,7 +2,7 @@
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
 
-namespace Menominee.Client.Components.Address
+namespace Menominee.Client.Components.Persons
 {
     public partial class PersonAddressEditor : ComponentBase
     {

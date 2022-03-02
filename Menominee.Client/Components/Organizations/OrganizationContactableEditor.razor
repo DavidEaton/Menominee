@@ -15,9 +15,7 @@
         </GridLayoutRows>
         <GridLayoutItems>
             <GridLayoutItem>
-
                 <OrganizationAddressEditor Organization="@Organization" />
-
             </GridLayoutItem>
             <GridLayoutItem>
                 <PhonesEditor Phones="@Organization?.Phones"></PhonesEditor>
@@ -36,11 +34,9 @@
     </div>
 </EditForm>
 
-
 @code {
     [Parameter] public OrganizationToWrite Organization { get; set; }
     [Parameter] public FormMode FormMode { get; set; }
     [Parameter] public EventCallback Close { get; set; }
     [Parameter] public EventCallback Save { get; set; }
-
 }
