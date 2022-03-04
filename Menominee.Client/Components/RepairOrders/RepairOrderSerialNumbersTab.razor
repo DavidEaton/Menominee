@@ -2,25 +2,26 @@
     <div>
         <Card Title="Serial Numbers">
             <Content>
-                @if (SerialNumbers == null)
+                @if (SerialNumberList == null)
                 {
                     <p><em>Loading...</em></p>
                 }
 
-                @if (SerialNumbers != null)
+                @if (SerialNumberList != null)
                 {
-                    <TelerikGrid Data="SerialNumbers"
+                    <TelerikGrid Data="SerialNumberList"
                                  OnRowClick="@OnRowSelected"
                                  OnRowDoubleClick="@OnEdit"
                                  SelectionMode="GridSelectionMode.Single"
-                                 SelectedItemsChanged="@((IEnumerable<SerialNumber> serialNumberList) => OnSelect(serialNumberList))"
+                                 SelectedItemsChanged="@((IEnumerable<SerialNumberListItem> serialNumberList) => OnSelect(serialNumberList))"
                                  SelectedItems="@SelectedSerialNumbers"
+                                 @ref="@SerialNumberGrid"
                                  Class="">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
                                     @{
-                                        var sn = context as SerialNumber;
+                                        var sn = context as SerialNumberListItem;
                                         if (sn.IsComplete())
                                         {
                                             <i class="fas fa-check m-green-check"></i>
@@ -32,10 +33,9 @@
                                     }
                                 </Template>
                             </GridColumn>
-                            <GridColumn Width="25%" Field="@nameof(SerialNumber.PartNumber)" Title="Part Number"></GridColumn>
-                            <GridColumn Width="35%" Field="@nameof(SerialNumber.Description)" Title="Description"></GridColumn>
-                            <GridColumn Width="10%" Field="@nameof(SerialNumber.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
-                            <GridColumn Width="30%" Field="@nameof(SerialNumber.SerialNum)" Title="Serial Number"></GridColumn>
+                            <GridColumn Width="25%" Field="@nameof(SerialNumberListItem.PartNumber)" Title="Part Number"></GridColumn>
+                            <GridColumn Width="40%" Field="@nameof(SerialNumberListItem.Description)" Title="Description"></GridColumn>
+                            <GridColumn Width="35%" Field="@nameof(SerialNumberListItem.SerialNum)" Title="Serial Number"></GridColumn>
                         </GridColumns>
                     </TelerikGrid>
 
@@ -51,6 +51,14 @@
             </Content>
         </Card>
     </div>
+
+    @if (EditDialogVisible && SelectedSerialNumber != null)
+    {
+        <RepairOrderSerialNumberEditor SerialNumber="@SerialNumberToModify" 
+                                     DialogVisible="@EditDialogVisible" 
+                                     OnSave="@OnSaveEdit" 
+                                     OnCancel="@OnCancelEdit" />
+    }
 </div>
 
 <style>

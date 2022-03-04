@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Client.Components.RepairOrders
 {
-    public partial class RepairOrderPaymentEdit : ComponentBase
+    public partial class RepairOrderPaymentEditor : ComponentBase
     {
         [Parameter]
         public RepairOrderPaymentToWrite Payment { get; set; }
@@ -25,13 +26,7 @@ namespace Menominee.Client.Components.RepairOrders
             set
             {
                 formMode = value;
-                if (formMode == FormMode.Add)
-                    Title = "Add";
-                else if (formMode == FormMode.Edit)
-                    Title = "Edit";
-                else
-                    Title = "View";
-                Title += " Payment";
+                Title = FormTitle.BuildTitle(formMode, "Payment");
             }
         }
 

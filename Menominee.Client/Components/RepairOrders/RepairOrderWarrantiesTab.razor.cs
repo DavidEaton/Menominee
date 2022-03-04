@@ -8,16 +8,16 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderWarrantiesTab : ComponentBase
     {
         [Parameter]
-        public List<Warranty> Warranties { get; set; }
+        public List<WarrantyListItem> Warranties { get; set; }
 
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
         private bool CanClear { get; set; } = false;
 
         // FIX ME - replace Warranty with DTO
-        public IEnumerable<Warranty> SelectedWarranties { get; set; } = Enumerable.Empty<Warranty>();
-        public Warranty SelectedWarranty { get; set; }
-        public Warranty WarrantyToModify { get; set; } = null;
+        public IEnumerable<WarrantyListItem> SelectedWarranties { get; set; } = Enumerable.Empty<WarrantyListItem>();
+        public WarrantyListItem SelectedWarranty { get; set; }
+        public WarrantyListItem WarrantyToModify { get; set; } = null;
 
         public long SelectedId
         {
@@ -49,11 +49,11 @@ namespace Menominee.Client.Components.RepairOrders
                 }
                 selectedItemIndex = Warranties.IndexOf(SelectedWarranty);
                 SelectedId = SelectedWarranty.Id;
-                SelectedWarranties = new List<Warranty> { SelectedWarranty };
+                SelectedWarranties = new List<WarrantyListItem> { SelectedWarranty };
             }
         }
 
-        protected void OnSelect(IEnumerable<Warranty> warranty)
+        protected void OnSelect(IEnumerable<WarrantyListItem> warranty)
         {
             //SelectedItem = ros.FirstOrDefault();
             //SelectedList = new List<RepairOrderToReadInList> { SelectedItem };
@@ -61,10 +61,10 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedWarranty = args.Item as Warranty;
+            SelectedWarranty = args.Item as WarrantyListItem;
             SelectedId = SelectedWarranty.Id;
             selectedItemIndex = Warranties.IndexOf(SelectedWarranty);
-            SelectedWarranties = new List<Warranty> { SelectedWarranty };
+            SelectedWarranties = new List<WarrantyListItem> { SelectedWarranty };
         }
 
         private void OnEdit()

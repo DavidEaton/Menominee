@@ -6,6 +6,7 @@ using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 //using MenomineePlayWASM.Shared.Entities.RepairOrders.Enums;
 using Microsoft.AspNetCore.Components;
@@ -20,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
-    public partial class RepairOrderItemEdit : ComponentBase
+    public partial class RepairOrderItemEditor : ComponentBase
     {
         [Inject]
         public IManufacturerDataService manufacturerDataService { get; set; }
@@ -47,13 +48,7 @@ namespace Menominee.Client.Components.RepairOrders
             set
             {
                 formMode = value;
-                if (formMode == FormMode.Add)
-                    Title = "Add";
-                else if (formMode == FormMode.Edit)
-                    Title = "Edit";
-                else
-                    Title = "View";
-                Title += " Item";
+                Title = FormTitle.BuildTitle(formMode, "Item");
             }
         }
 
@@ -141,6 +136,7 @@ namespace Menominee.Client.Components.RepairOrders
         // replace the following when able
         private string PlaceholderReasonForReplacement { get; set; } = string.Empty;
         private int PlaceholderQuantityOnHand { get; set; } = 0;
+        private bool PlaceholderBuyout { get; set; } = false;
 
         private int ManufacturerId { get; set; } = 0;
         private int SaleCodeId { get; set; } = 0;

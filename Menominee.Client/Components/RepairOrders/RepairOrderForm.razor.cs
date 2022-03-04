@@ -1,4 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -22,17 +24,17 @@ namespace Menominee.Client.Components.RepairOrders
 
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
-        List<Purchase> Purchases { get; set; }
-        List<SerialNumber> SerialNumbers { get; set; }
-        List<Warranty> Warranties { get; set; }
+        List<PurchaseListItem> PurchaseList { get; set; } = new();
+        List<SerialNumberListItem> SerialNumberList { get; set; } = new();
+        List<WarrantyListItem> WarrantyList { get; set; } = new();
         //List<Payment> Payments { get; set; }
 
         protected override void OnInitialized()
         {
             Inspection inspection;
-            Purchase purchase;
-            SerialNumber serialNumber;
-            Warranty warranty;
+            //PurchaseListItem purchase;
+            //SerialNumberListItem serialNumber;
+            //Warranty warranty;
             //Payment payment;
 
             CurrentInspections = new List<Inspection>();
@@ -66,94 +68,84 @@ namespace Menominee.Client.Components.RepairOrders
             inspection.Status = "Completed";
             PreviousInspections.Add(inspection);
 
-            Purchases = new List<Purchase>();
+            //PurchasesList = new List<PurchaseListItem>();
 
-            purchase = new Purchase();
-            purchase.Id = 1;
-            purchase.PartNumber = "BP1234";
-            purchase.Description = "Brake Pads";
-            purchase.Quantity = 1;
-            purchase.VendorName = "ABC Parts Warehouse";
-            purchase.VendorCost = 21.76;
-            Purchases.Add(purchase);
+            //purchase = new PurchaseListItem();
+            //purchase.Id = 1;
+            //purchase.PartNumber = "BP1234";
+            //purchase.Description = "Brake Pads";
+            //purchase.Quantity = 1;
+            //purchase.VendorName = "ABC Parts Warehouse";
+            //purchase.VendorCost = 21.76;
+            //PurchasesList.Add(purchase);
 
-            purchase = new Purchase();
-            purchase.Id = 2;
-            purchase.PartNumber = "CL9876";
-            purchase.Description = "Clamp";
-            purchase.Quantity = 4;
-            purchase.VendorName = "";
-            purchase.VendorCost = 0;
-            Purchases.Add(purchase);
+            //purchase = new PurchaseListItem();
+            //purchase.Id = 2;
+            //purchase.PartNumber = "CL9876";
+            //purchase.Description = "Clamp";
+            //purchase.Quantity = 4;
+            //purchase.VendorName = "";
+            //purchase.VendorCost = 0;
+            //PurchasesList.Add(purchase);
 
-            purchase = new Purchase();
-            purchase.Id = 3;
-            purchase.PartNumber = "WB445566";
-            purchase.Description = "Wiper Blade";
-            purchase.Quantity = 2;
-            purchase.VendorName = "PDQ Parts Supplier";
-            purchase.VendorCost = 7.34;
-            Purchases.Add(purchase);
+            //purchase = new PurchaseListItem();
+            //purchase.Id = 3;
+            //purchase.PartNumber = "WB445566";
+            //purchase.Description = "Wiper Blade";
+            //purchase.Quantity = 2;
+            //purchase.VendorName = "PDQ Parts Supplier";
+            //purchase.VendorCost = 7.34;
+            //PurchasesList.Add(purchase);
 
-            SerialNumbers = new List<SerialNumber>();
+            //serialNumber = new SerialNumberListItem();
+            //serialNumber.Id = 1;
+            //serialNumber.PartNumber = "AT12123";
+            //serialNumber.Description = "All Terrain Tire";
+            //serialNumber.SerialNum = "XXX111111111";
+            //SerialNumberList.Add(serialNumber);
 
-            serialNumber = new SerialNumber();
-            serialNumber.Id = 1;
-            serialNumber.SequenceNumber = 1;
-            serialNumber.PartNumber = "AT12123";
-            serialNumber.Description = "All Terrain Tire";
-            serialNumber.Quantity = 1;
-            serialNumber.SerialNum = "XXX111111111";
-            SerialNumbers.Add(serialNumber);
+            //serialNumber = new SerialNumberListItem();
+            //serialNumber.Id = 2;
+            //serialNumber.PartNumber = "AT12123";
+            //serialNumber.Description = "All Terrain Tire";
+            //serialNumber.SerialNum = "YYY22222";
+            //SerialNumberList.Add(serialNumber);
 
-            serialNumber = new SerialNumber();
-            serialNumber.Id = 1;
-            serialNumber.SequenceNumber = 2;
-            serialNumber.PartNumber = "AT12123";
-            serialNumber.Description = "All Terrain Tire";
-            serialNumber.Quantity = 1;
-            serialNumber.SerialNum = "YYY22222";
-            SerialNumbers.Add(serialNumber);
+            //serialNumber = new SerialNumberListItem();
+            //serialNumber.Id = 3;
+            //serialNumber.PartNumber = "AT12123";
+            //serialNumber.Description = "All Terrain Tire";
+            //serialNumber.SerialNum = "ZZZ3333333";
+            //SerialNumberList.Add(serialNumber);
 
-            serialNumber = new SerialNumber();
-            serialNumber.Id = 1;
-            serialNumber.SequenceNumber = 3;
-            serialNumber.PartNumber = "AT12123";
-            serialNumber.Description = "All Terrain Tire";
-            serialNumber.Quantity = 1;
-            serialNumber.SerialNum = "ZZZ3333333";
-            SerialNumbers.Add(serialNumber);
+            //serialNumber = new SerialNumberListItem();
+            //serialNumber.Id = 4;
+            //serialNumber.PartNumber = "AT12123";
+            //serialNumber.Description = "All Terrain Tire";
+            //serialNumber.SerialNum = "";
+            //SerialNumberList.Add(serialNumber);
 
-            serialNumber = new SerialNumber();
-            serialNumber.Id = 1;
-            serialNumber.SequenceNumber = 4;
-            serialNumber.PartNumber = "AT12123";
-            serialNumber.Description = "All Terrain Tire";
-            serialNumber.Quantity = 1;
-            serialNumber.SerialNum = "";
-            SerialNumbers.Add(serialNumber);
+            //Warranties = new List<Warranty>();
 
-            Warranties = new List<Warranty>();
+            //warranty = new Warranty();
+            //warranty.Id = 1;
+            //warranty.SequenceNumber = 1;
+            //warranty.Type = WarrantyType.GuaranteedReplacement;
+            //warranty.PartNumber = "BP1234";
+            //warranty.Description = "Brake Pad";
+            //warranty.Quantity = 1;
+            //warranty.WarrantyNumber = "XXX111111111";
+            //Warranties.Add(warranty);
 
-            warranty = new Warranty();
-            warranty.Id = 1;
-            warranty.SequenceNumber = 1;
-            warranty.Type = WarrantyType.GuaranteedReplacement;
-            warranty.PartNumber = "BP1234";
-            warranty.Description = "Brake Pad";
-            warranty.Quantity = 1;
-            warranty.WarrantyNumber = "XXX111111111";
-            Warranties.Add(warranty);
-
-            warranty = new Warranty();
-            warranty.Id = 2;
-            warranty.SequenceNumber = 1;
-            warranty.Type = WarrantyType.NewWarranty;
-            warranty.PartNumber = "WC97531";
-            warranty.Description = "Wheel Cylinder";
-            warranty.Quantity = 1;
-            warranty.WarrantyNumber = "DFG01386";
-            Warranties.Add(warranty);
+            //warranty = new Warranty();
+            //warranty.Id = 2;
+            //warranty.SequenceNumber = 1;
+            //warranty.Type = WarrantyType.NewWarranty;
+            //warranty.PartNumber = "WC97531";
+            //warranty.Description = "Wheel Cylinder";
+            //warranty.Quantity = 1;
+            //warranty.WarrantyNumber = "DFG01386";
+            //Warranties.Add(warranty);
 
         }
 
@@ -166,6 +158,10 @@ namespace Menominee.Client.Components.RepairOrders
             if (RepairOrder.Vehicle.Length > 0)
                 title += $"   ~   {RepairOrder.Vehicle}";
             Title = title;
+
+            BuildSerialNumberList();
+            BuildPurchaseList();
+            BuildWarrantyList();
         }
 
         //private RepairOrderTab SelectedTab { get; set; }
@@ -181,23 +177,177 @@ namespace Menominee.Client.Components.RepairOrders
         private bool SerialNumbersSelected { get; set; }
         private bool PaymentSelected { get; set; }
 
-        private int PurchaseInfoNeededCount { get; set; } = 1;
+        private int PurchaseInfoNeededCount { get; set; } = 0;
         private int WarrantyInfoNeededCount { get; set; } = 0;
-        private int SerialNumberInfoNeededCount { get; set; } = 1;
+        private int SerialNumberInfoNeededCount { get; set; } = 0;
+
+        private void BuildSerialNumberList()
+        {
+            //SerialNumberList = new List<SerialNumberListItem>();
+            var tempId = 0;
+
+            // Search through each item on each service to find the ones needing serial numbers
+            if (RepairOrder?.Services?.Count > 0)
+            {
+                foreach (var service in RepairOrder.Services)
+                {
+                    if (service.Items?.Count > 0)
+                    {
+                        foreach (var item in service.Items)
+                        {
+                            // check if serial numbers are required on this item
+                            if (SerialNumberRequired(item))
+                            {
+                                List<SerialNumberListItem> matchingList = SerialNumberList.FindAll(
+                                    delegate (SerialNumberListItem sn) { return sn.ItemId == item.Id; });
+
+                                var missingCount = item.QuantitySold - matchingList.Count;
+                                for (var i = 0; i < missingCount; i++)
+                                {
+                                    SerialNumberListItem sn = new SerialNumberListItem
+                                    {
+                                        Id = ++tempId,
+                                        ItemId = item.Id,
+                                        PartNumber = item.PartNumber,
+                                        Description = item.Description
+                                        //SerialNum = string.Empty
+                                    };
+                                    SerialNumberList.Add(sn);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            SerialNumberInfoNeededCount = SerialNumberList.FindAll(
+                                    delegate (SerialNumberListItem sn) { return string.IsNullOrWhiteSpace(sn.SerialNum); }).Count;
+        }
+
+        private bool SerialNumberRequired(RepairOrderItemToWrite item)
+        {
+            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
+            {
+                // check if this part's product code requires serial numbers
+                // if (ProductCodeRequiresSerialNumber())
+                return true;
+            }
+            return false;
+        }
+
+        private void UpdateSerialNumbers()  // An unsuccessful attempt to get the grid to update immediately after edit
+        {
+            StateHasChanged();
+        }
+
+        private void BuildPurchaseList()
+        {
+            var tempId = 0;
+
+            // Search through each item on each service to find the ones needing purchase info
+            if (RepairOrder?.Services?.Count > 0)
+            {
+                foreach (var service in RepairOrder.Services)
+                {
+                    if (service.Items?.Count > 0)
+                    {
+                        foreach (var item in service.Items)
+                        {
+                            // check if purchase info is required on this item
+                            if (PurchaseInfoRequired(item))
+                            {
+                                PurchaseListItem purchase = new PurchaseListItem
+                                {
+                                    Id = ++tempId,
+                                    VendorId = 0,
+                                    ItemId = item.Id,
+                                    PartNumber = item.PartNumber,
+                                    Description = item.Description,
+
+                                    VendorName = string.Empty,
+                                    VendorPartNumber = item.PartNumber,
+                                    VendorInvoiceNumber = string.Empty,
+                                    PONumber = string.Empty,
+                                    FileCost = item.Cost,
+                                    VendorCost = 0.0,
+                                    VendorCore = 0.0,
+                                    DatePurchased = DateTime.Today
+                                };
+
+                                PurchaseList.Add(purchase);
+                            }
+                        }
+                    }
+                }
+            }
+            PurchaseInfoNeededCount = PurchaseList.FindAll(
+                                    delegate (PurchaseListItem purchase) { return !purchase.IsComplete(); }).Count;
+        }
+
+        private bool PurchaseInfoRequired(RepairOrderItemToWrite item)
+        {
+            return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0 /*&& item.IsBuyout*/);
+        }
+
+        private void BuildWarrantyList()
+        {
+            var tempId = 0;
+
+            // Search through each item on each service to find the ones needing warranty info
+            if (RepairOrder?.Services?.Count > 0)
+            {
+                foreach (var service in RepairOrder.Services)
+                {
+                    if (service.Items?.Count > 0)
+                    {
+                        foreach (var item in service.Items)
+                        {
+                            var nextSequenceNumber = 0;
+
+                            // check if warranty info is required on this item
+                            if (WarrantyInfoRequired(item))
+                            {
+                                WarrantyListItem warranty = new WarrantyListItem
+                                {
+                                    Id = ++tempId,
+                                    ItemId = item.Id,
+                                    PartNumber = item.PartNumber,
+                                    Description = item.Description,
+                                    SequenceNumber = ++nextSequenceNumber,
+                                    Type = WarrantyType.NewWarranty,
+                                    WarrantyNumber = string.Empty,
+                                    Quantity = item.QuantitySold
+                                };
+
+                                WarrantyList.Add(warranty);
+                            }
+                        }
+                    }
+                }
+            }
+            WarrantyInfoNeededCount = WarrantyList.FindAll(
+                                    delegate (WarrantyListItem warranty) { return !warranty.IsComplete(); }).Count;
+        }
+
+        private bool WarrantyInfoRequired(RepairOrderItemToWrite item)
+        {
+            // FIX ME - 
+            // if (ProductCodeRequiresWarranty())
+            return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0);
+        }
 
         public bool HavePurchases()
         {
-            return true;
+            return PurchaseList.Count > 0;
         }
 
         public bool HaveWarranties()
         {
-            return true;
+            return WarrantyList.Count > 0;
         }
 
         public bool HaveSerialNumbers()
         {
-            return true;
+            return SerialNumberList.Count > 0;
         }
     }
 
@@ -211,33 +361,40 @@ namespace Menominee.Client.Components.RepairOrders
         public string Status { get; set; }
     }
 
-    public class Purchase
+    public class PurchaseListItem
     {
         public long Id { get; set; }
+        public long ItemId { get; set; }
+        public long VendorId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public string VendorName { get; set; }
+        public string VendorPartNumber { get; set; }
+        public string VendorInvoiceNumber { get; set; }
+        public string PONumber { get; set; }
         public double Quantity { get; set; }
+        public double FileCost { get; set; }
         public double VendorCost { get; set; }
+        public double VendorCore { get; set; }
+        public DateTime? DatePurchased { get; set; }
 
         public bool IsComplete()
         {
-            return VendorName.Length > 0 && VendorCost > 0.0;
+            return !string.IsNullOrWhiteSpace(VendorName) && !string.IsNullOrWhiteSpace(VendorInvoiceNumber) && VendorCost > 0.0;
         }
     }
 
-    public class SerialNumber
+    public class SerialNumberListItem
     {
         public long Id { get; set; }
-        public long SequenceNumber { get; set; }
+        public long ItemId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public string SerialNum { get; set; }
-        public double Quantity { get; set; }
 
         public bool IsComplete()
         {
-            return SerialNum.Length > 0;
+            return !String.IsNullOrWhiteSpace(SerialNum);
         }
     }
 
@@ -251,9 +408,10 @@ namespace Menominee.Client.Components.RepairOrders
         DefectiveReplacement
     }
 
-    public class Warranty
+    public class WarrantyListItem
     {
         public long Id { get; set; }
+        public long ItemId { get; set; }
         public long SequenceNumber { get; set; }
         public WarrantyType Type { get; set; }
         public string PartNumber { get; set; }
