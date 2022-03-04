@@ -3,24 +3,38 @@
 <CustomersMenu />
 
 <div class="grid-display pt-5">
-    <Card Title="Customers">
+    <Card Title="@Caption">
         <Content>
-            @if (Customers == null && FormMode != FormMode.Add && FormMode != FormMode.Edit)
+            @if (Customers == null && FormMode == FormMode.View)
             {
                 <p><em>Loading...</em></p>
+                <img src="/assets/loader-blue-purple.gif" />
             }
-            @if (FormMode == FormMode.View && Customers != null)
+            @if (Customers?.Count == 0 && FormMode == FormMode.View)
+            {
+                <div class="pb-3">
+                    <TelerikButton OnClick="Add"
+                                   ThemeColor="primary"
+                                   Icon="plus"
+                                   title="Add New Customer">
+                        Add Customer
+                    </TelerikButton>
+                </div>
+            }
+            @if (FormMode == FormMode.View && Customers?.Count > 0)
             {
                 <CustomersGrid CustomersList="Customers"
                                OnAddAsync="Add"
                                OnRowClicked="EditAsync"></CustomersGrid>
             }
-            @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit) && Customer != null)
+            @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit))
             {
-                <p><em>@Caption</em></p>
+                @if (Customer?.Person is null && Customer?.Organization is null)
+                {
+                    <img src="/assets/loader-blue-purple.gif" />
+                }
                 <EditForm Model="Customer">
-
-                    <label class="form-control-label">Customer Type</label>
+                    <label class="k-label" for="customerType">Customer Type</label>
                     <div class="m-form-control-group" for="customerType">
                         <TelerikDropDownList @bind-Value="Customer.CustomerType"
                                              Data="CustomerTypeEnumData"
@@ -30,21 +44,21 @@
                                              Id="customerType">
                         </TelerikDropDownList>
                     </div>
+                    <div>
+                        <label class="k-label mt-2" for="entityType">Customer is a(n)</label>
+                        <div class="m-form-control-group" for="entityType">
 
-                    <label class="form-control-label">Customer Class</label>
-                    <div class="m-form-control-group" for="entityType">
-
-                        <TelerikDropDownList @bind-Value="Customer.EntityType"
-                                             Data="EntityTypeEnumData"
-                                             OnChange="EntityTypeChanged"
-                                             Width="100%"
-                                             TextField="DisplayText"
-                                             ValueField="Value"
-                                             Id="entityType">
-                        </TelerikDropDownList>
+                            <TelerikDropDownList @bind-Value="Customer.EntityType"
+                                                 Data="EntityTypeEnumData"
+                                                 OnChange="EntityTypeChanged"
+                                                 Width="100%"
+                                                 TextField="DisplayText"
+                                                 ValueField="Value"
+                                                 Id="entityType">
+                            </TelerikDropDownList>
+                        </div>
                     </div>
-
-                    <div class="container">
+                    <div class="editor mt-2">
                         @if (Customer.EntityType == Common.Enums.EntityType.Person)
                         {
                             <PersonContactableEditor Person="Customer.Person"
@@ -61,13 +75,6 @@
                                                            Close="Close" />
                         }
                     </div>
-
-                    @*<div class="pt-4">
-                            <EditFormButtons Close="Close"
-                                             Save="Submit"
-                                             EnableSave="true">
-                            </EditFormButtons>
-                        </div>*@
                 </EditForm>
             }
 
@@ -75,7 +82,14 @@
     </Card>
 </div>
 <style>
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+
     .grid-display {
         display: grid;
+    }
+    .editor {
+        padding: 1rem;
     }
 </style>

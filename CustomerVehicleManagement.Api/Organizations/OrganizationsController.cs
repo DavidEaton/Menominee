@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Helpers;
@@ -18,11 +19,15 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         private readonly IOrganizationRepository repository;
         private readonly string BasePath = "/api/organizations";
+        private readonly PersonsController personsController;
 
-        public OrganizationsController(IOrganizationRepository repository)
+        public OrganizationsController(IOrganizationRepository repository,
+                                       PersonsController personsController)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
+            this.personsController = personsController ??
+                throw new ArgumentNullException(nameof(personsController));
         }
 
         // api/organizations/list
@@ -64,8 +69,8 @@ namespace CustomerVehicleManagement.Api.Organizations
                 3) Set entity's TrackingState to Modified
                 4) FixTrackingState: moves entity state tracking back out of
                 the object and into the context to track entity state in this
-                disconnected applications. In other words, sych the EF Change
-                Tracker with our disconnected entity's TrackingState
+                disconnected application. In other words, sych the EF Change
+                Tracker with our disconnected entitys TrackingState.
                 5) Save changes
                 6) return NoContent()
             */
@@ -78,11 +83,6 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
-
-            DriversLicense driversLicense;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-            Address address = null;
 
             //1) Get domain entity from repository
             var organizationFromRepository = repository.GetOrganizationEntityAsync(id).Result;
@@ -100,6 +100,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                                      organizationToUpdate.Address.PostalCode).Value);
             organizationFromRepository.SetNote(organizationToUpdate.Note);
 
+            List<Phone> phones = new();
             if (organizationToUpdate?.Phones.Count > 0)
                 foreach (var phone in organizationToUpdate.Phones)
                 {
@@ -107,6 +108,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     organizationFromRepository.SetPhones(phones);
                 }
 
+            List<Email> emails = new();
             if (organizationToUpdate?.Emails.Count > 0)
                 foreach (var email in organizationToUpdate.Emails)
                 {
@@ -114,40 +116,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                     organizationFromRepository.SetEmails(emails);
                 }
 
-            if (organizationToUpdate.Contact != null)
+            if (organizationToUpdate?.Contact != null)
             {
-                var contact = new Person(PersonName.Create(
-                                            organizationToUpdate.Contact.Name.LastName,
-                                            organizationToUpdate.Contact.Name.FirstName,
-                                            organizationToUpdate.Contact.Name.MiddleName).Value,
-                                            organizationToUpdate.Contact.Gender,
-                                            address,
-                                            null, null);
-
-                if (organizationToUpdate.Contact?.DriversLicense != null)
-                {
-                    DateTimeRange dateTimeRange = DateTimeRange.Create(
-                        organizationToUpdate.Contact.DriversLicense.Issued,
-                        organizationToUpdate.Contact.DriversLicense.Expiry).Value;
-
-                    driversLicense = DriversLicense.Create(organizationToUpdate.Contact.DriversLicense.Number,
-                        organizationToUpdate.Contact.DriversLicense.State,
-                        dateTimeRange).Value;
-
-                    contact.SetDriversLicense(driversLicense);
-                }
-
-                if (organizationToUpdate?.Contact?.Address != null)
-                    contact.SetAddress(Address.Create(organizationToUpdate.Contact.Address.AddressLine,
-                                                           organizationToUpdate.Contact.Address.City,
-                                                           organizationToUpdate.Contact.Address.State,
-                                                           organizationToUpdate.Contact.Address.PostalCode).Value);
-
-                contact.SetBirthday(organizationToUpdate.Contact.Birthday);
-                contact.SetPhones(phones);
-                contact.SetEmails(emails);
-
-                organizationFromRepository.SetContact(contact);
+                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id, organizationToUpdate.Contact);
+                organizationFromRepository.SetContact((Person)contact);
             }
 
             // Update the objects ObjectState and sych the EF Change Tracker

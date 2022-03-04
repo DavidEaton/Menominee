@@ -77,26 +77,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 
             var result = await controller.AddPersonAsync(person);
 
-            result.Should().BeOfType<ActionResult<PersonToRead>>();
-        }
-
-        [Fact]
-        public async Task Not_Save_On_CreatePersonAsync_When_ModelState_Invalid()
-        {
-            controller.ModelState.AddModelError("x", "Test Error Message");
-            var person = new PersonToWrite()
-            {
-                Name = new PersonNameToWrite()
-                {
-                    LastName = "Doe",
-                    FirstName = "Jane"
-                },
-                Gender = Gender.Female
-            };
-
-            var result = await controller.AddPersonAsync(person);
-
-            moqRepository.Verify(repo => repo.AddPersonAsync(It.IsAny<Person>()), Times.Never);
+            result.Should().BeOfType<CreatedResult>();
         }
 
         [Fact]
@@ -121,7 +102,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var result = await controller.AddPersonAsync(person);
 
             moqRepository.Verify(repository => repository.AddPersonAsync(It.IsAny<Person>()), Times.Once);
-            person.Name.Should().Be(savedPerson.Name);
+            person.Name.FirstMiddleLast.Should().Be(savedPerson.Name.FirstMiddleLast);
             person.Gender.Should().Be(savedPerson.Gender);
             person.Birthday.Should().Be(savedPerson.Birthday);
         }
@@ -142,7 +123,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             };
             var result = await controller.AddPersonAsync(person);
 
-            result.Should().BeOfType<ActionResult<PersonToRead>>();
+            result.Should().BeOfType<CreatedResult>();
         }
 
         #endregion Post
@@ -168,10 +149,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             result.Should().BeOfType<NotFoundObjectResult>();
         }
 
-        //[Fact]
-        //public async Task Return_NoContent_On_UpdatePersonAsync()
-        //{
-        //}
         #endregion Put
     }
 }

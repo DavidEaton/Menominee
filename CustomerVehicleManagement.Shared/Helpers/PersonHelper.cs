@@ -11,6 +11,9 @@ namespace CustomerVehicleManagement.Shared.Helpers
     {
         public static Person CreateEntityFromWriteDto(PersonToWrite person)
         {
+            if (person is null)
+                return null;
+
             Address address = null;
             List<Phone> phones = new();
             List<Email> emails = new();

@@ -119,7 +119,9 @@ namespace CustomerVehicleManagement.Api
             // to the container, but AddScoped will.
             services.TryAddScoped<UserContext, UserContext>();
             services.TryAddScoped<IPersonRepository, PersonRepository>();
+            services.TryAddScoped<PersonsController, PersonsController>();
             services.TryAddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.TryAddScoped<OrganizationsController, OrganizationsController>();
             services.TryAddScoped<ICustomerRepository, CustomerRepository>();
             services.TryAddScoped<IVendorRepository, VendorRepository>();
             services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();

@@ -1,27 +1,28 @@
-﻿using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
+using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
-using System.Net.Http;
-using System;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {
-    public class PersonsControllerShould : SharedInstanceTestFixture
+    public class PersonsControllerShould : SharedInstanceTestFixture, IClassFixture<PersonsController>
     {
         private const string Path = "https://localhost/api/persons/";
         private readonly HttpClient httpClient;
         private readonly PersonsController controller;
 
-        public PersonsControllerShould(TestApplicationFactory<Startup, TestStartup> factory) : base(factory)
+        public PersonsControllerShould(TestApplicationFactory<Startup,
+                                       TestStartup> factory,
+                                       PersonsController controller) : base(factory)
         {
+            this.controller = controller;
             httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
@@ -142,10 +143,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             result.Should().BeOfType<NotFoundObjectResult>();
         }
 
-        //[Fact]
-        //public async Task Return_NoContent_On_UpdatePersonAsync()
-        //{
-        //}
         #endregion Put
     }
 }

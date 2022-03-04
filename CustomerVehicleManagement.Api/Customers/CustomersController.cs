@@ -6,7 +6,6 @@ using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,19 +19,19 @@ namespace CustomerVehicleManagement.Api.Customers
     public class CustomersController : ApplicationController
     {
         private readonly ICustomerRepository customerRepository;
-        private readonly IPersonRepository personRepository;
-        private readonly IOrganizationRepository organizationRepository;
+        private readonly PersonsController personsController;
+        private readonly OrganizationsController organizationsController;
 
         public CustomersController(ICustomerRepository customerRepository,
-                                   IPersonRepository personRepository,
-                                   IOrganizationRepository organizationRepository)
+                                   PersonsController personsController,
+                                   OrganizationsController organizationsController)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
-            this.personRepository = personRepository ??
-                throw new ArgumentNullException(nameof(personRepository));
-            this.organizationRepository = organizationRepository ??
-                throw new ArgumentNullException(nameof(organizationRepository));
+            this.personsController = personsController ??
+                throw new ArgumentNullException(nameof(personsController));
+            this.organizationsController = organizationsController ??
+                throw new ArgumentNullException(nameof(organizationsController));
         }
 
         //// GET: api/customers/list
@@ -76,101 +75,24 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpPut("{id:long}")]
         public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
         {
+            // VK: here, the logic should be:
+            // 1. Get the customer entity (not DTO) from the DB
+            // 2. Look at its type
+            // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
+            // 4. Save back to the DB
+
             CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(id);
 
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
-            DriversLicense driversLicense = null;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-            Address address = null;
-
             if (customerFromRepository.EntityType == EntityType.Organization)
-            {
-                Organization organizationFromRepository = await organizationRepository.GetOrganizationEntityAsync(customerFromRepository.Organization.Id);
-
-                if (organizationFromRepository == null)
-                    return NotFound($"Could not find Organization '{customerFromRepository.Organization.Name}' in the database to update.");
-
-                var organizationNameOrError = OrganizationName.Create(customerToWrite.Organization.Name);
-                if (organizationNameOrError.IsFailure)
-                    return BadRequest(organizationNameOrError.Error);
-
-
-                if (customerToWrite.Organization?.Address != null)
-                    address = Address.Create(customerToWrite.Organization.Address.AddressLine,
-                                                                         customerToWrite.Organization.Address.City,
-                                                                         customerToWrite.Organization.Address.State,
-                                                                         customerToWrite.Organization.Address.PostalCode).Value;
-
-                if (customerToWrite.Organization?.Phones.Count > 0)
-                    foreach (var phone in customerToWrite.Organization.Phones)
-                        phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-                if (customerToWrite.Organization?.Emails.Count > 0)
-                    foreach (var email in customerToWrite.Organization.Emails)
-                        emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-                organizationFromRepository.SetName(organizationNameOrError.Value);
-                organizationFromRepository.SetNote(customerToWrite.Organization.Note);
-                organizationFromRepository.SetAddress(address);
-                organizationFromRepository.SetEmails(emails);
-                organizationFromRepository.SetPhones(phones);
-
-                organizationFromRepository.SetTrackingState(TrackingState.Modified);
-                customerRepository.FixTrackingState();
-            }
+                await organizationsController.UpdateOrganizationAsync(customerFromRepository.Organization.Id, customerToWrite.Organization);
 
             if (customerFromRepository.EntityType == EntityType.Person)
-            {
-                // VK: here, the logic should be:
-                // 1. Get the customer entity (not DTO) from the DB
-                // 2. Look at its type
-                // 3. Update the corresponding fields in the customer depending on the type (i.e take the fields from the DTO needed for this specific customer type)
-                // 4. Save back to the DB
+                await personsController.UpdatePersonAsync(customerFromRepository.Person.Id, customerToWrite.Person);
 
-                Person personFromRepository = await personRepository.GetPersonEntityAsync(customerFromRepository.Person.Id);
-
-                personFromRepository.SetName(PersonName.Create(
-                                                customerToWrite.Person.Name.LastName,
-                                                customerToWrite.Person.Name.FirstName,
-                                                customerToWrite.Person.Name.MiddleName).Value);
-                personFromRepository.SetGender(customerToWrite.Person.Gender);
-                personFromRepository.SetBirthday(customerToWrite.Person.Birthday);
-
-                if (customerToWrite.Person?.Address != null)
-                    personFromRepository.SetAddress(Address.Create(customerToWrite.Person.Address.AddressLine,
-                                                                   customerToWrite.Person.Address.City,
-                                                                   customerToWrite.Person.Address.State,
-                                                                   customerToWrite.Person.Address.PostalCode).Value);
-                if (customerToWrite.Person?.Phones.Count > 0)
-                    foreach (var phone in customerToWrite.Person.Phones)
-                        phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-                if (customerToWrite.Person?.Emails.Count > 0)
-                    foreach (var email in customerToWrite.Person.Emails)
-                        emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-                if (customerToWrite.Person?.DriversLicense != null)
-                {
-                    DateTimeRange dateTimeRange = DateTimeRange.Create(
-                        customerToWrite.Person.DriversLicense.Issued,
-                        customerToWrite.Person.DriversLicense.Expiry).Value;
-
-                    driversLicense = DriversLicense.Create(customerToWrite.Person.DriversLicense.Number,
-                        customerToWrite.Person.DriversLicense.State,
-                        dateTimeRange).Value;
-
-                    personFromRepository.SetDriversLicense(driversLicense);
-                }
-
-                personFromRepository.SetEmails(emails);
-                personFromRepository.SetPhones(phones);
-
-                personFromRepository.SetTrackingState(TrackingState.Modified);
-                customerRepository.FixTrackingState();
-            }
+            customerRepository.FixTrackingState();
 
             if (await customerRepository.SaveChangesAsync())
                 return NoContent();

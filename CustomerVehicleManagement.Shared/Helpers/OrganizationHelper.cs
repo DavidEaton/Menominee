@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
-using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Helpers
@@ -32,44 +30,12 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 foreach (var email in organization.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
-            //Organization.Contact
-            Person person = null;
-            Address personAddress = null;
-            DriversLicense driversLicense = null;
-
-            if (organization?.Contact != null)
-            {
-                if (organization?.Contact?.Address != null)
-                    personAddress = Address.Create(
-                        organization.Contact.Address.AddressLine,
-                        organization.Contact.Address.City,
-                        organization.Contact.Address.State,
-                        organization.Contact.Address.PostalCode).Value;
-
-                if (organization?.Contact?.DriversLicense != null)
-                {
-                    DateTimeRange dateTimeRange = DateTimeRange.Create(
-                        organization.Contact.DriversLicense.Issued,
-                        organization.Contact.DriversLicense.Expiry).Value;
-
-                    driversLicense = DriversLicense.Create(organization.Contact.DriversLicense.Number,
-                        organization.Contact.DriversLicense.State,
-                        dateTimeRange).Value;
-                }
-
-                person = new Person(
-                PersonName.Create(
-                    organization.Contact.Name.LastName,
-                    organization.Contact.Name.FirstName,
-                    organization.Contact.Name.MiddleName).Value,
-                organization.Contact.Gender,
-                personAddress, emails, phones,
-                organization.Contact.Birthday,
-                driversLicense);
-            }
-
-            return new Organization(organizationName, organization.Note, person, organizationAddress, emails, phones);
-
+            return new Organization(organizationName,
+                                    organization.Note,
+                                    PersonHelper.CreateEntityFromWriteDto(organization?.Contact),
+                                    organizationAddress,
+                                    emails,
+                                    phones);
         }
 
         public static OrganizationToWrite CreateWriteDtoFromReadDto(OrganizationToRead organization)
@@ -90,65 +56,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 };
 
             if (organization?.Contact != null)
-            {
-                Organization.Contact = new()
-                {
-                    Name = new()
-                    {
-                        LastName = organization.Contact.LastName,
-                        MiddleName = organization.Contact.MiddleName,
-                        FirstName = organization.Contact.FirstName
-                    },
-
-                    Gender = organization.Contact.Gender,
-                    Birthday = organization.Contact?.Birthday
-
-                };
-
-                if (organization.Contact?.Address is not null)
-                    Organization.Contact.Address = new()
-                    {
-                        AddressLine = organization.Contact.Address.AddressLine,
-                        City = organization.Contact.Address.City,
-                        State = organization.Contact.Address.State,
-                        PostalCode = organization.Contact.Address.PostalCode
-                    };
-
-
-                if (organization.Contact?.DriversLicense is not null)
-                    Organization.Contact.DriversLicense = new()
-                    {
-                        Number = organization.Contact.DriversLicense.Number,
-                        State = organization.Contact.DriversLicense.State,
-                        Issued = organization.Contact.DriversLicense.Issued,
-                        Expiry = organization.Contact.DriversLicense.Expiry
-                    };
-
-                if (organization.Contact?.Phones.Count > 0)
-                {
-                    foreach (var phone in organization.Contact.Phones)
-                    {
-                        Organization.Contact.Phones.Add(new()
-                        {
-                            Number = phone.Number,
-                            PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
-                            IsPrimary = phone.IsPrimary
-                        });
-                    }
-                }
-
-                if (Organization.Contact?.Emails.Count > 0)
-                {
-                    foreach (var email in organization.Contact.Emails)
-                    {
-                        Organization.Contact.Emails.Add(new()
-                        {
-                            Address = email.Address,
-                            IsPrimary = email.IsPrimary
-                        });
-                    }
-                }
-            }
+                Organization.Contact = PersonHelper.CreateWriteDtoFromReadDto(organization?.Contact);
 
             return Organization;
         }

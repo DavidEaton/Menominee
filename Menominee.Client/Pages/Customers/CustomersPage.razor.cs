@@ -20,13 +20,14 @@ namespace Menominee.Client.Pages.Customers
         public FormMode FormMode { get; set; } = FormMode.View;
         private CustomerToWrite Customer { get; set; }
         private long Id { get; set; }
-        private string Caption { get; set; }
+        private string Caption { get; set; } = string.Empty;
         List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
         List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
 
         protected override async Task OnInitializedAsync()
         {
             Customers = (await CustomerDataService.GetAllCustomers()).ToList();
+            //Customers = new List<CustomerToReadInList>();
 
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
@@ -46,10 +47,10 @@ namespace Menominee.Client.Pages.Customers
             Customer = CustomerHelper.CreateWriteDtoFromReadDto(customerReadDto);
 
             if (customerReadDto.EntityType == EntityType.Person)
-                Caption = $"Editing Customer {customerReadDto.Person.FirstMiddleLast}";
+                Caption = $"Editing Customer: {customerReadDto.Person.FirstMiddleLast}";
 
             if (customerReadDto.EntityType == EntityType.Organization)
-                Caption = $"Editing Customer {customerReadDto.Organization.Name}";
+                Caption = $"Editing Customer: {customerReadDto.Organization.Name}";
 
         }
 
@@ -125,10 +126,10 @@ namespace Menominee.Client.Pages.Customers
 
         protected async Task Close()
         {
-            Customer = null;
-            Caption = string.Empty;
-            Customers = (await CustomerDataService.GetAllCustomers()).ToList();
             FormMode = FormMode.View;
+            Customers = (await CustomerDataService.GetAllCustomers()).ToList();
+            Caption = string.Empty;
+            Customer = null;
         }
 
         private class CustomerTypeEnumModel

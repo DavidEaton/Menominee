@@ -47,11 +47,15 @@ namespace CustomerVehicleManagement.Api.Customers
         public async Task<CustomerToRead> GetCustomerAsync(long id)
         {
             var customerFromContext = await context.Customers
-                                        .Include(customer => customer.Person)
-                                        .Include(customer => customer.Organization)
-                                            .ThenInclude(organization => organization.Contact)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(customer => customer.Id == id);
+                                                    // Person
+                                                    .Include(customer => customer.Person.Phones.Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer => customer.Person.Emails.Where(email => email.IsPrimary == true))
+
+                                                    // Organization and Organization.Contact
+                                                    .Include(customer => customer.Organization.Contact.Phones.Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer => customer.Organization.Contact.Emails.Where(email => email.IsPrimary == true))
+                                                    .AsNoTracking()
+                                                    .FirstOrDefaultAsync(customer => customer.Id == id);
 
             Guard.ForNull(customerFromContext, "customerFromContext");
 
@@ -116,20 +120,14 @@ namespace CustomerVehicleManagement.Api.Customers
         public async Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync()
         {
             var customersFromContext = await context.Customers
-                                                    .Include(customer => customer.Person)
-                                                        .ThenInclude(person => person.Phones)
-                                                    .Include(customer => customer.Person)
-                                                        .ThenInclude(person => person.Emails)
-                                                    .Include(customer => customer.Organization)
-                                                        .ThenInclude(organization => organization.Phones)
-                                                    .Include(customer => customer.Organization)
-                                                        .ThenInclude(organization => organization.Emails)
-                                                    .Include(customer => customer.Organization)
-                                                        .ThenInclude(organization => organization.Contact)
-                                                            .ThenInclude(contact => contact.Phones)
-                                                    .Include(customer => customer.Organization)
-                                                        .ThenInclude(organization => organization.Contact)
-                                                            .ThenInclude(contact => contact.Emails)
+
+                                                    // Person
+                                                    .Include(customer => customer.Person.Phones.Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer => customer.Person.Emails.Where(email => email.IsPrimary == true))
+
+                                                    // Organization and Organization.Contact
+                                                    .Include(customer => customer.Organization.Contact.Phones.Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer => customer.Organization.Contact.Emails.Where(email => email.IsPrimary == true))
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
@@ -151,10 +149,12 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Person.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Person.Name.LastFirstMiddle,
-                        AddressFull = customer.Person?.Address?.AddressFull,
-                        PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Person),
-                        PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Person),
-                        PrimaryEmail = EmailHelper.GetPrimaryEmail(customer.Person)
+                        AddressFull = customer.Person?.Address?.AddressFull is null ? string.Empty
+                                                                                    : customer.Person?.Address.AddressFull,
+                        PrimaryPhone = customer.Person?.Phones?.Count < 1           ? string.Empty
+                                                                                    : customer.Person?.Phones[0]?.Number,
+                        PrimaryEmail = customer.Person?.Emails?.Count < 1           ? string.Empty
+                                                                                    : customer.Person?.Emails[0]?.Address
                     };
                 }
 
@@ -167,16 +167,13 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Organization.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Organization.Name.Name,
-                        AddressFull = customer.Organization?.Address?.AddressFull,
-                        Note = customer.Organization?.Note,
-                        PrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Organization),
-                        PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Organization),
-                        PrimaryEmail = EmailHelper.GetPrimaryEmail(customer.Organization),
-                        ContactName = customer?.Organization?.Contact?.Name.LastFirstMiddle,
-                        ContactPrimaryPhone = PhoneHelper.GetPrimaryPhone(customer.Organization?.Contact),
-                        ContactPrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(customer.Organization?.Contact)
+                        AddressFull = customer.Organization?.Address?.AddressFull is null ? string.Empty
+                                                                                          : customer.Organization?.Address.AddressFull,
+                        PrimaryPhone = customer.Organization?.Phones?.Count < 1           ? string.Empty
+                                                                                          : customer.Organization?.Phones?[0]?.Number,
+                        PrimaryEmail = customer.Organization?.Emails?.Count < 1           ? string.Empty
+                                                                                          : customer.Organization?.Emails[0]?.Address
                     };
-
                 }
             }
 
