@@ -1,45 +1,78 @@
 ﻿<div class="form m-form">
-    <ContentHeader Header="@Title" />
+    <ContentHeader Header="Title" />
 
     <div class="m-pad-bottom m-tab-button-group">
-        <TelerikButtonGroup SelectionMode="@ButtonGroupSelectionMode.Single" Class="m-tab-button-group">
-            <ButtonGroupToggleButton @bind-Selected="@CustSelected" Class="@(CustSelected ? "m-button-selected" : "m-button-not-selected")">Customer & Vehicle</ButtonGroupToggleButton>
+        <TelerikButtonGroup SelectionMode="ButtonGroupSelectionMode.Single"
+                            Class="m-tab-button-group">
+            <ButtonGroupToggleButton @bind-Selected="@CustomerSelected"
+                                     Class="@(CustomerSelected ? "m-button-selected" : "m-button-not-selected")">
+                Customer & Vehicle
+            </ButtonGroupToggleButton>
+
             @if (FleetVisible)
             {
-                <ButtonGroupToggleButton @bind-Selected="@FleetSelected" Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">Fleet</ButtonGroupToggleButton>
+                <ButtonGroupToggleButton @bind-Selected="@FleetSelected"
+                                         Class="@(FleetSelected ? "m-button-selected" : "m-button-not-selected")">
+                    Fleet
+                </ButtonGroupToggleButton>
             }
-            <ButtonGroupToggleButton @bind-Selected="@ServiceRequestSelected" Class="@(ServiceRequestSelected ? "m-button-selected" : "m-button-not-selected")">Service Request</ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@InspectionsSelected" Class="@(InspectionsSelected ? "m-button-selected" : "m-button-not-selected")">Inspections</ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@ServicesSelected" Class="@(ServicesSelected ? "m-button-selected" : "m-button-not-selected")">Services</ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@PurchasesSelected" Enabled="@HavePurchases()" Class="@(PurchasesSelected ? "m-button-selected" : "m-button-not-selected")">
+
+            <ButtonGroupToggleButton @bind-Selected="@ServiceRequestSelected"
+                                     Class="@(ServiceRequestSelected ? "m-button-selected" : "m-button-not-selected")">
+                Service Request
+            </ButtonGroupToggleButton>
+
+            <ButtonGroupToggleButton @bind-Selected="@InspectionsSelected"
+                                     Class="@(InspectionsSelected ? "m-button-selected" : "m-button-not-selected")">
+                Inspections
+            </ButtonGroupToggleButton>
+
+            <ButtonGroupToggleButton @bind-Selected="@ServicesSelected"
+                                     Class="@(ServicesSelected ? "m-button-selected" : "m-button-not-selected")">
+                Services
+            </ButtonGroupToggleButton>
+
+            <ButtonGroupToggleButton @bind-Selected="@PurchasesSelected"
+                                     Enabled="HavePurchases()"
+                                     Class="@(PurchasesSelected ? "m-button-selected" : "m-button-not-selected")">
                 Purchases
                 @if (PurchaseInfoNeededCount > 0)
                 {
                     <span class="badge badge-danger">@PurchaseInfoNeededCount</span>
                 }
             </ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@WarrantiesSelected" Enabled="@HaveWarranties()" Class="@(WarrantiesSelected ? "m-button-selected" : "m-button-not-selected")">
+
+            <ButtonGroupToggleButton @bind-Selected="@WarrantiesSelected"
+                                     Enabled="HaveWarranties()"
+                                     Class="@(WarrantiesSelected ? "m-button-selected" : "m-button-not-selected")">
                 Warranties
                 @if (WarrantyInfoNeededCount > 0)
                 {
                     <span class="badge badge-danger">@WarrantyInfoNeededCount</span>
                 }
             </ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@SerialNumbersSelected" Enabled="@HaveSerialNumbers()" Class="@(SerialNumbersSelected ? "m-button-selected" : "m-button-not-selected")">
+
+            <ButtonGroupToggleButton @bind-Selected="@SerialNumbersSelected"
+                                     Enabled="HaveSerialNumbers()"
+                                     Class="@(SerialNumbersSelected ? "m-button-selected" : "m-button-not-selected")">
                 Serial Numbers
                 @if (SerialNumberInfoNeededCount > 0)
                 {
                     <span class="badge badge-danger">@SerialNumberInfoNeededCount</span>
                 }
             </ButtonGroupToggleButton>
-            <ButtonGroupToggleButton @bind-Selected="@PaymentSelected" Class="@(PaymentSelected ? "m-button-selected" : "m-button-not-selected")">Payments</ButtonGroupToggleButton>
+
+            <ButtonGroupToggleButton @bind-Selected="@PaymentSelected"
+                                     Class="@(PaymentSelected ? "m-button-selected" : "m-button-not-selected")">
+                Payments
+            </ButtonGroupToggleButton>
         </TelerikButtonGroup>
     </div>
 
-    <CascadingValue Value="@RepairOrder">
+    <CascadingValue Value="RepairOrder">
         <div class="row m-no-row-margin">
             <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-                @if (CustSelected)
+                @if (CustomerSelected)
                 {
                     @*<RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />*@
                     <RepairOrderCustomerVehicleTab />
@@ -51,17 +84,18 @@
 
                 @if (ServicesSelected)
                 {
-                    <RepairOrderServicesTab Services="@RepairOrder.Services" />
+                    <RepairOrderServicesTab Services="RepairOrder.Services" />
                 }
 
                 @if (InspectionsSelected)
                 {
-                    <RepairOrderInspectionTab CurrentInspections="@CurrentInspections" PreviousInspections="@PreviousInspections" />
+                    <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
+                                              PreviousInspections="PreviousInspections" />
                 }
 
                 @if (PurchasesSelected)
                 {
-                    <RepairOrderPurchasesTab Purchases="@PurchaseList" />
+                    <RepairOrderPurchasesTab Purchases="PurchaseList" />
                 }
 
                 @if (WarrantiesSelected)
@@ -71,18 +105,20 @@
 
                 @if (SerialNumbersSelected)
                 {
-                    <CascadingValue Value="@SerialNumberList">
-                        <RepairOrderSerialNumbersTab OnChangeSerialNumber="UpdateSerialNumbers" />
+                    <CascadingValue Value="SerialNumberList">
+                        <RepairOrderSerialNumbersTab />
                     </CascadingValue>
                 }
                 @if (PaymentSelected)
                 {
-                    <RepairOrderPaymentsTab Payments="@RepairOrder.Payments" />
+                    <RepairOrderPaymentsTab Payments="RepairOrder.Payments" />
                 }
 
             </div>
-            <div class="col-12 col-md-3 col-lg-2" id="totalsCol">
-                <RepairOrderTotals OnDiscard="@OnDiscard" OnSave="@OnSave" />
+            <div class="col-12 col-md-3 col-lg-2"
+                 id="totalsCol">
+                <RepairOrderTotals OnDiscard="@OnDiscard"
+                                   OnSave="@OnSave" />
             </div>
         </div>
     </CascadingValue>

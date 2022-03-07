@@ -10,10 +10,6 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [CascadingParameter]
         public List<SerialNumberListItem> SerialNumberList { get; set; }
-
-        [Parameter]
-        public EventCallback OnChangeSerialNumber { get; set; } // An unsuccessful attempt to get the grid to update immediately
-
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
         private bool CanClear { get; set; } = false;
@@ -69,50 +65,9 @@ namespace Menominee.Client.Components.RepairOrders
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedSerialNumber = args.Item as SerialNumberListItem;
-            SelectedId = SelectedSerialNumber.Id;
-            //selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
-            SelectedSerialNumbers = new List<SerialNumberListItem> { SelectedSerialNumber };
-        }
-
-        private void OnEdit()
-        {
-            SerialNumberToModify = new();
-            CopySerialNumber(SelectedSerialNumber, SerialNumberToModify);
-            //ItemFormMode = FormMode.Edit;
-            EditDialogVisible = true;
         }
 
         private void OnCopy()
-        {
-        }
-
-        private void OnSaveEdit()
-        {
-            //if (ItemFormMode != FormMode.Add && ItemFormMode != FormMode.Edit)
-            //    return;   // may need to add this back in if we end up using FormMode.View
-
-            var index = SerialNumberList.IndexOf(SelectedSerialNumber);
-            CopySerialNumber(SerialNumberToModify, SelectedSerialNumber);
-
-            if (index >= 0)
-                CopySerialNumber(SelectedSerialNumber, SerialNumberList[index]);
-
-            EditDialogVisible = false;
-            // FIX ME - trying to get the grid to reflect the changes immediately but this isn't working
-            StateHasChanged();
-            SerialNumberGrid?.Rebind();
-            StateHasChanged();
-            OnChangeSerialNumber.InvokeAsync();
-            SerialNumberGrid?.Rebind();
-        }
-
-        private void OnCancelEdit()
-        {
-            //ItemFormMode = FormMode.Unknown;
-            EditDialogVisible = false;
-        }
-
-        private void OnClear()
         {
         }
 

@@ -166,7 +166,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         //private RepairOrderTab SelectedTab { get; set; }
 
-        private bool CustSelected { get; set; } = true;
+        private bool CustomerSelected { get; set; } = true;
         private bool FleetSelected { get; set; }
         private bool FleetVisible { get; set; } = false;
         private bool ServiceRequestSelected { get; set; }
@@ -232,11 +232,6 @@ namespace Menominee.Client.Components.RepairOrders
                 return true;
             }
             return false;
-        }
-
-        private void UpdateSerialNumbers()  // An unsuccessful attempt to get the grid to update immediately after edit
-        {
-            StateHasChanged();
         }
 
         private void BuildPurchaseList()
@@ -330,7 +325,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private bool WarrantyInfoRequired(RepairOrderItemToWrite item)
         {
-            // FIX ME - 
+            // FIX ME -
             // if (ProductCodeRequiresWarranty())
             return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0);
         }
@@ -394,7 +389,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public bool IsComplete()
         {
-            return !String.IsNullOrWhiteSpace(SerialNum);
+            return !string.IsNullOrWhiteSpace(SerialNum);
         }
     }
 
