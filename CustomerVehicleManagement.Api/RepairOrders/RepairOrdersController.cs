@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite roToUpdate)
         {
             if (!await repository.RepairOrderExistsAsync(id))
-                return NotFound($"Could not find RO # {roToUpdate.Id} to update.");
+                return NotFound($"Could not find RO # {id} to update.");
 
             //1) Get domain entity from repository
             var ro = repository.GetRepairOrderEntityAsync(id).Result;

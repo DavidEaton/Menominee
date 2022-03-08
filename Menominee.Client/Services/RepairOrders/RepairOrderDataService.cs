@@ -75,7 +75,7 @@ namespace Menominee.Client.Services.RepairOrders
                 return;
             }
 
-            toastService.ShowError($"Repair Order failed to update:  Id = {repairOrder.Id}", "Save Failed");
+            toastService.ShowError($"Repair Order failed to update:  RO #{repairOrder.RepairOrderNumber}", "Save Failed");
         }
     }
 }

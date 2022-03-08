@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 {
     public class RepairOrderToWrite// : INotifyPropertyChanged -- was trying to get the RO totals to update immediately
     {
-        public long Id { get; set; } = 0;
         public long RepairOrderNumber { get; set; } = 0;
         public long InvoiceNumber { get; set; } = 0;
         public string CustomerName { get; set; } = string.Empty;
@@ -38,7 +37,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public IList<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
         public IList<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
         public IList<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
-        
+
         //public event PropertyChangedEventHandler PropertyChanged;
         //private void NotifyPropertyChanged(string propertyName)
         //{

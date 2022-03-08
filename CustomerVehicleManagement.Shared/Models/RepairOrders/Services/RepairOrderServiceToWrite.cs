@@ -7,7 +7,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
 {
     public class RepairOrderServiceToWrite
     {
-        public long Id { get; set; } = 0;
         public long RepairOrderId { get; set; } = 0;
         public int SequenceNumber { get; set; } = 0;
         public string ServiceName { get; set; } = string.Empty;

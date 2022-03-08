@@ -152,7 +152,7 @@ namespace Menominee.Client.Components.RepairOrders
         protected override void OnParametersSet()
         {
             // replaced these once correct fields are in place
-            string title = $"RO #{RepairOrder.Id}";
+            string title = $"RO #{RandomInt()}";
             if (RepairOrder.CustomerName.Length > 0)
                 title += $"   ~   {RepairOrder.CustomerName}";
             if (RepairOrder.Vehicle.Length > 0)
@@ -162,6 +162,12 @@ namespace Menominee.Client.Components.RepairOrders
             BuildSerialNumberList();
             BuildPurchaseList();
             BuildWarrantyList();
+        }
+
+        private static int RandomInt()
+        {
+            var random = new Random();
+            return random.Next();
         }
 
         //private RepairOrderTab SelectedTab { get; set; }
@@ -180,6 +186,31 @@ namespace Menominee.Client.Components.RepairOrders
         private int PurchaseInfoNeededCount { get; set; } = 0;
         private int WarrantyInfoNeededCount { get; set; } = 0;
         private int SerialNumberInfoNeededCount { get; set; } = 0;
+
+        public void SerialNumbersUpdated()
+        {
+            // This should fire on RepairOrderSerialNumberEditor.OnSave
+            // fires RepairOrderSerialNumbersTab.Save
+            // invokes RepairOrderForm.SerialNumbersUpdated (this method)
+            var services = RepairOrder.Services;
+
+            List<RepairOrderItemToWrite> items = new();
+            foreach (var item in services[0].Items)
+            {
+                items.Add(item);
+            }
+
+            var originalItems = items;
+            var SerialNumbersToUpdate = SerialNumberList;
+
+            foreach (var item in originalItems)
+            {
+                Console.WriteLine($"Part Number: {item.PartNumber}");
+                Console.WriteLine($"Part Number: {item.SerialNumbers}");
+            }
+
+            OnSave.InvokeAsync();
+        }
 
         private void BuildSerialNumberList()
         {

@@ -10,6 +10,9 @@ namespace Menominee.Client.Components.RepairOrders
     {
         [CascadingParameter]
         public List<SerialNumberListItem> SerialNumberList { get; set; }
+
+        [Parameter]
+        public EventCallback Updated { get; set; }
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
         private bool CanClear { get; set; } = false;
@@ -19,8 +22,6 @@ namespace Menominee.Client.Components.RepairOrders
         public IEnumerable<SerialNumberListItem> SelectedSerialNumbers { get; set; } = Enumerable.Empty<SerialNumberListItem>();
         public SerialNumberListItem SelectedSerialNumber { get; set; }
         public SerialNumberListItem SerialNumberToModify { get; set; } = null;
-
-        public TelerikGrid<SerialNumberListItem> SerialNumberGrid { get; set; }
 
         public long SelectedId
         {
@@ -54,6 +55,13 @@ namespace Menominee.Client.Components.RepairOrders
                 SelectedId = SelectedSerialNumber.Id;
                 SelectedSerialNumbers = new List<SerialNumberListItem> { SelectedSerialNumber };
             }
+        }
+
+        public void Save()
+        {
+            EditDialogVisible = false;
+            // Update SerialNumberList with model changes
+            Updated.InvokeAsync();
         }
 
         protected void OnSelect(IEnumerable<SerialNumberListItem> serialNumber)

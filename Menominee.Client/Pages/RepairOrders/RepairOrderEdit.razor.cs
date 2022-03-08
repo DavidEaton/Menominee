@@ -48,31 +48,29 @@ namespace Menominee.Client.Pages.RepairOrders
             }
         }
 
-        public static RepairOrderToWrite ReadDtoToWriteDto(RepairOrderToRead repairOrderToRead)
+        public static RepairOrderToWrite ReadDtoToWriteDto(RepairOrderToRead roToRead)
         {
             var roToWrite = new RepairOrderToWrite
             {
-                Id = repairOrderToRead.Id,
-                RepairOrderNumber = repairOrderToRead.RepairOrderNumber,
-                InvoiceNumber = repairOrderToRead.InvoiceNumber,
-                CustomerName = repairOrderToRead.CustomerName,
-                Vehicle = repairOrderToRead.Vehicle,
-                PartsTotal = repairOrderToRead.PartsTotal,
-                LaborTotal = repairOrderToRead.LaborTotal,
-                DiscountTotal = repairOrderToRead.DiscountTotal,
-                HazMatTotal = repairOrderToRead.HazMatTotal,
-                TaxTotal = repairOrderToRead.TaxTotal,
-                ShopSuppliesTotal = repairOrderToRead.ShopSuppliesTotal,
-                Total = repairOrderToRead.Total
+                RepairOrderNumber = roToRead.RepairOrderNumber,
+                InvoiceNumber = roToRead.InvoiceNumber,
+                CustomerName = roToRead.CustomerName,
+                Vehicle = roToRead.Vehicle,
+                PartsTotal = roToRead.PartsTotal,
+                LaborTotal = roToRead.LaborTotal,
+                DiscountTotal = roToRead.DiscountTotal,
+                HazMatTotal = roToRead.HazMatTotal,
+                TaxTotal = roToRead.TaxTotal,
+                ShopSuppliesTotal = roToRead.ShopSuppliesTotal,
+                Total = roToRead.Total
             };
 
-            if (repairOrderToRead?.Services?.Count > 0)
+            if (roToRead?.Services?.Count > 0)
             {
-                foreach (var service in repairOrderToRead.Services)
+                foreach (var service in roToRead.Services)
                 {
                     var serviceToWrite = new RepairOrderServiceToWrite
                     {
-                        Id = service.Id,
                         RepairOrderId = service.RepairOrderId,
                         SequenceNumber = service.SequenceNumber,
                         ServiceName = service.ServiceName,
@@ -125,7 +123,6 @@ namespace Menominee.Client.Pages.RepairOrders
                                 {
                                     itemToWrite.SerialNumbers.Add(new RepairOrderSerialNumberToWrite()
                                     {
-                                        Id = sn.Id,
                                         RepairOrderItemId = sn.RepairOrderItemId,
                                         SerialNumber = sn.SerialNumber
                                     });
@@ -209,9 +206,9 @@ namespace Menominee.Client.Pages.RepairOrders
                 }
             }
 
-            if (repairOrderToRead?.Payments.Count > 0)
+            if (roToRead?.Payments.Count > 0)
             {
-                foreach (var payment in repairOrderToRead.Payments)
+                foreach (var payment in roToRead.Payments)
                 {
                     roToWrite.Payments.Add(new RepairOrderPaymentToWrite()
                     {
@@ -228,26 +225,9 @@ namespace Menominee.Client.Pages.RepairOrders
 
         private async Task Save()
         {
+            // Called from RepairOrderForm.SerialNumbersUpdated()... OnSave.InvokeAsync();
             if (Valid())
             {
-                //if (RepairOrder?.Services?.Count > 0)
-                //{
-                //    foreach (var service in RepairOrder.Services)
-                //    {
-                //        if (service.Id < 0)
-                //            service.Id = 0;
-                //        if (service.Items?.Count > 0)
-                //        {
-                //            foreach (var item in service.Items)
-                //            {
-                //                if (item.Id < 0)
-                //                    item.Id = 0;
-                //                item.RepairOrderServiceId = service.Id;
-                //            }
-                //        }
-                //    }
-                //}
-
                 if (Id == 0)
                 {
                     var ro = await dataService.AddRepairOrder(RepairOrder);

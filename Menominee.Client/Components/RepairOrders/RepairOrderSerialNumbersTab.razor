@@ -14,9 +14,7 @@
                                  OnRowDoubleClick="@(() => EditDialogVisible = true)"
                                  SelectionMode="GridSelectionMode.Single"
                                  SelectedItemsChanged="@((IEnumerable<SerialNumberListItem> serialNumberList) => OnSelect(serialNumberList))"
-                                 SelectedItems="@SelectedSerialNumbers"
-                                 @ref="@SerialNumberGrid"
-                                 Class="">
+                                 SelectedItems="@SelectedSerialNumbers">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
@@ -25,15 +23,13 @@
                                         if (sn.IsComplete())
                                         {
                                             <div class="success-icon">
-                                                <TelerikIcon Icon="check"
-                                                             IconClass="m-green-check" />
+                                                <TelerikIcon Icon="check" />
                                             </div>
                                         }
                                         else
                                         {
                                             <div class="danger-icon">
-                                                <TelerikIcon Icon="x"
-                                                             IconClass="danger" />
+                                                <TelerikIcon Icon="exclamation-circle" />
                                             </div>
                                         }
                                     }
@@ -62,7 +58,7 @@
     {
         <RepairOrderSerialNumberEditor SerialNumber="@SelectedSerialNumber"
                                        DialogVisible="@EditDialogVisible"
-                                       OnSave="@(() => EditDialogVisible = false)"
+                                       OnSave="Save"
                                        OnCancel="@(() => EditDialogVisible = false)" />
     }
 </div>
@@ -75,20 +71,8 @@
     .danger-icon .k-icon {
         color: red;
     }
+
     .m-serialNumbers-tab {
         display: grid;
-    }
-
-    .m-green-check {
-        color: green;
-    }
-
-    .m-red-x {
-        color: red;
-    }
-
-    .m-icon-checked:before {
-        content: '\e7ab';
-        color: limegreen;
     }
 </style>

@@ -208,7 +208,7 @@ namespace Menominee.Client.Components.RepairOrders
             SelectedItem = args.Item as RepairOrderItemToWrite;
             if (await ShowItemDeleteConfirm(SelectedItem.PartNumber))
             {
-                RepairOrderServiceToWrite service = FindServiceById(SelectedItem.RepairOrderServiceId);
+                RepairOrderServiceToWrite service = FindServiceByCode(SelectedItem.SaleCode.Code);
                 if (service != null)
                 {
                     service.Items.Remove(SelectedItem);
@@ -305,11 +305,6 @@ namespace Menominee.Client.Components.RepairOrders
         private RepairOrderServiceToWrite FindServiceByCode(string saleCode)
         {
             return RepairOrder.Services?.Where(x => x.SaleCode == saleCode).FirstOrDefault();
-        }
-
-        private RepairOrderServiceToWrite FindServiceById(long id)
-        {
-            return RepairOrder.Services?.Where(x => x.Id == id).FirstOrDefault();
         }
 
         private RepairOrderServiceToWrite AddService(string saleCode, string name)
