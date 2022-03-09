@@ -52,7 +52,7 @@ namespace Menominee.Client.Pages.RepairOrders
                 }
                 else
                 {
-                    SelectedItem = ROList.Where(x => x.Id == ROToSelect).FirstOrDefault();
+                    SelectedItem = ROList.Where(ro => ro.Id == ROToSelect).FirstOrDefault();
                 }
                 SelectedId = SelectedItem.Id;
                 SelectedList = new List<RepairOrderToReadInList> { SelectedItem };

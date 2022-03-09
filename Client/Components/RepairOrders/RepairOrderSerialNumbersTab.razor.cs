@@ -37,7 +37,7 @@ namespace MenomineePlayWASM.Client.Components.RepairOrders
         private long selectedId = 0;
         private int selectedItemIndex = 0;
 
-        protected override void OnInitialized()
+        protected override void OnInitializedAsync()
         {
             if (SerialNumbers.Count > 0)
             {

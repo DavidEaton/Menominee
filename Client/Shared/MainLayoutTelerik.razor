@@ -90,7 +90,7 @@
         new DrawerItem { Text = "Payables", Url = "payables", Icon = "grid" }
     };
 
-    protected override void OnInitialized()
+    protected override void OnInitializedAsync()
     {
         // pre-select the page the user lands on
         // as the user clicks items, the DOM changes only in the Body and so the selected item stays active

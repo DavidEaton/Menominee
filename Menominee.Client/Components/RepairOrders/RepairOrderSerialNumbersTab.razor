@@ -12,9 +12,7 @@
                     <TelerikGrid Data="SerialNumberList"
                                  OnRowClick="@OnRowSelected"
                                  OnRowDoubleClick="@(() => EditDialogVisible = true)"
-                                 SelectionMode="GridSelectionMode.Single"
-                                 SelectedItemsChanged="@((IEnumerable<SerialNumberListItem> serialNumberList) => OnSelect(serialNumberList))"
-                                 SelectedItems="@SelectedSerialNumbers">
+                                 SelectionMode="GridSelectionMode.Single">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
@@ -37,7 +35,7 @@
                             </GridColumn>
                             <GridColumn Width="25%" Field="@nameof(SerialNumberListItem.PartNumber)" Title="Part Number"></GridColumn>
                             <GridColumn Width="40%" Field="@nameof(SerialNumberListItem.Description)" Title="Description"></GridColumn>
-                            <GridColumn Width="35%" Field="@nameof(SerialNumberListItem.SerialNum)" Title="Serial Number"></GridColumn>
+                            <GridColumn Width="35%" Field="@nameof(SerialNumberListItem.SerialNumber)" Title="Serial Number"></GridColumn>
                         </GridColumns>
                     </TelerikGrid>
 
@@ -46,7 +44,6 @@
 
                         <div>
                             <button class="btn m-button m-edit-btn" @onclick="@(() => EditDialogVisible = true)" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="btn m-button m-generic-btn" @onclick="OnCopy" disabled="@(CanCopy ? false : true)"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
                 }
@@ -54,9 +51,9 @@
         </Card>
     </div>
 
-    @if (EditDialogVisible && SelectedSerialNumber != null)
+    @if (EditDialogVisible && SerialNumberToEdit != null)
     {
-        <RepairOrderSerialNumberEditor SerialNumber="@SelectedSerialNumber"
+        <RepairOrderSerialNumberEditor SerialNumber="@SerialNumberToEdit"
                                        DialogVisible="@EditDialogVisible"
                                        OnSave="Save"
                                        OnCancel="@(() => EditDialogVisible = false)" />

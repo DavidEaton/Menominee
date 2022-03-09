@@ -10,8 +10,13 @@ namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderForm
     {
+        public RepairOrderToWrite RepairOrderToEdit { get; set; }
+
         [Parameter]
-        public RepairOrderToWrite RepairOrder { get; set; }
+        public long Id { get; set; }
+
+        [Parameter]
+        public RepairOrderToRead RepairOrder { get; set; }
 
         [Parameter]
         public string Title { get; set; } //= "RO #123123123   ~   Jane Doe   ~   2019 Dodge Durango";
@@ -195,10 +200,10 @@ namespace Menominee.Client.Components.RepairOrders
             var services = RepairOrder.Services;
 
             List<RepairOrderItemToWrite> items = new();
-            foreach (var item in services[0].Items)
-            {
-                items.Add(item);
-            }
+            //foreach (var item in services[0].Items)
+            //{
+            //    items.Add(item);
+            //}
 
             var originalItems = items;
             var SerialNumbersToUpdate = SerialNumberList;
@@ -209,52 +214,38 @@ namespace Menominee.Client.Components.RepairOrders
                 Console.WriteLine($"Part Number: {item.SerialNumbers}");
             }
 
-            OnSave.InvokeAsync();
+            // Do NOT save the entire form ti the dtaa service yet!!!
+            //OnSave.InvokeAsync();
         }
 
         private void BuildSerialNumberList()
         {
-            //SerialNumberList = new List<SerialNumberListItem>();
-            var tempId = 0;
-
             // Search through each item on each service to find the ones needing serial numbers
             if (RepairOrder?.Services?.Count > 0)
             {
                 foreach (var service in RepairOrder.Services)
                 {
-                    if (service.Items?.Count > 0)
+                    if (service?.Items.Count > 0)
                     {
                         foreach (var item in service.Items)
                         {
                             // check if serial numbers are required on this item
                             if (SerialNumberRequired(item))
                             {
-                                List<SerialNumberListItem> matchingList = SerialNumberList.FindAll(
-                                    delegate (SerialNumberListItem sn) { return sn.ItemId == item.Id; });
-
-                                var missingCount = item.QuantitySold - matchingList.Count;
-                                for (var i = 0; i < missingCount; i++)
-                                {
-                                    SerialNumberListItem sn = new SerialNumberListItem
-                                    {
-                                        Id = ++tempId,
-                                        ItemId = item.Id,
-                                        PartNumber = item.PartNumber,
-                                        Description = item.Description
-                                        //SerialNum = string.Empty
-                                    };
-                                    SerialNumberList.Add(sn);
-                                }
+                                SerialNumberList = SerialNumberList.FindAll(sn =>
+                                                                            sn.ItemId == item.Id);
                             }
                         }
                     }
                 }
             }
-            SerialNumberInfoNeededCount = SerialNumberList.FindAll(
-                                    delegate (SerialNumberListItem sn) { return string.IsNullOrWhiteSpace(sn.SerialNum); }).Count;
+
+            SerialNumberInfoNeededCount = SerialNumberList.FindAll(serialNumberListItem =>
+                                                                   string.IsNullOrWhiteSpace(serialNumberListItem.SerialNumber))
+                                                                   .Count;
         }
 
-        private bool SerialNumberRequired(RepairOrderItemToWrite item)
+        private bool SerialNumberRequired(RepairOrderItemToRead item)
         {
             if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
             {
@@ -270,41 +261,41 @@ namespace Menominee.Client.Components.RepairOrders
             var tempId = 0;
 
             // Search through each item on each service to find the ones needing purchase info
-            if (RepairOrder?.Services?.Count > 0)
-            {
-                foreach (var service in RepairOrder.Services)
-                {
-                    if (service.Items?.Count > 0)
-                    {
-                        foreach (var item in service.Items)
-                        {
-                            // check if purchase info is required on this item
-                            if (PurchaseInfoRequired(item))
-                            {
-                                PurchaseListItem purchase = new PurchaseListItem
-                                {
-                                    Id = ++tempId,
-                                    VendorId = 0,
-                                    ItemId = item.Id,
-                                    PartNumber = item.PartNumber,
-                                    Description = item.Description,
+            //if (RepairOrder?.Services?.Count > 0)
+            //{
+            //    foreach (var service in RepairOrder.Services)
+            //    {
+            //        if (service.Items?.Count > 0)
+            //        {
+            //            foreach (var item in service.Items)
+            //            {
+            //                // check if purchase info is required on this item
+            //                if (PurchaseInfoRequired(item))
+            //                {
+            //                    PurchaseListItem purchase = new PurchaseListItem
+            //                    {
+            //                        Id = ++tempId,
+            //                        VendorId = 0,
+            //                        ItemId = item.Id,
+            //                        PartNumber = item.PartNumber,
+            //                        Description = item.Description,
 
-                                    VendorName = string.Empty,
-                                    VendorPartNumber = item.PartNumber,
-                                    VendorInvoiceNumber = string.Empty,
-                                    PONumber = string.Empty,
-                                    FileCost = item.Cost,
-                                    VendorCost = 0.0,
-                                    VendorCore = 0.0,
-                                    DatePurchased = DateTime.Today
-                                };
+            //                        VendorName = string.Empty,
+            //                        VendorPartNumber = item.PartNumber,
+            //                        VendorInvoiceNumber = string.Empty,
+            //                        PONumber = string.Empty,
+            //                        FileCost = item.Cost,
+            //                        VendorCost = 0.0,
+            //                        VendorCore = 0.0,
+            //                        DatePurchased = DateTime.Today
+            //                    };
 
-                                PurchaseList.Add(purchase);
-                            }
-                        }
-                    }
-                }
-            }
+            //                    PurchaseList.Add(purchase);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             PurchaseInfoNeededCount = PurchaseList.FindAll(
                                     delegate (PurchaseListItem purchase) { return !purchase.IsComplete(); }).Count;
         }
@@ -319,37 +310,37 @@ namespace Menominee.Client.Components.RepairOrders
             var tempId = 0;
 
             // Search through each item on each service to find the ones needing warranty info
-            if (RepairOrder?.Services?.Count > 0)
-            {
-                foreach (var service in RepairOrder.Services)
-                {
-                    if (service.Items?.Count > 0)
-                    {
-                        foreach (var item in service.Items)
-                        {
-                            var nextSequenceNumber = 0;
+            //if (RepairOrder?.Services?.Count > 0)
+            //{
+            //    foreach (var service in RepairOrder.Services)
+            //    {
+            //        if (service.Items?.Count > 0)
+            //        {
+            //            foreach (var item in service.Items)
+            //            {
+            //                var nextSequenceNumber = 0;
 
-                            // check if warranty info is required on this item
-                            if (WarrantyInfoRequired(item))
-                            {
-                                WarrantyListItem warranty = new WarrantyListItem
-                                {
-                                    Id = ++tempId,
-                                    ItemId = item.Id,
-                                    PartNumber = item.PartNumber,
-                                    Description = item.Description,
-                                    SequenceNumber = ++nextSequenceNumber,
-                                    Type = WarrantyType.NewWarranty,
-                                    WarrantyNumber = string.Empty,
-                                    Quantity = item.QuantitySold
-                                };
+            //                // check if warranty info is required on this item
+            //                if (WarrantyInfoRequired(item))
+            //                {
+            //                    WarrantyListItem warranty = new WarrantyListItem
+            //                    {
+            //                        Id = ++tempId,
+            //                        ItemId = item.Id,
+            //                        PartNumber = item.PartNumber,
+            //                        Description = item.Description,
+            //                        SequenceNumber = ++nextSequenceNumber,
+            //                        Type = WarrantyType.NewWarranty,
+            //                        WarrantyNumber = string.Empty,
+            //                        Quantity = item.QuantitySold
+            //                    };
 
-                                WarrantyList.Add(warranty);
-                            }
-                        }
-                    }
-                }
-            }
+            //                    WarrantyList.Add(warranty);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             WarrantyInfoNeededCount = WarrantyList.FindAll(
                                     delegate (WarrantyListItem warranty) { return !warranty.IsComplete(); }).Count;
         }
@@ -416,11 +407,11 @@ namespace Menominee.Client.Components.RepairOrders
         public long ItemId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public string SerialNum { get; set; }
+        public string SerialNumber { get; set; }
 
         public bool IsComplete()
         {
-            return !string.IsNullOrWhiteSpace(SerialNum);
+            return !string.IsNullOrWhiteSpace(SerialNumber);
         }
     }
 

@@ -1,5 +1,5 @@
 ﻿<div class="form m-form">
-    <ContentHeader Header="Title" />
+    <ContentHeader Header="@Title" />
 
     <div class="m-pad-bottom m-tab-button-group">
         <TelerikButtonGroup SelectionMode="ButtonGroupSelectionMode.Single"
@@ -72,10 +72,10 @@
     <CascadingValue Value="RepairOrder">
         <div class="row m-no-row-margin">
             <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-                @if (CustomerSelected)
-                {
+                <!--@if (CustomerSelected)
+                {-->
                     @*<RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />*@
-                    <RepairOrderCustomerVehicleTab />
+                    <!--<RepairOrderCustomerVehicleTab />
                 }
 
                 @if (FleetSelected)
@@ -101,18 +101,16 @@
                 @if (WarrantiesSelected)
                 {
                     <RepairOrderWarrantiesTab Warranties="WarrantyList" />
-                }
+                }-->
 
                 @if (SerialNumbersSelected)
                 {
-                    <CascadingValue Value="SerialNumberList">
-                        <RepairOrderSerialNumbersTab Updated="SerialNumbersUpdated"/>
-                    </CascadingValue>
+                    <RepairOrderSerialNumbersTab Services="RepairOrder.Services" />
                 }
-                @if (PaymentSelected)
-                {
-                    <RepairOrderPaymentsTab Payments="RepairOrder.Payments" />
-                }
+                @*@if (PaymentSelected)
+                    {
+                        <RepairOrderPaymentsTab Payments="RepairOrder.Payments" />
+                    }*@
 
             </div>
             <div class="col-12 col-md-3 col-lg-2"

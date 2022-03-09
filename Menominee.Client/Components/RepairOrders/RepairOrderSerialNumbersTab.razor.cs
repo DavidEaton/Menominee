@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using Telerik.Blazor.Components;
@@ -8,53 +10,102 @@ namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderSerialNumbersTab : ComponentBase
     {
-        [CascadingParameter]
         public List<SerialNumberListItem> SerialNumberList { get; set; }
 
         [Parameter]
+        public IReadOnlyList<RepairOrderServiceToRead> Services { get; set; }
+
+        [Parameter]
         public EventCallback Updated { get; set; }
-        private bool CanEdit { get; set; } = false;
-        private bool CanCopy { get; set; } = false;
-        private bool CanClear { get; set; } = false;
         private bool EditDialogVisible { get; set; } = false;
+        private bool CanEdit { get; set; } = false;
 
-        // FIX ME - resolve Id==0 issue with new records with detail records
         public IEnumerable<SerialNumberListItem> SelectedSerialNumbers { get; set; } = Enumerable.Empty<SerialNumberListItem>();
-        public SerialNumberListItem SelectedSerialNumber { get; set; }
-        public SerialNumberListItem SerialNumberToModify { get; set; } = null;
-
-        public long SelectedId
-        {
-            get => selectedId;
-            set
-            {
-                selectedId = value;
-                CanEdit = selectedId != 0;
-                CanCopy = selectedId != 0 && SerialNumberList.Count > 0;
-                CanClear = selectedId != 0;
-            }
-        }
-
-        private long itemToSelect { get; set; } = 0;
-        private long selectedId = 0;
-        //private int selectedItemIndex = 0;
+        public SerialNumberListItem SerialNumberToEdit { get; set; }
 
         protected override void OnInitialized()
         {
-            if (SerialNumberList.Count > 0)
+
+            if (Services?.Count > 0)
             {
-                if (itemToSelect == 0)
+                foreach (var service in Services)
                 {
-                    SelectedSerialNumber = SerialNumberList.FirstOrDefault();
+                    var serviceToWrite = new RepairOrderServiceToWrite
+                    {
+                        RepairOrderId = service.RepairOrderId,
+                        SequenceNumber = service.SequenceNumber,
+                        ServiceName = service.ServiceName,
+                        SaleCode = service.SaleCode,
+                        IsCounterSale = service.IsCounterSale,
+                        IsDeclined = service.IsDeclined,
+                        PartsTotal = service.PartsTotal,
+                        LaborTotal = service.LaborTotal,
+                        DiscountTotal = service.DiscountTotal,
+                        TaxTotal = service.TaxTotal,
+                        ShopSuppliesTotal = service.ShopSuppliesTotal,
+                        Total = service.Total
+                    };
+
+                    if (service.Items?.Count > 0)
+                    {
+                        foreach (var item in service.Items)
+                        {
+                            var itemToWrite = new RepairOrderItemToWrite
+                            {
+                                Id = item.Id,
+                                RepairOrderServiceId = item.RepairOrderServiceId,
+                                SequenceNumber = item.SequenceNumber,
+                                //Manufacturer = item.Manufacturer,
+                                ManufacturerId = item.ManufacturerId,
+                                PartNumber = item.PartNumber,
+                                Description = item.Description,
+                                //SaleCode = item.SaleCode,
+                                SaleCodeId = item.SaleCodeId,
+                                //ProductCode = item.ProductCode,
+                                ProductCodeId = item.ProductCodeId,
+                                SaleType = item.SaleType,
+                                PartType = item.PartType,
+                                IsDeclined = item.IsDeclined,
+                                IsCounterSale = item.IsCounterSale,
+                                QuantitySold = item.QuantitySold,
+                                SellingPrice = item.SellingPrice,
+                                LaborType = item.LaborType,
+                                LaborEach = item.LaborEach,
+                                DiscountType = item.DiscountType,
+                                DiscountEach = item.DiscountEach,
+                                Cost = item.Cost,
+                                Core = item.Core,
+                                Total = item.Total
+                            };
+
+                            if (item.SerialNumbers?.Count > 0)
+                            {
+                                foreach (var sn in item.SerialNumbers)
+                                {
+                                    itemToWrite.SerialNumbers.Add(new RepairOrderSerialNumberToWrite()
+                                    {
+                                        RepairOrderItemId = sn.RepairOrderItemId,
+                                        SerialNumber = sn.SerialNumber
+                                    });
+                                }
+                            }
+
+
+                            serviceToWrite.Items.Add(itemToWrite);
+                        }
+
+                    }
+
+
+                    Services.Add(serviceToWrite);
                 }
-                else
-                {
-                    SelectedSerialNumber = SerialNumberList.Where(x => x.Id == itemToSelect).FirstOrDefault();
-                }
-                //selectedItemIndex = SerialNumbers.IndexOf(SelectedSerialNumber);
-                SelectedId = SelectedSerialNumber.Id;
-                SelectedSerialNumbers = new List<SerialNumberListItem> { SelectedSerialNumber };
             }
+
+
+
+
+            SerialNumberList = new List<SerialNumberListItem> { SerialNumberToEdit };
+
         }
 
         public void Save()
@@ -64,28 +115,10 @@ namespace Menominee.Client.Components.RepairOrders
             Updated.InvokeAsync();
         }
 
-        protected void OnSelect(IEnumerable<SerialNumberListItem> serialNumber)
-        {
-            //SelectedItem = ros.FirstOrDefault();
-            //SelectedList = new List<RepairOrderToReadInList> { SelectedItem };
-        }
-
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedSerialNumber = args.Item as SerialNumberListItem;
+            SerialNumberToEdit = args.Item as SerialNumberListItem;
         }
 
-        private void OnCopy()
-        {
-        }
-
-        private static void CopySerialNumber(SerialNumberListItem src, SerialNumberListItem dst)
-        {
-            dst.Id = src.Id;
-            dst.ItemId = src.ItemId;
-            dst.PartNumber = src.PartNumber;
-            dst.Description = src.Description;
-            dst.SerialNum = src.SerialNum;
-        }
     }
 }

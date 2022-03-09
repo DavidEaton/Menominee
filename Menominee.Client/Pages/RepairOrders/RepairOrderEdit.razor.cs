@@ -23,32 +23,16 @@ namespace Menominee.Client.Pages.RepairOrders
         [Parameter]
         public long Id { get; set; }
 
-        public RepairOrderToWrite RepairOrder { get; set; }
+        public RepairOrderToRead RepairOrder { get; set; }
+        public RepairOrderToWrite RepairOrderToEdit { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            if (Id == 0)
-            {
-                RepairOrder = new();
-                //Invoice.Date = DateTime.Today;
-            }
-            else
-            {
-                var readDto = await dataService.GetRepairOrder(Id);
-                RepairOrder = ReadDtoToWriteDto(readDto);
-                //RepairOrder = new RepairOrderToWrite()
-                //{
-                //    Id = readDto.Id,
-                //    RepairOrderNumber = readDto.RepairOrderNumber,
-                //    InvoiceNumber = readDto.InvoiceNumber,
-                //    CustomerName = readDto.CustomerName,
-                //    Vehicle = readDto.Vehicle,
-                //    Total = readDto.Total
-                //};
-            }
+            RepairOrderToEdit = Id == 0 ? RepairOrderToEdit = new()
+                                        : RepairOrderToEdit = ReadDtoToWriteDto(await dataService.GetRepairOrder(Id));
         }
 
-        public static RepairOrderToWrite ReadDtoToWriteDto(RepairOrderToRead roToRead)
+        private static RepairOrderToWrite ReadDtoToWriteDto(RepairOrderToRead roToRead)
         {
             var roToWrite = new RepairOrderToWrite
             {
@@ -65,177 +49,175 @@ namespace Menominee.Client.Pages.RepairOrders
                 Total = roToRead.Total
             };
 
-            if (roToRead?.Services?.Count > 0)
-            {
-                foreach (var service in roToRead.Services)
-                {
-                    var serviceToWrite = new RepairOrderServiceToWrite
-                    {
-                        RepairOrderId = service.RepairOrderId,
-                        SequenceNumber = service.SequenceNumber,
-                        ServiceName = service.ServiceName,
-                        SaleCode = service.SaleCode,
-                        IsCounterSale = service.IsCounterSale,
-                        IsDeclined = service.IsDeclined,
-                        PartsTotal = service.PartsTotal,
-                        LaborTotal = service.LaborTotal,
-                        DiscountTotal = service.DiscountTotal,
-                        TaxTotal = service.TaxTotal,
-                        ShopSuppliesTotal = service.ShopSuppliesTotal,
-                        Total = service.Total
-                    };
+            //if (roToRead?.Services?.Count > 0)
+            //{
+            //    foreach (var service in roToRead.Services)
+            //    {
+            //        var serviceToWrite = new RepairOrderServiceToWrite
+            //        {
+            //            RepairOrderId = service.RepairOrderId,
+            //            SequenceNumber = service.SequenceNumber,
+            //            ServiceName = service.ServiceName,
+            //            SaleCode = service.SaleCode,
+            //            IsCounterSale = service.IsCounterSale,
+            //            IsDeclined = service.IsDeclined,
+            //            PartsTotal = service.PartsTotal,
+            //            LaborTotal = service.LaborTotal,
+            //            DiscountTotal = service.DiscountTotal,
+            //            TaxTotal = service.TaxTotal,
+            //            ShopSuppliesTotal = service.ShopSuppliesTotal,
+            //            Total = service.Total
+            //        };
 
-                    if (service.Items?.Count > 0)
-                    {
-                        foreach (var item in service.Items)
-                        {
-                            var itemToWrite = new RepairOrderItemToWrite
-                            {
-                                Id = item.Id,
-                                RepairOrderServiceId = item.RepairOrderServiceId,
-                                SequenceNumber = item.SequenceNumber,
-                                //Manufacturer = item.Manufacturer,
-                                ManufacturerId = item.ManufacturerId,
-                                PartNumber = item.PartNumber,
-                                Description = item.Description,
-                                //SaleCode = item.SaleCode,
-                                SaleCodeId = item.SaleCodeId,
-                                //ProductCode = item.ProductCode,
-                                ProductCodeId = item.ProductCodeId,
-                                SaleType = item.SaleType,
-                                PartType = item.PartType,
-                                IsDeclined = item.IsDeclined,
-                                IsCounterSale = item.IsCounterSale,
-                                QuantitySold = item.QuantitySold,
-                                SellingPrice = item.SellingPrice,
-                                LaborType = item.LaborType,
-                                LaborEach = item.LaborEach,
-                                DiscountType = item.DiscountType,
-                                DiscountEach = item.DiscountEach,
-                                Cost = item.Cost,
-                                Core = item.Core,
-                                Total = item.Total
-                            };
+            //        if (service.Items?.Count > 0)
+            //        {
+            //            foreach (var item in service.Items)
+            //            {
+            //                var itemToWrite = new RepairOrderItemToWrite
+            //                {
+            //                    Id = item.Id,
+            //                    RepairOrderServiceId = item.RepairOrderServiceId,
+            //                    SequenceNumber = item.SequenceNumber,
+            //                    //Manufacturer = item.Manufacturer,
+            //                    ManufacturerId = item.ManufacturerId,
+            //                    PartNumber = item.PartNumber,
+            //                    Description = item.Description,
+            //                    //SaleCode = item.SaleCode,
+            //                    SaleCodeId = item.SaleCodeId,
+            //                    //ProductCode = item.ProductCode,
+            //                    ProductCodeId = item.ProductCodeId,
+            //                    SaleType = item.SaleType,
+            //                    PartType = item.PartType,
+            //                    IsDeclined = item.IsDeclined,
+            //                    IsCounterSale = item.IsCounterSale,
+            //                    QuantitySold = item.QuantitySold,
+            //                    SellingPrice = item.SellingPrice,
+            //                    LaborType = item.LaborType,
+            //                    LaborEach = item.LaborEach,
+            //                    DiscountType = item.DiscountType,
+            //                    DiscountEach = item.DiscountEach,
+            //                    Cost = item.Cost,
+            //                    Core = item.Core,
+            //                    Total = item.Total
+            //                };
 
-                            if (item.SerialNumbers?.Count > 0)
-                            {
-                                foreach (var sn in item.SerialNumbers)
-                                {
-                                    itemToWrite.SerialNumbers.Add(new RepairOrderSerialNumberToWrite()
-                                    {
-                                        RepairOrderItemId = sn.RepairOrderItemId,
-                                        SerialNumber = sn.SerialNumber
-                                    });
-                                }
-                            }
+            //                if (item.SerialNumbers?.Count > 0)
+            //                {
+            //                    foreach (var sn in item.SerialNumbers)
+            //                    {
+            //                        itemToWrite.SerialNumbers.Add(new RepairOrderSerialNumberToWrite()
+            //                        {
+            //                            RepairOrderItemId = sn.RepairOrderItemId,
+            //                            SerialNumber = sn.SerialNumber
+            //                        });
+            //                    }
+            //                }
 
-                            if (item.Taxes?.Count > 0)
-                            {
-                                foreach (var tax in item.Taxes)
-                                {
-                                    itemToWrite.Taxes.Add(new RepairOrderItemTaxToWrite()
-                                    {
-                                        Id = tax.Id,
-                                        RepairOrderItemId = tax.RepairOrderItemId,
-                                        SequenceNumber = tax.SequenceNumber,
-                                        TaxId = tax.TaxId,
-                                        PartTaxRate = tax.PartTaxRate,
-                                        LaborTaxRate = tax.LaborTaxRate,
-                                        PartTax = tax.PartTax,
-                                        LaborTax = tax.LaborTax
+            //                if (item.Taxes?.Count > 0)
+            //                {
+            //                    foreach (var tax in item.Taxes)
+            //                    {
+            //                        itemToWrite.Taxes.Add(new RepairOrderItemTaxToWrite()
+            //                        {
+            //                            Id = tax.Id,
+            //                            RepairOrderItemId = tax.RepairOrderItemId,
+            //                            SequenceNumber = tax.SequenceNumber,
+            //                            TaxId = tax.TaxId,
+            //                            PartTaxRate = tax.PartTaxRate,
+            //                            LaborTaxRate = tax.LaborTaxRate,
+            //                            PartTax = tax.PartTax,
+            //                            LaborTax = tax.LaborTax
 
-                                    });
-                                }
-                            }
+            //                        });
+            //                    }
+            //                }
 
-                            if (item.Warranties?.Count > 0)
-                            {
-                                foreach (var warranty in item.Warranties)
-                                {
-                                    itemToWrite.Warranties.Add(new RepairOrderWarrantyToWrite()
-                                    {
-                                        Id = warranty.Id,
-                                        RepairOrderItemId = warranty.RepairOrderItemId,
-                                        SequenceNumber = warranty.SequenceNumber,
-                                        Quantity = warranty.Quantity,
-                                        Type = warranty.Type,
-                                        NewWarranty = warranty.NewWarranty,
-                                        OriginalWarranty = warranty.OriginalWarranty,
-                                        OriginalInvoiceId = warranty.OriginalInvoiceId
-                                    });
-                                }
-                            }
+            //                if (item.Warranties?.Count > 0)
+            //                {
+            //                    foreach (var warranty in item.Warranties)
+            //                    {
+            //                        itemToWrite.Warranties.Add(new RepairOrderWarrantyToWrite()
+            //                        {
+            //                            Id = warranty.Id,
+            //                            RepairOrderItemId = warranty.RepairOrderItemId,
+            //                            SequenceNumber = warranty.SequenceNumber,
+            //                            Quantity = warranty.Quantity,
+            //                            Type = warranty.Type,
+            //                            NewWarranty = warranty.NewWarranty,
+            //                            OriginalWarranty = warranty.OriginalWarranty,
+            //                            OriginalInvoiceId = warranty.OriginalInvoiceId
+            //                        });
+            //                    }
+            //                }
 
-                            serviceToWrite.Items.Add(itemToWrite);
-                        }
+            //                serviceToWrite.Items.Add(itemToWrite);
+            //            }
 
-                    }
+            //        }
 
-                    if (service.Techs?.Count > 0)
-                    {
-                        foreach (var tech in service.Techs)
-                        {
-                            serviceToWrite.Techs.Add(new RepairOrderTechToWrite()
-                            {
-                                Id = tech.Id,
-                                RepairOrderServiceId = tech.RepairOrderServiceId,
-                                TechnicianId = tech.TechnicianId
-                            });
-                        }
-                    }
+            //        if (service.Techs?.Count > 0)
+            //        {
+            //            foreach (var tech in service.Techs)
+            //            {
+            //                serviceToWrite.Techs.Add(new RepairOrderTechToWrite()
+            //                {
+            //                    Id = tech.Id,
+            //                    RepairOrderServiceId = tech.RepairOrderServiceId,
+            //                    TechnicianId = tech.TechnicianId
+            //                });
+            //            }
+            //        }
 
-                    if (service.Taxes?.Count > 0)
-                    {
-                        foreach (var tax in service.Taxes)
-                        {
-                            serviceToWrite.Taxes.Add(new RepairOrderServiceTaxToWrite()
-                            {
-                                Id = tax.Id,
-                                RepairOrderServiceId = tax.RepairOrderServiceId,
-                                SequenceNumber = tax.SequenceNumber,
-                                TaxId = tax.TaxId,
-                                PartTaxRate = tax.PartTaxRate,
-                                LaborTaxRate = tax.LaborTaxRate,
-                                PartTax = tax.PartTax,
-                                LaborTax = tax.LaborTax
-                            });
-                        }
-                    }
+            //        if (service.Taxes?.Count > 0)
+            //        {
+            //            foreach (var tax in service.Taxes)
+            //            {
+            //                serviceToWrite.Taxes.Add(new RepairOrderServiceTaxToWrite()
+            //                {
+            //                    Id = tax.Id,
+            //                    RepairOrderServiceId = tax.RepairOrderServiceId,
+            //                    SequenceNumber = tax.SequenceNumber,
+            //                    TaxId = tax.TaxId,
+            //                    PartTaxRate = tax.PartTaxRate,
+            //                    LaborTaxRate = tax.LaborTaxRate,
+            //                    PartTax = tax.PartTax,
+            //                    LaborTax = tax.LaborTax
+            //                });
+            //            }
+            //        }
 
-                    roToWrite.Services.Add(serviceToWrite);
-                }
-            }
+            //        roToWrite.Services.Add(serviceToWrite);
+            //    }
+            //}
 
-            if (roToRead?.Payments.Count > 0)
-            {
-                foreach (var payment in roToRead.Payments)
-                {
-                    roToWrite.Payments.Add(new RepairOrderPaymentToWrite()
-                    {
-                        Id = payment.Id,
-                        RepairOrderId = payment.RepairOrderId,
-                        PaymentMethod = payment.PaymentMethod,
-                        Amount = payment.Amount
-                    });
-                }
-            }
+            //if (roToRead?.Payments.Count > 0)
+            //{
+            //    foreach (var payment in roToRead.Payments)
+            //    {
+            //        roToWrite.Payments.Add(new RepairOrderPaymentToWrite()
+            //        {
+            //            Id = payment.Id,
+            //            RepairOrderId = payment.RepairOrderId,
+            //            PaymentMethod = payment.PaymentMethod,
+            //            Amount = payment.Amount
+            //        });
+            //    }
+            //}
 
             return roToWrite;
         }
 
         private async Task Save()
         {
-            // Called from RepairOrderForm.SerialNumbersUpdated()... OnSave.InvokeAsync();
             if (Valid())
             {
                 if (Id == 0)
                 {
-                    var ro = await dataService.AddRepairOrder(RepairOrder);
-                    Id = ro.Id;
+                    await dataService.AddRepairOrder(RepairOrderToEdit);
                 }
                 else
                 {
-                    await dataService.UpdateRepairOrder(RepairOrder, Id);
+                    await dataService.UpdateRepairOrder(RepairOrderToEdit, Id);
                 }
 
                 EndEdit();
