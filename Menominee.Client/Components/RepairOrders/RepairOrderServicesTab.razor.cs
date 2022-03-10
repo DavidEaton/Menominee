@@ -19,7 +19,7 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderServicesTab : ComponentBase
     {
         [Inject]
-        public ISaleCodeDataService saleCodeDataService { get; set; }
+        public ISaleCodeDataService SaleCodeDataService { get; set; }
 
         //[Inject]
         //public IInventoryItemDataService inventoryItemDataService { get; set; }
@@ -39,25 +39,6 @@ namespace Menominee.Client.Components.RepairOrders
         public RepairOrderItemToWrite SelectedItem { get; set; }
         public RepairOrderItemToWrite ItemToModify { get; set; } = null;
 
-        //public long SelectedItemId
-        //{
-        //    get => selectedItemId;
-        //    set
-        //    {
-        //        selectedItemId = value;
-        //        CanEditItem = selectedItemId != 0;
-        //        CanDeleteItem = selectedItemId != 0 && Services[selectedServiceIndex].Items.Count > 0;
-        //        //CanAddItem = true;
-        //    }
-        //}
-
-        //private long itemToSelect { get; set; } = 0;
-        //private long selectedItemId = 0;
-        //private int selectedItemIndex = 0;
-        //private int selectedServiceIndex = 0;
-        //private long nextItemId = 0;
-        //private long nextServiceId = 0;
-        //private bool shouldRender = true;
         private FormMode ItemFormMode = FormMode.Unknown;
         private bool EditItemDialogVisible { get; set; } = false;
         private bool EditLaborDialogVisible { get; set; } = false;
@@ -80,11 +61,6 @@ namespace Menominee.Client.Components.RepairOrders
         {
             base.OnParametersSet();
         }
-
-        //protected override bool ShouldRender()
-        //{
-        //    return true;
-        //}
 
         private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
         {
@@ -195,6 +171,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
         {
+            var moops = args.Item as RepairOrderItemToWrite;
+
             EditItem(args.Item as RepairOrderItemToWrite);
         }
 
@@ -295,7 +273,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task<(string sc, string name)> GetSaleCode(long id)
         {
-            SaleCodeToRead saleCodeToRead = await saleCodeDataService.GetSaleCode(id);
+            SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetSaleCode(id);
             if (saleCodeToRead != null)
                 return (saleCodeToRead.Code, saleCodeToRead.Name);
 

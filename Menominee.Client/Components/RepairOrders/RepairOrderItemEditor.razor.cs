@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Enums;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
@@ -8,15 +7,10 @@ using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
-//using MenomineePlayWASM.Shared.Entities.RepairOrders.Enums;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -24,16 +18,13 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderItemEditor : ComponentBase
     {
         [Inject]
-        public IManufacturerDataService manufacturerDataService { get; set; }
+        public IManufacturerDataService ManufacturerDataService { get; set; }
 
         [Inject]
-        public ISaleCodeDataService saleCodeDataService { get; set; }
+        public ISaleCodeDataService SaleCodeDataService { get; set; }
 
         [Inject]
-        public IProductCodeDataService productCodeDataService { get; set; }
-
-        //[Inject]
-        //IJSRuntime _js { get; set; }
+        public IProductCodeDataService ProductCodeDataService { get; set; }
 
         [Parameter]
         public RepairOrderItemToWrite Item { get; set; }
@@ -66,7 +57,6 @@ namespace Menominee.Client.Components.RepairOrders
         {
             foreach (SaleType item in Enum.GetValues(typeof(SaleType)))
             {
-                //SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = item.ToString(), Value = item });
                 SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(item), Value = item });
             }
             foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
@@ -83,9 +73,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await manufacturerDataService.GetAllManufacturers()).ToList();
-            SaleCodes = (await saleCodeDataService.GetAllSaleCodes()).ToList();
-            ProductCodes = (await productCodeDataService.GetAllProductCodes()).ToList();    // FIX ME - need to restrict list to mfr, salecode
+            Manufacturers = (await ManufacturerDataService.GetAllManufacturers()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllSaleCodes()).ToList();
+            ProductCodes = (await ProductCodeDataService.GetAllProductCodes()).ToList();    // FIX ME - need to restrict list to mfr, salecode
 
             ManufacturerList = new();
             foreach (var mfr in Manufacturers)

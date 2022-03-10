@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.Customers
+namespace Menominee.Client.Components.Customers
 {
     public partial class CustomersPage : ComponentBase
     {
@@ -27,8 +27,7 @@ namespace Menominee.Client.Pages.Customers
         protected override async Task OnInitializedAsync()
         {
             Customers = (await CustomerDataService.GetAllCustomers()).ToList();
-            //Customers = new List<CustomerToReadInList>();
-
+    
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
 

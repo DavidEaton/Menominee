@@ -10,7 +10,7 @@ namespace MenomineePlayWASM.Client.Components.RepairOrders
     {
         List<Service> Services { get; set; }
 
-        protected override void OnInitializedAsync()
+        protected override void OnInitialized()
         {
             Services = GenerateData();
         }

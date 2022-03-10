@@ -7,6 +7,8 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
     public class RepairOrderItem : Entity
     {
+        // DDD Notes
+        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold. If three of same part are sold, three serial numbers are required.
         public long RepairOrderServiceId { get; set; }
         public int SequenceNumber { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }

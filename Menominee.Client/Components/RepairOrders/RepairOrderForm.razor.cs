@@ -1,16 +1,22 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Helpers;
+using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderForm
     {
         public RepairOrderToWrite RepairOrderToEdit { get; set; }
+
+        [Inject]
+        private IRepairOrderDataService DataService { get; set; }
 
         [Parameter]
         public long Id { get; set; }
@@ -156,7 +162,11 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            // replaced these once correct fields are in place
+            RepairOrderToEdit = Id == 0
+                ? RepairOrderToEdit = new()
+                : RepairOrderToEdit = RepairOrderHelper.ConvertReadDtoToWriteDto(RepairOrder);
+
+            // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";
             if (RepairOrder.CustomerName.Length > 0)
                 title += $"   ~   {RepairOrder.CustomerName}";
@@ -165,8 +175,31 @@ namespace Menominee.Client.Components.RepairOrders
             Title = title;
 
             BuildSerialNumberList();
-            BuildPurchaseList();
-            BuildWarrantyList();
+        }
+
+        private async Task Save()
+        {
+            if (Valid())
+            {
+                if (Id == 0)
+                {
+                    await DataService.AddRepairOrder(RepairOrderToEdit);
+                }
+                else
+                {
+                    await DataService.UpdateRepairOrder(RepairOrderToEdit, Id);
+                }
+
+                await OnSave.InvokeAsync();
+            }
+        }
+        private bool Valid()
+        {
+            //if (Invoice.VendorId > 0 && Invoice.Date.HasValue)
+            //    return true;
+
+            //return false;
+            return true;
         }
 
         private static int RandomInt()
@@ -174,8 +207,6 @@ namespace Menominee.Client.Components.RepairOrders
             var random = new Random();
             return random.Next();
         }
-
-        //private RepairOrderTab SelectedTab { get; set; }
 
         private bool CustomerSelected { get; set; } = true;
         private bool FleetSelected { get; set; }
@@ -232,8 +263,14 @@ namespace Menominee.Client.Components.RepairOrders
                             // check if serial numbers are required on this item
                             if (SerialNumberRequired(item))
                             {
-                                SerialNumberList = SerialNumberList.FindAll(sn =>
-                                                                            sn.ItemId == item.Id);
+                                SerialNumberListItem serialNumber = new SerialNumberListItem
+                                {
+                                    ItemId = item.Id,
+                                    PartNumber = item.PartNumber,
+                                    Description = item.Description
+                                    //SerialNum = string.Empty
+                                };
+                                SerialNumberList.Add(serialNumber);
                             }
                         }
                     }

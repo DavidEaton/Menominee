@@ -69,25 +69,25 @@
         </TelerikButtonGroup>
     </div>
 
-    <CascadingValue Value="RepairOrder">
+    <CascadingValue Value="RepairOrderToEdit">
         <div class="row m-no-row-margin">
             <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-                <!--@if (CustomerSelected)
-                {-->
-                    @*<RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />*@
+@*                @if (CustomerSelected)
+                {
+                <RepairOrderCustomerVehicleTab RepairOrder="@RepairOrder" />
                     <!--<RepairOrderCustomerVehicleTab />
                 }
 
                 @if (FleetSelected)
                 {
                 }
-
+*@
                 @if (ServicesSelected)
                 {
-                    <RepairOrderServicesTab Services="RepairOrder.Services" />
+                    <RepairOrderServicesTab Services="RepairOrderToEdit.Services" />
                 }
 
-                @if (InspectionsSelected)
+@*                @if (InspectionsSelected)
                 {
                     <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
                                               PreviousInspections="PreviousInspections" />
@@ -101,22 +101,23 @@
                 @if (WarrantiesSelected)
                 {
                     <RepairOrderWarrantiesTab Warranties="WarrantyList" />
-                }-->
-
+                }
+*@
                 @if (SerialNumbersSelected)
                 {
-                    <RepairOrderSerialNumbersTab Services="RepairOrder.Services" />
+                    <RepairOrderSerialNumbersTab SerialNumberList ="SerialNumberList"
+                                                 Updated="Save"/>
                 }
-                @*@if (PaymentSelected)
+@*                @if (PaymentSelected)
                     {
                         <RepairOrderPaymentsTab Payments="RepairOrder.Payments" />
-                    }*@
-
+                    }
+*@
             </div>
             <div class="col-12 col-md-3 col-lg-2"
                  id="totalsCol">
-                <RepairOrderTotals OnDiscard="@OnDiscard"
-                                   OnSave="@OnSave" />
+                <RepairOrderTotals OnDiscard="OnDiscard"
+                                   OnSave="Save" />
             </div>
         </div>
     </CascadingValue>

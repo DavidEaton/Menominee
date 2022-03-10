@@ -14,7 +14,7 @@ namespace MenomineePlayWASM.Client.Components.Reports
 
         public List<ModuleMenuItem> MenuItems { get; set; }
 
-        protected override void OnInitializedAsync()
+        protected override void OnInitialized()
         {
             MenuItems = new List<ModuleMenuItem>()
         {
