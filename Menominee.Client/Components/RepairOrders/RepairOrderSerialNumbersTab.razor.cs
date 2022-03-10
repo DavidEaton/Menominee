@@ -20,10 +20,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             EditDialogVisible = false;
 
-            var mmops = SerialNumberList?.Count;
-
-            // Update SerialNumberList with model changes
-            Updated.InvokeAsync();
+            //Updated.InvokeAsync();
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
