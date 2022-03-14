@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Menominee.Client.Services.RepairOrders;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages.RepairOrders
@@ -21,8 +22,10 @@ namespace Menominee.Client.Pages.RepairOrders
         {
             if (Id == 0)
             {
-                RepairOrder = new();
-                //Invoice.Date = DateTime.Today;
+                RepairOrder = new()
+                {
+                    DateCreated = DateTime.Today
+                };
             }
             else
             {

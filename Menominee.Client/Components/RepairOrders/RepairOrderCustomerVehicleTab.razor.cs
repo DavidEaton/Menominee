@@ -5,8 +5,7 @@ namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderCustomerVehicleTab
     {
-        //[Parameter]
-        [CascadingParameter]
+        [Parameter]
         public RepairOrderToWrite RepairOrder { get; set; }
     }
 }
