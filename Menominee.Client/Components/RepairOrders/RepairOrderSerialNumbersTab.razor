@@ -10,7 +10,7 @@
                 @if (SerialNumberList != null)
                 {
                     <TelerikGrid Data="SerialNumberList"
-                                 OnRowClick="@OnRowSelected"
+                                 OnRowClick="OnRowSelected"
                                  OnRowDoubleClick="@(() => EditDialogVisible = true)"
                                  SelectionMode="GridSelectionMode.Single">
                         <GridColumns>
@@ -53,8 +53,8 @@
 
     @if (EditDialogVisible && SerialNumberToEdit != null)
     {
-        <RepairOrderSerialNumberEditor SerialNumber="@SerialNumberToEdit"
-                                       DialogVisible="@EditDialogVisible"
+        <RepairOrderSerialNumberEditor SerialNumber="SerialNumberToEdit"
+                                       DialogVisible="EditDialogVisible"
                                        OnSave="Save"
                                        OnCancel="@(() => EditDialogVisible = false)" />
     }

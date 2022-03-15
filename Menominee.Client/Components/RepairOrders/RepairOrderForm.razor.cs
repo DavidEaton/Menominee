@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -175,16 +174,85 @@ namespace Menominee.Client.Components.RepairOrders
                 title += $"   ~   {RepairOrder.Vehicle}";
             Title = title;
 
-            BuildSerialNumberList();
+            InitializeSerialNumberMissingCount();
+        }
+
+        private void UpdateSerialNumberMissingCount(int count)
+        {
+            SerialNumbersMissingCount = count;
+        }
+
+        private void InitializeSerialNumberMissingCount()
+        {
+            // Clear the list
+            SerialNumberList = new();
+
+            // Search through each item on each service to find the ones needing serial numbers
+            foreach (var service in RepairOrder?.Services)
+            {
+                foreach (var item in service?.Items)
+                {
+                    // check if serial numbers are required on current item
+                    if (SerialNumberRequired(item))
+                    {
+                        // add existing serial number rows from database to the collection
+                        AddExistingToSerialNumberMissingCount(item);
+
+                        // add existing serial numbers matching the current item
+                        AddMissingToSerialNumberMissingCount(item);
+                    }
+                }
+            }
+
+            SerialNumbersMissingCount = SerialNumberList.FindAll(
+                serialNumberListItem =>
+                string.IsNullOrWhiteSpace(serialNumberListItem.SerialNumber)).Count;
+        }
+        private void AddMissingToSerialNumberMissingCount(RepairOrderItemToRead item)
+        {
+            var matchingItemSerialNumbers = SerialNumberList.FindAll(
+                serialNumber =>
+                serialNumber.ItemId == item.Id);
+
+            var missingItemSerialNumberRowsCount = item.QuantitySold - matchingItemSerialNumbers.Count;
+            for (var i = 0; i < missingItemSerialNumberRowsCount; i++)
+            {
+                SerialNumberListItem serialNumber = new SerialNumberListItem
+                {
+                    ItemId = item.Id,
+                    RepairOrderItemId = item.Id,
+                    PartNumber = item.PartNumber
+                };
+
+                SerialNumberList.Add(serialNumber);
+            }
+        }
+
+        private void AddExistingToSerialNumberMissingCount(RepairOrderItemToRead item)
+        {
+            foreach (var existingSerialNumber in item?.SerialNumbers)
+            {
+                SerialNumberListItem serialNumber = new SerialNumberListItem
+                {
+                    ItemId = item.Id,
+                    RepairOrderItemId = existingSerialNumber.RepairOrderItemId,
+                    PartNumber = item.PartNumber,
+                    SerialNumber = existingSerialNumber.SerialNumber
+                };
+
+                SerialNumberList.Add(serialNumber);
+            }
+        }
+
+        private bool SerialNumberRequired(RepairOrderItemToRead item)
+        {
+            return true;
         }
 
         private async Task Save()
         {
             if (Valid())
             {
-
-                UpdateSerialNumbers();
-
                 if (Id == 0)
                 {
                     await DataService.AddRepairOrder(RepairOrderToEdit);
@@ -196,46 +264,6 @@ namespace Menominee.Client.Components.RepairOrders
 
                 await OnSave.InvokeAsync();
             }
-        }
-
-        private void UpdateSerialNumbers()
-        {
-            // For each service... 
-            foreach (var service in RepairOrderToEdit?.Services)
-            {
-                // ...replace each RepairOrderItem...
-                foreach (var item in service?.Items)
-                {
-                    // ...collection of RepairOrderItemSerialNumbers...
-                    foreach (var existingSerialNumber in item?.SerialNumbers)
-                    {
-                        // ...with the RepairOrderItem's edited collection from SerialNumberList
-                        var editedRows = SerialNumberList.FindAll(
-                            serialNumberItem =>
-                            serialNumberItem.RepairOrderItemId == existingSerialNumber.RepairOrderItemId);
-
-                        item.SerialNumbers = UpdateSerialNumbers(editedRows);
-                    }
-                }
-            }
-
-            // Now reverse the search: For each Serial Number ADDED (not yet in database)
-        }
-
-        private static List<RepairOrderSerialNumberToWrite> UpdateSerialNumbers(List<SerialNumberListItem> editedRows)
-        {
-            var updatedRows = new List<RepairOrderSerialNumberToWrite>();
-
-            foreach (var row in editedRows)
-            {
-                updatedRows.Add(new RepairOrderSerialNumberToWrite()
-                {
-                    RepairOrderItemId = row.RepairOrderItemId,
-                    SerialNumber = row.SerialNumber
-                });
-            }
-
-            return updatedRows;
         }
 
         private bool Valid()
@@ -266,90 +294,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private int PurchaseInfoNeededCount { get; set; } = 0;
         private int WarrantyInfoNeededCount { get; set; } = 0;
-        private int SerialNumberMissingCount { get; set; } = 0;
-
-        private void BuildSerialNumberList()
-        {
-            // Search through each item on each service to find the ones needing serial numbers
-            foreach (var service in RepairOrder?.Services)
-            {
-                foreach (var item in service?.Items)
-                {
-                    // check if serial numbers are required on current item
-                    if (SerialNumberRequired(item))
-                    {
-                        // add existing serial number rows to the collection
-                        AddExistingToSerialNumberList(item);
-
-                        // add existing serial numbers matching the current item
-                        AddMatchingToSerialNumberList(item);
-
-                        // add unmatched serial numbers to the current item
-                        AddNonMatchingToSerialNumberList(item);
-                    }
-                }
-            }
-
-            SerialNumberMissingCount = SerialNumberList.FindAll(
-                serialNumberListItem =>
-                string.IsNullOrWhiteSpace(serialNumberListItem.SerialNumber)).Count;
-        }
-
-        private void AddNonMatchingToSerialNumberList(RepairOrderItemToRead item)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void AddExistingToSerialNumberList(RepairOrderItemToRead item)
-        {
-            foreach (var existingSerialNumber in item?.SerialNumbers)
-            {
-                SerialNumberListItem serialNumber = new SerialNumberListItem
-                {
-                    Id = existingSerialNumber.Id,
-                    ItemId = item.Id,
-                    RepairOrderItemId = existingSerialNumber.RepairOrderItemId,
-                    PartNumber = item.PartNumber,
-                    Description = item.Description,
-                    SerialNumber = existingSerialNumber.SerialNumber
-                };
-
-                SerialNumberList.Add(serialNumber);
-            }
-        }
-
-        private void AddMatchingToSerialNumberList(RepairOrderItemToRead item)
-        {
-            var matchingItemSerialNumbers = SerialNumberList.FindAll(
-                serialNumber =>
-                serialNumber.ItemId == item.Id);
-
-            var missingItemSerialNumberRowsCount = item.QuantitySold - matchingItemSerialNumbers.Count;
-            for (var i = 0; i < missingItemSerialNumberRowsCount; i++)
-            {
-                SerialNumberListItem serialNumber = new SerialNumberListItem
-                {
-                    Id = 0,
-                    ItemId = item.Id,
-                    RepairOrderItemId = item.Id,
-                    PartNumber = item.PartNumber,
-                    Description = item.Description
-                };
-
-                SerialNumberList.Add(serialNumber);
-            }
-        }
-
-        private bool SerialNumberRequired(RepairOrderItemToRead item)
-        {
-            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
-            {
-                // check if this part's product code requires serial numbers
-                // if (ProductCodeRequiresSerialNumber())
-                return true;
-            }
-            return false;
-        }
+        private int SerialNumbersMissingCount { get; set; } = 1;
 
         private void BuildPurchaseList()
         {
@@ -451,19 +396,19 @@ namespace Menominee.Client.Components.RepairOrders
             return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0);
         }
 
-        public bool HavePurchases()
+        public bool HasPurchases()
         {
             return PurchaseList.Count > 0;
         }
 
-        public bool HaveWarranties()
+        public bool HasWarranties()
         {
             return WarrantyList.Count > 0;
         }
 
-        public bool HaveSerialNumbers()
+        public bool HasSerialNumbers()
         {
-            return SerialNumberList.Count > 0;
+            return SerialNumbersMissingCount > 0;
         }
     }
 

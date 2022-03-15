@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Enums;
-using Menominee.Common;
+﻿using Menominee.Common;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 
