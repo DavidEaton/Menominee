@@ -6,6 +6,8 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Techs;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
+using Menominee.Common.Enums;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Helpers
 {
@@ -28,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 Total = repairOrder.Total,
                 DateCreated = repairOrder.DateCreated,
                 DateInvoiced = repairOrder.DateInvoiced,
-                DateModified = repairOrder.DateModified          
+                DateModified = repairOrder.DateModified
             };
 
             if (repairOrder?.Services?.Count > 0)
@@ -114,6 +116,9 @@ namespace CustomerVehicleManagement.Shared.Helpers
             {
                 RepairOrderItemToWrite itemToWrite = ReadDtoToWriteDto(item);
 
+                // add missing serial number rows for the current item
+                AddMissingToSerialNumbers(itemToWrite);
+
                 if (item.SerialNumbers?.Count > 0)
                     SerialNumbersReadDtoToWriteDto(item, itemToWrite);
 
@@ -125,6 +130,38 @@ namespace CustomerVehicleManagement.Shared.Helpers
 
                 serviceToWrite.Items.Add(itemToWrite);
             }
+        }
+
+        private static void AddMissingToSerialNumbers(RepairOrderItemToWrite item)
+        {
+            if (item?.SerialNumbers is null || !SerialNumberRequired(item))
+                return;
+
+            // If QuantitySold is fractional, and part requires serial number,
+            // that's an invalid state we must prevent.
+            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
+            if (IsFractional(item.QuantitySold))
+                return;
+
+            int quantitySold = (int)item.QuantitySold;
+
+            int matchingItemSerialNumbersCount = item?.SerialNumbers is not null ? item.SerialNumbers.Count : 0;
+
+            int missingItemSerialNumbersCount = quantitySold - matchingItemSerialNumbersCount;
+            for (var i = 0; i < missingItemSerialNumbersCount; i++)
+            {
+                var serialNumber = new RepairOrderSerialNumberToWrite
+                {
+                    RepairOrderItemId = item.Id
+                };
+
+                item.SerialNumbers.Add(serialNumber);
+            }
+        }
+
+        private static bool IsFractional(double quantitySold)
+        {
+            return (quantitySold % 1) == 0;
         }
 
         private static void WarrantiesReadDtoToWriteDto(RepairOrderItemToRead item, RepairOrderItemToWrite itemToWrite)
@@ -223,6 +260,47 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 ShopSuppliesTotal = repairOrderService.ShopSuppliesTotal,
                 Total = repairOrderService.Total
             };
+        }
+
+
+        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
+        private static bool SerialNumberRequired(RepairOrderItemToWrite item)
+        {
+            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
+            {
+                // check if this part's product code requires serial numbers
+                // if (ProductCodeRequiresSerialNumber())
+                return true;
+            }
+            return false;
+        }
+
+        public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> servicesToWrite)
+        {
+            int missingSerialNumberCount = 0;
+
+            foreach (var service in servicesToWrite)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.SerialNumbers is null || !SerialNumberRequired(item))
+                        continue;
+
+                    // If QuantitySold is fractional, and part requires serial number,
+                    // that's an invalid state we must prevent.
+                    // TODO: This is a business rule. Business rules should live in the domain layer.
+                    if (IsFractional(item.QuantitySold))
+                        continue;
+
+                    int quantitySold = (int)item.QuantitySold;
+
+                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count;
+
+                    missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
+                }
+            }
+
+            return missingSerialNumberCount;
         }
     }
 }

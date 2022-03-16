@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -452,11 +453,11 @@ namespace Menominee.Client.Components.RepairOrders
         public long ItemId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public string SerialNumber { get; set; }
+        public RepairOrderSerialNumberToWrite SerialNumber { get; set; }
 
         public bool IsComplete()
         {
-            return !string.IsNullOrWhiteSpace(SerialNumber);
+            return !string.IsNullOrWhiteSpace(SerialNumber.SerialNumber);
         }
     }
 

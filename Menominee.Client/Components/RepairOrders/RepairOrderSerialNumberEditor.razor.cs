@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -8,7 +9,7 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderSerialNumberEditor : ComponentBase
     {
         [Parameter]
-        public SerialNumberListItem SerialNumber { get; set; }
+        public RepairOrderSerialNumberToWrite SerialNumber { get; set; }
 
         [CascadingParameter]
         public RepairOrderToWrite RepairOrder { get; set; }
