@@ -24,11 +24,12 @@ namespace Menominee.Client.Components.RepairOrders
         private bool EditDialogVisible { get; set; } = false;
         private bool CanEdit { get; set; } = false;
 
-        public IList<RepairOrderSerialNumberToWrite> SerialNumberList { get; set; } = new List<RepairOrderSerialNumberToWrite>();
+        public IList<SerialNumberListItem> SerialNumberList { get; set; } = new List<SerialNumberListItem>();
         public RepairOrderSerialNumberToWrite SerialNumberToEdit { get; set; }
 
         public void Save()
         {
+            UpdateMissingSerialNumberCount();
             EditDialogVisible = false;
         }
 
@@ -44,13 +45,20 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void BuildSerialNumberList()
         {
+            SerialNumberList = new List<SerialNumberListItem>();
             foreach (var service in RepairOrder.Services)
             {
                 foreach (var item in service.Items)
                 {
                     foreach (var serialNumber in item.SerialNumbers)
                     {
-                        SerialNumberList.Add(serialNumber);
+                        SerialNumberList.Add(new SerialNumberListItem()
+                        {
+                            Description = item.Description,
+                            PartNumber = item.PartNumber,
+                            RepairOrderItemId = serialNumber.RepairOrderItemId,
+                            SerialNumberType = serialNumber
+                        });
                     }
                 }
             }

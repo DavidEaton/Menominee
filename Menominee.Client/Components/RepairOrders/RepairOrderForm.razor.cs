@@ -37,7 +37,6 @@ namespace Menominee.Client.Components.RepairOrders
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
         List<PurchaseListItem> PurchaseList { get; set; } = new();
-        List<SerialNumberListItem> SerialNumberList { get; set; } = new();
         List<WarrantyListItem> WarrantyList { get; set; } = new();
         //List<Payment> Payments { get; set; }
 
@@ -175,79 +174,12 @@ namespace Menominee.Client.Components.RepairOrders
                 title += $"   ~   {RepairOrder.Vehicle}";
             Title = title;
 
-            InitializeSerialNumberMissingCount();
+            SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrderToEdit.Services);
         }
 
         private void UpdateSerialNumberMissingCount(int count)
         {
             SerialNumbersMissingCount = count;
-        }
-
-        private void InitializeSerialNumberMissingCount()
-        {
-            // Clear the list
-            SerialNumberList = new();
-
-            // Search through each item on each service to find the ones needing serial numbers
-            foreach (var service in RepairOrder?.Services)
-            {
-                foreach (var item in service?.Items)
-                {
-                    // check if serial numbers are required on current item
-                    if (SerialNumberRequired(item))
-                    {
-                        // add existing serial number rows from database to the collection
-                        AddExistingToSerialNumberMissingCount(item);
-
-                        // add existing serial numbers matching the current item
-                        AddMissingToSerialNumberMissingCount(item);
-                    }
-                }
-            }
-
-            SerialNumbersMissingCount = SerialNumberList.FindAll(
-                serialNumberListItem =>
-                string.IsNullOrWhiteSpace(serialNumberListItem.SerialNumber)).Count;
-        }
-        private void AddMissingToSerialNumberMissingCount(RepairOrderItemToRead item)
-        {
-            var matchingItemSerialNumbers = SerialNumberList.FindAll(
-                serialNumber =>
-                serialNumber.ItemId == item.Id);
-
-            var missingItemSerialNumberRowsCount = item.QuantitySold - matchingItemSerialNumbers.Count;
-            for (var i = 0; i < missingItemSerialNumberRowsCount; i++)
-            {
-                SerialNumberListItem serialNumber = new SerialNumberListItem
-                {
-                    ItemId = item.Id,
-                    RepairOrderItemId = item.Id,
-                    PartNumber = item.PartNumber
-                };
-
-                SerialNumberList.Add(serialNumber);
-            }
-        }
-
-        private void AddExistingToSerialNumberMissingCount(RepairOrderItemToRead item)
-        {
-            foreach (var existingSerialNumber in item?.SerialNumbers)
-            {
-                SerialNumberListItem serialNumber = new SerialNumberListItem
-                {
-                    ItemId = item.Id,
-                    RepairOrderItemId = existingSerialNumber.RepairOrderItemId,
-                    PartNumber = item.PartNumber,
-                    SerialNumber = existingSerialNumber.SerialNumber
-                };
-
-                SerialNumberList.Add(serialNumber);
-            }
-        }
-
-        private bool SerialNumberRequired(RepairOrderItemToRead item)
-        {
-            return true;
         }
 
         private async Task Save()
@@ -453,11 +385,15 @@ namespace Menominee.Client.Components.RepairOrders
         public long ItemId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public RepairOrderSerialNumberToWrite SerialNumber { get; set; }
+        public RepairOrderSerialNumberToWrite SerialNumberType { get; set; }
+        public string SerialNumber =>
+            !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber)
+            ? SerialNumberType.SerialNumber
+            : string.Empty;
 
         public bool IsComplete()
         {
-            return !string.IsNullOrWhiteSpace(SerialNumber.SerialNumber);
+            return !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber);
         }
     }
 

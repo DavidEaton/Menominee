@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
 {
     public class RepairOrderItemToWrite
     {
-        public long Id { get; set; } = 0;
+        //public long Id { get; set; } = 0;
         public long RepairOrderServiceId { get; set; } = 0;
         public int SequenceNumber { get; set; } = 0;
         public ManufacturerToWrite Manufacturer { get; set; }
