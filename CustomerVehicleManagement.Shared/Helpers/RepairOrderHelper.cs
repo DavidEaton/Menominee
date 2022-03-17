@@ -7,6 +7,7 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Helpers
 {
@@ -34,6 +35,12 @@ namespace CustomerVehicleManagement.Shared.Helpers
                 Payments = PaymentsReadDtoToWriteDto(repairOrder),
                 Taxes = TaxesReadDtoToWriteDto(repairOrder)
             };
+
+            foreach (var service in repairOrderToWrite.Services)
+            {
+                foreach (var item in service.Items)
+                    AddMissingSerialNumbers(item);
+            }
 
             return repairOrderToWrite;
         }
@@ -120,86 +127,6 @@ namespace CustomerVehicleManagement.Shared.Helpers
         private static bool IsFractional(double quantitySold)
         {
             return !((quantitySold % 1) == 0);
-        }
-
-        //private static void WarrantiesReadDtoToWriteDto(RepairOrderItemToRead item, RepairOrderItemToWrite itemToWrite)
-        //{
-        //    foreach (var warranty in item?.Warranties)
-        //    {
-        //        itemToWrite.Warranties.Add(new RepairOrderWarrantyToWrite()
-        //        {
-        //            Id = warranty.Id,
-        //            RepairOrderItemId = warranty.RepairOrderItemId,
-        //            SequenceNumber = warranty.SequenceNumber,
-        //            Quantity = warranty.Quantity,
-        //            Type = warranty.Type,
-        //            NewWarranty = warranty.NewWarranty,
-        //            OriginalWarranty = warranty.OriginalWarranty,
-        //            OriginalInvoiceId = warranty.OriginalInvoiceId
-        //        });
-        //    }
-        //}
-
-        //private static void ReadDtoToWriteDto(RepairOrderItemToRead item, RepairOrderItemToWrite itemToWrite)
-        //{
-        //    foreach (var tax in item?.Taxes)
-        //    {
-        //        itemToWrite.Taxes.Add(new RepairOrderItemTaxToWrite()
-        //        {
-        //            RepairOrderItemId = tax.RepairOrderItemId,
-        //            SequenceNumber = tax.SequenceNumber,
-        //            TaxId = tax.TaxId,
-        //            PartTaxRate = tax.PartTaxRate,
-        //            LaborTaxRate = tax.LaborTaxRate,
-        //            PartTax = tax.PartTax,
-        //            LaborTax = tax.LaborTax
-        //        });
-        //    }
-        //}
-
-        //private static void SerialNumbersReadDtoToWriteDto(RepairOrderItemToRead item, RepairOrderItemToWrite itemToWrite)
-        //{
-        //    foreach (var serialNumber in item?.SerialNumbers)
-        //    {
-        //        itemToWrite.SerialNumbers.Add(new RepairOrderSerialNumberToWrite()
-        //        {
-        //            RepairOrderItemId = serialNumber.RepairOrderItemId,
-        //            SerialNumber = serialNumber.SerialNumber
-        //        });
-        //    }
-        //}
-
-        private static RepairOrderItemToWrite ReadDtoToWriteDto(RepairOrderItemToRead repairOrderItem)
-        {
-            return new RepairOrderItemToWrite
-            {
-                RepairOrderServiceId = repairOrderItem.RepairOrderServiceId,
-                SequenceNumber = repairOrderItem.SequenceNumber,
-                //Manufacturer = item.Manufacturer,
-                ManufacturerId = repairOrderItem.ManufacturerId,
-                PartNumber = repairOrderItem.PartNumber,
-                Description = repairOrderItem.Description,
-                //SaleCode = item.SaleCode,
-                SaleCodeId = repairOrderItem.SaleCodeId,
-                //ProductCode = item.ProductCode,
-                ProductCodeId = repairOrderItem.ProductCodeId,
-                SaleType = repairOrderItem.SaleType,
-                PartType = repairOrderItem.PartType,
-                IsDeclined = repairOrderItem.IsDeclined,
-                IsCounterSale = repairOrderItem.IsCounterSale,
-                QuantitySold = repairOrderItem.QuantitySold,
-                SellingPrice = repairOrderItem.SellingPrice,
-                LaborType = repairOrderItem.LaborType,
-                LaborEach = repairOrderItem.LaborEach,
-                DiscountType = repairOrderItem.DiscountType,
-                DiscountEach = repairOrderItem.DiscountEach,
-                Cost = repairOrderItem.Cost,
-                Core = repairOrderItem.Core,
-                Total = repairOrderItem.Total,
-                SerialNumbers = ReadDtoToWriteDto(repairOrderItem.SerialNumbers),
-                Taxes = ReadDtoToWriteDto(repairOrderItem.Taxes),
-                Warranties = ReadDtoToWriteDto(repairOrderItem.Warranties)
-            };
         }
 
         private static IList<RepairOrderWarrantyToWrite> ReadDtoToWriteDto(IReadOnlyList<RepairOrderWarrantyToRead> warranties)
@@ -333,18 +260,6 @@ namespace CustomerVehicleManagement.Shared.Helpers
             return false;
         }
 
-        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
-        private static bool SerialNumberRequired(RepairOrderItemToRead item)
-        {
-            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
-            {
-                // check if this part's product code requires serial numbers
-                // if (ProductCodeRequiresSerialNumber())
-                return true;
-            }
-            return false;
-        }
-
         public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> servicesToWrite)
         {
             int missingSerialNumberCount = 0;
@@ -364,7 +279,9 @@ namespace CustomerVehicleManagement.Shared.Helpers
 
                     int quantitySold = (int)item.QuantitySold;
 
-                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count;
+                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count(
+                        serialNumber => 
+                        !string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
 
                     missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
                 }
@@ -373,32 +290,5 @@ namespace CustomerVehicleManagement.Shared.Helpers
             return missingSerialNumberCount;
         }
 
-        public static int MissingSerialNumberCount(IList<RepairOrderServiceToRead> services)
-        {
-            int missingSerialNumberCount = 0;
-
-            foreach (var service in services)
-            {
-                foreach (var item in service?.Items)
-                {
-                    if (item?.SerialNumbers is null || !SerialNumberRequired(item))
-                        continue;
-
-                    // If QuantitySold is fractional, and part requires serial number,
-                    // that's an invalid state we must prevent.
-                    // TODO: This is a business rule. Business rules should live in the domain layer.
-                    if (IsFractional(item.QuantitySold))
-                        continue;
-
-                    int quantitySold = (int)item.QuantitySold;
-
-                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count;
-
-                    missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
-                }
-            }
-
-            return missingSerialNumberCount;
-        }
     }
 }

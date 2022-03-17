@@ -1,10 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;
 
@@ -25,7 +21,7 @@ namespace Menominee.Client.Components.RepairOrders
         private bool CanEdit { get; set; } = false;
 
         public IList<SerialNumberListItem> SerialNumberList { get; set; } = new List<SerialNumberListItem>();
-        public RepairOrderSerialNumberToWrite SerialNumberToEdit { get; set; }
+        public SerialNumberListItem SerialNumber { get; set; }
 
         public void Save()
         {
@@ -35,7 +31,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SerialNumberToEdit = args.Item as RepairOrderSerialNumberToWrite;
+            SerialNumber = args.Item as SerialNumberListItem;
         }
 
         protected override void OnParametersSet()

@@ -51,9 +51,9 @@
         </Card>
     </div>
 
-    @if (EditDialogVisible && SerialNumberToEdit != null)
+    @if (EditDialogVisible && SerialNumber != null)
     {
-        <RepairOrderSerialNumberEditor SerialNumber="SerialNumberToEdit"
+        <RepairOrderSerialNumberEditor SerialNumber="SerialNumber"
                                        DialogVisible="EditDialogVisible"
                                        OnSave="Save"
                                        OnCancel="@(() => EditDialogVisible = false)" />

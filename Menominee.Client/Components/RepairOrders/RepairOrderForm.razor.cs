@@ -386,10 +386,16 @@ namespace Menominee.Client.Components.RepairOrders
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public RepairOrderSerialNumberToWrite SerialNumberType { get; set; }
-        public string SerialNumber =>
-            !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber)
-            ? SerialNumberType.SerialNumber
-            : string.Empty;
+
+        public string SerialNumber
+        {
+            get =>
+                !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber)
+                ? SerialNumberType.SerialNumber
+                : string.Empty;
+
+            set => SerialNumberType.SerialNumber = value;
+        }
 
         public bool IsComplete()
         {

@@ -52,16 +52,6 @@ namespace Menominee.Client.Components.RepairOrders
         //private bool CanAddLabor { get; set; } = true;
         public RepairOrderServiceToWrite ServiceToEdit { get; set; }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-        }
-
         private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
         {
             dst.RepairOrderServiceId = src.RepairOrderServiceId;
