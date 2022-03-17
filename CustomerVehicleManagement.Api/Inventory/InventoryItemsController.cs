@@ -104,7 +104,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemCreateDto)
+        public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemCreateDto)
         {
             // 1. Convert dto to domain entity
             var item = new InventoryItem()

@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
+        public async Task<ActionResult> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
         {
             // VK: here, the logic should be:
             // 1. Get the customer entity (not DTO) from the DB
@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult<CustomerToRead>> AddCustomerAsync(CustomerToWrite customerToAdd)
+        public async Task<ActionResult> AddCustomerAsync(CustomerToWrite customerToAdd)
         {
             Customer customer = null;
 

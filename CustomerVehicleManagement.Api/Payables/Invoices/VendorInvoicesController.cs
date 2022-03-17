@@ -135,7 +135,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         // POST: api/payables/invoices
         [HttpPost]
-        public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
+        public async Task<ActionResult> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the

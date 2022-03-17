@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         }
 
         [HttpPost]
-        public async Task<ActionResult<RepairOrderToRead>> AddRepairOrderAsync(RepairOrderToWrite roToWrite)
+        public async Task<ActionResult> AddRepairOrderAsync(RepairOrderToWrite roToWrite)
         {
             // 1. Convert dto to domain entity
             var ro = new RepairOrder();

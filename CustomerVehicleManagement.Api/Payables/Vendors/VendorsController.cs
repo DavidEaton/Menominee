@@ -118,7 +118,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         }
 
         [HttpPost]
-        public async Task<ActionResult<VendorToRead>> AddVendorAsync(VendorToWrite vendorCreateDto)
+        public async Task<ActionResult> AddVendorAsync(VendorToWrite vendorCreateDto)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the

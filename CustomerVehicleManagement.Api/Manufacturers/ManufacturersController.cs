@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ManufacturerToRead>> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
+        public async Task<ActionResult> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
         {
             // 1. Convert dto to domain entity
             var mfr = new Manufacturer()

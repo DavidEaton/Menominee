@@ -85,7 +85,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
+        public async Task<ActionResult> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
         {
             // 1. Convert dto to domain entity
             var pc = new ProductCode()

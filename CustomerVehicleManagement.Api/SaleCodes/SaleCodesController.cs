@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult<SaleCodeToRead>> AddSaleCodeAsync(SaleCodeToWrite scCreateDto)
+        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite scCreateDto)
         {
             // 1. Convert dto to domain entity
             var sc = new SaleCode()
