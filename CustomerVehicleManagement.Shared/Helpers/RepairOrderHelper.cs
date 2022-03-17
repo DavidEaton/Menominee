@@ -45,6 +45,48 @@ namespace CustomerVehicleManagement.Shared.Helpers
             return repairOrderToWrite;
         }
 
+        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
+        private static bool SerialNumberRequired(RepairOrderItemToWrite item)
+        {
+            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
+            {
+                // check if this part's product code requires serial numbers
+                // if (ProductCodeRequiresSerialNumber())
+                return true;
+            }
+            return false;
+        }
+
+        public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> servicesToWrite)
+        {
+            int missingSerialNumberCount = 0;
+
+            foreach (var service in servicesToWrite)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.SerialNumbers is null || !SerialNumberRequired(item))
+                        continue;
+
+                    // If QuantitySold is fractional, and part requires serial number,
+                    // that's an invalid state we must prevent.
+                    // TODO: This is a business rule. Business rules should live in the domain layer.
+                    if (IsFractional(item.QuantitySold))
+                        continue;
+
+                    int quantitySold = (int)item.QuantitySold;
+
+                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count(
+                        serialNumber =>
+                        !string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
+
+                    missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
+                }
+            }
+
+            return missingSerialNumberCount;
+        }
+
         private static IList<RepairOrderTaxToWrite> TaxesReadDtoToWriteDto(RepairOrderToRead repairOrder)
         {
             var result = new List<RepairOrderTaxToWrite>();
@@ -246,49 +288,5 @@ namespace CustomerVehicleManagement.Shared.Helpers
 
             return result;
         }
-
-
-        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
-        private static bool SerialNumberRequired(RepairOrderItemToWrite item)
-        {
-            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
-            {
-                // check if this part's product code requires serial numbers
-                // if (ProductCodeRequiresSerialNumber())
-                return true;
-            }
-            return false;
-        }
-
-        public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> servicesToWrite)
-        {
-            int missingSerialNumberCount = 0;
-
-            foreach (var service in servicesToWrite)
-            {
-                foreach (var item in service?.Items)
-                {
-                    if (item?.SerialNumbers is null || !SerialNumberRequired(item))
-                        continue;
-
-                    // If QuantitySold is fractional, and part requires serial number,
-                    // that's an invalid state we must prevent.
-                    // TODO: This is a business rule. Business rules should live in the domain layer.
-                    if (IsFractional(item.QuantitySold))
-                        continue;
-
-                    int quantitySold = (int)item.QuantitySold;
-
-                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count(
-                        serialNumber => 
-                        !string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
-
-                    missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
-                }
-            }
-
-            return missingSerialNumberCount;
-        }
-
     }
 }
