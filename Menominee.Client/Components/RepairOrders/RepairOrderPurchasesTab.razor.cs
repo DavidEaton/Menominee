@@ -1,4 +1,5 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Client.Components.RepairOrders.Models;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,12 +47,12 @@ namespace Menominee.Client.Components.RepairOrders
                 {
                     SelectedPurchase = Purchases.FirstOrDefault();
                 }
-                else
-                {
-                    SelectedPurchase = Purchases.Where(x => x.Id == itemToSelect).FirstOrDefault();
-                }
+                //else
+                //{
+                //    SelectedPurchase = Purchases.Where(x => x.Id == itemToSelect).FirstOrDefault();
+                //}
                 selectedItemIndex = Purchases.IndexOf(SelectedPurchase);
-                SelectedId = SelectedPurchase.Id;
+                //SelectedId = SelectedPurchase.Id;
                 SelectedPurchases = new List<PurchaseListItem> { SelectedPurchase };
             }
         }
@@ -65,7 +66,6 @@ namespace Menominee.Client.Components.RepairOrders
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedPurchase = args.Item as PurchaseListItem;
-            SelectedId = SelectedPurchase.Id;
             selectedItemIndex = Purchases.IndexOf(SelectedPurchase);
             SelectedPurchases = new List<PurchaseListItem> { SelectedPurchase };
         }
@@ -112,7 +112,6 @@ namespace Menominee.Client.Components.RepairOrders
 
         private static void CopyPurchase(PurchaseListItem src, PurchaseListItem dst)
         {
-            dst.Id = src.Id;
             dst.ItemId = src.ItemId;
             dst.VendorId = src.VendorId;
             dst.PartNumber = src.PartNumber;

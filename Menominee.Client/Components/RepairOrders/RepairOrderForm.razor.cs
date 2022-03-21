@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
+using Menominee.Client.Components.RepairOrders.Models;
 using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -38,7 +39,10 @@ namespace Menominee.Client.Components.RepairOrders
         List<Inspection> PreviousInspections { get; set; }
         List<PurchaseListItem> PurchaseList { get; set; } = new();
         List<WarrantyListItem> WarrantyList { get; set; } = new();
-        //List<Payment> Payments { get; set; }
+
+        private int PurchaseInfoNeededCount { get; set; } = 0;
+        private int WarrantiesMissingCount { get; set; } = 0;
+        private int SerialNumbersMissingCount { get; set; } = 0;
 
         protected override void OnInitialized()
         {
@@ -178,11 +182,17 @@ namespace Menominee.Client.Components.RepairOrders
             Title = title;
 
             SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrderToEdit.Services);
+            WarrantiesMissingCount = RepairOrderHelper.MissingWarrantyCount(RepairOrderToEdit.Services);
         }
 
-        private void UpdateSerialNumberMissingCount(int count)
+        private void UpdateSerialNumbersMissingCount(int count)
         {
             SerialNumbersMissingCount = count;
+        }
+
+        private void UpdateWarrantiesMissingCount(int count)
+        {
+            WarrantiesMissingCount = count;
         }
 
         private async Task Save()
@@ -228,10 +238,6 @@ namespace Menominee.Client.Components.RepairOrders
         private bool SerialNumbersSelected { get; set; }
         private bool PaymentSelected { get; set; }
 
-        private int PurchaseInfoNeededCount { get; set; } = 0;
-        private int WarrantyInfoNeededCount { get; set; } = 0;
-        private int SerialNumbersMissingCount { get; set; } = 1;
-
         private void BuildPurchaseList()
         {
             var tempId = 0;
@@ -250,7 +256,6 @@ namespace Menominee.Client.Components.RepairOrders
                             {
                                 PurchaseListItem purchase = new PurchaseListItem
                                 {
-                                    Id = ++tempId,
                                     VendorId = 0,
                                     ItemId = item.Id,
                                     PartNumber = item.PartNumber,
@@ -283,55 +288,6 @@ namespace Menominee.Client.Components.RepairOrders
             return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0 /*&& item.IsBuyout*/);
         }
 
-        private void BuildWarrantyList()
-        {
-            var tempId = 0;
-
-            // Search through each item on each service to find the ones needing warranty info
-            if (RepairOrder?.Services?.Count > 0)
-            {
-                foreach (var service in RepairOrder.Services)
-                {
-                    if (service.Items?.Count > 0)
-                    {
-                        foreach (var item in service.Items)
-                        {
-                            var nextSequenceNumber = 0;
-
-                            // check if warranty info is required on this item
-                            if (WarrantyInfoRequired(item))
-                            {
-                                WarrantyListItem warranty = new WarrantyListItem
-                                {
-                                    Id = ++tempId,
-                                    ItemId = item.Id,
-                                    PartNumber = item.PartNumber,
-                                    Description = item.Description,
-                                    SequenceNumber = ++nextSequenceNumber,
-                                    Type = WarrantyType.NewWarranty,
-                                    WarrantyNumber = string.Empty,
-                                    Quantity = item.QuantitySold
-                                };
-
-                                WarrantyList.Add(warranty);
-                            }
-                        }
-                    }
-                }
-            }
-
-            WarrantyInfoNeededCount = WarrantyList.FindAll(
-                warranty =>
-                !warranty.IsComplete()).Count;
-        }
-
-        private bool WarrantyInfoRequired(RepairOrderItemToRead item)
-        {
-            // FIX ME -
-            // if (ProductCodeRequiresWarranty())
-            return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0);
-        }
-
         public bool HasPurchases()
         {
             return PurchaseList.Count > 0;
@@ -339,7 +295,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public bool HasWarranties()
         {
-            return WarrantyList.Count > 0;
+            return WarrantiesMissingCount > 0;
         }
 
         public bool HasSerialNumbers()
@@ -356,81 +312,6 @@ namespace Menominee.Client.Components.RepairOrders
         public DateTime Date { get; set; }
         public string Tech { get; set; }
         public string Status { get; set; }
-    }
-
-    public class PurchaseListItem
-    {
-        public long Id { get; set; }
-        public long ItemId { get; set; }
-        public long VendorId { get; set; }
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public string VendorName { get; set; }
-        public string VendorPartNumber { get; set; }
-        public string VendorInvoiceNumber { get; set; }
-        public string PONumber { get; set; }
-        public double Quantity { get; set; }
-        public double FileCost { get; set; }
-        public double VendorCost { get; set; }
-        public double VendorCore { get; set; }
-        public DateTime? DatePurchased { get; set; }
-
-        public bool IsComplete()
-        {
-            return !string.IsNullOrWhiteSpace(VendorName) && !string.IsNullOrWhiteSpace(VendorInvoiceNumber) && VendorCost > 0.0;
-        }
-    }
-
-    public class SerialNumberListItem
-    {
-        public long Id { get; set; }
-        public long RepairOrderItemId { get; set; }
-        public long ItemId { get; set; }
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public RepairOrderSerialNumberToWrite SerialNumberType { get; set; }
-
-        public string SerialNumber
-        {
-            get =>
-                !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber)
-                ? SerialNumberType.SerialNumber
-                : string.Empty;
-
-            set => SerialNumberType.SerialNumber = value;
-        }
-
-        public bool IsComplete()
-        {
-            return !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber);
-        }
-    }
-
-    public enum WarrantyType
-    {
-        [Display(Name = "New Warranty")]
-        NewWarranty,
-        [Display(Name = "Guaranteed Replacement")]
-        GuaranteedReplacement,
-        [Display(Name = "Defective Replacement")]
-        DefectiveReplacement
-    }
-
-    public class WarrantyListItem
-    {
-        public long Id { get; set; }
-        public long ItemId { get; set; }
-        public long SequenceNumber { get; set; }
-        public WarrantyType Type { get; set; }
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public string WarrantyNumber { get; set; }
-        public double Quantity { get; set; }
-
-        public bool IsComplete()
-        {
-            return WarrantyNumber.Length > 0;
-        }
     }
 
     //public class Payment

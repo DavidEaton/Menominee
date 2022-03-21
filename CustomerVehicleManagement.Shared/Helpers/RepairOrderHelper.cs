@@ -42,7 +42,40 @@ namespace CustomerVehicleManagement.Shared.Helpers
                     AddMissingSerialNumbers(item);
             }
 
+            foreach (var service in repairOrderToWrite.Services)
+            {
+                foreach (var item in service.Items)
+                    AddMissingWarranties(item);
+            }
+
             return repairOrderToWrite;
+        }
+
+        private static void AddMissingWarranties(RepairOrderItemToWrite item)
+        {
+            if (item?.Warranties is null || !WarrantyRequired(item))
+                return;
+
+            // If QuantitySold is fractional, and part requires warranty, that's an invalid
+            // state we must prevent.
+            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
+            if (IsFractional(item.QuantitySold))
+                return;
+
+            int quantitySold = (int)item.QuantitySold;
+
+            int matchingItemWarrantiesCount = item.Warranties.Count;
+
+            int missingItemWarrantiesCount = quantitySold - matchingItemWarrantiesCount;
+            for (var i = 0; i < missingItemWarrantiesCount; i++)
+            {
+                var warranty = new RepairOrderWarrantyToWrite
+                {
+                    RepairOrderItemId = item.RepairOrderServiceId
+                };
+
+                item.Warranties.Add(warranty);
+            }
         }
 
         // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
@@ -57,11 +90,53 @@ namespace CustomerVehicleManagement.Shared.Helpers
             return false;
         }
 
-        public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> servicesToWrite)
+        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
+        private static bool WarrantyRequired(RepairOrderItemToWrite item)
+        {
+            if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
+            {
+                // check if this part's product code requires warranty
+                // if (ProductCodeRequiresSerialNumber())
+                return true;
+            }
+            return false;
+        }
+
+        public static int MissingWarrantyCount(IList<RepairOrderServiceToWrite> services)
+        {
+            int missingWarrantiesCount = 0;
+
+            foreach (var service in services)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.Warranties is null || !WarrantyRequired(item))
+                        continue;
+
+                    // If QuantitySold is fractional, and part requires warranty, that's an invalid
+                    // state we must prevent.
+                    // TODO: This is a business rule. Business rules should live in the domain layer.
+                    if (IsFractional(item.QuantitySold))
+                        continue;
+
+                    int quantitySold = (int)item.QuantitySold;
+
+                    int matchingItemWarrantiesCount = item.Warranties.Count(
+                        warranty =>
+                        warranty.SequenceNumber > 0);
+
+                    missingWarrantiesCount += quantitySold - matchingItemWarrantiesCount;
+                }
+            }
+
+            return missingWarrantiesCount;
+        }
+
+        public static int MissingSerialNumberCount(IList<RepairOrderServiceToWrite> services)
         {
             int missingSerialNumberCount = 0;
 
-            foreach (var service in servicesToWrite)
+            foreach (var service in services)
             {
                 foreach (var item in service?.Items)
                 {

@@ -46,6 +46,24 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
+        public void Return_Correct_WarrantiesMissingCount_On_ConvertReadDtoToWriteDto()
+        {
+            // repair-order-graph.json contains 1 Services row, having one Items row,
+            // having "quantitySold": 5, and 4 Warranties rows. Therefore, 
+            // SerialNumbersMissingCount == 1.
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = CreateRepairOrder(jsonString);
+            var repairOrderToEdit = RepairOrderHelper.ConvertReadDtoToWriteDto(repairOrder);
+
+            var warranties = repairOrderToEdit.Services[0].Items[0].Warranties;
+            int createdWarrantiesCount = warranties.Count(
+                warranty =>
+                warranty.SequenceNumber == 0);
+
+            RepairOrderHelper.MissingWarrantyCount(repairOrderToEdit.Services).Should().Be(createdWarrantiesCount);
+        }
+
+        [Fact]
         public void Create_Missing_SerialNumbers_On_ConvertReadDtoToWriteDto()
         {
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");

@@ -2,32 +2,33 @@
     <div>
         <Card Title="Warranties">
             <Content>
-                @if (Warranties == null)
+                @if (WarrantyList == null)
                 {
                     <p><em>Loading...</em></p>
                 }
 
-                @if (Warranties != null)
+                @if (WarrantyList != null)
                 {
-                    <TelerikGrid Data="Warranties"
-                                 OnRowClick="@OnRowSelected"
-                                 OnRowDoubleClick="@OnEdit"
-                                 SelectionMode="GridSelectionMode.Single"
-                                 SelectedItemsChanged="@((IEnumerable<WarrantyListItem> warrantyList) => OnSelect(warrantyList))"
-                                 SelectedItems="@SelectedWarranties"
-                                 Class="">
+                    <TelerikGrid Data="WarrantyList"
+                                 OnRowClick="OnRowSelected"
+                                 OnRowDoubleClick="@(() => EditDialogVisible = true)"
+                                 SelectionMode="GridSelectionMode.Single">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
                                     @{
-                                        var war = context as WarrantyListItem;
-                                        if (war.IsComplete())
+                                        var warranty = context as WarrantyListItem;
+                                        if (warranty.IsComplete())
                                         {
-                                            <i class="fas fa-check m-green-check"></i>
+                                            <div class="success-icon">
+                                                <TelerikIcon Icon="check" />
+                                            </div>
                                         }
                                         else
                                         {
-                                            <i class="fas fa-exclamation-circle m-red-x"></i>
+                                            <div class="danger-icon">
+                                                <TelerikIcon Icon="exclamation-circle" />
+                                            </div>
                                         }
                                     }
                                 </Template>
@@ -48,7 +49,7 @@
                     <div>
                         <hr class="m-btn-group-divider">
                         <div>
-                            <button class="btn m-button m-edit-btn" @onclick="OnEdit" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn m-button m-edit-btn" @onclick="@(() => EditDialogVisible = true)" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
                             <button class="btn m-button m-generic-btn" @onclick="OnCopy" disabled="@(CanCopy ? false : true)"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>

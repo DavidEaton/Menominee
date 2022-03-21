@@ -46,14 +46,14 @@
                                      Enabled="HasWarranties()"
                                      Class="@(WarrantiesSelected ? "m-button-selected" : "m-button-not-selected")">
                 Warranties
-                @if (WarrantyInfoNeededCount > 0)
+                @if (WarrantiesMissingCount > 0)
                 {
-                    <span class="badge badge-danger">@WarrantyInfoNeededCount</span>
+                    <span class="badge badge-danger">@WarrantiesMissingCount</span>
                 }
             </ButtonGroupToggleButton>
 
             <ButtonGroupToggleButton @bind-Selected="SerialNumbersSelected"
-                                     Enabled=true
+                                     Enabled=HasSerialNumbers()
                                      Class="@(SerialNumbersSelected ? "m-button-selected" : "m-button-not-selected")">
                 Serial Numbers
                 @if (SerialNumbersMissingCount > 0)
@@ -99,13 +99,14 @@
 
                 @if (WarrantiesSelected)
                 {
-                    <RepairOrderWarrantiesTab Warranties="WarrantyList" />
+                    <RepairOrderWarrantiesTab RepairOrder="RepairOrderToEdit"
+                                              Updated="UpdateWarrantiesMissingCount"/>
                 }
 
                 @if (SerialNumbersSelected)
                 {
                     <RepairOrderSerialNumbersTab RepairOrder="RepairOrderToEdit"
-                                                 Updated="UpdateSerialNumberMissingCount" />
+                                                 Updated="UpdateSerialNumbersMissingCount" />
                 }
                 @if (PaymentSelected)
                 {
