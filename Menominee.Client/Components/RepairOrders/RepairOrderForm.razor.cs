@@ -1,14 +1,11 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
-using Menominee.Client.Components.RepairOrders.Models;
-using Menominee.Client.Services.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -38,7 +35,6 @@ namespace Menominee.Client.Components.RepairOrders
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
         List<PurchaseListItem> PurchaseList { get; set; } = new();
-        List<WarrantyListItem> WarrantyList { get; set; } = new();
 
         private int PurchaseInfoNeededCount { get; set; } = 0;
         private int WarrantiesMissingCount { get; set; } = 0;
@@ -144,7 +140,6 @@ namespace Menominee.Client.Components.RepairOrders
 
             //warranty = new Warranty();
             //warranty.Id = 1;
-            //warranty.SequenceNumber = 1;
             //warranty.Type = WarrantyType.GuaranteedReplacement;
             //warranty.PartNumber = "BP1234";
             //warranty.Description = "Brake Pad";
@@ -154,7 +149,6 @@ namespace Menominee.Client.Components.RepairOrders
 
             //warranty = new Warranty();
             //warranty.Id = 2;
-            //warranty.SequenceNumber = 1;
             //warranty.Type = WarrantyType.NewWarranty;
             //warranty.PartNumber = "WC97531";
             //warranty.Description = "Wheel Cylinder";
@@ -168,21 +162,21 @@ namespace Menominee.Client.Components.RepairOrders
         {
             RepairOrderToEdit = Id == 0
                 ? RepairOrderToEdit = new()
-                : RepairOrderToEdit = RepairOrderHelper.ConvertReadDtoToWriteDto(RepairOrder);
+                : RepairOrderToEdit = RepairOrderHelper.Transform(RepairOrder);
 
             // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";
 
-            if (RepairOrder.CustomerName.Length > 0)
+            if (RepairOrder?.CustomerName?.Length > 0)
                 title += $"   ~   {RepairOrder.CustomerName}";
 
-            if (RepairOrder.Vehicle.Length > 0)
+            if (RepairOrder?.Vehicle?.Length > 0)
                 title += $"   ~   {RepairOrder.Vehicle}";
 
             Title = title;
 
-            SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrderToEdit.Services);
-            WarrantiesMissingCount = RepairOrderHelper.MissingWarrantyCount(RepairOrderToEdit.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumberRequiredMissingCount(RepairOrderToEdit.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyRequiredMissingCount(RepairOrderToEdit.Services);
         }
 
         private void UpdateSerialNumbersMissingCount(int count)
@@ -197,18 +191,44 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task Save()
         {
+            RemoveIncompleteSerialNumbers();
+            RemoveIncompleteWarranties();
+
             if (Valid())
             {
                 if (Id == 0)
-                {
                     await DataService.AddRepairOrder(RepairOrderToEdit);
-                }
-                else
-                {
+
+                if (Id != 0)
                     await DataService.UpdateRepairOrder(RepairOrderToEdit, Id);
-                }
 
                 await OnSave.InvokeAsync();
+            }
+        }
+
+        private void RemoveIncompleteSerialNumbers()
+        {
+            foreach (var service in RepairOrderToEdit?.Services)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.SerialNumbers is not null)
+                        item.SerialNumbers.RemoveAll(serialNumber =>
+                                                     string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
+                }
+            }
+        }
+
+        private void RemoveIncompleteWarranties()
+        {
+            foreach (var service in RepairOrderToEdit?.Services)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.Warranties is not null)
+                        item.Warranties.RemoveAll(warranty =>
+                                                  warranty.Quantity == 0);
+                }
             }
         }
 
@@ -290,17 +310,25 @@ namespace Menominee.Client.Components.RepairOrders
 
         public bool HasPurchases()
         {
-            return PurchaseList.Count > 0;
+            return true;
         }
 
         public bool HasWarranties()
         {
-            return WarrantiesMissingCount > 0;
+            return RepairOrder.Services
+                .Select(service =>
+                        service.Items
+                        .Select(item =>
+                                item.Warranties.Any())).Any();
         }
 
         public bool HasSerialNumbers()
         {
-            return SerialNumbersMissingCount > 0;
+            return RepairOrder.Services
+                .Select(service =>
+                        service.Items
+                        .Select(item =>
+                                item.SerialNumbers.Any())).Any();
         }
     }
 
@@ -317,7 +345,6 @@ namespace Menominee.Client.Components.RepairOrders
     //public class Payment
     //{
     //    public long Id { get; set; }
-    //    public long SequenceNumber { get; set; }
     //    public string Method { get; set; }
     //    public double Amount { get; set; }
     //}

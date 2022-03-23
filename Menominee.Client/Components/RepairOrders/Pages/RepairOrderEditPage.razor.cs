@@ -1,12 +1,11 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using Menominee.Client.Services.RepairOrders;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.RepairOrders
+namespace Menominee.Client.Components.RepairOrders.Pages
 {
-    public partial class RepairOrderEdit : ComponentBase
+    public partial class RepairOrderEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager NavigationManager { get; set; }

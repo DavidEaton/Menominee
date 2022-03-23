@@ -1,6 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using Menominee.Client.Components.RepairOrders.Models;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;
@@ -17,7 +16,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public int SerialNumbersMissingCount { get; set; }
 
-        private bool EditDialogVisible { get; set; } = false;
+        private bool DialogVisible { get; set; } = false;
 
         private bool CanEdit { get; set; } = false;
 
@@ -27,7 +26,8 @@ namespace Menominee.Client.Components.RepairOrders
         public void Save()
         {
             UpdateMissingSerialNumberCount();
-            EditDialogVisible = false;
+            DialogVisible = false;
+            Updated.InvokeAsync(SerialNumbersMissingCount);
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
@@ -37,33 +37,12 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            BuildSerialNumberList();
-        }
-
-        private void BuildSerialNumberList()
-        {
-            SerialNumberList = new List<SerialNumberListItem>();
-            foreach (var service in RepairOrder.Services)
-            {
-                foreach (var item in service.Items)
-                {
-                    foreach (var serialNumber in item.SerialNumbers)
-                    {
-                        SerialNumberList.Add(new SerialNumberListItem()
-                        {
-                            Description = item.Description,
-                            PartNumber = item.PartNumber,
-                            RepairOrderItemId = serialNumber.RepairOrderItemId,
-                            SerialNumberType = serialNumber
-                        });
-                    }
-                }
-            }
+            SerialNumberList = RepairOrderHelper.BuildSerialNumberList(RepairOrder.Services);
         }
 
         private void UpdateMissingSerialNumberCount()
         {
-            SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrder.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumberRequiredMissingCount(RepairOrder.Services);
         }
     }
 }

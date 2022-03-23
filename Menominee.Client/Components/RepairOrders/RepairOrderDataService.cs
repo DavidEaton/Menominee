@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Services.RepairOrders
+namespace Menominee.Client.Components.RepairOrders
 {
     public class RepairOrderDataService : IRepairOrderDataService
     {

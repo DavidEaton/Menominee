@@ -17,20 +17,20 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
-        [Fact]
-        public async Task Return_Success_And_Expected_MediaType_For_Regular_User_On_Get()
-        {
-            var provider = TestClaimsProvider.WithUserClaims();
-            var client = Factory.CreateClientWithTestAuth(provider);
-            var mediaType = "application/json";
+        //[Fact]
+        //public async Task Return_Success_And_Expected_MediaType_For_Regular_User_On_Get()
+        //{
+        //    var provider = TestClaimsProvider.WithUserClaims();
+        //    var client = Factory.CreateClientWithTestAuth(provider);
+        //    var mediaType = "application/json";
 
-            var response = await client.GetAsync(Path);
+        //    var response = await client.GetAsync(Path);
 
-            response.EnsureSuccessStatusCode();
-            response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
-            response.Content.Should().NotBeNull();
-            response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
-        }
+        //    response.EnsureSuccessStatusCode();
+        //    response.Content.Headers.ContentType.MediaType.Should().Be(mediaType);
+        //    response.Content.Should().NotBeNull();
+        //    response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
+        //}
 
         // These next two tests depend on hard-coded entity Id values.
         // Refactor to remove that dependency.

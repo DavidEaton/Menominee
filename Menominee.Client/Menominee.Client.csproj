@@ -60,6 +60,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Customers\" />
+    <Folder Include="Services\RepairOrders\" />
   </ItemGroup>
 
 </Project>

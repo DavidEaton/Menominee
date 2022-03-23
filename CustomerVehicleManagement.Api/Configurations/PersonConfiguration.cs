@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public override void Configure(EntityTypeBuilder<Person> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("Person", "dbo");
             builder.Ignore(person => person.TrackingState);
 

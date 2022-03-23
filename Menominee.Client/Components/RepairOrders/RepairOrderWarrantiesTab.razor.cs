@@ -1,7 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using Menominee.Client.Components.RepairOrders.Models;
-using Menominee.Common.Enums;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;
@@ -18,7 +16,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public int WarrantiesMissingCount { get; set; }
 
-        private bool EditDialogVisible { get; set; } = false;
+        private bool DialogVisible { get; set; } = false;
 
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
@@ -31,7 +29,8 @@ namespace Menominee.Client.Components.RepairOrders
         public void Save()
         {
             UpdateMissingWarrantyCount();
-            EditDialogVisible = false;
+            DialogVisible = false;
+            Updated.InvokeAsync(WarrantiesMissingCount);
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
@@ -41,35 +40,12 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            BuildWarrantyList();
-        }
-
-        private void BuildWarrantyList()
-        {
-            WarrantyList = new List<WarrantyListItem>();
-            foreach (var service in RepairOrder.Services)
-            {
-                foreach (var item in service.Items)
-                {
-                    foreach (var warranty in item.Warranties)
-                    {
-                        WarrantyList.Add(new WarrantyListItem()
-                        {
-                            SequenceNumber = warranty.SequenceNumber,
-                            Type = (WarrantyType)warranty.Type,
-                            Description = item.Description,
-                            PartNumber = item.PartNumber,
-                            RepairOrderItemId = warranty.RepairOrderItemId,
-                            WarrantyType = warranty
-                        });
-                    }
-                }
-            }
+            WarrantyList = RepairOrderHelper.BuildWarrantyList(RepairOrder.Services);
         }
 
         private void UpdateMissingWarrantyCount()
         {
-            WarrantiesMissingCount = RepairOrderHelper.MissingWarrantyCount(RepairOrder.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyRequiredMissingCount(RepairOrder.Services);
         }
 
         private void OnEdit()

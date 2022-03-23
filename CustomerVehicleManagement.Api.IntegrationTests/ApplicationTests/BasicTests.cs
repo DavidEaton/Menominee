@@ -19,13 +19,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Application
             httpClient = factory.CreateDefaultClient(new Uri(Path));
         }
 
-        [Fact]
-        public async Task Should_Return_Content_On_Get()
-        {
-            var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonToReadInList>>("");
+        //[Fact]
+        //public async Task Should_Return_Content_On_Get()
+        //{
+        //    var persons = await httpClient.GetFromJsonAsync<IEnumerable<PersonToReadInList>>("");
 
-            // Confirm that endpoint returns content (!= null && length > 0)
-            persons.Should().NotBeNull();
-        }
+        //    // Confirm that endpoint returns content (!= null && length > 0)
+        //    persons.Should().NotBeNull();
+        //}
     }
 }

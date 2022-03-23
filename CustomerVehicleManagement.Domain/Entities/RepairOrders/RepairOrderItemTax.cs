@@ -5,7 +5,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     public class RepairOrderItemTax : Entity
     {
         public long RepairOrderItemId { get; set; }
-        public int SequenceNumber { get; set; }
         public long TaxId { get; set; }
         public double PartTaxRate { get; set; }
         public double LaborTaxRate { get; set; }

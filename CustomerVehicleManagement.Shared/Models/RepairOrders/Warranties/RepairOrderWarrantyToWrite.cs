@@ -4,8 +4,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties
 {
     public class RepairOrderWarrantyToWrite
     {
+        public long Id { get; set; }
         public long RepairOrderItemId { get; set; } = 0;
-        public int SequenceNumber { get; set; } = 0;
         public double Quantity { get; set; } = 0.0;
         public WarrantyType Type { get; set; } = WarrantyType.NewWarranty;
         public string NewWarranty { get; set; } = string.Empty;

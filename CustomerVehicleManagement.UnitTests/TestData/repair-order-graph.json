@@ -18,7 +18,6 @@
         {
             "id": 39,
             "repairOrderId": 1,
-            "sequenceNumber": 0,
             "serviceName": "Lube",
             "saleCode": "L",
             "isCounterSale": false,
@@ -33,7 +32,6 @@
                 {
                     "id": 39,
                     "repairOrderServiceId": 39,
-                    "sequenceNumber": 0,
                     "manufacturer": {
                         "id": 1,
                         "code": "COKE",
@@ -55,15 +53,13 @@
                             "code": "COKE",
                             "prefix": "X",
                             "name": "Coca Cola",
-                            "id": 1,
-                            "trackingState": 1
+                            "id": 1
                         },
                         "code": "SC1",
                         "saleCode": {
                             "code": "L",
                             "name": "Lube",
-                            "id": 1,
-                            "trackingState": 1
+                            "id": 1
                         },
                         "name": "Sale Code 1"
                     },
@@ -103,7 +99,17 @@
                             "serialNumber": "106"
                         }
                     ],
-                    "warranties": [],
+                  "warranties": [
+                    {
+                      "id": 91,
+                      "repairOrderItemId": 39,
+                      "quantity": 1,
+                      "type": 0,
+                      "newWarranty": "new warranty 1",
+                      "originalWarranty": "new warranty 1",
+                      "originalInvoiceId": 0
+                    }
+                  ],
                     "taxes": []
                 }
             ],

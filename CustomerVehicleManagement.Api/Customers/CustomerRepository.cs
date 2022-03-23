@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -48,18 +48,26 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var customerFromContext = await context.Customers
                                                     // Person
-                                                    .Include(customer => customer.Person.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Person.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Person.Phones)
+                                                    .AsNoTracking()
+                                                    .Include(customer =>
+                                                             customer.Person.Emails)
+                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
-                                                    .Include(customer => customer.Organization.Contact.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Organization.Contact.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Organization.Contact.Phones)
                                                     .AsNoTracking()
-                                                    .FirstOrDefaultAsync(customer => customer.Id == id);
+                                                    .Include(customer => 
+                                                             customer.Organization.Contact.Emails)
+                                                    .AsNoTracking()
+                                                    .FirstOrDefaultAsync(customer =>
+                                                                         customer.Id == id);
 
             Guard.ForNull(customerFromContext, "customerFromContext");
 
-            return CustomerToRead.ConvertToDto(customerFromContext);
+            return CustomerHelper.ConvertToDto(customerFromContext);
         }
 
         public async Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync()
@@ -68,13 +76,14 @@ namespace CustomerVehicleManagement.Api.Customers
 
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
+                                                    .AsNoTracking()
                                                     .Include(customer => customer.Organization)
                                                         .ThenInclude(organization => organization.Contact)
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
-                customers.Add(CustomerToRead.ConvertToDto(customer));
+                customers.Add(CustomerHelper.ConvertToDto(customer));
 
             return customers;
         }
@@ -85,9 +94,9 @@ namespace CustomerVehicleManagement.Api.Customers
                 .AnyAsync(customer => customer.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            await context.SaveChangesAsync();
         }
 
         public void FixTrackingState()
@@ -110,7 +119,7 @@ namespace CustomerVehicleManagement.Api.Customers
             catch (DbUpdateConcurrencyException)
             {
                 if (!await CustomerExistsAsync(customer.Id))
-                    return null;// something that tells the controller to return NotFound();
+                    return null;
                 throw;
             }
 
@@ -122,12 +131,23 @@ namespace CustomerVehicleManagement.Api.Customers
             var customersFromContext = await context.Customers
 
                                                     // Person
-                                                    .Include(customer => customer.Person.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Person.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Person.Phones
+                                                             .Where(phone => phone.IsPrimary == true))
+                                                    .AsNoTracking()
+                                                    .Include(customer =>
+                                                             customer.Person.Emails
+                                                             .Where(email => email.IsPrimary == true))
+                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
-                                                    .Include(customer => customer.Organization.Contact.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Organization.Contact.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Organization.Contact.Phones
+                                                             .Where(phone => phone.IsPrimary == true))
+                                                    .AsNoTracking()
+                                                    .Include(customer =>
+                                                             customer.Organization.Contact.Emails
+                                                             .Where(email => email.IsPrimary == true))
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 

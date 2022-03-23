@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -102,23 +103,31 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             List<Phone> phones = new();
             if (organizationToUpdate?.Phones.Count > 0)
-                foreach (var phone in organizationToUpdate.Phones)
-                {
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-                    organizationFromRepository.SetPhones(phones);
-                }
+            {
+                phones.AddRange(organizationToUpdate.Phones
+                    .Select(phone =>
+                            Phone.Create(phone.Number,
+                                         phone.PhoneType,
+                                         phone.IsPrimary).Value));
+            }
+
+            organizationFromRepository.SetPhones(phones);
 
             List<Email> emails = new();
             if (organizationToUpdate?.Emails.Count > 0)
-                foreach (var email in organizationToUpdate.Emails)
-                {
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-                    organizationFromRepository.SetEmails(emails);
-                }
+            {
+                emails.AddRange(organizationToUpdate.Emails
+                    .Select(email =>
+                            Email.Create(email.Address,
+                                         email.IsPrimary).Value));
+            }
+
+            organizationFromRepository.SetEmails(emails);
 
             if (organizationToUpdate?.Contact != null)
             {
-                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id, organizationToUpdate.Contact);
+                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id,
+                                                                        organizationToUpdate.Contact);
                 organizationFromRepository.SetContact((Person)contact);
             }
 
@@ -178,7 +187,9 @@ namespace CustomerVehicleManagement.Api.Organizations
             await repository.SaveChangesAsync();
 
             // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{organization.Id}", UriKind.Relative), new { id = organization.Id });
+            return Created(new Uri($"{BasePath}/{organization.Id}",
+                               UriKind.Relative),
+                               new { id = organization.Id });
         }
 
 
@@ -189,14 +200,13 @@ namespace CustomerVehicleManagement.Api.Organizations
              1) Get domain entity from repository
              2) Call repository.Delete(), which removes entity from context
              3) Save changes
-             4) return Ok()
+             4) return NoContent()
          */
             var organizationFromRepository = await repository.GetOrganizationAsync(id);
             if (organizationFromRepository == null)
                 return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
             await repository.DeleteOrganizationAsync(id);
-
             await repository.SaveChangesAsync();
 
             return NoContent();

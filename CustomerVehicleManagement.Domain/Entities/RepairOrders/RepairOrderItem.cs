@@ -6,10 +6,10 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
     public class RepairOrderItem : Entity
     {
-        // DDD Notes
-        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold. If three of same part are sold, three serial numbers are required.
+        // TODO: DDD Notes
+        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold.
+        // For example, if three of same part are sold, three serial numbers are required.
         public long RepairOrderServiceId { get; set; }
-        public int SequenceNumber { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
         public long ManufacturerId { get; set; }
         public string PartNumber { get; set; }
@@ -32,9 +32,9 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double DiscountEach { get; set; }
         public double Total { get; set; }
 
-        public virtual IList<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
-        public virtual IList<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
-        public virtual IList<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
+        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
+        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
+        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
 
         public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Services.RepairOrders
+namespace Menominee.Client.Components.RepairOrders
 {
     public interface IRepairOrderDataService
     {

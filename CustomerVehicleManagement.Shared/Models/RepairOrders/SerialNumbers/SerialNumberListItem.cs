@@ -1,10 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
-
-namespace Menominee.Client.Components.RepairOrders.Models
+﻿namespace CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers
 {
     public class SerialNumberListItem
     {
-        //public long Id { get; set; }
         public long RepairOrderItemId { get; set; }
         public long ItemId { get; set; }
         public string PartNumber { get; set; }

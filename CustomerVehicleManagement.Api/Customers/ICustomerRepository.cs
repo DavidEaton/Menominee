@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,6 +15,6 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync();
         Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync();
         Task<CustomerToRead> GetCustomerAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }

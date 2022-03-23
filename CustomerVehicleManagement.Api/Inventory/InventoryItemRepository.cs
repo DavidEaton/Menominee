@@ -40,6 +40,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItemToRead> GetInventoryItemAsync(long mfrId, string partNumber)
         {
             var itemFromContext = await context.InventoryItems
+                .AsNoTracking()
                 .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
 
             return InventoryItemToRead.ConvertToDto(itemFromContext);
@@ -48,6 +49,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItemToRead> GetInventoryItemAsync(long id)
         {
             var itemFromContext = await context.InventoryItems
+                .AsNoTracking()
                 .FirstOrDefaultAsync(item => item.Id == id);
 
             return InventoryItemToRead.ConvertToDto(itemFromContext);
@@ -71,7 +73,9 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync()
         {
-            IReadOnlyList<InventoryItem> items = await context.InventoryItems.ToListAsync();
+            IReadOnlyList<InventoryItem> items = await context.InventoryItems
+                .AsNoTracking()
+                .ToListAsync();
 
             return items.
                 Select(item => InventoryItemToReadInList.ConvertToDto(item))
@@ -80,7 +84,9 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId)
         {
-            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == mfrId).ToListAsync();
+            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == mfrId)
+                .AsNoTracking()
+                .ToListAsync();
 
             return items.
                 Select(item => InventoryItemToReadInList.ConvertToDto(item))

@@ -1,22 +1,33 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
-using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Helpers
 {
-    public class CustomerToRead
+    public class CustomerHelper
     {
-        public long Id { get; set; }
-        public PersonToRead Person { get; set; }
-        public OrganizationToRead Organization { get; set; }
-        public EntityType EntityType { get; set; }
-        public string Name { get; set; }
-        public AddressToRead Address { get; set; }
-        public string Note { get; set; }
-        public PersonToRead Contact { get; set; }
-        public CustomerType CustomerType { get; set; }
-        public IReadOnlyList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
-        public IReadOnlyList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
+        public static CustomerToWrite CreateWriteFromReadDto(CustomerToRead customer)
+        {
+            var Customer = new CustomerToWrite
+            {
+                EntityType = customer.EntityType,
+                CustomerType = customer.CustomerType
+            };
+
+            if (customer.EntityType == EntityType.Person)
+            {
+                Customer.Person = PersonHelper.CreateWriteDtoFromReadDto(customer.Person);
+            }
+
+            if (customer.EntityType == EntityType.Organization)
+            {
+                Customer.Organization = OrganizationHelper.CreateWriteDtoFromReadDto(customer.Organization);
+            }
+
+            return Customer;
+        }
+
         public static CustomerToRead ConvertToDto(Customer customer)
         {
             if (customer != null)
