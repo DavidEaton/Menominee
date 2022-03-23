@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using System;
@@ -25,38 +24,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public DateTime? DateModified { get; set; }
         public DateTime? DateInvoiced { get; set; }
 
-        public IReadOnlyList<RepairOrderServiceToRead> Services { get; set; } = new List<RepairOrderServiceToRead>();
-        public IReadOnlyList<RepairOrderTaxToRead> Taxes { get; set; } = new List<RepairOrderTaxToRead>();
-        public IReadOnlyList<RepairOrderPaymentToRead> Payments { get; set; } = new List<RepairOrderPaymentToRead>();
-
-        public static RepairOrderToRead ConvertToDto(RepairOrder repairOrder)
-        {
-            if (repairOrder != null)
-            {
-                return new RepairOrderToRead()
-                {
-                    Id = repairOrder.Id,
-                    RepairOrderNumber = repairOrder.RepairOrderNumber,
-                    InvoiceNumber = repairOrder.InvoiceNumber,
-                    CustomerName = repairOrder.CustomerName,
-                    Vehicle = repairOrder.Vehicle,
-                    PartsTotal = repairOrder.PartsTotal,
-                    LaborTotal = repairOrder.LaborTotal,
-                    DiscountTotal = repairOrder.DiscountTotal,
-                    TaxTotal = repairOrder.TaxTotal,
-                    HazMatTotal = repairOrder.HazMatTotal,
-                    ShopSuppliesTotal = repairOrder.ShopSuppliesTotal,
-                    Total = repairOrder.Total,
-                    DateCreated = repairOrder.DateCreated,
-                    DateModified = repairOrder.DateModified,
-                    DateInvoiced = repairOrder.DateInvoiced,
-                    Services = RepairOrderServiceToRead.ConvertToDto(repairOrder.Services),
-                    Taxes = RepairOrderTaxToRead.ConvertToDto(repairOrder.Taxes),
-                    Payments = RepairOrderPaymentToRead.ConvertToDto(repairOrder.Payments)
-                };
-            }
-
-            return null;
-        }
+        public IList<RepairOrderServiceToRead> Services { get; set; } = new List<RepairOrderServiceToRead>();
+        public IList<RepairOrderTaxToRead> Taxes { get; set; } = new List<RepairOrderTaxToRead>();
+        public IList<RepairOrderPaymentToRead> Payments { get; set; } = new List<RepairOrderPaymentToRead>();
     }
 }

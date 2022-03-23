@@ -31,16 +31,6 @@
 
                 <div class="form-row">
                     <div class="form-group col-12">
-                        <label class="k-label" for="SequenceNumber">Sequence Number</label>
-                        <TelerikNumericTextBox @bind-Value="@Warranty.SequenceNumber"
-                                               Width="100%"
-                                               Id="SequenceNumber">
-                        </TelerikNumericTextBox>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-12">
                         <label for="type" class="k-label">Type</label>
                         <TelerikComboBox Data="WarrantyTypeEnumData"
                                          Id="type"
@@ -50,7 +40,7 @@
                                          Width="100%"
                                          Filterable="true"
                                          ClearButton="false"
-                                         Placeholder="Select a Type" />
+                                         Placeholder="Select a Type"/>
                     </div>
                 </div>
 
@@ -65,15 +55,13 @@
                     </div>
                 </div>
 
-
                 <div class="form-row">
                     <div class="form-group col-12">
-                        <label class="k-label" for="amount">Warranty Number</label>
-                        <TelerikTextBox @bind-Value="@Warranty.WarrantyNumber"
-                                        Width="100%"
-                                        AutoComplete="off"
-                                        Id="amount">
-                        </TelerikTextBox>
+                        <label class="k-label" for="quantity">Quantity</label>
+                        <TelerikNumericTextBox @bind-Value="@Warranty.Quantity"
+                                               Width="100%"
+                                               Id="quantity">
+                        </TelerikNumericTextBox>
                     </div>
                 </div>
 

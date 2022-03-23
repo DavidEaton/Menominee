@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 .Include(ro => ro.Payments)
                 .FirstOrDefaultAsync(ro => ro.Id == id);
 
-            return RepairOrderToRead.ConvertToDto(roFromContext);
+            return RepairOrderHelper.ConvertToReadDto(roFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             return repairOrders.
                 Select(repairOrder =>
-                       RepairOrderToReadInList.ConvertToDto(repairOrder))
+                       RepairOrderHelper.ConvertToReadInList(repairOrder))
                 .ToList();
         }
 

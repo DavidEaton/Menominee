@@ -6,7 +6,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     public class RepairOrderService : Entity
     {
         public long RepairOrderId { get; set; }
-        public int SequenceNumber { get; set; }
         public string ServiceName { get; set; }
         public string SaleCode { get; set; }
         public bool IsCounterSale { get; set; }

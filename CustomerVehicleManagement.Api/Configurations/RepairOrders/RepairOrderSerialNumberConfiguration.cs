@@ -9,8 +9,12 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         public override void Configure(EntityTypeBuilder<RepairOrderSerialNumber> builder)
         {
             base.Configure(builder);
-            builder.ToTable("RepairOrderSerialNumbers", "dbo");
+            builder.ToTable("RepairOrderSerialNumber", "dbo");
             builder.Ignore(item => item.TrackingState);
+
+            builder.Property(item => item.SerialNumber)
+                .HasMaxLength(50)
+                .IsRequired();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -42,7 +43,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var scFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
 
-            return SaleCodeToRead.ConvertToDto(scFromContext);
+            return RepairOrderHelper.ConvertSaleCodeToReadDto(scFromContext);
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
@@ -50,7 +51,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var scFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Id == id);
 
-            return SaleCodeToRead.ConvertToDto(scFromContext);
+            return RepairOrderHelper.ConvertSaleCodeToReadDto(scFromContext);
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)

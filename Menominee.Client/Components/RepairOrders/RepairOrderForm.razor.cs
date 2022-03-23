@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Client.Components.RepairOrders.Models;
@@ -144,7 +143,6 @@ namespace Menominee.Client.Components.RepairOrders
 
             //warranty = new Warranty();
             //warranty.Id = 1;
-            //warranty.SequenceNumber = 1;
             //warranty.Type = WarrantyType.GuaranteedReplacement;
             //warranty.PartNumber = "BP1234";
             //warranty.Description = "Brake Pad";
@@ -154,7 +152,6 @@ namespace Menominee.Client.Components.RepairOrders
 
             //warranty = new Warranty();
             //warranty.Id = 2;
-            //warranty.SequenceNumber = 1;
             //warranty.Type = WarrantyType.NewWarranty;
             //warranty.PartNumber = "WC97531";
             //warranty.Description = "Wheel Cylinder";
@@ -168,21 +165,21 @@ namespace Menominee.Client.Components.RepairOrders
         {
             RepairOrderToEdit = Id == 0
                 ? RepairOrderToEdit = new()
-                : RepairOrderToEdit = RepairOrderHelper.ConvertReadDtoToWriteDto(RepairOrder);
+                : RepairOrderToEdit = RepairOrderHelper.ConvertReadToWriteDto(RepairOrder);
 
             // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";
 
-            if (RepairOrder.CustomerName.Length > 0)
+            if (RepairOrder?.CustomerName?.Length > 0)
                 title += $"   ~   {RepairOrder.CustomerName}";
 
-            if (RepairOrder.Vehicle.Length > 0)
+            if (RepairOrder?.Vehicle?.Length > 0)
                 title += $"   ~   {RepairOrder.Vehicle}";
 
             Title = title;
 
-            SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrderToEdit.Services);
-            WarrantiesMissingCount = RepairOrderHelper.MissingWarrantyCount(RepairOrderToEdit.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersMissingCount(RepairOrderToEdit.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyMissingCount(RepairOrderToEdit.Services);
         }
 
         private void UpdateSerialNumbersMissingCount(int count)
@@ -197,6 +194,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task Save()
         {
+            RemoveIncompleteSerialNumbers();
+            RemoveIncompleteWarranties();
+
             if (Valid())
             {
                 if (Id == 0)
@@ -209,6 +209,38 @@ namespace Menominee.Client.Components.RepairOrders
                 }
 
                 await OnSave.InvokeAsync();
+            }
+        }
+
+        private void RemoveIncompleteSerialNumbers()
+        {
+            foreach (var service in RepairOrder.Services)
+            {
+                foreach (var item in service.Items)
+                {
+                    foreach (var serialNumber in item.SerialNumbers)
+                    {
+                        if (string.IsNullOrWhiteSpace(serialNumber.SerialNumber))
+                            item.SerialNumbers.Remove(serialNumber);
+                    }
+                }
+            }
+        }
+
+        private void RemoveIncompleteWarranties()
+        {
+            foreach (var service in RepairOrder.Services)
+            {
+                foreach (var item in service.Items)
+                {
+                    foreach (var warranty in item.Warranties)
+                    {
+                        if (warranty.Quantity < 1)
+                        {
+                            item.Warranties.Remove(warranty);
+                        }
+                    }
+                }
             }
         }
 
@@ -317,7 +349,6 @@ namespace Menominee.Client.Components.RepairOrders
     //public class Payment
     //{
     //    public long Id { get; set; }
-    //    public long SequenceNumber { get; set; }
     //    public string Method { get; set; }
     //    public double Amount { get; set; }
     //}

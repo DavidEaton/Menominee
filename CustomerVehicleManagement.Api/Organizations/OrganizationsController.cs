@@ -103,18 +103,14 @@ namespace CustomerVehicleManagement.Api.Organizations
             List<Phone> phones = new();
             if (organizationToUpdate?.Phones.Count > 0)
                 foreach (var phone in organizationToUpdate.Phones)
-                {
                     phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-                    organizationFromRepository.SetPhones(phones);
-                }
+            organizationFromRepository.SetPhones(phones);
 
             List<Email> emails = new();
             if (organizationToUpdate?.Emails.Count > 0)
                 foreach (var email in organizationToUpdate.Emails)
-                {
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-                    organizationFromRepository.SetEmails(emails);
-                }
+            organizationFromRepository.SetEmails(emails);
 
             if (organizationToUpdate?.Contact != null)
             {
@@ -178,7 +174,9 @@ namespace CustomerVehicleManagement.Api.Organizations
             await repository.SaveChangesAsync();
 
             // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{organization.Id}", UriKind.Relative), new { id = organization.Id });
+            return Created(new Uri($"{BasePath}/{organization.Id}",
+                               UriKind.Relative),
+                               new { id = organization.Id });
         }
 
 

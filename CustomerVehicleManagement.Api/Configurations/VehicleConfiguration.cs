@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public override void Configure(EntityTypeBuilder<Vehicle> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("Vehicle", "dbo");
             builder.Ignore(vehicle => vehicle.TrackingState);
         }

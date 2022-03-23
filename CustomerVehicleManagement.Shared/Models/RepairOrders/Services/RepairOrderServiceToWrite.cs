@@ -8,7 +8,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
     public class RepairOrderServiceToWrite
     {
         public long RepairOrderId { get; set; } = 0;
-        public int SequenceNumber { get; set; } = 0;
         public string ServiceName { get; set; } = string.Empty;
         public string SaleCode { get; set; } = string.Empty;
         public bool IsCounterSale { get; set; } = false;

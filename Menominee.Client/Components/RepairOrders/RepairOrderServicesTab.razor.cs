@@ -55,7 +55,6 @@ namespace Menominee.Client.Components.RepairOrders
         private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
         {
             dst.RepairOrderServiceId = src.RepairOrderServiceId;
-            dst.SequenceNumber = src.SequenceNumber;
             dst.Manufacturer = src.Manufacturer;
             dst.ManufacturerId = src.ManufacturerId;
             dst.PartNumber = src.PartNumber;

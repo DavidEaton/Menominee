@@ -4,7 +4,7 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 throw new ArgumentNullException(nameof(organizationsController));
         }
 
-        //// GET: api/customers/list
+        // GET: api/customers/list
         [Route("list")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetCustomersListAsync()

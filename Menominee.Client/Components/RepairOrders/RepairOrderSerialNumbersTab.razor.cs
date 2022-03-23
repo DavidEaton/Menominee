@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Menominee.Client.Components.RepairOrders.Models;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public int SerialNumbersMissingCount { get; set; }
 
-        private bool EditDialogVisible { get; set; } = false;
+        private bool DialogVisible { get; set; } = false;
 
         private bool CanEdit { get; set; } = false;
 
@@ -27,7 +26,8 @@ namespace Menominee.Client.Components.RepairOrders
         public void Save()
         {
             UpdateMissingSerialNumberCount();
-            EditDialogVisible = false;
+            DialogVisible = false;
+            Updated.InvokeAsync();
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
@@ -63,7 +63,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void UpdateMissingSerialNumberCount()
         {
-            SerialNumbersMissingCount = RepairOrderHelper.MissingSerialNumberCount(RepairOrder.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersMissingCount(RepairOrder.Services);
         }
     }
 }

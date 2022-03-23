@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Menominee.Client.Components.RepairOrders.Models;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -32,6 +31,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             UpdateMissingWarrantyCount();
             EditDialogVisible = false;
+            Updated.InvokeAsync();
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
@@ -55,7 +55,6 @@ namespace Menominee.Client.Components.RepairOrders
                     {
                         WarrantyList.Add(new WarrantyListItem()
                         {
-                            SequenceNumber = warranty.SequenceNumber,
                             Type = (WarrantyType)warranty.Type,
                             Description = item.Description,
                             PartNumber = item.PartNumber,
@@ -69,7 +68,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void UpdateMissingWarrantyCount()
         {
-            WarrantiesMissingCount = RepairOrderHelper.MissingWarrantyCount(RepairOrder.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyMissingCount(RepairOrder.Services);
         }
 
         private void OnEdit()

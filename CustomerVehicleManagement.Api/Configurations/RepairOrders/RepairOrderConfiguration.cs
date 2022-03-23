@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         public override void Configure(EntityTypeBuilder<RepairOrder> builder)
         {
             base.Configure(builder);
-            builder.ToTable("RepairOrders", "dbo");
+            builder.ToTable("RepairOrder", "dbo");
 
             builder.Ignore(item => item.TrackingState);
         }

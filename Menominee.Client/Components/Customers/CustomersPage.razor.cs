@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Client.Services.Customers;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -43,7 +44,7 @@ namespace Menominee.Client.Components.Customers
 
             CustomerToRead customerReadDto = await CustomerDataService.GetCustomer(Id);
 
-            Customer = CustomerHelper.CreateWriteDtoFromReadDto(customerReadDto);
+            Customer = CustomerHelper.CreateWriteFromReadDto(customerReadDto);
 
             if (customerReadDto.EntityType == EntityType.Person)
                 Caption = $"Editing Customer: {customerReadDto.Person.FirstMiddleLast}";

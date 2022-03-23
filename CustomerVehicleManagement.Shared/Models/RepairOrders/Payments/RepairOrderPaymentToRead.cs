@@ -11,29 +11,5 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Payments
         public long RepairOrderId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public double Amount { get; set; }
-
-        public static IReadOnlyList<RepairOrderPaymentToRead> ConvertToDto(IList<RepairOrderPayment> payments)
-        {
-            return payments
-                .Select(payment =>
-                        ConvertToDto(payment))
-                .ToList();
-        }
-
-        private static RepairOrderPaymentToRead ConvertToDto(RepairOrderPayment payment)
-        {
-            if (payment != null)
-            {
-                return new RepairOrderPaymentToRead()
-                {
-                    Id = payment.Id,
-                    RepairOrderId = payment.RepairOrderId,
-                    PaymentMethod = payment.PaymentMethod,
-                    Amount = payment.Amount
-                };
-            }
-
-            return null;
-        }
     }
 }

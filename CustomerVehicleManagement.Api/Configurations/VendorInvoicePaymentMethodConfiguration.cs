@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public override void Configure(EntityTypeBuilder<VendorInvoicePaymentMethod> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("VendorInvoicePaymentMethod", "dbo");
 
             builder.Ignore(payment => payment.TrackingState);
