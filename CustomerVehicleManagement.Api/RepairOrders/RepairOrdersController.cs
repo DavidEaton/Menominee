@@ -62,7 +62,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
 
-            // 2) Update domain entity with data in data transfer object(DTO)
             repairOrderFromRepository.CustomerName = repairOrder.CustomerName;
             repairOrderFromRepository.DateModified = DateTime.Today;
             repairOrderFromRepository.DiscountTotal = repairOrder.DiscountTotal;
@@ -79,6 +78,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             if (repairOrder.DateInvoiced.HasValue)
                 repairOrderFromRepository.DateInvoiced = (DateTime)repairOrder.DateInvoiced;
 
+            // Payments
             List<RepairOrderPayment> payments = new();
             if (repairOrder?.Payments.Count > 0)
                 foreach (var payment in repairOrder.Payments)
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                     });
             repairOrderFromRepository.SetPayments(payments);
 
-
+            // Services
             List<RepairOrderService> services = new();
             if (repairOrder?.Services.Count > 0)
                 foreach (var service in repairOrder.Services)
@@ -99,7 +99,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                         DiscountTotal = service.DiscountTotal,
                         IsCounterSale = service.IsCounterSale,
                         IsDeclined = service.IsDeclined,
-                        Items = RepairOrderHelper.CreateItemsFromWriteDto(service.Items),
+                        Items = RepairOrderHelper.CreateServiceItems(service.Items),
                         LaborTotal = service.LaborTotal,
                         PartsTotal = service.PartsTotal,
                         RepairOrderId = service.RepairOrderId,
@@ -107,13 +107,13 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                         ServiceName = service.ServiceName,
                         ShopSuppliesTotal = service.ShopSuppliesTotal,
                         TaxTotal = service.TaxTotal,
-                        Taxes = RepairOrderHelper.CreateServiceTaxesFromWriteDto(service.Taxes),
-                        Techs = RepairOrderHelper.CreateTechniciansFromWriteDto(service.Techs),
+                        Taxes = RepairOrderHelper.CreateServiceTaxes(service.Taxes),
+                        Techs = RepairOrderHelper.CreateTechnicians(service.Techs),
                         Total = service.Total
                     });
             repairOrderFromRepository.SetServices(services);
 
-
+            // Taxes
             List<RepairOrderTax> taxes = new();
             if (repairOrder?.Taxes.Count > 0)
                 foreach (var tax in repairOrder.Taxes)
@@ -130,8 +130,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
+            
             repository.UpdateRepairOrderAsync(repairOrderFromRepository);
-
             await repository.SaveChangesAsync();
 
             return NoContent();
@@ -140,7 +140,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPost]
         public async Task<ActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var repairOrder = RepairOrderHelper.CreateRepairOrderFromWriteDto(repairOrderToAdd);
+            var repairOrder = RepairOrderHelper.CreateRepairOrder(repairOrderToAdd);
+
             await repository.AddRepairOrderAsync(repairOrder);
             await repository.SaveChangesAsync();
 
