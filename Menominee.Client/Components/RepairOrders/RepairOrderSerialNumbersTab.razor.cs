@@ -63,7 +63,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void UpdateMissingSerialNumberCount()
         {
-            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersMissingCount(RepairOrder.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersRequiredMissingCount(RepairOrder.Services);
         }
     }
 }

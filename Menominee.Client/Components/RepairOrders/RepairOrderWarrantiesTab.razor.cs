@@ -68,7 +68,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void UpdateMissingWarrantyCount()
         {
-            WarrantiesMissingCount = RepairOrderHelper.WarrantyMissingCount(RepairOrder.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyRequiredMissingCount(RepairOrder.Services);
         }
 
         private void OnEdit()

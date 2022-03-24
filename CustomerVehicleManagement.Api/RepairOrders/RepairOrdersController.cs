@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -78,59 +77,13 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             if (repairOrder.DateInvoiced.HasValue)
                 repairOrderFromRepository.DateInvoiced = (DateTime)repairOrder.DateInvoiced;
 
-            // Payments
-            List<RepairOrderPayment> payments = new();
-            if (repairOrder?.Payments.Count > 0)
-                foreach (var payment in repairOrder.Payments)
-                    payments.Add(new RepairOrderPayment()
-                    {
-                        Amount = payment.Amount,
-                        PaymentMethod = payment.PaymentMethod,
-                        RepairOrderId = payment.RepairOrderId
-                    });
-            repairOrderFromRepository.SetPayments(payments);
-
-            // Services
-            List<RepairOrderService> services = new();
-            if (repairOrder?.Services.Count > 0)
-                foreach (var service in repairOrder.Services)
-                    services.Add(new RepairOrderService()
-                    {
-                        DiscountTotal = service.DiscountTotal,
-                        IsCounterSale = service.IsCounterSale,
-                        IsDeclined = service.IsDeclined,
-                        Items = RepairOrderHelper.CreateServiceItems(service.Items),
-                        LaborTotal = service.LaborTotal,
-                        PartsTotal = service.PartsTotal,
-                        RepairOrderId = service.RepairOrderId,
-                        SaleCode = service.SaleCode,
-                        ServiceName = service.ServiceName,
-                        ShopSuppliesTotal = service.ShopSuppliesTotal,
-                        TaxTotal = service.TaxTotal,
-                        Taxes = RepairOrderHelper.CreateServiceTaxes(service.Taxes),
-                        Techs = RepairOrderHelper.CreateTechnicians(service.Techs),
-                        Total = service.Total
-                    });
-            repairOrderFromRepository.SetServices(services);
-
-            // Taxes
-            List<RepairOrderTax> taxes = new();
-            if (repairOrder?.Taxes.Count > 0)
-                foreach (var tax in repairOrder.Taxes)
-                    taxes.Add(new RepairOrderTax()
-                    {
-                        LaborTax = tax.LaborTax,
-                        LaborTaxRate = tax.LaborTaxRate,
-                        PartTax = tax.PartTax,
-                        PartTaxRate = tax.PartTaxRate,
-                        RepairOrderId = tax.RepairOrderId,
-                        TaxId = tax.TaxId
-                    });
-            repairOrderFromRepository.SetTaxes(taxes);
+            repairOrderFromRepository.SetPayments(RepairOrderHelper.CreatePayments(repairOrder?.Payments));
+            repairOrderFromRepository.SetServices(RepairOrderHelper.CreateServices(repairOrder?.Services));
+            repairOrderFromRepository.SetTaxes(RepairOrderHelper.CreateTaxes(repairOrder?.Taxes));
 
             repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
-            
+
             repository.UpdateRepairOrderAsync(repairOrderFromRepository);
             await repository.SaveChangesAsync();
 

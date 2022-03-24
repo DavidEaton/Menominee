@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
                 serialNumber =>
                 string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
 
-            RepairOrderHelper.SerialNumbersMissingCount(repairOrderToEdit.Services).Should().Be(createdSerialNumbersCount);
+            RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services).Should().Be(createdSerialNumbersCount);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
                 warranty =>
                 warranty.Quantity == 0);
 
-            RepairOrderHelper.WarrantyMissingCount(repairOrderToEdit.Services).Should().Be(createdWarrantiesCount);
+            RepairOrderHelper.WarrantyRequiredMissingCount(repairOrderToEdit.Services).Should().Be(createdWarrantiesCount);
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             int quantitySold = (int)repairOrderToEdit.Services[0].Items[0].QuantitySold;
             int existingSerialNumbersCount = quantitySold - createdSerialNumbersCount;
 
-            createdSerialNumbersCount.Should().Be(RepairOrderHelper.SerialNumbersMissingCount(repairOrderToEdit.Services));
+            createdSerialNumbersCount.Should().Be(RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services));
             existingSerialNumbersCount.Should().Be(quantitySold - createdSerialNumbersCount);
         }
 
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             int quantitySold = (int)repairOrderToEdit.Services[0].Items[0].QuantitySold;
             int existingWarrantiesCount = quantitySold - createdWarrantiesCount;
 
-            createdWarrantiesCount.Should().Be(RepairOrderHelper.WarrantyMissingCount(repairOrderToEdit.Services));
+            createdWarrantiesCount.Should().Be(RepairOrderHelper.WarrantyRequiredMissingCount(repairOrderToEdit.Services));
             existingWarrantiesCount.Should().Be(quantitySold - createdWarrantiesCount);
         }
 

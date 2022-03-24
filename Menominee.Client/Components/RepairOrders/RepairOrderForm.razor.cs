@@ -178,8 +178,8 @@ namespace Menominee.Client.Components.RepairOrders
 
             Title = title;
 
-            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersMissingCount(RepairOrderToEdit.Services);
-            WarrantiesMissingCount = RepairOrderHelper.WarrantyMissingCount(RepairOrderToEdit.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersRequiredMissingCount(RepairOrderToEdit.Services);
+            WarrantiesMissingCount = RepairOrderHelper.WarrantyRequiredMissingCount(RepairOrderToEdit.Services);
         }
 
         private void UpdateSerialNumbersMissingCount(int count)
