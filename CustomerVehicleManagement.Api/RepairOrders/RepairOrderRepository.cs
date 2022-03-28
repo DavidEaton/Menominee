@@ -131,9 +131,18 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             return await context.RepairOrders.AnyAsync(ro => ro.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: log exception
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
         public void UpdateRepairOrderAsync(RepairOrder repairOrder)

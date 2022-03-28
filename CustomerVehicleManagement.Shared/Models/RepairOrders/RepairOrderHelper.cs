@@ -77,44 +77,73 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     if (IsFractional(item.QuantitySold))
                         continue;
 
-                    int quantitySold = (int)item.QuantitySold;
-
                     int matchingItemSerialNumbersCount = item.SerialNumbers.Count(
                         serialNumber =>
                         !string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
 
-                    missingSerialNumberCount += quantitySold - matchingItemSerialNumbersCount;
+                    missingSerialNumberCount += (int)item.QuantitySold - matchingItemSerialNumbersCount;
                 }
             }
 
             return missingSerialNumberCount;
         }
 
-        private static void AddMissingRequiredSerialNumbers(RepairOrderItemToWrite item)
+        public static List<SerialNumberListItem> BuildSerialNumberList(IList<RepairOrderServiceToWrite> services)
         {
-            if (item?.SerialNumbers is null || !SerialNumberRequired(item))
-                return;
+            var list = new List<SerialNumberListItem>();
+            foreach (var service in services)
+            {
+                foreach (var item in service.Items)
+                {
+                    foreach (var serialNumber in item.SerialNumbers)
+                    {
+                        list.Add(new SerialNumberListItem()
+                        {
+                            Description = item.Description,
+                            PartNumber = item.PartNumber,
+                            RepairOrderItemId = item.RepairOrderServiceId,
+                            SerialNumberType = new RepairOrderSerialNumberToWrite()
+                            {
+                                RepairOrderItemId = serialNumber.RepairOrderItemId,
+                                SerialNumber = serialNumber.SerialNumber
+                            }
+                        });
+                    }
 
+                    list.AddRange(AddMissingRequiredSerialNumbers(item));
+                }
+            }
+
+            return list;
+        }
+
+        private static List<SerialNumberListItem> AddMissingRequiredSerialNumbers(RepairOrderItemToWrite item)
+        {
             // If QuantitySold is fractional, and part requires serial number,
             // that's an invalid state we must prevent.
             // TODO: This is a business rule. Business rules shouuld live in the domain layer.
             if (IsFractional(item.QuantitySold))
-                return;
+                return null;
 
-            int quantitySold = (int)item.QuantitySold;
-
-            int matchingItemSerialNumbersCount = item.SerialNumbers.Count;
-
-            int missingItemSerialNumbersCount = quantitySold - matchingItemSerialNumbersCount;
-            for (var i = 0; i < missingItemSerialNumbersCount; i++)
+            int missingRequiredSerialNumbersCount = (int)item.QuantitySold - item.SerialNumbers.Count;
+            var list = new List<SerialNumberListItem>();
+            for (var i = 0; i < missingRequiredSerialNumbersCount; i++)
             {
-                var serialNumber = new RepairOrderSerialNumberToWrite
+                var serialNumber = new SerialNumberListItem()
                 {
-                    RepairOrderItemId = item.RepairOrderServiceId
+                    Description = item.Description,
+                    PartNumber = item.PartNumber,
+                    RepairOrderItemId = item.RepairOrderServiceId,
+                    SerialNumberType = new RepairOrderSerialNumberToWrite()
+                    {
+                        RepairOrderItemId = item.RepairOrderServiceId,
+                        SerialNumber = string.Empty
+                    }
                 };
 
-                item.SerialNumbers.Add(serialNumber);
+                list.Add(serialNumber);
             }
+            return list;
         }
 
         private static bool IsFractional(double quantitySold)
@@ -145,11 +174,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 Taxes = CreateTaxes(repairOrder.Taxes)
             };
 
-            foreach (var service in repairOrderToWrite?.Services)
-            {
-                foreach (var item in service?.Items)
-                    AddMissingRequiredSerialNumbers(item);
-            }
+            //foreach (var service in repairOrderToWrite?.Services)
+            //{
+            //    foreach (var item in service?.Items)
+            //        AddMissingRequiredSerialNumbers(item);
+            //}
 
             foreach (var service in repairOrderToWrite?.Services)
             {
@@ -199,18 +228,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 return true;
             }
             return false;
-        }
-
-        private static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
-        {
-            if (saleCode == null)
-                return null;
-
-            return new SaleCode()
-            {
-                Code = saleCode.Code,
-                Name = saleCode.Name
-            };
         }
 
         public static RepairOrder CreateRepairOrder(RepairOrderToWrite repairOrder)
@@ -331,7 +348,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     PartType = item.PartType,
-                    ProductCode = CreateProductCode(item.ProductCode),
+                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                     ProductCodeId = item.ProductCodeId,
                     QuantitySold = item.QuantitySold,
                     RepairOrderServiceId = item.RepairOrderServiceId,
@@ -418,6 +435,30 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
+        private static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
+        {
+            if (saleCode == null)
+                return null;
+
+            return new SaleCode()
+            {
+                Code = saleCode.Code,
+                Name = saleCode.Name
+            };
+        }
+
+        private static SaleCodeToWrite CreateSaleCode(SaleCodeToRead saleCode)
+        {
+            if (saleCode is null)
+                return null;
+
+            return new SaleCodeToWrite
+            {
+                Code = saleCode.Code,
+                Name = saleCode.Name
+            };
+        }
+
         public static SaleCodeToRead CreateSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
@@ -428,20 +469,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 Id = saleCode.Id,
                 Code = saleCode.Code,
                 Name = saleCode.Name
-            };
-        }
-
-        private static ProductCode CreateProductCode(ProductCodeToWrite productCode)
-        {
-            if (productCode == null)
-                return null;
-
-            return new ProductCode()
-            {
-                Code = productCode.Code,
-                Manufacturer = productCode.Manufacturer,
-                Name = productCode.Name,
-                SaleCode = productCode.SaleCode
             };
         }
 
@@ -544,11 +571,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     TaxTotal = service.TaxTotal,
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     Total = service.Total,
-                    Items = CreateItems(service.Items)
+                    Items = CreateRepairOrderItems(service.Items)
                 }).ToList();
         }
 
-        private static IList<RepairOrderItemToWrite> CreateItems(IList<RepairOrderItemToRead> items)
+        private static IList<RepairOrderItemToWrite> CreateRepairOrderItems(IList<RepairOrderItemToRead> items)
         {
             if (items is null)
                 return new List<RepairOrderItemToWrite>();
@@ -565,15 +592,15 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     IsDeclined = item.IsDeclined,
                     LaborEach = item.LaborEach,
                     LaborType = item.LaborType,
-                    //Manufacturer = item.Manufacturer,
+                    Manufacturer = CreateManufacturer(item.Manufacturer),
                     ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     PartType = item.PartType,
-                    //ProductCode = item.ProductCode,
+                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                     ProductCodeId = item.ProductCodeId,
                     QuantitySold = item.QuantitySold,
                     RepairOrderServiceId = item.RepairOrderServiceId,
-                    //SaleCode = item.SaleCode,
+                    SaleCode = CreateSaleCode(item.SaleCode),
                     SaleCodeId = item.SaleCodeId,
                     SaleType = item.SaleType,
                     SellingPrice = item.SellingPrice,
@@ -582,6 +609,18 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Taxes = CreateItemTaxes(item.Taxes),
                     Warranties = CreateWarranties(item.Warranties)
                 }).ToList();
+        }
+
+        private static ManufacturerToWrite CreateManufacturer(ManufacturerToRead manufacturer)
+        {
+            if (manufacturer is null)
+                return new ManufacturerToWrite();
+
+            return new ManufacturerToWrite
+            {
+                Code = manufacturer.Code,
+                Name = manufacturer.Name
+            };
         }
 
         private static IList<RepairOrderTechToRead> CreateServiceTechnicians(IList<RepairOrderTech> technicians)
@@ -614,7 +653,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Description = item.Description,
                     SaleCode = CreateSaleCode(item.SaleCode),
                     SaleCodeId = item.SaleCodeId,
-                    ProductCode = ProductCodeToRead.ConvertToDto(item.ProductCode),
+                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                     ProductCodeId = item.ProductCodeId,
                     SaleType = item.SaleType,
                     PartType = item.PartType,

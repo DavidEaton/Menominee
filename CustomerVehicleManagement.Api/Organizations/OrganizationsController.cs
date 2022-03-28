@@ -187,14 +187,13 @@ namespace CustomerVehicleManagement.Api.Organizations
              1) Get domain entity from repository
              2) Call repository.Delete(), which removes entity from context
              3) Save changes
-             4) return Ok()
+             4) return NoContent()
          */
             var organizationFromRepository = await repository.GetOrganizationAsync(id);
             if (organizationFromRepository == null)
                 return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
             await repository.DeleteOrganizationAsync(id);
-
             await repository.SaveChangesAsync();
 
             return NoContent();

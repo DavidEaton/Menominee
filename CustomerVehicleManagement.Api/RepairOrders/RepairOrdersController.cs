@@ -111,11 +111,9 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 return NotFound($"Could not find Repair Order in the database to delete with id of {id}.");
 
             await repository.DeleteRepairOrderAsync(id);
+            await repository.SaveChangesAsync();
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
-
-            return BadRequest($"Failed to delete Repair Order with Id of {id}.");
+            return NoContent();
         }
     }
 }

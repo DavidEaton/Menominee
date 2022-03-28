@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using Menominee.Client.Components.RepairOrders.Models;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;
@@ -37,28 +37,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            BuildSerialNumberList();
-        }
-
-        private void BuildSerialNumberList()
-        {
-            SerialNumberList = new List<SerialNumberListItem>();
-            foreach (var service in RepairOrder.Services)
-            {
-                foreach (var item in service.Items)
-                {
-                    foreach (var serialNumber in item.SerialNumbers)
-                    {
-                        SerialNumberList.Add(new SerialNumberListItem()
-                        {
-                            Description = item.Description,
-                            PartNumber = item.PartNumber,
-                            RepairOrderItemId = serialNumber.RepairOrderItemId,
-                            SerialNumberType = serialNumber
-                        });
-                    }
-                }
-            }
+            SerialNumberList = RepairOrderHelper.BuildSerialNumberList(RepairOrder.Services);
         }
 
         private void UpdateMissingSerialNumberCount()

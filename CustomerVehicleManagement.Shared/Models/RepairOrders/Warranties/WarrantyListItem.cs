@@ -1,7 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 
-namespace Menominee.Client.Components.RepairOrders.Models
+namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties
 {
     public class WarrantyListItem
     {

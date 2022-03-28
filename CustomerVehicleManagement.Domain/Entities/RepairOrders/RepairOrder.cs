@@ -1,4 +1,5 @@
 ﻿using Menominee.Common;
+using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -27,19 +28,25 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void AddService(RepairOrderService service)
         {
+            Guard.ForNull(service, "service");
             Services.Add(service);
         }
 
         public void RemoveService(RepairOrderService service)
         {
+            Guard.ForNull(service, "service");
             Services.Remove(service);
         }
 
         public void SetServices(IList<RepairOrderService> services)
         {
-            Services.Clear();
-            if (services.Count > 0)
+            // Client may send an empty or null collection, signifying removal
+            if (services is null || services?.Count == 0)
+                Services = services;
+
+            if (services?.Count > 0)
             {
+                Services.Clear();
                 foreach (var service in services)
                     AddService(service);
             }
@@ -47,19 +54,24 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void AddTax(RepairOrderTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Add(tax);
         }
 
         public void RemoveTax(RepairOrderTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Remove(tax);
         }
 
         public void SetTaxes(IList<RepairOrderTax> taxes)
         {
-            Taxes.Clear();
-            if (taxes.Count > 0)
+            if (taxes is null || taxes?.Count == 0)
+                Taxes = taxes;
+
+            if (taxes?.Count > 0)
             {
+                Taxes.Clear();
                 foreach (var tax in taxes)
                     AddTax(tax);
             }
@@ -67,17 +79,22 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void AddPayment(RepairOrderPayment payment)
         {
+            Guard.ForNull(payment, "payment");
             Payments.Add(payment);
         }
 
         public void RemovePayment(RepairOrderPayment payment)
         {
+            Guard.ForNull(payment, "payment");
             Payments.Remove(payment);
         }
 
 
         public void SetPayments(IList<RepairOrderPayment> payments)
         {
+            if (payments is null || payments?.Count == 0)
+                Payments = payments;
+
             Payments.Clear();
             if (payments.Count > 0)
             {

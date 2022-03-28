@@ -2,8 +2,8 @@
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using FluentAssertions;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using Xunit;
 
@@ -28,39 +28,48 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
-        public void Return_Correct_SerialNumbersMissingCount_On_ConvertReadDtoToWriteDto()
+        public void Return_Correct_SerialNumbersRequiredMissingCount()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
             // having "quantitySold": 5, and 4 SerialNumbers rows. Therefore, 
             // SerialNumbersMissingCount == 1.
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
             repairOrder = CreateRepairOrder(jsonString);
+
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
-            var serialNumbers = repairOrderToEdit.Services[0].Items[0].SerialNumbers;
-            int createdSerialNumbersCount = serialNumbers.Count(
-                serialNumber =>
-                string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
-
-            RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services).Should().Be(createdSerialNumbersCount);
+            RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services).Should().Be(1);
         }
 
         [Fact]
-        public void Return_Correct_WarrantiesMissingCount_On_ConvertReadDtoToWriteDto()
+        public void BuildSerialNumberList()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
-            // having "quantitySold": 5, and 4 Warranties rows. Therefore, 
-            // WarrantyMissingCount == 1.
+            // having "quantitySold": 5, and 4 SerialNumbers rows. Therefore, 
+            // SerialNumberList.Count == 5 (4 existing plus 1 new, empty row for user to complete).
+
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
             repairOrder = CreateRepairOrder(jsonString);
+
+            var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
+            var serialNumberList = RepairOrderHelper.BuildSerialNumberList(repairOrderToEdit.Services);
+
+            serialNumberList.Should().BeOfType<List<SerialNumberListItem>>();
+            serialNumberList.Count.Should().Be(5);
+        }
+
+        [Fact]
+        public void Return_Correct_WarrantiesRequiredMissingCount()
+        {
+            // repair-order-graph.json contains 1 Services row, having one Items row,
+            // having "quantitySold": 5, and 1 Warranties rows. Therefore, 
+            // WarrantyMissingCount == 4.
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = CreateRepairOrder(jsonString);
+
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
-            var warranties = repairOrderToEdit.Services[0].Items[0].Warranties;
-            int createdWarrantiesCount = warranties.Count(
-                warranty =>
-                warranty.Quantity == 0);
-
-            RepairOrderHelper.WarrantyRequiredMissingCount(repairOrderToEdit.Services).Should().Be(createdWarrantiesCount);
+            RepairOrderHelper.WarrantyRequiredMissingCount(repairOrderToEdit.Services).Should().Be(4);
         }
 
         [Fact]
@@ -85,42 +94,6 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             var createdWarranties = repairOrderToEdit.Services[0].Items[0].Warranties;
 
             createdWarranties[0].Should().BeOfType<RepairOrderWarrantyToWrite>();
-        }
-
-        [Fact]
-        public void Calculate_ExistingSerialNumbersCount_On_ConvertReadDtoToWriteDto()
-        {
-            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
-            var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
-
-            var createdSerialNumbers = repairOrderToEdit.Services[0].Items[0].SerialNumbers;
-            int createdSerialNumbersCount = createdSerialNumbers.Count(
-                serialNumber =>
-                string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
-            int quantitySold = (int)repairOrderToEdit.Services[0].Items[0].QuantitySold;
-            int existingSerialNumbersCount = quantitySold - createdSerialNumbersCount;
-
-            createdSerialNumbersCount.Should().Be(RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services));
-            existingSerialNumbersCount.Should().Be(quantitySold - createdSerialNumbersCount);
-        }
-
-        [Fact]
-        public void Calculate_ExistingWarrantiesCount_On_ConvertReadDtoToWriteDto()
-        {
-            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
-            var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
-
-            var createdWarranties = repairOrderToEdit.Services[0].Items[0].Warranties;
-            int createdWarrantiesCount = createdWarranties.Count(
-                warranty =>
-                warranty.Quantity == 0);
-            int quantitySold = (int)repairOrderToEdit.Services[0].Items[0].QuantitySold;
-            int existingWarrantiesCount = quantitySold - createdWarrantiesCount;
-
-            createdWarrantiesCount.Should().Be(RepairOrderHelper.WarrantyRequiredMissingCount(repairOrderToEdit.Services));
-            existingWarrantiesCount.Should().Be(quantitySold - createdWarrantiesCount);
         }
 
         private RepairOrderToRead CreateRepairOrder(string jsonString)

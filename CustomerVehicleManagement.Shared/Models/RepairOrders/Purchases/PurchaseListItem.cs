@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Menominee.Client.Components.RepairOrders.Models
+namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases
 {
     public class PurchaseListItem
     {
-        //public long Id { get; set; }
         public long ItemId { get; set; }
         public long VendorId { get; set; }
         public string PartNumber { get; set; }

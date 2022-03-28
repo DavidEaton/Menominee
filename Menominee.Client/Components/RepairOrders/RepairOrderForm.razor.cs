@@ -1,13 +1,12 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
-using Menominee.Client.Components.RepairOrders.Models;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -214,11 +213,11 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void RemoveIncompleteSerialNumbers()
         {
-            foreach (var service in RepairOrder.Services)
+            foreach (var service in RepairOrderToEdit?.Services)
             {
-                foreach (var item in service.Items)
+                foreach (var item in service?.Items)
                 {
-                    foreach (var serialNumber in item.SerialNumbers)
+                    foreach (var serialNumber in item?.SerialNumbers)
                     {
                         if (string.IsNullOrWhiteSpace(serialNumber.SerialNumber))
                             item.SerialNumbers.Remove(serialNumber);
@@ -229,13 +228,13 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void RemoveIncompleteWarranties()
         {
-            foreach (var service in RepairOrder.Services)
+            foreach (var service in RepairOrderToEdit?.Services)
             {
-                foreach (var item in service.Items)
+                foreach (var item in service?.Items)
                 {
-                    foreach (var warranty in item.Warranties)
+                    foreach (var warranty in item?.Warranties)
                     {
-                        if (warranty.Quantity < 1)
+                        if (warranty.Quantity == 0)
                         {
                             item.Warranties.Remove(warranty);
                         }
@@ -327,12 +326,14 @@ namespace Menominee.Client.Components.RepairOrders
 
         public bool HasWarranties()
         {
-            return WarrantiesMissingCount > 0;
+            return true;
+            //return WarrantiesMissingCount > 0;
         }
 
         public bool HasSerialNumbers()
         {
-            return SerialNumbersMissingCount > 0;
+            return true;
+            //return SerialNumbersMissingCount > 0;
         }
     }
 

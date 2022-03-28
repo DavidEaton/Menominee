@@ -99,7 +99,17 @@
                             "serialNumber": "106"
                         }
                     ],
-                    "warranties": [],
+                  "warranties": [
+                    {
+                      "id": 91,
+                      "repairOrderItemId": 39,
+                      "quantity": 1,
+                      "type": 0,
+                      "newWarranty": "new warranty 1",
+                      "originalWarranty": "new warranty 1",
+                      "originalInvoiceId": 0
+                    }
+                  ],
                     "taxes": []
                 }
             ],
