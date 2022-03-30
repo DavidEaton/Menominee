@@ -35,8 +35,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
         public double Core { get; set; }
         public double Total { get; set; }
 
-        public IList<RepairOrderSerialNumberToRead> SerialNumbers { get; set; } = new List<RepairOrderSerialNumberToRead>();
-        public IList<RepairOrderWarrantyToRead> Warranties { get; set; } = new List<RepairOrderWarrantyToRead>();
-        public IList<RepairOrderItemTaxToRead> Taxes { get; set; } = new List<RepairOrderItemTaxToRead>();
+        public List<RepairOrderSerialNumberToRead> SerialNumbers { get; set; } = new List<RepairOrderSerialNumberToRead>();
+        public List<RepairOrderWarrantyToRead> Warranties { get; set; } = new List<RepairOrderWarrantyToRead>();
+        public List<RepairOrderItemTaxToRead> Taxes { get; set; } = new List<RepairOrderItemTaxToRead>();
     }
 }

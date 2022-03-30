@@ -14,11 +14,11 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         private RepairOrderToRead repairOrder;
 
         [Fact]
-        public void ConvertReadDtoToWriteDto()
+        public void CreateRepairOrder()
         {
             // Arrange
             string jsonString = File.ReadAllText("./TestData/repair-order.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
 
             // Act
             var repairOrderToWrite = RepairOrderHelper.CreateRepairOrder(repairOrder);
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             // having "quantitySold": 5, and 4 SerialNumbers rows. Therefore, 
             // SerialNumbersMissingCount == 1.
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
 
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             // SerialNumberList.Count == 5 (4 existing plus 1 new, empty row for user to complete).
 
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
 
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
             var serialNumberList = RepairOrderHelper.BuildSerialNumberList(repairOrderToEdit.Services);
@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             // having "quantitySold": 5, and 1 Warranties rows. Therefore, 
             // WarrantyMissingCount == 4.
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
 
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
@@ -73,10 +73,10 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
-        public void Create_Missing_SerialNumbers_On_ConvertReadDtoToWriteDto()
+        public void Create_Missing_SerialNumbers_On_CreateRepairOrder()
         {
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
             var createdSerialNumbers = repairOrderToEdit.Services[0].Items[0].SerialNumbers;
@@ -85,10 +85,10 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
-        public void Create_Missing_Warranties_On_ConvertReadDtoToWriteDto()
+        public void Create_Missing_Warranties_On_CreateRepairOrder()
         {
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
-            repairOrder = CreateRepairOrder(jsonString);
+            repairOrder = DeserializeRepairOrder(jsonString);
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
             var createdWarranties = repairOrderToEdit.Services[0].Items[0].Warranties;
@@ -96,7 +96,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             createdWarranties[0].Should().BeOfType<RepairOrderWarrantyToWrite>();
         }
 
-        private RepairOrderToRead CreateRepairOrder(string jsonString)
+        private RepairOrderToRead DeserializeRepairOrder(string jsonString)
         {
             RepairOrderToRead repairOrder = JsonSerializer.Deserialize<RepairOrderToRead>(jsonString, new JsonSerializerOptions
             {

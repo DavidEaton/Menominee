@@ -27,7 +27,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             UpdateMissingSerialNumberCount();
             DialogVisible = false;
-            Updated.InvokeAsync();
+            Updated.InvokeAsync(SerialNumbersMissingCount);
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)

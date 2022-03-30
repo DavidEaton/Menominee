@@ -77,11 +77,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     if (IsFractional(item.QuantitySold))
                         continue;
 
-                    int matchingItemSerialNumbersCount = item.SerialNumbers.Count(
+                    missingSerialNumberCount += item.SerialNumbers.Count(
                         serialNumber =>
-                        !string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
-
-                    missingSerialNumberCount += (int)item.QuantitySold - matchingItemSerialNumbersCount;
+                        string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
                 }
             }
 
@@ -102,47 +100,12 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             Description = item.Description,
                             PartNumber = item.PartNumber,
                             RepairOrderItemId = item.RepairOrderServiceId,
-                            SerialNumberType = new RepairOrderSerialNumberToWrite()
-                            {
-                                RepairOrderItemId = serialNumber.RepairOrderItemId,
-                                SerialNumber = serialNumber.SerialNumber
-                            }
+                            SerialNumberType = serialNumber
                         });
                     }
-
-                    list.AddRange(AddMissingRequiredSerialNumbers(item));
                 }
             }
 
-            return list;
-        }
-
-        private static List<SerialNumberListItem> AddMissingRequiredSerialNumbers(RepairOrderItemToWrite item)
-        {
-            // If QuantitySold is fractional, and part requires serial number,
-            // that's an invalid state we must prevent.
-            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
-            if (IsFractional(item.QuantitySold))
-                return null;
-
-            int missingRequiredSerialNumbersCount = (int)item.QuantitySold - item.SerialNumbers.Count;
-            var list = new List<SerialNumberListItem>();
-            for (var i = 0; i < missingRequiredSerialNumbersCount; i++)
-            {
-                var serialNumber = new SerialNumberListItem()
-                {
-                    Description = item.Description,
-                    PartNumber = item.PartNumber,
-                    RepairOrderItemId = item.RepairOrderServiceId,
-                    SerialNumberType = new RepairOrderSerialNumberToWrite()
-                    {
-                        RepairOrderItemId = item.RepairOrderServiceId,
-                        SerialNumber = string.Empty
-                    }
-                };
-
-                list.Add(serialNumber);
-            }
             return list;
         }
 
@@ -173,12 +136,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 Payments = CreatePayments(repairOrder.Payments),
                 Taxes = CreateTaxes(repairOrder.Taxes)
             };
-
-            //foreach (var service in repairOrderToWrite?.Services)
-            //{
-            //    foreach (var item in service?.Items)
-            //        AddMissingRequiredSerialNumbers(item);
-            //}
 
             foreach (var service in repairOrderToWrite?.Services)
             {
@@ -424,7 +381,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         private static IList<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
         {
-            if (serialNumbers == null)
+            if (serialNumbers is null)
                 return new List<RepairOrderSerialNumber>();
 
             return serialNumbers.Select(serialNumber =>
@@ -580,6 +537,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             if (items is null)
                 return new List<RepairOrderItemToWrite>();
 
+            foreach (var item in items)
+                item.SerialNumbers.AddRange(MissingRequiredSerialNumbers(item));
+
             return items.Select(item =>
                 new RepairOrderItemToWrite()
                 {
@@ -609,6 +569,31 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Taxes = CreateItemTaxes(item.Taxes),
                     Warranties = CreateWarranties(item.Warranties)
                 }).ToList();
+        }
+
+        private static List<RepairOrderSerialNumberToRead> MissingRequiredSerialNumbers(RepairOrderItemToRead item)
+        {
+            var list = new List<RepairOrderSerialNumberToRead>();
+            // If QuantitySold is fractional, and part requires serial number,
+            // that's an invalid state we must prevent.
+            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
+            if (IsFractional(item.QuantitySold))
+                return new List<RepairOrderSerialNumberToRead>();
+
+            int missingRequiredSerialNumbersCount = (int)item.QuantitySold - item.SerialNumbers.Count;
+
+            for (var i = 0; i < missingRequiredSerialNumbersCount; i++)
+            {
+                var newSerialNumber = new RepairOrderSerialNumberToRead()
+                {
+                    RepairOrderItemId = item.RepairOrderServiceId,
+                    SerialNumber = string.Empty
+                };
+
+                list.Add(newSerialNumber);
+            }
+
+            return list;
         }
 
         private static ManufacturerToWrite CreateManufacturer(ManufacturerToRead manufacturer)
@@ -730,7 +715,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return null;
         }
 
-        private static IList<RepairOrderItemTaxToRead> CreateItemTaxes(IList<RepairOrderItemTax> taxes)
+        private static List<RepairOrderItemTaxToRead> CreateItemTaxes(IList<RepairOrderItemTax> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderItemTaxToRead>();
@@ -748,7 +733,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderWarrantyToRead> CreateWarranties(IList<RepairOrderWarranty> warranties)
+        private static List<RepairOrderWarrantyToRead> CreateWarranties(IList<RepairOrderWarranty> warranties)
         {
             if (warranties == null)
                 return new List<RepairOrderWarrantyToRead>();
@@ -766,7 +751,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderSerialNumberToRead> CreateSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
+        private static List<RepairOrderSerialNumberToRead> CreateSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
         {
             if (serialNumbers == null)
                 return new List<RepairOrderSerialNumberToRead>();
