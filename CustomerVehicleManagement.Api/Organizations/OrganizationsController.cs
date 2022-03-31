@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
@@ -102,19 +103,31 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             List<Phone> phones = new();
             if (organizationToUpdate?.Phones.Count > 0)
-                foreach (var phone in organizationToUpdate.Phones)
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+            {
+                phones.AddRange(organizationToUpdate.Phones
+                    .Select(phone =>
+                            Phone.Create(phone.Number,
+                                         phone.PhoneType,
+                                         phone.IsPrimary).Value));
+            }
+
             organizationFromRepository.SetPhones(phones);
 
             List<Email> emails = new();
             if (organizationToUpdate?.Emails.Count > 0)
-                foreach (var email in organizationToUpdate.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
+            {
+                emails.AddRange(organizationToUpdate.Emails
+                    .Select(email =>
+                            Email.Create(email.Address,
+                                         email.IsPrimary).Value));
+            }
+
             organizationFromRepository.SetEmails(emails);
 
             if (organizationToUpdate?.Contact != null)
             {
-                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id, organizationToUpdate.Contact);
+                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id,
+                                                                        organizationToUpdate.Contact);
                 organizationFromRepository.SetContact((Person)contact);
             }
 

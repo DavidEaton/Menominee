@@ -1,8 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.RepairOrders
@@ -32,14 +34,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             return Ok(results);
         }
 
-        // api/repairorders
-        //[HttpGet]
-        //public async Task<ActionResult<IReadOnlyList<RepairOrderToRead>>> GetRepairOrdersAsync()
-        //{
-        //    var result = await repository.GetRepairOrdersAsync();
-        //    return Ok(result);
-        //}
-
         // api/repairorders/1
         [HttpGet("{id:long}")]
         public async Task<ActionResult<RepairOrderToRead>> GetRepairOrderAsync(long id)
@@ -56,11 +50,74 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrder)
         {
-            if (!await repository.RepairOrderExistsAsync(id))
+            var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
+            if (repairOrderFromRepository is null)
                 return NotFound($"Could not find Repair Order #{id} to update.");
 
-            var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
+            UpdateRepairOrder(repairOrder, repairOrderFromRepository);
 
+            List<RepairOrderService> services = new();
+            if (repairOrder?.Services.Count > 0)
+            {
+                services.AddRange(repairOrder.Services.Select(service => new RepairOrderService()
+                {
+                    DiscountTotal = service.DiscountTotal,
+                    IsCounterSale = service.IsCounterSale,
+                    IsDeclined = service.IsDeclined,
+                    LaborTotal = service.LaborTotal,
+                    PartsTotal = service.PartsTotal,
+                    RepairOrderId = id,
+                    SaleCode = service.SaleCode,
+                    ServiceName = service.ServiceName,
+                    ShopSuppliesTotal = service.ShopSuppliesTotal,
+                    TaxTotal = service.TaxTotal,
+                    Total = service.Total,
+                    Items = RepairOrderHelper.CreateServiceItems(service.Items),
+                    Taxes = RepairOrderHelper.CreateServiceTaxes(service.Taxes),
+                    Techs = RepairOrderHelper.CreateTechnicians(service.Techs)
+                }));
+            }
+
+            List<RepairOrderPayment> payments = new();
+            if (repairOrder?.Payments.Count > 0)
+            {
+                payments.AddRange(repairOrder.Payments.Select(payment => new RepairOrderPayment()
+                {
+                    Amount = payment.Amount,
+                    PaymentMethod = payment.PaymentMethod,
+                    RepairOrderId = payment.RepairOrderId
+                }));
+            }
+
+            List<RepairOrderTax> taxes = new();
+            if (repairOrder?.Taxes.Count > 0)
+            {
+                taxes.AddRange(repairOrder.Taxes.Select(payment => new RepairOrderTax()
+                {
+                    LaborTax = payment.LaborTax,
+                    LaborTaxRate = payment.LaborTaxRate,
+                    PartTax = payment.PartTax,
+                    PartTaxRate = payment.PartTaxRate,
+                    RepairOrderId = payment.RepairOrderId,
+                    TaxId = payment.TaxId
+                }));
+            }
+
+            repairOrderFromRepository.SetServices(services);
+            repairOrderFromRepository.SetPayments(payments);
+            repairOrderFromRepository.SetTaxes(taxes);
+
+            repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
+            repository.FixTrackingState();
+
+            repository.UpdateRepairOrderAsync(repairOrderFromRepository);
+            await repository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private static void UpdateRepairOrder(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        {
             repairOrderFromRepository.CustomerName = repairOrder.CustomerName;
             repairOrderFromRepository.DateModified = DateTime.Today;
             repairOrderFromRepository.DiscountTotal = repairOrder.DiscountTotal;
@@ -76,18 +133,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             if (repairOrder.DateInvoiced.HasValue)
                 repairOrderFromRepository.DateInvoiced = (DateTime)repairOrder.DateInvoiced;
-
-            repairOrderFromRepository.SetPayments(RepairOrderHelper.CreatePayments(repairOrder?.Payments));
-            repairOrderFromRepository.SetServices(RepairOrderHelper.CreateServices(repairOrder?.Services));
-            repairOrderFromRepository.SetTaxes(RepairOrderHelper.CreateTaxes(repairOrder?.Taxes));
-
-            repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
-            repository.UpdateRepairOrderAsync(repairOrderFromRepository);
-            await repository.SaveChangesAsync();
-
-            return NoContent();
         }
 
         [HttpPost]

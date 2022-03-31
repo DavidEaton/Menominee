@@ -350,7 +350,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderWarranty> CreateWarranties(IList<RepairOrderWarrantyToWrite> warranties)
+        public static IList<RepairOrderWarranty> CreateWarranties(IList<RepairOrderWarrantyToWrite> warranties)
         {
             if (warranties == null)
                 return new List<RepairOrderWarranty>();
@@ -367,7 +367,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             }).ToList();
         }
 
-        private static IList<RepairOrderItemTax> CreateItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
+        public static IList<RepairOrderItemTax> CreateItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderItemTax>();
@@ -379,7 +379,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
+        public static IList<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
         {
             if (serialNumbers is null)
                 return new List<RepairOrderSerialNumber>();
@@ -392,7 +392,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
+        public static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
@@ -462,7 +462,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderWarrantyToWrite> CreateWarranties(IList<RepairOrderWarrantyToRead> warranties)
+        private static List<RepairOrderWarrantyToWrite> CreateWarranties(IList<RepairOrderWarrantyToRead> warranties)
         {
             if (warranties is null)
                 return new List<RepairOrderWarrantyToWrite>();
@@ -479,7 +479,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderItemTaxToWrite> CreateItemTaxes(IList<RepairOrderItemTaxToRead> taxes)
+        private static List<RepairOrderItemTaxToWrite> CreateItemTaxes(IList<RepairOrderItemTaxToRead> taxes)
         {
             if (taxes is null)
                 return new List<RepairOrderItemTaxToWrite>();
@@ -496,7 +496,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static IList<RepairOrderSerialNumberToWrite> CreateSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
+        private static List<RepairOrderSerialNumberToWrite> CreateSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
         {
             if (serialNumbers is null)
                 return new List<RepairOrderSerialNumberToWrite>();

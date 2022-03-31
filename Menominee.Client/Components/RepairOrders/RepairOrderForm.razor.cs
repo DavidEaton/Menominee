@@ -199,13 +199,10 @@ namespace Menominee.Client.Components.RepairOrders
             if (Valid())
             {
                 if (Id == 0)
-                {
                     await DataService.AddRepairOrder(RepairOrderToEdit);
-                }
-                else
-                {
+
+                if (Id != 0)
                     await DataService.UpdateRepairOrder(RepairOrderToEdit, Id);
-                }
 
                 await OnSave.InvokeAsync();
             }
@@ -217,11 +214,9 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 foreach (var item in service?.Items)
                 {
-                    foreach (var serialNumber in item?.SerialNumbers)
-                    {
-                        if (string.IsNullOrWhiteSpace(serialNumber.SerialNumber))
-                            item.SerialNumbers.Remove(serialNumber);
-                    }
+                    if (item?.SerialNumbers is not null)
+                        item.SerialNumbers.RemoveAll(serialNumber => 
+                                                     string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
                 }
             }
         }
@@ -232,13 +227,9 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 foreach (var item in service?.Items)
                 {
-                    foreach (var warranty in item?.Warranties)
-                    {
-                        if (warranty.Quantity == 0)
-                        {
-                            item.Warranties.Remove(warranty);
-                        }
-                    }
+                    if (item?.Warranties is not null)
+                        item.Warranties.RemoveAll(warranty =>
+                                                  warranty.Quantity == 0);
                 }
             }
         }
