@@ -586,7 +586,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             {
                 var newSerialNumber = new RepairOrderSerialNumberToRead()
                 {
-                    RepairOrderItemId = item.RepairOrderServiceId,
+                    RepairOrderItemId = item.Id,
                     SerialNumber = string.Empty
                 };
 

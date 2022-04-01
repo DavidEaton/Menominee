@@ -49,23 +49,15 @@ namespace CustomerVehicleManagement.Api.Customers
             var customerFromContext = await context.Customers
                                                     // Person
                                                     .Include(customer =>
-                                                             customer.Person.Phones
-                                                             .Where(phone =>
-                                                                    phone.IsPrimary == true))
+                                                             customer.Person.Phones)
                                                     .Include(customer =>
-                                                             customer.Person.Emails
-                                                             .Where(email =>
-                                                                    email.IsPrimary == true))
+                                                             customer.Person.Emails)
 
                                                     // Organization and Organization.Contact
                                                     .Include(customer =>
-                                                             customer.Organization.Contact.Phones.
-                                                             Where(phone =>
-                                                                   phone.IsPrimary == true))
+                                                             customer.Organization.Contact.Phones)
                                                     .Include(customer => 
-                                                             customer.Organization.Contact.Emails.
-                                                             Where(email =>
-                                                                   email.IsPrimary == true))
+                                                             customer.Organization.Contact.Emails)
                                                     .AsNoTracking()
                                                     .FirstOrDefaultAsync(customer =>
                                                                          customer.Id == id);
@@ -135,12 +127,20 @@ namespace CustomerVehicleManagement.Api.Customers
             var customersFromContext = await context.Customers
 
                                                     // Person
-                                                    .Include(customer => customer.Person.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Person.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Person.Phones
+                                                             .Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Person.Emails
+                                                             .Where(email => email.IsPrimary == true))
 
                                                     // Organization and Organization.Contact
-                                                    .Include(customer => customer.Organization.Contact.Phones.Where(phone => phone.IsPrimary == true))
-                                                    .Include(customer => customer.Organization.Contact.Emails.Where(email => email.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Organization.Contact.Phones
+                                                             .Where(phone => phone.IsPrimary == true))
+                                                    .Include(customer =>
+                                                             customer.Organization.Contact.Emails
+                                                             .Where(email => email.IsPrimary == true))
                                                     .AsNoTracking()
                                                     .ToArrayAsync();
 
