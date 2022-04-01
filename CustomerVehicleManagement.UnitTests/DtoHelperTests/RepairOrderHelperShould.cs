@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
-        public void Return_Correct_SerialNumbersRequiredMissingCount()
+        public void Return_Correct_SerialNumberRequiredMissingCount()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
             // having "quantitySold": 5, and 4 SerialNumbers rows. Therefore, 
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
 
             var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
 
-            RepairOrderHelper.SerialNumbersRequiredMissingCount(repairOrderToEdit.Services).Should().Be(1);
+            RepairOrderHelper.SerialNumberRequiredMissingCount(repairOrderToEdit.Services).Should().Be(1);
         }
 
         [Fact]
@@ -59,11 +59,11 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
-        public void Return_Correct_WarrantiesRequiredMissingCount()
+        public void Return_Correct_WarrantyRequiredMissingCount()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
-            // having "quantitySold": 5, and 1 Warranties rows. Therefore, 
-            // WarrantyMissingCount == 4.
+            // having "quantitySold": 5, and 1 Warranties row. Therefore, 
+            // SerialNumbersMissingCount == 4.
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
             repairOrder = DeserializeRepairOrder(jsonString);
 

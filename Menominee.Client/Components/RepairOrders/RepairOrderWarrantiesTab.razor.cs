@@ -31,7 +31,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             UpdateMissingWarrantyCount();
             EditDialogVisible = false;
-            Updated.InvokeAsync();
+            Updated.InvokeAsync(WarrantiesMissingCount);
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
@@ -59,7 +59,8 @@ namespace Menominee.Client.Components.RepairOrders
                             Description = item.Description,
                             PartNumber = item.PartNumber,
                             RepairOrderItemId = warranty.RepairOrderItemId,
-                            WarrantyType = warranty
+                            WarrantyType = warranty,
+                            Quantity = warranty.Quantity
                         });
                     }
                 }

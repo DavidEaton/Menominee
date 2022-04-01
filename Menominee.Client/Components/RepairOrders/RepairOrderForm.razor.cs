@@ -1,12 +1,12 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using Menominee.Client.Services.RepairOrders;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -36,7 +36,6 @@ namespace Menominee.Client.Components.RepairOrders
         List<Inspection> CurrentInspections { get; set; }
         List<Inspection> PreviousInspections { get; set; }
         List<PurchaseListItem> PurchaseList { get; set; } = new();
-        List<WarrantyListItem> WarrantyList { get; set; } = new();
 
         private int PurchaseInfoNeededCount { get; set; } = 0;
         private int WarrantiesMissingCount { get; set; } = 0;
@@ -177,7 +176,7 @@ namespace Menominee.Client.Components.RepairOrders
 
             Title = title;
 
-            SerialNumbersMissingCount = RepairOrderHelper.SerialNumbersRequiredMissingCount(RepairOrderToEdit.Services);
+            SerialNumbersMissingCount = RepairOrderHelper.SerialNumberRequiredMissingCount(RepairOrderToEdit.Services);
             WarrantiesMissingCount = RepairOrderHelper.WarrantyRequiredMissingCount(RepairOrderToEdit.Services);
         }
 
@@ -215,7 +214,7 @@ namespace Menominee.Client.Components.RepairOrders
                 foreach (var item in service?.Items)
                 {
                     if (item?.SerialNumbers is not null)
-                        item.SerialNumbers.RemoveAll(serialNumber => 
+                        item.SerialNumbers.RemoveAll(serialNumber =>
                                                      string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
                 }
             }
@@ -312,19 +311,25 @@ namespace Menominee.Client.Components.RepairOrders
 
         public bool HasPurchases()
         {
-            return PurchaseList.Count > 0;
+            return true;
         }
 
         public bool HasWarranties()
         {
-            return true;
-            //return WarrantiesMissingCount > 0;
+            return RepairOrder.Services
+                .Select(service =>
+                        service.Items
+                        .Select(item =>
+                                item.Warranties.Any())).Any();
         }
 
         public bool HasSerialNumbers()
         {
-            return true;
-            //return SerialNumbersMissingCount > 0;
+            return RepairOrder.Services
+                .Select(service =>
+                        service.Items
+                        .Select(item =>
+                                item.SerialNumbers.Any())).Any();
         }
     }
 

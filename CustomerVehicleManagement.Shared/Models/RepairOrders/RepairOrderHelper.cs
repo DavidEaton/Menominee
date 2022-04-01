@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
             {
                 // check if this part's product code requires warranty
-                // if (ProductCodeRequiresSerialNumber())
+                // if (ProductCodeRequireWwarranty(item))
                 return true;
             }
             return false;
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         public static int WarrantyRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
         {
-            int missingWarrantiesCount = 0;
+            int missingWarrantyCount = 0;
 
             foreach (var service in services)
             {
@@ -47,20 +47,16 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     if (IsFractional(item.QuantitySold))
                         continue;
 
-                    int quantitySold = (int)item.QuantitySold;
-
-                    int matchingItemWarrantiesCount = item.Warranties.Count(
+                    missingWarrantyCount += item.Warranties.Count(
                         warranty =>
-                        warranty.Quantity > 0);
-
-                    missingWarrantiesCount += quantitySold - matchingItemWarrantiesCount;
+                        warranty.Quantity == 0);
                 }
             }
 
-            return missingWarrantiesCount;
+            return missingWarrantyCount;
         }
 
-        public static int SerialNumbersRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
+        public static int SerialNumberRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
         {
             int missingSerialNumberCount = 0;
 
@@ -137,42 +133,32 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 Taxes = CreateTaxes(repairOrder.Taxes)
             };
 
-            foreach (var service in repairOrderToWrite?.Services)
-            {
-                foreach (var item in service?.Items)
-                    AddMissingRequiredWarranties(item);
-            }
-
             return repairOrderToWrite;
         }
 
-        private static void AddMissingRequiredWarranties(RepairOrderItemToWrite item)
+        private static List<RepairOrderWarrantyToRead> MissingRequiredWarranties(RepairOrderItemToRead item)
         {
-            if (item?.Warranties is null || !WarrantyRequired(item))
-                return;
-
+            var list = new List<RepairOrderWarrantyToRead>();
             // If QuantitySold is fractional, and part requires warranty, that's an invalid
             // state we must prevent.
             // TODO: This is a business rule. Business rules shouuld live in the domain layer.
             if (IsFractional(item.QuantitySold))
-                return;
+                return new List<RepairOrderWarrantyToRead>();
 
-            int quantitySold = (int)item.QuantitySold;
+            int missingRequiredWarrantiesCount = (int)item.QuantitySold - item.Warranties.Count;
 
-            int matchingItemWarrantiesCount = item.Warranties.Count;
-
-            int missingItemWarrantiesCount = quantitySold - matchingItemWarrantiesCount;
-            for (var i = 0; i < missingItemWarrantiesCount; i++)
+            for (var i = 0; i < missingRequiredWarrantiesCount; i++)
             {
-                var warranty = new RepairOrderWarrantyToWrite
+                var newWarranty = new RepairOrderWarrantyToRead()
                 {
-                    RepairOrderItemId = item.RepairOrderServiceId,
-                    Quantity = 0,
-                    Type = WarrantyType.NewWarranty
+                    RepairOrderItemId = item.Id,
+                    Quantity = 0
                 };
 
-                item.Warranties.Add(warranty);
+                list.Add(newWarranty);
             }
+
+            return list;
         }
 
         // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
@@ -181,7 +167,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
             {
                 // check if this part's product code requires serial numbers
-                // if (ProductCodeRequiresSerialNumber())
+                // if (ProductCodeRequiresSerialNumber(item))
                 return true;
             }
             return false;
@@ -259,7 +245,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static IList<RepairOrderService> CreateServices(IList<RepairOrderServiceToWrite> services)
+        private static IList<RepairOrderService> CreateServices(IList<RepairOrderServiceToWrite> services)
         {
             if (services is null)
                 return new List<RepairOrderService>();
@@ -379,7 +365,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static IList<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
+        private static IList<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
         {
             if (serialNumbers is null)
                 return new List<RepairOrderSerialNumber>();
@@ -538,7 +524,10 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 return new List<RepairOrderItemToWrite>();
 
             foreach (var item in items)
+            {
                 item.SerialNumbers.AddRange(MissingRequiredSerialNumbers(item));
+                item.Warranties.AddRange(MissingRequiredWarranties(item));
+            }
 
             return items.Select(item =>
                 new RepairOrderItemToWrite()

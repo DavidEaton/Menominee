@@ -67,8 +67,11 @@ namespace CustomerVehicleManagement.Api.Persons
         public async Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync()
         {
             var personsFromContext = await context.Persons
-                                                  .Include(person => person.Phones)
-                                                  .Include(person => person.Emails)
+                                                  .Include(person =>
+                                                           person.Phones
+                                                           .Where(phone => phone.IsPrimary == true))
+                                                  .Include(person => person.Emails
+                                                           .Where(phone => phone.IsPrimary == true))
                                                   .ToArrayAsync();
 
             return personsFromContext
