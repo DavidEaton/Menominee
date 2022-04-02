@@ -50,12 +50,15 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     // Person
                                                     .Include(customer =>
                                                              customer.Person.Phones)
+                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Person.Emails)
+                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Phones)
+                                                    .AsNoTracking()
                                                     .Include(customer => 
                                                              customer.Organization.Contact.Emails)
                                                     .AsNoTracking()
@@ -73,6 +76,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
+                                                    .AsNoTracking()
                                                     .Include(customer => customer.Organization)
                                                         .ThenInclude(organization => organization.Contact)
                                                     .AsNoTracking()
@@ -130,14 +134,17 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .Include(customer =>
                                                              customer.Person.Phones
                                                              .Where(phone => phone.IsPrimary == true))
+                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Person.Emails
                                                              .Where(email => email.IsPrimary == true))
+                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Phones
                                                              .Where(phone => phone.IsPrimary == true))
+                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Emails
                                                              .Where(email => email.IsPrimary == true))
