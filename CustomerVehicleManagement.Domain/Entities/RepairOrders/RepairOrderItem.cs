@@ -32,9 +32,9 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double DiscountEach { get; set; }
         public double Total { get; set; }
 
-        public virtual IList<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
-        public virtual IList<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
-        public virtual IList<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
+        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
+        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
+        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
 
         public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
         {

@@ -2,6 +2,7 @@
 {
     public class RepairOrderTaxToWrite
     {
+        public long Id { get; set; }
         public long RepairOrderId { get; set; } = 0;
         public long TaxId { get; set; } = 0;
         public double PartTaxRate { get; set; } = 0.0;

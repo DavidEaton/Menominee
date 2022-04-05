@@ -24,8 +24,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public DateTime? DateModified { get; set; }
         public DateTime? DateInvoiced { get; set; }
 
-        public IList<RepairOrderServiceToRead> Services { get; set; } = new List<RepairOrderServiceToRead>();
-        public IList<RepairOrderTaxToRead> Taxes { get; set; } = new List<RepairOrderTaxToRead>();
-        public IList<RepairOrderPaymentToRead> Payments { get; set; } = new List<RepairOrderPaymentToRead>();
+        public List<RepairOrderServiceToRead> Services { get; set; } = new List<RepairOrderServiceToRead>();
+        public List<RepairOrderTaxToRead> Taxes { get; set; } = new List<RepairOrderTaxToRead>();
+        public List<RepairOrderPaymentToRead> Payments { get; set; } = new List<RepairOrderPaymentToRead>();
     }
 }

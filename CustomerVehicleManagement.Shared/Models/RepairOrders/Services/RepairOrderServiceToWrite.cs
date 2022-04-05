@@ -7,6 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
 {
     public class RepairOrderServiceToWrite
     {
+        public long Id { get; set; }
         public long RepairOrderId { get; set; } = 0;
         public string ServiceName { get; set; } = string.Empty;
         public string SaleCode { get; set; } = string.Empty;
@@ -19,9 +20,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
         public double ShopSuppliesTotal { get; set; } = 0.0;
         public double Total { get; set; } = 0.0;
 
-        public IList<RepairOrderItemToWrite> Items { get; set; } = new List<RepairOrderItemToWrite>();
-        public IList<RepairOrderTechToWrite> Techs { get; set; } = new List<RepairOrderTechToWrite>();
-        public IList<RepairOrderServiceTaxToWrite> Taxes { get; set; } = new List<RepairOrderServiceTaxToWrite>();
+        public List<RepairOrderItemToWrite> Items { get; set; } = new List<RepairOrderItemToWrite>();
+        public List<RepairOrderTechToWrite> Techs { get; set; } = new List<RepairOrderTechToWrite>();
+        public List<RepairOrderServiceTaxToWrite> Taxes { get; set; } = new List<RepairOrderServiceTaxToWrite>();
 
         public void Recalculate()
         {

@@ -34,9 +34,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public DateTime? DateModified { get; set; }
         public DateTime? DateInvoiced { get; set; }
 
-        public IList<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
-        public IList<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
-        public IList<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
+        public List<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
+        public List<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
+        public List<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
 
         //public event PropertyChangedEventHandler PropertyChanged;
         //private void NotifyPropertyChanged(string propertyName)

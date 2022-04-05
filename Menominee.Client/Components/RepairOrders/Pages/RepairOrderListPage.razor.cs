@@ -1,14 +1,13 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using Menominee.Client.Services.RepairOrders;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.RepairOrders
+namespace Menominee.Client.Components.RepairOrders.Pages
 {
-    public partial class RepairOrderList : ComponentBase
+    public partial class RepairOrderListPage : ComponentBase
     {
         [Inject]
         private NavigationManager NavigationManager { get; set; }

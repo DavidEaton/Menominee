@@ -22,9 +22,9 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public DateTime DateModified { get; set; }
         public DateTime DateInvoiced { get; set; }
 
-        public virtual IList<RepairOrderService> Services { get; set; } = new List<RepairOrderService>();
-        public virtual IList<RepairOrderTax> Taxes { get; set; } = new List<RepairOrderTax>();
-        public virtual IList<RepairOrderPayment> Payments { get; set; } = new List<RepairOrderPayment>();
+        public virtual List<RepairOrderService> Services { get; set; } = new List<RepairOrderService>();
+        public virtual List<RepairOrderTax> Taxes { get; set; } = new List<RepairOrderTax>();
+        public virtual List<RepairOrderPayment> Payments { get; set; } = new List<RepairOrderPayment>();
 
         public void AddService(RepairOrderService service)
         {
@@ -36,20 +36,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         {
             Guard.ForNull(service, "service");
             Services.Remove(service);
-        }
-
-        public void SetServices(IList<RepairOrderService> services)
-        {
-            // Client may send an empty or null collection, signifying removal
-            if (services is null || services?.Count == 0)
-                Services = services;
-
-            if (services?.Count > 0)
-            {
-                Services.Clear();
-                foreach (var service in services)
-                    AddService(service);
-            }
         }
 
         public void AddTax(RepairOrderTax tax)
@@ -64,19 +50,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             Taxes.Remove(tax);
         }
 
-        public void SetTaxes(IList<RepairOrderTax> taxes)
-        {
-            if (taxes is null || taxes?.Count == 0)
-                Taxes = taxes;
-
-            if (taxes?.Count > 0)
-            {
-                Taxes.Clear();
-                foreach (var tax in taxes)
-                    AddTax(tax);
-            }
-        }
-
         public void AddPayment(RepairOrderPayment payment)
         {
             Guard.ForNull(payment, "payment");
@@ -87,20 +60,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         {
             Guard.ForNull(payment, "payment");
             Payments.Remove(payment);
-        }
-
-
-        public void SetPayments(IList<RepairOrderPayment> payments)
-        {
-            if (payments is null || payments?.Count == 0)
-                Payments = payments;
-
-            Payments.Clear();
-            if (payments.Count > 0)
-            {
-                foreach (var payment in payments)
-                    AddPayment(payment);
-            }
         }
 
         #region ORM
