@@ -157,10 +157,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseSqlServer(Connection, null);
-            var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<ApplicationDbContext>>();
-            var mockEnvironment = new Mock<IHostEnvironment>();
-            mockEnvironment
+
+            new Mock<IHostEnvironment>()
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:Testing");
             var context = new ApplicationDbContext(Connection);

@@ -49,7 +49,6 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)
         {
             var mfrFromContext = await context.Manufacturers
-                .AsNoTracking()
                 .FirstOrDefaultAsync(mfr => mfr.Code == code);
 
             return mfrFromContext;

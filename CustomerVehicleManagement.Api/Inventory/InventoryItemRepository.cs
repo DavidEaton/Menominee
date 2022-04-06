@@ -58,7 +58,6 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItem> GetInventoryItemEntityAsync(long mfrId, string partNumber)
         {
             var itemFromContext = await context.InventoryItems
-                .AsNoTracking()
                 .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
 
             return itemFromContext;
@@ -67,7 +66,6 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItem> GetInventoryItemEntityAsync(long id)
         {
             var itemFromContext = await context.InventoryItems
-                .AsNoTracking()
                 .FirstOrDefaultAsync(item => item.Id == id);
 
             return itemFromContext;

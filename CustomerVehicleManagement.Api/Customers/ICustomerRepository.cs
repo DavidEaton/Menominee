@@ -15,6 +15,6 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync();
         Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync();
         Task<CustomerToRead> GetCustomerAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }

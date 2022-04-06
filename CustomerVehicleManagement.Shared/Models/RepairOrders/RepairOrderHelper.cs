@@ -93,6 +93,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     {
                         list.Add(new SerialNumberListItem()
                         {
+                            ItemId = item.Id,
                             Description = item.Description,
                             PartNumber = item.PartNumber,
                             RepairOrderItemId = item.RepairOrderServiceId,
@@ -515,6 +516,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return serialNumbers.Select(serialNumber =>
                 new RepairOrderSerialNumberToWrite()
                 {
+                    Id = serialNumber.Id,
                     RepairOrderItemId = serialNumber.RepairOrderItemId,
                     SerialNumber = serialNumber.SerialNumber
                 }).ToList();
@@ -528,6 +530,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return services.Select(service =>
                 new RepairOrderServiceToWrite()
                 {
+                    Id = service.Id,
                     RepairOrderId = service.RepairOrderId,
                     ServiceName = service.ServiceName,
                     SaleCode = service.SaleCode,
@@ -557,6 +560,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return items.Select(item =>
                 new RepairOrderItemToWrite()
                 {
+                    Id = item.Id,
                     Core = item.Core,
                     Cost = item.Cost,
                     Description = item.Description,

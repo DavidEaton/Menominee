@@ -85,37 +85,27 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(m => m.Manufacturer)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(p => p.ProductCode)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(s => s.SaleCode)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(t => t.Taxes)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(s => s.SerialNumbers)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(w => w.Warranties)
-                        .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(t => t.Techs)
-                    .AsNoTracking()
                 .Include(ro => ro.Services)
                     .ThenInclude(t => t.Taxes)
-                    .AsNoTracking()
                 .Include(ro => ro.Taxes)
-                .AsNoTracking()
                 .Include(ro => ro.Payments)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(ro => ro.Id == id);
 
             return roFromContext;
@@ -155,7 +145,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             try
             {
-                await context.SaveChangesAsync();
+                var moops = await context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

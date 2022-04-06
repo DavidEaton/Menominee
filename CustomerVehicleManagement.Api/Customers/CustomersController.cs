@@ -21,6 +21,7 @@ namespace CustomerVehicleManagement.Api.Customers
         private readonly ICustomerRepository customerRepository;
         private readonly PersonsController personsController;
         private readonly OrganizationsController organizationsController;
+        private readonly string BasePath = "/api/customers/";
 
         public CustomersController(ICustomerRepository customerRepository,
                                    PersonsController personsController,
@@ -73,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Customers
 
         // PUT: api/Customer/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
+        public async Task<IActionResult> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
         {
             // VK: here, the logic should be:
             // 1. Get the customer entity (not DTO) from the DB
@@ -94,15 +95,14 @@ namespace CustomerVehicleManagement.Api.Customers
 
             customerRepository.FixTrackingState();
 
-            if (await customerRepository.SaveChangesAsync())
-                return NoContent();
+            await customerRepository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update .");
+            return NoContent();
         }
 
         // POST: api/Customer/
         [HttpPost]
-        public async Task<ActionResult> AddCustomerAsync(CustomerToWrite customerToAdd)
+        public async Task<IActionResult> AddCustomerAsync(CustomerToWrite customerToAdd)
         {
             Customer customer = null;
 
@@ -114,17 +114,9 @@ namespace CustomerVehicleManagement.Api.Customers
 
             await customerRepository.AddCustomerAsync(customer);
 
-            if (!await customerRepository.SaveChangesAsync())
-                return BadRequest($"Failed to add {customerToAdd}.");
+            await customerRepository.SaveChangesAsync();
 
-            CustomerToRead customerFromRepository = await customerRepository.GetCustomerAsync(customer.Id);
-
-            if (customerFromRepository == null)
-                return BadRequest($"Failed to add {customerToAdd}.");
-
-            return CreatedAtRoute("GetCustomerAsync",
-                new { id = customerFromRepository.Id },
-                customerFromRepository);
+            return Created(new Uri($"{BasePath}/{customer.Id}", UriKind.Relative), new { id = customer.Id });
         }
 
         [HttpDelete("{id:long}")]
@@ -137,10 +129,9 @@ namespace CustomerVehicleManagement.Api.Customers
 
             await customerRepository.DeleteCustomerAsync(id);
 
-            if (await customerRepository.SaveChangesAsync())
-                return NoContent();
+            await customerRepository.SaveChangesAsync();
 
-            return BadRequest($"Failed to delete Customer with Id: {id}.");
+            return NoContent();
         }
     }
 

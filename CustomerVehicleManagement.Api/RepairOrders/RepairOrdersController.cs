@@ -58,8 +58,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             UpdateRepairOrder(repairOrder, repairOrderFromRepository);
             UpdateServices(repairOrder, repairOrderFromRepository);
-            UpdatePayments(repairOrder, repairOrderFromRepository);
-            UpdateTaxes(repairOrder, repairOrderFromRepository);
+            //UpdatePayments(repairOrder, repairOrderFromRepository);
+            //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
             repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             return NoContent();
         }
 
-        private void UpdateTaxes(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        private static void UpdateTaxes(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
         {
             foreach (var tax in repairOrder?.Taxes)
             {
@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             }
         }
 
-        private void UpdatePayments(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        private static void UpdatePayments(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
         {
             foreach (var payment in repairOrder?.Payments)
             {
@@ -176,8 +176,14 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             {
                 var editableSerialNumber = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
 
-                if (editableItem is null)
-                    continue;
+                // Seems we are jumping thru this hoop because this unfound serial number
+                // was added in BuildSerialNumberList, disconnected from the db context, 
+                // so we must add it to the tracked collection here
+                if (editableSerialNumber is null)
+                {
+                    editableSerialNumber = new();
+                    editableItem.SerialNumbers.Add(editableSerialNumber);
+                }
 
                 editableSerialNumber.RepairOrderItemId = serialNumber.RepairOrderItemId;
                 editableSerialNumber.SerialNumber = serialNumber.SerialNumber;
@@ -204,7 +210,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
+        public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
             var repairOrder = RepairOrderHelper.CreateRepairOrder(repairOrderToAdd);
 
