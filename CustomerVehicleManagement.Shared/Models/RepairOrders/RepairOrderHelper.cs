@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         {
             if ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0)
             {
-                // check if this part's product code requires warranty
+                // TODO: check if this part's product code requires warranty
                 // if (ProductCodeRequireWwarranty(item))
                 return true;
             }
@@ -41,9 +41,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     if (item?.Warranties is null || !WarrantyRequired(item))
                         continue;
 
-                    // If QuantitySold is fractional, and part requires warranty, that's an invalid
-                    // state we must prevent.
-                    // TODO: This is a business rule. Business rules should live in the domain layer.
                     if (IsFractional(item.QuantitySold))
                         continue;
 
@@ -106,6 +103,30 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        public static List<WarrantyListItem> BuildWarrantyList(List<RepairOrderServiceToWrite> services)
+        {
+            var list = new List<WarrantyListItem>();
+            foreach (var service in services)
+            {
+                foreach (var item in service.Items)
+                {
+                    foreach (var warranty in item.Warranties)
+                    {
+                        list.Add(new WarrantyListItem()
+                        {
+                            Type = (WarrantyType)warranty.Type,
+                            Description = item.Description,
+                            PartNumber = item.PartNumber,
+                            RepairOrderItemId = warranty.RepairOrderItemId,
+                            WarrantyType = warranty,
+                            Quantity = warranty.Quantity
+                        });
+                    }
+                }
+            }
+
+            return list;
+        }
         private static bool IsFractional(double quantitySold)
         {
             return !(quantitySold % 1 == 0);
@@ -482,6 +503,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return warranties.Select(warranty =>
                 new RepairOrderWarrantyToWrite()
                 {
+                    Id =    warranty.Id,
                     NewWarranty = warranty.NewWarranty,
                     OriginalInvoiceId = warranty.OriginalInvoiceId,
                     OriginalWarranty = warranty.OriginalWarranty,
@@ -584,8 +606,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     SellingPrice = item.SellingPrice,
                     Total = item.Total,
                     SerialNumbers = CreateSerialNumbers(item.SerialNumbers),
-                    Taxes = CreateItemTaxes(item.Taxes),
-                    Warranties = CreateWarranties(item.Warranties)
+                    Warranties = CreateWarranties(item.Warranties),
+                    Taxes = CreateItemTaxes(item.Taxes)
                 }).ToList();
         }
 

@@ -106,6 +106,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             foreach (var service in repairOrder?.Services)
             {
                 var editableService = repairOrderFromRepository.Services.Find(x => x.Id == service.Id);
+
                 if (editableService is null)
                     continue;
 
@@ -164,9 +165,31 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableItem.Total = item.Total;
 
                 UpdateServiceItemSerialNumbers(item, editableItem);
+                UpdateServiceItemWarranties(item, editableItem);
                 //editableItem.SerialNumbers = CreateSerialNumbers(item.SerialNumbers);
-                //editableItem.Taxes = CreateItemTaxes(item.Taxes);
                 //editableItem.Warranties = CreateWarranties(item.Warranties)
+                //editableItem.Taxes = CreateItemTaxes(item.Taxes);
+            }
+        }
+
+        private static void UpdateServiceItemWarranties(RepairOrderItemToWrite item, RepairOrderItem editableItem)
+        {
+            foreach (var warranty in item?.Warranties)
+            {
+                RepairOrderWarranty editableWarranty
+                    = editableItem?.Warranties.Find(x => x.Id == warranty.Id);
+
+                editableWarranty = editableWarranty ?? new();
+
+                if (editableWarranty.Id == 0)
+                    editableItem.Warranties.Add(editableWarranty);
+
+                editableWarranty.RepairOrderItemId = warranty.RepairOrderItemId;
+                editableWarranty.NewWarranty = warranty.NewWarranty;
+                editableWarranty.OriginalInvoiceId = warranty.OriginalInvoiceId;
+                editableWarranty.OriginalWarranty = warranty.OriginalWarranty;
+                editableWarranty.Quantity = warranty.Quantity;
+                editableWarranty.Type = warranty.Type;
             }
         }
 
@@ -174,16 +197,16 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             foreach (var serialNumber in item?.SerialNumbers)
             {
-                var editableSerialNumber = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
+                RepairOrderSerialNumber editableSerialNumber
+                    = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
 
-                // Seems we are jumping thru this hoop because this unfound serial number
+                // We are jumping thru this hoop because this unfound serial number
                 // was added in BuildSerialNumberList, disconnected from the db context, 
                 // so we must add it to the tracked collection here
-                if (editableSerialNumber is null)
-                {
-                    editableSerialNumber = new();
+                editableSerialNumber = editableSerialNumber ?? new();
+
+                if (editableSerialNumber.Id == 0)
                     editableItem.SerialNumbers.Add(editableSerialNumber);
-                }
 
                 editableSerialNumber.RepairOrderItemId = serialNumber.RepairOrderItemId;
                 editableSerialNumber.SerialNumber = serialNumber.SerialNumber;

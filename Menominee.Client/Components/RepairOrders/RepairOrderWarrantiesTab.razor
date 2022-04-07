@@ -11,7 +11,7 @@
                 {
                     <TelerikGrid Data="WarrantyList"
                              OnRowClick="OnRowSelected"
-                             OnRowDoubleClick="@(() => EditDialogVisible = true)"
+                             OnRowDoubleClick="@(() => DialogVisible = true)"
                              SelectionMode="GridSelectionMode.Single">
                         <GridColumns>
                             <GridColumn Width="32px">
@@ -49,7 +49,7 @@
                     <div>
                         <hr class="m-btn-group-divider">
                         <div>
-                            <button class="btn m-button m-edit-btn" @onclick="@(() => EditDialogVisible = true)" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn m-button m-edit-btn" @onclick="@(() => DialogVisible = true)" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
                             <button class="btn m-button m-generic-btn" @onclick="OnCopy" disabled="@(CanCopy ? false : true)"><i class="fas fa-copy"></i> Copy</button>
                         </div>
                     </div>
@@ -59,12 +59,12 @@
         </Card>
     </div>
 
-    @if (EditDialogVisible && Warranty != null)
+    @if (DialogVisible && Warranty != null)
     {
         <RepairOrderWarrantyEditor Warranty="Warranty"
-                               DialogVisible="EditDialogVisible"
+                               DialogVisible="DialogVisible"
                                OnSave="Save"
-                               OnCancel="@(() => EditDialogVisible = false)" />
+                               OnCancel="@(() => DialogVisible = false)" />
     }
 
 </div>

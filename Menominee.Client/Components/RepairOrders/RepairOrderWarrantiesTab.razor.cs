@@ -17,7 +17,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         public int WarrantiesMissingCount { get; set; }
 
-        private bool EditDialogVisible { get; set; } = false;
+        private bool DialogVisible { get; set; } = false;
 
         private bool CanEdit { get; set; } = false;
         private bool CanCopy { get; set; } = false;
@@ -30,7 +30,7 @@ namespace Menominee.Client.Components.RepairOrders
         public void Save()
         {
             UpdateMissingWarrantyCount();
-            EditDialogVisible = false;
+            DialogVisible = false;
             Updated.InvokeAsync(WarrantiesMissingCount);
         }
 
@@ -41,30 +41,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            BuildWarrantyList();
-        }
-
-        private void BuildWarrantyList()
-        {
-            WarrantyList = new List<WarrantyListItem>();
-            foreach (var service in RepairOrder.Services)
-            {
-                foreach (var item in service.Items)
-                {
-                    foreach (var warranty in item.Warranties)
-                    {
-                        WarrantyList.Add(new WarrantyListItem()
-                        {
-                            Type = (WarrantyType)warranty.Type,
-                            Description = item.Description,
-                            PartNumber = item.PartNumber,
-                            RepairOrderItemId = warranty.RepairOrderItemId,
-                            WarrantyType = warranty,
-                            Quantity = warranty.Quantity
-                        });
-                    }
-                }
-            }
+            WarrantyList = RepairOrderHelper.BuildWarrantyList(RepairOrder.Services);
         }
 
         private void UpdateMissingWarrantyCount()

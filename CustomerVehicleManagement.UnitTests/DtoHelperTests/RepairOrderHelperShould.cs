@@ -59,11 +59,28 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
+        public void BuildWarrantyList()
+        {
+            // repair-order-graph.json contains 1 Services row, having one Items row,
+            // having "quantitySold": 5, and 4 Warranties rows. Therefore, 
+            // WarrantyList.Count == 5 (4 existing plus 1 new, empty row for user to complete).
+
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = DeserializeRepairOrder(jsonString);
+
+            var repairOrderToEdit = RepairOrderHelper.CreateRepairOrder(repairOrder);
+            var warrantyList = RepairOrderHelper.BuildWarrantyList(repairOrderToEdit.Services);
+
+            warrantyList.Should().BeOfType<List<WarrantyListItem>>();
+            warrantyList.Count.Should().Be(5);
+        }
+
+        [Fact]
         public void Return_Correct_WarrantyRequiredMissingCount()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
             // having "quantitySold": 5, and 1 Warranties row. Therefore, 
-            // SerialNumbersMissingCount == 4.
+            // WarrantyRequiredMissingCount == 4.
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
             repairOrder = DeserializeRepairOrder(jsonString);
 
