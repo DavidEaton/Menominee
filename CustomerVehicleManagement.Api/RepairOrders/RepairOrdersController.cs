@@ -174,6 +174,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         private static void UpdateServiceItemWarranties(RepairOrderItemToWrite item, RepairOrderItem editableItem)
         {
+            List<RepairOrderWarranty> addedWarranties = new();
+
             foreach (var warranty in item?.Warranties)
             {
                 RepairOrderWarranty editableWarranty
@@ -181,36 +183,42 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
                 editableWarranty = editableWarranty ?? new();
 
-                if (editableWarranty.Id == 0)
-                    editableItem.Warranties.Add(editableWarranty);
-
                 editableWarranty.RepairOrderItemId = warranty.RepairOrderItemId;
                 editableWarranty.NewWarranty = warranty.NewWarranty;
                 editableWarranty.OriginalInvoiceId = warranty.OriginalInvoiceId;
                 editableWarranty.OriginalWarranty = warranty.OriginalWarranty;
                 editableWarranty.Quantity = warranty.Quantity;
                 editableWarranty.Type = warranty.Type;
+
+                if (editableWarranty.Id == 0)
+                    addedWarranties.Add(editableWarranty);
             }
+
+            if (addedWarranties.Count > 0)
+                editableItem.Warranties.AddRange(addedWarranties);
         }
 
         private static void UpdateServiceItemSerialNumbers(RepairOrderItemToWrite item, RepairOrderItem editableItem)
         {
+            List<RepairOrderSerialNumber> addedSerialNumbers = new();
+
             foreach (var serialNumber in item?.SerialNumbers)
             {
-                RepairOrderSerialNumber editableSerialNumber
-                    = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
+                var editableSerialNumber = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
 
-                // We are jumping thru this hoop because this unfound serial number
-                // was added in BuildSerialNumberList, disconnected from the db context, 
-                // so we must add it to the tracked collection here
                 editableSerialNumber = editableSerialNumber ?? new();
-
-                if (editableSerialNumber.Id == 0)
-                    editableItem.SerialNumbers.Add(editableSerialNumber);
 
                 editableSerialNumber.RepairOrderItemId = serialNumber.RepairOrderItemId;
                 editableSerialNumber.SerialNumber = serialNumber.SerialNumber;
+
+                if (editableSerialNumber.Id == 0)
+                // This unfound serial number was added in BuildSerialNumberList, disconnected
+                // from the db context, so we must add it to the tracked collection here
+                    addedSerialNumbers.Add(editableSerialNumber);
             }
+
+            if (addedSerialNumbers.Count > 0)
+                editableItem.SerialNumbers.AddRange(addedSerialNumbers);
         }
 
         private static void UpdateRepairOrder(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
