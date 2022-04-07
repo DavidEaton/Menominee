@@ -127,12 +127,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
             return list;
         }
+        
         private static bool IsFractional(double quantitySold)
         {
             return !(quantitySold % 1 == 0);
         }
 
-        public static RepairOrderToWrite CreateRepairOrder(RepairOrderToRead repairOrder)
+        public static RepairOrderToWrite Project(RepairOrderToRead repairOrder)
         {
             var repairOrderToWrite = new RepairOrderToWrite
             {
@@ -150,9 +151,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 DateCreated = repairOrder.DateCreated,
                 DateInvoiced = repairOrder.DateInvoiced,
                 DateModified = repairOrder.DateModified,
-                Services = CreateServices(repairOrder.Services),
-                Payments = CreatePayments(repairOrder.Payments),
-                Taxes = CreateTaxes(repairOrder.Taxes)
+                Services = ProjectServices(repairOrder.Services),
+                Payments = ProjectPayments(repairOrder.Payments),
+                Taxes = ProjectTaxes(repairOrder.Taxes)
             };
 
             return repairOrderToWrite;
@@ -195,7 +196,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return false;
         }
 
-        public static RepairOrder CreateRepairOrder(RepairOrderToWrite repairOrder)
+        public static RepairOrder Project(RepairOrderToWrite repairOrder)
         {
             if (repairOrder is null)
                 return null;
@@ -225,18 +226,18 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 result.DateModified = repairOrder.DateModified.Value;
 
             if (repairOrder?.Payments?.Count > 0)
-                result.Payments = CreatePayments(repairOrder.Payments);
+                result.Payments = ProjectPayments(repairOrder.Payments);
 
             if (repairOrder?.Services?.Count > 0)
-                result.Services = CreateServices(repairOrder.Services);
+                result.Services = ProjectServices(repairOrder.Services);
 
             if (repairOrder?.Taxes?.Count > 0)
-                result.Taxes = CreateTaxes(repairOrder.Taxes);
+                result.Taxes = ProjectTaxes(repairOrder.Taxes);
 
             return result;
         }
 
-        private static List<RepairOrderService> CreateServices(List<RepairOrderServiceToWrite> services)
+        private static List<RepairOrderService> ProjectServices(List<RepairOrderServiceToWrite> services)
         {
             if (services is null)
                 return new List<RepairOrderService>();
@@ -255,13 +256,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     TaxTotal = service.TaxTotal,
                     Total = service.Total,
-                    Items = CreateServiceItems(service.Items),
-                    Taxes = CreateServiceTaxes(service.Taxes),
-                    Techs = CreateTechnicians(service.Techs)
+                    Items = ProjectServiceItems(service.Items),
+                    Taxes = ProjectServiceTaxes(service.Taxes),
+                    Techs = ProjectServiceTechnicians(service.Techs)
                 }).ToList();
         }
 
-        public static List<RepairOrderTax> CreateTaxes(List<RepairOrderTaxToWrite> taxes)
+        public static List<RepairOrderTax> ProjectTaxes(List<RepairOrderTaxToWrite> taxes)
         {
             if (taxes is null)
                 return new List<RepairOrderTax>();
@@ -278,7 +279,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static List<RepairOrderPayment> CreatePayments(List<RepairOrderPaymentToWrite> payments)
+        public static List<RepairOrderPayment> ProjectPayments(List<RepairOrderPaymentToWrite> payments)
         {
             if (payments is null)
                 return new List<RepairOrderPayment>();
@@ -292,68 +293,43 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        //private static List<RepairOrderService> CreateServices(List<RepairOrderServiceToWrite> services)
-        //{
-        //    if (services is null)
-        //        return new List<RepairOrderService>();
+        public static IList<RepairOrderItem> ProjectServiceItems(IList<RepairOrderItemToWrite> items)
+        {
+            if (items is null)
+                return new List<RepairOrderItem>();
 
-        //    return services.Select(service =>
-        //        new RepairOrderService()
-        //        {
-        //            DiscountTotal = service.DiscountTotal,
-        //            IsCounterSale = service.IsCounterSale,
-        //            IsDeclined = service.IsDeclined,
-        //            LaborTotal = service.LaborTotal,
-        //            PartsTotal = service.PartsTotal,
-        //            RepairOrderId = service.RepairOrderId,
-        //            SaleCode = service.SaleCode,
-        //            ServiceName = service.ServiceName,
-        //            ShopSuppliesTotal = service.ShopSuppliesTotal,
-        //            TaxTotal = service.TaxTotal,
-        //            Total = service.Total,
-        //            Items = CreateServiceItems(service.Items),
-        //            Taxes = CreateServiceTaxes(service.Taxes),
-        //            Techs = CreateTechnicians(service.Techs)
-        //        }).ToList();
-        //}
+            return items.Select(item =>
+                new RepairOrderItem()
+                {
+                    Core = item.Core,
+                    Cost = item.Cost,
+                    Description = item.Description,
+                    DiscountEach = item.DiscountEach,
+                    DiscountType = item.DiscountType,
+                    IsCounterSale = item.IsCounterSale,
+                    IsDeclined = item.IsDeclined,
+                    LaborEach = item.LaborEach,
+                    LaborType = item.LaborType,
+                    //Manufacturer = item.Manufacturer,
+                    ManufacturerId = item.ManufacturerId,
+                    PartNumber = item.PartNumber,
+                    PartType = item.PartType,
+                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
+                    ProductCodeId = item.ProductCodeId,
+                    QuantitySold = item.QuantitySold,
+                    RepairOrderServiceId = item.RepairOrderServiceId,
+                    SaleCode = ProjectSaleCode(item.SaleCode),
+                    SaleCodeId = item.SaleCodeId,
+                    SaleType = item.SaleType,
+                    SellingPrice = item.SellingPrice,
+                    Total = item.Total,
+                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                    Taxes = ProjectServiceItemTaxes(item.Taxes),
+                    Warranties = ProjectServiceItemWarranties(item.Warranties)
+                }).ToList();
+        }
 
-        //public static IList<RepairOrderItem> CreateServiceItems(IList<RepairOrderItemToWrite> items)
-        //{
-        //    if (items is null)
-        //        return new List<RepairOrderItem>();
-
-        //    return items.Select(item =>
-        //        new RepairOrderItem()
-        //        {
-        //            Core = item.Core,
-        //            Cost = item.Cost,
-        //            Description = item.Description,
-        //            DiscountEach = item.DiscountEach,
-        //            DiscountType = item.DiscountType,
-        //            IsCounterSale = item.IsCounterSale,
-        //            IsDeclined = item.IsDeclined,
-        //            LaborEach = item.LaborEach,
-        //            LaborType = item.LaborType,
-        //            //Manufacturer = item.Manufacturer,
-        //            ManufacturerId = item.ManufacturerId,
-        //            PartNumber = item.PartNumber,
-        //            PartType = item.PartType,
-        //            ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
-        //            ProductCodeId = item.ProductCodeId,
-        //            QuantitySold = item.QuantitySold,
-        //            RepairOrderServiceId = item.RepairOrderServiceId,
-        //            SaleCode = CreateSaleCode(item.SaleCode),
-        //            SaleCodeId = item.SaleCodeId,
-        //            SaleType = item.SaleType,
-        //            SellingPrice = item.SellingPrice,
-        //            Total = item.Total,
-        //            SerialNumbers = CreateSerialNumbers(item.SerialNumbers),
-        //            Taxes = CreateItemTaxes(item.Taxes),
-        //            Warranties = CreateWarranties(item.Warranties)
-        //        }).ToList();
-        //}
-
-        public static List<RepairOrderTech> CreateTechnicians(IList<RepairOrderTechToWrite> technicians)
+        public static List<RepairOrderTech> ProjectServiceTechnicians(IList<RepairOrderTechToWrite> technicians)
         {
             if (technicians == null)
                 return new List<RepairOrderTech>();
@@ -366,7 +342,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static List<RepairOrderServiceTax> CreateServiceTaxes(IList<RepairOrderServiceTaxToWrite> taxes)
+        public static List<RepairOrderServiceTax> ProjectServiceTaxes(IList<RepairOrderServiceTaxToWrite> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderServiceTax>();
@@ -383,7 +359,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static List<RepairOrderWarranty> CreateWarranties(IList<RepairOrderWarrantyToWrite> warranties)
+        public static List<RepairOrderWarranty> ProjectServiceItemWarranties(IList<RepairOrderWarrantyToWrite> warranties)
         {
             if (warranties == null)
                 return new List<RepairOrderWarranty>();
@@ -400,7 +376,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             }).ToList();
         }
 
-        public static List<RepairOrderItemTax> CreateItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
+        public static List<RepairOrderItemTax> ProjectServiceItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderItemTax>();
@@ -411,8 +387,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     LaborTax = tax.LaborTax,
                 }).ToList();
         }
-
-        private static List<RepairOrderSerialNumber> CreateSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
+        
+        private static List<RepairOrderSerialNumber> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
         {
             if (serialNumbers is null)
                 return new List<RepairOrderSerialNumber>();
@@ -425,7 +401,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
+        public static SaleCode ProjectSaleCode(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
@@ -437,7 +413,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        private static SaleCodeToWrite CreateSaleCode(SaleCodeToRead saleCode)
+        private static SaleCodeToWrite ProjectSaleCode(SaleCodeToRead saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -449,7 +425,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        public static SaleCodeToRead CreateSaleCode(SaleCode saleCode)
+        public static SaleCodeToRead ProjectSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -462,7 +438,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        private static List<RepairOrderTaxToWrite> CreateTaxes(List<RepairOrderTaxToRead> taxes)
+        private static List<RepairOrderTaxToWrite> ProjectTaxes(List<RepairOrderTaxToRead> taxes)
         {
             if (taxes is null)
                 return new List<RepairOrderTaxToWrite>();
@@ -479,7 +455,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderPaymentToWrite> CreatePayments(List<RepairOrderPaymentToRead> payments)
+        private static List<RepairOrderPaymentToWrite> ProjectPayments(List<RepairOrderPaymentToRead> payments)
         {
             if (payments is null)
                 return new List<RepairOrderPaymentToWrite>();
@@ -495,7 +471,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderWarrantyToWrite> CreateWarranties(IList<RepairOrderWarrantyToRead> warranties)
+        private static List<RepairOrderWarrantyToWrite> ProjectServiceItemWarranties(IList<RepairOrderWarrantyToRead> warranties)
         {
             if (warranties is null)
                 return new List<RepairOrderWarrantyToWrite>();
@@ -512,8 +488,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Type = warranty.Type
                 }).ToList();
         }
-
-        private static List<RepairOrderItemTaxToWrite> CreateItemTaxes(IList<RepairOrderItemTaxToRead> taxes)
+        
+        private static List<RepairOrderItemTaxToWrite> ProjectServiceItemTaxes(IList<RepairOrderItemTaxToRead> taxes)
         {
             if (taxes is null)
                 return new List<RepairOrderItemTaxToWrite>();
@@ -530,7 +506,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderSerialNumberToWrite> CreateSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
+        private static List<RepairOrderSerialNumberToWrite> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
         {
             if (serialNumbers is null)
                 return new List<RepairOrderSerialNumberToWrite>();
@@ -544,7 +520,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderServiceToWrite> CreateServices(List<RepairOrderServiceToRead> services)
+        private static List<RepairOrderServiceToWrite> ProjectServices(List<RepairOrderServiceToRead> services)
         {
             if (services is null)
                 return new List<RepairOrderServiceToWrite>();
@@ -564,11 +540,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     TaxTotal = service.TaxTotal,
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     Total = service.Total,
-                    Items = CreateRepairOrderItems(service.Items)
+                    Items = ProjectServiceItems(service.Items)
                 }).ToList();
         }
 
-        private static List<RepairOrderItemToWrite> CreateRepairOrderItems(IList<RepairOrderItemToRead> items)
+        private static List<RepairOrderItemToWrite> ProjectServiceItems(IList<RepairOrderItemToRead> items)
         {
             if (items is null)
                 return new List<RepairOrderItemToWrite>();
@@ -592,7 +568,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     IsDeclined = item.IsDeclined,
                     LaborEach = item.LaborEach,
                     LaborType = item.LaborType,
-                    Manufacturer = CreateManufacturer(item.Manufacturer),
+                    Manufacturer = ProjectManufacturer(item.Manufacturer),
                     ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     PartType = item.PartType,
@@ -600,14 +576,14 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     ProductCodeId = item.ProductCodeId,
                     QuantitySold = item.QuantitySold,
                     RepairOrderServiceId = item.RepairOrderServiceId,
-                    SaleCode = CreateSaleCode(item.SaleCode),
+                    SaleCode = ProjectSaleCode(item.SaleCode),
                     SaleCodeId = item.SaleCodeId,
                     SaleType = item.SaleType,
                     SellingPrice = item.SellingPrice,
                     Total = item.Total,
-                    SerialNumbers = CreateSerialNumbers(item.SerialNumbers),
-                    Warranties = CreateWarranties(item.Warranties),
-                    Taxes = CreateItemTaxes(item.Taxes)
+                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                    Warranties = ProjectServiceItemWarranties(item.Warranties),
+                    Taxes = ProjectServiceItemTaxes(item.Taxes)
                 }).ToList();
         }
 
@@ -636,7 +612,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
-        private static ManufacturerToWrite CreateManufacturer(ManufacturerToRead manufacturer)
+        private static ManufacturerToWrite ProjectManufacturer(ManufacturerToRead manufacturer)
         {
             if (manufacturer is null)
                 return new ManufacturerToWrite();
@@ -648,7 +624,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        private static IList<RepairOrderTechToRead> CreateServiceTechnicians(IList<RepairOrderTech> technicians)
+        private static IList<RepairOrderTechToRead> ProjectServiceTechnicians(IList<RepairOrderTech> technicians)
         {
             if (technicians == null)
                 return new List<RepairOrderTechToRead>();
@@ -661,7 +637,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     TechnicianId = technician.TechnicianId
                 }).ToList();
         }
-        private static List<RepairOrderItem> CreateServiceItems(List<RepairOrderItemToWrite> items)
+        
+        private static List<RepairOrderItem> ProjectServiceItems(List<RepairOrderItemToWrite> items)
         {
             if (items == null)
                 return new List<RepairOrderItem>();
@@ -674,7 +651,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     Description = item.Description,
-                    SaleCode = CreateSaleCode(item.SaleCode),
+                    SaleCode = ProjectSaleCode(item.SaleCode),
                     SaleCodeId = item.SaleCodeId,
                     ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                     ProductCodeId = item.ProductCodeId,
@@ -691,12 +668,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Cost = item.Cost,
                     Core = item.Core,
                     Total = item.Total,
-                    SerialNumbers = CreateSerialNumbers(item.SerialNumbers),
-                    Warranties = CreateWarranties(item.Warranties),
-                    Taxes = CreateItemTaxes(item.Taxes)
+                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                    Warranties = ProjectServiceItemWarranties(item.Warranties),
+                    Taxes = ProjectServiceItemTaxes(item.Taxes)
                 }).ToList();
         }
-        private static List<RepairOrderItemToRead> CreateServiceItems(IList<RepairOrderItem> items)
+        
+        private static List<RepairOrderItemToRead> ProjectServiceItems(IList<RepairOrderItem> items)
         {
             if (items == null)
                 return new List<RepairOrderItemToRead>();
@@ -710,7 +688,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     ManufacturerId = item.ManufacturerId,
                     PartNumber = item.PartNumber,
                     Description = item.Description,
-                    SaleCode = CreateSaleCode(item.SaleCode),
+                    SaleCode = ProjectSaleCode(item.SaleCode),
                     SaleCodeId = item.SaleCodeId,
                     ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                     ProductCodeId = item.ProductCodeId,
@@ -727,13 +705,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     Cost = item.Cost,
                     Core = item.Core,
                     Total = item.Total,
-                    SerialNumbers = CreateSerialNumbers(item.SerialNumbers),
-                    Warranties = CreateWarranties(item.Warranties),
-                    Taxes = CreateItemTaxes(item.Taxes)
+                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                    Warranties = ProjectServiceItemWarranties(item.Warranties),
+                    Taxes = ProjectServiceItemTaxes(item.Taxes)
                 }).ToList();
         }
 
-        private static List<RepairOrderServiceToRead> CreateServices(List<RepairOrderService> services)
+        private static List<RepairOrderServiceToRead> ProjectServices(List<RepairOrderService> services)
         {
             if (services == null)
                 return new List<RepairOrderServiceToRead>();
@@ -753,13 +731,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     TaxTotal = service.TaxTotal,
                     ShopSuppliesTotal = service.ShopSuppliesTotal,
                     Total = service.Total,
-                    Items = CreateServiceItems(service.Items),
-                    Techs = CreateServiceTechnicians(service.Techs),
-                    Taxes = CreateServiceTaxes(service.Taxes)
+                    Items = ProjectServiceItems(service.Items),
+                    Techs = ProjectServiceTechnicians(service.Techs),
+                    Taxes = ProjectServiceTaxes(service.Taxes)
                 }).ToList();
         }
 
-        public static RepairOrderToRead CreateRepairOrder(RepairOrder repairOrder)
+        public static RepairOrderToRead Project(RepairOrder repairOrder)
         {
             if (repairOrder != null)
             {
@@ -780,16 +758,16 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     DateCreated = repairOrder.DateCreated,
                     DateModified = repairOrder.DateModified,
                     DateInvoiced = repairOrder.DateInvoiced,
-                    Services = CreateServices(repairOrder.Services),
-                    Taxes = CreateTaxes(repairOrder.Taxes),
-                    Payments = CreatePayments(repairOrder.Payments)
+                    Services = ProjectServices(repairOrder.Services),
+                    Taxes = ProjectTaxes(repairOrder.Taxes),
+                    Payments = ProjectPayments(repairOrder.Payments)
                 };
             }
 
             return null;
         }
 
-        private static List<RepairOrderItemTaxToRead> CreateItemTaxes(IList<RepairOrderItemTax> taxes)
+        private static List<RepairOrderItemTaxToRead> ProjectServiceItemTaxes(IList<RepairOrderItemTax> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderItemTaxToRead>();
@@ -807,7 +785,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderWarrantyToRead> CreateWarranties(IList<RepairOrderWarranty> warranties)
+        private static List<RepairOrderWarrantyToRead> ProjectServiceItemWarranties(IList<RepairOrderWarranty> warranties)
         {
             if (warranties == null)
                 return new List<RepairOrderWarrantyToRead>();
@@ -825,7 +803,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderSerialNumberToRead> CreateSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
+        private static List<RepairOrderSerialNumberToRead> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
         {
             if (serialNumbers == null)
                 return new List<RepairOrderSerialNumberToRead>();
@@ -839,7 +817,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderTaxToRead> CreateTaxes(IList<RepairOrderTax> taxes)
+        private static List<RepairOrderTaxToRead> ProjectTaxes(IList<RepairOrderTax> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderTaxToRead>();
@@ -857,7 +835,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                         }).ToList();
         }
 
-        private static IList<RepairOrderServiceTaxToRead> CreateServiceTaxes(IList<RepairOrderServiceTax> taxes)
+        private static IList<RepairOrderServiceTaxToRead> ProjectServiceTaxes(IList<RepairOrderServiceTax> taxes)
         {
             if (taxes == null)
                 return new List<RepairOrderServiceTaxToRead>();
@@ -875,7 +853,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        private static List<RepairOrderPaymentToRead> CreatePayments(IList<RepairOrderPayment> payments)
+        private static List<RepairOrderPaymentToRead> ProjectPayments(IList<RepairOrderPayment> payments)
         {
             if (payments == null)
                 return new List<RepairOrderPaymentToRead>();
@@ -890,7 +868,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 }).ToList();
         }
 
-        public static RepairOrderToReadInList CreateRepairOrderToReadInList(RepairOrder repairOrder)
+        public static RepairOrderToReadInList ProjectInList(RepairOrder repairOrder)
         {
             if (repairOrder != null)
             {

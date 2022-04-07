@@ -158,7 +158,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableItem.ProductCodeId = item.ProductCodeId;
                 editableItem.QuantitySold = item.QuantitySold;
                 editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
-                editableItem.SaleCode = RepairOrderHelper.CreateSaleCode(item.SaleCode);
+                editableItem.SaleCode = RepairOrderHelper.ProjectSaleCode(item.SaleCode);
                 editableItem.SaleCodeId = item.SaleCodeId;
                 editableItem.SaleType = item.SaleType;
                 editableItem.SellingPrice = item.SellingPrice;
@@ -243,7 +243,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPost]
         public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var repairOrder = RepairOrderHelper.CreateRepairOrder(repairOrderToAdd);
+            var repairOrder = RepairOrderHelper.Project(repairOrderToAdd);
 
             await repository.AddRepairOrderAsync(repairOrder);
             await repository.SaveChangesAsync();

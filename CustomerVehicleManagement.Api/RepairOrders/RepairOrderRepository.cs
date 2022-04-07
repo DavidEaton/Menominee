@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(ro => ro.Id == id);
 
-            return RepairOrderHelper.CreateRepairOrder(roFromContext);
+            return RepairOrderHelper.Project(roFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
@@ -115,26 +115,11 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
 
-            return repairOrders.
-                Select(repairOrder =>
-                       RepairOrderHelper.CreateRepairOrderToReadInList(repairOrder))
+            return repairOrders
+                .Select(repairOrder =>
+                       RepairOrderHelper.ProjectInList(repairOrder))
                 .ToList();
         }
-
-        //public async Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync()
-        //{
-        //    IReadOnlyList<RepairOrder> ros = await context.RepairOrders.ToListAsync();
-
-        //    return ros.Select(ro => new RepairOrderToRead()
-        //    {
-        //        Id = ro.Id,
-        //        RepairOrderNumber = ro.RepairOrderNumber,
-        //        InvoiceNumber = ro.InvoiceNumber,
-        //        CustomerName = ro.CustomerName,
-        //        Vehicle = ro.Vehicle,
-        //        Total = ro.Total
-        //    }).ToList();
-        //}
 
         public async Task<bool> RepairOrderExistsAsync(long id)
         {
