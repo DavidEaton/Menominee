@@ -45,10 +45,25 @@
                         <GridSearchBox Fields="@SearchFields" />
                     </GridToolBar>
                     <GridColumns>
-                        <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.PartNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.SuggestedPrice)" Title="Retail"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(InventoryItemToReadInList.QuantityOnHand)" Title="On Hand"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="20%"
+                                                              Field="@nameof(InventoryItemToReadInList.ItemNumber)"
+                                                              Title="Part Number">
+                        </Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="50%"
+                                                              Field="@nameof(InventoryItemToReadInList.Description)"
+                                                              Title="Description">
+                        </Telerik.Blazor.Components.GridColumn>
+                        @*<Telerik.Blazor.Components.GridColumn Width="15%"
+                                                              Field="@nameof(InventoryItemToReadInList.SuggestedPrice)"
+                                                              Title="Retail"
+                                                              TextAlign="ColumnTextAlign.Right"
+                                                              DisplayFormat="{0:C}">
+                        </Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%"
+                                                              Field="@nameof(InventoryItemToReadInList.QuantityOnHand)"
+                                                              TextAlign="ColumnTextAlign.Right"
+                                                              Title="On Hand">
+                        </Telerik.Blazor.Components.GridColumn>*@
                     </GridColumns>
                 </TelerikGrid>
 
@@ -56,6 +71,14 @@
             }
         </div>
     </div>
+
+    @if (ItemTypeSelectDialogVisible)
+    {
+        <InventoryItemTypeSelectDialog @bind-SelectedItemType="SelectedItemType"
+                                       DialogVisible="ItemTypeSelectDialogVisible"
+                                       OnSelect="OnSelectItemType"
+                                       OnCancel="@(() => ItemTypeSelectDialogVisible = false)" />
+    }
 </div>
 
 <style>

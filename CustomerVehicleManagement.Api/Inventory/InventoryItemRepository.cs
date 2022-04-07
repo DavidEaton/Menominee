@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
+using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,21 +17,30 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public InventoryItemRepository(ApplicationDbContext context)
         {
-            this.context = context ??
-                throw new ArgumentNullException(nameof(context));
+            Guard.ForNull(context, "context");
+
+            this.context = context;
         }
 
-        public async Task AddInventoryItemAsync(InventoryItem item)
+        public async Task AddItemAsync(InventoryItem item)
         {
-            if (item != null)
-                await context.AddAsync(item);
+            Guard.ForNull(item, "item");
+
+            if (await ItemExistsAsync(item.Id))
+                throw new Exception("Inventory Item already exists");
+
+            await context.AddAsync(item);
         }
 
-        public async Task DeleteInventoryItemAsync(long id)
+        public async Task DeleteItemAsync(long id)
         {
-            var itemFromContext = await context.InventoryItems.FindAsync(id);
-            if (itemFromContext != null)
-                context.Remove(itemFromContext);
+            var item = await context.InventoryItems
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(item => item.Id == id);
+
+            Guard.ForNull(item, "item");
+
+            context.Remove(item);
         }
 
         public void FixTrackingState()
@@ -37,74 +48,144 @@ namespace CustomerVehicleManagement.Api.Inventory
             context.FixState();
         }
 
-        public async Task<InventoryItemToRead> GetInventoryItemAsync(long mfrId, string partNumber)
+        public async Task<InventoryItemToRead> GetItemAsync(long id)
         {
             var itemFromContext = await context.InventoryItems
-                .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
+                                               .AsNoTracking()
+                                               .FirstOrDefaultAsync(item => item.Id == id);
+
+            Guard.ForNull(itemFromContext, "itemFromContext");
 
             return InventoryItemToRead.ConvertToDto(itemFromContext);
         }
 
-        public async Task<InventoryItemToRead> GetInventoryItemAsync(long id)
+        public async Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber)
         {
             var itemFromContext = await context.InventoryItems
-                .FirstOrDefaultAsync(item => item.Id == id);
+                                               .AsNoTracking()
+                                               .FirstOrDefaultAsync(item => item.ManufacturerId == mfrId && item.ItemNumber == itemNumber);
+
+            Guard.ForNull(itemFromContext, "itemFromContext");
 
             return InventoryItemToRead.ConvertToDto(itemFromContext);
         }
 
-        public async Task<InventoryItem> GetInventoryItemEntityAsync(long mfrId, string partNumber)
+        public async Task<InventoryItem> GetItemEntityAsync(long id)
         {
-            var itemFromContext = await context.InventoryItems
-                .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
-
-            return itemFromContext;
+            return await context.InventoryItems
+                                .FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public async Task<InventoryItem> GetInventoryItemEntityAsync(long id)
+        public async Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync()
         {
-            var itemFromContext = await context.InventoryItems
-                .FirstOrDefaultAsync(item => item.Id == id);
+            var items = new List<InventoryItemToRead>();
 
-            return itemFromContext;
+            var itemsFromContext = await context.InventoryItems
+                                                .Include(item => item.Part)
+                                                .Include(item => item.Labor)
+                                                .Include(item => item.Tire)
+                                                .AsNoTracking()
+                                                .ToArrayAsync();
+
+            foreach (var item in itemsFromContext)
+                items.Add(InventoryItemToRead.ConvertToDto(item));
+
+            return items;
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync()
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync()
         {
-            IReadOnlyList<InventoryItem> items = await context.InventoryItems.ToListAsync();
+            var itemsFromContext = await context.InventoryItems
+                                                .AsNoTracking()
+                                                .ToArrayAsync();
 
-            return items.
-                Select(item => InventoryItemToReadInList.ConvertToDto(item))
-                .ToList();
+            return itemsFromContext.Select(item => ConvertToDto(item))
+                                   .ToList();
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId)
-        {
-            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == mfrId).ToListAsync();
-
-            return items.
-                Select(item => InventoryItemToReadInList.ConvertToDto(item))
-                .ToList();
-        }
-
-        public async Task<bool> InventoryItemExistsAsync(long mfrId, string partNumber)
-        {
-            return await context.InventoryItems.AnyAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
-        }
-
-        public async Task<bool> InventoryItemExistsAsync(long id)
+        public async Task<bool> ItemExistsAsync(long id)
         {
             return await context.InventoryItems.AnyAsync(item => item.Id == id);
         }
 
         public async Task<bool> SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            return (await context.SaveChangesAsync()) > 0;
         }
 
-        public void UpdateInventoryItemAsync(InventoryItem item)
+        public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)
         {
-            // No code in this implementation
+            Guard.ForNull(item, "item");
+
+            // Tracking IS needed for commands for disconnected data collections
+            context.Entry(item).State = EntityState.Modified;
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await ItemExistsAsync(item.Id))
+                    return null;// something that tells the controller to return NotFound();
+                throw;
+            }
+
+            return null;
+        }
+
+        private static InventoryItemToReadInList ConvertToDto(InventoryItem item)
+        {
+            if (item == null)
+                return null;
+
+            if (item.ItemType == InventoryItemType.Part)
+            {
+                return new InventoryItemToReadInList()
+                {
+                    Id = item.Id,
+                    Manufacturer = item.Manufacturer,
+                    ManufacturerId = item.ManufacturerId,
+                    ItemNumber = item.ItemNumber,
+                    Description = item.Description,
+                    ProductCode = item.ProductCode,
+                    ProductCodeId = item.ProductCodeId,
+                    ItemType = item.ItemType
+                };
+            }
+            else if (item.ItemType == InventoryItemType.Labor)
+            {
+                // FIX ME -- WHAT DO WE NEED TO DO HERE?
+                return new InventoryItemToReadInList()
+                {
+                    Id = item.Id,
+                    Manufacturer = item.Manufacturer,
+                    ManufacturerId = item.ManufacturerId,
+                    ItemNumber = item.ItemNumber,
+                    Description = item.Description,
+                    ProductCode = item.ProductCode,
+                    ProductCodeId = item.ProductCodeId,
+                    ItemType = item.ItemType
+                };
+            }
+            else if (item.ItemType == InventoryItemType.Tire)
+            {
+                // FIX ME -- WHAT DO WE NEED TO DO HERE?
+                return new InventoryItemToReadInList()
+                {
+                    Id = item.Id,
+                    Manufacturer = item.Manufacturer,
+                    ManufacturerId = item.ManufacturerId,
+                    ItemNumber = item.ItemNumber,
+                    Description = item.Description,
+                    ProductCode = item.ProductCode,
+                    ProductCodeId = item.ProductCodeId,
+                    ItemType = item.ItemType
+                };
+            }
+            else
+                return null;
         }
     }
 }
+

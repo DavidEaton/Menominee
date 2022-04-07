@@ -1,11 +1,9 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.ProductCodes

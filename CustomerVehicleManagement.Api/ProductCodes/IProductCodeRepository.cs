@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using System;
 using System.Collections.Generic;

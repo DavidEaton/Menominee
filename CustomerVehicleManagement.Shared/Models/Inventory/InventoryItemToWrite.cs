@@ -1,22 +1,22 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
-using MenomineePlayWASM.Shared.Entities.Inventory.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryItemToWrite
     {
         public long Id { get; set; }
-        public virtual Manufacturer Manufacturer { get; set; }
+        //public virtual Manufacturer Manufacturer { get; set; }
         public long ManufacturerId { get; set; }
-        public string PartNumber { get; set; }
+        public string ItemNumber { get; set; }
         public string Description { get; set; }
-        public virtual ProductCode ProductCode { get; set; }
+        //public virtual ProductCode ProductCode { get; set; }
         public long ProductCodeId { get; set; }
-        public PartType PartType { get; set; }      // FIX ME - PartType vs InventoryItemType
-        public int QuantityOnHand { get; set; }
-        public double Cost { get; set; }
-        public double SuggestedPrice { get; set; }
-        public double Labor { get; set; }
+        public InventoryItemType ItemType { get; set; }
+        public long DetailId { get; set; }
+
+        public InventoryPartToWrite Part { get; set; }
+        public InventoryLaborToWrite Labor { get; set; }
+        public InventoryTireToWrite Tire { get; set; }
     }
 }

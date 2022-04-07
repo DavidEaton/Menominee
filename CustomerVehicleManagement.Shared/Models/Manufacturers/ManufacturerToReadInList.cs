@@ -1,9 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {

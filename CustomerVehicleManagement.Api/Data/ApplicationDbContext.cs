@@ -1,7 +1,11 @@
 ﻿using CustomerVehicleManagement.Api.Configurations;
+using CustomerVehicleManagement.Api.Configurations.Inventory;
+using CustomerVehicleManagement.Api.Configurations.Payables;
 using CustomerVehicleManagement.Api.Configurations.RepairOrders;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
@@ -47,11 +51,11 @@ namespace CustomerVehicleManagement.Api.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if (UserContext != null) // Unit tests do not yet inject UserContext
-                Connection = GetTenantConnection();
+            //if (UserContext != null) // Unit tests do not yet inject UserContext
+            //    Connection = GetTenantConnection();
 
-            if (!options.IsConfigured) // Unit tests will configure context with test provider
-                options.UseSqlServer(Connection);
+            //if (!options.IsConfigured) // Unit tests will configure context with test provider
+            //    options.UseSqlServer(Connection);
 
             base.OnConfiguring(options);
 
@@ -71,7 +75,6 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new PersonConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-            modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
 
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
@@ -104,6 +107,9 @@ namespace CustomerVehicleManagement.Api.Data
 
             // Inventory
             modelBuilder.ApplyConfiguration(new InventoryItemConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryPartConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryLaborConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryTireConfiguration());
         }
 
         private string GetTenantConnection()
@@ -205,6 +211,9 @@ namespace CustomerVehicleManagement.Api.Data
 
         // Inventory
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<InventoryPart> InventoryParts { get; set; }
+        public DbSet<InventoryLabor> InventoryLabor { get; set; }
+        public DbSet<InventoryTire> InventoryTires { get; set; }
 
         #endregion
     }

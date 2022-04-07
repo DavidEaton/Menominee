@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;

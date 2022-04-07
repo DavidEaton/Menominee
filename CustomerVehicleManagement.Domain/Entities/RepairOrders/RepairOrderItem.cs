@@ -1,4 +1,5 @@
-﻿using Menominee.Common;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using Menominee.Common;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 

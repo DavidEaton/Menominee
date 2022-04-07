@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,9 @@ namespace Menominee.Client.Pages.Inventory
 
         public TelerikGrid<InventoryItemToReadInList> Grid { get; set; }
 
+        private bool ItemTypeSelectDialogVisible { get; set; } = false;
+        private InventoryItemType SelectedItemType;
+
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
 
@@ -57,6 +61,8 @@ namespace Menominee.Client.Pages.Inventory
             SearchFields.Add("Description");
 
             await FilterItemsList(0);
+
+            SelectedItemType = InventoryItemType.Part;
 
             //ItemsList = (await DataService.GetAllItems()).ToList();
 
@@ -141,7 +147,14 @@ namespace Menominee.Client.Pages.Inventory
 
         private void OnAdd()
         {
-            NavigationManager.NavigateTo("inventory/items/0");
+            ItemTypeSelectDialogVisible = true;
+        }
+
+        private void OnSelectItemType()
+        {
+            ItemTypeSelectDialogVisible = false;
+            if (SelectedItemType == InventoryItemType.Part)
+                NavigationManager.NavigateTo("inventory/items/0");
         }
 
         private void OnEdit()

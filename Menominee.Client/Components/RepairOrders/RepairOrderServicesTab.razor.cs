@@ -96,15 +96,15 @@ namespace Menominee.Client.Components.RepairOrders
                 //ItemToModify.SaleCodeId = (long)(SelectedInventoryItem.ProductCode?.SaleCode?.Id);
                 ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
                 ItemToModify.ProductCodeId = SelectedInventoryItem.ProductCodeId;
-                ItemToModify.PartNumber = SelectedInventoryItem.PartNumber;
+                ItemToModify.PartNumber = SelectedInventoryItem.ItemNumber;
                 ItemToModify.Description = SelectedInventoryItem.Description;
-                ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
-                if (SelectedInventoryItem.Labor > 0)
-                {
-                    ItemToModify.LaborType = ItemLaborType.Flat;
-                    ItemToModify.LaborEach = SelectedInventoryItem.Labor;
-                }
-                ItemToModify.Cost = SelectedInventoryItem.Cost;
+                //ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
+                //if (SelectedInventoryItem.Labor > 0)
+                //{
+                //    ItemToModify.LaborType = ItemLaborType.Flat;
+                //    ItemToModify.LaborEach = SelectedInventoryItem.Labor;
+                //}
+                //ItemToModify.Cost = SelectedInventoryItem.Cost;
                 //ItemToModify.Core = SelectedInventoryItem.Core;
 
                 ItemFormMode = FormMode.Add;

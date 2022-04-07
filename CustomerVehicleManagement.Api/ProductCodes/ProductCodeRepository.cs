@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Microsoft.EntityFrameworkCore;
 using System;

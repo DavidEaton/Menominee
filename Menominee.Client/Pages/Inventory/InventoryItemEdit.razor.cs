@@ -32,17 +32,18 @@ namespace Menominee.Client.Pages.Inventory
                     Item = new InventoryItemToWrite()
                     {
                         Id = readDto.Id,
-                        Manufacturer = readDto.Manufacturer,
+                        //Manufacturer = readDto.Manufacturer,
                         ManufacturerId = readDto.ManufacturerId,
-                        PartNumber = readDto.PartNumber,
+                        ItemNumber = readDto.ItemNumber,
                         Description = readDto.Description,
-                        ProductCode = readDto.ProductCode,
+                        //ProductCode = readDto.ProductCode,
                         ProductCodeId = readDto.ProductCodeId,
-                        PartType = readDto.PartType,
-                        SuggestedPrice = readDto.SuggestedPrice,
-                        Cost = readDto.Cost,
-                        Labor = readDto.Labor,
-                        QuantityOnHand = readDto.QuantityOnHand
+                        ItemType = readDto.ItemType,
+                        DetailId = readDto.DetailId
+                        //SuggestedPrice = readDto.SuggestedPrice,
+                        //Cost = readDto.Cost,
+                        //Labor = readDto.Labor,
+                        //QuantityOnHand = readDto.QuantityOnHand
                     };
                 }
                 else
