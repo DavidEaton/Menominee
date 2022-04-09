@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(ro => ro.Id == id);
 
-            return RepairOrderHelper.Project(roFromContext);
+            return RepairOrderHelper.Transform(roFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
@@ -117,7 +117,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
             return repairOrders
                 .Select(repairOrder =>
-                       RepairOrderHelper.ProjectInList(repairOrder))
+                       RepairOrderHelper.TransformInList(repairOrder))
                 .ToList();
         }
 

@@ -11,6 +11,7 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Techs;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -114,7 +115,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     {
                         list.Add(new WarrantyListItem()
                         {
-                            Type = (WarrantyType)warranty.Type,
+                            Type = warranty.Type,
                             Description = item.Description,
                             PartNumber = item.PartNumber,
                             RepairOrderItemId = warranty.RepairOrderItemId,
@@ -133,7 +134,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return !(quantitySold % 1 == 0);
         }
 
-        public static RepairOrderToWrite Project(RepairOrderToRead repairOrder)
+        public static RepairOrderToWrite Transform(RepairOrderToRead repairOrder)
         {
             var repairOrderToWrite = new RepairOrderToWrite
             {
@@ -196,7 +197,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return false;
         }
 
-        public static RepairOrder Project(RepairOrderToWrite repairOrder)
+        public static RepairOrder Transform(RepairOrderToWrite repairOrder)
         {
             if (repairOrder is null)
                 return null;
@@ -225,13 +226,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             if (repairOrder.DateModified.HasValue)
                 result.DateModified = repairOrder.DateModified.Value;
 
-            if (repairOrder?.Payments?.Count > 0)
+            if (repairOrder?.Payments.Count > 0)
                 result.Payments = ProjectPayments(repairOrder.Payments);
 
-            if (repairOrder?.Services?.Count > 0)
+            if (repairOrder?.Services.Count > 0)
                 result.Services = ProjectServices(repairOrder.Services);
 
-            if (repairOrder?.Taxes?.Count > 0)
+            if (repairOrder?.Taxes.Count > 0)
                 result.Taxes = ProjectTaxes(repairOrder.Taxes);
 
             return result;
@@ -239,169 +240,180 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         private static List<RepairOrderService> ProjectServices(List<RepairOrderServiceToWrite> services)
         {
-            if (services is null)
-                return new List<RepairOrderService>();
-
-            return services.Select(service =>
-                new RepairOrderService()
-                {
-                    DiscountTotal = service.DiscountTotal,
-                    IsCounterSale = service.IsCounterSale,
-                    IsDeclined = service.IsDeclined,
-                    LaborTotal = service.LaborTotal,
-                    PartsTotal = service.PartsTotal,
-                    RepairOrderId = service.RepairOrderId,
-                    SaleCode = service.SaleCode,
-                    ServiceName = service.ServiceName,
-                    ShopSuppliesTotal = service.ShopSuppliesTotal,
-                    TaxTotal = service.TaxTotal,
-                    Total = service.Total,
-                    Items = ProjectServiceItems(service.Items),
-                    Taxes = ProjectServiceTaxes(service.Taxes),
-                    Techs = ProjectServiceTechnicians(service.Techs)
-                }).ToList();
+            return services?.Select(TransformService()).ToList()
+                ?? new List<RepairOrderService>();
         }
 
-        public static List<RepairOrderTax> ProjectTaxes(List<RepairOrderTaxToWrite> taxes)
+        private static Func<RepairOrderServiceToWrite, RepairOrderService> TransformService()
         {
-            if (taxes is null)
-                return new List<RepairOrderTax>();
-
-            return taxes.Select(tax =>
-                new RepairOrderTax()
-                {
-                    LaborTax = tax.LaborTax,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    PartTaxRate = tax.PartTaxRate,
-                    RepairOrderId = tax.RepairOrderId,
-                    TaxId = tax.TaxId
-                }).ToList();
+            return service =>
+                            new RepairOrderService()
+                            {
+                                DiscountTotal = service.DiscountTotal,
+                                IsCounterSale = service.IsCounterSale,
+                                IsDeclined = service.IsDeclined,
+                                LaborTotal = service.LaborTotal,
+                                PartsTotal = service.PartsTotal,
+                                RepairOrderId = service.RepairOrderId,
+                                SaleCode = service.SaleCode,
+                                ServiceName = service.ServiceName,
+                                ShopSuppliesTotal = service.ShopSuppliesTotal,
+                                TaxTotal = service.TaxTotal,
+                                Total = service.Total,
+                                Items = ProjectServiceItems(service.Items),
+                                Taxes = ProjectServiceTaxes(service.Taxes),
+                                Techs = ProjectServiceTechnicians(service.Techs)
+                            };
         }
 
-        public static List<RepairOrderPayment> ProjectPayments(List<RepairOrderPaymentToWrite> payments)
+        private static List<RepairOrderTax> ProjectTaxes(List<RepairOrderTaxToWrite> taxes)
         {
-            if (payments is null)
-                return new List<RepairOrderPayment>();
-
-            return payments.Select(payment =>
-                new RepairOrderPayment()
-                {
-                    Amount = payment.Amount,
-                    PaymentMethod = payment.PaymentMethod,
-                    RepairOrderId = payment.RepairOrderId
-                }).ToList();
+            return taxes?.Select(TransformTax()).ToList()
+                ?? new List<RepairOrderTax>();
         }
 
-        public static IList<RepairOrderItem> ProjectServiceItems(IList<RepairOrderItemToWrite> items)
+        private static Func<RepairOrderTaxToWrite, RepairOrderTax> TransformTax()
         {
-            if (items is null)
-                return new List<RepairOrderItem>();
-
-            return items.Select(item =>
-                new RepairOrderItem()
-                {
-                    Core = item.Core,
-                    Cost = item.Cost,
-                    Description = item.Description,
-                    DiscountEach = item.DiscountEach,
-                    DiscountType = item.DiscountType,
-                    IsCounterSale = item.IsCounterSale,
-                    IsDeclined = item.IsDeclined,
-                    LaborEach = item.LaborEach,
-                    LaborType = item.LaborType,
-                    //Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    PartNumber = item.PartNumber,
-                    PartType = item.PartType,
-                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
-                    ProductCodeId = item.ProductCodeId,
-                    QuantitySold = item.QuantitySold,
-                    RepairOrderServiceId = item.RepairOrderServiceId,
-                    SaleCode = ProjectSaleCode(item.SaleCode),
-                    SaleCodeId = item.SaleCodeId,
-                    SaleType = item.SaleType,
-                    SellingPrice = item.SellingPrice,
-                    Total = item.Total,
-                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                    Taxes = ProjectServiceItemTaxes(item.Taxes),
-                    Warranties = ProjectServiceItemWarranties(item.Warranties)
-                }).ToList();
+            return tax =>
+                            new RepairOrderTax()
+                            {
+                                LaborTax = tax.LaborTax,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                PartTaxRate = tax.PartTaxRate,
+                                RepairOrderId = tax.RepairOrderId,
+                                TaxId = tax.TaxId
+                            };
         }
 
-        public static List<RepairOrderTech> ProjectServiceTechnicians(IList<RepairOrderTechToWrite> technicians)
+        private static List<RepairOrderPayment> ProjectPayments(List<RepairOrderPaymentToWrite> payments)
         {
-            if (technicians == null)
-                return new List<RepairOrderTech>();
-
-            return technicians.Select(technician =>
-                new RepairOrderTech()
-                {
-                    RepairOrderServiceId = technician.RepairOrderServiceId,
-                    TechnicianId = technician.TechnicianId
-                }).ToList();
+            return payments?.Select(TransformPayment()).ToList()
+                ?? new List<RepairOrderPayment>();
         }
 
-        public static List<RepairOrderServiceTax> ProjectServiceTaxes(IList<RepairOrderServiceTaxToWrite> taxes)
+        private static Func<RepairOrderPaymentToWrite, RepairOrderPayment> TransformPayment()
         {
-            if (taxes == null)
-                return new List<RepairOrderServiceTax>();
-
-            return taxes.Select(tax =>
-                new RepairOrderServiceTax()
-                {
-                    LaborTax = tax.LaborTax,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    PartTaxRate = tax.PartTaxRate,
-                    RepairOrderServiceId = tax.RepairOrderServiceId,
-                    TaxId = tax.TaxId
-                }).ToList();
+            return payment =>
+                            new RepairOrderPayment()
+                            {
+                                Amount = payment.Amount,
+                                PaymentMethod = payment.PaymentMethod,
+                                RepairOrderId = payment.RepairOrderId
+                            };
         }
 
-        public static List<RepairOrderWarranty> ProjectServiceItemWarranties(IList<RepairOrderWarrantyToWrite> warranties)
+        private static Func<RepairOrderItemToWrite, RepairOrderItem> TransformServiceItem()
         {
-            if (warranties == null)
-                return new List<RepairOrderWarranty>();
-
-            return warranties.Select(warranty => new
-                RepairOrderWarranty()
-            {
-                NewWarranty = warranty.NewWarranty,
-                OriginalInvoiceId = warranty.OriginalInvoiceId,
-                OriginalWarranty = warranty.OriginalWarranty,
-                Quantity = warranty.Quantity,
-                RepairOrderItemId = warranty.RepairOrderItemId,
-                Type = warranty.Type
-            }).ToList();
+            return item =>
+                            new RepairOrderItem()
+                            {
+                                Core = item.Core,
+                                Cost = item.Cost,
+                                Description = item.Description,
+                                DiscountEach = item.DiscountEach,
+                                DiscountType = item.DiscountType,
+                                IsCounterSale = item.IsCounterSale,
+                                IsDeclined = item.IsDeclined,
+                                LaborEach = item.LaborEach,
+                                LaborType = item.LaborType,
+                                //Manufacturer = item.Manufacturer,
+                                ManufacturerId = item.ManufacturerId,
+                                PartNumber = item.PartNumber,
+                                PartType = item.PartType,
+                                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
+                                ProductCodeId = item.ProductCodeId,
+                                QuantitySold = item.QuantitySold,
+                                RepairOrderServiceId = item.RepairOrderServiceId,
+                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCodeId = item.SaleCodeId,
+                                SaleType = item.SaleType,
+                                SellingPrice = item.SellingPrice,
+                                Total = item.Total,
+                                SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                                Taxes = ProjectServiceItemTaxes(item.Taxes),
+                                Warranties = ProjectServiceItemWarranties(item.Warranties)
+                            };
         }
 
-        public static List<RepairOrderItemTax> ProjectServiceItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
+        private static List<RepairOrderTech> ProjectServiceTechnicians(IList<RepairOrderTechToWrite> technicians)
         {
-            if (taxes == null)
-                return new List<RepairOrderItemTax>();
-
-            return taxes.Select(tax =>
-                new RepairOrderItemTax()
-                {
-                    LaborTax = tax.LaborTax,
-                }).ToList();
+            return technicians?.Select(TransformServiceTechnician()).ToList()
+                ?? new List<RepairOrderTech>();
         }
-        
+
+        private static Func<RepairOrderTechToWrite, RepairOrderTech> TransformServiceTechnician()
+        {
+            return technician =>
+                            new RepairOrderTech()
+                            {
+                                RepairOrderServiceId = technician.RepairOrderServiceId,
+                                TechnicianId = technician.TechnicianId
+                            };
+        }
+
+        private static List<RepairOrderServiceTax> ProjectServiceTaxes(IList<RepairOrderServiceTaxToWrite> taxes)
+        {
+            return taxes?.Select(TransformServiceTax()).ToList()
+                ?? new List<RepairOrderServiceTax>();
+        }
+
+        private static Func<RepairOrderServiceTaxToWrite, RepairOrderServiceTax> TransformServiceTax()
+        {
+            return tax =>
+                            new RepairOrderServiceTax()
+                            {
+                                LaborTax = tax.LaborTax,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                PartTaxRate = tax.PartTaxRate,
+                                RepairOrderServiceId = tax.RepairOrderServiceId,
+                                TaxId = tax.TaxId
+                            };
+        }
+
+        private static List<RepairOrderWarranty> ProjectServiceItemWarranties(IList<RepairOrderWarrantyToWrite> warranties)
+        {
+            return warranties?.Select(TransformServiceItemWarranty()).ToList()
+                ?? new List<RepairOrderWarranty>();
+        }
+
+        private static Func<RepairOrderWarrantyToWrite, RepairOrderWarranty> TransformServiceItemWarranty()
+        {
+            return warranty =>
+                            new RepairOrderWarranty()
+                            {
+                                NewWarranty = warranty.NewWarranty,
+                                OriginalInvoiceId = warranty.OriginalInvoiceId,
+                                OriginalWarranty = warranty.OriginalWarranty,
+                                Quantity = warranty.Quantity,
+                                RepairOrderItemId = warranty.RepairOrderItemId,
+                                Type = warranty.Type
+                            };
+        }
+
+        private static List<RepairOrderItemTax> ProjectServiceItemTaxes(IList<RepairOrderItemTaxToWrite> taxes)
+        {
+            return taxes?.Select(tax =>
+                                new RepairOrderItemTax()
+                                {
+                                    LaborTax = tax.LaborTax,
+                                }).ToList()
+                ?? new List<RepairOrderItemTax>();
+        }
+
         private static List<RepairOrderSerialNumber> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumberToWrite> serialNumbers)
         {
-            if (serialNumbers is null)
-                return new List<RepairOrderSerialNumber>();
-
-            return serialNumbers.Select(serialNumber =>
-                new RepairOrderSerialNumber()
-                {
-                    RepairOrderItemId = serialNumber.RepairOrderItemId,
-                    SerialNumber = serialNumber.SerialNumber
-                }).ToList();
+            return serialNumbers?.Select(serialNumber =>
+                                        new RepairOrderSerialNumber()
+                                        {
+                                            RepairOrderItemId = serialNumber.RepairOrderItemId,
+                                            SerialNumber = serialNumber.SerialNumber
+                                        }).ToList()
+                ?? new List<RepairOrderSerialNumber>();
         }
 
-        public static SaleCode ProjectSaleCode(SaleCodeToWrite saleCode)
+        public static SaleCode TransformSaleCode(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
@@ -413,7 +425,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        private static SaleCodeToWrite ProjectSaleCode(SaleCodeToRead saleCode)
+        private static SaleCodeToWrite TransformSaleCode(SaleCodeToRead saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -425,7 +437,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             };
         }
 
-        public static SaleCodeToRead ProjectSaleCode(SaleCode saleCode)
+        public static SaleCodeToRead TransformSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -440,108 +452,126 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         private static List<RepairOrderTaxToWrite> ProjectTaxes(List<RepairOrderTaxToRead> taxes)
         {
-            if (taxes is null)
-                return new List<RepairOrderTaxToWrite>();
+            return taxes?.Select(TransformTaxToWrite()).ToList()
+                ?? new List<RepairOrderTaxToWrite>();
+        }
 
-            return taxes.Select(tax =>
-                new RepairOrderTaxToWrite()
-                {
-                    LaborTax = tax.LaborTax,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    PartTaxRate = tax.PartTaxRate,
-                    RepairOrderId = tax.RepairOrderId,
-                    TaxId = tax.TaxId
-                }).ToList();
+        private static Func<RepairOrderTaxToRead, RepairOrderTaxToWrite> TransformTaxToWrite()
+        {
+            return tax =>
+                            new RepairOrderTaxToWrite()
+                            {
+                                LaborTax = tax.LaborTax,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                PartTaxRate = tax.PartTaxRate,
+                                RepairOrderId = tax.RepairOrderId,
+                                TaxId = tax.TaxId
+                            };
         }
 
         private static List<RepairOrderPaymentToWrite> ProjectPayments(List<RepairOrderPaymentToRead> payments)
         {
-            if (payments is null)
-                return new List<RepairOrderPaymentToWrite>();
+            return payments?.Select(TransformPaymentToWrite()).ToList()
+                ?? new List<RepairOrderPaymentToWrite>();
+        }
 
-            return payments.Select(payment =>
-                new RepairOrderPaymentToWrite()
-                {
-                    Id = payment.Id,
-                    RepairOrderId = payment.RepairOrderId,
-                    PaymentMethod = payment.PaymentMethod,
-                    Amount = payment.Amount
+        private static Func<RepairOrderPaymentToRead, RepairOrderPaymentToWrite> TransformPaymentToWrite()
+        {
+            return payment =>
+                            new RepairOrderPaymentToWrite()
+                            {
+                                Id = payment.Id,
+                                RepairOrderId = payment.RepairOrderId,
+                                PaymentMethod = payment.PaymentMethod,
+                                Amount = payment.Amount
 
-                }).ToList();
+                            };
         }
 
         private static List<RepairOrderWarrantyToWrite> ProjectServiceItemWarranties(IList<RepairOrderWarrantyToRead> warranties)
         {
-            if (warranties is null)
-                return new List<RepairOrderWarrantyToWrite>();
-
-            return warranties.Select(warranty =>
-                new RepairOrderWarrantyToWrite()
-                {
-                    Id =    warranty.Id,
-                    NewWarranty = warranty.NewWarranty,
-                    OriginalInvoiceId = warranty.OriginalInvoiceId,
-                    OriginalWarranty = warranty.OriginalWarranty,
-                    Quantity = warranty.Quantity,
-                    RepairOrderItemId = warranty.RepairOrderItemId,
-                    Type = warranty.Type
-                }).ToList();
+            return warranties?.Select(TransformServiceItemWarrantyToWrite()).ToList()
+                ?? new List<RepairOrderWarrantyToWrite>();
         }
-        
+
+        private static Func<RepairOrderWarrantyToRead, RepairOrderWarrantyToWrite> TransformServiceItemWarrantyToWrite()
+        {
+            return warranty =>
+                            new RepairOrderWarrantyToWrite()
+                            {
+                                Id = warranty.Id,
+                                NewWarranty = warranty.NewWarranty,
+                                OriginalInvoiceId = warranty.OriginalInvoiceId,
+                                OriginalWarranty = warranty.OriginalWarranty,
+                                Quantity = warranty.Quantity,
+                                RepairOrderItemId = warranty.RepairOrderItemId,
+                                Type = warranty.Type
+                            };
+        }
+
         private static List<RepairOrderItemTaxToWrite> ProjectServiceItemTaxes(IList<RepairOrderItemTaxToRead> taxes)
         {
-            if (taxes is null)
-                return new List<RepairOrderItemTaxToWrite>();
+            return taxes?.Select(TransformServiceItemTaxToWrite()).ToList()
+                ?? new List<RepairOrderItemTaxToWrite>();
+        }
 
-            return taxes.Select(tax =>
-                new RepairOrderItemTaxToWrite()
-                {
-                    LaborTax = tax.LaborTax,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    PartTaxRate = tax.PartTaxRate,
-                    RepairOrderItemId = tax.RepairOrderItemId,
-                    TaxId = tax.TaxId
-                }).ToList();
+        private static Func<RepairOrderItemTaxToRead, RepairOrderItemTaxToWrite> TransformServiceItemTaxToWrite()
+        {
+            return tax =>
+                            new RepairOrderItemTaxToWrite()
+                            {
+                                LaborTax = tax.LaborTax,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                PartTaxRate = tax.PartTaxRate,
+                                RepairOrderItemId = tax.RepairOrderItemId,
+                                TaxId = tax.TaxId
+                            };
         }
 
         private static List<RepairOrderSerialNumberToWrite> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
         {
-            if (serialNumbers is null)
-                return new List<RepairOrderSerialNumberToWrite>();
+            return serialNumbers?.Select(TransformServiceItemSerialNumberToWrite()).ToList()
+                ?? new List<RepairOrderSerialNumberToWrite>();
+        }
 
-            return serialNumbers.Select(serialNumber =>
-                new RepairOrderSerialNumberToWrite()
-                {
-                    Id = serialNumber.Id,
-                    RepairOrderItemId = serialNumber.RepairOrderItemId,
-                    SerialNumber = serialNumber.SerialNumber
-                }).ToList();
+        private static Func<RepairOrderSerialNumberToRead, RepairOrderSerialNumberToWrite> TransformServiceItemSerialNumberToWrite()
+        {
+            return serialNumber =>
+                            new RepairOrderSerialNumberToWrite()
+                            {
+                                Id = serialNumber.Id,
+                                RepairOrderItemId = serialNumber.RepairOrderItemId,
+                                SerialNumber = serialNumber.SerialNumber
+                            };
         }
 
         private static List<RepairOrderServiceToWrite> ProjectServices(List<RepairOrderServiceToRead> services)
         {
-            if (services is null)
-                return new List<RepairOrderServiceToWrite>();
+            return services?.Select(TransformServiceToWrite()).ToList()
+                ?? new List<RepairOrderServiceToWrite>();
+        }
 
-            return services.Select(service =>
-                new RepairOrderServiceToWrite()
-                {
-                    Id = service.Id,
-                    RepairOrderId = service.RepairOrderId,
-                    ServiceName = service.ServiceName,
-                    SaleCode = service.SaleCode,
-                    IsCounterSale = service.IsCounterSale,
-                    IsDeclined = service.IsDeclined,
-                    PartsTotal = service.PartsTotal,
-                    LaborTotal = service.LaborTotal,
-                    DiscountTotal = service.DiscountTotal,
-                    TaxTotal = service.TaxTotal,
-                    ShopSuppliesTotal = service.ShopSuppliesTotal,
-                    Total = service.Total,
-                    Items = ProjectServiceItems(service.Items)
-                }).ToList();
+        private static Func<RepairOrderServiceToRead, RepairOrderServiceToWrite> TransformServiceToWrite()
+        {
+            return service =>
+                            new RepairOrderServiceToWrite()
+                            {
+                                Id = service.Id,
+                                RepairOrderId = service.RepairOrderId,
+                                ServiceName = service.ServiceName,
+                                SaleCode = service.SaleCode,
+                                IsCounterSale = service.IsCounterSale,
+                                IsDeclined = service.IsDeclined,
+                                PartsTotal = service.PartsTotal,
+                                LaborTotal = service.LaborTotal,
+                                DiscountTotal = service.DiscountTotal,
+                                TaxTotal = service.TaxTotal,
+                                ShopSuppliesTotal = service.ShopSuppliesTotal,
+                                Total = service.Total,
+                                Items = ProjectServiceItems(service.Items)
+                            };
         }
 
         private static List<RepairOrderItemToWrite> ProjectServiceItems(IList<RepairOrderItemToRead> items)
@@ -555,36 +585,41 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 item.Warranties.AddRange(MissingRequiredWarranties(item));
             }
 
-            return items.Select(item =>
-                new RepairOrderItemToWrite()
-                {
-                    Id = item.Id,
-                    Core = item.Core,
-                    Cost = item.Cost,
-                    Description = item.Description,
-                    DiscountEach = item.DiscountEach,
-                    DiscountType = item.DiscountType,
-                    IsCounterSale = item.IsCounterSale,
-                    IsDeclined = item.IsDeclined,
-                    LaborEach = item.LaborEach,
-                    LaborType = item.LaborType,
-                    Manufacturer = ProjectManufacturer(item.Manufacturer),
-                    ManufacturerId = item.ManufacturerId,
-                    PartNumber = item.PartNumber,
-                    PartType = item.PartType,
-                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
-                    ProductCodeId = item.ProductCodeId,
-                    QuantitySold = item.QuantitySold,
-                    RepairOrderServiceId = item.RepairOrderServiceId,
-                    SaleCode = ProjectSaleCode(item.SaleCode),
-                    SaleCodeId = item.SaleCodeId,
-                    SaleType = item.SaleType,
-                    SellingPrice = item.SellingPrice,
-                    Total = item.Total,
-                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                    Warranties = ProjectServiceItemWarranties(item.Warranties),
-                    Taxes = ProjectServiceItemTaxes(item.Taxes)
-                }).ToList();
+            return items.Select(TransformServiceItemToWrite()).ToList();
+        }
+
+        private static Func<RepairOrderItemToRead, RepairOrderItemToWrite> TransformServiceItemToWrite()
+        {
+            return item =>
+                            new RepairOrderItemToWrite()
+                            {
+                                Id = item.Id,
+                                Core = item.Core,
+                                Cost = item.Cost,
+                                Description = item.Description,
+                                DiscountEach = item.DiscountEach,
+                                DiscountType = item.DiscountType,
+                                IsCounterSale = item.IsCounterSale,
+                                IsDeclined = item.IsDeclined,
+                                LaborEach = item.LaborEach,
+                                LaborType = item.LaborType,
+                                Manufacturer = TransformManufacturer(item.Manufacturer),
+                                ManufacturerId = item.ManufacturerId,
+                                PartNumber = item.PartNumber,
+                                PartType = item.PartType,
+                                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
+                                ProductCodeId = item.ProductCodeId,
+                                QuantitySold = item.QuantitySold,
+                                RepairOrderServiceId = item.RepairOrderServiceId,
+                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCodeId = item.SaleCodeId,
+                                SaleType = item.SaleType,
+                                SellingPrice = item.SellingPrice,
+                                Total = item.Total,
+                                SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                                Warranties = ProjectServiceItemWarranties(item.Warranties),
+                                Taxes = ProjectServiceItemTaxes(item.Taxes)
+                            };
         }
 
         private static List<RepairOrderSerialNumberToRead> MissingRequiredSerialNumbers(RepairOrderItemToRead item)
@@ -612,7 +647,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
-        private static ManufacturerToWrite ProjectManufacturer(ManufacturerToRead manufacturer)
+        private static ManufacturerToWrite TransformManufacturer(ManufacturerToRead manufacturer)
         {
             if (manufacturer is null)
                 return new ManufacturerToWrite();
@@ -626,118 +661,97 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         private static IList<RepairOrderTechToRead> ProjectServiceTechnicians(IList<RepairOrderTech> technicians)
         {
-            if (technicians == null)
-                return new List<RepairOrderTechToRead>();
-
-            return technicians.Select(technician =>
-                new RepairOrderTechToRead()
-                {
-                    Id = technician.Id,
-                    RepairOrderServiceId = technician.RepairOrderServiceId,
-                    TechnicianId = technician.TechnicianId
-                }).ToList();
+            return technicians?.Select(TransformServiceTechnicianToRead()).ToList()
+                ?? new List<RepairOrderTechToRead>();
         }
-        
+
+        private static Func<RepairOrderTech, RepairOrderTechToRead> TransformServiceTechnicianToRead()
+        {
+            return technician =>
+                            new RepairOrderTechToRead()
+                            {
+                                Id = technician.Id,
+                                RepairOrderServiceId = technician.RepairOrderServiceId,
+                                TechnicianId = technician.TechnicianId
+                            };
+        }
+
         private static List<RepairOrderItem> ProjectServiceItems(List<RepairOrderItemToWrite> items)
         {
-            if (items == null)
-                return new List<RepairOrderItem>();
-
-            return items.Select(item =>
-                new RepairOrderItem()
-                {
-                    RepairOrderServiceId = item.RepairOrderServiceId,
-                    //Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
-                    ManufacturerId = item.ManufacturerId,
-                    PartNumber = item.PartNumber,
-                    Description = item.Description,
-                    SaleCode = ProjectSaleCode(item.SaleCode),
-                    SaleCodeId = item.SaleCodeId,
-                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
-                    ProductCodeId = item.ProductCodeId,
-                    SaleType = item.SaleType,
-                    PartType = item.PartType,
-                    IsDeclined = item.IsDeclined,
-                    IsCounterSale = item.IsCounterSale,
-                    QuantitySold = item.QuantitySold,
-                    SellingPrice = item.SellingPrice,
-                    LaborType = item.LaborType,
-                    LaborEach = item.LaborEach,
-                    DiscountType = item.DiscountType,
-                    DiscountEach = item.DiscountEach,
-                    Cost = item.Cost,
-                    Core = item.Core,
-                    Total = item.Total,
-                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                    Warranties = ProjectServiceItemWarranties(item.Warranties),
-                    Taxes = ProjectServiceItemTaxes(item.Taxes)
-                }).ToList();
+            return items?.Select(TransformServiceItem()).ToList()
+                ?? new List<RepairOrderItem>();
         }
-        
+
         private static List<RepairOrderItemToRead> ProjectServiceItems(IList<RepairOrderItem> items)
         {
-            if (items == null)
-                return new List<RepairOrderItemToRead>();
+            return items?.Select(TransformServiceItemToRead()).ToList()
+                ?? new List<RepairOrderItemToRead>();
+        }
 
-            return items.Select(item =>
-                new RepairOrderItemToRead()
-                {
-                    Id = item.Id,
-                    RepairOrderServiceId = item.RepairOrderServiceId,
-                    Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
-                    ManufacturerId = item.ManufacturerId,
-                    PartNumber = item.PartNumber,
-                    Description = item.Description,
-                    SaleCode = ProjectSaleCode(item.SaleCode),
-                    SaleCodeId = item.SaleCodeId,
-                    ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
-                    ProductCodeId = item.ProductCodeId,
-                    SaleType = item.SaleType,
-                    PartType = item.PartType,
-                    IsDeclined = item.IsDeclined,
-                    IsCounterSale = item.IsCounterSale,
-                    QuantitySold = item.QuantitySold,
-                    SellingPrice = item.SellingPrice,
-                    LaborType = item.LaborType,
-                    LaborEach = item.LaborEach,
-                    DiscountType = item.DiscountType,
-                    DiscountEach = item.DiscountEach,
-                    Cost = item.Cost,
-                    Core = item.Core,
-                    Total = item.Total,
-                    SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                    Warranties = ProjectServiceItemWarranties(item.Warranties),
-                    Taxes = ProjectServiceItemTaxes(item.Taxes)
-                }).ToList();
+        private static Func<RepairOrderItem, RepairOrderItemToRead> TransformServiceItemToRead()
+        {
+            return item =>
+                            new RepairOrderItemToRead()
+                            {
+                                Id = item.Id,
+                                RepairOrderServiceId = item.RepairOrderServiceId,
+                                Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
+                                ManufacturerId = item.ManufacturerId,
+                                PartNumber = item.PartNumber,
+                                Description = item.Description,
+                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCodeId = item.SaleCodeId,
+                                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
+                                ProductCodeId = item.ProductCodeId,
+                                SaleType = item.SaleType,
+                                PartType = item.PartType,
+                                IsDeclined = item.IsDeclined,
+                                IsCounterSale = item.IsCounterSale,
+                                QuantitySold = item.QuantitySold,
+                                SellingPrice = item.SellingPrice,
+                                LaborType = item.LaborType,
+                                LaborEach = item.LaborEach,
+                                DiscountType = item.DiscountType,
+                                DiscountEach = item.DiscountEach,
+                                Cost = item.Cost,
+                                Core = item.Core,
+                                Total = item.Total,
+                                SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+                                Warranties = ProjectServiceItemWarranties(item.Warranties),
+                                Taxes = ProjectServiceItemTaxes(item.Taxes)
+                            };
         }
 
         private static List<RepairOrderServiceToRead> ProjectServices(List<RepairOrderService> services)
         {
-            if (services == null)
-                return new List<RepairOrderServiceToRead>();
-
-            return services.Select(service =>
-                new RepairOrderServiceToRead()
-                {
-                    Id = service.Id,
-                    RepairOrderId = service.RepairOrderId,
-                    ServiceName = service.ServiceName,
-                    SaleCode = service.SaleCode,
-                    IsCounterSale = service.IsCounterSale,
-                    IsDeclined = service.IsDeclined,
-                    PartsTotal = service.PartsTotal,
-                    LaborTotal = service.LaborTotal,
-                    DiscountTotal = service.DiscountTotal,
-                    TaxTotal = service.TaxTotal,
-                    ShopSuppliesTotal = service.ShopSuppliesTotal,
-                    Total = service.Total,
-                    Items = ProjectServiceItems(service.Items),
-                    Techs = ProjectServiceTechnicians(service.Techs),
-                    Taxes = ProjectServiceTaxes(service.Taxes)
-                }).ToList();
+            return services?.Select(TransformServiceToRead()).ToList()
+                ?? new List<RepairOrderServiceToRead>();
         }
 
-        public static RepairOrderToRead Project(RepairOrder repairOrder)
+        private static Func<RepairOrderService, RepairOrderServiceToRead> TransformServiceToRead()
+        {
+            return service =>
+                            new RepairOrderServiceToRead()
+                            {
+                                Id = service.Id,
+                                RepairOrderId = service.RepairOrderId,
+                                ServiceName = service.ServiceName,
+                                SaleCode = service.SaleCode,
+                                IsCounterSale = service.IsCounterSale,
+                                IsDeclined = service.IsDeclined,
+                                PartsTotal = service.PartsTotal,
+                                LaborTotal = service.LaborTotal,
+                                DiscountTotal = service.DiscountTotal,
+                                TaxTotal = service.TaxTotal,
+                                ShopSuppliesTotal = service.ShopSuppliesTotal,
+                                Total = service.Total,
+                                Items = ProjectServiceItems(service.Items),
+                                Techs = ProjectServiceTechnicians(service.Techs),
+                                Taxes = ProjectServiceTaxes(service.Taxes)
+                            };
+        }
+
+        public static RepairOrderToRead Transform(RepairOrder repairOrder)
         {
             if (repairOrder != null)
             {
@@ -769,60 +783,72 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         private static List<RepairOrderItemTaxToRead> ProjectServiceItemTaxes(IList<RepairOrderItemTax> taxes)
         {
-            if (taxes == null)
-                return new List<RepairOrderItemTaxToRead>();
+            return taxes?.Select(TransformServiceItemTax()).ToList()
+                ?? new List<RepairOrderItemTaxToRead>();
+        }
 
-            return taxes.Select(tax =>
-                new RepairOrderItemTaxToRead()
-                {
-                    Id = tax.Id,
-                    RepairOrderItemId = tax.RepairOrderItemId,
-                    TaxId = tax.TaxId,
-                    PartTaxRate = tax.PartTaxRate,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    LaborTax = tax.LaborTax
-                }).ToList();
+        private static Func<RepairOrderItemTax, RepairOrderItemTaxToRead> TransformServiceItemTax()
+        {
+            return tax =>
+                            new RepairOrderItemTaxToRead()
+                            {
+                                Id = tax.Id,
+                                RepairOrderItemId = tax.RepairOrderItemId,
+                                TaxId = tax.TaxId,
+                                PartTaxRate = tax.PartTaxRate,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                LaborTax = tax.LaborTax
+                            };
         }
 
         private static List<RepairOrderWarrantyToRead> ProjectServiceItemWarranties(IList<RepairOrderWarranty> warranties)
         {
-            if (warranties == null)
-                return new List<RepairOrderWarrantyToRead>();
+            return warranties?.Select(TransformServiceItemWarrantyToRead()).ToList()
+                ?? new List<RepairOrderWarrantyToRead>();
+        }
 
-            return warranties.Select(warranty =>
-                new RepairOrderWarrantyToRead()
-                {
-                    Id = warranty.Id,
-                    RepairOrderItemId = warranty.RepairOrderItemId,
-                    Quantity = warranty.Quantity,
-                    Type = warranty.Type,
-                    NewWarranty = warranty.NewWarranty,
-                    OriginalWarranty = warranty.OriginalWarranty,
-                    OriginalInvoiceId = warranty.OriginalInvoiceId
-                }).ToList();
+        private static Func<RepairOrderWarranty, RepairOrderWarrantyToRead> TransformServiceItemWarrantyToRead()
+        {
+            return warranty =>
+                            new RepairOrderWarrantyToRead()
+                            {
+                                Id = warranty.Id,
+                                RepairOrderItemId = warranty.RepairOrderItemId,
+                                Quantity = warranty.Quantity,
+                                Type = warranty.Type,
+                                NewWarranty = warranty.NewWarranty,
+                                OriginalWarranty = warranty.OriginalWarranty,
+                                OriginalInvoiceId = warranty.OriginalInvoiceId
+                            };
         }
 
         private static List<RepairOrderSerialNumberToRead> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
         {
-            if (serialNumbers == null)
-                return new List<RepairOrderSerialNumberToRead>();
+            return serialNumbers?.Select(TransformServiceItemSerialNumber()).ToList()
+                ?? new List<RepairOrderSerialNumberToRead>();
+        }
 
-            return serialNumbers.Select(serialNumber =>
-                new RepairOrderSerialNumberToRead()
-                {
-                    Id = serialNumber.Id,
-                    RepairOrderItemId = serialNumber.RepairOrderItemId,
-                    SerialNumber = serialNumber.SerialNumber
-                }).ToList();
+        private static Func<RepairOrderSerialNumber, RepairOrderSerialNumberToRead> TransformServiceItemSerialNumber()
+        {
+            return serialNumber =>
+                            new RepairOrderSerialNumberToRead()
+                            {
+                                Id = serialNumber.Id,
+                                RepairOrderItemId = serialNumber.RepairOrderItemId,
+                                SerialNumber = serialNumber.SerialNumber
+                            };
         }
 
         private static List<RepairOrderTaxToRead> ProjectTaxes(IList<RepairOrderTax> taxes)
         {
-            if (taxes == null)
-                return new List<RepairOrderTaxToRead>();
+            return taxes?.Select(TransformTaxToRead()).ToList()
+                ?? new List<RepairOrderTaxToRead>();
+        }
 
-            return taxes.Select(tax =>
+        private static Func<RepairOrderTax, RepairOrderTaxToRead> TransformTaxToRead()
+        {
+            return tax =>
                         new RepairOrderTaxToRead()
                         {
                             Id = tax.Id,
@@ -832,43 +858,49 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             LaborTaxRate = tax.LaborTaxRate,
                             PartTax = tax.PartTax,
                             LaborTax = tax.LaborTax
-                        }).ToList();
+                        };
         }
 
         private static IList<RepairOrderServiceTaxToRead> ProjectServiceTaxes(IList<RepairOrderServiceTax> taxes)
         {
-            if (taxes == null)
-                return new List<RepairOrderServiceTaxToRead>();
+            return taxes?.Select(TransformServiceTaxToRead()).ToList()
+                ?? new List<RepairOrderServiceTaxToRead>();
+        }
 
-            return taxes.Select(tax =>
-                new RepairOrderServiceTaxToRead()
-                {
-                    Id = tax.Id,
-                    RepairOrderServiceId = tax.RepairOrderServiceId,
-                    TaxId = tax.TaxId,
-                    PartTaxRate = tax.PartTaxRate,
-                    LaborTaxRate = tax.LaborTaxRate,
-                    PartTax = tax.PartTax,
-                    LaborTax = tax.LaborTax
-                }).ToList();
+        private static Func<RepairOrderServiceTax, RepairOrderServiceTaxToRead> TransformServiceTaxToRead()
+        {
+            return tax =>
+                            new RepairOrderServiceTaxToRead()
+                            {
+                                Id = tax.Id,
+                                RepairOrderServiceId = tax.RepairOrderServiceId,
+                                TaxId = tax.TaxId,
+                                PartTaxRate = tax.PartTaxRate,
+                                LaborTaxRate = tax.LaborTaxRate,
+                                PartTax = tax.PartTax,
+                                LaborTax = tax.LaborTax
+                            };
         }
 
         private static List<RepairOrderPaymentToRead> ProjectPayments(IList<RepairOrderPayment> payments)
         {
-            if (payments == null)
-                return new List<RepairOrderPaymentToRead>();
-
-            return payments.Select(payment =>
-                new RepairOrderPaymentToRead()
-                {
-                    Id = payment.Id,
-                    RepairOrderId = payment.RepairOrderId,
-                    PaymentMethod = payment.PaymentMethod,
-                    Amount = payment.Amount
-                }).ToList();
+            return payments?.Select(TransformPaymentToRead()).ToList()
+                ?? new List<RepairOrderPaymentToRead>();
         }
 
-        public static RepairOrderToReadInList ProjectInList(RepairOrder repairOrder)
+        private static Func<RepairOrderPayment, RepairOrderPaymentToRead> TransformPaymentToRead()
+        {
+            return payment =>
+                            new RepairOrderPaymentToRead()
+                            {
+                                Id = payment.Id,
+                                RepairOrderId = payment.RepairOrderId,
+                                PaymentMethod = payment.PaymentMethod,
+                                Amount = payment.Amount
+                            };
+        }
+
+        public static RepairOrderToReadInList TransformInList(RepairOrder repairOrder)
         {
             if (repairOrder != null)
             {

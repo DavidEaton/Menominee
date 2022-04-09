@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var scFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
 
-            return RepairOrderHelper.ProjectSaleCode(scFromContext);
+            return RepairOrderHelper.TransformSaleCode(scFromContext);
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var scFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Id == id);
 
-            return RepairOrderHelper.ProjectSaleCode(scFromContext);
+            return RepairOrderHelper.TransformSaleCode(scFromContext);
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)

@@ -162,7 +162,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             RepairOrderToEdit = Id == 0
                 ? RepairOrderToEdit = new()
-                : RepairOrderToEdit = RepairOrderHelper.Project(RepairOrder);
+                : RepairOrderToEdit = RepairOrderHelper.Transform(RepairOrder);
 
             // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";
