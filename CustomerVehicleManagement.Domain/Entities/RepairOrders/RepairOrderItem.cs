@@ -1,5 +1,6 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
@@ -32,69 +33,59 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double DiscountEach { get; set; }
         public double Total { get; set; }
 
-        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
-        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
-        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
+        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new();
+        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new();
+        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new();
+        public virtual List<RepairOrderPurchase> Purchases { get; set; } = new();
 
         public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
         {
+            Guard.ForNull(serialNumber, "serialNumber");
             SerialNumbers.Add(serialNumber);
         }
 
         public void RemoveSerialNumber(RepairOrderSerialNumber serialNumber)
         {
+            Guard.ForNull(serialNumber, "serialNumber");
             SerialNumbers.Remove(serialNumber);
-        }
-
-        public void SetSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
-        {
-            SerialNumbers.Clear();
-            if (serialNumbers.Count > 0)
-            {
-                foreach (var serialNumber in serialNumbers)
-                    AddSerialNumber(serialNumber);
-            }
         }
 
         public void AddWarranty(RepairOrderWarranty warranty)
         {
+            Guard.ForNull(warranty, "warranty");
             Warranties.Add(warranty);
         }
 
         public void RemoveWarranty(RepairOrderWarranty warranty)
         {
+            Guard.ForNull(warranty, "warranty");
             Warranties.Remove(warranty);
-        }
-
-        public void SetWarranties(IList<RepairOrderWarranty> warranties)
-        {
-            Warranties.Clear();
-            if (warranties.Count > 0)
-            {
-                foreach (var warranty in warranties)
-                    AddWarranty(warranty);
-            }
         }
 
         public void AddTax(RepairOrderItemTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Add(tax);
         }
 
         public void RemoveTax(RepairOrderItemTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Remove(tax);
         }
 
-        public void SetTaxes(IList<RepairOrderItemTax> taxes)
+        public void AddPurchase(RepairOrderPurchase purchase)
         {
-            Taxes.Clear();
-            if (taxes.Count > 0)
-            {
-                foreach (var tax in taxes)
-                    AddTax(tax);
-            }
+            Guard.ForNull(purchase, "purchase");
+            Purchases.Add(purchase);
         }
+
+        public void RemovePurchase(RepairOrderPurchase purchase)
+        {
+            Guard.ForNull(purchase, "purchase");
+            Purchases.Remove(purchase);
+        }
+
 
         #region ORM
 

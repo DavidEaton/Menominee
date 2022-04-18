@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
@@ -29,6 +30,12 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                 return true;
             }
             return false;
+        }
+
+        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
+        private static bool PurchaseInfoRequired(RepairOrderItemToWrite item)
+        {
+            return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0 /*&& item.IsBuyout*/);
         }
 
         public static int WarrantyRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
@@ -68,6 +75,29 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                     // If QuantitySold is fractional, and part requires serial number,
                     // that's an invalid state we must prevent.
                     // TODO: This is a business rule. Business rules should live in the domain layer.
+                    if (IsFractional(item.QuantitySold))
+                        continue;
+
+                    missingSerialNumberCount += item.SerialNumbers.Count(
+                        serialNumber =>
+                        string.IsNullOrWhiteSpace(serialNumber.SerialNumber));
+                }
+            }
+
+            return missingSerialNumberCount;
+        }
+
+        public static int PurchaseRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
+        {
+            int missingSerialNumberCount = 0;
+
+            foreach (var service in services)
+            {
+                foreach (var item in service?.Items)
+                {
+                    if (item?.Warranties is null || !PurchaseInfoRequired(item))
+                        continue;
+
                     if (IsFractional(item.QuantitySold))
                         continue;
 
@@ -128,7 +158,36 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
             return list;
         }
-        
+
+        public static List<PurchaseListItem> BuildPurchaseList(List<RepairOrderServiceToWrite> services)
+        {
+            var list = new List<PurchaseListItem>();
+            foreach (var service in services)
+            {
+                foreach (var item in service.Items)
+                {
+                    // check if purchase info is required on this item
+                    if (PurchaseInfoRequired(item))
+
+                        foreach (var purchase in item.Purchases)
+                        {
+                            list.Add(new PurchaseListItem()
+                            {
+                                Description = item.Description,
+                                VendorCost = item.Cost,
+                                RepairOrderItemId = purchase.RepairOrderItemId,
+                                PartNumber = item.PartNumber,
+                                VendorName = purchase.VendorId.ToString(),
+                                Quantity = item.QuantitySold,
+                                PurchaseDate = DateTime.Today
+                            }); ;
+                        }
+                }
+            }
+
+            return list;
+        }
+
         private static bool IsFractional(double quantitySold)
         {
             return !(quantitySold % 1 == 0);
@@ -160,18 +219,39 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return repairOrderToWrite;
         }
 
+        private static IEnumerable<RepairOrderPurchaseToRead> MissingRequiredPurchases(RepairOrderItemToRead item)
+        {
+            var list = new List<RepairOrderPurchaseToRead>();
+
+            if (IsFractional(item.QuantitySold))
+                return list;
+
+            int missingCount = (int)item.QuantitySold - item.Purchases.Count;
+
+            for (var i = 0; i < missingCount; i++)
+            {
+                var newPurchase = new RepairOrderPurchaseToRead()
+                {
+                    RepairOrderItemId = item.Id
+                    //Quantity = 0
+                };
+
+                list.Add(newPurchase);
+            }
+
+            return list;
+        }
+
         private static List<RepairOrderWarrantyToRead> MissingRequiredWarranties(RepairOrderItemToRead item)
         {
             var list = new List<RepairOrderWarrantyToRead>();
-            // If QuantitySold is fractional, and part requires warranty, that's an invalid
-            // state we must prevent.
-            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
+
             if (IsFractional(item.QuantitySold))
-                return new List<RepairOrderWarrantyToRead>();
+                return list;
 
-            int missingRequiredWarrantiesCount = (int)item.QuantitySold - item.Warranties.Count;
+            int missingCount = (int)item.QuantitySold - item.Warranties.Count;
 
-            for (var i = 0; i < missingRequiredWarrantiesCount; i++)
+            for (var i = 0; i < missingCount; i++)
             {
                 var newWarranty = new RepairOrderWarrantyToRead()
                 {
@@ -185,6 +265,31 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        private static List<RepairOrderSerialNumberToRead> MissingRequiredSerialNumbers(RepairOrderItemToRead item)
+        {
+            var list = new List<RepairOrderSerialNumberToRead>();
+            // If QuantitySold is fractional, and part requires serial number,
+            // that's an invalid state we must prevent.
+            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
+            if (IsFractional(item.QuantitySold))
+                return list;
+
+            int missingCount = (int)item.QuantitySold - item.SerialNumbers.Count;
+
+            for (var i = 0; i < missingCount; i++)
+            {
+                var newSerialNumber = new RepairOrderSerialNumberToRead()
+                {
+                    RepairOrderItemId = item.Id,
+                    SerialNumber = string.Empty
+                };
+
+                list.Add(newSerialNumber);
+            }
+
+            return list;
+        }
+
         // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrderItem.cs
         private static bool SerialNumberRequired(RepairOrderItemToWrite item)
         {
@@ -192,6 +297,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             {
                 // check if this part's product code requires serial numbers
                 // if (ProductCodeRequiresSerialNumber(item))
+                // TODO: Implement ProductCodeRequiresSerialNumber(item)
                 return true;
             }
             return false;
@@ -332,7 +438,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 Total = item.Total,
                                 SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
                                 Taxes = ProjectServiceItemTaxes(item.Taxes),
-                                Warranties = ProjectServiceItemWarranties(item.Warranties)
+                                Warranties = ProjectServiceItemWarranties(item.Warranties),
+                                Purchases = ProjectServiceItemPurchases(item.Purchases)
                             };
         }
 
@@ -369,6 +476,41 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 PartTaxRate = tax.PartTaxRate,
                                 RepairOrderServiceId = tax.RepairOrderServiceId,
                                 TaxId = tax.TaxId
+                            };
+        }
+
+        private static List<RepairOrderPurchase> ProjectServiceItemPurchases(IList<RepairOrderPurchaseToWrite> purchases)
+        {
+            return purchases?.Select(TransformServiceItemPurchase()).ToList()
+                ?? new List<RepairOrderPurchase>();
+        }
+
+        private static Func<RepairOrderPurchaseToWrite, RepairOrderPurchase> TransformServiceItemPurchase()
+        {
+            return purchase =>
+                            new RepairOrderPurchase()
+                            {
+                                PONumber = purchase.PONumber,
+                                PurchaseDate = purchase.PurchaseDate.Value,
+                                RepairOrderItemId = purchase.RepairOrderItemId,
+                                VendorId = purchase.VendorId,
+                                VendorInvoiceNumber = purchase.VendorInvoiceNumber,
+                                VendorPartNumber = purchase.VendorPartNumber
+                            };
+        }
+
+        private static Func<RepairOrderPurchase, RepairOrderPurchaseToRead> TransformServiceItemPurchaseToRead()
+        {
+            return purchase =>
+                            new RepairOrderPurchaseToRead()
+                            {
+                                Id = purchase.Id,
+                                PONumber = purchase.PONumber,
+                                PurchaseDate = purchase.PurchaseDate,
+                                RepairOrderItemId = purchase.RepairOrderItemId,
+                                VendorId = purchase.VendorId,
+                                VendorInvoiceNumber = purchase.VendorInvoiceNumber,
+                                VendorPartNumber = purchase.VendorPartNumber
                             };
         }
 
@@ -530,6 +672,27 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             };
         }
 
+        private static List<RepairOrderPurchaseToWrite> ProjectServiceItemPurchases(IList<RepairOrderPurchaseToRead> purchases)
+        {
+            return purchases?.Select(TransformServiceItemPurchaseToWrite()).ToList()
+                ?? new List<RepairOrderPurchaseToWrite>();
+        }
+
+        private static Func<RepairOrderPurchaseToRead, RepairOrderPurchaseToWrite> TransformServiceItemPurchaseToWrite()
+        {
+            return purchase =>
+                            new RepairOrderPurchaseToWrite()
+                            {
+                                Id = purchase.Id,
+                                RepairOrderItemId = purchase.RepairOrderItemId,
+                                PONumber = purchase.PONumber,
+                                PurchaseDate = purchase.PurchaseDate,
+                                VendorId = purchase.VendorId,
+                                VendorInvoiceNumber = purchase.VendorInvoiceNumber,
+                                VendorPartNumber = purchase.VendorPartNumber
+                            };
+        }
+
         private static List<RepairOrderSerialNumberToWrite> ProjectServiceItemSerialNumbers(IList<RepairOrderSerialNumberToRead> serialNumbers)
         {
             return serialNumbers?.Select(TransformServiceItemSerialNumberToWrite()).ToList()
@@ -583,6 +746,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             {
                 item.SerialNumbers.AddRange(MissingRequiredSerialNumbers(item));
                 item.Warranties.AddRange(MissingRequiredWarranties(item));
+                item.Purchases.AddRange(MissingRequiredPurchases(item));
             }
 
             return items.Select(TransformServiceItemToWrite()).ToList();
@@ -618,33 +782,9 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 Total = item.Total,
                                 SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
                                 Warranties = ProjectServiceItemWarranties(item.Warranties),
-                                Taxes = ProjectServiceItemTaxes(item.Taxes)
+                                Taxes = ProjectServiceItemTaxes(item.Taxes),
+                                Purchases = ProjectServiceItemPurchases(item.Purchases)
                             };
-        }
-
-        private static List<RepairOrderSerialNumberToRead> MissingRequiredSerialNumbers(RepairOrderItemToRead item)
-        {
-            var list = new List<RepairOrderSerialNumberToRead>();
-            // If QuantitySold is fractional, and part requires serial number,
-            // that's an invalid state we must prevent.
-            // TODO: This is a business rule. Business rules shouuld live in the domain layer.
-            if (IsFractional(item.QuantitySold))
-                return new List<RepairOrderSerialNumberToRead>();
-
-            int missingRequiredSerialNumbersCount = (int)item.QuantitySold - item.SerialNumbers.Count;
-
-            for (var i = 0; i < missingRequiredSerialNumbersCount; i++)
-            {
-                var newSerialNumber = new RepairOrderSerialNumberToRead()
-                {
-                    RepairOrderItemId = item.Id,
-                    SerialNumber = string.Empty
-                };
-
-                list.Add(newSerialNumber);
-            }
-
-            return list;
         }
 
         private static ManufacturerToWrite TransformManufacturer(ManufacturerToRead manufacturer)
@@ -718,8 +858,15 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 Total = item.Total,
                                 SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
                                 Warranties = ProjectServiceItemWarranties(item.Warranties),
-                                Taxes = ProjectServiceItemTaxes(item.Taxes)
+                                Taxes = ProjectServiceItemTaxes(item.Taxes),
+                                Purchases = ProjectServiceItemPurchases(item.Purchases)
                             };
+        }
+
+        private static List<RepairOrderPurchaseToRead> ProjectServiceItemPurchases(IList<RepairOrderPurchase> purchases)
+        {
+            return purchases?.Select(TransformServiceItemPurchaseToRead()).ToList()
+                ?? new List<RepairOrderPurchaseToRead>();
         }
 
         private static List<RepairOrderServiceToRead> ProjectServices(List<RepairOrderService> services)

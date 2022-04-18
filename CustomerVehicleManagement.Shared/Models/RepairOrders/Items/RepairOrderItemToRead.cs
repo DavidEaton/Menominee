@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
@@ -35,8 +36,10 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
         public double Core { get; set; }
         public double Total { get; set; }
 
-        public List<RepairOrderSerialNumberToRead> SerialNumbers { get; set; } = new List<RepairOrderSerialNumberToRead>();
-        public List<RepairOrderWarrantyToRead> Warranties { get; set; } = new List<RepairOrderWarrantyToRead>();
-        public List<RepairOrderItemTaxToRead> Taxes { get; set; } = new List<RepairOrderItemTaxToRead>();
+        public List<RepairOrderSerialNumberToRead> SerialNumbers { get; set; } = new();
+        public List<RepairOrderWarrantyToRead> Warranties { get; set; } = new();
+        public List<RepairOrderItemTaxToRead> Taxes { get; set; } = new();
+        public virtual List<RepairOrderPurchaseToRead> Purchases { get; set; } = new();
+
     }
 }
