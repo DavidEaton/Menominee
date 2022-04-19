@@ -182,6 +182,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
+        public void DisallowAddDuplicatePhone()
+        {
+
+        }
+
+        [Fact]
         public void AddPersonEmails()
         {
             var organization = Utilities.CreatePerson();

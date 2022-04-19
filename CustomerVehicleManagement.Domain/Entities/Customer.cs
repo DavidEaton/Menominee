@@ -44,12 +44,66 @@ namespace CustomerVehicleManagement.Domain.Entities
             throw new InvalidOperationException("Unknown entity type");
         }
 
+        public void AddPhone(Phone phone)
+        {
+            Guard.ForNull(phone, "phone");
+
+            if (CustomerHasPhone(phone))
+                throw new InvalidOperationException("customer already has this phone.");
+
+            if (EntityType is EntityType.Person)
+                Person.Phones.Add(phone);
+
+            if (EntityType is EntityType.Organization)
+                Organization.Phones.Add(phone);
+        }
+
+        private bool CustomerHasPhone(Phone phone)
+        {
+            Guard.ForNull(phone, "phone");
+
+            if (EntityType is EntityType.Person)
+                return Person.Phones.Any(x => x == phone);
+
+            if (EntityType is EntityType.Organization)
+                return Organization.Phones.Any(x => x == phone);
+
+            throw new InvalidOperationException("customer is unknown entity type.");
+        }
+
+        public void AddEmail(Email email)
+        {
+            Guard.ForNull(email, "email");
+
+            if (CustomerHasEmail(email))
+                throw new InvalidOperationException("customer already has this email.");
+
+            if (EntityType is EntityType.Person)
+                Person.Emails.Add(email);
+
+            if (EntityType is EntityType.Organization)
+                Organization.Emails.Add(email);
+        }
+
+        private bool CustomerHasEmail(Email email)
+        {
+            Guard.ForNull(email, "email");
+
+            if (EntityType is EntityType.Person)
+                return Person.Emails.Any(x => x == email);
+
+            if (EntityType is EntityType.Organization)
+                return Organization.Emails.Any(x => x == email);
+
+            throw new InvalidOperationException("customer is unknown entity type.");
+        }
+
         public void AddVehicle(Vehicle vehicle)
         {
             Guard.ForNull(vehicle, "vehicle");
 
             if (CustomerHasVehicle(vehicle))
-                throw new Exception("customer already has this vehicle.");
+                throw new InvalidOperationException("customer already has this vehicle.");
 
             Vehicles.Add(vehicle);
         }
@@ -62,7 +116,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         private bool CustomerHasVehicle(Vehicle vehicle)
         {
-            return Vehicles.Any(x => x == vehicle);
+            return Vehicles.Any(v => v == vehicle);
         }
         #region ORM
 
