@@ -11,8 +11,8 @@
         public string SerialNumber
         {
             get =>
-                !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber)
-                ? SerialNumberType.SerialNumber
+                !string.IsNullOrWhiteSpace(SerialNumberType?.SerialNumber)
+                ? SerialNumberType?.SerialNumber
                 : string.Empty;
 
             set => SerialNumberType.SerialNumber = value;
@@ -20,7 +20,7 @@
 
         public bool IsComplete()
         {
-            return !string.IsNullOrWhiteSpace(SerialNumberType.SerialNumber);
+            return !string.IsNullOrWhiteSpace(SerialNumberType?.SerialNumber);
         }
     }
 }

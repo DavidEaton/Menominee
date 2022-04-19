@@ -20,7 +20,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         private bool CanEdit { get; set; } = false;
 
-        public IList<SerialNumberListItem> SerialNumberList { get; set; } = new List<SerialNumberListItem>();
+        public List<SerialNumberListItem> SerialNumbers { get; set; } = new();
+
         public SerialNumberListItem SerialNumber { get; set; }
 
         public void Save()
@@ -37,7 +38,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            SerialNumberList = RepairOrderHelper.BuildSerialNumberList(RepairOrder.Services);
+            SerialNumbers = RepairOrderHelper.BuildSerialNumberList(RepairOrder.Services);
         }
 
         private void UpdateMissingSerialNumberCount()

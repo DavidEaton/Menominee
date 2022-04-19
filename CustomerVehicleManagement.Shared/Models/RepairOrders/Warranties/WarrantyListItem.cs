@@ -12,8 +12,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties
         public string WarrantyNumber
         {
             get =>
-                !string.IsNullOrWhiteSpace(WarrantyType.OriginalWarranty)
-                ? WarrantyType.OriginalWarranty
+                !string.IsNullOrWhiteSpace(WarrantyType?.OriginalWarranty)
+                ? WarrantyType?.OriginalWarranty
                 : string.Empty;
 
             set => WarrantyType.OriginalWarranty = value;
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties
         public RepairOrderWarrantyToWrite WarrantyType { get; set; }
         public bool IsComplete()
         {
-            return Quantity > 0;
+            return WarrantyType is null ? false : Quantity > 0;
         }
     }
 }

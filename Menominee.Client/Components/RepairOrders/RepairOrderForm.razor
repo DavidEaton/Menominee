@@ -36,9 +36,9 @@
                                      Enabled="HasPurchases()"
                                      Class="@(PurchasesSelected ? "m-button-selected" : "m-button-not-selected")">
                 Purchases
-                @if (PurchaseInfoNeededCount > 0)
+                @if (PurchasesMissingCount > 0)
                 {
-                    <span class="badge badge-danger">@PurchaseInfoNeededCount</span>
+                    <span class="badge badge-danger">@PurchasesMissingCount</span>
                 }
             </ButtonGroupToggleButton>
 
@@ -89,12 +89,13 @@
                 @if (InspectionsSelected)
                 {
                     <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
-                                          PreviousInspections="PreviousInspections" />
+                                              PreviousInspections="PreviousInspections" />
                 }
 
                 @if (PurchasesSelected)
                 {
-                    <RepairOrderPurchasesTab Purchases="PurchaseList" />
+                    <RepairOrderPurchasesTab RepairOrder="RepairOrderToEdit"
+                                             Updated="UpdatePurchasesMissingCount"/>
                 }
 
                 @if (WarrantiesSelected)
