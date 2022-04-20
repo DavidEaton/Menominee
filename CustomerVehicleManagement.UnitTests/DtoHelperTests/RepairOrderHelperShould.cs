@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
 using FluentAssertions;
@@ -76,6 +77,19 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
+        public void BuildPurchaseList()
+        {
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = DeserializeRepairOrder(jsonString);
+
+            var repairOrderToEdit = RepairOrderHelper.Transform(repairOrder);
+            var warrantyList = RepairOrderHelper.BuildPurchaseList(repairOrderToEdit.Services);
+
+            warrantyList.Should().BeOfType<List<PurchaseListItem>>();
+            warrantyList.Count.Should().Be(5);
+        }
+
+        [Fact]
         public void Return_Correct_WarrantyRequiredMissingCount()
         {
             // repair-order-graph.json contains 1 Services row, having one Items row,
@@ -90,15 +104,29 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
         }
 
         [Fact]
+        public void Return_Correct_PurchaseRequiredMissingCount()
+        {
+            // repair-order-graph.json contains 1 Services row, having one Items row,
+            // having "quantitySold": 5, and 1 Purchases row. Therefore, 
+            // PurchaseRequiredMissingCount == 1.
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = DeserializeRepairOrder(jsonString);
+
+            var repairOrderToEdit = RepairOrderHelper.Transform(repairOrder);
+
+            RepairOrderHelper.PurchaseRequiredMissingCount(repairOrderToEdit.Services).Should().Be(1);
+        }
+
+        [Fact]
         public void Create_Missing_SerialNumbers_On_CreateRepairOrder()
         {
             string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
             repairOrder = DeserializeRepairOrder(jsonString);
             var repairOrderToEdit = RepairOrderHelper.Transform(repairOrder);
 
-            var createdSerialNumbers = repairOrderToEdit.Services[0].Items[0].SerialNumbers;
+            var createdSerialNumbersToWrite = repairOrderToEdit.Services[0].Items[0].SerialNumbers;
 
-            createdSerialNumbers[0].Should().BeOfType<RepairOrderSerialNumberToWrite>();
+            createdSerialNumbersToWrite[0].Should().BeOfType<RepairOrderSerialNumberToWrite>();
         }
 
         [Fact]
@@ -108,9 +136,21 @@ namespace CustomerVehicleManagement.UnitTests.DtoHelperTests
             repairOrder = DeserializeRepairOrder(jsonString);
             var repairOrderToEdit = RepairOrderHelper.Transform(repairOrder);
 
-            var createdWarranties = repairOrderToEdit.Services[0].Items[0].Warranties;
+            var createdWarrantiesToWrite = repairOrderToEdit.Services[0].Items[0].Warranties;
 
-            createdWarranties[0].Should().BeOfType<RepairOrderWarrantyToWrite>();
+            createdWarrantiesToWrite[0].Should().BeOfType<RepairOrderWarrantyToWrite>();
+        }
+
+        [Fact]
+        public void Create_Missing_Purchases_On_CreateRepairOrder()
+        {
+            string jsonString = File.ReadAllText("./TestData/repair-order-graph.json");
+            repairOrder = DeserializeRepairOrder(jsonString);
+            var repairOrderToEdit = RepairOrderHelper.Transform(repairOrder);
+
+            var createdPurchasesToWrite = repairOrderToEdit.Services[0].Items[0].Purchases;
+
+            createdPurchasesToWrite[0].Should().BeOfType<RepairOrderPurchaseToWrite>();
         }
 
         private RepairOrderToRead DeserializeRepairOrder(string jsonString)
