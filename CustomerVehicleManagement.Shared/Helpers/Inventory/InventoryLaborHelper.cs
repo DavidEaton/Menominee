@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
 {
     public class InventoryLaborHelper
     {
-        public static InventoryLabor CreateEntityFromWriteDto(InventoryLaborToWrite labor)
+        public static InventoryItemLabor CreateEntityFromWriteDto(InventoryLaborToWrite labor)
         {
             return new()
             {
@@ -27,6 +27,15 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
                 TechPayAmount = labor.TechPayAmount,
                 SkillLevel = labor.SkillLevel
             };
+        }
+
+        public static void CopyWriteDtoToEntity(InventoryLaborToWrite laborToUpdate, InventoryItemLabor labor)
+        {
+            labor.LaborType = laborToUpdate.LaborType;
+            labor.LaborAmount = laborToUpdate.LaborAmount;
+            labor.TechPayType = laborToUpdate.TechPayType;
+            labor.TechPayAmount = laborToUpdate.TechPayAmount;
+            labor.SkillLevel = laborToUpdate.SkillLevel;
         }
     }
 }

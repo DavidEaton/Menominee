@@ -11,11 +11,11 @@ namespace CustomerVehicleManagement.Api.Inventory
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InventoryTiresController : ControllerBase
+    public class InventoryItemTiresControllerXXX : ControllerBase
     {
-        private readonly IInventoryTireRepository tireRepository;
+        private readonly IInventoryItemTireRepositoryXXX tireRepository;
 
-        public InventoryTiresController(IInventoryTireRepository tireRepository)
+        public InventoryItemTiresControllerXXX(IInventoryItemTireRepositoryXXX tireRepository)
         {
             this.tireRepository = tireRepository ?? throw new ArgumentNullException(nameof(tireRepository));
         }
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         [HttpPost]
         public async Task<ActionResult> AddInventoryTireAsync(InventoryTireToWrite tireToAdd)
         {
-            InventoryTire tire = null;
+            InventoryItemTire tire = null;
 
             await tireRepository.AddTireAsync(tire);
 

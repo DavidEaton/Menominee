@@ -8,9 +8,9 @@ namespace Menominee.Client.Services.SaleCodes
 {
     public interface ISaleCodeDataService
     {
-        Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodes();
-        Task<SaleCodeToRead> GetSaleCode(long id);
-        Task<SaleCodeToRead> AddSaleCode(SaleCodeToWrite saleCode);
-        Task UpdateSaleCode(SaleCodeToWrite saleCode, long id);
+        Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodesAsync();
+        Task<SaleCodeToRead> GetSaleCodeAsync(long id);
+        Task<SaleCodeToRead> AddSaleCodeAsync(SaleCodeToWrite saleCode);
+        Task UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id);
     }
 }

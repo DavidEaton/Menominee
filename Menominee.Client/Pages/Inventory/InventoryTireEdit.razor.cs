@@ -1,11 +1,12 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+﻿using CustomerVehicleManagement.Shared.Helpers.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages.Inventory
 {
-    public partial class InventoryItemEdit : ComponentBase
+    public partial class InventoryTireEdit : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }
@@ -26,25 +27,10 @@ namespace Menominee.Client.Pages.Inventory
             }
             else
             {
-                var readDto = await DataService.GetItem(ItemId);
+                var readDto = await DataService.GetItemAsync(ItemId);
                 if (readDto != null)
                 {
-                    Item = new InventoryItemToWrite()
-                    {
-                        Id = readDto.Id,
-                        //Manufacturer = readDto.Manufacturer,
-                        ManufacturerId = readDto.ManufacturerId,
-                        ItemNumber = readDto.ItemNumber,
-                        Description = readDto.Description,
-                        //ProductCode = readDto.ProductCode,
-                        ProductCodeId = readDto.ProductCodeId,
-                        ItemType = readDto.ItemType,
-                        DetailId = readDto.DetailId
-                        //SuggestedPrice = readDto.SuggestedPrice,
-                        //Cost = readDto.Cost,
-                        //Labor = readDto.Labor,
-                        //QuantityOnHand = readDto.QuantityOnHand
-                    };
+                    Item = InventoryItemHelper.CreateWriteDtoFromReadDto(readDto);
                 }
                 else
                 {
@@ -59,12 +45,12 @@ namespace Menominee.Client.Pages.Inventory
         {
             if (ItemId == 0)
             {
-                var item = await DataService.AddItem(Item);
+                var item = await DataService.AddItemAsync(Item);
                 ItemId = Item.Id;
             }
             else
             {
-                await DataService.UpdateItem(Item, ItemId);
+                await DataService.UpdateItemAsync(Item, ItemId);
             }
 
             EndEdit();

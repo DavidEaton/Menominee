@@ -8,10 +8,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public long Id { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
         public long ManufacturerId { get; set; }
+        public string ManufacturerName { get; set; }
         public string ItemNumber { get; set; }
         public string Description { get; set; }
         public virtual ProductCode ProductCode { get; set; }
         public long ProductCodeId { get; set; }
+        public string ProductCodeName { get; set; }
         public InventoryItemType ItemType { get; set; }
         public long DetailId { get; set; }
 
@@ -29,12 +31,17 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                     Id = item.Id,
                     Manufacturer = item.Manufacturer,
                     ManufacturerId = item.ManufacturerId,
+                    ManufacturerName = item.Manufacturer?.Name,
                     ItemNumber = item.ItemNumber,
                     Description = item.Description,
                     ProductCode = item.ProductCode,
                     ProductCodeId = item.ProductCodeId,
+                    ProductCodeName = item.ProductCode?.Name,
                     ItemType = item.ItemType,
                     DetailId = item.DetailId
+                    //Part ???
+                    //Labor ???
+                    //Tire ???
                     //QuantityOnHand = item.QuantityOnHand,
                     //Cost = item.Cost,
                     //SuggestedPrice = item.SuggestedPrice,

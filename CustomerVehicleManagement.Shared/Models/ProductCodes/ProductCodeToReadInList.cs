@@ -15,6 +15,13 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
         public string Code { get; set; }
         public SaleCode SaleCode { get; set; }
         public string Name { get; set; }
+        public string DisplayText
+        {
+            get
+            {
+                return Code + " - " + Name;
+            }
+        }
 
         public static ProductCodeToReadInList ConvertToDto(ProductCode pc)
         {

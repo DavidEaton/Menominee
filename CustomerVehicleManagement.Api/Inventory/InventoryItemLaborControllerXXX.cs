@@ -9,11 +9,11 @@ namespace CustomerVehicleManagement.Api.Inventory
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InventoryLaborController : ControllerBase
+    public class InventoryItemLaborControllerXXX : ControllerBase
     {
-        private readonly IInventoryLaborRepository laborRepository;
+        private readonly IInventoryItemLaborRepositoryXXX laborRepository;
 
-        public InventoryLaborController(IInventoryLaborRepository laborRepository)
+        public InventoryItemLaborControllerXXX(IInventoryItemLaborRepositoryXXX laborRepository)
         {
             this.laborRepository = laborRepository ?? throw new ArgumentNullException(nameof(laborRepository));
         }
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         [HttpPost]
         public async Task<ActionResult> AddInventoryPartAsync(InventoryLaborToWrite laborToAdd)
         {
-            InventoryLabor labor = null;
+            InventoryItemLabor labor = null;
 
             await laborRepository.AddLaborAsync(labor);
 

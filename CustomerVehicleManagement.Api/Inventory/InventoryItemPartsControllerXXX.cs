@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    [Route("api/[controller]")]
+    //[Route("api/inventoryitems/[controller]")]
+    [Route("api/inventoryitems/parts")]
     [ApiController]
-    public class InventoryPartsController : ControllerBase
+    public class InventoryItemPartsControllerXXX : ControllerBase
     {
-        private readonly IInventoryPartRepository partRepository;
+        private readonly IInventoryItemPartRepositoryXXX partRepository;
 
-        public InventoryPartsController(IInventoryPartRepository partRepository)
+        public InventoryItemPartsControllerXXX(IInventoryItemPartRepositoryXXX partRepository)
         {
             this.partRepository = partRepository ?? throw new ArgumentNullException(nameof(partRepository));
         }
@@ -74,7 +75,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         [HttpPost]
         public async Task<ActionResult> AddInventoryPartAsync(InventoryPartToWrite partToAdd)
         {
-            InventoryPart part = null;
+            InventoryItemPart part = null;
 
             await partRepository.AddPartAsync(part);
 

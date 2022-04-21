@@ -1,9 +1,14 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
-    public class InventoryPart : Entity
+    public abstract class InstallablePart : Entity
     {
         public double List { get; set; }
         public double Cost { get; set; }

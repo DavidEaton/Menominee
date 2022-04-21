@@ -170,10 +170,10 @@ namespace Menominee.Client.Components.RepairOrders
             // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";
 
-            if (RepairOrder.CustomerName.Length > 0)
+            if (RepairOrder.CustomerName?.Length > 0)
                 title += $"   ~   {RepairOrder.CustomerName}";
 
-            if (RepairOrder.Vehicle.Length > 0)
+            if (RepairOrder.Vehicle?.Length > 0)
                 title += $"   ~   {RepairOrder.Vehicle}";
 
             Title = title;

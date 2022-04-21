@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Configurations.Inventory
 {
-    public class InventoryLaborConfiguration : EntityConfiguration<InventoryLabor>
+    public class InventoryItemLaborConfiguration : EntityConfiguration<InventoryItemLabor>
     {
-        public override void Configure(EntityTypeBuilder<InventoryLabor> builder)
+        public override void Configure(EntityTypeBuilder<InventoryItemLabor> builder)
         {
             base.Configure(builder);
-            builder.ToTable("InventoryLabor", "dbo");
+            builder.ToTable("InventoryItemLabor", "dbo");
 
             builder.Ignore(item => item.TrackingState);
         }

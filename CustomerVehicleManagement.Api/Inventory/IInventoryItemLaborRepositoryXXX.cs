@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public interface IInventoryLaborRepository
+    public interface IInventoryItemLaborRepositoryXXX
     {
-        Task AddLaborAsync(InventoryLabor labor);
+        Task AddLaborAsync(InventoryItemLabor labor);
         Task DeleteLaborAsync(long id);
         void FixTrackingState();
         Task<bool> LaborExistsAsync(long id);
-        Task<InventoryLabor> UpdateLaborAsync(InventoryLabor labor);
+        Task<InventoryItemLabor> UpdateLaborAsync(InventoryItemLabor labor);
         Task<IReadOnlyList<InventoryLaborToRead>> GetLaborsAsync();
         Task<IReadOnlyList<InventoryLaborToReadInList>> GetLaborListAsync();
         Task<InventoryLaborToRead> GetLaborAsync(long id);
-        Task<InventoryLabor> GetLaborEntityAsync(long id);
+        Task<InventoryItemLabor> GetLaborEntityAsync(long id);
         Task<bool> SaveChangesAsync();
     }
 }

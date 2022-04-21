@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public interface IInventoryTireRepository
+    public interface IInventoryItemTireRepositoryXXX
     {
-        Task AddTireAsync(InventoryTire tire);
+        Task AddTireAsync(InventoryItemTire tire);
         Task DeleteTireAsync(long id);
         void FixTrackingState();
         Task<bool> TireExistsAsync(long id);
-        Task<InventoryTire> UpdateTireAsync(InventoryTire tire);
+        Task<InventoryItemTire> UpdateTireAsync(InventoryItemTire tire);
         Task<IReadOnlyList<InventoryTireToRead>> GetTiresAsync();
         Task<IReadOnlyList<InventoryTireToReadInList>> GetTiresInListAsync();
         Task<InventoryTireToRead> GetTireAsync(long id);
-        Task<InventoryTire> GetTireEntityAsync(long id);
+        Task<InventoryItemTire> GetTireEntityAsync(long id);
         Task<bool> SaveChangesAsync();
     }
 }

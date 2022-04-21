@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class InventoryLaborRepository : IInventoryLaborRepository
+    public class InventoryItemLaborRepositoryXXX : IInventoryItemLaborRepositoryXXX
     {
         private readonly ApplicationDbContext context;
 
-        public InventoryLaborRepository(ApplicationDbContext context)
+        public InventoryItemLaborRepositoryXXX(ApplicationDbContext context)
         {
             Guard.ForNull(context, "context");
 
             this.context = context;
         }
 
-        public async Task AddLaborAsync(InventoryLabor labor)
+        public async Task AddLaborAsync(InventoryItemLabor labor)
         {
             Guard.ForNull(labor, "labor");
 
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task DeleteLaborAsync(long id)
         {
-            var labor = await context.InventoryLabor
+            var labor = await context.InventoryItemLabor
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(labor => labor.Id == id);
 
@@ -49,28 +49,28 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<IReadOnlyList<InventoryLaborToRead>> GetLaborsAsync()
         {
-            var laborFromContext = await context.InventoryLabor.ToArrayAsync();
+            var laborFromContext = await context.InventoryItemLabor.ToArrayAsync();
 
             return laborFromContext.Select(labor => InventoryLaborToRead.ConvertToDto(labor)).ToList();
         }
 
         public async Task<InventoryLaborToRead> GetLaborAsync(long id)
         {
-            var laborFromContext = await context.InventoryLabor
+            var laborFromContext = await context.InventoryItemLabor
                                                 .FirstOrDefaultAsync(labor => labor.Id == id);
 
             return InventoryLaborToRead.ConvertToDto(laborFromContext);
         }
 
-        public async Task<InventoryLabor> GetLaborEntityAsync(long id)
+        public async Task<InventoryItemLabor> GetLaborEntityAsync(long id)
         {
-            return await context.InventoryLabor
+            return await context.InventoryItemLabor
                                 .FirstOrDefaultAsync(labor => labor.Id == id);
         }
 
         public async Task<IReadOnlyList<InventoryLaborToReadInList>> GetLaborListAsync()
         {
-            var laborFromContext = await context.InventoryLabor.ToArrayAsync();
+            var laborFromContext = await context.InventoryItemLabor.ToArrayAsync();
 
             return laborFromContext.Select(labor => InventoryLaborToReadInList.ConvertToDto(labor))
                                    .ToList();
@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<bool> LaborExistsAsync(long id)
         {
-            return await context.InventoryLabor.AnyAsync(labor => labor.Id == id);
+            return await context.InventoryItemLabor.AnyAsync(labor => labor.Id == id);
         }
 
         public async Task<bool> SaveChangesAsync()
@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             return (await context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<InventoryLabor> UpdateLaborAsync(InventoryLabor labor)
+        public async Task<InventoryItemLabor> UpdateLaborAsync(InventoryItemLabor labor)
         {
             Guard.ForNull(labor, "labor");
 

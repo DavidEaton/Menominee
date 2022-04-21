@@ -8,10 +8,10 @@ namespace Menominee.Client.Services.Inventory
 {
     public interface IInventoryItemDataService
     {
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItems();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItems(long mfrId);
-        Task<InventoryItemToRead> GetItem(long id);
-        Task<InventoryItemToRead> AddItem(InventoryItemToWrite item);
-        Task UpdateItem(InventoryItemToWrite item, long id);
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync(long mfrId);
+        Task<InventoryItemToRead> GetItemAsync(long id);
+        Task<InventoryItemToRead> AddItemAsync(InventoryItemToWrite item);
+        Task UpdateItemAsync(InventoryItemToWrite item, long id);
     }
 }

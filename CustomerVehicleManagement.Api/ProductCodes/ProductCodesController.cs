@@ -25,18 +25,27 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync()
         {
-            var results = await repository.GetProductCodeListAsync();
+            var results = await repository.GetProductCodesInListAsync();
+            return Ok(results);
+        }
+
+        // api/productcodes/listing/1
+        [Route("listing")]
+        [HttpGet("listing/{mfrid:long}")]
+        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId)
+        {
+            var results = await repository.GetProductCodesInListAsync(mfrId);
             return Ok(results);
         }
 
         // api/productcodes/listing/1/1
-        [Route("listing")]
-        [HttpGet("listing/{mfrid:long}/{scId:long}")]
-        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId, long saleCodeId)
-        {
-            var results = await repository.GetProductCodeListAsync(mfrId, saleCodeId);
-            return Ok(results);
-        }
+        //[Route("listing")]
+        //[HttpGet("listing/{mfrid:long}/{scId:long}")]
+        //public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId, long saleCodeId)
+        //{
+        //    var results = await repository.GetProductCodesInListAsync(mfrId, saleCodeId);
+        //    return Ok(results);
+        //}
 
         // api/productcodes/xyz/123
         [HttpGet("{mfrcode}/{code}")]
@@ -75,7 +84,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            repository.UpdateProductCodeAsync(pc);
+            await repository.UpdateProductCodeAsync(pc);
 
             await repository.SaveChangesAsync();
 

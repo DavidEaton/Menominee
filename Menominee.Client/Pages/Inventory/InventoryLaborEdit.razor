@@ -1,0 +1,10 @@
+﻿@page "/inventory/labor/{ItemId:long}"
+
+<InventoryMenu />
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryLaborForm Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

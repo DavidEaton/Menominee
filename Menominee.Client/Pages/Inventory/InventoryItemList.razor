@@ -47,23 +47,31 @@
                     <GridColumns>
                         <Telerik.Blazor.Components.GridColumn Width="20%"
                                                               Field="@nameof(InventoryItemToReadInList.ItemNumber)"
-                                                              Title="Part Number">
+                                                              Title="Item Number">
                         </Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="50%"
+                        <Telerik.Blazor.Components.GridColumn Width="40%"
                                                               Field="@nameof(InventoryItemToReadInList.Description)"
                                                               Title="Description">
                         </Telerik.Blazor.Components.GridColumn>
-                        @*<Telerik.Blazor.Components.GridColumn Width="15%"
-                                                              Field="@nameof(InventoryItemToReadInList.SuggestedPrice)"
-                                                              Title="Retail"
-                                                              TextAlign="ColumnTextAlign.Right"
-                                                              DisplayFormat="{0:C}">
+                        <Telerik.Blazor.Components.GridColumn Width="20%"
+                                                              Field="@nameof(InventoryItemToReadInList.ManufacturerName)"
+                                                              Title="Manufacturer">
                         </Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%"
-                                                              Field="@nameof(InventoryItemToReadInList.QuantityOnHand)"
-                                                              TextAlign="ColumnTextAlign.Right"
-                                                              Title="On Hand">
-                        </Telerik.Blazor.Components.GridColumn>*@
+                        <Telerik.Blazor.Components.GridColumn Width="20%"
+                                                              Field="@nameof(InventoryItemToReadInList.ProductCodeName)"
+                                                              Title="Product Line">
+                        </Telerik.Blazor.Components.GridColumn>
+                        @*<Telerik.Blazor.Components.GridColumn Width="15%"
+                                              Field="@nameof(InventoryItemToReadInList.SuggestedPrice)"
+                                              Title="Retail"
+                                              TextAlign="ColumnTextAlign.Right"
+                                              DisplayFormat="{0:C}">
+        </Telerik.Blazor.Components.GridColumn>
+        <Telerik.Blazor.Components.GridColumn Width="15%"
+                                              Field="@nameof(InventoryItemToReadInList.QuantityOnHand)"
+                                              TextAlign="ColumnTextAlign.Right"
+                                              Title="On Hand">
+        </Telerik.Blazor.Components.GridColumn>*@
                     </GridColumns>
                 </TelerikGrid>
 

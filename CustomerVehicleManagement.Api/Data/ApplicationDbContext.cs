@@ -107,9 +107,9 @@ namespace CustomerVehicleManagement.Api.Data
 
             // Inventory
             modelBuilder.ApplyConfiguration(new InventoryItemConfiguration());
-            modelBuilder.ApplyConfiguration(new InventoryPartConfiguration());
-            modelBuilder.ApplyConfiguration(new InventoryLaborConfiguration());
-            modelBuilder.ApplyConfiguration(new InventoryTireConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemPartConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemLaborConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemTireConfiguration());
         }
 
         private string GetTenantConnection()
@@ -211,9 +211,9 @@ namespace CustomerVehicleManagement.Api.Data
 
         // Inventory
         public DbSet<InventoryItem> InventoryItems { get; set; }
-        public DbSet<InventoryPart> InventoryParts { get; set; }
-        public DbSet<InventoryLabor> InventoryLabor { get; set; }
-        public DbSet<InventoryTire> InventoryTires { get; set; }
+        public DbSet<InventoryItemPart> InventoryItemParts { get; set; }
+        public DbSet<InventoryItemLabor> InventoryItemLabor { get; set; }
+        public DbSet<InventoryItemTire> InventoryItemTires { get; set; }
 
         #endregion
     }

@@ -11,6 +11,76 @@ namespace CustomerVehicleManagement.Api.Migrations
                 name: "dbo");
 
             migrationBuilder.CreateTable(
+                name: "InventoryLabor",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LaborType = table.Column<int>(type: "int", nullable: false),
+                    LaborAmount = table.Column<double>(type: "float", nullable: false),
+                    TechPayType = table.Column<int>(type: "int", nullable: false),
+                    TechPayAmount = table.Column<double>(type: "float", nullable: false),
+                    SkillLevel = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryLabor", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryPart",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    List = table.Column<double>(type: "float", nullable: false),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    Core = table.Column<double>(type: "float", nullable: false),
+                    Retail = table.Column<double>(type: "float", nullable: false),
+                    TechPayType = table.Column<int>(type: "int", nullable: false),
+                    TechPayAmount = table.Column<double>(type: "float", nullable: false),
+                    LineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubLineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fractional = table.Column<bool>(type: "bit", nullable: false),
+                    SkillLevel = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryPart", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTire",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Width = table.Column<double>(type: "float", nullable: false),
+                    AspectRatio = table.Column<double>(type: "float", nullable: false),
+                    Diameter = table.Column<double>(type: "float", nullable: false),
+                    LoadIndex = table.Column<int>(type: "int", nullable: false),
+                    SpeedRating = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    List = table.Column<double>(type: "float", nullable: false),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    Core = table.Column<double>(type: "float", nullable: false),
+                    Retail = table.Column<double>(type: "float", nullable: false),
+                    TechPayType = table.Column<int>(type: "int", nullable: false),
+                    TechPayAmount = table.Column<double>(type: "float", nullable: false),
+                    LineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubLineCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Fractional = table.Column<bool>(type: "bit", nullable: false),
+                    SkillLevel = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTire", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Manufacturer",
                 schema: "dbo",
                 columns: table => new
@@ -82,6 +152,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                     InvoiceNumber = table.Column<long>(type: "bigint", nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Vehicle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PartsTotal = table.Column<double>(type: "float", nullable: false),
+                    LaborTotal = table.Column<double>(type: "float", nullable: false),
+                    DiscountTotal = table.Column<double>(type: "float", nullable: false),
+                    TaxTotal = table.Column<double>(type: "float", nullable: false),
+                    HazMatTotal = table.Column<double>(type: "float", nullable: false),
+                    ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -202,6 +278,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     IsDeclined = table.Column<bool>(type: "bit", nullable: false),
                     PartsTotal = table.Column<double>(type: "float", nullable: false),
                     LaborTotal = table.Column<double>(type: "float", nullable: false),
+                    DiscountTotal = table.Column<double>(type: "float", nullable: false),
                     TaxTotal = table.Column<double>(type: "float", nullable: false),
                     ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false)
@@ -314,8 +391,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     CustomerType = table.Column<int>(type: "int", nullable: false),
                     AllowMail = table.Column<bool>(type: "bit", nullable: true),
                     AllowEmail = table.Column<bool>(type: "bit", nullable: true),
-                    AllowSms = table.Column<bool>(type: "bit", nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AllowSms = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -449,6 +525,63 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "InventoryItem",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ManufacturerId = table.Column<long>(type: "bigint", nullable: false),
+                    ItemNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductCodeId = table.Column<long>(type: "bigint", nullable: false),
+                    ItemType = table.Column<int>(type: "int", nullable: false),
+                    DetailId = table.Column<long>(type: "bigint", nullable: false),
+                    PartId = table.Column<long>(type: "bigint", nullable: true),
+                    LaborId = table.Column<long>(type: "bigint", nullable: true),
+                    TireId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryItem_InventoryLabor_LaborId",
+                        column: x => x.LaborId,
+                        principalSchema: "dbo",
+                        principalTable: "InventoryLabor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItem_InventoryPart_PartId",
+                        column: x => x.PartId,
+                        principalSchema: "dbo",
+                        principalTable: "InventoryPart",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItem_InventoryTire_TireId",
+                        column: x => x.TireId,
+                        principalSchema: "dbo",
+                        principalTable: "InventoryTire",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItem_Manufacturer_ManufacturerId",
+                        column: x => x.ManufacturerId,
+                        principalSchema: "dbo",
+                        principalTable: "Manufacturer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryItem_ProductCode_ProductCodeId",
+                        column: x => x.ProductCodeId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductCode",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RepairOrderItems",
                 schema: "dbo",
                 columns: table => new
@@ -457,11 +590,11 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: false),
                     SequenceNumber = table.Column<int>(type: "int", nullable: false),
-                    ManufacturerId = table.Column<long>(type: "bigint", nullable: true),
+                    ManufacturerId = table.Column<long>(type: "bigint", nullable: false),
                     PartNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SaleCodeId = table.Column<long>(type: "bigint", nullable: true),
-                    ProductCodeId = table.Column<long>(type: "bigint", nullable: true),
+                    SaleCodeId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductCodeId = table.Column<long>(type: "bigint", nullable: false),
                     SaleType = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     PartType = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     IsDeclined = table.Column<bool>(type: "bit", nullable: false),
@@ -485,14 +618,14 @@ namespace CustomerVehicleManagement.Api.Migrations
                         principalSchema: "dbo",
                         principalTable: "Manufacturer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RepairOrderItems_ProductCode_ProductCodeId",
                         column: x => x.ProductCodeId,
                         principalSchema: "dbo",
                         principalTable: "ProductCode",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RepairOrderItems_RepairOrderServices_RepairOrderServiceId",
                         column: x => x.RepairOrderServiceId,
@@ -506,7 +639,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         principalSchema: "dbo",
                         principalTable: "SaleCode",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -715,6 +848,36 @@ namespace CustomerVehicleManagement.Api.Migrations
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryItem_LaborId",
+                schema: "dbo",
+                table: "InventoryItem",
+                column: "LaborId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItem_ManufacturerId",
+                schema: "dbo",
+                table: "InventoryItem",
+                column: "ManufacturerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItem_PartId",
+                schema: "dbo",
+                table: "InventoryItem",
+                column: "PartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItem_ProductCodeId",
+                schema: "dbo",
+                table: "InventoryItem",
+                column: "ProductCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryItem_TireId",
+                schema: "dbo",
+                table: "InventoryItem",
+                column: "TireId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Organization_ContactId",
                 schema: "dbo",
                 table: "Organization",
@@ -854,6 +1017,10 @@ namespace CustomerVehicleManagement.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "InventoryItem",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "Phone",
                 schema: "dbo");
 
@@ -906,6 +1073,18 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "VendorInvoiceTax",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "InventoryLabor",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "InventoryPart",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "InventoryTire",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

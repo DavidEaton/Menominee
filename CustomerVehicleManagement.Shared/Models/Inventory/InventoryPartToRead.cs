@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public bool Fractional { get; set; }
         public SkillLevel SkillLevel { get; set; }
 
-        public static InventoryPartToRead ConvertToDto(InventoryPart part)
+        public static InventoryPartToRead ConvertToDto(InventoryItemPart part)
         {
             if (part != null)
             {

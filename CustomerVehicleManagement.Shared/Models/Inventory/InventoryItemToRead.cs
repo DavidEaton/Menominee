@@ -31,9 +31,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 var itemReadDto = new InventoryItemToRead
                 {
                     Id = item.Id,
+                    Manufacturer = item.Manufacturer,
                     ManufacturerId = item.ManufacturerId,
                     ItemNumber = item.ItemNumber,
                     Description = item.Description,
+                    ProductCode = item.ProductCode,
                     ProductCodeId = item.ProductCodeId,
                     ItemType = item.ItemType,
                     DetailId = item.DetailId
@@ -51,6 +53,8 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 {
                     itemReadDto.Tire = InventoryTireToRead.ConvertToDto(item.Tire);
                 }
+
+                return itemReadDto;
             }
 
             return null;

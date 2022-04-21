@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public double TechPayAmount { get; set; }
         public SkillLevel SkillLevel { get; set; }
 
-        public static InventoryLaborToReadInList ConvertToDto(InventoryLabor labor)
+        public static InventoryLaborToReadInList ConvertToDto(InventoryItemLabor labor)
         {
             if (labor != null)
             {

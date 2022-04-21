@@ -262,7 +262,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task<(string sc, string name)> GetSaleCode(long id)
         {
-            SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetSaleCode(id);
+            SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetSaleCodeAsync(id);
             if (saleCodeToRead != null)
                 return (saleCodeToRead.Code, saleCodeToRead.Name);
 

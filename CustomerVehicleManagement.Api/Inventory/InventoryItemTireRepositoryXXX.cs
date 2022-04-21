@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class InventoryTireRepository : IInventoryTireRepository
+    public class InventoryItemTireRepositoryXXX : IInventoryItemTireRepositoryXXX
     {
         private readonly ApplicationDbContext context;
 
-        public InventoryTireRepository(ApplicationDbContext context)
+        public InventoryItemTireRepositoryXXX(ApplicationDbContext context)
         {
             Guard.ForNull(context, "context");
 
             this.context = context;
         }
 
-        public async Task AddTireAsync(InventoryTire tire)
+        public async Task AddTireAsync(InventoryItemTire tire)
         {
             Guard.ForNull(tire, "tire");
 
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task DeleteTireAsync(long id)
         {
-            var tire = await context.InventoryTires
+            var tire = await context.InventoryItemTires
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(tire => tire.Id == id);
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<InventoryTireToRead> GetTireAsync(long id)
         {
-            var tireFromContext = await context.InventoryTires
+            var tireFromContext = await context.InventoryItemTires
                                                .AsNoTracking()
                                                .FirstOrDefaultAsync(tire => tire.Id == id);
 
@@ -58,15 +58,15 @@ namespace CustomerVehicleManagement.Api.Inventory
             return InventoryTireToRead.ConvertToDto(tireFromContext);
         }
 
-        public async Task<InventoryTire> GetTireEntityAsync(long id)
+        public async Task<InventoryItemTire> GetTireEntityAsync(long id)
         {
-            return await context.InventoryTires
+            return await context.InventoryItemTires
                                 .FirstOrDefaultAsync(tire => tire.Id == id);
         }
 
         public async Task<IReadOnlyList<InventoryTireToReadInList>> GetTiresInListAsync()
         {
-            var tiresFromContext = await context.InventoryTires
+            var tiresFromContext = await context.InventoryItemTires
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -77,7 +77,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<IReadOnlyList<InventoryTireToRead>> GetTiresAsync()
         {
             var tires = new List<InventoryTireToRead>();
-            var tiresFromContext = await context.InventoryTires
+            var tiresFromContext = await context.InventoryItemTires
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -94,10 +94,10 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<bool> TireExistsAsync(long id)
         {
-            return await context.InventoryTires.AnyAsync(tire => tire.Id == id);
+            return await context.InventoryItemTires.AnyAsync(tire => tire.Id == id);
         }
 
-        public async Task<InventoryTire> UpdateTireAsync(InventoryTire tire)
+        public async Task<InventoryItemTire> UpdateTireAsync(InventoryItemTire tire)
         {
             Guard.ForNull(tire, "tire");
 

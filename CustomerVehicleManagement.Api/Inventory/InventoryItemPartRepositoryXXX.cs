@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class InventoryPartRepository : IInventoryPartRepository
+    public class InventoryItemPartRepositoryXXX : IInventoryItemPartRepositoryXXX
     {
         private readonly ApplicationDbContext context;
 
-        public InventoryPartRepository(ApplicationDbContext context)
+        public InventoryItemPartRepositoryXXX(ApplicationDbContext context)
         {
             Guard.ForNull(context, "context");
 
             this.context = context;
         }
 
-        public async Task AddPartAsync(InventoryPart part)
+        public async Task AddPartAsync(InventoryItemPart part)
         {
             Guard.ForNull(part, "part");
 
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task DeletePartAsync(long id)
         {
-            var part = await context.InventoryParts
+            var part = await context.InventoryItemParts
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(part => part.Id == id);
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<InventoryPartToRead> GetPartAsync(long id)
         {
-            var partFromContext = await context.InventoryParts
+            var partFromContext = await context.InventoryItemParts
                                                .AsNoTracking()
                                                .FirstOrDefaultAsync(part => part.Id == id);
 
@@ -58,16 +58,16 @@ namespace CustomerVehicleManagement.Api.Inventory
             return InventoryPartToRead.ConvertToDto(partFromContext);
         }
 
-        public async Task<InventoryPart> GetPartEntityAsync(long id)
+        public async Task<InventoryItemPart> GetPartEntityAsync(long id)
         {
-            return await context.InventoryParts
+            return await context.InventoryItemParts
                                 .FirstOrDefaultAsync(part => part.Id == id);
         }
 
         public async Task<IReadOnlyList<InventoryPartToRead>> GetPartsAsync()
         {
             var parts = new List<InventoryPartToRead>();
-            var partsFromContext = await context.InventoryParts
+            var partsFromContext = await context.InventoryItemParts
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<IReadOnlyList<InventoryPartToReadInList>> GetPartsInListAsync()
         {
-            var partsFromContext = await context.InventoryParts
+            var partsFromContext = await context.InventoryItemParts
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<bool> PartExistsAsync(long id)
         {
-            return await context.InventoryParts.AnyAsync(part => part.Id == id);
+            return await context.InventoryItemParts.AnyAsync(part => part.Id == id);
         }
 
         public async Task<bool> SaveChangesAsync()
@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             return (await context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<InventoryItem> UpdatePartAsync(InventoryPart part)
+        public async Task<InventoryItemPart> UpdatePartAsync(InventoryItemPart part)
         {
             Guard.ForNull(part, "part");
 

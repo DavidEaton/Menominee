@@ -57,7 +57,7 @@ namespace Menominee.Client.Pages.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            SearchFields.Add("PartNumber");
+            SearchFields.Add("ItemNumber");
             SearchFields.Add("Description");
 
             await FilterItemsList(0);
@@ -87,7 +87,7 @@ namespace Menominee.Client.Pages.Inventory
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await MfrDataService.GetAllManufacturers()).ToList();
+            Manufacturers = (await MfrDataService.GetAllManufacturersAsync()).ToList();
 
             ManufacturerList = new();
             ManufacturerList.Add(new ManufacturerX
@@ -99,7 +99,7 @@ namespace Menominee.Client.Pages.Inventory
             });
             foreach (var mfr in Manufacturers)
             {
-                if (mfr.Code != "0" && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
+                if (mfr.Code != "0" && mfr.Prefix?.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
                 {
                     ManufacturerList.Add(new ManufacturerX
                     {
@@ -115,9 +115,9 @@ namespace Menominee.Client.Pages.Inventory
         private async Task FilterItemsList(long mfrId)
         {
             if (mfrId > 0)
-                ItemsList = (await DataService.GetAllItems(mfrId)).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
             else
-                ItemsList = (await DataService.GetAllItems()).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync()).ToList();
 
             if (ItemsList.Count > 0)
             {
@@ -142,6 +142,7 @@ namespace Menominee.Client.Pages.Inventory
             {
                 ViewingMfrId = SelectedMfrId;
                 await FilterItemsList(ViewingMfrId);
+                Grid.Rebind();
             }
         }
 
@@ -154,12 +155,21 @@ namespace Menominee.Client.Pages.Inventory
         {
             ItemTypeSelectDialogVisible = false;
             if (SelectedItemType == InventoryItemType.Part)
-                NavigationManager.NavigateTo("inventory/items/0");
+                NavigationManager.NavigateTo("inventory/parts/0");
+            else if (SelectedItemType == InventoryItemType.Labor)
+                NavigationManager.NavigateTo("inventory/labor/0");
+            else if (SelectedItemType == InventoryItemType.Tire)
+                NavigationManager.NavigateTo("inventory/tires/0");
         }
 
         private void OnEdit()
         {
-            NavigationManager.NavigateTo($"inventory/items/{SelectedId}");
+            if (SelectedItem?.ItemType == InventoryItemType.Part)
+                NavigationManager.NavigateTo($"inventory/parts/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Labor)
+                NavigationManager.NavigateTo($"inventory/labor/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Tire)
+                NavigationManager.NavigateTo($"inventory/tires/{SelectedId}");
         }
 
         private void OnDelete()

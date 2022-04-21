@@ -8,9 +8,9 @@ namespace Menominee.Client.Services.Manufacturers
 {
     public interface IManufacturerDataService
     {
-        Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturers();
-        Task<ManufacturerToRead> GetManufacturer(long id);
-        Task<ManufacturerToRead> AddManufacturer(ManufacturerToWrite manufacturer);
-        Task UpdateManufacturer(ManufacturerToWrite manufacturer, long id);
+        Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturersAsync();
+        Task<ManufacturerToRead> GetManufacturerAsync(long id);
+        Task<ManufacturerToRead> AddManufacturerAsync(ManufacturerToWrite manufacturer);
+        Task UpdateManufacturerAsync(ManufacturerToWrite manufacturer, long id);
     }
 }

@@ -20,11 +20,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemType ItemType { get; set; }
         public long DetailId { get; set; }
 
-        public InventoryPart Part { get; private set; }
-        public InventoryLabor Labor { get; private set; }
-        public InventoryTire Tire { get; private set; }
+        public InventoryItemPart Part { get; private set; }
+        public InventoryItemLabor Labor { get; private set; }
+        public InventoryItemTire Tire { get; private set; }
 
-        public InventoryItem(InventoryPart part)
+        public InventoryItem(InventoryItemPart part)
         {
             Guard.ForNull(part, "part == null");
 
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             ItemType = InventoryItemType.Part;
         }
 
-        public InventoryItem(InventoryLabor labor)
+        public InventoryItem(InventoryItemLabor labor)
         {
             Guard.ForNull(labor, "labor == null");
 
@@ -40,14 +40,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             ItemType = InventoryItemType.Labor;
         }
 
-        public InventoryItem(InventoryTire tire)
+        public InventoryItem(InventoryItemTire tire)
         {
             Guard.ForNull(tire, "tire == null");
 
             Tire = tire;
             ItemType = InventoryItemType.Tire;
         }
-
 
         #region ORM
 

@@ -51,6 +51,12 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItemToRead> GetItemAsync(long id)
         {
             var itemFromContext = await context.InventoryItems
+                                               .Include(item => item.Manufacturer)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(pc => pc.SaleCode)
+                                               .Include(item => item.Part)
+                                               .Include(item => item.Labor)
+                                               .Include(item => item.Tire)
                                                .AsNoTracking()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
@@ -62,6 +68,12 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber)
         {
             var itemFromContext = await context.InventoryItems
+                                               .Include(item => item.Manufacturer)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(pc => pc.SaleCode)
+                                               .Include(item => item.Part)
+                                               .Include(item => item.Labor)
+                                               .Include(item => item.Tire)
                                                .AsNoTracking()
                                                .FirstOrDefaultAsync(item => item.ManufacturerId == mfrId && item.ItemNumber == itemNumber);
 
@@ -73,6 +85,12 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItem> GetItemEntityAsync(long id)
         {
             return await context.InventoryItems
+                                .Include(item => item.Manufacturer)
+                                .Include(item => item.ProductCode)
+                                    .ThenInclude(pc => pc.SaleCode)
+                                .Include(item => item.Part)
+                                .Include(item => item.Labor)
+                                .Include(item => item.Tire)
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
@@ -81,6 +99,9 @@ namespace CustomerVehicleManagement.Api.Inventory
             var items = new List<InventoryItemToRead>();
 
             var itemsFromContext = await context.InventoryItems
+                                                .Include(item => item.Manufacturer)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(pc => pc.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
@@ -96,6 +117,29 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync()
         {
             var itemsFromContext = await context.InventoryItems
+                                                .Include(item => item.Manufacturer)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(pc => pc.SaleCode)
+                                                .Include(item => item.Part)
+                                                .Include(item => item.Labor)
+                                                .Include(item => item.Tire)
+                                                .AsNoTracking()
+                                                .ToArrayAsync();
+
+            return itemsFromContext.Select(item => ConvertToDto(item))
+                                   .ToList();
+        }
+
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long mfrId)
+        {
+            var itemsFromContext = await context.InventoryItems
+                                                .Include(item => item.Manufacturer)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(pc => pc.SaleCode)
+                                                .Include(item => item.Part)
+                                                .Include(item => item.Labor)
+                                                .Include(item => item.Tire)
+                                                .Where(item => item.ManufacturerId == mfrId)
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -139,52 +183,19 @@ namespace CustomerVehicleManagement.Api.Inventory
             if (item == null)
                 return null;
 
-            if (item.ItemType == InventoryItemType.Part)
-            {
-                return new InventoryItemToReadInList()
-                {
-                    Id = item.Id,
-                    Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ProductCode = item.ProductCode,
-                    ProductCodeId = item.ProductCodeId,
-                    ItemType = item.ItemType
-                };
-            }
-            else if (item.ItemType == InventoryItemType.Labor)
-            {
-                // FIX ME -- WHAT DO WE NEED TO DO HERE?
-                return new InventoryItemToReadInList()
-                {
-                    Id = item.Id,
-                    Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ProductCode = item.ProductCode,
-                    ProductCodeId = item.ProductCodeId,
-                    ItemType = item.ItemType
-                };
-            }
-            else if (item.ItemType == InventoryItemType.Tire)
-            {
-                // FIX ME -- WHAT DO WE NEED TO DO HERE?
-                return new InventoryItemToReadInList()
-                {
-                    Id = item.Id,
-                    Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ProductCode = item.ProductCode,
-                    ProductCodeId = item.ProductCodeId,
-                    ItemType = item.ItemType
-                };
-            }
-            else
-                return null;
+            InventoryItemToReadInList itemInList = new();
+            itemInList.Id = item.Id;
+            itemInList.Manufacturer = item.Manufacturer;
+            itemInList.ManufacturerId = item.ManufacturerId;
+            itemInList.ManufacturerName = item.Manufacturer?.Name;
+            itemInList.ItemNumber = item.ItemNumber;
+            itemInList.Description = item.Description;
+            itemInList.ProductCode = item.ProductCode;
+            itemInList.ProductCodeId = item.ProductCodeId;
+            itemInList.ProductCodeName = item.ProductCode?.Name;
+            itemInList.ItemType = item.ItemType;
+
+            return itemInList;
         }
     }
 }

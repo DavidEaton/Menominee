@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryTireToReadInList
     {
+        public double List { get; set; }
+        public double Cost { get; set; }
+        public double Core { get; set; }
+        public double Retail { get; set; }
+        public ItemLaborType TechPayType { get; set; }
+        public double TechPayAmount { get; set; }
+        public string LineCode { get; set; }
+        public string SubLineCode { get; set; }
+        public bool Fractional { get; set; }
+        public SkillLevel SkillLevel { get; set; }
         public string Type { get; set; }
         public double Width { get; set; }
         public double AspectRatio { get; set; }
@@ -16,12 +27,22 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public int LoadIndex { get; set; }
         public string SpeedRating { get; set; }
 
-        public static InventoryTireToReadInList ConvertToDto(InventoryTire tire)
+        public static InventoryTireToReadInList ConvertToDto(InventoryItemTire tire)
         {
             if (tire != null)
             {
                 return new InventoryTireToReadInList
                 {
+                    List = tire.List,
+                    Cost = tire.Cost,
+                    Core = tire.Core,
+                    Retail = tire.Retail,
+                    TechPayType = tire.TechPayType,
+                    TechPayAmount = tire.TechPayAmount,
+                    LineCode = tire.LineCode,
+                    SubLineCode = tire.SubLineCode,
+                    Fractional = tire.Fractional,
+                    SkillLevel = tire.SkillLevel,
                     Type = tire.Type,
                     Width = tire.Width,
                     AspectRatio = tire.AspectRatio,

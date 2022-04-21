@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
 {
     public class InventoryPartHelper
     {
-        public static InventoryPart CreateEntityFromWriteDto(InventoryPartToWrite part)
+        public static InventoryItemPart CreateEntityFromWriteDto(InventoryPartToWrite part)
         {
             return new()
             {
@@ -37,6 +37,20 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
                 Fractional = part.Fractional,
                 SkillLevel = part.SkillLevel
             };
+        }
+
+        public static void CopyWriteDtoToEntity(InventoryPartToWrite partToUpdate, InventoryItemPart part)
+        {
+            part.List = partToUpdate.List;
+            part.Cost = partToUpdate.Cost;
+            part.Core = partToUpdate.Core;
+            part.Retail = partToUpdate.Retail;
+            part.TechPayType = partToUpdate.TechPayType;
+            part.TechPayAmount = partToUpdate.TechPayAmount;
+            part.LineCode = partToUpdate.LineCode;
+            part.SubLineCode = partToUpdate.SubLineCode;
+            part.Fractional = partToUpdate.Fractional;
+            part.SkillLevel = partToUpdate.SkillLevel;
         }
     }
 }
