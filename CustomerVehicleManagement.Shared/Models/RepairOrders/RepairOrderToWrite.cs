@@ -3,11 +3,10 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 {
-    public class RepairOrderToWrite// : INotifyPropertyChanged -- was trying to get the RO totals to update immediately
+    public class RepairOrderToWrite
     {
         public long RepairOrderNumber { get; set; } = 0;
         public long InvoiceNumber { get; set; } = 0;
@@ -19,35 +18,16 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public double TaxTotal { get; set; } = 0.0;
         public double HazMatTotal { get; set; } = 0.0;
         public double ShopSuppliesTotal { get; set; } = 0.0;
-        //private double _total { get; set; } = 0.0;
-        //public double Total
-        //{
-        //    get { return _total; }
-        //    set
-        //    {
-        //        this._total = value;
-        //        NotifyPropertyChanged(nameof(RepairOrderToWrite.Total));
-        //    }
-        //}
         public double Total { get; set; } = 0.0;
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime? DateInvoiced { get; set; }
 
-        public IList<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
-        public IList<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
-        public IList<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
+        public List<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
+        public List<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
+        public List<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
 
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private void NotifyPropertyChanged(string propertyName)
-        //{
-        //    var handler = PropertyChanged;
-        //    if (handler != null)
-        //    {
-        //        handler(this, new PropertyChangedEventArgs(propertyName));
-        //    }
-        //}
-
+        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrder.cs
         public void Recalculate()
         {
             PartsTotal = 0.0;

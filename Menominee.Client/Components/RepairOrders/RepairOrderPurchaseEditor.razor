@@ -1,134 +1,132 @@
-﻿@using Menominee.Common.Enums
-@using Telerik.Blazor.Components.Common.Editors
-
-<TelerikWindow Visible="DialogVisible"
-               Modal="true"
-               Width="450px"
-               Class="popupWindowClass">
-    <WindowTitle>
-        @Title
-    </WindowTitle>
-    <WindowContent>
-        <div class="form-row">
-            <div class="form-group col-12">
-                <label class="k-label" for="partNumber">Part Number</label>
-                <TelerikTextBox @bind-Value="@Purchase.PartNumber"
-                                Width="100%"
-                                AutoComplete="off"
-                                Enabled="false"
-                                Id="partNumber">
-                </TelerikTextBox>
+﻿<EditForm Model="Purchase">
+    <TelerikWindow Visible="DialogVisible"
+                   Modal="true"
+                   Width="450px"
+                   Class="popupWindowClass">
+        <WindowTitle>
+            @Title
+        </WindowTitle>
+        <WindowContent>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label" for="partNumber">Part Number</label>
+                    <TelerikTextBox @bind-Value="@Purchase.PartNumber"
+                                    Width="100%"
+                                    AutoComplete="off"
+                                    Enabled="false"
+                                    Id="partNumber">
+                    </TelerikTextBox>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-12">
-                <label class="k-label" for="description">Description</label>
-                <TelerikTextBox @bind-Value="@Purchase.Description"
-                                Width="100%"
-                                AutoComplete="off"
-                                Enabled="false"
-                                Id="description">
-                </TelerikTextBox>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label" for="description">Description</label>
+                    <TelerikTextBox @bind-Value="@Purchase.Description"
+                                    Width="100%"
+                                    AutoComplete="off"
+                                    Enabled="false"
+                                    Id="description">
+                    </TelerikTextBox>
+                </div>
             </div>
-        </div>
 
-        <hr class="m-section-divider">
+            <hr class="m-section-divider">
 
-        <div class="form-row">
-            <div class="form-group col-12">
-                @if (Vendors != null)
-                {
-                    <label class="k-label" for="vendor">Vendor</label>
-                    <TelerikDropDownList @bind-Value="@Purchase.VendorId"
+            <div class="form-row">
+                <div class="form-group col-12">
+                    @if (Vendors != null)
+                    {
+                        <label class="k-label" for="vendor">Vendor</label>
+                        <TelerikDropDownList @bind-Value="@Purchase.VendorId"
                                          Width="100%"
                                          Data="@VendorList"
                                          TextField="DisplayText"
                                          ValueField="Id"
                                          Id="vendor">
-                    </TelerikDropDownList>
-                }
+                        </TelerikDropDownList>
+                    }
+                </div>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-group col-12">
-                <label class="k-label" for="vendorPartNumber">Vendor Part Number</label>
-                <TelerikTextBox @bind-Value="@Purchase.VendorPartNumber"
-                                Width="100%"
-                                AutoComplete="off"
-                                Id="vendorPartNumber">
-                </TelerikTextBox>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="k-label" for="vendorPartNumber">Vendor Part Number</label>
+                    <TelerikTextBox @bind-Value="@Purchase.VendorPartNumber"
+                                    Width="100%"
+                                    AutoComplete="off"
+                                    Id="vendorPartNumber">
+                    </TelerikTextBox>
+                </div>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-group col-6">
-                <label class="k-label" for="invoiceNumber">Vendor Invoice Number</label>
-                <TelerikTextBox @bind-Value="@Purchase.VendorInvoiceNumber"
-                                Width="100%"
-                                AutoComplete="off"
-                                Id="invoiceNumber">
-                </TelerikTextBox>
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label class="k-label" for="invoiceNumber">Vendor Invoice Number</label>
+                    <TelerikTextBox @bind-Value="@Purchase.VendorInvoiceNumber"
+                                    Width="100%"
+                                    AutoComplete="off"
+                                    Id="invoiceNumber">
+                    </TelerikTextBox>
+                </div>
+                <div class="form-group col-6">
+                    <label class="k-label" for="poNumber">PO Number</label>
+                    <TelerikTextBox @bind-Value="@Purchase.PONumber"
+                                    Width="100%"
+                                    AutoComplete="off"
+                                    Id="poNumber">
+                    </TelerikTextBox>
+                </div>
             </div>
-            <div class="form-group col-6">
-                <label class="k-label" for="poNumber">PO Number</label>
-                <TelerikTextBox @bind-Value="@Purchase.PONumber"
-                                Width="100%"
-                                AutoComplete="off"
-                                Id="poNumber">
-                </TelerikTextBox>
-            </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-group col-6">
-                <label class="k-label" for="cost">Vendor Cost</label>
-                <TelerikNumericTextBox @bind-Value="@Purchase.VendorCost"
-                                       Width="100%"
-                                       Format="C"
-                                       Decimals="2"
-                                       Arrows="false"
-                                       Id="cost">
-                </TelerikNumericTextBox>
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label class="k-label" for="cost">Vendor Cost</label>
+                    <TelerikNumericTextBox @bind-Value="@Purchase.VendorCost"
+                                           Width="100%"
+                                           Format="C"
+                                           Decimals="2"
+                                           Arrows="false"
+                                           Id="cost">
+                    </TelerikNumericTextBox>
+                </div>
+                <div class="form-group col-6">
+                    <label class="k-label" for="core">Vendor Core</label>
+                    <TelerikNumericTextBox @bind-Value="@Purchase.VendorCore"
+                                           Width="100%"
+                                           Format="C"
+                                           Decimals="2"
+                                           Arrows="false"
+                                           Id="core">
+                    </TelerikNumericTextBox>
+                </div>
             </div>
-            <div class="form-group col-6">
-                <label class="k-label" for="core">Vendor Core</label>
-                <TelerikNumericTextBox @bind-Value="@Purchase.VendorCore"
-                                       Width="100%"
-                                       Format="C"
-                                       Decimals="2"
-                                       Arrows="false"
-                                       Id="core">
-                </TelerikNumericTextBox>
+
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label class="k-label" for="date">Date Purchased</label>
+                    <TelerikDatePicker @bind-Value="@Purchase.PurchaseDate"
+                                       Id="date">
+                    </TelerikDatePicker>
+                </div>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-group col-6">
-                <label class="k-label" for="date">Date Purchased</label>
-                <TelerikDatePicker @bind-Value="@Purchase.DatePurchased"
-                                   Id="date">
-                </TelerikDatePicker>
+            <hr class="m-button-divider">
+            <div>
+                <TelerikButton OnClick="OnSave"
+                               ButtonType="ButtonType.Button"
+                               ThemeColor="primary"
+                               Class="dialog-button">
+                    <i class="fas fa-check"></i> OK
+                </TelerikButton>
+                <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               Class="dialog-button">
+                    <i class="fas fa-times"></i> Cancel
+                </TelerikButton>
             </div>
-        </div>
-
-        <hr class="m-button-divider">
-        <div>
-            <TelerikButton OnClick="OnSave"
-                           ButtonType="ButtonType.Button"
-                           ThemeColor="primary"
-                           Class="dialog-button">
-                <i class="fas fa-check"></i> OK
-            </TelerikButton>
-            <TelerikButton OnClick="OnCancel"
-                           ButtonType="ButtonType.Button"
-                           Class="dialog-button">
-                <i class="fas fa-times"></i> Cancel
-            </TelerikButton>
-        </div>
-    </WindowContent>
-</TelerikWindow>
-
+        </WindowContent>
+    </TelerikWindow>
+</EditForm>
 <style>
     .m-button-divider {
         margin-top: 1em;

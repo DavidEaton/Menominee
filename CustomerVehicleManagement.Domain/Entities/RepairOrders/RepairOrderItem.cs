@@ -1,16 +1,17 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
     public class RepairOrderItem : Entity
     {
-        // DDD Notes
-        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold. If three of same part are sold, three serial numbers are required.
+        // TODO: DDD Notes
+        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold.
+        // For example, if three of same part are sold, three serial numbers are required.
         public long RepairOrderServiceId { get; set; }
-        public int SequenceNumber { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
         public long ManufacturerId { get; set; }
         public string PartNumber { get; set; }
@@ -33,69 +34,59 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double DiscountEach { get; set; }
         public double Total { get; set; }
 
-        public virtual IList<RepairOrderSerialNumber> SerialNumbers { get; set; } = new List<RepairOrderSerialNumber>();
-        public virtual IList<RepairOrderWarranty> Warranties { get; set; } = new List<RepairOrderWarranty>();
-        public virtual IList<RepairOrderItemTax> Taxes { get; set; } = new List<RepairOrderItemTax>();
+        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new();
+        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new();
+        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new();
+        public virtual List<RepairOrderPurchase> Purchases { get; set; } = new();
 
         public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
         {
+            Guard.ForNull(serialNumber, "serialNumber");
             SerialNumbers.Add(serialNumber);
         }
 
         public void RemoveSerialNumber(RepairOrderSerialNumber serialNumber)
         {
+            Guard.ForNull(serialNumber, "serialNumber");
             SerialNumbers.Remove(serialNumber);
-        }
-
-        public void SetSerialNumbers(IList<RepairOrderSerialNumber> serialNumbers)
-        {
-            SerialNumbers.Clear();
-            if (serialNumbers.Count > 0)
-            {
-                foreach (var serialNumber in serialNumbers)
-                    AddSerialNumber(serialNumber);
-            }
         }
 
         public void AddWarranty(RepairOrderWarranty warranty)
         {
+            Guard.ForNull(warranty, "warranty");
             Warranties.Add(warranty);
         }
 
         public void RemoveWarranty(RepairOrderWarranty warranty)
         {
+            Guard.ForNull(warranty, "warranty");
             Warranties.Remove(warranty);
-        }
-
-        public void SetWarranties(IList<RepairOrderWarranty> warranties)
-        {
-            Warranties.Clear();
-            if (warranties.Count > 0)
-            {
-                foreach (var warranty in warranties)
-                    AddWarranty(warranty);
-            }
         }
 
         public void AddTax(RepairOrderItemTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Add(tax);
         }
 
         public void RemoveTax(RepairOrderItemTax tax)
         {
+            Guard.ForNull(tax, "tax");
             Taxes.Remove(tax);
         }
 
-        public void SetTaxes(IList<RepairOrderItemTax> taxes)
+        public void AddPurchase(RepairOrderPurchase purchase)
         {
-            Taxes.Clear();
-            if (taxes.Count > 0)
-            {
-                foreach (var tax in taxes)
-                    AddTax(tax);
-            }
+            Guard.ForNull(purchase, "purchase");
+            Purchases.Add(purchase);
         }
+
+        public void RemovePurchase(RepairOrderPurchase purchase)
+        {
+            Guard.ForNull(purchase, "purchase");
+            Purchases.Remove(purchase);
+        }
+
 
         #region ORM
 

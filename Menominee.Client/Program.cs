@@ -1,5 +1,6 @@
 using Blazored.Toast;
 using CustomerVehicleManagement.Shared;
+using Menominee.Client.Components.RepairOrders;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
 using Menominee.Client.Services.Customers;
@@ -8,7 +9,6 @@ using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Services.ProductCodes;
-using Menominee.Client.Services.RepairOrders;
 using Menominee.Client.Services.SaleCodes;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;

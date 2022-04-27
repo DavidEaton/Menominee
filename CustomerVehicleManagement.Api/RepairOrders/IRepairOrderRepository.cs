@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         void UpdateRepairOrderAsync(RepairOrder repairOrder);
         Task DeleteRepairOrderAsync(long id);
         Task<bool> RepairOrderExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         void FixTrackingState();
     }
 }

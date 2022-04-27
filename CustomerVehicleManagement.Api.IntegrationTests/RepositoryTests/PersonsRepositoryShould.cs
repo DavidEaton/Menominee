@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;

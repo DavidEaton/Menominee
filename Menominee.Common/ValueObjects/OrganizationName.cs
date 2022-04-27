@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Utilities;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -36,9 +35,6 @@ namespace Menominee.Common.ValueObjects
 
         public static OrganizationName NewOrganizationName(string name)
         {
-            name = (name ?? string.Empty).Trim();
-            Guard.ForNullOrEmpty(name, "name");
-            //VK: Are the previous two lines necessary?
             return Create(name).Value;
         }
 

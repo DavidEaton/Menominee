@@ -1,5 +1,106 @@
-﻿<h3>RepairOrderWarrantyEditor</h3>
+﻿<EditForm Model="Warranty">
+    <TelerikWindow Visible="DialogVisible"
+                   Modal="true"
+                   Class="popupWindowClass">
+        <WindowTitle>
+            @Title
+        </WindowTitle>
+        <WindowContent>
+            <div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="partNumber">Part Number</label>
+                        <TelerikTextBox @bind-Value="@Warranty.PartNumber"
+                                        Width="100%"
+                                        Enabled="false"
+                                        Id="partNumber">
+                        </TelerikTextBox>
+                    </div>
+                </div>
 
-@code {
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="description">Description</label>
+                        <TelerikTextBox @bind-Value="@Warranty.Description"
+                                        Width="100%"
+                                        Enabled="false"
+                                        Id="description">
+                        </TelerikTextBox>
+                    </div>
+                </div>
 
-}
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label for="type" class="k-label">Type</label>
+                        <TelerikComboBox Data="WarrantyTypeEnumData"
+                                         Id="type"
+                                         TextField="DisplayText"
+                                         ValueField="Value"
+                                         @bind-Value="@Warranty.Type"
+                                         Width="100%"
+                                         Filterable="true"
+                                         ClearButton="false"
+                                         Placeholder="Select a Type"/>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="amount">Warranty Number</label>
+                        <TelerikTextBox @bind-Value="@Warranty.WarrantyNumber"
+                                        Width="100%"
+                                        AutoComplete="off"
+                                        Id="amount">
+                        </TelerikTextBox>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="k-label" for="quantity">Quantity</label>
+                        <TelerikNumericTextBox @bind-Value="@Warranty.Quantity"
+                                               Width="100%"
+                                               Id="quantity">
+                        </TelerikNumericTextBox>
+                    </div>
+                </div>
+
+            </div>
+            <hr id="divider">
+            <div>
+                <TelerikButton OnClick="OnSave"
+                               ButtonType="ButtonType.Button"
+                               ThemeColor="primary"
+                               Class="dialog-button">
+                    <i class="fas fa-check"></i> OK
+                </TelerikButton>
+                <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               Class="dialog-button">
+                    <i class="fas fa-times"></i> Cancel
+                </TelerikButton>
+            </div>
+        </WindowContent>
+    </TelerikWindow>
+
+</EditForm>
+
+<style>
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+</style>

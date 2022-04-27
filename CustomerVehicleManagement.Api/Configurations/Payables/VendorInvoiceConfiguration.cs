@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public override void Configure(EntityTypeBuilder<VendorInvoice> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("VendorInvoice", "dbo");
 
             builder.Ignore(invoice => invoice.TrackingState);

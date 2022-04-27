@@ -36,12 +36,20 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizationFromContext =
                 await context.Organizations
-                             .Include(organization => organization.Phones.OrderByDescending(phone => phone.IsPrimary))
-                             .Include(organization => organization.Emails.OrderByDescending(email => email.IsPrimary))
-                             .Include(organization => organization.Contact)
-                                 .ThenInclude(contact => contact.Phones)
-                             .Include(organization => organization.Contact)
-                                 .ThenInclude(contact => contact.Emails)
+                             .Include(organization => organization.Phones
+                                .OrderByDescending(phone => phone.IsPrimary))
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Emails
+                                .OrderByDescending(email => email.IsPrimary))
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Contact.Phones)
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Contact.Emails)
+                             .AsNoTracking()
+                             
                              .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return OrganizationToRead.ConvertToDto(organizationFromContext);
@@ -51,11 +59,20 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             IReadOnlyList<Organization> organizationsFromContext =
                 await context.Organizations
-                             .Include(organization => organization.Phones)
-                             .Include(organization => organization.Emails)
-                             .Include(organization => organization.Contact)
-                                 .ThenInclude(contact => contact.Phones)
-                                 .Include(contact => contact.Emails)
+                             .Include(organization => organization.Phones
+                                .OrderByDescending(phone => phone.IsPrimary))
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Emails
+                                .OrderByDescending(email => email.IsPrimary))
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Contact.Phones)
+                             .AsNoTracking()
+
+                             .Include(organization => organization.Contact.Emails)
+                             .AsNoTracking()
+
                              .ToListAsync();
 
             return organizationsFromContext
@@ -82,19 +99,29 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync()
         {
-            IReadOnlyList<Organization> organizations = await context.Organizations
-                                                                     .Include(organization => organization.Phones)
-                                                                     .Include(organization => organization.Emails)
-                                                                     .Include(organization => organization.Contact)
-                                                                        .ThenInclude(contact => contact.Phones)
-                                                                        .Include(contact => contact.Emails)
-                                                                     .ToListAsync();
+            IReadOnlyList<Organization> organizationsFromContext =
+                await context.Organizations
+                             .Include(organization => organization.Phones)
+                                .AsNoTracking()
 
-            return organizations.
+                             .Include(organization => organization.Emails)
+                                .AsNoTracking()
+
+                             // Contact
+                             .Include(organization => organization.Contact.Phones
+                                .Where(phone => phone.IsPrimary == true))
+                                .AsNoTracking()
+                             .Include(contact => contact.Emails
+                                .Where(email => email.IsPrimary == true))
+                                .AsNoTracking()
+
+                             .ToArrayAsync();
+
+            return organizationsFromContext.
                 Select(organization =>
                        OrganizationToReadInList.ConvertToDto(organization))
-                .OrderBy(organization => organization.Name)
-                .ToList();
+               .OrderBy(organization => organization.Name)
+               .ToList();
         }
 
         public void UpdateOrganizationAsync(Organization organization)

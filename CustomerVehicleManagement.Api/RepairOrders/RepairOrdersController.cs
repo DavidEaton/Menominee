@@ -1,5 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,19 +30,11 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             var results = await repository.GetRepairOrderListAsync();
 
-            //if (results == null)
-            //    return NotFound();
+            if (results == null)
+                return NotFound();
 
             return Ok(results);
         }
-
-        // api/repairorders
-        //[HttpGet]
-        //public async Task<ActionResult<IReadOnlyList<RepairOrderToRead>>> GetRepairOrdersAsync()
-        //{
-        //    var result = await repository.GetRepairOrdersAsync();
-        //    return Ok(result);
-        //}
 
         // api/repairorders/1
         [HttpGet("{id:long}")]
@@ -53,49 +48,209 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             return result;
         }
 
-
         // api/repairorders/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite roToUpdate)
+        public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrder)
         {
-            if (!await repository.RepairOrderExistsAsync(id))
-                return NotFound($"Could not find RO # {id} to update.");
+            var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
+            if (repairOrderFromRepository is null)
+                return NotFound($"Could not find Repair Order #{id} to update.");
 
-            //1) Get domain entity from repository
-            var ro = repository.GetRepairOrderEntityAsync(id).Result;
-            WriteDtoToEntity(roToUpdate, ro);
+            UpdateRepairOrder(repairOrder, repairOrderFromRepository);
+            UpdateServices(repairOrder, repairOrderFromRepository);
+            //UpdatePayments(repairOrder, repairOrderFromRepository);
+            //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-
-            // Update the objects ObjectState and synch the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            ro.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
+            repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
 
-            repository.UpdateRepairOrderAsync(ro);
-
+            repository.UpdateRepairOrderAsync(repairOrderFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult> AddRepairOrderAsync(RepairOrderToWrite roToWrite)
+        private static void UpdateTaxes(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
         {
-            // 1. Convert dto to domain entity
-            var ro = new RepairOrder();
-            WriteDtoToEntity(roToWrite, ro);
+            foreach (var tax in repairOrder?.Taxes)
+            {
+                var editableTax = repairOrderFromRepository.Taxes.Find(x => x.Id == tax.Id);
+                if (editableTax is null)
+                    continue;
 
-            // 2. Add domain entity to repository
-            await repository.AddRepairOrderAsync(ro);
+                editableTax.LaborTax = tax.LaborTax;
+                editableTax.LaborTaxRate = tax.LaborTaxRate;
+                editableTax.PartTax = tax.PartTax;
+                editableTax.PartTaxRate = tax.PartTaxRate;
+                editableTax.RepairOrderId = tax.RepairOrderId;
+                editableTax.TaxId = tax.TaxId;
+            }
+        }
 
-            // 3. Save changes on repository
+        private static void UpdatePayments(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        {
+            foreach (var payment in repairOrder?.Payments)
+            {
+                var editablePayment = repairOrderFromRepository.Payments.Find(x => x.Id == payment.Id);
+                if (editablePayment is null)
+                    continue;
+
+                editablePayment.Amount = payment.Amount;
+                editablePayment.PaymentMethod = payment.PaymentMethod;
+                editablePayment.RepairOrderId = payment.RepairOrderId;
+            }
+        }
+
+        private static void UpdateServices(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        {
+            foreach (var service in repairOrder?.Services)
+            {
+                var editableService = repairOrderFromRepository.Services.Find(x => x.Id == service.Id);
+
+                if (editableService is null)
+                    continue;
+
+                editableService.DiscountTotal = service.DiscountTotal;
+                editableService.IsCounterSale = service.IsCounterSale;
+                editableService.IsDeclined = service.IsDeclined;
+                editableService.LaborTotal = service.LaborTotal;
+                editableService.PartsTotal = service.PartsTotal;
+                editableService.RepairOrderId = repairOrderFromRepository.Id;
+                editableService.SaleCode = service.SaleCode;
+                editableService.ServiceName = service.ServiceName;
+                editableService.ShopSuppliesTotal = service.ShopSuppliesTotal;
+                editableService.TaxTotal = service.TaxTotal;
+                editableService.Total = service.Total;
+
+                UpdateServiceItems(service, editableService);
+                //UpdateServiceTaxes(service);
+                //UpdateServiceTechnician(service);
+
+                // Services.Taxes = RepairOrderHelper.CreateServiceTaxes(service.Taxes),
+                // Services.Techs = RepairOrderHelper.CreateTechnicians(service.Techs)
+
+            }
+        }
+
+        private static void UpdateServiceItems(RepairOrderServiceToWrite service, RepairOrderService editableService)
+        {
+            foreach (var item in service?.Items)
+            {
+                var editableItem = editableService.Items.Find(x => x.Id == item.Id);
+
+                if (editableItem is null)
+                    continue;
+
+                editableItem.Core = item.Core;
+                editableItem.Cost = item.Cost;
+                editableItem.Description = item.Description;
+                editableItem.DiscountEach = item.DiscountEach;
+                editableItem.DiscountType = item.DiscountType;
+                editableItem.IsCounterSale = item.IsCounterSale;
+                editableItem.IsDeclined = item.IsDeclined;
+                editableItem.LaborEach = item.LaborEach;
+                editableItem.LaborType = item.LaborType;
+                //editableItem.Manufacturer = item.Manufacturer;
+                editableItem.ManufacturerId = item.ManufacturerId;
+                editableItem.PartNumber = item.PartNumber;
+                editableItem.PartType = item.PartType;
+                editableItem.ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode);
+                editableItem.ProductCodeId = item.ProductCodeId;
+                editableItem.QuantitySold = item.QuantitySold;
+                editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
+                editableItem.SaleCode = RepairOrderHelper.TransformSaleCode(item.SaleCode);
+                editableItem.SaleCodeId = item.SaleCodeId;
+                editableItem.SaleType = item.SaleType;
+                editableItem.SellingPrice = item.SellingPrice;
+                editableItem.Total = item.Total;
+
+                UpdateServiceItemSerialNumbers(item, editableItem);
+                UpdateServiceItemWarranties(item, editableItem);
+                //editableItem.SerialNumbers = CreateSerialNumbers(item.SerialNumbers);
+                //editableItem.Warranties = CreateWarranties(item.Warranties)
+                //editableItem.Taxes = CreateItemTaxes(item.Taxes);
+            }
+        }
+
+        private static void UpdateServiceItemWarranties(RepairOrderItemToWrite item, RepairOrderItem editableItem)
+        {
+            List<RepairOrderWarranty> addedWarranties = new();
+
+            foreach (var warranty in item?.Warranties)
+            {
+                RepairOrderWarranty editableWarranty
+                    = editableItem?.Warranties.Find(x => x.Id == warranty.Id);
+
+                editableWarranty = editableWarranty ?? new();
+
+                editableWarranty.RepairOrderItemId = warranty.RepairOrderItemId;
+                editableWarranty.NewWarranty = warranty.NewWarranty;
+                editableWarranty.OriginalInvoiceId = warranty.OriginalInvoiceId;
+                editableWarranty.OriginalWarranty = warranty.OriginalWarranty;
+                editableWarranty.Quantity = warranty.Quantity;
+                editableWarranty.Type = warranty.Type;
+
+                if (editableWarranty.Id == 0)
+                    addedWarranties.Add(editableWarranty);
+            }
+
+            if (addedWarranties.Count > 0)
+                editableItem.Warranties.AddRange(addedWarranties);
+        }
+
+        private static void UpdateServiceItemSerialNumbers(RepairOrderItemToWrite item, RepairOrderItem editableItem)
+        {
+            List<RepairOrderSerialNumber> addedSerialNumbers = new();
+
+            foreach (var serialNumber in item?.SerialNumbers)
+            {
+                var editableSerialNumber = editableItem?.SerialNumbers.Find(x => x.Id == serialNumber.Id);
+
+                editableSerialNumber = editableSerialNumber ?? new();
+
+                editableSerialNumber.RepairOrderItemId = serialNumber.RepairOrderItemId;
+                editableSerialNumber.SerialNumber = serialNumber.SerialNumber;
+
+                if (editableSerialNumber.Id == 0)
+                // This unfound serial number was added in BuildSerialNumberList, disconnected
+                // from the db context, so we must add it to the tracked collection here
+                    addedSerialNumbers.Add(editableSerialNumber);
+            }
+
+            if (addedSerialNumbers.Count > 0)
+                editableItem.SerialNumbers.AddRange(addedSerialNumbers);
+        }
+
+        private static void UpdateRepairOrder(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        {
+            repairOrderFromRepository.CustomerName = repairOrder.CustomerName;
+            repairOrderFromRepository.DateModified = DateTime.Today;
+            repairOrderFromRepository.DiscountTotal = repairOrder.DiscountTotal;
+            repairOrderFromRepository.HazMatTotal = repairOrder.HazMatTotal;
+            repairOrderFromRepository.InvoiceNumber = repairOrder.InvoiceNumber;
+            repairOrderFromRepository.LaborTotal = repairOrder.LaborTotal;
+            repairOrderFromRepository.PartsTotal = repairOrder.PartsTotal;
+            repairOrderFromRepository.RepairOrderNumber = repairOrder.RepairOrderNumber;
+            repairOrderFromRepository.ShopSuppliesTotal = repairOrder.ShopSuppliesTotal;
+            repairOrderFromRepository.TaxTotal = repairOrder.TaxTotal;
+            repairOrderFromRepository.Total = repairOrder.Total;
+            repairOrderFromRepository.Vehicle = repairOrder.Vehicle;
+
+            if (repairOrder.DateInvoiced.HasValue)
+                repairOrderFromRepository.DateInvoiced = (DateTime)repairOrder.DateInvoiced;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
+        {
+            var repairOrder = RepairOrderHelper.Transform(repairOrderToAdd);
+
+            await repository.AddRepairOrderAsync(repairOrder);
             await repository.SaveChangesAsync();
 
-            // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{ro.Id}", UriKind.Relative), new { id = ro.Id });
+            return Created(new Uri($"{BasePath}/{repairOrder.Id}",
+                               UriKind.Relative),
+                               new { id = repairOrder.Id });
         }
 
         [HttpDelete("{id:long}")]
@@ -103,220 +258,12 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             var roFromRepository = await repository.GetRepairOrderAsync(id);
             if (roFromRepository == null)
-                return NotFound($"Could not find RO in the database to delete with id of {id}.");
+                return NotFound($"Could not find Repair Order in the database to delete with id of {id}.");
 
             await repository.DeleteRepairOrderAsync(id);
+            await repository.SaveChangesAsync();
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
-
-            return BadRequest($"Failed to delete Repair Order with Id of {id}.");
-        }
-
-        private void WriteDtoToEntity(RepairOrderToWrite roToUpdate, RepairOrder ro)
-        {
-            // -------------------------------------------------------------------------------
-            // FIX ME -- should all detail records get new Ids every time they get resaved????
-            // -------------------------------------------------------------------------------
-
-            ro.RepairOrderNumber = roToUpdate.RepairOrderNumber;
-            ro.InvoiceNumber = roToUpdate.InvoiceNumber;
-            ro.CustomerName = roToUpdate.CustomerName;
-            ro.Vehicle = roToUpdate.Vehicle;
-            ro.PartsTotal = roToUpdate.PartsTotal;
-            ro.LaborTotal = roToUpdate.LaborTotal;
-            ro.DiscountTotal = roToUpdate.DiscountTotal;
-            ro.HazMatTotal = roToUpdate.HazMatTotal;
-            ro.TaxTotal = roToUpdate.TaxTotal;
-            ro.ShopSuppliesTotal = roToUpdate.ShopSuppliesTotal;
-            ro.Total = roToUpdate.Total;
-            if (roToUpdate?.DateCreated != null)
-                ro.DateCreated = (DateTime)roToUpdate.DateCreated;
-            if (roToUpdate?.DateModified != null)
-                ro.DateModified = (DateTime)roToUpdate.DateModified;
-            if (roToUpdate?.DateInvoiced != null)
-                ro.DateInvoiced = (DateTime)roToUpdate.DateInvoiced;
-
-            List<RepairOrderService> services = new();
-            List<RepairOrderPayment> payments = new();
-            List<RepairOrderTax> taxes = new();
-
-            if (roToUpdate?.Services?.Count > 0)
-            {
-                foreach (var serviceToUpdate in roToUpdate.Services)
-                {
-                    RepairOrderService service = new();
-                    List<RepairOrderItem> items = new();
-                    List<RepairOrderTech> techs = new();
-                    List<RepairOrderServiceTax> serviceTaxes = new();
-
-                    //service.RepairOrderId = serviceToUpdate.RepairOrderId;
-                    service.SequenceNumber = serviceToUpdate.SequenceNumber;
-                    service.ServiceName = serviceToUpdate.ServiceName;
-                    service.SaleCode = serviceToUpdate.SaleCode;
-                    service.IsCounterSale = serviceToUpdate.IsCounterSale;
-                    service.IsDeclined = serviceToUpdate.IsDeclined;
-                    service.PartsTotal = serviceToUpdate.PartsTotal;
-                    service.LaborTotal = serviceToUpdate.LaborTotal;
-                    service.DiscountTotal = serviceToUpdate.DiscountTotal;
-                    service.TaxTotal = serviceToUpdate.TaxTotal;
-                    service.ShopSuppliesTotal = serviceToUpdate.ShopSuppliesTotal;
-                    service.Total = serviceToUpdate.Total;
-
-                    if (serviceToUpdate.Items?.Count > 0)
-                    {
-                        foreach (var itemToUpdate in serviceToUpdate.Items)
-                        {
-                            RepairOrderItem item = new();
-                            List<RepairOrderSerialNumber> serialNumbers = new();
-                            List<RepairOrderWarranty> warranties = new();
-                            List<RepairOrderItemTax> itemTaxes = new();
-
-                            //item.RepairOrderServiceId = itemToUpdate.RepairOrderServiceId;
-                            item.SequenceNumber = itemToUpdate.SequenceNumber;
-                            //item.Manufacturer = itemToUpdate.Manufacturer;
-                            item.ManufacturerId = itemToUpdate.ManufacturerId;
-                            item.PartNumber = itemToUpdate.PartNumber;
-                            item.Description = itemToUpdate.Description;
-                            //item.SaleCode = itemToUpdate.SaleCode;
-                            item.SaleCodeId = itemToUpdate.SaleCodeId;
-                            //item.ProductCode = itemToUpdate.ProductCode;
-                            item.ProductCodeId = itemToUpdate.ProductCodeId;
-                            item.SaleType = itemToUpdate.SaleType;
-                            item.PartType = itemToUpdate.PartType;
-                            item.IsDeclined = itemToUpdate.IsDeclined;
-                            item.IsCounterSale = itemToUpdate.IsDeclined;
-                            item.QuantitySold = itemToUpdate.QuantitySold;
-                            item.SellingPrice = itemToUpdate.SellingPrice;
-                            item.LaborType = itemToUpdate.LaborType;
-                            item.LaborEach = itemToUpdate.LaborEach;
-                            item.DiscountType = itemToUpdate.DiscountType;
-                            item.DiscountEach = itemToUpdate.DiscountEach;
-                            item.Cost = itemToUpdate.Cost;
-                            item.Core = itemToUpdate.Core;
-                            item.Total = itemToUpdate.Total;
-
-                            if (itemToUpdate.SerialNumbers?.Count > 0)
-                            {
-                                foreach (var serialNumberToUpdate in itemToUpdate.SerialNumbers)
-                                {
-                                    RepairOrderSerialNumber serialNumber = new();
-                                    //serialNumber.RepairOrderItemId = serialNumberToUpdate.RepairOrderItemId;
-                                    serialNumber.SerialNumber = serialNumberToUpdate.SerialNumber;
-
-                                    serialNumbers.Add(serialNumber);
-                                }
-                            }
-                            item.SetSerialNumbers(serialNumbers);
-
-                            if (itemToUpdate.Warranties?.Count > 0)
-                            {
-                                foreach (var warrantyToUpdate in itemToUpdate.Warranties)
-                                {
-                                    RepairOrderWarranty warranty = new();
-                                    //warranty.RepairOrderItemId = warrantyToUpdate.RepairOrderItemId;
-                                    warranty.SequenceNumber = warrantyToUpdate.SequenceNumber;
-                                    warranty.Quantity = warrantyToUpdate.Quantity;
-                                    warranty.Type = warrantyToUpdate.Type;
-                                    warranty.NewWarranty = warrantyToUpdate.NewWarranty;
-                                    warranty.OriginalWarranty = warrantyToUpdate.OriginalWarranty;
-                                    warranty.OriginalInvoiceId = warrantyToUpdate.OriginalInvoiceId;
-
-                                    warranties.Add(warranty);
-                                }
-                            }
-                            item.SetWarranties(warranties);
-
-                            if (itemToUpdate.Taxes?.Count > 0)
-                            {
-                                foreach (var taxToUpdate in itemToUpdate.Taxes)
-                                {
-                                    RepairOrderItemTax tax = new();
-                                    //tax.RepairOrderItemId = taxToUpdate.RepairOrderItemId;
-                                    tax.SequenceNumber = taxToUpdate.SequenceNumber;
-                                    tax.TaxId = taxToUpdate.TaxId;
-                                    tax.PartTaxRate = taxToUpdate.PartTaxRate;
-                                    tax.LaborTaxRate = taxToUpdate.LaborTaxRate;
-                                    tax.PartTax = taxToUpdate.PartTax;
-                                    tax.LaborTax = taxToUpdate.LaborTax;
-
-                                    itemTaxes.Add(tax);
-                                }
-                            }
-                            item.SetTaxes(itemTaxes);
-
-                            items.Add(item);
-                        }
-                    }
-                    service.SetItems(items);
-
-                    if (serviceToUpdate.Techs?.Count > 0)
-                    {
-                        foreach (var techToUpdate in serviceToUpdate.Techs)
-                        {
-                            RepairOrderTech tech = new();
-                            //tech.RepairOrderServiceId = techToUpdate.RepairOrderServiceId;
-                            tech.TechnicianId = techToUpdate.TechnicianId;
-
-                            techs.Add(tech);
-                        }
-                    }
-                    service.SetTechs(techs);
-
-                    if (serviceToUpdate.Taxes?.Count > 0)
-                    {
-                        foreach (var taxToUpdate in serviceToUpdate.Taxes)
-                        {
-                            RepairOrderServiceTax tax = new();
-                            //tax.RepairOrderServiceId = taxToUpdate.RepairOrderServiceId;
-                            tax.SequenceNumber = taxToUpdate.SequenceNumber;
-                            tax.TaxId = taxToUpdate.TaxId;
-                            tax.PartTaxRate = taxToUpdate.PartTaxRate;
-                            tax.LaborTaxRate = taxToUpdate.LaborTaxRate;
-                            tax.PartTax = taxToUpdate.PartTax;
-                            tax.LaborTax = taxToUpdate.LaborTax;
-
-                            serviceTaxes.Add(tax);
-                        }
-                    }
-                    service.SetTaxes(serviceTaxes);
-
-                    services.Add(service);
-                }
-            }
-            ro.SetServices(services);
-
-            if (roToUpdate?.Taxes?.Count > 0)
-            {
-                foreach (var taxToUpdate in roToUpdate.Taxes)
-                {
-                    RepairOrderTax tax = new();
-                    //tax.RepairOrderId = taxToUpdate.RepairOrderId;
-                    tax.SequenceNumber = taxToUpdate.SequenceNumber;
-                    tax.TaxId = taxToUpdate.TaxId;
-                    tax.PartTaxRate = taxToUpdate.PartTaxRate;
-                    tax.LaborTaxRate = taxToUpdate.LaborTaxRate;
-                    tax.PartTax = taxToUpdate.PartTax;
-                    tax.LaborTax = taxToUpdate.LaborTax;
-
-                    taxes.Add(tax);
-                }
-            }
-            ro.SetTaxes(taxes);
-
-            if (roToUpdate?.Payments?.Count > 0)
-            {
-                foreach (var paymentToUpdate in roToUpdate.Payments)
-                {
-                    RepairOrderPayment payment = new();
-                    //payment.RepairOrderId = paymentToUpdate.RepairOrderId;
-                    payment.PaymentMethod = paymentToUpdate.PaymentMethod;
-                    payment.Amount = paymentToUpdate.Amount;
-
-                    payments.Add(payment);
-                }
-            }
-            ro.SetPayments(payments);
+            return NoContent();
         }
     }
 }

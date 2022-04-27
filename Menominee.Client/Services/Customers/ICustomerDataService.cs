@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Shared.Models.Customers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

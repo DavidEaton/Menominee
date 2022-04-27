@@ -50,12 +50,12 @@
                 @if (ProductCodes != null)
                 {
                     <label class="k-label" for="productCode">Product Code</label>
-                    <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
+                    <TelerikDropDownList @bind-Value="Item.ProductCode"
                                          Width="100%"
-                                         Data="@ProductCodeList"
+                                         Data="ProductCodeList"
                                          TextField="DisplayText"
-                                         ValueField="Id"
-                                         Enabled="@CanChangePart"
+                                         ValueField="Value"
+                                         Enabled="CanChangePart"
                                          Id="productCode">
                     </TelerikDropDownList>
                 }

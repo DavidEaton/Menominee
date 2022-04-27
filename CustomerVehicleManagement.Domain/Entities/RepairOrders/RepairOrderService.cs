@@ -6,7 +6,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     public class RepairOrderService : Entity
     {
         public long RepairOrderId { get; set; }
-        public int SequenceNumber { get; set; }
         public string ServiceName { get; set; }
         public string SaleCode { get; set; }
         public bool IsCounterSale { get; set; }
@@ -18,9 +17,9 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double ShopSuppliesTotal { get; set; }
         public double Total { get; set; }
 
-        public virtual IList<RepairOrderItem> Items { get; set; } = new List<RepairOrderItem>();
-        public virtual IList<RepairOrderTech> Techs { get; set; } = new List<RepairOrderTech>();
-        public virtual IList<RepairOrderServiceTax> Taxes { get; set; } = new List<RepairOrderServiceTax>();
+        public virtual List<RepairOrderItem> Items { get; set; } = new List<RepairOrderItem>();
+        public virtual List<RepairOrderTech> Techs { get; set; } = new List<RepairOrderTech>();
+        public virtual List<RepairOrderServiceTax> Taxes { get; set; } = new List<RepairOrderServiceTax>();
 
         public void AddItem(RepairOrderItem item)
         {

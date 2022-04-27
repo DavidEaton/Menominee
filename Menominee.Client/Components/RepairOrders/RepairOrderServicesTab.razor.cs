@@ -55,7 +55,6 @@ namespace Menominee.Client.Components.RepairOrders
         private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
         {
             dst.RepairOrderServiceId = src.RepairOrderServiceId;
-            dst.SequenceNumber = src.SequenceNumber;
             dst.Manufacturer = src.Manufacturer;
             dst.ManufacturerId = src.ManufacturerId;
             dst.PartNumber = src.PartNumber;
@@ -160,8 +159,6 @@ namespace Menominee.Client.Components.RepairOrders
 
         void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
         {
-            var moops = args.Item as RepairOrderItemToWrite;
-
             EditItem(args.Item as RepairOrderItemToWrite);
         }
 
@@ -201,10 +198,11 @@ namespace Menominee.Client.Components.RepairOrders
 
             ItemToModify.Recalculate();
 
-            (string scCode, string scName) = await GetSaleCode(ItemToModify.SaleCodeId);
-            RepairOrderServiceToWrite service = FindServiceByCode(scCode); //FindService(ItemToModify.SaleCode.Code);
+            (string saleCode, string saleCodeName) = await GetSaleCode(ItemToModify.SaleCodeId);
+            RepairOrderServiceToWrite service = FindServiceByCode(saleCode); //FindService(ItemToModify.SaleCode.Code);
+
             if (service == null)
-                service = AddService(scCode, scName);   //AddService(ItemToModify.SaleCode.Code);
+                service = AddService(saleCode, saleCodeName);   //AddService(ItemToModify.SaleCode.Code);
 
             if (ItemFormMode == FormMode.Add)
                 service.Items.Add(ItemToModify);
@@ -260,7 +258,7 @@ namespace Menominee.Client.Components.RepairOrders
             return techs;
         }
 
-        private async Task<(string sc, string name)> GetSaleCode(long id)
+        private async Task<(string saleCode, string name)> GetSaleCode(long id)
         {
             SaleCodeToRead saleCodeToRead = await SaleCodeDataService.GetSaleCodeAsync(id);
             if (saleCodeToRead != null)

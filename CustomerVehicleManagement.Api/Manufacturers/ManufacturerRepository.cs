@@ -40,6 +40,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
         {
             var mfrFromContext = await context.Manufacturers
+                .AsNoTracking()
                 .FirstOrDefaultAsync(mfr => mfr.Code == code);
 
             return ManufacturerToRead.ConvertToDto(mfrFromContext);
@@ -55,7 +56,9 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync()
         {
-            IReadOnlyList<Manufacturer> mfrs = await context.Manufacturers.ToListAsync();
+            IReadOnlyList<Manufacturer> mfrs = await context.Manufacturers
+                .AsNoTracking()
+                .ToListAsync();
 
             return mfrs.
                 Select(mfr => ManufacturerToReadInList.ConvertToDto(mfr))

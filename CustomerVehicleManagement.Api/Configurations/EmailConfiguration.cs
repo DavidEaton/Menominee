@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public override void Configure(EntityTypeBuilder<Email> builder)
         {
-            base.Configure(builder); // <--
+            base.Configure(builder);
             builder.ToTable("Email", "dbo");
             builder.Ignore(email => email.TrackingState);
 
@@ -23,6 +23,5 @@ namespace CustomerVehicleManagement.Api.Configurations
                 .HasDefaultValue(false)
                 .IsRequired();
         }
-
     }
 }

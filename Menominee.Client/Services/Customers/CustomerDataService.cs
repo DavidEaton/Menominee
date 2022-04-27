@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;

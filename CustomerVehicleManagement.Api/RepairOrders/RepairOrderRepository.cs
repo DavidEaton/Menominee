@@ -40,33 +40,47 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         public async Task<RepairOrderToRead> GetRepairOrderAsync(long id)
         {
             var roFromContext = await context.RepairOrders
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Items)
-                        .ThenInclude(roItem => roItem.Manufacturer)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Items)
-                        .ThenInclude(roItem => roItem.ProductCode)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Items)
-                        .ThenInclude(roItem => roItem.SaleCode)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Items)
-                        .ThenInclude(roItem => roItem.Taxes)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Items)
-                        .ThenInclude(roItem => roItem.SerialNumbers)
-                .Include(ro => ro.Services)
-                    .ThenInclude(roItem => roItem.Items)
-                        .ThenInclude(roItem => roItem.Warranties)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Techs)
-                .Include(ro => ro.Services)
-                    .ThenInclude(service => service.Taxes)
-                .Include(ro => ro.Taxes)
-                .Include(ro => ro.Payments)
-                .FirstOrDefaultAsync(ro => ro.Id == id);
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Items)
+                                                     .ThenInclude(roItem => roItem.Manufacturer)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Items)
+                                                     .ThenInclude(roItem => roItem.ProductCode)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Items)
+                                                     .ThenInclude(roItem => roItem.SaleCode)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Items)
+                                                     .ThenInclude(roItem => roItem.Taxes)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Items)
+                                                     .ThenInclude(roItem => roItem.SerialNumbers)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(roItem => roItem.Items)
+                                                     .ThenInclude(roItem => roItem.Warranties)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(roItem => roItem.Items)
+                                                     .ThenInclude(roItem => roItem.Purchases)
+                                                     .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Techs)
+                                                 .AsNoTracking()
+                                             .Include(ro => ro.Services)
+                                                 .ThenInclude(service => service.Taxes)
+                                                 .AsNoTracking()
+                                             .Include(ro => ro.Taxes)
+                                             .AsNoTracking()
+                                             .Include(ro => ro.Payments)
+                                             .AsNoTracking()
+                                             .FirstOrDefaultAsync(ro => ro.Id == id);
 
-            return RepairOrderToRead.ConvertToDto(roFromContext);
+            return RepairOrderHelper.Transform(roFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
@@ -105,35 +119,29 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         {
             IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
 
-            return repairOrders.
-                Select(repairOrder =>
-                       RepairOrderToReadInList.ConvertToDto(repairOrder))
+            return repairOrders
+                .Select(repairOrder =>
+                       RepairOrderHelper.TransformInList(repairOrder))
                 .ToList();
         }
-
-        //public async Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync()
-        //{
-        //    IReadOnlyList<RepairOrder> ros = await context.RepairOrders.ToListAsync();
-
-        //    return ros.Select(ro => new RepairOrderToRead()
-        //    {
-        //        Id = ro.Id,
-        //        RepairOrderNumber = ro.RepairOrderNumber,
-        //        InvoiceNumber = ro.InvoiceNumber,
-        //        CustomerName = ro.CustomerName,
-        //        Vehicle = ro.Vehicle,
-        //        Total = ro.Total
-        //    }).ToList();
-        //}
 
         public async Task<bool> RepairOrderExistsAsync(long id)
         {
             return await context.RepairOrders.AnyAsync(ro => ro.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            try
+            {
+                var moops = await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: log exception
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
         public void UpdateRepairOrderAsync(RepairOrder repairOrder)

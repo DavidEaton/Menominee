@@ -1,6 +1,6 @@
 ﻿<div class="m-purchases-tab">
     <div>
-        <Card Title="Payments">
+        <Card Title="Purchases">
             <Content>
                 @if (Purchases == null)
                 {
@@ -10,44 +10,42 @@
                 @if (Purchases != null)
                 {
                     <TelerikGrid Data="Purchases"
-                                 OnRowClick="@OnRowSelected"
-                                 OnRowDoubleClick="@OnEdit"
-                                 SelectionMode="GridSelectionMode.Single"
-                                 SelectedItemsChanged="@((IEnumerable<PurchaseListItem> purchaseList) => OnSelect(purchaseList))"
-                                 SelectedItems="@SelectedPurchases"
-                                 @ref="@PurchasesGrid"
-                                 Class="">
+                             OnRowClick="OnRowSelected"
+                             OnRowDoubleClick="@(() => DialogVisible = true)"
+                             SelectionMode="GridSelectionMode.Single">
                         <GridColumns>
                             <GridColumn Width="32px">
                                 <Template>
                                     @{
-                                        var purchase = context as PurchaseListItem;
-                                        if (purchase.IsComplete())
-                                        {
-                                            <i class="fas fa-check m-green-check"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fas fa-exclamation-circle m-red-x"></i>
-                                        }
+                                    var purchase = context as PurchaseListItem;
+                                    if (purchase.IsComplete())
+                                    {
+                                        <div class="success-icon">
+                                            <TelerikIcon Icon="check" />
+                                        </div>
                                     }
-                                </Template>
-                            </GridColumn>
-                            <GridColumn Width="20%" Field="@nameof(PurchaseListItem.PartNumber)" Title="Part Number"></GridColumn>
-                            <GridColumn Width="30%" Field="@nameof(PurchaseListItem.Description)" Title="Description"></GridColumn>
-                            <GridColumn Width="30%" Field="@nameof(PurchaseListItem.VendorName)" Title="Vendor"></GridColumn>
-                            <GridColumn Width="10%" Field="@nameof(PurchaseListItem.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
-                            <GridColumn Width="10%" Field="@nameof(PurchaseListItem.VendorCost)" Title="Cost" DisplayFormat="{0:C}" TextAlign="ColumnTextAlign.Right"></GridColumn>
-                        </GridColumns>
-                    </TelerikGrid>
+                                    else
+                                    {
+                                        <div class="danger-icon">
+                                            <TelerikIcon Icon="exclamation-circle" />
+                                        </div>
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Width="20%" Field="@nameof(PurchaseListItem.PartNumber)" Title="Part Number"></GridColumn>
+                        <GridColumn Width="30%" Field="@nameof(PurchaseListItem.Description)" Title="Description"></GridColumn>
+                        <GridColumn Width="30%" Field="@nameof(PurchaseListItem.VendorName)" Title="Vendor"></GridColumn>
+                        <GridColumn Width="10%" Field="@nameof(PurchaseListItem.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
+                        <GridColumn Width="10%" Field="@nameof(PurchaseListItem.VendorCost)" Title="Cost" DisplayFormat="{0:C}" TextAlign="ColumnTextAlign.Right"></GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
 
                     <div>
                         <hr class="m-btn-group-divider">
 
                         <div>
-                            <button class="btn m-button m-edit-btn" @onclick="OnEdit" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="btn m-button m-generic-btn" @onclick="OnCopy" disabled="@(CanCopy ? false : true)"><i class="fas fa-copy"></i> Copy</button>
-                            @*<button class="btn m-button" id="clear" @onclick="OnClear" disabled="@(CanClear ? false : true)"><i class="fas fa-eraser"></i> Clear</button>*@
+                            <button class="btn m-button m-edit-btn" @onclick="@(() => DialogVisible = true)" disabled="@(CanEdit ? false : true)"><i class="fas fa-edit"></i> Edit</button>
                         </div>
                     </div>
                 }
@@ -55,28 +53,26 @@
         </Card>
     </div>
 
-    @if (SelectedPurchase != null && EditDialogVisible)
+    @if (DialogVisible && Purchase != null)
     {
-        <RepairOrderPurchaseEditor Purchase="@SelectedPurchase" DialogVisible="@EditDialogVisible" Mode="@PurchaseFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
+        <RepairOrderPurchaseEditor Purchase="Purchase"
+                                   DialogVisible="DialogVisible"
+                                   OnSave="Save"
+                                   OnCancel="@(() => DialogVisible = false)" />
     }
 
 </div>
 
 <style>
-    .m-purchases-tab {
-        display: grid;
-    }
-
-    .m-green-check {
+    .success-icon .k-icon {
         color: green;
     }
 
-    .m-red-x {
+    .danger-icon .k-icon {
         color: red;
     }
 
-    .m-icon-checked:before {
-        content: '\e7ab';
-        color: limegreen;
+    .m-purchases-tab {
+        display: grid;
     }
 </style>

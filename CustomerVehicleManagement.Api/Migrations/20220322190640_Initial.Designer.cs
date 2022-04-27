@@ -11,7 +11,12 @@ namespace CustomerVehicleManagement.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20220322190640_Initial")]
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
     partial class Initial
+========
+    [Migration("20220412163704_AddRepairOrderItemPurchases")]
+    partial class AddRepairOrderItemPurchases
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220412163704_AddRepairOrderItemPurchases.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -78,36 +83,213 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.ToTable("Email", "dbo");
                 });
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", b =>
+========
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.InventoryItem", b =>
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+========
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+                    b.Property<long>("DetailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ItemNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("LaborId")
+                        .HasColumnType("bigint");
+========
                     b.Property<double>("Labor")
                         .HasColumnType("float");
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
 
                     b.Property<long>("ManufacturerId")
                         .HasColumnType("bigint");
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+                    b.Property<long?>("PartId")
+                        .HasColumnType("bigint");
+========
                     b.Property<string>("PartNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PartType")
                         .HasColumnType("int");
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
 
                     b.Property<long>("ProductCodeId")
                         .HasColumnType("bigint");
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+                    b.Property<long?>("TireId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LaborId");
+
+                    b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("PartId");
+
+                    b.HasIndex("ProductCodeId");
+
+                    b.HasIndex("TireId");
+
+                    b.ToTable("InventoryItem", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryLabor", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("LaborAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("LaborType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillLevel")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TechPayAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TechPayType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryLabor", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryPart", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Core")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Fractional")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LineCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("List")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Retail")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SkillLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubLineCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TechPayAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TechPayType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryPart", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryTire", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AspectRatio")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Core")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Diameter")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Fractional")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LineCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("List")
+                        .HasColumnType("float");
+
+                    b.Property<int>("LoadIndex")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Retail")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SkillLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpeedRating")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubLineCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TechPayAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TechPayType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Width")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryTire", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", b =>
+========
                     b.Property<int>("QuantityOnHand")
                         .HasColumnType("int");
 
@@ -124,6 +306,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Manufacturer", b =>
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,79 +329,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.ToTable("Manufacturer", "dbo");
                 });
 
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long?>("ContactId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(10000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactId");
-
-                    b.ToTable("Organization", "dbo");
-                });
-
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Person", "dbo");
-                });
-
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Phone", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<long?>("OrganizationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("PersonId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("PhoneType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("PersonId");
-
-                    b.ToTable("Phone", "dbo");
-                });
-
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.ProductCode", b =>
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.ProductCode", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,6 +357,100 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.HasIndex("SaleCodeId");
 
                     b.ToTable("ProductCode", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long?>("ContactId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Organization", "dbo");
+                });
+
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                        .HasColumnType("datetime2");
+
+
+                    b.Property<string>("InvoiceNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
+
+                    b.Property<long?>("VendorId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                });
+
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+
+                        .IsRequired()
+
+                        .HasColumnType("bigint");
+
+                        .HasColumnType("bigint");
+
+                        .HasColumnType("int");
+
+                    b.Property<long?>("VendorInvoiceId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+
+                });
+
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                        .HasColumnType("nvarchar(max)");
+
+                        .HasColumnType("bigint");
+
+                        .IsRequired()
+
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PhoneType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+
+
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", b =>
@@ -467,6 +672,11 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.HasKey("Id");
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
+========
+                    b.HasIndex("RepairOrderItemId");
+
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220412163704_AddRepairOrderItemPurchases.Designer.cs
                     b.ToTable("RepairOrderPurchase", "dbo");
                 });
 
@@ -948,23 +1158,72 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasForeignKey("PersonId");
                 });
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryLabor", "Labor")
+                        .WithMany()
+                        .HasForeignKey("LaborId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
+========
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.InventoryItem", b =>
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Manufacturer", "Manufacturer")
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                         .WithMany()
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryPart", "Part")
+                        .WithMany()
+                        .HasForeignKey("PartId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.ProductCode", "ProductCode")
+========
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.ProductCode", "ProductCode")
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                         .WithMany()
                         .HasForeignKey("ProductCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.Designer.cs
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryTire", "Tire")
+                        .WithMany()
+                        .HasForeignKey("TireId");
+
+                    b.Navigation("Labor");
+
+                    b.Navigation("Manufacturer");
+
+                    b.Navigation("Part");
+
+                    b.Navigation("ProductCode");
+
+                    b.Navigation("Tire");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.ProductCode", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
+                        .WithMany()
+                        .HasForeignKey("SaleCodeId");
+
+                    b.Navigation("Manufacturer");
+
+                    b.Navigation("SaleCode");
+========
                     b.Navigation("Manufacturer");
 
                     b.Navigation("ProductCode");
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.Designer.cs
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>
@@ -1034,6 +1293,40 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Navigation("Contact");
 
                     b.Navigation("Name");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId");
+
+                    b.Navigation("Vendor");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", "Invoice")
+                        .WithMany("LineItems")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePayment", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("VendorInvoiceId");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceTax", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
+                        .WithMany("Taxes")
+                        .HasForeignKey("VendorInvoiceId");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
@@ -1192,13 +1485,11 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Manufacturer", "Manufacturer")
                         .WithMany()
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.ProductCode", "ProductCode")
                         .WithMany()
                         .HasForeignKey("ProductCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1237,6 +1528,15 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrder", null)
                         .WithMany("Payments")
                         .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderPurchase", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", null)
+                        .WithMany("Purchases")
+                        .HasForeignKey("RepairOrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1350,6 +1650,15 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Navigation("Phones");
                 });
 
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", b =>
+                {
+                    b.Navigation("LineItems");
+
+                    b.Navigation("Payments");
+
+                    b.Navigation("Taxes");
+                });
+
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
                 {
                     b.Navigation("Emails");
@@ -1368,6 +1677,8 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.RepairOrders.RepairOrderItem", b =>
                 {
+                    b.Navigation("Purchases");
+
                     b.Navigation("SerialNumbers");
 
                     b.Navigation("Taxes");

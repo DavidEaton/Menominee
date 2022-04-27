@@ -123,7 +123,34 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderPurchases",
+                name: "RepairOrder",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RepairOrderNumber = table.Column<long>(type: "bigint", nullable: false),
+                    InvoiceNumber = table.Column<long>(type: "bigint", nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Vehicle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PartsTotal = table.Column<double>(type: "float", nullable: false),
+                    LaborTotal = table.Column<double>(type: "float", nullable: false),
+                    DiscountTotal = table.Column<double>(type: "float", nullable: false),
+                    TaxTotal = table.Column<double>(type: "float", nullable: false),
+                    HazMatTotal = table.Column<double>(type: "float", nullable: false),
+                    ShopSuppliesTotal = table.Column<double>(type: "float", nullable: false),
+                    Total = table.Column<double>(type: "float", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateInvoiced = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrder", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RepairOrderPurchase",
                 schema: "dbo",
                 columns: table => new
                 {
@@ -138,6 +165,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                     table.PrimaryKey("PK_RepairOrderPurchases", x => x.Id);
                 });
 
@@ -166,6 +194,9 @@ namespace CustomerVehicleManagement.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RepairOrders", x => x.Id);
+========
+                    table.PrimaryKey("PK_RepairOrderPurchase", x => x.Id);
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 });
 
             migrationBuilder.CreateTable(
@@ -241,7 +272,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderPayments",
+                name: "RepairOrderPayment",
                 schema: "dbo",
                 columns: table => new
                 {
@@ -253,25 +284,24 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderPayments", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderPayment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderPayments_RepairOrders_RepairOrderId",
+                        name: "FK_RepairOrderPayment_RepairOrder_RepairOrderId",
                         column: x => x.RepairOrderId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrders",
+                        principalTable: "RepairOrder",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderServices",
+                name: "RepairOrderService",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderId = table.Column<long>(type: "bigint", nullable: false),
-                    SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SaleCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsCounterSale = table.Column<bool>(type: "bit", nullable: false),
@@ -285,25 +315,24 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderServices", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderService", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderServices_RepairOrders_RepairOrderId",
+                        name: "FK_RepairOrderService_RepairOrder_RepairOrderId",
                         column: x => x.RepairOrderId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrders",
+                        principalTable: "RepairOrder",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderTaxes",
+                name: "RepairOrderTax",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderId = table.Column<long>(type: "bigint", nullable: false),
-                    SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     TaxId = table.Column<long>(type: "bigint", nullable: false),
                     PartTaxRate = table.Column<double>(type: "float", nullable: false),
                     LaborTaxRate = table.Column<double>(type: "float", nullable: false),
@@ -312,12 +341,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderTaxes", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderTax", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderTaxes_RepairOrders_RepairOrderId",
+                        name: "FK_RepairOrderTax_RepairOrder_RepairOrderId",
                         column: x => x.RepairOrderId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrders",
+                        principalTable: "RepairOrder",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -476,14 +505,13 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderServiceTaxes",
+                name: "RepairOrderServiceTax",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: false),
-                    SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     TaxId = table.Column<long>(type: "bigint", nullable: false),
                     PartTaxRate = table.Column<double>(type: "float", nullable: false),
                     LaborTaxRate = table.Column<double>(type: "float", nullable: false),
@@ -492,18 +520,18 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderServiceTaxes", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderServiceTax", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderServiceTaxes_RepairOrderServices_RepairOrderServiceId",
+                        name: "FK_RepairOrderServiceTax_RepairOrderService_RepairOrderServiceId",
                         column: x => x.RepairOrderServiceId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderServices",
+                        principalTable: "RepairOrderService",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderTechs",
+                name: "RepairOrderTech",
                 schema: "dbo",
                 columns: table => new
                 {
@@ -514,12 +542,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderTechs", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderTech", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderTechs_RepairOrderServices_RepairOrderServiceId",
+                        name: "FK_RepairOrderTech_RepairOrderService_RepairOrderServiceId",
                         column: x => x.RepairOrderServiceId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderServices",
+                        principalTable: "RepairOrderService",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -532,6 +560,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ManufacturerId = table.Column<long>(type: "bigint", nullable: false),
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                     ItemNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductCodeId = table.Column<long>(type: "bigint", nullable: false),
@@ -540,11 +569,22 @@ namespace CustomerVehicleManagement.Api.Migrations
                     PartId = table.Column<long>(type: "bigint", nullable: true),
                     LaborId = table.Column<long>(type: "bigint", nullable: true),
                     TireId = table.Column<long>(type: "bigint", nullable: true)
+========
+                    PartNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductCodeId = table.Column<long>(type: "bigint", nullable: false),
+                    PartType = table.Column<int>(type: "int", nullable: false),
+                    QuantityOnHand = table.Column<int>(type: "int", nullable: false),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    SuggestedPrice = table.Column<double>(type: "float", nullable: false),
+                    Labor = table.Column<double>(type: "float", nullable: false)
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InventoryItem", x => x.Id);
                     table.ForeignKey(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                         name: "FK_InventoryItem_InventoryLabor_LaborId",
                         column: x => x.LaborId,
                         principalSchema: "dbo",
@@ -566,6 +606,8 @@ namespace CustomerVehicleManagement.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+========
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                         name: "FK_InventoryItem_Manufacturer_ManufacturerId",
                         column: x => x.ManufacturerId,
                         principalSchema: "dbo",
@@ -582,14 +624,21 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                 name: "RepairOrderItems",
+========
+                name: "RepairOrderItem",
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderServiceId = table.Column<long>(type: "bigint", nullable: false),
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                     SequenceNumber = table.Column<int>(type: "int", nullable: false),
+========
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                     ManufacturerId = table.Column<long>(type: "bigint", nullable: false),
                     PartNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -611,30 +660,30 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderItems", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderItems_Manufacturer_ManufacturerId",
+                        name: "FK_RepairOrderItem_Manufacturer_ManufacturerId",
                         column: x => x.ManufacturerId,
                         principalSchema: "dbo",
                         principalTable: "Manufacturer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RepairOrderItems_ProductCode_ProductCodeId",
+                        name: "FK_RepairOrderItem_ProductCode_ProductCodeId",
                         column: x => x.ProductCodeId,
                         principalSchema: "dbo",
                         principalTable: "ProductCode",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RepairOrderItems_RepairOrderServices_RepairOrderServiceId",
+                        name: "FK_RepairOrderItem_RepairOrderService_RepairOrderServiceId",
                         column: x => x.RepairOrderServiceId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderServices",
+                        principalTable: "RepairOrderService",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RepairOrderItems_SaleCode_SaleCodeId",
+                        name: "FK_RepairOrderItem_SaleCode_SaleCodeId",
                         column: x => x.SaleCodeId,
                         principalSchema: "dbo",
                         principalTable: "SaleCode",
@@ -748,14 +797,13 @@ namespace CustomerVehicleManagement.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderItemTaxes",
+                name: "RepairOrderItemTax",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderItemId = table.Column<long>(type: "bigint", nullable: false),
-                    SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     TaxId = table.Column<long>(type: "bigint", nullable: false),
                     PartTaxRate = table.Column<double>(type: "float", nullable: false),
                     LaborTaxRate = table.Column<double>(type: "float", nullable: false),
@@ -764,47 +812,46 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderItemTaxes", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderItemTax", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderItemTaxes_RepairOrderItems_RepairOrderItemId",
+                        name: "FK_RepairOrderItemTax_RepairOrderItem_RepairOrderItemId",
                         column: x => x.RepairOrderItemId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderItems",
+                        principalTable: "RepairOrderItem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderSerialNumbers",
+                name: "RepairOrderSerialNumber",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderItemId = table.Column<long>(type: "bigint", nullable: false),
-                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SerialNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderSerialNumbers", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderSerialNumber", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderSerialNumbers_RepairOrderItems_RepairOrderItemId",
+                        name: "FK_RepairOrderSerialNumber_RepairOrderItem_RepairOrderItemId",
                         column: x => x.RepairOrderItemId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderItems",
+                        principalTable: "RepairOrderItem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RepairOrderWarranties",
+                name: "RepairOrderWarranty",
                 schema: "dbo",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairOrderItemId = table.Column<long>(type: "bigint", nullable: false),
-                    SequenceNumber = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     NewWarranty = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -813,12 +860,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RepairOrderWarranties", x => x.Id);
+                    table.PrimaryKey("PK_RepairOrderWarranty", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RepairOrderWarranties_RepairOrderItems_RepairOrderItemId",
+                        name: "FK_RepairOrderWarranty_RepairOrderItem_RepairOrderItemId",
                         column: x => x.RepairOrderItemId,
                         principalSchema: "dbo",
-                        principalTable: "RepairOrderItems",
+                        principalTable: "RepairOrderItem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -848,36 +895,45 @@ namespace CustomerVehicleManagement.Api.Migrations
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                 name: "IX_InventoryItem_LaborId",
                 schema: "dbo",
                 table: "InventoryItem",
                 column: "LaborId");
 
             migrationBuilder.CreateIndex(
+========
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 name: "IX_InventoryItem_ManufacturerId",
                 schema: "dbo",
                 table: "InventoryItem",
                 column: "ManufacturerId");
 
             migrationBuilder.CreateIndex(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                 name: "IX_InventoryItem_PartId",
                 schema: "dbo",
                 table: "InventoryItem",
                 column: "PartId");
 
             migrationBuilder.CreateIndex(
+========
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 name: "IX_InventoryItem_ProductCodeId",
                 schema: "dbo",
                 table: "InventoryItem",
                 column: "ProductCodeId");
 
             migrationBuilder.CreateIndex(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                 name: "IX_InventoryItem_TireId",
                 schema: "dbo",
                 table: "InventoryItem",
                 column: "TireId");
 
             migrationBuilder.CreateIndex(
+========
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 name: "IX_Organization_ContactId",
                 schema: "dbo",
                 table: "Organization",
@@ -908,75 +964,75 @@ namespace CustomerVehicleManagement.Api.Migrations
                 column: "SaleCodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderItems_ManufacturerId",
+                name: "IX_RepairOrderItem_ManufacturerId",
                 schema: "dbo",
-                table: "RepairOrderItems",
+                table: "RepairOrderItem",
                 column: "ManufacturerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderItems_ProductCodeId",
+                name: "IX_RepairOrderItem_ProductCodeId",
                 schema: "dbo",
-                table: "RepairOrderItems",
+                table: "RepairOrderItem",
                 column: "ProductCodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderItems_RepairOrderServiceId",
+                name: "IX_RepairOrderItem_RepairOrderServiceId",
                 schema: "dbo",
-                table: "RepairOrderItems",
+                table: "RepairOrderItem",
                 column: "RepairOrderServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderItems_SaleCodeId",
+                name: "IX_RepairOrderItem_SaleCodeId",
                 schema: "dbo",
-                table: "RepairOrderItems",
+                table: "RepairOrderItem",
                 column: "SaleCodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderItemTaxes_RepairOrderItemId",
+                name: "IX_RepairOrderItemTax_RepairOrderItemId",
                 schema: "dbo",
-                table: "RepairOrderItemTaxes",
+                table: "RepairOrderItemTax",
                 column: "RepairOrderItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderPayments_RepairOrderId",
+                name: "IX_RepairOrderPayment_RepairOrderId",
                 schema: "dbo",
-                table: "RepairOrderPayments",
+                table: "RepairOrderPayment",
                 column: "RepairOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderSerialNumbers_RepairOrderItemId",
+                name: "IX_RepairOrderSerialNumber_RepairOrderItemId",
                 schema: "dbo",
-                table: "RepairOrderSerialNumbers",
+                table: "RepairOrderSerialNumber",
                 column: "RepairOrderItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderServices_RepairOrderId",
+                name: "IX_RepairOrderService_RepairOrderId",
                 schema: "dbo",
-                table: "RepairOrderServices",
+                table: "RepairOrderService",
                 column: "RepairOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderServiceTaxes_RepairOrderServiceId",
+                name: "IX_RepairOrderServiceTax_RepairOrderServiceId",
                 schema: "dbo",
-                table: "RepairOrderServiceTaxes",
+                table: "RepairOrderServiceTax",
                 column: "RepairOrderServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderTaxes_RepairOrderId",
+                name: "IX_RepairOrderTax_RepairOrderId",
                 schema: "dbo",
-                table: "RepairOrderTaxes",
+                table: "RepairOrderTax",
                 column: "RepairOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderTechs_RepairOrderServiceId",
+                name: "IX_RepairOrderTech_RepairOrderServiceId",
                 schema: "dbo",
-                table: "RepairOrderTechs",
+                table: "RepairOrderTech",
                 column: "RepairOrderServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RepairOrderWarranties_RepairOrderItemId",
+                name: "IX_RepairOrderWarranty_RepairOrderItemId",
                 schema: "dbo",
-                table: "RepairOrderWarranties",
+                table: "RepairOrderWarranty",
                 column: "RepairOrderItemId");
 
             migrationBuilder.CreateIndex(
@@ -1025,35 +1081,35 @@ namespace CustomerVehicleManagement.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderItemTaxes",
+                name: "RepairOrderItemTax",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderPayments",
+                name: "RepairOrderPayment",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderPurchases",
+                name: "RepairOrderPurchase",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderSerialNumbers",
+                name: "RepairOrderSerialNumber",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderServiceTaxes",
+                name: "RepairOrderServiceTax",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderTaxes",
+                name: "RepairOrderTax",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderTechs",
+                name: "RepairOrderTech",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderWarranties",
+                name: "RepairOrderWarranty",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1076,6 +1132,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+<<<<<<<< HEAD:CustomerVehicleManagement.Api/Migrations/20220407183532_Initial.cs
                 name: "InventoryLabor",
                 schema: "dbo");
 
@@ -1089,6 +1146,9 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "RepairOrderItems",
+========
+                name: "RepairOrderItem",
+>>>>>>>> master:CustomerVehicleManagement.Api/Migrations/20220322190640_Initial.cs
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1104,7 +1164,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrderServices",
+                name: "RepairOrderService",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -1124,7 +1184,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "RepairOrders",
+                name: "RepairOrder",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
