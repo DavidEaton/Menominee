@@ -19,9 +19,8 @@ namespace CustomerVehicleManagement.Api.Data
         private readonly IConfiguration Configuration;
         private readonly IWebHostEnvironment Environment;
         private readonly UserContext UserContext;
-        readonly ILogger<ApplicationDbContext> Logger;
         private string Connection = string.Empty;
-
+        readonly ILogger<ApplicationDbContext> Logger;
         public ApplicationDbContext() { }
 
         public ApplicationDbContext(string connection)
@@ -30,7 +29,7 @@ namespace CustomerVehicleManagement.Api.Data
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { } // Unit tests pass in options
+            : base(options) { } // tests pass in options
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
             IConfiguration configuration,
@@ -51,10 +50,25 @@ namespace CustomerVehicleManagement.Api.Data
                 Connection = GetTenantConnection();
 
             if (!options.IsConfigured) // Unit tests will configure context with test provider
+            {
+                if (Environment?.EnvironmentName != "Production")
+                {
+                    options.UseLoggerFactory(CreateLoggerFactory());
+                    options.EnableSensitiveDataLogging(true);
+                }
+
                 options.UseSqlServer(Connection);
+            }
 
             base.OnConfiguring(options);
 
+        }
+
+        private static ILoggerFactory CreateLoggerFactory()
+        {
+            return LoggerFactory.Create(builder => builder
+                .AddFilter((category, level) => category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
+                .AddConsole());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -167,7 +181,6 @@ namespace CustomerVehicleManagement.Api.Data
 
             return tenantName;
         }
-
 
         #region -------------------- DbSets -----------------------------
         public DbSet<Person> Persons { get; set; }
