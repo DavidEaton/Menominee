@@ -50,8 +50,8 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizations = await repository.GetOrganizationsAsync();
 
-            if (organizations == null)
-                return NotFound();
+                if (organizations == null)
+                    return NotFound();
 
             return Ok(organizations);
         }
@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var organizationFromRepository = repository.GetOrganizationEntityAsync(id).Result;
+            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
             if (organizationFromRepository is null)
                 return NotFound(notFoundMessage);

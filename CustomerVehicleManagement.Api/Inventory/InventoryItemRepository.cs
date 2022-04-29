@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.Inventory;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,11 +27,9 @@ namespace CustomerVehicleManagement.Api.Inventory
                 await context.AddAsync(item);
         }
 
-        public async Task DeleteInventoryItemAsync(long id)
+        public void DeleteInventoryItem(InventoryItem item)
         {
-            var itemFromContext = await context.InventoryItems.FindAsync(id);
-            if (itemFromContext != null)
-                context.Remove(itemFromContext);
+            context.Remove(item);
         }
 
         public void FixTrackingState()
@@ -37,28 +37,27 @@ namespace CustomerVehicleManagement.Api.Inventory
             context.FixState();
         }
 
-        public async Task<InventoryItemToRead> GetInventoryItemAsync(long mfrId, string partNumber)
+        public async Task<InventoryItemToRead> GetInventoryItemAsync(long manufacturerId, string partNumber)
         {
-            var itemFromContext = await context.InventoryItems
-                .AsNoTracking()
-                .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
-
-            return InventoryItemToRead.ConvertToDto(itemFromContext);
+            Guard.ForNullOrEmpty(partNumber, nameof(partNumber));
+            
+            var itemFromContext = await GetInventoryItemEntityAsync(manufacturerId, partNumber);
+            return InventoryItemHelper.ConvertToDto(itemFromContext);
         }
 
         public async Task<InventoryItemToRead> GetInventoryItemAsync(long id)
         {
-            var itemFromContext = await context.InventoryItems
-                .AsNoTracking()
-                .FirstOrDefaultAsync(item => item.Id == id);
-
-            return InventoryItemToRead.ConvertToDto(itemFromContext);
+            var itemFromContext = await GetInventoryItemEntityAsync(id);
+            return InventoryItemHelper.ConvertToDto(itemFromContext);
         }
 
-        public async Task<InventoryItem> GetInventoryItemEntityAsync(long mfrId, string partNumber)
+        public async Task<InventoryItem> GetInventoryItemEntityAsync(long manufacturerId, string partNumber)
         {
+            Guard.ForNullOrEmpty(partNumber, nameof(partNumber));
+
             var itemFromContext = await context.InventoryItems
-                .FirstOrDefaultAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
+                .AsNoTracking()
+                .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId && item.PartNumber == partNumber);
 
             return itemFromContext;
         }
@@ -66,6 +65,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<InventoryItem> GetInventoryItemEntityAsync(long id)
         {
             var itemFromContext = await context.InventoryItems
+                .AsNoTracking()
                 .FirstOrDefaultAsync(item => item.Id == id);
 
             return itemFromContext;
@@ -78,24 +78,24 @@ namespace CustomerVehicleManagement.Api.Inventory
                 .ToListAsync();
 
             return items.
-                Select(item => InventoryItemToReadInList.ConvertToDto(item))
+                Select(item => InventoryItemHelper.ConvertToReadInListDto(item))
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId)
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long manufacturerId)
         {
-            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == mfrId)
+            IReadOnlyList<InventoryItem> items = await context.InventoryItems.Where(item => item.ManufacturerId == manufacturerId)
                 .AsNoTracking()
                 .ToListAsync();
 
             return items.
-                Select(item => InventoryItemToReadInList.ConvertToDto(item))
+                Select(item => InventoryItemHelper.ConvertToReadInListDto(item))
                 .ToList();
         }
 
-        public async Task<bool> InventoryItemExistsAsync(long mfrId, string partNumber)
+        public async Task<bool> InventoryItemExistsAsync(long manufacturerId, string partNumber)
         {
-            return await context.InventoryItems.AnyAsync(item => (item.ManufacturerId == mfrId && item.PartNumber == partNumber));
+            return await context.InventoryItems.AnyAsync(item => item.ManufacturerId == manufacturerId && item.PartNumber == partNumber);
         }
 
         public async Task<bool> InventoryItemExistsAsync(long id)

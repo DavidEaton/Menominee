@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Inventory;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
@@ -17,10 +15,10 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync();
         Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemListAsync(long mfrId);
         void UpdateInventoryItemAsync(InventoryItem item);
-        Task DeleteInventoryItemAsync(long id);
         Task<bool> InventoryItemExistsAsync(long mfrId, string partNumber);
         Task<bool> InventoryItemExistsAsync(long id);
         Task<bool> SaveChangesAsync();
         void FixTrackingState();
+        void DeleteInventoryItem(InventoryItem itemFromRepository);
     }
 }

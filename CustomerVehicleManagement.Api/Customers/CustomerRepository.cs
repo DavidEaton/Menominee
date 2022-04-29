@@ -18,9 +18,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
         public CustomerRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddCustomerAsync(Customer customer)
@@ -30,43 +29,19 @@ namespace CustomerVehicleManagement.Api.Customers
             if (await CustomerExistsAsync(customer.Id))
                 throw new Exception("Customer already exists");
 
-
             await context.AddAsync(customer);
         }
 
-        public async Task DeleteCustomerAsync(long id)
+        public void DeleteCustomer(Customer customer)
         {
-            var customer = await context.Customers.AsNoTracking()
-                                      .FirstOrDefaultAsync(customer => customer.Id == id);
-
-            Guard.ForNull(customer, "customer");
-
             context.Remove(customer);
         }
 
         public async Task<CustomerToRead> GetCustomerAsync(long id)
         {
-            var customerFromContext = await context.Customers
-                                                    // Person
-                                                    .Include(customer =>
-                                                             customer.Person.Phones)
-                                                    .AsNoTracking()
-                                                    .Include(customer =>
-                                                             customer.Person.Emails)
-                                                    .AsNoTracking()
-
-                                                    // Organization and Organization.Contact
-                                                    .Include(customer =>
-                                                             customer.Organization.Contact.Phones)
-                                                    .AsNoTracking()
-                                                    .Include(customer => 
-                                                             customer.Organization.Contact.Emails)
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(customer =>
-                                                                         customer.Id == id);
+            var customerFromContext = await GetCustomerEntityAsync(id);
 
             Guard.ForNull(customerFromContext, "customerFromContext");
-
             return CustomerHelper.ConvertToDto(customerFromContext);
         }
 
@@ -200,5 +175,24 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
+        public async Task<Customer> GetCustomerEntityAsync(long id)
+        {
+            var customerFromContext = await context.Customers
+                // Person
+                .Include(customer => customer.Person.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
+                .Include(customer => customer.Person.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+
+                // Organization and Organization.Contact
+                .Include(customer => customer.Organization.Contact.Phones)
+                .Include(customer => customer.Organization.Contact.Emails)
+
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(customer => customer.Id == id);
+
+            return customerFromContext;
+        }
     }
 }

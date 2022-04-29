@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,17 +33,6 @@ namespace CustomerVehicleManagement.Api.Persons
         }
         public async Task<Person> GetPersonEntityAsync(long id)
         {
-            var personFromContext = await context.Persons
-                .Include(person => person.Phones)
-                .Include(person => person.Emails)
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(person => person.Id == id);
-
-            return personFromContext;
-        }
-
-        public async Task<PersonToRead> GetPersonAsync(long id)
-        {
             Person personFromContext = await context.Persons
                 .Include(person => person.Phones
                     .OrderByDescending(phone => phone.IsPrimary))
@@ -52,6 +42,14 @@ namespace CustomerVehicleManagement.Api.Persons
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(person => person.Id == id);
 
+            return personFromContext;
+        }
+
+        public async Task<PersonToRead> GetPersonAsync(long id)
+        {
+            Person personFromContext = await GetPersonEntityAsync(id);
+
+            Guard.ForNull(personFromContext, "personFromContext");
             return PersonToRead.ConvertToDto(personFromContext);
         }
 

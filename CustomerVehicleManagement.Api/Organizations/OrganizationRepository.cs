@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,20 +34,9 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<OrganizationToRead> GetOrganizationAsync(long id)
         {
-            Organization organizationFromContext = await context.Organizations
-                .Include(organization => organization.Phones
-                    .OrderByDescending(phone => phone.IsPrimary))
+            Organization organizationFromContext = await GetOrganizationEntityAsync(id);
 
-                .Include(organization => organization.Emails
-                    .OrderByDescending(email => email.IsPrimary))
-             
-                .Include(organization => organization.Contact.Phones)
-                .Include(organization => organization.Contact.Emails)
-             
-                .AsNoTracking()
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(organization => organization.Id == id);
-
+            Guard.ForNull(organizationFromContext, "organizationFromContext");
             return OrganizationToRead.ConvertToDto(organizationFromContext);
         }
 
@@ -72,27 +62,6 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .ToList();
         }
 
-        public async Task<Organization> GetOrganizationEntityAsync(long id)
-        {
-            // Prefer FindAsync() over Single() or First() for single objects (non-collections);
-            // FindAsync() checks the Identity Map Cache before making a trip to the database.
-            var organizationFromContext = context.Organizations
-                .Include(organization => organization.Phones)
-                .Include(organization => organization.Emails)
-
-                .Include(organization => organization.Contact)
-                    .ThenInclude(contact => contact.Emails)
-                .Include(organization => organization.Contact)
-                    .ThenInclude(contact => contact.Phones)
-
-                .AsSplitQuery()
-                //.AsNoTracking() // Disabling ChangeTracker breaks loading of navigation properties
-
-                .FirstOrDefaultAsync(organization => organization.Id == id);
-
-            return await organizationFromContext;
-        }
-
         public async Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync()
         {
             IReadOnlyList<Organization> organizationsFromContext = await context.Organizations
@@ -115,6 +84,27 @@ namespace CustomerVehicleManagement.Api.Organizations
                        OrganizationToReadInList.ConvertToDto(organization))
                .OrderBy(organization => organization.Name)
                .ToList();
+        }
+
+        public async Task<Organization> GetOrganizationEntityAsync(long id)
+        {
+            // Prefer FindAsync() over Single() or First() for single objects (non-collections);
+            // FindAsync() checks the Identity Map Cache before making a trip to the database.
+            var organizationFromContext = context.Organizations
+                .Include(organization => organization.Phones)
+                .Include(organization => organization.Emails)
+
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Emails)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Phones)
+
+                .AsSplitQuery()
+                //.AsNoTracking() // Disabling ChangeTracker breaks loading of navigation properties
+
+                .FirstOrDefaultAsync(organization => organization.Id == id);
+
+            return await organizationFromContext;
         }
 
         public void UpdateOrganizationAsync(Organization organization)

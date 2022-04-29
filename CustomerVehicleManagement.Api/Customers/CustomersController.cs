@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -122,13 +121,16 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteCustomerAsync(long id)
         {
-            var customerFromRepository = await customerRepository.GetCustomerAsync(id);
+            var notFoundMessage = $"Could not find Customer in the database to delete with Id: {id}.";
 
-            if (customerFromRepository == null)
-                return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
+            if (!await customerRepository.CustomerExistsAsync(id))
+                return NotFound(notFoundMessage);
 
-            await customerRepository.DeleteCustomerAsync(id);
+            var customerFromRepository = await customerRepository.GetCustomerEntityAsync(id);
+            if (customerFromRepository is null)
+                return NotFound(notFoundMessage);
 
+            customerRepository.DeleteCustomer(customerFromRepository);
             await customerRepository.SaveChangesAsync();
 
             return NoContent();
