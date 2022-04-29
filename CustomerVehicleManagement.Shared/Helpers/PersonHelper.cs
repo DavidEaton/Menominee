@@ -44,7 +44,6 @@ namespace CustomerVehicleManagement.Shared.Helpers
             }
 
             return new(personName, person.Gender, address, emails, phones, person.Birthday, driversLicense);
-
         }
         public static PersonToWrite CreateWriteDtoFromReadDto(PersonToRead person)
         {

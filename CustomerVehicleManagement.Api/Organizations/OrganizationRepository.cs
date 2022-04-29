@@ -26,60 +26,50 @@ namespace CustomerVehicleManagement.Api.Organizations
                 await context.AddAsync(organization);
         }
 
-        public async Task DeleteOrganizationAsync(long id)
+        public void DeleteOrganization(Organization organization)
         {
-            var organizationFromContext = await context.Organizations.FindAsync(id);
-            context.Remove(organizationFromContext);
+            context.Remove(organization);
         }
 
         public async Task<OrganizationToRead> GetOrganizationAsync(long id)
         {
-            var organizationFromContext =
-                await context.Organizations
-                             .Include(organization => organization.Phones
-                                .OrderByDescending(phone => phone.IsPrimary))
-                             .AsNoTracking()
+            Organization organizationFromContext = await context.Organizations
+                .Include(organization => organization.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
 
-                             .Include(organization => organization.Emails
-                                .OrderByDescending(email => email.IsPrimary))
-                             .AsNoTracking()
-
-                             .Include(organization => organization.Contact.Phones)
-                             .AsNoTracking()
-
-                             .Include(organization => organization.Contact.Emails)
-                             .AsNoTracking()
-                             
-                             .FirstOrDefaultAsync(organization => organization.Id == id);
+                .Include(organization => organization.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+             
+                .Include(organization => organization.Contact.Phones)
+                .Include(organization => organization.Contact.Emails)
+             
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return OrganizationToRead.ConvertToDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync()
         {
-            IReadOnlyList<Organization> organizationsFromContext =
-                await context.Organizations
-                             .Include(organization => organization.Phones
-                                .OrderByDescending(phone => phone.IsPrimary))
-                             .AsNoTracking()
+            IReadOnlyList<Organization> organizationsFromContext = await context.Organizations
+                .Include(organization => organization.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
 
-                             .Include(organization => organization.Emails
-                                .OrderByDescending(email => email.IsPrimary))
-                             .AsNoTracking()
+                .Include(organization => organization.Emails
+                    .OrderByDescending(email => email.IsPrimary))
 
-                             .Include(organization => organization.Contact.Phones)
-                             .AsNoTracking()
+                .Include(organization => organization.Contact.Phones)
+                .Include(organization => organization.Contact.Emails)
 
-                             .Include(organization => organization.Contact.Emails)
-                             .AsNoTracking()
-
-                             .ToListAsync();
+                .AsNoTracking()
+                .AsSplitQuery()
+                .ToListAsync();
 
             return organizationsFromContext
                 .Select(organization =>
                         OrganizationToRead.ConvertToDto(organization))
                 .ToList();
-
         }
 
         public async Task<Organization> GetOrganizationEntityAsync(long id)
@@ -87,35 +77,38 @@ namespace CustomerVehicleManagement.Api.Organizations
             // Prefer FindAsync() over Single() or First() for single objects (non-collections);
             // FindAsync() checks the Identity Map Cache before making a trip to the database.
             var organizationFromContext = context.Organizations
-                                             .Include(organization => organization.Phones)
-                                             .Include(organization => organization.Emails)
-                                             .Include(organization => organization.Contact)
-                                                .ThenInclude(contact => contact.Phones)
-                                             .Include(contact => contact.Emails)
-                                             .FirstOrDefaultAsync(organization => organization.Id == id);
+                .Include(organization => organization.Phones)
+                .Include(organization => organization.Emails)
+
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Emails)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Phones)
+
+                .AsSplitQuery()
+                //.AsNoTracking() // Disabling ChangeTracker breaks loading of navigation properties
+
+                .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return await organizationFromContext;
         }
 
         public async Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync()
         {
-            IReadOnlyList<Organization> organizationsFromContext =
-                await context.Organizations
-                             .Include(organization => organization.Phones)
-                                .AsNoTracking()
+            IReadOnlyList<Organization> organizationsFromContext = await context.Organizations
+                .Include(organization => organization.Phones
+                    .Where(phone => phone.IsPrimary == true))
+                .Include(organization => organization.Emails
+                    .Where(email => email.IsPrimary == true))
 
-                             .Include(organization => organization.Emails)
-                                .AsNoTracking()
+                .Include(organization => organization.Contact.Phones
+                    .Where(phone => phone.IsPrimary == true))
+                .Include(organization => organization.Contact.Emails
+                    .Where(email => email.IsPrimary == true))
 
-                             // Contact
-                             .Include(organization => organization.Contact.Phones
-                                .Where(phone => phone.IsPrimary == true))
-                                .AsNoTracking()
-                             .Include(contact => contact.Emails
-                                .Where(email => email.IsPrimary == true))
-                                .AsNoTracking()
-
-                             .ToArrayAsync();
+                .AsNoTracking()
+                .AsSplitQuery()
+                .ToArrayAsync();
 
             return organizationsFromContext.
                 Select(organization =>

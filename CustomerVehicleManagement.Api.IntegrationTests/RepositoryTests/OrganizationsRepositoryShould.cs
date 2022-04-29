@@ -387,7 +387,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Should().NotBeNull();
 
-                await repository.DeleteOrganizationAsync(organizationFromRepo.Id);
+                repository.DeleteOrganization(organizationFromRepo);
                 await repository.SaveChangesAsync();
                 organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
 

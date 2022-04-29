@@ -36,28 +36,36 @@ namespace CustomerVehicleManagement.Api.Organizations
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrganizationToReadInList>>> GetOrganizationsListAsync()
         {
-            var results = await repository.GetOrganizationsListAsync();
-            return Ok(results);
+            var organizations = await repository.GetOrganizationsListAsync();
+
+            if (organizations == null)
+                return NotFound();
+
+            return Ok(organizations);
         }
 
         // api/organizations
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrganizationToRead>>> GetOrganizationsAsync()
         {
-            var result = await repository.GetOrganizationsAsync();
-            return Ok(result);
+            var organizations = await repository.GetOrganizationsAsync();
+
+            if (organizations == null)
+                return NotFound();
+
+            return Ok(organizations);
         }
 
         // api/organizations/1
         [HttpGet("{id:long}", Name = "GetOrganizationAsync")]
         public async Task<ActionResult<OrganizationToRead>> GetOrganizationAsync(long id)
         {
-            var result = await repository.GetOrganizationAsync(id);
+            var organization = await repository.GetOrganizationAsync(id);
 
-            if (result == null)
+            if (organization == null)
                 return NotFound();
 
-            return result;
+            return organization;
         }
 
         // api/organizations/1
@@ -88,6 +96,9 @@ namespace CustomerVehicleManagement.Api.Organizations
             //1) Get domain entity from repository
             var organizationFromRepository = repository.GetOrganizationEntityAsync(id).Result;
 
+            if (organizationFromRepository is null)
+                return NotFound(notFoundMessage);
+
             // 2) Update domain entity with data in data transfer object(DTO)
             var organizationNameOrError = OrganizationName.Create(organizationToUpdate.Name);
 
@@ -99,6 +110,10 @@ namespace CustomerVehicleManagement.Api.Organizations
                                                                      organizationToUpdate.Address.City,
                                                                      organizationToUpdate.Address.State,
                                                                      organizationToUpdate.Address.PostalCode).Value);
+           
+            if (organizationToUpdate?.Address is null)
+                organizationFromRepository.SetAddress(null);
+
             organizationFromRepository.SetNote(organizationToUpdate.Note);
 
             List<Phone> phones = new();
@@ -202,11 +217,17 @@ namespace CustomerVehicleManagement.Api.Organizations
              3) Save changes
              4) return NoContent()
          */
-            var organizationFromRepository = await repository.GetOrganizationAsync(id);
-            if (organizationFromRepository == null)
-                return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
-            await repository.DeleteOrganizationAsync(id);
+            var notFoundMessage = $"Could not find Organization in the database to delete with Id: {id}.";
+
+            if (!await repository.OrganizationExistsAsync(id))
+                    return NotFound(notFoundMessage);
+
+            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
+            if (organizationFromRepository == null)
+                return NotFound(notFoundMessage);
+
+            repository.DeleteOrganization(organizationFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
