@@ -12,6 +12,8 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
         public long Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public double LaborRate { get; set; }
+        public double DesiredMargin { get; set; }
 
         public static SaleCodeToReadInList ConvertToDto(SaleCode sc)
         {
@@ -21,7 +23,9 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 {
                     Id = sc.Id,
                     Code = sc.Code,
-                    Name = sc.Name
+                    Name = sc.Name,
+                    LaborRate = sc.LaborRate,
+                    DesiredMargin = sc.DesiredMargin
                 };
             }
 

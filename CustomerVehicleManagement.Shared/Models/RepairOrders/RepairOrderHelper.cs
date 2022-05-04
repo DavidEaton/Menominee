@@ -431,7 +431,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 ProductCodeId = item.ProductCodeId,
                                 QuantitySold = item.QuantitySold,
                                 RepairOrderServiceId = item.RepairOrderServiceId,
-                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCode = SaleCodeHelper.Transform(item.SaleCode),
                                 SaleCodeId = item.SaleCodeId,
                                 SaleType = item.SaleType,
                                 SellingPrice = item.SellingPrice,
@@ -553,43 +553,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                             SerialNumber = serialNumber.SerialNumber
                                         }).ToList()
                 ?? new List<RepairOrderSerialNumber>();
-        }
-
-        public static SaleCode TransformSaleCode(SaleCodeToWrite saleCode)
-        {
-            if (saleCode == null)
-                return null;
-
-            return new SaleCode()
-            {
-                Code = saleCode.Code,
-                Name = saleCode.Name
-            };
-        }
-
-        private static SaleCodeToWrite TransformSaleCode(SaleCodeToRead saleCode)
-        {
-            if (saleCode is null)
-                return null;
-
-            return new SaleCodeToWrite
-            {
-                Code = saleCode.Code,
-                Name = saleCode.Name
-            };
-        }
-
-        public static SaleCodeToRead TransformSaleCode(SaleCode saleCode)
-        {
-            if (saleCode is null)
-                return null;
-
-            return new SaleCodeToRead
-            {
-                Id = saleCode.Id,
-                Code = saleCode.Code,
-                Name = saleCode.Name
-            };
         }
 
         private static List<RepairOrderTaxToWrite> ProjectTaxes(List<RepairOrderTaxToRead> taxes)
@@ -767,7 +730,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 IsDeclined = item.IsDeclined,
                                 LaborEach = item.LaborEach,
                                 LaborType = item.LaborType,
-                                Manufacturer = TransformManufacturer(item.Manufacturer),
+                                Manufacturer = ManufacturerHelper.TransformManufacturer(item.Manufacturer),
                                 ManufacturerId = item.ManufacturerId,
                                 PartNumber = item.PartNumber,
                                 PartType = item.PartType,
@@ -775,7 +738,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 ProductCodeId = item.ProductCodeId,
                                 QuantitySold = item.QuantitySold,
                                 RepairOrderServiceId = item.RepairOrderServiceId,
-                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCode = SaleCodeHelper.Transform(item.SaleCode),
                                 SaleCodeId = item.SaleCodeId,
                                 SaleType = item.SaleType,
                                 SellingPrice = item.SellingPrice,
@@ -785,18 +748,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                                 Taxes = ProjectServiceItemTaxes(item.Taxes),
                                 Purchases = ProjectServiceItemPurchases(item.Purchases)
                             };
-        }
-
-        private static ManufacturerToWrite TransformManufacturer(ManufacturerToRead manufacturer)
-        {
-            if (manufacturer is null)
-                return new ManufacturerToWrite();
-
-            return new ManufacturerToWrite
-            {
-                Code = manufacturer.Code,
-                Name = manufacturer.Name
-            };
         }
 
         private static IList<RepairOrderTechToRead> ProjectServiceTechnicians(IList<RepairOrderTech> technicians)
@@ -835,11 +786,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             {
                                 Id = item.Id,
                                 RepairOrderServiceId = item.RepairOrderServiceId,
-                                Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
+                                Manufacturer = ManufacturerHelper.TransformManufacturer(item.Manufacturer),
                                 ManufacturerId = item.ManufacturerId,
                                 PartNumber = item.PartNumber,
                                 Description = item.Description,
-                                SaleCode = TransformSaleCode(item.SaleCode),
+                                SaleCode = SaleCodeHelper.Transform(item.SaleCode),
                                 SaleCodeId = item.SaleCodeId,
                                 ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                                 ProductCodeId = item.ProductCodeId,

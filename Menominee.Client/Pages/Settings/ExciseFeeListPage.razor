@@ -1,0 +1,63 @@
+﻿@page "/settings/excisefees"
+@page "/settings/excisefees/{FeeToSelect:long}"
+
+@using CustomerVehicleManagement.Shared.Models.Taxes
+@using Menominee.Client.Components.Settings
+@using Menominee.Client.Components.Shared
+
+<SettingsMenu />
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Excise / Disposal / HazMat Fees" />
+            @if (ExciseFeeList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (ExciseFeeList != null)
+            {
+                <TelerikGrid Data="ExciseFeeList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEditAsync"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.None"
+                             ShowColumnMenu="false"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<ExciseFeeToReadInList> exciseFeeList) => OnSelect(exciseFeeList))"
+                             SelectedItems="@SelectedExciseFees"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <GridColumn Width="75%" 
+                                    Field="@nameof(ExciseFeeToReadInList.Description)" 
+                                    Title="Description">
+                        </GridColumn>
+                        <GridColumn Width="25%" 
+                                    Field="@nameof(ExciseFeeToReadInList.DisplayAmount)" 
+                                    Title="Fee"
+                                    TextAlign="ColumnTextAlign.Right">
+                        </GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+@if (ExciseFeeToModify != null && EditFeeDialogVisible)
+{
+    <ExciseFeeEditor ExciseFee="@ExciseFeeToModify"
+                     OnSave="@OnSaveEditAsync"
+                     OnCancel="@OnCancelEdit" />
+}
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

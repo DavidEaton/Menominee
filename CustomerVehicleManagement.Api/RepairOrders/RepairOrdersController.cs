@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -158,7 +159,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableItem.ProductCodeId = item.ProductCodeId;
                 editableItem.QuantitySold = item.QuantitySold;
                 editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
-                editableItem.SaleCode = RepairOrderHelper.TransformSaleCode(item.SaleCode);
+                editableItem.SaleCode = SaleCodeHelper.Transform(item.SaleCode);
                 editableItem.SaleCodeId = item.SaleCodeId;
                 editableItem.SaleType = item.SaleType;
                 editableItem.SellingPrice = item.SellingPrice;

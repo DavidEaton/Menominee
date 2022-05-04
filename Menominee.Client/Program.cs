@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared;
 using Menominee.Client.Components.RepairOrders;
 using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
+using Menominee.Client.Services.CreditCards;
 using Menominee.Client.Services.Customers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
@@ -10,6 +11,7 @@ using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Services.Taxes;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -122,6 +124,18 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IInventoryItemDataService, InventoryItemDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<ICreditCardDataService, CreditCardDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IExciseFeeDataService, ExciseFeeDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<ISalesTaxDataService, SalesTaxDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

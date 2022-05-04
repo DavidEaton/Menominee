@@ -1,0 +1,71 @@
+﻿@page "/settings/salestaxes"
+@page "/settings/salestaxes/{TaxToSelect:long}"
+
+@using CustomerVehicleManagement.Shared.Models.Taxes
+@using Menominee.Client.Components.Settings
+@using Menominee.Client.Components.Shared
+
+<SettingsMenu />
+
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Sales Taxes" />
+            @if (SalesTaxList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (SalesTaxList != null)
+            {
+                <TelerikGrid Data="SalesTaxList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEditAsync"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.None"
+                             ShowColumnMenu="false"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<SalesTaxToReadInList> salesTaxList) => OnSelect(salesTaxList))"
+                             SelectedItems="@SelectedSalesTaxes"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <GridColumn Width="60%" 
+                                    Field="@nameof(SalesTaxToReadInList.Description)" 
+                                    Title="Tax Name">
+                        </GridColumn>
+                        <GridColumn Width="20%" 
+                                    Field="@nameof(SalesTaxToReadInList.PartTaxRate)" 
+                                    Title="Part Rate"
+                                    TextAlign="ColumnTextAlign.Right"
+                                    DisplayFormat="{0:P}">
+                        </GridColumn>
+                        <GridColumn Width="20%" 
+                                    Field="@nameof(SalesTaxToReadInList.LaborTaxRate)" 
+                                    Title="Labor Rate"
+                                    TextAlign="ColumnTextAlign.Right"
+                                    DisplayFormat="{0:P}">
+                        </GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+@if (SalesTaxToModify != null && EditTaxDialogVisible)
+{
+    <SalesTaxEditor SalesTax="@SalesTaxToModify"
+                    OnSave="@OnSaveEditAsync"
+                    OnCancel="@OnCancelEdit" />
+}
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

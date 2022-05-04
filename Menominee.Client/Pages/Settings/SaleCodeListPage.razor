@@ -1,0 +1,75 @@
+﻿@page "/settings/salecodes"
+@page "/settings/salecodes/{CodeToSelect:long}"
+
+@using CustomerVehicleManagement.Shared.Models.SaleCodes
+@using Menominee.Client.Components.Settings
+@using Menominee.Client.Components.Shared
+
+<SettingsMenu />
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Sale Codes" />
+            @if (SaleCodeList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (SaleCodeList != null)
+            {
+                <TelerikGrid Data="SaleCodeList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEditAsync"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.None"
+                             ShowColumnMenu="false"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<SaleCodeToReadInList> saleCodeList) => OnSelect(saleCodeList))"
+                             SelectedItems="@SelectedSaleCodes"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <GridColumn Width="10%" 
+                                    Field="@nameof(SaleCodeToReadInList.Code)" 
+                                    Title="Code">
+                        </GridColumn>
+                        <GridColumn Width="45%" 
+                                    Field="@nameof(SaleCodeToReadInList.Name)" 
+                                    Title="Description">
+                        </GridColumn>
+                        <GridColumn Width="20%" 
+                                    Field="@nameof(SaleCodeToReadInList.LaborRate)" 
+                                    Title="Labor Rate">
+                        </GridColumn>
+                        <GridColumn Width="20%" 
+                                    Field="@nameof(SaleCodeToReadInList.DesiredMargin)" 
+                                    Title="Desired Margin">
+                        </GridColumn>
+@*                        <GridColumn Width="15%" 
+                                    Field="@nameof(SaleCodeToReadInList.CorporateRow)" 
+                                    Title="Corp. Row">
+                        </GridColumn>
+*@                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+
+@if (SaleCodeToModify != null && EditCodeDialogVisible)
+{
+@*    <CreditCardEditor CreditCard="@CreditCardToModify"
+                           OnSave="@OnSaveEditAsync"
+                           OnCancel="@OnCancelEdit" />
+*@}
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

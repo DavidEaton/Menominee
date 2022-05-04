@@ -1,3 +1,4 @@
+using CustomerVehicleManagement.Api.CreditCards;
 using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Inventory;
@@ -9,6 +10,7 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Api.RepairOrders;
 using CustomerVehicleManagement.Api.SaleCodes;
+using CustomerVehicleManagement.Api.Taxes;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
@@ -130,6 +132,9 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<ISaleCodeRepository, SaleCodeRepository>();
             services.TryAddScoped<IProductCodeRepository, ProductCodeRepository>();
             services.TryAddScoped<IInventoryItemRepository, InventoryItemRepository>();
+            services.TryAddScoped<ICreditCardRepository, CreditCardRepository>();
+            services.TryAddScoped<IExciseFeeRepository, ExciseFeeRepository>();
+            services.TryAddScoped<ISalesTaxRepository, SalesTaxRepository>();
 
             services.AddHealthChecks();
             services.AddCors();
@@ -145,9 +150,9 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
-                services.AddDbContext<ApplicationDbContext>();
+                //services.AddDbContext<ApplicationDbContext>();
                 // Uncomment next line and comment previous line to route all requests to a single tenant database during development
-                //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 

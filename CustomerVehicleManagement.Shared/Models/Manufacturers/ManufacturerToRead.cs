@@ -1,6 +1,4 @@
-﻿
-
-using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {

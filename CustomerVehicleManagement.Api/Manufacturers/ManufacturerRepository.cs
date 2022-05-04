@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(mfr => mfr.Code == code);
 
-            return ManufacturerToRead.ConvertToDto(mfrFromContext);
+            return ManufacturerHelper.TransformManufacturer(mfrFromContext);
         }
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)

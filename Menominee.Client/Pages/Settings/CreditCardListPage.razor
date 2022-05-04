@@ -1,0 +1,64 @@
+﻿@page "/settings/creditcards"
+@page "/settings/creditcards/{ItemToSelect:long}"
+
+@using CustomerVehicleManagement.Shared.Models.CreditCards
+@using Menominee.Client.Components.Settings
+@using Menominee.Client.Components.Shared
+
+<SettingsMenu />
+
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Credit Cards" />
+            @if (CreditCardList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (CreditCardList != null)
+            {
+                <TelerikGrid Data="CreditCardList"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@OnEditAsync"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.None"
+                             ShowColumnMenu="false"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<CreditCardToReadInList> creditCardList) => OnSelect(creditCardList))"
+                             SelectedItems="@SelectedCreditCards"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <GridColumn Width="60%" 
+                                    Field="@nameof(CreditCardToReadInList.Name)" 
+                                    Title="Name">
+                        </GridColumn>
+                        <GridColumn Width="40%" 
+                                    Field="@nameof(CreditCardToReadInList.ProcessorName)" 
+                                    Title="Processor">
+                        </GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+
+@if (CreditCardToModify != null && EditCardDialogVisible)
+{
+    <CreditCardEditor CreditCard="@CreditCardToModify"
+                           OnSave="@OnSaveEditAsync"
+                           OnCancel="@OnCancelEdit" />
+}
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>
