@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿//using CustomerVehicleManagement.Api.Configurations.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Shared.Helpers.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +14,26 @@ namespace CustomerVehicleManagement.Api.Inventory
     [ApiController]
     public class InventoryItemsController : ControllerBase
     {
-        private readonly IInventoryItemRepository repository;
+        private readonly IInventoryItemRepository itemRepository;
+        //private readonly InventoryPartsController partsController;
+        //private readonly InventoryLaborController laborController;
+        //private readonly InventoryTiresController tiresController;
         private readonly string BasePath = "/api/inventoryitems";
 
-        public InventoryItemsController(IInventoryItemRepository repository)
+        //public InventoryItemsController(IInventoryItemRepository itemRepository,
+        //                                InventoryPartsController partsController,
+        //                                InventoryLaborController laborController,
+        //                                InventoryTiresController tiresController)
+        //{
+        //    this.itemRepository = itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
+        //    this.partsController = partsController ?? throw new ArgumentNullException(nameof(partsController));
+        //    this.laborController = laborController ?? throw new ArgumentNullException(nameof(laborController));
+        //    this.tiresController = tiresController ?? throw new ArgumentNullException(nameof(tiresController));
+        //}
+
+        public InventoryItemsController(IInventoryItemRepository itemRepository)
         {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.itemRepository = itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
         }
 
         // api/inventoryitems/listing
@@ -59,10 +75,10 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         // api/inventoryitems/1
-        [HttpGet("{id:long}")]
+        [HttpGet("{id:long}", Name = "GetInventoryItemAsync")]
         public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long id)
         {
-            var result = await repository.GetInventoryItemAsync(id);
+            var result = await itemRepository.GetItemAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -72,71 +88,127 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         // api/inventoryitems/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemDto)
+        public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemToWrite)
         {
-            var notFoundMessage = $"Could not find Inventory Item to update: {itemDto.PartNumber}";
+            if (!await itemRepository.ItemExistsAsync(id))
+                return NotFound($"Could not find Inventory Item # {id} to update.");
 
-            if (!await repository.InventoryItemExistsAsync(id))
-                return NotFound(notFoundMessage);
+            //InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(id);
 
             //1) Get domain entity from repository
             var item = await repository.GetInventoryItemEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            item.Manufacturer = itemDto.Manufacturer;
-            item.ManufacturerId = itemDto.ManufacturerId;
-            item.PartNumber = itemDto.PartNumber;
-            item.Description = itemDto.Description;
-            item.ProductCode = itemDto.ProductCode;
-            item.ProductCodeId = itemDto.ProductCodeId;
-            item.PartType = itemDto.PartType;
-            item.QuantityOnHand = itemDto.QuantityOnHand;
-            item.Cost = itemDto.Cost;
-            item.SuggestedPrice = itemDto.SuggestedPrice;
-            item.Labor = itemDto.Labor;
+            InventoryItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
 
-            // Update the objects ObjectState and sych the EF Change Tracker
+            // Update the objects ObjectState and synch the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
             item.SetTrackingState(TrackingState.Modified);
 
             // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
+            itemRepository.FixTrackingState();
 
-            repository.UpdateInventoryItemAsync(item);
+            if (await itemRepository.SaveChangesAsync())
+                return NoContent();
 
-            await repository.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest($"Failed to update .");
         }
 
+        // api/inventoryitems/1
+        //[HttpPut("{id:long}")]
+        //public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemDto)
+        //{
+        //    var notFoundMessage = $"Could not find Inventory Item to update: {itemDto.ItemNumber}";
+
+        //    if (!await repository.InventoryItemExistsAsync(id))
+        //        return NotFound(notFoundMessage);
+
+        //    //1) Get domain entity from repository
+        //    var item = repository.GetInventoryItemEntityAsync(id).Result;
+
+        //    // 2) Update domain entity with data in data transfer object(DTO)
+        //    item.Manufacturer = itemDto.Manufacturer;
+        //    item.ManufacturerId = itemDto.ManufacturerId;
+        //    item.ItemNumber = itemDto.ItemNumber;
+        //    item.Description = itemDto.Description;
+        //    item.ProductCode = itemDto.ProductCode;
+        //    item.ProductCodeId = itemDto.ProductCodeId;
+        //    item.ItemType = itemDto.ItemType;
+
+
+        //    // Update the objects ObjectState and sych the EF Change Tracker
+        //    // 3) Set entity's TrackingState to Modified
+        //    item.SetTrackingState(TrackingState.Modified);
+
+        //    // 4) FixTrackingState: moves entity state tracking into the context
+        //    repository.FixTrackingState();
+
+        //    repository.UpdateInventoryItemAsync(item);
+
+        //    await repository.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
         [HttpPost]
-        public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemCreateDto)
+        public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
         {
-            // 1. Convert dto to domain entity
-            var item = new InventoryItem()
-            {
-                Manufacturer = itemCreateDto.Manufacturer,
-                ManufacturerId = itemCreateDto.ManufacturerId,
-                PartNumber = itemCreateDto.PartNumber,
-                Description = itemCreateDto.Description,
-                ProductCode = itemCreateDto.ProductCode,
-                ProductCodeId = itemCreateDto.ProductCodeId,
-                PartType = itemCreateDto.PartType,
-                QuantityOnHand = itemCreateDto.QuantityOnHand,
-                Cost = itemCreateDto.Cost,
-                SuggestedPrice = itemCreateDto.SuggestedPrice,
-                Labor = itemCreateDto.Labor
-            };
+            InventoryItem item = null;
 
-            // 2. Add domain entity to repository
-            await repository.AddInventoryItemAsync(item);
+            if (itemToAdd.ItemType == InventoryItemType.Part)
+                item = new(InventoryPartHelper.CreateEntityFromWriteDto(itemToAdd.Part));
+            else if (itemToAdd.ItemType == InventoryItemType.Labor)
+                item = new(InventoryLaborHelper.CreateEntityFromWriteDto(itemToAdd.Labor));
+            else if (itemToAdd.ItemType == InventoryItemType.Tire)
+                item = new(InventoryTireHelper.CreateEntityFromWriteDto(itemToAdd.Tire));
 
-            // 3. Save changes on repository
-            await repository.SaveChangesAsync();
+            item.ManufacturerId = itemToAdd.ManufacturerId;
+            item.ItemNumber = itemToAdd.ItemNumber;
+            item.Description = itemToAdd.Description;
+            item.ProductCodeId = itemToAdd.ProductCodeId;
+
+            await itemRepository.AddItemAsync(item);
+
+            if (!await itemRepository.SaveChangesAsync())
+                return BadRequest($"Failed to add {itemToAdd}.");
+
+            InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(item.Id);
+
+            if (itemFromRepository == null)
+                return BadRequest($"Failed to add {itemToAdd}.");
 
             // 4. Return new manufacturerId & partNumber from database to consumer after save
             return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.PartNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, PartNumber = item.PartNumber });
         }
+
+        //[HttpPost]
+        //public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemCreateDto)
+        //{
+        //    // 1. Convert dto to domain entity
+        //    var item = new InventoryItem()
+        //    {
+        //        Manufacturer = itemCreateDto.Manufacturer,
+        //        ManufacturerId = itemCreateDto.ManufacturerId,
+        //        ItemNumber = itemCreateDto.ItemNumber,
+        //        Description = itemCreateDto.Description,
+        //        ProductCode = itemCreateDto.ProductCode,
+        //        ProductCodeId = itemCreateDto.ProductCodeId,
+        //        ItemType = itemCreateDto.ItemType
+        //        //QuantityOnHand = itemCreateDto.QuantityOnHand,
+        //        //Cost = itemCreateDto.Cost,
+        //        //SuggestedPrice = itemCreateDto.SuggestedPrice,
+        //        //Labor = itemCreateDto.Labor
+        //    };
+
+        //    // 2. Add domain entity to repository
+        //    await repository.AddInventoryItemAsync(item);
+
+        //    // 3. Save changes on repository
+        //    await repository.SaveChangesAsync();
+
+        //    // 4. Return new mfrId & itemNumber from database to consumer after save
+        //    return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.ItemNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, ItemNumber = item.ItemNumber });
+        //}
 
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteInventoryItemAsync(long id)

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MenomineePlayWASM.Shared.Entities.Inventory.Enums
+namespace Menominee.Common.Enums
 {
     public enum InventoryItemType
     {
         Part,
         Labor,
-        NonStocked,
-        Package,
-        Core,
         Tire,
+        [Display(Name = "Courtesy Check")]
         CourtesyCheck,
         Donation,
-        Warranty
+        Warranty,
+        [Display(Name = "Gift Certificate")]
+        GiftCertificate
     }
 }

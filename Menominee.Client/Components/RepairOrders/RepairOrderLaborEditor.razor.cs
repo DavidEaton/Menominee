@@ -59,8 +59,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            SaleCodes = (await saleCodeDataService.GetAllSaleCodes()).ToList();
-            ProductCodes = (await productCodeDataService.GetAllProductCodes()).ToList();
+            SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync()).ToList();
 
             SaleCodeList = new();
             foreach (var saleCode in SaleCodes)

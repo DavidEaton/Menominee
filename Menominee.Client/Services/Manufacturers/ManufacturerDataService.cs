@@ -24,7 +24,7 @@ namespace Menominee.Client.Services.Manufacturers
             this.toastService = toastService;
         }
 
-        public async Task<ManufacturerToRead> AddManufacturer(ManufacturerToWrite manufacturer)
+        public async Task<ManufacturerToRead> AddManufacturerAsync(ManufacturerToWrite manufacturer)
         {
             var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -38,7 +38,7 @@ namespace Menominee.Client.Services.Manufacturers
             return null;
         }
 
-        public async Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturers()
+        public async Task<IReadOnlyList<ManufacturerToReadInList>> GetAllManufacturersAsync()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Menominee.Client.Services.Manufacturers
             return null;
         }
 
-        public async Task<ManufacturerToRead> GetManufacturer(long id)
+        public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Menominee.Client.Services.Manufacturers
             return null;
         }
 
-        public async Task UpdateManufacturer(ManufacturerToWrite manufacturer, long id)
+        public async Task UpdateManufacturerAsync(ManufacturerToWrite manufacturer, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

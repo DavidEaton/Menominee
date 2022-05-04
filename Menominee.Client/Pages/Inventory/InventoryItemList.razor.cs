@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,9 @@ namespace Menominee.Client.Pages.Inventory
 
         public TelerikGrid<InventoryItemToReadInList> Grid { get; set; }
 
+        private bool ItemTypeSelectDialogVisible { get; set; } = false;
+        private InventoryItemType SelectedItemType;
+
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
 
@@ -53,10 +57,12 @@ namespace Menominee.Client.Pages.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            SearchFields.Add("PartNumber");
+            SearchFields.Add("ItemNumber");
             SearchFields.Add("Description");
 
             await FilterItemsList(0);
+
+            SelectedItemType = InventoryItemType.Part;
 
             //ItemsList = (await DataService.GetAllItems()).ToList();
 
@@ -81,7 +87,7 @@ namespace Menominee.Client.Pages.Inventory
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await MfrDataService.GetAllManufacturers()).ToList();
+            Manufacturers = (await MfrDataService.GetAllManufacturersAsync()).ToList();
 
             ManufacturerList = new();
             ManufacturerList.Add(new ManufacturerX
@@ -93,7 +99,7 @@ namespace Menominee.Client.Pages.Inventory
             });
             foreach (var mfr in Manufacturers)
             {
-                if (mfr.Code != "0" && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
+                if (mfr.Code != "0" && mfr.Prefix?.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
                 {
                     ManufacturerList.Add(new ManufacturerX
                     {
@@ -109,9 +115,9 @@ namespace Menominee.Client.Pages.Inventory
         private async Task FilterItemsList(long mfrId)
         {
             if (mfrId > 0)
-                ItemsList = (await DataService.GetAllItems(mfrId)).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
             else
-                ItemsList = (await DataService.GetAllItems()).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync()).ToList();
 
             if (ItemsList.Count > 0)
             {
@@ -136,17 +142,34 @@ namespace Menominee.Client.Pages.Inventory
             {
                 ViewingMfrId = SelectedMfrId;
                 await FilterItemsList(ViewingMfrId);
+                Grid.Rebind();
             }
         }
 
         private void OnAdd()
         {
-            NavigationManager.NavigateTo("inventory/items/0");
+            ItemTypeSelectDialogVisible = true;
+        }
+
+        private void OnSelectItemType()
+        {
+            ItemTypeSelectDialogVisible = false;
+            if (SelectedItemType == InventoryItemType.Part)
+                NavigationManager.NavigateTo("inventory/parts/0");
+            else if (SelectedItemType == InventoryItemType.Labor)
+                NavigationManager.NavigateTo("inventory/labor/0");
+            else if (SelectedItemType == InventoryItemType.Tire)
+                NavigationManager.NavigateTo("inventory/tires/0");
         }
 
         private void OnEdit()
         {
-            NavigationManager.NavigateTo($"inventory/items/{SelectedId}");
+            if (SelectedItem?.ItemType == InventoryItemType.Part)
+                NavigationManager.NavigateTo($"inventory/parts/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Labor)
+                NavigationManager.NavigateTo($"inventory/labor/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Tire)
+                NavigationManager.NavigateTo($"inventory/tires/{SelectedId}");
         }
 
         private void OnDelete()

@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using System.Collections.Generic;
 using System.Threading.Tasks;

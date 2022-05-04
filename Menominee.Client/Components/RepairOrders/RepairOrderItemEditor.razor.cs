@@ -73,9 +73,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await ManufacturerDataService.GetAllManufacturers()).ToList();
-            SaleCodes = (await SaleCodeDataService.GetAllSaleCodes()).ToList();
-            ProductCodes = (await ProductCodeDataService.GetAllProductCodes()).ToList();    // FIX ME - need to restrict list to mfr, salecode
+            Manufacturers = (await ManufacturerDataService.GetAllManufacturersAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            ProductCodes = (await ProductCodeDataService.GetAllProductCodesAsync()).ToList();    // FIX ME - need to restrict list to mfr, salecode
 
             ManufacturerList = new();
             foreach (var mfr in Manufacturers)
