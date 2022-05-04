@@ -150,9 +150,9 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsDevelopment())
             {
                 AddControllersWithOptions(services, false);
-                //services.AddDbContext<ApplicationDbContext>();
+                services.AddDbContext<ApplicationDbContext>();
                 // Uncomment next line and comment previous line to route all requests to a single tenant database during development
-                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+                //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
             }
         }
 

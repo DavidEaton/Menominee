@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
-using Telerik.DataSource;
 
 namespace Menominee.Client.Pages.Settings
 {
@@ -18,101 +17,81 @@ namespace Menominee.Client.Pages.Settings
         [Inject]
         public ISalesTaxDataService SalesTaxDataService { get; set; }
 
-        [Parameter]
-        public long TaxToSelect { get; set; } = 0;
-
-        public IReadOnlyList<SalesTaxToReadInList> SalesTaxList;
-        public IEnumerable<SalesTaxToReadInList> SelectedSalesTaxes { get; set; } = Enumerable.Empty<SalesTaxToReadInList>();
-        public SalesTaxToReadInList SelectedSalesTax { get; set; }
-        public SalesTaxToWrite SalesTaxToModify { get; set; } = null;
-
-        public long SelectedId
-        {
-            get => selectedId;
-            set
-            {
-                selectedId = value;
-                CanEdit = selectedId > 0;
-                CanDelete = selectedId > 0;
-            }
-        }
+        public IReadOnlyList<SalesTaxToReadInList> SalesTaxes;
+        public SalesTaxToWrite SalesTax { get; set; } = null;
 
         public TelerikGrid<SalesTaxToReadInList> Grid { get; set; }
 
-        private long selectedId;
+        [Parameter]
+        public long Id { get; set; } = 0;
+        
+        private bool CanEdit { get => Id > 0; }
+        private bool CanDelete { get => Id > 0; }
 
-        private bool CanEdit { get; set; } = false;
-        private bool CanDelete { get; set; } = false;
-        private bool EditTaxDialogVisible { get; set; } = false;
+        private FormMode SalesTaxFormMode = FormMode.Unknown;
 
         protected override async Task OnInitializedAsync()
         {
-            SalesTaxList = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
-
-            if (SalesTaxList.Count > 0)
-            {
-                if (TaxToSelect == 0)
-                {
-                    SelectedSalesTax = SalesTaxList.FirstOrDefault();
-                }
-                else
-                {
-                    SelectedSalesTax = SalesTaxList.Where(x => x.Id == TaxToSelect).FirstOrDefault();
-                }
-                SelectedId = SelectedSalesTax.Id;
-                SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
-            }
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
-            GridState<SalesTaxToReadInList> desiredState = new GridState<SalesTaxToReadInList>()
-            {
-                SortDescriptors = new List<SortDescriptor>()
-                {
-                    new SortDescriptor { Member = "Name", SortDirection = ListSortDirection.Descending }
-                }
-            };
-
-            if (Grid != null)
-                await Grid?.SetState(desiredState);
+            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
         }
 
         private void OnAdd()
         {
-            SelectedId = 0;
-            SalesTaxToModify = new();
-            SalesTaxToModify.TaxType = SalesTaxType.Normal;
-            EditTaxDialogVisible = true;
+            SalesTaxFormMode = FormMode.Add;
+            SalesTaxes = null;
+            SalesTax = new();
         }
 
-        private async Task OnEditAsync()
+        private async Task RowDoubleClickAsync(GridRowClickEventArgs args)
         {
-            if (SelectedId != 0)
+            Id = (args.Item as SalesTaxToReadInList).Id;
+            await Edit();
+        }
+
+        private async Task Edit()
+        {
+            if (Id > 0)
             {
-                SalesTaxToRead tax = await SalesTaxDataService.GetSalesTaxAsync(SelectedId);
-                if (tax != null)
+                var readDto = await SalesTaxDataService.GetSalesTaxAsync(Id);
+                SalesTax = new SalesTaxToWrite
                 {
-                    SalesTaxToModify = SalesTaxHelper.Transform(tax);
-                    EditTaxDialogVisible = true;
+                    Description = readDto.Description,
+                    IsAppliedByDefault = readDto.IsAppliedByDefault,
+                    IsTaxable = readDto.IsTaxable,
+                    LaborTaxRate = readDto.LaborTaxRate,
+                    Order = readDto.Order,
+                    PartTaxRate = readDto.PartTaxRate,
+                    TaxIdNumber = readDto.TaxIdNumber,
+                    TaxType = readDto.TaxType
+                };
+
+                if (readDto?.TaxedExciseFees.Count > 0)
+                {
+                    foreach (var tax in readDto.TaxedExciseFees)
+                    {
+                        SalesTax.TaxedExciseFees.Add(new ExciseFeeToWrite
+                        {
+                            Amount = tax.Amount,
+                            Description = tax.Description,
+                            FeeType = tax.FeeType
+                        });
+                    }
                 }
+
+                SalesTaxFormMode = FormMode.Edit;
+                SalesTaxes = null;
             }
         }
 
         private void OnDelete()
         {
-            SelectedId = 0;
-        }
-
-        protected void OnSelect(IEnumerable<SalesTaxToReadInList> SalesTaxs)
-        {
-            SelectedSalesTax = SalesTaxs.FirstOrDefault();
-            SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
+            //if (Id > 0)
+            //    await SalesTaxDataService.Delete(Id);
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as SalesTaxToReadInList).Id;
+            Id = (args.Item as SalesTaxToReadInList).Id;
         }
 
         private void OnDone()
@@ -120,35 +99,31 @@ namespace Menominee.Client.Pages.Settings
             NavigationManager.NavigateTo("/settings/");
         }
 
-        private async Task OnSaveEditAsync()
+        protected async Task HandleAddSubmit()
         {
-            if (SelectedId == 0)
-            {
-                SalesTaxToRead tax = await SalesTaxDataService.AddSalesTaxAsync(SalesTaxToModify);
-                if (tax != null)
-                {
-                    SelectedId = tax.Id;
-                }
-            }
-            else
-            {
-                await SalesTaxDataService.UpdateSalesTaxAsync(SelectedId, SalesTaxToModify);
-            }
-
-            if (SelectedId > 0)
-            {
-                SalesTaxList = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
-                SelectedSalesTax = SalesTaxList.Where(x => x.Id == SelectedId).FirstOrDefault();
-                SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
-                Grid.Rebind();
-            }
-
-            EditTaxDialogVisible = false;
+            await SalesTaxDataService.AddSalesTaxAsync(SalesTax);
+            await EndAddEditAsync();
         }
 
-        private void OnCancelEdit()
+        protected async Task HandleEditSubmit()
         {
-            EditTaxDialogVisible = false;
+            await SalesTaxDataService.UpdateSalesTaxAsync(Id, SalesTax);
+            await EndAddEditAsync();
+        }
+
+        protected async Task SubmitHandlerAsync()
+        {
+            if (SalesTaxFormMode == FormMode.Add)
+                await HandleAddSubmit();
+
+            if (SalesTaxFormMode == FormMode.Edit)
+                await HandleEditSubmit();
+        }
+
+        protected async Task EndAddEditAsync()
+        {
+            SalesTaxFormMode = FormMode.Unknown;
+            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
         }
     }
 }

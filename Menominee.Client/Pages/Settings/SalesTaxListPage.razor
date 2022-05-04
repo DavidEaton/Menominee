@@ -1,67 +1,61 @@
 ﻿@page "/settings/salestaxes"
-@page "/settings/salestaxes/{TaxToSelect:long}"
-
-@using CustomerVehicleManagement.Shared.Models.Taxes
-@using Menominee.Client.Components.Settings
-@using Menominee.Client.Components.Shared
+@page "/settings/salestaxes/{Id:long}"
 
 <SettingsMenu />
 
-
 <div class="m-main-content">
     <div class="m-form">
-        <div>
+        @if (SalesTaxFormMode != FormMode.Add && SalesTaxFormMode != FormMode.Edit)
+        {
             <ContentHeader Header="Sales Taxes" />
-            @if (SalesTaxList == null)
+            @if (SalesTaxes == null)
             {
                 <p><em>Loading...</em></p>
             }
 
-            @if (SalesTaxList != null)
+            @if (SalesTaxes != null)
             {
-                <TelerikGrid Data="SalesTaxList"
-                             OnRowClick="@OnRowSelected"
-                             OnRowDoubleClick="@OnEditAsync"
-                             Sortable="true"
-                             Pageable="true"
-                             FilterMode="GridFilterMode.None"
-                             ShowColumnMenu="false"
-                             SelectionMode="GridSelectionMode.Single"
-                             SelectedItemsChanged="@((IEnumerable<SalesTaxToReadInList> salesTaxList) => OnSelect(salesTaxList))"
-                             SelectedItems="@SelectedSalesTaxes"
-                             Class="m-grid"
-                             @ref="@Grid">
+                <TelerikGrid Data="SalesTaxes"
+                     OnRowClick="OnRowSelected"
+                     OnRowDoubleClick="RowDoubleClickAsync"
+                     Sortable="true"
+                     Pageable="true"
+                     FilterMode="GridFilterMode.None"
+                     ShowColumnMenu="false"
+                     SelectionMode="GridSelectionMode.Single"
+                     Class="m-grid"
+                     @ref="Grid">
                     <GridColumns>
-                        <GridColumn Width="60%" 
-                                    Field="@nameof(SalesTaxToReadInList.Description)" 
-                                    Title="Tax Name">
+                        <GridColumn Width="60%"
+                            Field="@nameof(SalesTaxToReadInList.Description)"
+                            Title="Tax Name">
                         </GridColumn>
-                        <GridColumn Width="20%" 
-                                    Field="@nameof(SalesTaxToReadInList.PartTaxRate)" 
-                                    Title="Part Rate"
-                                    TextAlign="ColumnTextAlign.Right"
-                                    DisplayFormat="{0:P}">
+                        <GridColumn Width="20%"
+                            Field="@nameof(SalesTaxToReadInList.PartTaxRate)"
+                            Title="Part Rate"
+                            TextAlign="ColumnTextAlign.Right"
+                            DisplayFormat="{0:P}">
                         </GridColumn>
-                        <GridColumn Width="20%" 
-                                    Field="@nameof(SalesTaxToReadInList.LaborTaxRate)" 
-                                    Title="Labor Rate"
-                                    TextAlign="ColumnTextAlign.Right"
-                                    DisplayFormat="{0:P}">
+                        <GridColumn Width="20%"
+                            Field="@nameof(SalesTaxToReadInList.LaborTaxRate)"
+                            Title="Labor Rate"
+                            TextAlign="ColumnTextAlign.Right"
+                            DisplayFormat="{0:P}">
                         </GridColumn>
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                <EditNewDeleteButtons OnDone="OnDone" OnEdit="Edit" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
             }
-        </div>
+        }
     </div>
 </div>
 
-@if (SalesTaxToModify != null && EditTaxDialogVisible)
+@if ((SalesTaxFormMode == FormMode.Add || SalesTaxFormMode == FormMode.Edit) && SalesTax != null)
 {
-    <SalesTaxEditor SalesTax="@SalesTaxToModify"
-                    OnSave="@OnSaveEditAsync"
-                    OnCancel="@OnCancelEdit" />
+    <SalesTaxEditor SalesTax="SalesTax"
+                OnSave="SubmitHandlerAsync"
+                OnCancel="EndAddEditAsync" />
 }
 
 <style>

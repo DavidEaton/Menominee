@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
-using Menominee.Common.Enums;
-using System;
+﻿using Menominee.Common.Enums;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Taxes
