@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using System;

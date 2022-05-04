@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
 using Menominee.Common.Utilities;

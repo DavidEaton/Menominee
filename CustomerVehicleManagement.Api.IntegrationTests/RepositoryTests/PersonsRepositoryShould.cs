@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Menominee.Common.Enums;
@@ -13,6 +12,7 @@ using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
 using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
+using CustomerVehicleManagement.Shared.Models.Persons;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {

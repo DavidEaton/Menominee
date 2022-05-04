@@ -835,7 +835,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             {
                                 Id = item.Id,
                                 RepairOrderServiceId = item.RepairOrderServiceId,
-                                Manufacturer = ManufacturerToRead.ConvertToDto(item.Manufacturer),
+                                Manufacturer = ManufacturerHelper.ConvertToReadDto(item.Manufacturer),
                                 ManufacturerId = item.ManufacturerId,
                                 PartNumber = item.PartNumber,
                                 Description = item.Description,

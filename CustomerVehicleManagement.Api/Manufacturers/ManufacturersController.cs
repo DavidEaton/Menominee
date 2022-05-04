@@ -61,21 +61,21 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var mfr = repository.GetManufacturerEntityAsync(code).Result;
+            var manufacturer = repository.GetManufacturerEntityAsync(code).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            mfr.Code = mfrDto.Code;
-            mfr.Name = mfrDto.Name;
-            mfr.Prefix = mfrDto.Prefix;
+            manufacturer.Code = mfrDto.Code;
+            manufacturer.Name = mfrDto.Name;
+            manufacturer.Prefix = mfrDto.Prefix;
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
-            mfr.SetTrackingState(TrackingState.Modified);
+            manufacturer.SetTrackingState(TrackingState.Modified);
 
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            repository.UpdateManufacturerAsync(mfr);
+            repository.UpdateManufacturerAsync(manufacturer);
 
             await repository.SaveChangesAsync();
 
@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<ActionResult> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
         {
             // 1. Convert dto to domain entity
-            var mfr = new Manufacturer()
+            var manufacturer = new Manufacturer()
             {
                 Code = mfrCreateDto.Code,
                 Name = mfrCreateDto.Name,
@@ -94,13 +94,13 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             };
 
             // 2. Add domain entity to repository
-            await repository.AddManufacturerAsync(mfr);
+            await repository.AddManufacturerAsync(manufacturer);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { mfr.Code });
+            return Created(new Uri($"{BasePath}/{manufacturer.Code}", UriKind.Relative), new { manufacturer.Code });
         }
 
         [HttpDelete("{code}")]

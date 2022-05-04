@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Api.Persons
             Person personFromContext = await GetPersonEntityAsync(id);
 
             Guard.ForNull(personFromContext, "personFromContext");
-            return PersonToRead.ConvertToDto(personFromContext);
+            return PersonHelper.ConvertToReadDto(personFromContext);
         }
 
         public async Task<IReadOnlyList<PersonToRead>> GetPersonsAsync()
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
             return personsFromContext
                 .Select(person =>
-                        PersonToRead.ConvertToDto(person))
+                        PersonHelper.ConvertToReadDto(person))
                 .ToList();
         }
 

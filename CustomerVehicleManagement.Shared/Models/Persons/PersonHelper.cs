@@ -1,14 +1,38 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.DriversLicenses;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Shared.Helpers
+namespace CustomerVehicleManagement.Shared.Models.Persons
 {
     public class PersonHelper
     {
+        public static PersonToRead ConvertToReadDto(Person person)
+        {
+            return person != null
+                ? new PersonToRead()
+                {
+                    Id = person.Id,
+                    FirstName = person.Name.FirstName,
+                    MiddleName = person.Name.MiddleName,
+                    LastName = person.Name.LastName,
+                    Gender = person.Gender,
+                    DriversLicense = DriversLicenseHelper.ConvertToReadDto(person.DriversLicense),
+                    Address =
+                        person?.Address != null
+                        ? AddressHelper.ConvertToDto(person.Address)
+                        : null,
+                    Birthday = person?.Birthday,
+                    Phones = PhoneHelper.CreatePhones(person.Phones),
+                    Emails = EmailHelper.CreateEmails(person.Emails)
+                }
+                : null;
+        }
+
         public static Person CreateEntityFromWriteDto(PersonToWrite person)
         {
             if (person is null)

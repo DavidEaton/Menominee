@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Inventory;
 
-namespace CustomerVehicleManagement.Shared.Helpers
+namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryItemHelper
     {

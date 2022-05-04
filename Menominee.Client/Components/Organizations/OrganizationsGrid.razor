@@ -18,8 +18,8 @@
                  Resizable="true"
                  Reorderable="true"
                  ShowColumnMenu="true"
-                 OnStateInit="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateInitHandler(args))"
-                 OnStateChanged="@((GridStateEventArgs<OrganizationToReadInList> args) => OnStateChangedHandler(args))"
+                 OnStateInit="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateInitHandler(args))"
+                 OnStateChanged="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateChangedHandler(args))"
                  @ref="@Grid">
         <GridToolBar>
             <TelerikButton OnClick="@ResetState"

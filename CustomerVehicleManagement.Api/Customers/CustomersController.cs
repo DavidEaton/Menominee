@@ -3,8 +3,9 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.Customers;
+using CustomerVehicleManagement.Shared.Models.Organizations;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -109,7 +110,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customer = new(PersonHelper.CreateEntityFromWriteDto(customerToAdd.Person), customerToAdd.CustomerType);
 
             if (customerToAdd.EntityType == EntityType.Organization)
-                customer = new(OrganizationHelper.CreateEntityFromWriteDto(customerToAdd.Organization), customerToAdd.CustomerType);
+                customer = new(OrganizationHelper.CreateOrganization(customerToAdd.Organization), customerToAdd.CustomerType);
 
             await customerRepository.AddCustomerAsync(customer);
 

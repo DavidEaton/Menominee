@@ -2,8 +2,8 @@
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -193,7 +193,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 4. Return to consumer */
 
             // 1. Convert dto to domain entity
-            var organization = OrganizationHelper.CreateEntityFromWriteDto(organizationToAdd);
+            var organization = OrganizationHelper.CreateOrganization(organizationToAdd);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);

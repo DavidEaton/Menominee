@@ -1,8 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Helpers;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Authorization;

@@ -1,9 +1,10 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
-using CustomerVehicleManagement.Shared.Models.Customers;
+using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Organizations;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Shared.Helpers
+namespace CustomerVehicleManagement.Shared.Models.Customers
 {
     public class CustomerHelper
     {
@@ -22,7 +23,7 @@ namespace CustomerVehicleManagement.Shared.Helpers
 
             if (customer.EntityType == EntityType.Organization)
             {
-                Customer.Organization = OrganizationHelper.CreateWriteDtoFromReadDto(customer.Organization);
+                Customer.Organization = OrganizationHelper.CreateOrganization(customer.Organization);
             }
 
             return Customer;
@@ -41,20 +42,20 @@ namespace CustomerVehicleManagement.Shared.Helpers
 
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    customerReadDto.Organization = OrganizationToRead.ConvertToDto(customer.Organization);
-                    customerReadDto.Address = AddressToRead.ConvertToDto(customer.Organization?.Address);
+                    customerReadDto.Organization = OrganizationHelper.CreateOrganization(customer.Organization);
+                    customerReadDto.Address = AddressHelper.ConvertToDto(customer.Organization?.Address);
                     customerReadDto.Name = customerReadDto.Organization.Name;
                     customerReadDto.Note = customerReadDto.Organization?.Note;
                     customerReadDto.Phones = customerReadDto.Organization?.Phones;
                     customerReadDto.Emails = customerReadDto.Organization?.Emails;
                     if (customer.Organization.Contact != null)
-                        customerReadDto.Contact = PersonToRead.ConvertToDto(customer.Organization.Contact);
+                        customerReadDto.Contact = PersonHelper.ConvertToReadDto(customer.Organization.Contact);
                 }
 
                 if (customer.EntityType == EntityType.Person)
                 {
-                    customerReadDto.Person = PersonToRead.ConvertToDto(customer.Person);
-                    customerReadDto.Address = AddressToRead.ConvertToDto(customer.Person?.Address);
+                    customerReadDto.Person = PersonHelper.ConvertToReadDto(customer.Person);
+                    customerReadDto.Address = AddressHelper.ConvertToDto(customer.Person?.Address);
                     customerReadDto.Name = customerReadDto.Person.LastFirstMiddleInitial;
                     customerReadDto.Phones = customerReadDto.Person?.Phones;
                     customerReadDto.Emails = customerReadDto.Person?.Emails;

@@ -1,6 +1,6 @@
 ﻿using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.Addresses
 {
     public class AddressToWrite
     {
