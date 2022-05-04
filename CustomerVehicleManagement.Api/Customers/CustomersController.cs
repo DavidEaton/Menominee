@@ -3,15 +3,15 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.Customers;
+using CustomerVehicleManagement.Shared.Models.Organizations;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
@@ -110,7 +110,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customer = new(PersonHelper.CreateEntityFromWriteDto(customerToAdd.Person), customerToAdd.CustomerType);
 
             if (customerToAdd.EntityType == EntityType.Organization)
-                customer = new(OrganizationHelper.CreateEntityFromWriteDto(customerToAdd.Organization), customerToAdd.CustomerType);
+                customer = new(OrganizationHelper.CreateOrganization(customerToAdd.Organization), customerToAdd.CustomerType);
 
             await customerRepository.AddCustomerAsync(customer);
 
@@ -122,13 +122,16 @@ namespace CustomerVehicleManagement.Api.Customers
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteCustomerAsync(long id)
         {
-            var customerFromRepository = await customerRepository.GetCustomerAsync(id);
+            var notFoundMessage = $"Could not find Customer in the database to delete with Id: {id}.";
 
-            if (customerFromRepository == null)
-                return NotFound($"Could not find Customer in the database to delete with Id: {id}.");
+            if (!await customerRepository.CustomerExistsAsync(id))
+                return NotFound(notFoundMessage);
 
-            await customerRepository.DeleteCustomerAsync(id);
+            var customerFromRepository = await customerRepository.GetCustomerEntityAsync(id);
+            if (customerFromRepository is null)
+                return NotFound(notFoundMessage);
 
+            customerRepository.DeleteCustomer(customerFromRepository);
             await customerRepository.SaveChangesAsync();
 
             return NoContent();

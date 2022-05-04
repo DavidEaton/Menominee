@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             var pcFromContext = await context.ProductCodes
                 .FirstOrDefaultAsync(pc => (pc.Manufacturer.Code == manufacturerCode && pc.Code == code));
 
-            return ProductCodeToRead.ConvertToDto(pcFromContext);
+            return ProductCodeHelper.CreateProductCode(pcFromContext);
         }
 
         public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)
@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             IReadOnlyList<ProductCode> pcs = await context.ProductCodes.ToListAsync();
 
             return pcs.
-                Select(pc => ProductCodeToReadInList.ConvertToDto(pc))
+                Select(pc => ProductCodeHelper.CreateProductCodeInList(pc))
                 .ToList();
         }
 
@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 .ToListAsync();
 
             return pcs.
-                Select(pc => ProductCodeToReadInList.ConvertToDto(pc))
+                Select(pc => ProductCodeHelper.CreateProductCodeInList(pc))
                 .ToList();
         }
 

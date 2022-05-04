@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 
 namespace Menominee.Client.Services
 {

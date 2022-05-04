@@ -16,7 +16,7 @@
     @if (((int)Emails?.Count()) > 0)
     {
         <ContactableTemplate Items="Emails"
-                             TItem="EmailToWrite"
+                             TItem="CustomerVehicleManagement.Shared.Models.Contactable.EmailToWrite"
                              Context="email"
                              @key="Email"
                              OnRowClick="Edit">

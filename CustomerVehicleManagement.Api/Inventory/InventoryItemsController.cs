@@ -1,11 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
@@ -28,23 +26,31 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync()
         {
             var results = await repository.GetInventoryItemListAsync();
+
+            if (results == null)
+                return NotFound();
+
             return Ok(results);
         }
 
         // api/inventoryitems/listing/1
         [Route("listing")]
-        [HttpGet("listing/{mfrid:long}")]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long mfrId)
+        [HttpGet("listing/{manufacturerId:long}")]
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long manufacturerId)
         {
-            var results = await repository.GetInventoryItemListAsync(mfrId);
+            var results = await repository.GetInventoryItemListAsync(manufacturerId);
+
+            if (results == null)
+                return NotFound();
+
             return Ok(results);
         }
 
         // api/inventoryitems/1/ABC123
-        [HttpGet("{mfrid:long}/{partnumber}")]
-        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long mfrId, string partNumber)
+        [HttpGet("{manufacturerId:long}/{partNumber}")]
+        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long manufacturerId, string partNumber)
         {
-            var result = await repository.GetInventoryItemAsync(mfrId, partNumber);
+            var result = await repository.GetInventoryItemAsync(manufacturerId, partNumber);
 
             if (result == null)
                 return NotFound();
@@ -74,7 +80,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var item = repository.GetInventoryItemEntityAsync(id).Result;
+            var item = await repository.GetInventoryItemEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
             item.Manufacturer = itemDto.Manufacturer;
@@ -128,19 +134,21 @@ namespace CustomerVehicleManagement.Api.Inventory
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new mfrId & partNumber from database to consumer after save
+            // 4. Return new manufacturerId & partNumber from database to consumer after save
             return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.PartNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, PartNumber = item.PartNumber });
         }
 
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteInventoryItemAsync(long id)
         {
-            var itemFromRepository = await repository.GetInventoryItemAsync(id);
+            var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
+
+            InventoryItem itemFromRepository = await repository.GetInventoryItemEntityAsync(id);
+
             if (itemFromRepository == null)
-                return NotFound($"Could not find Inventory Item in the database to delete with Id = {id}.");
+                return NotFound(notFoundMessage);
 
-            await repository.DeleteInventoryItemAsync(id);
-
+            repository.DeleteInventoryItem(itemFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

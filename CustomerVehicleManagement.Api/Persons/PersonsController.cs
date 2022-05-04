@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
@@ -25,7 +24,6 @@ namespace CustomerVehicleManagement.Api.Persons
                 throw new ArgumentNullException(nameof(repository));
         }
 
-        // GET: api/persons/list
         [Route("list")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<PersonToReadInList>>> GetPersonsListAsync()
@@ -38,7 +36,6 @@ namespace CustomerVehicleManagement.Api.Persons
             return Ok(persons);
         }
 
-        // GET: api/persons
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetPersonsAsync()
         {
@@ -50,7 +47,6 @@ namespace CustomerVehicleManagement.Api.Persons
             return Ok(persons);
         }
 
-        // GET: api/persons/1
         [HttpGet("{id:long}", Name = "GetPersonAsync")]
         public async Task<ActionResult<PersonToRead>> GetPersonAsync(long id)
         {
@@ -62,23 +58,25 @@ namespace CustomerVehicleManagement.Api.Persons
             return Ok(person);
         }
 
-        // PUT: api/persons/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite personToUpdate)
         {
-            var notFoundMessage = $"Could not find Person to update";
+            var notFoundMessage = $"Could not find Person to update: {personToUpdate.Name.FirstMiddleLast}";
 
-            Person personFromRepository = await repository.GetPersonEntityAsync(id);
+            if (!await repository.PersonExistsAsync(id))
+                return NotFound(notFoundMessage);
+
+            var personFromRepository = await repository.GetPersonEntityAsync(id);
+
             if (personFromRepository is null)
                 return NotFound(notFoundMessage);
 
+            var personNameOrError = PersonName.Create(personToUpdate.Name.LastName,
+                                                      personToUpdate.Name.FirstName,
+                                                      personToUpdate.Name.MiddleName);
 
-            personFromRepository.SetName(PersonName.Create(
-                                            personToUpdate.Name.LastName,
-                                            personToUpdate.Name.FirstName,
-                                            personToUpdate.Name.MiddleName).Value);
-
-            personFromRepository.SetGender(personToUpdate.Gender);
+            if (personNameOrError.IsSuccess)
+                personFromRepository.SetName(personNameOrError.Value);
 
             if (personToUpdate?.Address is not null)
                 personFromRepository.SetAddress(Address.Create(personToUpdate.Address.AddressLine,
@@ -86,10 +84,10 @@ namespace CustomerVehicleManagement.Api.Persons
                                                                personToUpdate.Address.State,
                                                                personToUpdate.Address.PostalCode).Value);
 
-
             if (personToUpdate?.Address is null)
                 personFromRepository.SetAddress(null);
 
+            personFromRepository.SetGender(personToUpdate.Gender);
             personFromRepository.SetBirthday(personToUpdate.Birthday);
 
             List<Phone> phones = new();
@@ -134,39 +132,14 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            var personName = PersonName.Create(personToAdd.Name.LastName, personToAdd.Name.FirstName, personToAdd.Name.MiddleName).Value;
-
-            Address address = null;
-            if (personToAdd?.Address != null)
-                address = Address.Create(personToAdd.Address.AddressLine, personToAdd.Address.City, personToAdd.Address.State, personToAdd.Address.PostalCode).Value;
-
-            DriversLicense driversLicense = null;
-            if (personToAdd?.DriversLicense != null)
-            {
-                DateTimeRange dateTimeRange = DateTimeRange.Create(
-                    personToAdd.DriversLicense.Issued,
-                    personToAdd.DriversLicense.Expiry).Value;
-
-                driversLicense = DriversLicense.Create(personToAdd.DriversLicense.Number,
-                    personToAdd.DriversLicense.State,
-                    dateTimeRange).Value;
-            }
-
-            List<Phone> phones = new();
-            foreach (var phone in personToAdd?.Phones)
-                phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            List<Email> emails = new();
-            foreach (var email in personToAdd?.Emails)
-                emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-            Person person = new(personName, personToAdd.Gender, address, emails, phones, personToAdd.Birthday, driversLicense);
+            Person person = PersonHelper.CreateEntityFromWriteDto(personToAdd);
 
             await repository.AddPersonAsync(person);
-
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{person.Id}", UriKind.Relative), new { id = person.Id });
+            return Created(new Uri($"{BasePath}/{person.Id}",
+                               UriKind.Relative),
+                               new { id = person.Id });
         }
 
         [HttpDelete("{id:long}")]
@@ -178,7 +151,6 @@ namespace CustomerVehicleManagement.Api.Persons
                 return NotFound($"Could not find Person in the database to delete with Id: {id}.");
 
             repository.DeletePerson(personFromRepository);
-
             await repository.SaveChangesAsync();
 
             return NoContent();

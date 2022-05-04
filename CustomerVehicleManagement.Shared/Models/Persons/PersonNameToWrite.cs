@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Shared.Models
+﻿namespace CustomerVehicleManagement.Shared.Models.Persons
 {
     public class PersonNameToWrite
     {

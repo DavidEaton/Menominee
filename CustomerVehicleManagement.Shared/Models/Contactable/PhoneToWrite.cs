@@ -1,9 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using Menominee.Common.Enums;
-using System.Collections.Generic;
-using Helper = CustomerVehicleManagement.Shared.Helpers.PhoneHelper;
+﻿using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class PhoneToWrite
     {
@@ -12,7 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models
         public bool IsPrimary { get; set; } = false;
         public override string ToString()
         {
-            return Helper.FormatPhoneNumber(Number);
+            return PhoneHelper.FormatPhoneNumber(Number);
         }
     }
 }

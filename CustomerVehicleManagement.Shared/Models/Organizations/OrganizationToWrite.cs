@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.Persons;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models
 {

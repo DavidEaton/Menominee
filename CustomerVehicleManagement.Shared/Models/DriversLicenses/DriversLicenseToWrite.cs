@@ -1,7 +1,7 @@
 ﻿using Menominee.Common.Enums;
 using System;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.DriversLicenses
 {
     public class DriversLicenseToWrite
     {

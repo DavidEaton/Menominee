@@ -1,4 +1,4 @@
-﻿namespace CustomerVehicleManagement.Shared.Models
+﻿namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class EmailToWrite
     {

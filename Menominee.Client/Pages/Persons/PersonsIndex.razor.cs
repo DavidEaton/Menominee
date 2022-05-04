@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Client.Components.Address;
 using Menominee.Client.Services;
 using Menominee.Common.Enums;

@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common.Enums;
-using MenomineePlayWASM.Shared.Entities.Inventory.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {

@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using System;
@@ -387,7 +387,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Should().NotBeNull();
 
-                await repository.DeleteOrganizationAsync(organizationFromRepo.Id);
+                repository.DeleteOrganization(organizationFromRepo);
                 await repository.SaveChangesAsync();
                 organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
 

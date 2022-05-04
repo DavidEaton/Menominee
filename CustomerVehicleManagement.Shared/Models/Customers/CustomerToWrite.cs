@@ -1,4 +1,5 @@
-﻿using Menominee.Common.Enums;
+﻿using CustomerVehicleManagement.Shared.Models.Persons;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Customers
 {

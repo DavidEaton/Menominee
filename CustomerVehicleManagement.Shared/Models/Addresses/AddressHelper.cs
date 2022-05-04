@@ -1,16 +1,9 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
+﻿using Menominee.Common.ValueObjects;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.Addresses
 {
-    public class AddressToRead
+    public class AddressHelper
     {
-        public string AddressLine { get; set; }
-        public string City { get; set; }
-        public State State { get; set; }
-        public string PostalCode { get; set; }
-        public string AddressFull { get => string.IsNullOrWhiteSpace(AddressLine) ? $"{string.Empty}" : $"{AddressLine} {City}, {State} {PostalCode}"; }
-
         public static AddressToRead ConvertToDto(Address address)
         {
             if (address != null)
