@@ -1,10 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Configurations
 {
@@ -21,6 +17,34 @@ namespace CustomerVehicleManagement.Api.Configurations
                 .IsRequired();
             builder.Property(saleCode => saleCode.Name)
                 .IsRequired();
+            builder.Property(saleCode => saleCode.DesiredMargin)
+                .HasDefaultValue(0);
+            builder.Property(saleCode => saleCode.LaborRate)
+                .HasDefaultValue(0);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.IncludeLabor)
+               .HasColumnName("IncludeLabor")
+               .HasDefaultValue(false);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.IncludeParts)
+               .HasColumnName("IncludeParts")
+               .HasDefaultValue(false);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.MaximumCharge)
+               .HasColumnName("MaximumCharge")
+                .HasDefaultValue(0);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.MinimumCharge)
+               .HasColumnName("MinimumCharge")
+                .HasDefaultValue(0);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.MinimumJobAmount)
+               .HasColumnName("MinimumJobAmount")
+                .HasDefaultValue(0);
+            builder.OwnsOne(saleCode => saleCode.ShopSupplies)
+               .Property(shopSupplies => shopSupplies.Percentage)
+               .HasColumnName("Percentage")
+                .HasDefaultValue(0);
         }
     }
 }

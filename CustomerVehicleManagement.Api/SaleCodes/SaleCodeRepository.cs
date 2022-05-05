@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -74,8 +73,8 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         {
             IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
 
-            return saleCodes.
-                Select(sc => SaleCodeToReadInList.ConvertToDto(sc))
+            return saleCodes
+                .Select(saleCode => SaleCodeHelper.ConvertToDto(saleCode))
                 .ToList();
         }
 

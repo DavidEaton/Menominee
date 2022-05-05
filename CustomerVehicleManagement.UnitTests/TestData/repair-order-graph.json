@@ -43,8 +43,18 @@
           "description": "longer description",
           "saleCode": {
             "id": 1,
-            "code": "L",
-            "name": "Lube"
+            "code": "BR549",
+            "name": "HeeHaw",
+            "laborRate": 1,
+            "desiredMargin": 0.1,
+            "shopSupplies": {
+              "percentage": 7,
+              "minimumJobAmount": 34.99,
+              "minimumCharge": 0.99,
+              "maximumCharge": 199.99,
+              "includeParts": true,
+              "includeLabor": true
+            }
           },
           "saleCodeId": 1,
           "productCode": {
