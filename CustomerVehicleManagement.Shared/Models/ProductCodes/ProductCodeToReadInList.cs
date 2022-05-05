@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {

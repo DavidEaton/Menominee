@@ -2,8 +2,6 @@
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Utilities;
-using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,9 +31,14 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         public void DeleteInventoryItem(InventoryItem item)
+        {
+            Guard.ForNull(item, "item");
+
+            context.Remove(item);
+            context.SaveChanges();
+        }
         public async Task DeleteItemAsync(long id)
         {
-            context.Remove(item);
             var item = await context.InventoryItems
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(item => item.Id == id);
@@ -43,6 +46,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             Guard.ForNull(item, "item");
 
             context.Remove(item);
+            context.SaveChanges();
         }
 
         public void FixTrackingState()
@@ -67,7 +71,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             return InventoryItemToRead.ConvertToDto(itemFromContext);
         }
 
-        public async Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber)
+        public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
         {
             var itemFromContext = await context.InventoryItems
                                                .Include(item => item.Manufacturer)
@@ -77,7 +81,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .AsNoTracking()
-                                               .FirstOrDefaultAsync(item => item.ManufacturerId == mfrId && item.ItemNumber == itemNumber);
+                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId && item.ItemNumber == itemNumber);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
@@ -132,7 +136,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                    .ToList();
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long mfrId)
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId)
         {
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
@@ -141,7 +145,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
-                                                .Where(item => item.ManufacturerId == mfrId)
+                                                .Where(item => item.ManufacturerId == manufacturerId)
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 

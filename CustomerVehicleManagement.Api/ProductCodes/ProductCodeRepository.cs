@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             Guard.ForNull(pcFromContext, "pcFromContext");
 
 
-            return ProductCodeToRead.ConvertToDto(pcFromContext);
+            return ProductCodeHelper.CreateProductCode(pcFromContext);
         }
 
         public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)

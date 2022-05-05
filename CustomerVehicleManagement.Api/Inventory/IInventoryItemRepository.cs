@@ -14,10 +14,11 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task<InventoryItem> UpdateItemAsync(InventoryItem item);
         Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync();
         Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long mfrId);
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId);
         Task<InventoryItemToRead> GetItemAsync(long id);
-        Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber);
+        Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber);
         Task<InventoryItem> GetItemEntityAsync(long id);
         Task<bool> SaveChangesAsync();
+        void DeleteInventoryItem(InventoryItem entity);
     }
 }
