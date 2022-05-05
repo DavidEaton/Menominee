@@ -24,7 +24,7 @@ namespace Menominee.Client.Services.SaleCodes
             this.toastService = toastService;
         }
 
-        public async Task<SaleCodeToRead> AddSaleCode(SaleCodeToWrite saleCode)
+        public async Task<SaleCodeToRead> AddSaleCodeAsync(SaleCodeToWrite saleCode)
         {
             var content = new StringContent(JsonSerializer.Serialize(saleCode), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -34,11 +34,11 @@ namespace Menominee.Client.Services.SaleCodes
                 return await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync());
             }
 
-            toastService.ShowError($"Failed to add Manufacturer. {response.ReasonPhrase}.", "Add Failed");
+            toastService.ShowError($"Failed to add Sale Code. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 
-        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodes()
+        public async Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodesAsync()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task<SaleCodeToRead> GetSaleCode(long id)
+        public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
             try
             {
@@ -65,14 +65,14 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task UpdateSaleCode(SaleCodeToWrite saleCode, long id)
+        public async Task UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(saleCode), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                toastService.ShowSuccess("Manufacturer saved successfully", "Saved");
+                toastService.ShowSuccess("Sale Code saved successfully", "Saved");
                 return;
             }
 

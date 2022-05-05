@@ -1,0 +1,36 @@
+﻿<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Width="300px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        Select Item Type
+    </WindowTitle>
+    <WindowContent>
+        <TelerikRadioGroup Data="@itemTypeList"
+                           @bind-Value="@SelectedItem"></TelerikRadioGroup>
+        <div class="m-pad-top">
+            <TelerikButton OnClick="SelectType"
+                           ButtonType="ButtonType.Button"
+                           ThemeColor="primary"
+                           Class="dialog-button">
+                <i class="fas fa-check"></i> OK
+            </TelerikButton>
+            <TelerikButton OnClick="OnCancel"
+                           ButtonType="ButtonType.Button"
+                           Class="dialog-button">
+                <i class="fas fa-times"></i> Cancel
+            </TelerikButton>
+        </div>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+</style>

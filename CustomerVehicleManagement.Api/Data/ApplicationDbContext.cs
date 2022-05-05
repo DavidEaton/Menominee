@@ -1,7 +1,11 @@
 ﻿using CustomerVehicleManagement.Api.Configurations;
+using CustomerVehicleManagement.Api.Configurations.Inventory;
+using CustomerVehicleManagement.Api.Configurations.Payables;
 using CustomerVehicleManagement.Api.Configurations.RepairOrders;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
@@ -85,7 +89,6 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new PersonConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-            modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
 
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
@@ -118,6 +121,9 @@ namespace CustomerVehicleManagement.Api.Data
 
             // Inventory
             modelBuilder.ApplyConfiguration(new InventoryItemConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemPartConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemLaborConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemTireConfiguration());
         }
 
         private string GetTenantConnection()
@@ -218,6 +224,9 @@ namespace CustomerVehicleManagement.Api.Data
 
         // Inventory
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<InventoryItemPart> InventoryItemParts { get; set; }
+        public DbSet<InventoryItemLabor> InventoryItemLabor { get; set; }
+        public DbSet<InventoryItemTire> InventoryItemTires { get; set; }
 
         #endregion
     }

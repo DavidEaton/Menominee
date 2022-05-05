@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {
@@ -9,5 +10,29 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
         public string Code { get; set; }
         public SaleCode SaleCode { get; set; }
         public string Name { get; set; }
+        public string DisplayText
+        {
+            get
+            {
+                return Code + " - " + Name;
+            }
+        }
+
+        public static ProductCodeToReadInList ConvertToDto(ProductCode pc)
+        {
+            if (pc != null)
+            {
+                return new ProductCodeToReadInList
+                {
+                    Id = pc.Id,
+                    Manufacturer = pc.Manufacturer,
+                    Code = pc.Code,
+                    SaleCode = pc.SaleCode,
+                    Name = pc.Name
+                };
+            }
+
+            return null;
+        }
     }
 }

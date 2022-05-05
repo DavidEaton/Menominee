@@ -1,10 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

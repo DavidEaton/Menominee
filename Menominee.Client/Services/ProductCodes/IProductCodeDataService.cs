@@ -8,10 +8,11 @@ namespace Menominee.Client.Services.ProductCodes
 {
     public interface IProductCodeDataService
     {
-        Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodes();
-        Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodes(long mfrId, long saleCodeId);
-        Task<ProductCodeToRead> GetProductCode(long id);
-        Task<ProductCodeToRead> AddManufacturer(ProductCodeToWrite productCode);
-        Task UpdateProductCode(ProductCodeToWrite productCode, long id);
+        Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync();
+        Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId);
+        //Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId, long saleCodeId);
+        Task<ProductCodeToRead> GetProductCodeAsync(long id);
+        Task<ProductCodeToRead> AddProductCodeAsync(ProductCodeToWrite productCode);
+        Task UpdateProductCodeAsync(ProductCodeToWrite productCode, long id);
     }
 }

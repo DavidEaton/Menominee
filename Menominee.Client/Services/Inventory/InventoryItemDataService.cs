@@ -24,7 +24,7 @@ namespace Menominee.Client.Services.Inventory
             this.toastService = toastService;
         }
 
-        public async Task<InventoryItemToRead> AddItem(InventoryItemToWrite item)
+        public async Task<InventoryItemToRead> AddItemAsync(InventoryItemToWrite item)
         {
             var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -38,7 +38,7 @@ namespace Menominee.Client.Services.Inventory
             return null;
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItems()
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Menominee.Client.Services.Inventory
             return null;
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItems(long mfrId)
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetAllItemsAsync(long mfrId)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Menominee.Client.Services.Inventory
             return null;
         }
 
-        public async Task<InventoryItemToRead> GetItem(long id)
+        public async Task<InventoryItemToRead> GetItemAsync(long id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Menominee.Client.Services.Inventory
             return null;
         }
 
-        public async Task UpdateItem(InventoryItemToWrite item, long id)
+        public async Task UpdateItemAsync(InventoryItemToWrite item, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

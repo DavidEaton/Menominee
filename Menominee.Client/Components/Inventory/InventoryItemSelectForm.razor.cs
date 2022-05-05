@@ -80,7 +80,7 @@ namespace Menominee.Client.Components.Inventory
 
         protected override async Task OnParametersSetAsync()
         {
-            Manufacturers = (await MfrDataService.GetAllManufacturers()).ToList();
+            Manufacturers = (await MfrDataService.GetAllManufacturersAsync()).ToList();
 
             ManufacturerList = new();
             ManufacturerList.Add(new ManufacturerX
@@ -108,9 +108,9 @@ namespace Menominee.Client.Components.Inventory
         private async Task FilterItemsList(long mfrId)
         {
             if (mfrId > 0)
-                ItemsList = (await DataService.GetAllItems(mfrId)).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
             else
-                ItemsList = (await DataService.GetAllItems()).ToList();
+                ItemsList = (await DataService.GetAllItemsAsync()).ToList();
 
             if (ItemsList.Count > 0)
             {
