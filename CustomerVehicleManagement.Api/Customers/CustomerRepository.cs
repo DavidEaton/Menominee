@@ -50,10 +50,10 @@ namespace CustomerVehicleManagement.Api.Customers
 
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
-                                                    .AsNoTracking()
                                                     .Include(customer => customer.Organization)
                                                         .ThenInclude(organization => organization.Contact)
                                                     .AsNoTracking()
+                                                    .AsSplitQuery()
                                                     .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
@@ -108,21 +108,19 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .Include(customer =>
                                                              customer.Person.Phones
                                                              .Where(phone => phone.IsPrimary == true))
-                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Person.Emails
                                                              .Where(email => email.IsPrimary == true))
-                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Phones
                                                              .Where(phone => phone.IsPrimary == true))
-                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Emails
                                                              .Where(email => email.IsPrimary == true))
                                                     .AsNoTracking()
+                                                    .AsSplitQuery()
                                                     .ToArrayAsync();
 
             return customersFromContext
@@ -143,12 +141,15 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Person.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Person.Name.LastFirstMiddle,
-                        AddressFull = customer.Person?.Address?.AddressFull is null ? string.Empty
-                                                                                    : customer.Person?.Address.AddressFull,
-                        PrimaryPhone = customer.Person?.Phones?.Count < 1           ? string.Empty
-                                                                                    : customer.Person?.Phones[0]?.Number,
-                        PrimaryEmail = customer.Person?.Emails?.Count < 1           ? string.Empty
-                                                                                    : customer.Person?.Emails[0]?.Address
+                        AddressFull = customer.Person?.Address?.AddressFull is null
+                            ? string.Empty
+                            : customer.Person?.Address.AddressFull,
+                        PrimaryPhone = customer.Person?.Phones?.Count < 1
+                            ? string.Empty
+                            : customer.Person?.Phones[0]?.Number,
+                        PrimaryEmail = customer.Person?.Emails?.Count < 1
+                            ? string.Empty
+                            : customer.Person?.Emails[0]?.Address
                     };
                 }
 
@@ -161,12 +162,15 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Organization.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Organization.Name.Name,
-                        AddressFull = customer.Organization?.Address?.AddressFull is null ? string.Empty
-                                                                                          : customer.Organization?.Address.AddressFull,
-                        PrimaryPhone = customer.Organization?.Phones?.Count < 1           ? string.Empty
-                                                                                          : customer.Organization?.Phones?[0]?.Number,
-                        PrimaryEmail = customer.Organization?.Emails?.Count < 1           ? string.Empty
-                                                                                          : customer.Organization?.Emails[0]?.Address
+                        AddressFull = customer.Organization?.Address?.AddressFull is null
+                            ? string.Empty
+                            : customer.Organization?.Address.AddressFull,
+                        PrimaryPhone = customer.Organization?.Phones?.Count < 1
+                            ? string.Empty
+                            : customer.Organization?.Phones?[0]?.Number,
+                        PrimaryEmail = customer.Organization?.Emails?.Count < 1
+                            ? string.Empty
+                            : customer.Organization?.Emails[0]?.Address
                     };
                 }
             }

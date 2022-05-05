@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     .ThenInclude(contact => contact.Phones)
 
                 .AsSplitQuery()
-                //.AsNoTracking() // Disabling ChangeTracker breaks loading of navigation properties
+                //.AsNoTracking() // Disabling ChangeTracker on entity breaks loading of navigation properties
 
                 .FirstOrDefaultAsync(organization => organization.Id == id);
 
@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         public async Task<bool> OrganizationExistsAsync(long id)
         {
             return await context.Organizations
-                .AnyAsync(o => o.Id == id);
+                .AnyAsync(organization => organization.Id == id);
         }
 
         public async Task SaveChangesAsync()

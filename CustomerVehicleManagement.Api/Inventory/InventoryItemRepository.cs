@@ -59,11 +59,12 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemFromContext = await context.InventoryItems
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
-                                                   .ThenInclude(pc => pc.SaleCode)
+                                                   .ThenInclude(productCode => productCode.SaleCode)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .AsNoTracking()
+                                               .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
@@ -76,12 +77,14 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemFromContext = await context.InventoryItems
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
-                                                   .ThenInclude(pc => pc.SaleCode)
+                                                   .ThenInclude(productCode => productCode.SaleCode)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .AsNoTracking()
-                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId && item.ItemNumber == itemNumber);
+                                               .AsSplitQuery()
+                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId
+                                                                         && item.ItemNumber == itemNumber);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
@@ -93,10 +96,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             return await context.InventoryItems
                                 .Include(item => item.Manufacturer)
                                 .Include(item => item.ProductCode)
-                                    .ThenInclude(pc => pc.SaleCode)
+                                    .ThenInclude(productCode => productCode.SaleCode)
                                 .Include(item => item.Part)
                                 .Include(item => item.Labor)
                                 .Include(item => item.Tire)
+                                .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
@@ -107,10 +111,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -125,10 +130,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
@@ -141,11 +147,12 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
                                                 .Where(item => item.ManufacturerId == manufacturerId)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 

@@ -50,10 +50,14 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         public async Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code)
         {
             var pcFromContext = await context.ProductCodes
-                                             .Include(pc => pc.Manufacturer)
-                                             .Include(pc => pc.SaleCode)
+                                             .Include(productCode => productCode.Manufacturer)
+                                             .Include(productCode => productCode.SaleCode)
+                                             .AsSplitQuery()
                                              .AsNoTracking()
-                                             .FirstOrDefaultAsync(pc => (pc.Manufacturer.Code == manufacturerCode && pc.Code == code));
+                                             .FirstOrDefaultAsync(productCode =>
+                                                productCode.Manufacturer.Code == manufacturerCode
+                                                &&
+                                                productCode.Code == code);
             
             Guard.ForNull(pcFromContext, "pcFromContext");
 
@@ -64,67 +68,73 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)
         {
             return await context.ProductCodes
-                                .Include(pc => pc.Manufacturer)
-                                .Include(pc => pc.SaleCode)
-                                .FirstOrDefaultAsync(pc => (pc.Manufacturer.Code == manufacturerCode && pc.Code == code));
+                                .Include(productCode => productCode.Manufacturer)
+                                .Include(productCode => productCode.SaleCode)
+                                .AsSplitQuery()
+                                .FirstOrDefaultAsync(productCode => 
+                                    productCode.Manufacturer.Code == manufacturerCode
+                                    &&
+                                    productCode.Code == code);
         }
 
         public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync()
         {
             var pcs = await context.ProductCodes
-                                   .Include(pc => pc.Manufacturer)
-                                   .Include(pc => pc.SaleCode)
+                                   .Include(productCode => productCode.Manufacturer)
+                                   .Include(productCode => productCode.SaleCode)
+                                   .AsSplitQuery()
                                    .AsNoTracking()
                                    .ToArrayAsync();
 
             return pcs.
-                Select(pc => ProductCodeHelper.CreateProductCodeInList(pc))
+                Select(productCode => ProductCodeHelper.CreateProductCodeInList(productCode))
                 .ToList();
         }
 
         public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId)
         {
             var pcs = await context.ProductCodes
-                                   .Include(pc => pc.Manufacturer)
-                                   .Include(pc => pc.SaleCode)
-                                   .Where(pc => pc.Manufacturer.Id == mfrId)
+                                   .Include(productCode => productCode.Manufacturer)
+                                   .Include(productCode => productCode.SaleCode)
+                                   .Where(productCode => productCode.Manufacturer.Id == mfrId)
+                                   .AsSplitQuery()
                                    .AsNoTracking()
                                    .ToArrayAsync();
 
             return pcs.
-                Select(pc => ProductCodeHelper.CreateProductCodeInList(pc))
+                Select(productCode => ProductCodeHelper.CreateProductCodeInList(productCode))
                 .ToList();
         }
 
         //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId, long saleCodeId)
         //{
         //    var pcs = await context.ProductCodes
-        //                           .Include(pc => pc.Manufacturer)
-        //                           .Include(pc => pc.SaleCode)
-        //                           .Where(pc => (pc.Manufacturer.Id == mfrId && pc.SaleCode.Id == saleCodeId))
+        //                           .Include(productCode => productCode.Manufacturer)
+        //                           .Include(productCode => productCode.SaleCode)
+        //                           .Where(productCode => (productCode.Manufacturer.Id == mfrId && productCode.SaleCode.Id == saleCodeId))
         //                           .AsNoTracking()
         //                           .ToArrayAsync();
 
-        //    return pcs.Select(pc => ProductCodeToReadInList.ConvertToDto(pc)).ToList();
+        //    return pcs.Select(productCode => ProductCodeToReadInList.ConvertToDto(productCode)).ToList();
         //}
 
         //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodeListAsync(string manufacturerCode)
         //{
-        //    IReadOnlyList<ProductCode> pcs = await context.ProductCodes.Where(pc => pc.Manufacturer.Code == manufacturerCode).ToListAsync();
+        //    IReadOnlyList<ProductCode> pcs = await context.ProductCodes.Where(productCode => productCode.Manufacturer.Code == manufacturerCode).ToListAsync();
 
         //    return pcs.
-        //        Select(pc => ProductCodeToReadInList.ConvertToDto(pc))
+        //        Select(productCode => ProductCodeToReadInList.ConvertToDto(productCode))
         //        .ToList();
         //}
 
         public async Task<bool> ProductCodeExistsAsync(string manufacturerCode, string code)
         {
-            return await context.ProductCodes.AnyAsync(pc => (pc.Manufacturer.Code == manufacturerCode && pc.Code == code));
+            return await context.ProductCodes.AnyAsync(productCode => (productCode.Manufacturer.Code == manufacturerCode && productCode.Code == code));
         }
         
         public async Task<bool> ProductCodeExistsAsync(long id)
         {
-            return await context.ProductCodes.AnyAsync(pc => (pc.Id == id));
+            return await context.ProductCodes.AnyAsync(productCode => (productCode.Id == id));
         }
 
         public async Task<bool> SaveChangesAsync()
