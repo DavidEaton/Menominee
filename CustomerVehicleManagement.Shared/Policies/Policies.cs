@@ -14,6 +14,7 @@ namespace CustomerVehicleManagement.Shared
         public const string OwnerOnly = "OwnerPolicy";
         public const string PaidUser = "PaidUserPolicy";
         public const string TechniciansUser = "TechniciansUserPolicy";
+        public const string RequireAuthenticatedUser = "RequireAuthenticatedUser";
 
         public static AuthorizationPolicy AdminPolicy()
         {
@@ -21,6 +22,13 @@ namespace CustomerVehicleManagement.Shared
                 .RequireAuthenticatedUser()
                 .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
                                                   ShopRole.Owner.ToString() })
+                .Build();
+        }
+
+        public static AuthorizationPolicy RequireAuthenticatedUserPolicy()
+        {
+            return new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
                 .Build();
         }
 

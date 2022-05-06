@@ -19,7 +19,6 @@ namespace Menominee.Client.Pages.Settings
 
         public IReadOnlyList<SalesTaxToReadInList> SalesTaxes;
         public SalesTaxToWrite SalesTax { get; set; } = null;
-
         public TelerikGrid<SalesTaxToReadInList> Grid { get; set; }
 
         [Parameter]
@@ -101,7 +100,7 @@ namespace Menominee.Client.Pages.Settings
 
         protected async Task HandleAddSubmit()
         {
-            await SalesTaxDataService.AddSalesTaxAsync(SalesTax);
+            Id = SalesTaxDataService.AddSalesTaxAsync(SalesTax).Id;
             await EndAddEditAsync();
         }
 
