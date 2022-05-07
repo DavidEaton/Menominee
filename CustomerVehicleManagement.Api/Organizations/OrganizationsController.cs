@@ -1,12 +1,10 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,11 +13,9 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
-    [Authorize(Policies.PaidUser)]
     public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
-        private readonly string BasePath = "/api/organizations";
         private readonly PersonsController personsController;
 
         public OrganizationsController(IOrganizationRepository repository,
@@ -162,7 +158,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
+        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -186,10 +182,13 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{organization.Id}",
-                               UriKind.Relative),
-                               new { id = organization.Id });
+            // 4. Return new Id and Organization from database to consumer after save
+            return CreatedAtRoute("GetOrganizationAsync",
+                new
+                {
+                    Id = organization.Id
+                },
+                OrganizationToRead.ConvertToDto(organization));
         }
 
 

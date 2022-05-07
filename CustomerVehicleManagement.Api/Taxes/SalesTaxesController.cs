@@ -1,7 +1,7 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,12 +9,9 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Taxes
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SalesTaxesController : ControllerBase
+    public class SalesTaxesController : ApplicationController
     {
         private readonly ISalesTaxRepository repository;
-        private readonly string BasePath = "/api/salestaxes";
         public SalesTaxesController(ISalesTaxRepository repository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -30,7 +27,7 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         // api/salestaxes/1
-        [HttpGet("{id:long}")]
+        [HttpGet("{id:long}", Name = "GetSalesTaxAsync")]
         public async Task<ActionResult<SalesTaxToRead>> GetSalesTaxAsync(long id)
         {
             var result = await repository.GetSalesTaxAsync(id);
@@ -77,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSalesTaxAsync(SalesTaxToWrite taxToWrite)
+        public async Task<ActionResult<SalesTaxToRead>> AddSalesTaxAsync(SalesTaxToWrite taxToWrite)
         {
             // 1. Convert dto to domain entity
             var tax = new SalesTax()
@@ -99,8 +96,13 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{tax.Id}", UriKind.Relative), new { tax.Id });
+            // 4. Return new tax from database to consumer after save
+            return CreatedAtRoute("GetSalesTaxAsync",
+                new
+                {
+                    Id = tax.Id
+                },
+                SalesTaxHelper.Transform(tax));
         }
 
         [HttpDelete("{id:long}")]

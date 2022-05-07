@@ -4,11 +4,9 @@ using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Shared;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,15 +33,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                             options.AccessDeniedPath = new PathString("/auth/denied");
                         });
 
-            var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(
-                    "RequireAuthenticatedUserPolicy",
-                    requireAuthenticatedUserPolicy);
+                    Policies.RequireAuthenticatedUser,
+                    Policies.RequireAuthenticatedUserPolicy());
 
                 authorizationOptions.AddPolicy(
                     Policies.AdminOnly,
@@ -77,7 +71,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             services.AddControllers(mvcOptions =>
             {
                 mvcOptions.ReturnHttpNotAcceptable = true; // Return 406 Not Acceptible if request content type is unavailable
-                mvcOptions.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
             }).AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
@@ -98,9 +91,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }

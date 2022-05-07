@@ -53,6 +53,10 @@ namespace Menominee.Client
                     Policies.AdminPolicy());
 
                 authorizationOptions.AddPolicy(
+                    Policies.RequireAuthenticatedUser,
+                    Policies.RequireAuthenticatedUserPolicy());
+
+                authorizationOptions.AddPolicy(
                     Policies.CanManageHumanResources,
                     Policies.CanManageHumanResourcesPolicy());
 

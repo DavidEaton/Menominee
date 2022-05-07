@@ -25,12 +25,17 @@ namespace Menominee.Client.Services.Taxes
 
         public async Task<SalesTaxToRead> AddSalesTaxAsync(SalesTaxToWrite salesTax)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(salesTax), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<SalesTaxToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<SalesTaxToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add Sales Tax. {response.ReasonPhrase}.", "Add Failed");
