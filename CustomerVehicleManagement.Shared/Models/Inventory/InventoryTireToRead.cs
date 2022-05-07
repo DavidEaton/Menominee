@@ -27,34 +27,5 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public double Diameter { get; set; }
         public int LoadIndex { get; set; }
         public string SpeedRating { get; set; }
-
-        public static InventoryTireToRead ConvertToDto(InventoryItemTire tire)
-        {
-            if (tire != null)
-            {
-                return new InventoryTireToRead
-                {
-                    Id = tire.Id,
-                    List = tire.List,
-                    Cost = tire.Cost,
-                    Core = tire.Core,
-                    Retail = tire.Retail,
-                    TechPayType = tire.TechPayType,
-                    TechPayAmount = tire.TechPayAmount,
-                    LineCode = tire.LineCode,
-                    SubLineCode = tire.SubLineCode,
-                    Fractional = tire.Fractional,
-                    SkillLevel = tire.SkillLevel,
-                    Type = tire.Type,
-                    Width = tire.Width,
-                    AspectRatio = tire.AspectRatio,
-                    Diameter = tire.Diameter,
-                    LoadIndex = tire.LoadIndex,
-                    SpeedRating = tire.SpeedRating
-                };
-            }
-
-            return null;
-        }
     }
 }

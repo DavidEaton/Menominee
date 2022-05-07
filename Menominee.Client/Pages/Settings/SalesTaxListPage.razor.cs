@@ -115,8 +115,9 @@ namespace Menominee.Client.Pages.Settings
 
         protected async Task HandleAddSubmit()
         {
-            Id = SalesTaxDataService.AddSalesTaxAsync(SalesTax).Id;
+            Id = (await SalesTaxDataService.AddSalesTaxAsync(SalesTax)).Id;
             await EndAddEditAsync();
+            Grid.Rebind();
         }
 
         protected async Task HandleEditSubmit()
@@ -129,8 +130,7 @@ namespace Menominee.Client.Pages.Settings
         {
             if (SalesTaxFormMode == FormMode.Add)
                 await HandleAddSubmit();
-
-            if (SalesTaxFormMode == FormMode.Edit)
+            else if (SalesTaxFormMode == FormMode.Edit)
                 await HandleEditSubmit();
         }
 

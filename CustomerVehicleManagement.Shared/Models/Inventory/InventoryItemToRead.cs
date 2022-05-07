@@ -23,41 +23,5 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         //public double Cost { get; set; }
         //public double SuggestedPrice { get; set; }
         //public double Labor { get; set; }
-
-        public static InventoryItemToRead ConvertToDto(InventoryItem item)
-        {
-            if (item != null)
-            {
-                var itemReadDto = new InventoryItemToRead
-                {
-                    Id = item.Id,
-                    Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ProductCode = item.ProductCode,
-                    ProductCodeId = item.ProductCodeId,
-                    ItemType = item.ItemType,
-                    DetailId = item.DetailId
-                };
-
-                if (item.ItemType == InventoryItemType.Part)
-                {
-                    itemReadDto.Part = InventoryPartToRead.ConvertToDto(item.Part);
-                }
-                else if (item.ItemType == InventoryItemType.Labor)
-                {
-                    itemReadDto.Labor = InventoryLaborToRead.ConvertToDto(item.Labor);
-                }
-                else if (item.ItemType == InventoryItemType.Tire)
-                {
-                    itemReadDto.Tire = InventoryTireToRead.ConvertToDto(item.Tire);
-                }
-
-                return itemReadDto;
-            }
-
-            return null;
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Manufacturers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ManufacturersController : ControllerBase
+    public class ManufacturersController : ApplicationController
     {
         private readonly IManufacturerRepository repository;
-        private readonly string BasePath = "/api/manufacturers";
+        //private readonly string BasePath = "/api/manufacturers";
 
         public ManufacturersController(IManufacturerRepository repository)
         {
@@ -42,6 +41,18 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(string code)
         {
             var result = await repository.GetManufacturerAsync(code);
+
+            if (result == null)
+                return NotFound();
+
+            return result;
+        }
+
+        // api/manufacturers/1
+        [HttpGet("{id:long}", Name = "GetManufacturerAsync")]
+        public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(long id)
+        {
+            var result = await repository.GetManufacturerAsync(id);
 
             if (result == null)
                 return NotFound();
@@ -81,7 +92,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
+        public async Task<ActionResult<ManufacturerToRead>> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
         {
             // 1. Convert dto to domain entity
             var mfr = new Manufacturer()
@@ -98,7 +109,10 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { mfr.Code });
+            //return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { mfr.Code });
+            return CreatedAtRoute("GetManufacturerAsync",
+                                  new { id = mfr.Id },
+                                  ManufacturerHelper.Transform(mfr));
         }
 
         [HttpDelete("{code}")]

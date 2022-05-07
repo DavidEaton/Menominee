@@ -13,6 +13,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         Task AddProductCodeAsync(ProductCode productCode);
         Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code);
         Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code);
+        Task<ProductCodeToRead> GetProductCodeAsync(long id);
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync();
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId);
         //Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId, long saleCodeId);

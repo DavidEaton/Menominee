@@ -2,11 +2,11 @@
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Shared.Helpers.Inventory
+namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryItemHelper
     {
-        public static InventoryItemToWrite CreateWriteDtoFromReadDto(InventoryItemToRead item)
+        public static InventoryItemToWrite Transform(InventoryItemToRead item)
         {
             var Item = new InventoryItemToWrite
             {
@@ -19,20 +19,38 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
             };
 
             if (item.ItemType == InventoryItemType.Part)
-            {
-                Item.Part = InventoryPartHelper.CreateWriteDtoFromReadDto(item.Part);
-            }
+                Item.Part = InventoryPartHelper.Transform(item.Part);
             else if (item.ItemType == InventoryItemType.Labor)
-            {
-                Item.Labor = InventoryLaborHelper.CreateWriteDtoFromReadDto(item.Labor);
-            }
+                Item.Labor = InventoryLaborHelper.Transform(item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
-            {
-                Item.Tire = InventoryTireHelper.CreateWriteDtoFromReadDto(item.Tire);
-            }
+                Item.Tire = InventoryTireHelper.Transform(item.Tire);
 
             return Item;
         }
+
+        public static InventoryItemToRead Transform(InventoryItem item)
+        {
+            var ItemToRead = new InventoryItemToRead
+            {
+                Id = item.Id,
+                ManufacturerId = item.ManufacturerId,
+                ItemNumber = item.ItemNumber,
+                Description = item.Description,
+                ProductCodeId = item.ProductCodeId,
+                ItemType = item.ItemType,
+                DetailId = item.DetailId
+            };
+
+            if (item.ItemType == InventoryItemType.Part)
+                ItemToRead.Part = InventoryPartHelper.Transform(item.Part);
+            else if (item.ItemType == InventoryItemType.Labor)
+                ItemToRead.Labor = InventoryLaborHelper.Transform(item.Labor);
+            else if (item.ItemType == InventoryItemType.Tire)
+                ItemToRead.Tire = InventoryTireHelper.Transform(item.Tire);
+
+            return ItemToRead;
+        }
+
 
         public static void CopyWriteDtoToEntity(InventoryItemToWrite itemToUpdate, InventoryItem item)
         {
@@ -44,17 +62,11 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
             item.DetailId = itemToUpdate.DetailId;
 
             if (item.ItemType == InventoryItemType.Part)
-            {
                 InventoryPartHelper.CopyWriteDtoToEntity(itemToUpdate.Part, item.Part);
-            }
             else if (item.ItemType == InventoryItemType.Labor)
-            {
                 InventoryLaborHelper.CopyWriteDtoToEntity(itemToUpdate.Labor, item.Labor);
-            }
             else if (item.ItemType == InventoryItemType.Tire)
-            {
                 InventoryTireHelper.CopyWriteDtoToEntity(itemToUpdate.Tire, item.Tire);
-            }
         }
     }
 }

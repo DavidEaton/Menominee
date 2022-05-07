@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemToRead.ConvertToDto(itemFromContext);
+            return InventoryItemHelper.Transform(itemFromContext);
         }
 
         public async Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber)
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemToRead.ConvertToDto(itemFromContext);
+            return InventoryItemHelper.Transform(itemFromContext);
         }
 
         public async Task<InventoryItem> GetItemEntityAsync(long id)
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .ToArrayAsync();
 
             foreach (var item in itemsFromContext)
-                items.Add(InventoryItemToRead.ConvertToDto(item));
+                items.Add(InventoryItemHelper.Transform(item));
 
             return items;
         }

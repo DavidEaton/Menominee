@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -8,22 +9,21 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Vendors
 {
-    //[Route("api/[controller]")]
-    [Route("api/payables/[controller]")]
-    [ApiController]
-    public class VendorsController : ControllerBase
+    ////[Route("api/[controller]")]
+    //[Route("api/payables/[controller]")]
+    //[ApiController]
+    public class VendorsController : ApplicationController
     {
         private readonly IVendorRepository repository;
-        private readonly string BasePath = "/api/payables/vendors";
+        //private readonly string BasePath = "/api/payables/vendors";
+        //private readonly string BasePath = "/api/vendors";
 
         public VendorsController(IVendorRepository repository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/payables/vendors/listing
-        //[Route("listing", Name = "GetVendorsListAsync")]
-        //[Route("/api/payables/vendors/listing")]
+        // api/vendors/listing
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorToReadInList>>> GetVendorsListAsync()
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             return Ok(results);
         }
 
-        // api/payables/vendors
+        // api/vendors
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorToRead>>> GetVendorsAsync()
         {
@@ -40,9 +40,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             return Ok(result);
         }
 
-        // api/payables/vendors/1
-        //[HttpGet("{id:long}", Name = "GetVendorAsync")]
-        [HttpGet("{id:long}")]
+        // api/vendors/1
+        [HttpGet("{id:long}", Name = "GetVendorAsync")]
         public async Task<ActionResult<VendorToRead>> GetVendorAsync(long id)
         {
             var result = await repository.GetVendorAsync(id);
@@ -53,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             return result;
         }
 
-        // api/payables/vendors/1
+        // api/vendors/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateVendorAsync(long id, VendorToEdit vendorUpdateDto)
         {
@@ -118,7 +117,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddVendorAsync(VendorToWrite vendorCreateDto)
+        public async Task<ActionResult<VendorToRead>> AddVendorAsync(VendorToWrite vendorCreateDto)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -145,7 +144,10 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             await repository.SaveChangesAsync();
 
             // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{vendor.Id}", UriKind.Relative), new { id = vendor.Id });
+            //return Created(new Uri($"{BasePath}/{vendor.Id}", UriKind.Relative), new { id = vendor.Id });
+            return CreatedAtRoute("GetVendorAsync",
+                                  new { id = vendor.Id },
+                                  VendorHelper.Transform(vendor));
         }
 
         [HttpDelete("{id:long}")]

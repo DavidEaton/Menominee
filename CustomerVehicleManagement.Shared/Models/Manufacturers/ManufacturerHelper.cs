@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
     public class ManufacturerHelper
     {
-        public static ManufacturerToWrite TransformManufacturer(ManufacturerToRead manufacturer)
+        public static ManufacturerToWrite Transform(ManufacturerToRead manufacturer)
         {
             if (manufacturer is null)
                 return new ManufacturerToWrite();
@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
             };
         }
 
-        public static ManufacturerToRead TransformManufacturer(Manufacturer manufacturer)
+        public static ManufacturerToRead Transform(Manufacturer manufacturer)
         {
             if (manufacturer is null)
                 return null;

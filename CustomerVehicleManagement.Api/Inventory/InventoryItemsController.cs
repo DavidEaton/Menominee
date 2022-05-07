@@ -1,6 +1,6 @@
 ﻿//using CustomerVehicleManagement.Api.Configurations.Inventory;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Helpers.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Http;
@@ -12,26 +12,9 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InventoryItemsController : ControllerBase
+    public class InventoryItemsController : ApplicationController
     {
         private readonly IInventoryItemRepository itemRepository;
-        //private readonly InventoryPartsController partsController;
-        //private readonly InventoryLaborController laborController;
-        //private readonly InventoryTiresController tiresController;
-        private readonly string BasePath = "/api/inventoryitems";
-
-        //public InventoryItemsController(IInventoryItemRepository itemRepository,
-        //                                InventoryPartsController partsController,
-        //                                InventoryLaborController laborController,
-        //                                InventoryTiresController tiresController)
-        //{
-        //    this.itemRepository = itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
-        //    this.partsController = partsController ?? throw new ArgumentNullException(nameof(partsController));
-        //    this.laborController = laborController ?? throw new ArgumentNullException(nameof(laborController));
-        //    this.tiresController = tiresController ?? throw new ArgumentNullException(nameof(tiresController));
-        //}
 
         public InventoryItemsController(IInventoryItemRepository itemRepository)
         {
@@ -108,53 +91,17 @@ namespace CustomerVehicleManagement.Api.Inventory
             return BadRequest($"Failed to update .");
         }
 
-        // api/inventoryitems/1
-        //[HttpPut("{id:long}")]
-        //public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemDto)
-        //{
-        //    var notFoundMessage = $"Could not find Inventory Item to update: {itemDto.ItemNumber}";
-
-        //    if (!await repository.InventoryItemExistsAsync(id))
-        //        return NotFound(notFoundMessage);
-
-        //    //1) Get domain entity from repository
-        //    var item = repository.GetInventoryItemEntityAsync(id).Result;
-
-        //    // 2) Update domain entity with data in data transfer object(DTO)
-        //    item.Manufacturer = itemDto.Manufacturer;
-        //    item.ManufacturerId = itemDto.ManufacturerId;
-        //    item.ItemNumber = itemDto.ItemNumber;
-        //    item.Description = itemDto.Description;
-        //    item.ProductCode = itemDto.ProductCode;
-        //    item.ProductCodeId = itemDto.ProductCodeId;
-        //    item.ItemType = itemDto.ItemType;
-
-
-        //    // Update the objects ObjectState and sych the EF Change Tracker
-        //    // 3) Set entity's TrackingState to Modified
-        //    item.SetTrackingState(TrackingState.Modified);
-
-        //    // 4) FixTrackingState: moves entity state tracking into the context
-        //    repository.FixTrackingState();
-
-        //    repository.UpdateInventoryItemAsync(item);
-
-        //    await repository.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
         [HttpPost]
-        public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
+        public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
         {
             InventoryItem item = null;
 
             if (itemToAdd.ItemType == InventoryItemType.Part)
-                item = new(InventoryPartHelper.CreateEntityFromWriteDto(itemToAdd.Part));
+                item = new(InventoryPartHelper.Transform(itemToAdd.Part));
             else if (itemToAdd.ItemType == InventoryItemType.Labor)
-                item = new(InventoryLaborHelper.CreateEntityFromWriteDto(itemToAdd.Labor));
+                item = new(InventoryLaborHelper.Transform(itemToAdd.Labor));
             else if (itemToAdd.ItemType == InventoryItemType.Tire)
-                item = new(InventoryTireHelper.CreateEntityFromWriteDto(itemToAdd.Tire));
+                item = new(InventoryTireHelper.Transform(itemToAdd.Tire));
 
             item.ManufacturerId = itemToAdd.ManufacturerId;
             item.ItemNumber = itemToAdd.ItemNumber;
@@ -163,48 +110,25 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             await itemRepository.AddItemAsync(item);
 
-            if (!await itemRepository.SaveChangesAsync())
-                return BadRequest($"Failed to add {itemToAdd}.");
+            //if (!await itemRepository.SaveChangesAsync())
+            //    return BadRequest($"Failed to add {itemToAdd}.");
 
-            InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(item.Id);
+            //InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(item.Id);
 
-            if (itemFromRepository == null)
-                return BadRequest($"Failed to add {itemToAdd}.");
+            //if (itemFromRepository == null)
+            //    return BadRequest($"Failed to add {itemToAdd}.");
+
+            //return CreatedAtRoute("GetInventoryItemAsync",
+            //                      new { id = itemFromRepository.Id },
+            //                      itemFromRepository);
+            //return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.ItemNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, ItemNumber = item.ItemNumber });
+
+            await itemRepository.SaveChangesAsync();
 
             return CreatedAtRoute("GetInventoryItemAsync",
-                                  new { id = itemFromRepository.Id },
-                                  itemFromRepository);
-            //return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.ItemNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, ItemNumber = item.ItemNumber });
+                                  new { id = item.Id },
+                                  InventoryItemHelper.Transform(item));
         }
-
-        //[HttpPost]
-        //public async Task<ActionResult> AddInventoryItemAsync(InventoryItemToWrite itemCreateDto)
-        //{
-        //    // 1. Convert dto to domain entity
-        //    var item = new InventoryItem()
-        //    {
-        //        Manufacturer = itemCreateDto.Manufacturer,
-        //        ManufacturerId = itemCreateDto.ManufacturerId,
-        //        ItemNumber = itemCreateDto.ItemNumber,
-        //        Description = itemCreateDto.Description,
-        //        ProductCode = itemCreateDto.ProductCode,
-        //        ProductCodeId = itemCreateDto.ProductCodeId,
-        //        ItemType = itemCreateDto.ItemType
-        //        //QuantityOnHand = itemCreateDto.QuantityOnHand,
-        //        //Cost = itemCreateDto.Cost,
-        //        //SuggestedPrice = itemCreateDto.SuggestedPrice,
-        //        //Labor = itemCreateDto.Labor
-        //    };
-
-        //    // 2. Add domain entity to repository
-        //    await repository.AddInventoryItemAsync(item);
-
-        //    // 3. Save changes on repository
-        //    await repository.SaveChangesAsync();
-
-        //    // 4. Return new mfrId & itemNumber from database to consumer after save
-        //    return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.ItemNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, ItemNumber = item.ItemNumber });
-        //}
 
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteInventoryItemAsync(long id)

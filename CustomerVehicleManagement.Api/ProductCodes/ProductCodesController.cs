@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.ProductCodes
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductCodesController : ControllerBase
+    public class ProductCodesController : ApplicationController
     {
         private readonly IProductCodeRepository repository;
-        private readonly string BasePath = "/api/productcodes";
+        //private readonly string BasePath = "/api/productcodes";
 
         public ProductCodesController(IProductCodeRepository repository)
         {
@@ -60,6 +59,18 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         }
 
         // api/productcodes/xyz/123
+        [HttpGet("{id:long}", Name = "GetProductCodeAsync")]
+        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(long id)
+        {
+            var result = await repository.GetProductCodeAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            return result;
+        }
+
+        // api/productcodes/xyz/123
         [HttpPut("{mfrcode}/{code}")]
         public async Task<IActionResult> UpdateProductCodeAsync(string mfrCode, string productCode, ProductCodeToWrite pcDto)
         {
@@ -92,7 +103,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
+        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
         {
             // 1. Convert dto to domain entity
             var pc = new ProductCode()
@@ -110,7 +121,11 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
+            //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
+            return CreatedAtRoute("GetProductCodeAsync",
+                                  new { id = pc.Id },
+                                  ProductCodeHelper.Transform(pc));
+
         }
 
         [HttpDelete("{mfrcode}/{code}")]

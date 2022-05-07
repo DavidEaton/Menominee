@@ -61,6 +61,20 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return ProductCodeToRead.ConvertToDto(pcFromContext);
         }
 
+        public async Task<ProductCodeToRead> GetProductCodeAsync(long id)
+        {
+            var pcFromContext = await context.ProductCodes
+                                             .Include(pc => pc.Manufacturer)
+                                             .Include(pc => pc.SaleCode)
+                                             .AsNoTracking()
+                                             .FirstOrDefaultAsync(pc => pc.Id == id);
+
+            Guard.ForNull(pcFromContext, "pcFromContext");
+
+
+            return ProductCodeToRead.ConvertToDto(pcFromContext);
+        }
+
         public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)
         {
             return await context.ProductCodes

@@ -155,7 +155,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableItem.ManufacturerId = item.ManufacturerId;
                 editableItem.PartNumber = item.PartNumber;
                 editableItem.PartType = item.PartType;
-                editableItem.ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode);
+                editableItem.ProductCode = ProductCodeHelper.Transform(item.ProductCode);
                 editableItem.ProductCodeId = item.ProductCodeId;
                 editableItem.QuantitySold = item.QuantitySold;
                 editableItem.RepairOrderServiceId = item.RepairOrderServiceId;

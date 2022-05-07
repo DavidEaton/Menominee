@@ -1,7 +1,7 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Taxes
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ExciseFeesController : ControllerBase
+    public class ExciseFeesController : ApplicationController
     {
         private readonly IExciseFeeRepository repository;
-        private readonly string BasePath = "/api/excisefees";
+
         public ExciseFeesController(IExciseFeeRepository repository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
@@ -30,7 +28,7 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         // api/excisefees/1
-        [HttpGet("{id:long}")]
+        [HttpGet("{id:long}", Name = "GetExciseFeeAsync")]
         public async Task<ActionResult<ExciseFeeToRead>> GetExciseFeeAsync(long id)
         {
             var result = await repository.GetExciseFeeAsync(id);
@@ -71,7 +69,7 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddExciseFeeAsync(ExciseFeeToWrite efDto)
+        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToWrite efDto)
         {
             // 1. Convert dto to domain entity
             var ef = new ExciseFee()
@@ -87,8 +85,13 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{ef.Id}", UriKind.Relative), new { ef.Id });
+            // 4. Return new fee from database to consumer after save
+            return CreatedAtRoute("GetExciseFeeAsync",
+                new
+                {
+                    Id = ef.Id
+                },
+                ExciseFeeHelper.Transform(ef));
         }
 
         [HttpDelete("{id:long}")]

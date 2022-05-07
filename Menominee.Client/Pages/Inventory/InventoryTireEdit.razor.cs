@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Helpers.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace Menominee.Client.Pages.Inventory
                 var readDto = await DataService.GetItemAsync(ItemId);
                 if (readDto != null)
                 {
-                    Item = InventoryItemHelper.CreateWriteDtoFromReadDto(readDto);
+                    Item = InventoryItemHelper.Transform(readDto);
                 }
                 else
                 {

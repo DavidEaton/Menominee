@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.SaleCodes
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SaleCodesController : ControllerBase
+    public class SaleCodesController : ApplicationController
     {
         private readonly ISaleCodeRepository repository;
         private readonly string BasePath = "/api/salecodes";

@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.CreditCards;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Http;
@@ -9,12 +10,10 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.CreditCards
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CreditCardsController : ControllerBase
+    public class CreditCardsController : ApplicationController
     {
         private readonly ICreditCardRepository repository;
-        private readonly string BasePath = "/api/creditcards";
+        //private readonly string BasePath = "/api/creditcards";
 
         public CreditCardsController(ICreditCardRepository repository)
         {
@@ -74,7 +73,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCreditCardAsync(CreditCardToWrite ccDto)
+        public async Task<ActionResult<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite ccDto)
         {
             // 1. Convert dto to domain entity
             var cc = new CreditCard()
@@ -90,20 +89,12 @@ namespace CustomerVehicleManagement.Api.CreditCards
             await repository.AddCreditCardAsync(cc);
 
             // 3. Save changes on repository
-            if (!await repository.SaveChangesAsync())
-                return BadRequest($"Failed to add {ccDto}.");
-
-            CreditCardToRead ccFromRepository = await repository.GetCreditCardAsync(cc.Id);
-
-            if (ccFromRepository == null)
-                return BadRequest($"Failed to add {ccDto}.");
-
-            //return CreatedAtRoute("GetCreditCardAsync",
-            //                      new { id = ccFromRepository.Id },
-            //                      ccFromRepository);
+            await repository.SaveChangesAsync();
 
             // 4.Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{cc.Id}", UriKind.Relative), new { cc.Id });
+            return CreatedAtRoute("GetCreditCardAsync",
+                                  new { id = cc.Id },
+                                  CreditCardHelper.Transform(cc));
         }
 
         [HttpDelete("{id:long}")]

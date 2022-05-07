@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
-    [Route("api/payables/[controller]")]
+    //[Route("api/payables/[controller]")]
     public class VendorInvoicesController : ApplicationController
     {
         private readonly IVendorInvoiceRepository repository;
-        private readonly string BasePath = "/api/payables/invoices";
+        //private readonly string BasePath = "/api/payables/invoices";
 
         public VendorInvoicesController(IVendorInvoiceRepository repository)
         {
@@ -135,7 +135,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         // POST: api/payables/invoices
         [HttpPost]
-        public async Task<ActionResult> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
+        public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -214,7 +214,10 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             await repository.SaveChangesAsync();
 
             // 4. Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{invoice.Id}", UriKind.Relative), new { id = invoice.Id });
+            //return Created(new Uri($"{BasePath}/{invoice.Id}", UriKind.Relative), new { id = invoice.Id });
+            return CreatedAtRoute("GetInvoiceAsync",
+                                  new { id = invoice.Id },
+                                  VendorInvoiceHelper.Transform(invoice));
         }
 
         [HttpDelete("{id:int}")]

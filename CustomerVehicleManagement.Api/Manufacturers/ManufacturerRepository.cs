@@ -43,7 +43,16 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(mfr => mfr.Code == code);
 
-            return ManufacturerHelper.TransformManufacturer(mfrFromContext);
+            return ManufacturerHelper.Transform(mfrFromContext);
+        }
+
+        public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
+        {
+            var mfrFromContext = await context.Manufacturers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(mfr => mfr.Id == id);
+
+            return ManufacturerHelper.Transform(mfrFromContext);
         }
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)

@@ -1,11 +1,11 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 
-namespace CustomerVehicleManagement.Shared.Helpers.Inventory
+namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryTireHelper
     {
-        public static InventoryItemTire CreateEntityFromWriteDto(InventoryTireToWrite tire)
+        public static InventoryTireToWrite Transform(InventoryTireToRead tire)
         {
             return new()
             {
@@ -28,10 +28,34 @@ namespace CustomerVehicleManagement.Shared.Helpers.Inventory
             };
         }
 
-        public static InventoryTireToWrite CreateWriteDtoFromReadDto(InventoryTireToRead tire)
+        public static InventoryItemTire Transform(InventoryTireToWrite tire)
         {
             return new()
             {
+                List = tire.List,
+                Cost = tire.Cost,
+                Core = tire.Core,
+                Retail = tire.Retail,
+                TechPayType = tire.TechPayType,
+                TechPayAmount = tire.TechPayAmount,
+                LineCode = tire.LineCode,
+                SubLineCode = tire.SubLineCode,
+                Fractional = tire.Fractional,
+                SkillLevel = tire.SkillLevel,
+                Type = tire.Type,
+                Width = tire.Width,
+                AspectRatio = tire.AspectRatio,
+                Diameter = tire.Diameter,
+                LoadIndex = tire.LoadIndex,
+                SpeedRating = tire.SpeedRating
+            };
+        }
+
+        public static InventoryTireToRead Transform(InventoryItemTire tire)
+        {
+            return new()
+            {
+                Id = tire.Id,
                 List = tire.List,
                 Cost = tire.Cost,
                 Core = tire.Core,
