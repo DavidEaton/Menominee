@@ -18,6 +18,8 @@ namespace Menominee.Client.Pages.Settings
         public ISalesTaxDataService SalesTaxDataService { get; set; }
 
         public IReadOnlyList<SalesTaxToReadInList> SalesTaxes;
+        public IEnumerable<SalesTaxToReadInList> SelectedSalesTaxes { get; set; } = Enumerable.Empty<SalesTaxToReadInList>();
+        public SalesTaxToReadInList SelectedSalesTax { get; set; }
         public SalesTaxToWrite SalesTax { get; set; } = null;
 
         public TelerikGrid<SalesTaxToReadInList> Grid { get; set; }
@@ -33,10 +35,17 @@ namespace Menominee.Client.Pages.Settings
         protected override async Task OnInitializedAsync()
         {
             SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
+            if (SalesTaxes?.Count > 0)
+            {
+                SelectedSalesTax = SalesTaxes.FirstOrDefault();
+                Id = SelectedSalesTax.Id;
+                SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
+            }
         }
 
         private void OnAdd()
         {
+            Id = 0;
             SalesTaxFormMode = FormMode.Add;
             SalesTaxes = null;
             SalesTax = new();
@@ -89,6 +98,12 @@ namespace Menominee.Client.Pages.Settings
             //    await SalesTaxDataService.Delete(Id);
         }
 
+        protected void OnSelect(IEnumerable<SalesTaxToReadInList> salesTaxes)
+        {
+            SelectedSalesTax = salesTaxes.FirstOrDefault();
+            SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
+        }
+
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             Id = (args.Item as SalesTaxToReadInList).Id;
@@ -101,7 +116,9 @@ namespace Menominee.Client.Pages.Settings
 
         protected async Task HandleAddSubmit()
         {
-            await SalesTaxDataService.AddSalesTaxAsync(SalesTax);
+            //await SalesTaxDataService.AddSalesTaxAsync(SalesTax);
+            SalesTaxToRead tax = await SalesTaxDataService.AddSalesTaxAsync(SalesTax);
+            Id = tax.Id;
             await EndAddEditAsync();
         }
 
@@ -124,6 +141,8 @@ namespace Menominee.Client.Pages.Settings
         {
             SalesTaxFormMode = FormMode.Unknown;
             SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
+            SelectedSalesTax = SalesTaxes.Where(x => x.Id == Id).FirstOrDefault();
+            SelectedSalesTaxes = new List<SalesTaxToReadInList> { SelectedSalesTax };
         }
     }
 }

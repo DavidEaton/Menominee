@@ -23,6 +23,8 @@
                      FilterMode="GridFilterMode.None"
                      ShowColumnMenu="false"
                      SelectionMode="GridSelectionMode.Single"
+                     SelectedItemsChanged="@((IEnumerable<SalesTaxToReadInList> taxList) => OnSelect(taxList))"
+                     SelectedItems="@SelectedSalesTaxes"
                      Class="m-grid"
                      @ref="Grid">
                     <GridColumns>

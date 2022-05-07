@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

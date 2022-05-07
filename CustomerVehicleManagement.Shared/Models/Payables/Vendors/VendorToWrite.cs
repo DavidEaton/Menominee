@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CustomerVehicleManagement.Shared.CustomerVehicleManagement.Shared.Models.Payables.Vendors
+namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
     public class VendorToWrite
     {

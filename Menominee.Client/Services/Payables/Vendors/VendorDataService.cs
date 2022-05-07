@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

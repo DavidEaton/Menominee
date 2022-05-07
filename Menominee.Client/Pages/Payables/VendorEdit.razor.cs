@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
-using CustomerVehicleManagement.Shared.CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 
 namespace Menominee.Client.Pages.Payables
 {

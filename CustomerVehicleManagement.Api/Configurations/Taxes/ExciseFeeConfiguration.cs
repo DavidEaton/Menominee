@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +16,10 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
 
             builder.Property(fee => fee.Description)
                 .IsRequired();
+            builder.Property(fee => fee.FeeType)
+                .HasDefaultValue(ExciseFeeType.Flat);
+            builder.Property(fee => fee.Amount)
+                .HasDefaultValue(0);
         }
     }
 }

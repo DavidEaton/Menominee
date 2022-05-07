@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +16,18 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
 
             builder.Property(st => st.Description)
                 .IsRequired();
+            builder.Property(st => st.TaxType)
+                .HasDefaultValue(SalesTaxType.Normal);
+            builder.Property(st => st.IsAppliedByDefault)
+                .HasDefaultValue(true);
+            builder.Property(st => st.IsTaxable)
+                .HasDefaultValue(false);
+            builder.Property(st => st.TaxIdNumber)
+                .HasMaxLength(255);
+            builder.Property(st => st.PartTaxRate)
+                .HasDefaultValue(0);
+            builder.Property(st => st.LaborTaxRate)
+                .HasDefaultValue(0);
         }
     }
 }
