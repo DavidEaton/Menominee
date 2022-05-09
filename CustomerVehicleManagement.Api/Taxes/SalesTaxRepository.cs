@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.Api.Taxes
 
             Guard.ForNull(taxFromContext, "Sales Tax");
 
-            return SalesTaxHelper.Transform(taxFromContext);
+            return SalesTaxHelper.CreateSalesTax(taxFromContext);
         }
 
         public async Task<SalesTax> GetSalesTaxEntityAsync(long id)
@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();
 
             return salesTaxes
-                .Select(tax => SalesTaxHelper.TransformToListItem(tax))
+                .Select(tax => SalesTaxHelper.CreateSalesTaxInList(tax))
                 .ToList();
         }
 

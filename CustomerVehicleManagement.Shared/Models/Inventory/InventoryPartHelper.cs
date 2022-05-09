@@ -5,8 +5,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryPartHelper
     {
-        public static InventoryPartToWrite Transform(InventoryPartToRead part)
+        public static InventoryPartToWrite CreateInventoryPart(InventoryPartToRead part)
         {
+            if (part is null)
+                return null;
+
             return new()
             {
                 List = part.List,
@@ -22,8 +25,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemPart Transform(InventoryPartToWrite part)
+        public static InventoryItemPart CreateInventoryPart(InventoryPartToWrite part)
         {
+            if (part is null)
+                return null;
+
             return new()
             {
                 List = part.List,
@@ -40,7 +46,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
 
 
-        //public static InventoryPartToWrite Transform(InventoryPart part)
+        //public static InventoryPartToWrite CreateInventoryPart(InventoryPart part)
         //{
         //    return new()
         //    {
@@ -57,47 +63,28 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         //    };
         //}
 
-        public static InventoryPartToRead Transform(InventoryItemPart part)
+        public static InventoryPartToRead CreateInventoryPart(InventoryItemPart part)
         {
-            if (part != null)
-            {
-                return new InventoryPartToRead
-                {
-                    Id = part.Id,
-                    List = part.List,
-                    Cost = part.Cost,
-                    Core = part.Core,
-                    Retail = part.Retail,
-                    TechPayType = part.TechPayType,
-                    TechPayAmount = part.TechPayAmount,
-                    LineCode = part.LineCode,
-                    SubLineCode = part.SubLineCode,
-                    Fractional = part.Fractional,
-                    SkillLevel = part.SkillLevel
-                };
-            }
+            if (part is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = part.Id,
+                List = part.List,
+                Cost = part.Cost,
+                Core = part.Core,
+                Retail = part.Retail,
+                TechPayType = part.TechPayType,
+                TechPayAmount = part.TechPayAmount,
+                LineCode = part.LineCode,
+                SubLineCode = part.SubLineCode,
+                Fractional = part.Fractional,
+                SkillLevel = part.SkillLevel
+            };
         }
 
-        //public static InventoryPart Transform(InventoryPart part)
-        //{
-        //    return new()
-        //    {
-        //        List = part.List,
-        //        Cost = part.Cost,
-        //        Core = part.Core,
-        //        Retail = part.Retail,
-        //        TechPayType = part.TechPayType,
-        //        TechPayAmount = part.TechPayAmount,
-        //        LineCode = part.LineCode,
-        //        SubLineCode = part.SubLineCode,
-        //        Fractional = part.Fractional,
-        //        SkillLevel = part.SkillLevel
-        //    };
-        //}
-
-        public static void CopyWriteDtoToEntity(InventoryPartToWrite partToUpdate, InventoryItemPart part)
+        public static void CopyInventoryPart(InventoryPartToWrite partToUpdate, InventoryItemPart part)
         {
             part.List = partToUpdate.List;
             part.Cost = partToUpdate.Cost;
@@ -109,6 +96,26 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             part.SubLineCode = partToUpdate.SubLineCode;
             part.Fractional = partToUpdate.Fractional;
             part.SkillLevel = partToUpdate.SkillLevel;
+        }
+
+        public static InventoryPartToReadInList CreateInventoryPartInList(InventoryItemPart part)
+        {
+            if (part is null)
+                return null;
+
+            return new()
+            {
+                List = part.List,
+                Cost = part.Cost,
+                Core = part.Core,
+                Retail = part.Retail,
+                TechPayType = part.TechPayType,
+                TechPayAmount = part.TechPayAmount,
+                LineCode = part.LineCode,
+                SubLineCode = part.SubLineCode,
+                Fractional = part.Fractional,
+                SkillLevel = part.SkillLevel
+            };
         }
     }
 }

@@ -93,7 +93,7 @@ namespace Menominee.Client.Pages.Settings
                 CreditCardToRead cc = await CreditCardDataService.GetCreditCardAsync(SelectedId);
                 if (cc != null)
                 {
-                    CreditCardToModify = CreditCardHelper.Transform(cc);
+                    CreditCardToModify = CreditCardHelper.CreateCreditCard(cc);
                     EditCardDialogVisible = true;
                 }
             }

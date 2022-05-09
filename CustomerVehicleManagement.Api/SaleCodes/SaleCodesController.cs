@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         }
 
         // api/salecodes/1
-        [HttpGet("{id:long}")]
+        [HttpGet("{id:long}", Name = "GetSaleCodeAsync")]
         public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(long id)
         {
             var result = await repository.GetSaleCodeAsync(id);
@@ -99,7 +99,12 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return Created(new Uri($"{BasePath}/{sc.Code}", UriKind.Relative), new { sc.Code });
+            return CreatedAtRoute("GetSaleCodeAsync",
+                new
+                {
+                    Id = sc.Id
+                },
+                SaleCodeHelper.CreateSaleCode(sc));
         }
 
         [HttpDelete("{code}")]

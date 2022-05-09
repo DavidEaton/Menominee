@@ -44,9 +44,6 @@ namespace Menominee.Client.Components.Settings
                     case "exciseFees":
                         navigationManager.NavigateTo($"{url}/excisefees");
                         break;
-                    case "exemptReasons":
-                        navigationManager.NavigateTo($"{url}/exemptReasons");
-                        break;
                     case "customerTaxProfiles":
                         //navigationManager.NavigateTo($"{url}/salestaxes");
                         break;
@@ -98,7 +95,6 @@ namespace Menominee.Client.Components.Settings
                 {
                     new MenuItem { Text= "Sales Taxes", HtmlAttributes=SubItemHtmlAttribute, Id="salesTaxes" },
                     new MenuItem { Text= "Excise / Disposal / HazMat Fees", HtmlAttributes=SubItemHtmlAttribute, Id="exciseFees" },
-                    new MenuItem { Text= "Exempt Reasons", HtmlAttributes=SubItemHtmlAttribute, Id="exemptReasons" },
                     new MenuItem { Text= "Customer Tax Profiles", HtmlAttributes=SubItemHtmlAttribute, Id="customerTaxProfiles" },
                     new MenuItem { Text= "Part Tax Profiles", HtmlAttributes=SubItemHtmlAttribute, Id="partTaxProfiles" }
                 },

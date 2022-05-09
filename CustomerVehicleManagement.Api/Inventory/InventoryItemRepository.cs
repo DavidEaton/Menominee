@@ -37,6 +37,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             context.Remove(item);
             context.SaveChanges();
         }
+
         public async Task DeleteItemAsync(long id)
         {
             var item = await context.InventoryItems
@@ -189,26 +190,6 @@ namespace CustomerVehicleManagement.Api.Inventory
             }
 
             return null;
-        }
-
-        private static InventoryItemToReadInList ConvertToDto(InventoryItem item)
-        {
-            if (item == null)
-                return null;
-
-            InventoryItemToReadInList itemInList = new();
-            itemInList.Id = item.Id;
-            itemInList.Manufacturer = item.Manufacturer;
-            itemInList.ManufacturerId = item.ManufacturerId;
-            itemInList.ManufacturerName = item.Manufacturer?.Name;
-            itemInList.ItemNumber = item.ItemNumber;
-            itemInList.Description = item.Description;
-            itemInList.ProductCode = item.ProductCode;
-            itemInList.ProductCodeId = item.ProductCodeId;
-            itemInList.ProductCodeName = item.ProductCode?.Name;
-            itemInList.ItemType = item.ItemType;
-
-            return itemInList;
         }
     }
 }

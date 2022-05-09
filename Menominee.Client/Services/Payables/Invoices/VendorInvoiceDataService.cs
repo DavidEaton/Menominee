@@ -15,7 +15,8 @@ namespace Menominee.Client.Services.Payables.Invoices
         private readonly HttpClient httpClient;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
-        private const string UriSegment = "api/payables/vendorinvoices";
+        //private const string UriSegment = "api/payables/vendorinvoices";
+        private const string UriSegment = "api/vendorinvoices";
 
         public VendorInvoiceDataService(HttpClient httpClient, IToastService toastService)
         {
@@ -50,25 +51,25 @@ namespace Menominee.Client.Services.Payables.Invoices
             return null;
         }
 
-        //public async Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToAdd invoice)
         public async Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToWrite invoice)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(invoice), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                //toastService.ShowSuccess($"{organization.Name} added successfully", "Added");
-                VendorInvoiceToRead inv = await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync());
-                //return await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync());
-                return inv;
+                return await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add vendor invoice. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 
-        //public async Task UpdateInvoice(VendorInvoiceToEdit invoice, long id)
         public async Task UpdateInvoice(VendorInvoiceToWrite invoice, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(invoice), Encoding.UTF8, MediaType);

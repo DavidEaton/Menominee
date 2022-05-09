@@ -26,12 +26,17 @@ namespace Menominee.Client.Services.Manufacturers
 
         public async Task<ManufacturerToRead> AddManufacturerAsync(ManufacturerToWrite manufacturer)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<ManufacturerToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<ManufacturerToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add Manufacturer. {response.ReasonPhrase}.", "Add Failed");

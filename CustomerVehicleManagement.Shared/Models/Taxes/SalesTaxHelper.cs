@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
     public class SalesTaxHelper
     {
-        public static SalesTax Transform(SalesTaxToWrite taxToWrite)
+        public static SalesTax CreateSalesTax(SalesTaxToWrite taxToWrite)
         {
             if (taxToWrite == null)
                 return null;
@@ -33,8 +33,11 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             return tax;
         }
 
-        public static SalesTaxToWrite Transform(SalesTaxToRead taxToRead)
+        public static SalesTaxToWrite CreateSalesTax(SalesTaxToRead taxToRead)
         {
+            if (taxToRead is null)
+                return null;
+
             var taxToWrite = new SalesTaxToWrite
             {
                 Description = taxToRead.Description,
@@ -60,7 +63,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             return taxToWrite;
         }
 
-        public static SalesTaxToRead Transform(SalesTax salesTax)
+        public static SalesTaxToRead CreateSalesTax(SalesTax salesTax)
         {
             if (salesTax is null)
                 return null;
@@ -91,12 +94,12 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             return taxToRead;
         }
 
-        public static SalesTaxToReadInList TransformToListItem(SalesTax tax)
+        public static SalesTaxToReadInList CreateSalesTaxInList(SalesTax tax)
         {
             if (tax is null)
                 return null;
 
-            return new SalesTaxToReadInList
+            return new()
             {
                 Id = tax.Id,
                 Description = tax.Description,

@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
             return result;
         }
 
-        // api/Creditcards/1
+        // api/creditcards/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite ccDto)
         {
@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
             // 4.Return new Id from database to consumer after save
             return CreatedAtRoute("GetCreditCardAsync",
                                   new { id = cc.Id },
-                                  CreditCardHelper.Transform(cc));
+                                  CreditCardHelper.CreateCreditCard(cc));
         }
 
         [HttpDelete("{id:long}")]

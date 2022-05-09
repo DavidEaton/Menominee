@@ -25,12 +25,17 @@ namespace Menominee.Client.Services.CreditCards
 
         public async Task<CreditCardToRead> AddCreditCardAsync(CreditCardToWrite creditCard)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(creditCard), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                CreditCardToRead cc = await JsonSerializer.DeserializeAsync<CreditCardToRead>(await response.Content.ReadAsStreamAsync());
+                CreditCardToRead cc = await JsonSerializer.DeserializeAsync<CreditCardToRead>(await response.Content.ReadAsStreamAsync(), options);
                 return cc;
             }
 

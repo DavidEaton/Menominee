@@ -24,34 +24,30 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 
         public static ManufacturerToRead CreateManufacturer(Manufacturer manufacturer)
         {
-            if (manufacturer != null)
-            {
-                return new ManufacturerToRead()
-                {
-                    Id = manufacturer.Id,
-                    Code = manufacturer.Code,
-                    Prefix = manufacturer.Prefix,
-                    Name = manufacturer.Name
-                };
-            }
+            if (manufacturer is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = manufacturer.Id,
+                Code = manufacturer.Code,
+                Prefix = manufacturer.Prefix,
+                Name = manufacturer.Name
+            };
         }
 
         public static ManufacturerToReadInList CreateManufacturerInList(Manufacturer manufacturer)
         {
-            if (manufacturer != null)
-            {
-                return new ManufacturerToReadInList
-                {
-                    Id = manufacturer.Id,
-                    Code = manufacturer.Code,
-                    Prefix = manufacturer.Prefix,
-                    Name = manufacturer.Name
-                };
-            }
+            if (manufacturer is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = manufacturer.Id,
+                Code = manufacturer.Code,
+                Prefix = manufacturer.Prefix,
+                Name = manufacturer.Name
+            };
         }
     }
 }

@@ -7,29 +7,30 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
     {
         public static InventoryItemToReadInList CreateInventoryItemInList(InventoryItem item)
         {
-            if (item is not null)
-            {
-                return new InventoryItemToReadInList
-                {
-                    Id = item.Id,
-                    Manufacturer = item.Manufacturer,
-                    ManufacturerId = item.ManufacturerId,
-                    ManufacturerName = item.Manufacturer?.Name,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ProductCode = item.ProductCode,
-                    ProductCodeId = item.ProductCodeId,
-                    ProductCodeName = item.ProductCode?.Name,
-                    ItemType = item.ItemType,
-                    DetailId = item.DetailId
-                };
-            }
+            if (item is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = item.Id,
+                Manufacturer = item.Manufacturer,
+                ManufacturerId = item.ManufacturerId,
+                ManufacturerName = item.Manufacturer?.Name,
+                ItemNumber = item.ItemNumber,
+                Description = item.Description,
+                ProductCode = item.ProductCode,
+                ProductCodeId = item.ProductCodeId,
+                ProductCodeName = item.ProductCode?.Name,
+                ItemType = item.ItemType,
+                DetailId = item.DetailId
+            };
         }
 
         public static InventoryItemToRead CreateInventoryItem(InventoryItem item)
         {
+            if (item is null)
+                return null;
+
             var ItemToRead = new InventoryItemToRead
             {
                 Id = item.Id,
@@ -42,17 +43,20 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
 
             if (item.ItemType == InventoryItemType.Part)
-                ItemToRead.Part = InventoryPartHelper.Transform(item.Part);
+                ItemToRead.Part = InventoryPartHelper.CreateInventoryPart(item.Part);
             else if (item.ItemType == InventoryItemType.Labor)
-                ItemToRead.Labor = InventoryLaborHelper.Transform(item.Labor);
+                ItemToRead.Labor = InventoryLaborHelper.CreateInventoryLabor(item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
-                ItemToRead.Tire = InventoryTireHelper.Transform(item.Tire);
+                ItemToRead.Tire = InventoryTireHelper.CreateInventoryTire(item.Tire);
 
             return ItemToRead;
         }
 
         public static InventoryItemToWrite CreateInventoryItem(InventoryItemToRead item)
         {
+            if (item is null)
+                return null;
+
             var Item = new InventoryItemToWrite
             {
                 ManufacturerId = item.ManufacturerId,
@@ -64,11 +68,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
 
             if (item.ItemType == InventoryItemType.Part)
-                Item.Part = InventoryPartHelper.Transform(item.Part);
+                Item.Part = InventoryPartHelper.CreateInventoryPart(item.Part);
             else if (item.ItemType == InventoryItemType.Labor)
-                Item.Labor = InventoryLaborHelper.Transform(item.Labor);
+                Item.Labor = InventoryLaborHelper.CreateInventoryLabor(item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
-                Item.Tire = InventoryTireHelper.Transform(item.Tire);
+                Item.Tire = InventoryTireHelper.CreateInventoryTire(item.Tire);
 
             return Item;
         }
@@ -83,11 +87,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             item.DetailId = itemToUpdate.DetailId;
 
             if (item.ItemType == InventoryItemType.Part)
-                InventoryPartHelper.CopyWriteDtoToEntity(itemToUpdate.Part, item.Part);
+                InventoryPartHelper.CopyInventoryPart(itemToUpdate.Part, item.Part);
             else if (item.ItemType == InventoryItemType.Labor)
-                InventoryLaborHelper.CopyWriteDtoToEntity(itemToUpdate.Labor, item.Labor);
+                InventoryLaborHelper.CopyInventoryLabor(itemToUpdate.Labor, item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
-                InventoryTireHelper.CopyWriteDtoToEntity(itemToUpdate.Tire, item.Tire);
+                InventoryTireHelper.CopyInventoryTire(itemToUpdate.Tire, item.Tire);
         }
     }
 }

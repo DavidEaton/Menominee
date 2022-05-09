@@ -26,12 +26,17 @@ namespace Menominee.Client.Services.ProductCodes
 
         public async Task<ProductCodeToRead> AddProductCodeAsync(ProductCodeToWrite productCode)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(productCode), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<ProductCodeToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<ProductCodeToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add Product Code. {response.ReasonPhrase}.", "Add Failed");

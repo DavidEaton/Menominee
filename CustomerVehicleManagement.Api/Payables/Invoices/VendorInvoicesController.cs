@@ -10,51 +10,54 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
-    //[Route("api/payables/[controller]")]
     public class VendorInvoicesController : ApplicationController
     {
         private readonly IVendorInvoiceRepository repository;
-        //private readonly string BasePath = "/api/payables/invoices";
 
         public VendorInvoicesController(IVendorInvoiceRepository repository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // GET: api/payables/invoices/list
+        // GET: api/vendorinvoices/list
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync()
         {
             var invoices = await repository.GetInvoiceListAsync();
 
-            //if (invoices == null)
-            //    return NotFound();
+            if (invoices == null)
+                return NotFound();
 
             return Ok(invoices);
         }
 
-        // GET: api/payables/invoices/1
+        // GET: api/vendorinvoices/1
         [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
         public async Task<ActionResult<VendorInvoiceToRead>> GetInvoiceAsync(long id)
         {
             var invoice = await repository.GetInvoiceAsync(id);
 
-            //if (invoice == null)
-            //    return NotFound();
+            if (invoice == null)
+                return NotFound();
 
             return Ok(invoice);
         }
 
-        // PUT: api/payables/invoices/1
+        // PUT: api/vendorinvoices/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoiceToEdit)
         {
+            var notFoundMessage = $"Could not find Vendor Invoice to update with Id = {id}.";
+
             if (!await repository.InvoiceExistsAsync(id))
-                return NotFound($"Could not find Vendor Invoice to update with Id = {id}.");
+                return NotFound(notFoundMessage);
 
             // 1) Get domain entity from repository
             var invoice = repository.GetInvoiceEntityAsync(id).Result;
+
+            if (invoice is null)
+                return NotFound(notFoundMessage);
 
             // 2) Update domain entity with data in data transfer object(DTO)
             //invoice.Vendor = ????
@@ -133,7 +136,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return BadRequest($"Failed to update vendor invoice.  Id = {invoiceToEdit.Id}.");
         }
 
-        // POST: api/payables/invoices
+        // POST: api/vendorinvoices
         [HttpPost]
         public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
@@ -217,7 +220,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             //return Created(new Uri($"{BasePath}/{invoice.Id}", UriKind.Relative), new { id = invoice.Id });
             return CreatedAtRoute("GetInvoiceAsync",
                                   new { id = invoice.Id },
-                                  VendorInvoiceHelper.Transform(invoice));
+                                  VendorInvoiceHelper.CreateVendorInvoice(invoice));
         }
 
         [HttpDelete("{id:int}")]

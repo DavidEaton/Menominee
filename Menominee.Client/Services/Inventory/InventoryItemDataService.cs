@@ -26,12 +26,17 @@ namespace Menominee.Client.Services.Inventory
 
         public async Task<InventoryItemToRead> AddItemAsync(InventoryItemToWrite item)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<InventoryItemToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<InventoryItemToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add Inventory Item. {response.ReasonPhrase}.", "Add Failed");

@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                 {
                     Id = tax.Id
                 },
-                SalesTaxHelper.Transform(tax));
+                SalesTaxHelper.CreateSalesTax(tax));
         }
 
         [HttpDelete("{id:long}")]

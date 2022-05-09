@@ -56,16 +56,16 @@ namespace CustomerVehicleManagement.Api.Data
             //if (UserContext != null) // Unit tests do not yet inject UserContext
             //    Connection = GetTenantConnection();
 
-            if (!options.IsConfigured) // Unit tests will configure context with test provider
-            {
-                if (Environment?.EnvironmentName != "Production")
-                {
-                    options.UseLoggerFactory(CreateLoggerFactory());
-                    options.EnableSensitiveDataLogging(true);
-                }
+            //if (!options.IsConfigured) // Unit tests will configure context with test provider
+            //{
+            //    if (Environment?.EnvironmentName != "Production")
+            //    {
+            //        options.UseLoggerFactory(CreateLoggerFactory());
+            //        options.EnableSensitiveDataLogging(true);
+            //    }
 
-                options.UseSqlServer(Connection);
-            }
+            //    options.UseSqlServer(Connection);
+            //}
 
             base.OnConfiguring(options);
 

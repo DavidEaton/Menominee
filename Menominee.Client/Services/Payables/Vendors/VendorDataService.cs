@@ -15,7 +15,7 @@ namespace Menominee.Client.Services.Payables.Vendors
         private readonly HttpClient httpClient;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
-        private const string UriSegment = "api/payables/vendors";
+        private const string UriSegment = "api/vendors";
 
         public VendorDataService(HttpClient httpClient, IToastService toastService)
         {
@@ -25,13 +25,18 @@ namespace Menominee.Client.Services.Payables.Vendors
 
         public async Task<VendorToRead> AddVendor(VendorToWrite vendor)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
                 toastService.ShowSuccess($"{vendor.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<VendorToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<VendorToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"{vendor.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
@@ -43,12 +48,10 @@ namespace Menominee.Client.Services.Payables.Vendors
             try
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToReadInList>>($"{UriSegment}/listing");
-                //return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToReadInList>>("GetVendorsListAsync");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Message: {ex.Message}");
-                //Console.WriteLine($"BaseAddress: {httpClient.BaseAddress}");
             }
 
             return null;

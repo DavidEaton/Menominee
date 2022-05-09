@@ -93,7 +93,7 @@ namespace Menominee.Client.Pages.Settings
                 ExciseFeeToRead fee = await ExciseFeeDataService.GetExciseFeeAsync(SelectedId);
                 if (fee != null)
                 {
-                    ExciseFeeToModify = ExciseFeeHelper.Transform(fee);
+                    ExciseFeeToModify = ExciseFeeHelper.CreateExciseFee(fee);
                     EditFeeDialogVisible = true;
                 }
             }

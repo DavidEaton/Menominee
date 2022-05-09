@@ -7,19 +7,17 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
     {
         public static ProductCodeToReadInList CreateProductCodeInList(ProductCode productCode)
         {
-            if (productCode is not null)
-            {
-                return new ProductCodeToReadInList
-                {
-                    Id = productCode.Id,
-                    Manufacturer = productCode.Manufacturer,
-                    Code = productCode.Code,
-                    SaleCode = productCode.SaleCode,
-                    Name = productCode.Name
-                };
-            }
+            if (productCode is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = productCode.Id,
+                Manufacturer = productCode.Manufacturer,
+                Code = productCode.Code,
+                SaleCode = productCode.SaleCode,
+                Name = productCode.Name
+            };
         }
 
         public static ProductCodeToRead CreateProductCode(ProductCode productCode)
@@ -27,7 +25,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             if (productCode == null)
                 return new ProductCodeToRead();
 
-            return new ProductCodeToRead()
+            return new()
             {
                 Id = productCode.Id,
                 Code = productCode.Code,
@@ -42,7 +40,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             if (productCode == null)
                 return new ProductCodeToWrite();
 
-            return new ProductCodeToWrite()
+            return new()
             {
                 Code = productCode.Code,
                 Manufacturer = productCode.Manufacturer,
@@ -56,7 +54,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             if (productCode == null)
                 return null;
 
-            return new ProductCode()
+            return new()
             {
                 Code = productCode.Code,
                 Manufacturer = productCode.Manufacturer,

@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
             Guard.ForNull(ccFromContext, "Credit Card");
 
-            return CreditCardHelper.Transform(ccFromContext);
+            return CreditCardHelper.CreateCreditCard(ccFromContext);
         }
 
         public async Task<CreditCard> GetCreditCardEntityAsync(long id)
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
             return creditCards
                 //.Select(cc => CreditCardToReadInList.ConvertToDto(cc))
-                .Select(cc => CreditCardHelper.TransformToListItem(cc))
+                .Select(cc => CreditCardHelper.CreateCreditCardInList(cc))
                 .ToList();
         }
 

@@ -15,22 +15,5 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public ItemLaborType TechPayType { get; set; }
         public double TechPayAmount { get; set; }
         public SkillLevel SkillLevel { get; set; }
-
-        public static InventoryLaborToReadInList ConvertToDto(InventoryItemLabor labor)
-        {
-            if (labor != null)
-            {
-                return new InventoryLaborToReadInList
-                {
-                    LaborType = labor.LaborType,
-                    LaborAmount = labor.LaborAmount,
-                    TechPayType = labor.TechPayType,
-                    TechPayAmount = labor.TechPayAmount,
-                    SkillLevel = labor.SkillLevel
-                };
-            }
-
-            return null;
-        }
     }
 }

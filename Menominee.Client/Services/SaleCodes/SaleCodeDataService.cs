@@ -26,12 +26,17 @@ namespace Menominee.Client.Services.SaleCodes
 
         public async Task<SaleCodeToRead> AddSaleCodeAsync(SaleCodeToWrite saleCode)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var content = new StringContent(JsonSerializer.Serialize(saleCode), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync());
+                return await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
             toastService.ShowError($"Failed to add Sale Code. {response.ReasonPhrase}.", "Add Failed");

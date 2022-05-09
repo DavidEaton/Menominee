@@ -12,9 +12,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public static class VendorInvoiceHelper
     {
-        public static VendorInvoiceToWrite Transform(VendorInvoiceToRead invoiceToRead)
+        public static VendorInvoiceToWrite CreateVendorInvoice(VendorInvoiceToRead invoiceToRead)
         {
-            return new VendorInvoiceToWrite()
+            if (invoiceToRead == null)
+                return null;
+
+            return new()
             {
                 Id = invoiceToRead.Id,
                 Date = invoiceToRead.Date,
@@ -29,9 +32,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             };
         }
 
-        public static VendorInvoiceToRead Transform(VendorInvoice invoice)
+        public static VendorInvoiceToRead CreateVendorInvoice(VendorInvoice invoice)
         {
-            return new VendorInvoiceToRead()
+            if (invoice == null)
+                return null;
+
+            return new()
             {
                 Id = invoice.Id,
                 Date = invoice.Date,
@@ -39,7 +45,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 Status = EnumExtensions.GetDisplayName(invoice.Status),//   (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
                 InvoiceNumber = invoice.InvoiceNumber,
                 Total = invoice.Total,
-                Vendor = VendorHelper.Transform(invoice.Vendor),
+                Vendor = VendorHelper.CreateVendor(invoice.Vendor),
                 LineItems = ProjectItems(invoice.LineItems),
                 Payments = ProjectPayments(invoice.Payments),
                 Taxes = ProjectTaxes(invoice.Taxes)

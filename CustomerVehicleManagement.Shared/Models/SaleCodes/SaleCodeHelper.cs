@@ -9,14 +9,14 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             if (saleCode == null)
                 return null;
 
-            return new SaleCode()
+            return new()
             {
                 Code = saleCode.Code,
                 Name = saleCode.Name,
                 DesiredMargin = saleCode.DesiredMargin,
                 LaborRate = saleCode.LaborRate,
 
-                ShopSupplies = new SaleCodeShopSupplies()
+                ShopSupplies = new()
                 {
                     IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
                     IncludeParts = saleCode.ShopSupplies.IncludeParts,
@@ -33,13 +33,13 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             if (saleCode is null)
                 return null;
 
-            return new SaleCodeToWrite()
+            return new()
             {
                 Code = saleCode.Code,
                 Name = saleCode.Name,
                 DesiredMargin = saleCode.DesiredMargin,
                 LaborRate = saleCode.LaborRate,
-                ShopSupplies = new SaleCodeShopSuppliesToWrite()
+                ShopSupplies = new()
                 {
                     IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
                     IncludeParts = saleCode.ShopSupplies.IncludeParts,
@@ -56,14 +56,14 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             if (saleCode is null)
                 return null;
 
-            return new SaleCodeToRead()
+            return new()
             {
                 Id = saleCode.Id,
                 Code = saleCode.Code,
                 Name = saleCode.Name,
                 DesiredMargin = saleCode.DesiredMargin,
                 LaborRate = saleCode.LaborRate,
-                ShopSupplies = new SaleCodeShopSuppliesToRead()
+                ShopSupplies = new()
                 {
                     IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
                     IncludeParts = saleCode.ShopSupplies.IncludeParts,
@@ -75,21 +75,19 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToReadInList CreateSaleCodeInList(SaleCode sc)
+        public static SaleCodeToReadInList CreateSaleCodeInList(SaleCode saleCode)
         {
-            if (sc != null)
-            {
-                return new SaleCodeToReadInList
-                {
-                    Id = sc.Id,
-                    Code = sc.Code,
-                    Name = sc.Name,
-                    LaborRate = sc.LaborRate,
-                    DesiredMargin = sc.DesiredMargin
-                };
-            }
+            if (saleCode is null)
+                return null;
 
-            return null;
+            return new()
+            {
+                Id = saleCode.Id,
+                Code = saleCode.Code,
+                Name = saleCode.Name,
+                LaborRate = saleCode.LaborRate,
+                DesiredMargin = saleCode.DesiredMargin
+            };
         }
     }
 }

@@ -9,12 +9,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
     public class VendorHelper
     {
-        public static Vendor Transform(VendorToWrite vendor)
+        public static Vendor CreateVendor(VendorToWrite vendor)
         {
             if (vendor is null)
                 return null;
 
-            return new Vendor()
+            return new()
             {
                 Name = vendor.Name,
                 VendorCode = vendor.VendorCode,
@@ -22,12 +22,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             };
         }
 
-        public static VendorToWrite Transform(VendorToRead vendor)
+        public static VendorToWrite CreateVendor(VendorToRead vendor)
         {
             if (vendor is null)
                 return null;
 
-            return new VendorToWrite
+            return new()
             {
                 Name = vendor.Name,
                 VendorCode = vendor.VendorCode,
@@ -35,12 +35,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             };
         }
 
-        public static VendorToRead Transform(Vendor vendor)
+        public static VendorToRead CreateVendor(Vendor vendor)
         {
             if (vendor is null)
                 return null;
 
-            return new VendorToRead
+            return new()
             {
                 Id = vendor.Id,
                 Name = vendor.Name,

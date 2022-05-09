@@ -29,7 +29,7 @@ namespace Menominee.Client.Pages.Payables
             else
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
-                Invoice = VendorInvoiceHelper.Transform(readDto);
+                Invoice = VendorInvoiceHelper.CreateVendorInvoice(readDto);
             }
         }
 

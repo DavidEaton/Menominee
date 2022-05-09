@@ -20,27 +20,5 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string SubLineCode { get; set; }
         public bool Fractional { get; set; }
         public SkillLevel SkillLevel { get; set; }
-
-        public static InventoryPartToReadInList ConvertToDto(InventoryItemPart part)
-        {
-            if (part != null)
-            {
-                return new InventoryPartToReadInList()
-                {
-                    List = part.List,
-                    Cost = part.Cost,
-                    Core = part.Core,
-                    Retail = part.Retail,
-                    TechPayType = part.TechPayType,
-                    TechPayAmount = part.TechPayAmount,
-                    LineCode = part.LineCode,
-                    SubLineCode = part.SubLineCode,
-                    Fractional = part.Fractional,
-                    SkillLevel = part.SkillLevel
-                };
-            }
-
-            return null;
-        }
     }
 }

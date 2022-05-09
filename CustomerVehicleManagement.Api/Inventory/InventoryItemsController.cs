@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class InventoryItemsController : ApplicationController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class InventoryItemsController : ControllerBase //ApplicationController  FIX ME - Route not found when inheriting from ApplicationController
     {
         private readonly IInventoryItemRepository itemRepository;
 
@@ -103,11 +105,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             InventoryItem item = null;
 
             if (itemToAdd.ItemType == InventoryItemType.Part)
-                item = new(InventoryPartHelper.Transform(itemToAdd.Part));
+                item = new(InventoryPartHelper.CreateInventoryPart(itemToAdd.Part));
             else if (itemToAdd.ItemType == InventoryItemType.Labor)
-                item = new(InventoryLaborHelper.Transform(itemToAdd.Labor));
+                item = new(InventoryLaborHelper.CreateInventoryLabor(itemToAdd.Labor));
             else if (itemToAdd.ItemType == InventoryItemType.Tire)
-                item = new(InventoryTireHelper.Transform(itemToAdd.Tire));
+                item = new(InventoryTireHelper.CreateInventoryTire(itemToAdd.Tire));
 
             item.ManufacturerId = itemToAdd.ManufacturerId;
             item.ItemNumber = itemToAdd.ItemNumber;
@@ -115,19 +117,6 @@ namespace CustomerVehicleManagement.Api.Inventory
             item.ProductCodeId = itemToAdd.ProductCodeId;
 
             await itemRepository.AddItemAsync(item);
-
-            //if (!await itemRepository.SaveChangesAsync())
-            //    return BadRequest($"Failed to add {itemToAdd}.");
-
-            //InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(item.Id);
-
-            //if (itemFromRepository == null)
-            //    return BadRequest($"Failed to add {itemToAdd}.");
-
-            //return CreatedAtRoute("GetInventoryItemAsync",
-            //                      new { id = itemFromRepository.Id },
-            //                      itemFromRepository);
-            //return Created(new Uri($"{BasePath}/{item.ManufacturerId}/{item.ItemNumber}", UriKind.Relative), new { ManufacturerId = item.ManufacturerId, ItemNumber = item.ItemNumber });
 
             await itemRepository.SaveChangesAsync();
 

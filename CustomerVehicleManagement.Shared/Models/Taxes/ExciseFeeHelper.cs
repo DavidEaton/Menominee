@@ -4,35 +4,38 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
     public class ExciseFeeHelper
     {
-        public static ExciseFee Transform(ExciseFeeToWrite feeToWrite)
+        public static ExciseFee CreateExciseFee(ExciseFeeToWrite exciseFee)
         {
-            if (feeToWrite == null)
+            if (exciseFee == null)
                 return null;
 
-            return new ExciseFee()
+            return new()
             {
-                Description = feeToWrite.Description,
-                FeeType = feeToWrite.FeeType,
-                Amount = feeToWrite.Amount
+                Description = exciseFee.Description,
+                FeeType = exciseFee.FeeType,
+                Amount = exciseFee.Amount
             };
         }
 
-        public static ExciseFeeToWrite Transform(ExciseFeeToRead feeToRead)
+        public static ExciseFeeToWrite CreateExciseFee(ExciseFeeToRead exciseFee)
         {
-            return new ExciseFeeToWrite()
+            if (exciseFee == null)
+                return null;
+
+            return new()
             {
-                Description = feeToRead.Description,
-                FeeType = feeToRead.FeeType,
-                Amount = feeToRead.Amount
+                Description = exciseFee.Description,
+                FeeType = exciseFee.FeeType,
+                Amount = exciseFee.Amount
             };
         }
 
-        public static ExciseFeeToRead Transform(ExciseFee exciseFee)
+        public static ExciseFeeToRead CreateExciseFee(ExciseFee exciseFee)
         {
             if (exciseFee is null)
                 return null;
 
-            return new ExciseFeeToRead()
+            return new()
             {
                 Id = exciseFee.Id,
                 Description = exciseFee.Description,
@@ -41,17 +44,17 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             };
         }
 
-        public static ExciseFeeToReadInList TransformToListItem(ExciseFee fee)
+        public static ExciseFeeToReadInList CreateExciseFeeInList(ExciseFee excisefee)
         {
-            if (fee is null)
+            if (excisefee is null)
                 return null;
 
-            return new ExciseFeeToReadInList
+            return new()
             {
-                Id = fee.Id,
-                Description = fee.Description,
-                FeeType = fee.FeeType,
-                Amount = fee.Amount
+                Id = excisefee.Id,
+                Description = excisefee.Description,
+                FeeType = excisefee.FeeType,
+                Amount = excisefee.Amount
             };
         }
     }

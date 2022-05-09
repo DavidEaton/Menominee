@@ -17,22 +17,5 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 return Code + " - " + Name;
             }
         }
-
-        public static ProductCodeToReadInList ConvertToDto(ProductCode pc)
-        {
-            if (pc != null)
-            {
-                return new ProductCodeToReadInList
-                {
-                    Id = pc.Id,
-                    Manufacturer = pc.Manufacturer,
-                    Code = pc.Code,
-                    SaleCode = pc.SaleCode,
-                    Name = pc.Name
-                };
-            }
-
-            return null;
-        }
     }
 }

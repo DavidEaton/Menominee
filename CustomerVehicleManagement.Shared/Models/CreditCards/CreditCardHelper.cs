@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
 {
     public class CreditCardHelper
     {
-        public static CreditCard Transform(CreditCardToWrite creditCard)
+        public static CreditCard CreateCreditCard(CreditCardToWrite creditCard)
         {
             if (creditCard == null)
                 return null;
@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
             };
         }
 
-        public static CreditCardToWrite Transform(CreditCardToRead creditCard)
+        public static CreditCardToWrite CreateCreditCard(CreditCardToRead creditCard)
         {
             if (creditCard is null)
                 return null;
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
             };
         }
 
-        public static CreditCardToRead Transform(CreditCard creditCard)
+        public static CreditCardToRead CreateCreditCard(CreditCard creditCard)
         {
             if (creditCard is null)
                 return null;
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
             };
         }
 
-        public static CreditCardToReadInList TransformToListItem(CreditCard cc)
+        public static CreditCardToReadInList CreateCreditCardInList(CreditCard cc)
         {
             if (cc is null)
                 return null;

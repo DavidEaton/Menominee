@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                 {
                     Id = ef.Id
                 },
-                ExciseFeeHelper.Transform(ef));
+                ExciseFeeHelper.CreateExciseFee(ef));
         }
 
         [HttpDelete("{id:long}")]

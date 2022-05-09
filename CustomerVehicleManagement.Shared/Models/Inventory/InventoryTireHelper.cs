@@ -5,8 +5,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryTireHelper
     {
-        public static InventoryTireToWrite Transform(InventoryTireToRead tire)
+        public static InventoryTireToWrite CreateInventoryTire(InventoryTireToRead tire)
         {
+            if (tire is null)
+                return null;
+
             return new()
             {
                 List = tire.List,
@@ -28,8 +31,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemTire Transform(InventoryTireToWrite tire)
+        public static InventoryItemTire CreateInventoryTire(InventoryTireToWrite tire)
         {
+            if (tire is null)
+                return null;
+
             return new()
             {
                 List = tire.List,
@@ -51,8 +57,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryTireToRead Transform(InventoryItemTire tire)
+        public static InventoryTireToRead CreateInventoryTire(InventoryItemTire tire)
         {
+            if (tire is null)
+                return null;
+
             return new()
             {
                 Id = tire.Id,
@@ -75,7 +84,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryTireToWrite tireToUpdate, InventoryItemTire tire)
+        public static void CopyInventoryTire(InventoryTireToWrite tireToUpdate, InventoryItemTire tire)
         {
             tire.List = tireToUpdate.List;
             tire.Cost = tireToUpdate.Cost;
@@ -93,6 +102,32 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             tire.Diameter = tireToUpdate.Diameter;
             tire.LoadIndex = tireToUpdate.LoadIndex;
             tire.SpeedRating = tireToUpdate.SpeedRating;
+        }
+
+        public static InventoryTireToReadInList CreateInventoryTireInList(InventoryItemTire tire)
+        {
+            if (tire is null)
+                return null;
+
+            return new()
+            {
+                List = tire.List,
+                Cost = tire.Cost,
+                Core = tire.Core,
+                Retail = tire.Retail,
+                TechPayType = tire.TechPayType,
+                TechPayAmount = tire.TechPayAmount,
+                LineCode = tire.LineCode,
+                SubLineCode = tire.SubLineCode,
+                Fractional = tire.Fractional,
+                SkillLevel = tire.SkillLevel,
+                Type = tire.Type,
+                Width = tire.Width,
+                AspectRatio = tire.AspectRatio,
+                Diameter = tire.Diameter,
+                LoadIndex = tire.LoadIndex,
+                SpeedRating = tire.SpeedRating
+            };
         }
     }
 }
