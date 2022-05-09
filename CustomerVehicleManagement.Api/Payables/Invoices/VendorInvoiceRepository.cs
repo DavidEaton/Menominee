@@ -48,6 +48,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .Include(invoice => invoice.Payments)
                                                   .Include(invoice => invoice.Taxes)
                                                   .Include(invoice => invoice.Vendor)
+                                                  .AsSplitQuery()
+                                                  .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return new VendorInvoiceToRead()
@@ -114,6 +116,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .Include(invoice => invoice.LineItems)
                                                   .Include(invoice => invoice.Payments)
                                                   .Include(invoice => invoice.Taxes)
+                                                  .AsSplitQuery()
+                                                  .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return invoiceFromContext;
@@ -131,6 +135,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             IReadOnlyList<VendorInvoice> invoices = await context.VendorInvoices
                                                                  .Include(invoice => invoice.Vendor)
+                                                                 .AsSplitQuery()
+                                                                 .AsNoTracking()
                                                                  .ToListAsync();
 
             return invoices

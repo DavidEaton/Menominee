@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Helpers;
+using CustomerVehicleManagement.Shared.Models.Contactable;
 using System;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.Persons
 {
     public class PersonToReadInList
     {

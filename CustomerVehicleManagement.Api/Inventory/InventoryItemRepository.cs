@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
-using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,9 +16,8 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public InventoryItemRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddItemAsync(InventoryItem item)
@@ -32,6 +30,13 @@ namespace CustomerVehicleManagement.Api.Inventory
             await context.AddAsync(item);
         }
 
+        public void DeleteInventoryItem(InventoryItem item)
+        {
+            Guard.ForNull(item, "item");
+
+            context.Remove(item);
+            context.SaveChanges();
+        }
         public async Task DeleteItemAsync(long id)
         {
             var item = await context.InventoryItems
@@ -41,6 +46,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             Guard.ForNull(item, "item");
 
             context.Remove(item);
+            context.SaveChanges();
         }
 
         public void FixTrackingState()
@@ -53,33 +59,36 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemFromContext = await context.InventoryItems
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
-                                                   .ThenInclude(pc => pc.SaleCode)
+                                                   .ThenInclude(productCode => productCode.SaleCode)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .AsNoTracking()
+                                               .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.Transform(itemFromContext);
+            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
         }
 
-        public async Task<InventoryItemToRead> GetItemAsync(long mfrId, string itemNumber)
+        public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
         {
             var itemFromContext = await context.InventoryItems
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
-                                                   .ThenInclude(pc => pc.SaleCode)
+                                                   .ThenInclude(productCode => productCode.SaleCode)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .AsNoTracking()
-                                               .FirstOrDefaultAsync(item => item.ManufacturerId == mfrId && item.ItemNumber == itemNumber);
+                                               .AsSplitQuery()
+                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId
+                                                                         && item.ItemNumber == itemNumber);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.Transform(itemFromContext);
+            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
         }
 
         public async Task<InventoryItem> GetItemEntityAsync(long id)
@@ -87,10 +96,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             return await context.InventoryItems
                                 .Include(item => item.Manufacturer)
                                 .Include(item => item.ProductCode)
-                                    .ThenInclude(pc => pc.SaleCode)
+                                    .ThenInclude(productCode => productCode.SaleCode)
                                 .Include(item => item.Part)
                                 .Include(item => item.Labor)
                                 .Include(item => item.Tire)
+                                .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
@@ -101,15 +111,16 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
             foreach (var item in itemsFromContext)
-                items.Add(InventoryItemHelper.Transform(item));
+                items.Add(InventoryItemHelper.CreateInventoryItem(item));
 
             return items;
         }
@@ -119,31 +130,33 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => ConvertToDto(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
                                    .ToList();
         }
 
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long mfrId)
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId)
         {
             var itemsFromContext = await context.InventoryItems
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
-                                                    .ThenInclude(pc => pc.SaleCode)
+                                                    .ThenInclude(productCode => productCode.SaleCode)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
-                                                .Where(item => item.ManufacturerId == mfrId)
+                                                .Where(item => item.ManufacturerId == manufacturerId)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => ConvertToDto(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
                                    .ToList();
         }
 

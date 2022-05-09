@@ -155,11 +155,11 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableItem.ManufacturerId = item.ManufacturerId;
                 editableItem.PartNumber = item.PartNumber;
                 editableItem.PartType = item.PartType;
-                editableItem.ProductCode = ProductCodeHelper.Transform(item.ProductCode);
+                editableItem.ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode);
                 editableItem.ProductCodeId = item.ProductCodeId;
                 editableItem.QuantitySold = item.QuantitySold;
                 editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
-                editableItem.SaleCode = SaleCodeHelper.Transform(item.SaleCode);
+                editableItem.SaleCode = SaleCodeHelper.CreateSaleCode(item.SaleCode);
                 editableItem.SaleCodeId = item.SaleCodeId;
                 editableItem.SaleType = item.SaleType;
                 editableItem.SellingPrice = item.SellingPrice;

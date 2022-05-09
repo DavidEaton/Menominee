@@ -27,9 +27,9 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task DeleteManufacturerAsync(string code)
         {
-            var mfrFromContext = await context.Manufacturers.FindAsync(code);
-            if (mfrFromContext != null)
-                context.Remove(mfrFromContext);
+            var manufacturerFromContext = await context.Manufacturers.FindAsync(code);
+            if (manufacturerFromContext != null)
+                context.Remove(manufacturerFromContext);
         }
 
         public void FixTrackingState()
@@ -39,11 +39,11 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
         {
-            var mfrFromContext = await context.Manufacturers
+            var manufacturerFromContext = await context.Manufacturers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(mfr => mfr.Code == code);
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code);
 
-            return ManufacturerHelper.Transform(mfrFromContext);
+            return ManufacturerHelper.CreateManufacturer(manufacturerFromContext);
         }
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
@@ -52,31 +52,31 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(mfr => mfr.Id == id);
 
-            return ManufacturerHelper.Transform(mfrFromContext);
+            return ManufacturerHelper.CreateManufacturer(mfrFromContext);
         }
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)
         {
-            var mfrFromContext = await context.Manufacturers
-                .FirstOrDefaultAsync(mfr => mfr.Code == code);
+            var manufacturerFromContext = await context.Manufacturers
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code);
 
-            return mfrFromContext;
+            return manufacturerFromContext;
         }
 
         public async Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync()
         {
-            IReadOnlyList<Manufacturer> mfrs = await context.Manufacturers
+            IReadOnlyList<Manufacturer> manufacturers = await context.Manufacturers
                 .AsNoTracking()
                 .ToListAsync();
 
-            return mfrs.
-                Select(mfr => ManufacturerToReadInList.ConvertToDto(mfr))
+            return manufacturers.
+                Select(manufacturer => ManufacturerHelper.CreateManufacturerInList(manufacturer))
                 .ToList();
         }
 
         public async Task<bool> ManufacturerExistsAsync(string code)
         {
-            return await context.Manufacturers.AnyAsync(mfr => mfr.Code == code);
+            return await context.Manufacturers.AnyAsync(manufacturer => manufacturer.Code == code);
         }
 
         public async Task<bool> SaveChangesAsync()

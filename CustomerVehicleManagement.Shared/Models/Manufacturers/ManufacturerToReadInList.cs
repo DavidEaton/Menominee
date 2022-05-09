@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-
-namespace CustomerVehicleManagement.Shared.Models.Manufacturers
+﻿namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
     public class ManufacturerToReadInList
     {
@@ -17,21 +15,5 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
         }
         //public xxx Country { get; set; }
         //public xxx Franchise { get; set; }
-
-        public static ManufacturerToReadInList ConvertToDto(Manufacturer mfr)
-        {
-            if (mfr != null)
-            {
-                return new ManufacturerToReadInList
-                {
-                    Id = mfr.Id,
-                    Code = mfr.Code,
-                    Prefix = mfr.Prefix,
-                    Name = mfr.Name
-                };
-            }
-
-            return null;
-        }
     }
 }

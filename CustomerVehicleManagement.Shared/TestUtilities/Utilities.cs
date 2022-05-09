@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Contactable;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;

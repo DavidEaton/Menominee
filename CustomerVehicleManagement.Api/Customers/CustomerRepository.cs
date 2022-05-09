@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Helpers;
 using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
 using Menominee.Common.Utilities;
@@ -18,9 +17,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
         public CustomerRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddCustomerAsync(Customer customer)
@@ -30,43 +28,19 @@ namespace CustomerVehicleManagement.Api.Customers
             if (await CustomerExistsAsync(customer.Id))
                 throw new Exception("Customer already exists");
 
-
             await context.AddAsync(customer);
         }
 
-        public async Task DeleteCustomerAsync(long id)
+        public void DeleteCustomer(Customer customer)
         {
-            var customer = await context.Customers.AsNoTracking()
-                                      .FirstOrDefaultAsync(customer => customer.Id == id);
-
-            Guard.ForNull(customer, "customer");
-
             context.Remove(customer);
         }
 
         public async Task<CustomerToRead> GetCustomerAsync(long id)
         {
-            var customerFromContext = await context.Customers
-                                                    // Person
-                                                    .Include(customer =>
-                                                             customer.Person.Phones)
-                                                    .AsNoTracking()
-                                                    .Include(customer =>
-                                                             customer.Person.Emails)
-                                                    .AsNoTracking()
-
-                                                    // Organization and Organization.Contact
-                                                    .Include(customer =>
-                                                             customer.Organization.Contact.Phones)
-                                                    .AsNoTracking()
-                                                    .Include(customer => 
-                                                             customer.Organization.Contact.Emails)
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(customer =>
-                                                                         customer.Id == id);
+            var customerFromContext = await GetCustomerEntityAsync(id);
 
             Guard.ForNull(customerFromContext, "customerFromContext");
-
             return CustomerHelper.ConvertToDto(customerFromContext);
         }
 
@@ -76,10 +50,10 @@ namespace CustomerVehicleManagement.Api.Customers
 
             var customersFromContext = await context.Customers
                                                     .Include(customer => customer.Person)
-                                                    .AsNoTracking()
                                                     .Include(customer => customer.Organization)
                                                         .ThenInclude(organization => organization.Contact)
                                                     .AsNoTracking()
+                                                    .AsSplitQuery()
                                                     .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
@@ -134,21 +108,19 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .Include(customer =>
                                                              customer.Person.Phones
                                                              .Where(phone => phone.IsPrimary == true))
-                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Person.Emails
                                                              .Where(email => email.IsPrimary == true))
-                                                    .AsNoTracking()
 
                                                     // Organization and Organization.Contact
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Phones
                                                              .Where(phone => phone.IsPrimary == true))
-                                                    .AsNoTracking()
                                                     .Include(customer =>
                                                              customer.Organization.Contact.Emails
                                                              .Where(email => email.IsPrimary == true))
                                                     .AsNoTracking()
+                                                    .AsSplitQuery()
                                                     .ToArrayAsync();
 
             return customersFromContext
@@ -169,12 +141,15 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Person.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Person.Name.LastFirstMiddle,
-                        AddressFull = customer.Person?.Address?.AddressFull is null ? string.Empty
-                                                                                    : customer.Person?.Address.AddressFull,
-                        PrimaryPhone = customer.Person?.Phones?.Count < 1           ? string.Empty
-                                                                                    : customer.Person?.Phones[0]?.Number,
-                        PrimaryEmail = customer.Person?.Emails?.Count < 1           ? string.Empty
-                                                                                    : customer.Person?.Emails[0]?.Address
+                        AddressFull = customer.Person?.Address?.AddressFull is null
+                            ? string.Empty
+                            : customer.Person?.Address.AddressFull,
+                        PrimaryPhone = customer.Person?.Phones?.Count < 1
+                            ? string.Empty
+                            : customer.Person?.Phones[0]?.Number,
+                        PrimaryEmail = customer.Person?.Emails?.Count < 1
+                            ? string.Empty
+                            : customer.Person?.Emails[0]?.Address
                     };
                 }
 
@@ -187,12 +162,15 @@ namespace CustomerVehicleManagement.Api.Customers
                         EntityId = customer.Organization.Id,
                         CustomerType = customer.CustomerType.ToString(),
                         Name = customer.Organization.Name.Name,
-                        AddressFull = customer.Organization?.Address?.AddressFull is null ? string.Empty
-                                                                                          : customer.Organization?.Address.AddressFull,
-                        PrimaryPhone = customer.Organization?.Phones?.Count < 1           ? string.Empty
-                                                                                          : customer.Organization?.Phones?[0]?.Number,
-                        PrimaryEmail = customer.Organization?.Emails?.Count < 1           ? string.Empty
-                                                                                          : customer.Organization?.Emails[0]?.Address
+                        AddressFull = customer.Organization?.Address?.AddressFull is null
+                            ? string.Empty
+                            : customer.Organization?.Address.AddressFull,
+                        PrimaryPhone = customer.Organization?.Phones?.Count < 1
+                            ? string.Empty
+                            : customer.Organization?.Phones?[0]?.Number,
+                        PrimaryEmail = customer.Organization?.Emails?.Count < 1
+                            ? string.Empty
+                            : customer.Organization?.Emails[0]?.Address
                     };
                 }
             }
@@ -200,5 +178,24 @@ namespace CustomerVehicleManagement.Api.Customers
             return null;
         }
 
+        public async Task<Customer> GetCustomerEntityAsync(long id)
+        {
+            var customerFromContext = await context.Customers
+                // Person
+                .Include(customer => customer.Person.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
+                .Include(customer => customer.Person.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+
+                // Organization and Organization.Contact
+                .Include(customer => customer.Organization.Contact.Phones)
+                .Include(customer => customer.Organization.Contact.Emails)
+
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(customer => customer.Id == id);
+
+            return customerFromContext;
+        }
     }
 }

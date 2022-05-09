@@ -1,5 +1,4 @@
-﻿
-namespace CustomerVehicleManagement.Shared.Models.Manufacturers
+﻿namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
     public class ManufacturerToWrite
     {

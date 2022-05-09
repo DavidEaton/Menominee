@@ -3,11 +3,9 @@ using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
@@ -27,23 +25,31 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync()
         {
             var results = await itemRepository.GetItemsInListAsync();
+
+            if (results == null)
+                return NotFound();
+
             return Ok(results);
         }
 
         // api/inventoryitems/listing/1
         [Route("listing")]
-        [HttpGet("listing/{mfrid:long}")]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long mfrId)
+        [HttpGet("listing/{manufacturerId:long}")]
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long manufacturerId)
         {
-            var results = await itemRepository.GetItemsInListAsync(mfrId);
+            var results = await itemRepository.GetItemsInListAsync(manufacturerId);
+
+            if (results == null)
+                return NotFound();
+
             return Ok(results);
         }
 
         // api/inventoryitems/1/ABC123
-        [HttpGet("{mfrid:long}/{itemnumber}")]
-        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long mfrId, string itemNumber)
+        [HttpGet("{manufacturerId:long}/{partNumber}")]
+        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long manufacturerId, string partNumber)
         {
-            var result = await itemRepository.GetItemAsync(mfrId, itemNumber);
+            var result = await itemRepository.GetItemAsync(manufacturerId, partNumber);
 
             if (result == null)
                 return NotFound();
@@ -73,10 +79,10 @@ namespace CustomerVehicleManagement.Api.Inventory
             //InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(id);
 
             //1) Get domain entity from repository
-            var item = itemRepository.GetItemEntityAsync(id).Result;
+            var item = await itemRepository.GetItemEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            InventoryItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
+            InventoryItemHelper.CopyInventoryItem(itemToWrite, item);
 
             // Update the objects ObjectState and synch the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -127,17 +133,20 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             return CreatedAtRoute("GetInventoryItemAsync",
                                   new { id = item.Id },
-                                  InventoryItemHelper.Transform(item));
+                                  InventoryItemHelper.CreateInventoryItem(item));
         }
 
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteInventoryItemAsync(long id)
         {
-            var itemFromRepository = await itemRepository.GetItemAsync(id);
-            if (itemFromRepository == null)
-                return NotFound($"Could not find Inventory Item in the database to delete with Id = {id}.");
+            var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
 
-            await itemRepository.DeleteItemAsync(id);
+            InventoryItem itemFromRepository = await itemRepository.GetItemEntityAsync(id);
+
+            if (itemFromRepository == null)
+                return NotFound(notFoundMessage);
+
+            itemRepository.DeleteInventoryItem(itemFromRepository);
             await itemRepository.SaveChangesAsync();
 
             return NoContent();

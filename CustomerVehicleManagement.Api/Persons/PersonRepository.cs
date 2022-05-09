@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Persons;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,13 @@ namespace CustomerVehicleManagement.Api.Persons
         }
         public async Task<Person> GetPersonEntityAsync(long id)
         {
-            var personFromContext = await context.Persons
-                .Include(person => person.Phones)
-                .Include(person => person.Emails)
+            Person personFromContext = await context.Persons
+                .Include(person => person.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
+                .Include(person => person.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+                .AsNoTracking()
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(person => person.Id == id);
 
             return personFromContext;
@@ -42,37 +47,39 @@ namespace CustomerVehicleManagement.Api.Persons
 
         public async Task<PersonToRead> GetPersonAsync(long id)
         {
-            var personFromContext = await context.Persons
-                .Include(person => person.Phones)
-                .Include(person => person.Emails)
-                .FirstOrDefaultAsync(person => person.Id == id);
+            Person personFromContext = await GetPersonEntityAsync(id);
 
-            return PersonToRead.ConvertToDto(personFromContext);
+            Guard.ForNull(personFromContext, "personFromContext");
+            return PersonHelper.ConvertToReadDto(personFromContext);
         }
 
         public async Task<IReadOnlyList<PersonToRead>> GetPersonsAsync()
         {
-            var personsFromContext = await context.Persons
-                                                  .Include(person => person.Phones)
-                                                  .Include(person => person.Emails)
-                                                  .ToArrayAsync();
-
+            IReadOnlyList<Person> personsFromContext = await context.Persons
+                .Include(person => person.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
+                .Include(person => person.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+                .AsNoTracking()
+                .AsSplitQuery()
+                .ToArrayAsync();
 
             return personsFromContext
                 .Select(person =>
-                        PersonToRead.ConvertToDto(person))
+                        PersonHelper.ConvertToReadDto(person))
                 .ToList();
         }
 
         public async Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync()
         {
-            var personsFromContext = await context.Persons
-                                                  .Include(person =>
-                                                           person.Phones
-                                                           .Where(phone => phone.IsPrimary == true))
-                                                  .Include(person => person.Emails
-                                                           .Where(phone => phone.IsPrimary == true))
-                                                  .ToArrayAsync();
+            IReadOnlyList<Person> personsFromContext = await context.Persons
+                .Include(person => person.Phones
+                    .OrderByDescending(phone => phone.IsPrimary))
+                .Include(person => person.Emails
+                    .OrderByDescending(email => email.IsPrimary))
+                .AsNoTracking()
+                .AsSplitQuery()
+                .ToArrayAsync();
 
             return personsFromContext
                 .Select(person =>

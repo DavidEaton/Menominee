@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using CustomerVehicleManagement.Shared.Models.Persons;
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 using System;

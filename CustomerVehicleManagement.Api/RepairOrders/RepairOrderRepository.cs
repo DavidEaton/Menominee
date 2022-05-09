@@ -27,9 +27,9 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         public async Task DeleteRepairOrderAsync(long id)
         {
-            var roFromContext = await context.RepairOrders.FindAsync(id);
-            if (roFromContext != null)
-                context.Remove(roFromContext);
+            var repairOrderFromContext = await context.RepairOrders.FindAsync(id);
+            if (repairOrderFromContext != null)
+                context.Remove(repairOrderFromContext);
         }
 
         public void FixTrackingState()
@@ -39,80 +39,71 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         public async Task<RepairOrderToRead> GetRepairOrderAsync(long id)
         {
-            var roFromContext = await context.RepairOrders
-                                             .Include(ro => ro.Services)
+            var repairOrderFromContext = await context.RepairOrders
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Items)
-                                                     .ThenInclude(roItem => roItem.Manufacturer)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.Manufacturer)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Items)
-                                                     .ThenInclude(roItem => roItem.ProductCode)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.ProductCode)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Items)
-                                                     .ThenInclude(roItem => roItem.SaleCode)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.SaleCode)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Items)
-                                                     .ThenInclude(roItem => roItem.Taxes)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.Taxes)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Items)
-                                                     .ThenInclude(roItem => roItem.SerialNumbers)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
-                                                 .ThenInclude(roItem => roItem.Items)
-                                                     .ThenInclude(roItem => roItem.Warranties)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
-                                                 .ThenInclude(roItem => roItem.Items)
-                                                     .ThenInclude(roItem => roItem.Purchases)
-                                                     .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.SerialNumbers)
+                                             .Include(repairOrder => repairOrder.Services)
+                                                 .ThenInclude(repairOrderItem => repairOrderItem.Items)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.Warranties)
+                                             .Include(repairOrder => repairOrder.Services)
+                                                 .ThenInclude(repairOrderItem => repairOrderItem.Items)
+                                                     .ThenInclude(repairOrderItem => repairOrderItem.Purchases)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Techs)
-                                                 .AsNoTracking()
-                                             .Include(ro => ro.Services)
+                                             .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Taxes)
-                                                 .AsNoTracking()
-                                             .Include(ro => ro.Taxes)
+                                             .Include(repairOrder => repairOrder.Taxes)
+                                             .Include(repairOrder => repairOrder.Payments)
+                                             .AsSplitQuery()
                                              .AsNoTracking()
-                                             .Include(ro => ro.Payments)
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(ro => ro.Id == id);
+                                             .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
 
-            return RepairOrderHelper.Transform(roFromContext);
+            return RepairOrderHelper.Transform(repairOrderFromContext);
         }
 
         public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
         {
-            var roFromContext = await context.RepairOrders
-                .Include(ro => ro.Services)
+            var repairOrderFromContext = await context.RepairOrders
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(m => m.Manufacturer)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(p => p.ProductCode)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(s => s.SaleCode)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(t => t.Taxes)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(s => s.SerialNumbers)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(i => i.Items)
                         .ThenInclude(w => w.Warranties)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(t => t.Techs)
-                .Include(ro => ro.Services)
+                .Include(repairOrder => repairOrder.Services)
                     .ThenInclude(t => t.Taxes)
-                .Include(ro => ro.Taxes)
-                .Include(ro => ro.Payments)
-                .FirstOrDefaultAsync(ro => ro.Id == id);
+                .Include(repairOrder => repairOrder.Taxes)
+                .Include(repairOrder => repairOrder.Payments)
+                .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
 
-            return roFromContext;
+            return repairOrderFromContext;
         }
 
         public async Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync()
@@ -127,7 +118,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         public async Task<bool> RepairOrderExistsAsync(long id)
         {
-            return await context.RepairOrders.AnyAsync(ro => ro.Id == id);
+            return await context.RepairOrders.AnyAsync(repairOrder => repairOrder.Id == id);
         }
 
         public async Task SaveChangesAsync()

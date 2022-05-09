@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
             return CreatedAtRoute("GetProductCodeAsync",
                                   new { id = pc.Id },
-                                  ProductCodeHelper.Transform(pc));
+                                  ProductCodeHelper.CreateProductCode(pc));
 
         }
 

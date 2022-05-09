@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 {
     public class SaleCodeHelper
     {
-        public static SaleCode Transform(SaleCodeToWrite saleCode)
+        public static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToWrite Transform(SaleCodeToRead saleCode)
+        public static SaleCodeToWrite CreateSaleCode(SaleCodeToRead saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToRead Transform(SaleCode saleCode)
+        public static SaleCodeToRead CreateSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToReadInList ConvertToDto(SaleCode sc)
+        public static SaleCodeToReadInList CreateSaleCodeInList(SaleCode sc)
         {
             if (sc != null)
             {

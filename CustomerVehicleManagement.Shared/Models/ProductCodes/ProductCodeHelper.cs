@@ -5,7 +5,24 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {
     public class ProductCodeHelper
     {
-        public static ProductCodeToRead Transform(ProductCode productCode)
+        public static ProductCodeToReadInList CreateProductCodeInList(ProductCode productCode)
+        {
+            if (productCode is not null)
+            {
+                return new ProductCodeToReadInList
+                {
+                    Id = productCode.Id,
+                    Manufacturer = productCode.Manufacturer,
+                    Code = productCode.Code,
+                    SaleCode = productCode.SaleCode,
+                    Name = productCode.Name
+                };
+            }
+
+            return null;
+        }
+
+        public static ProductCodeToRead CreateProductCode(ProductCode productCode)
         {
             if (productCode == null)
                 return new ProductCodeToRead();
@@ -20,7 +37,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             };
         }
 
-        public static ProductCodeToWrite Transform(ProductCodeToRead productCode)
+        public static ProductCodeToWrite CreateProductCode(ProductCodeToRead productCode)
         {
             if (productCode == null)
                 return new ProductCodeToWrite();
@@ -34,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             };
         }
 
-        public static ProductCode Transform(ProductCodeToWrite productCode)
+        public static ProductCode CreateProductCode(ProductCodeToWrite productCode)
         {
             if (productCode == null)
                 return null;

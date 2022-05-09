@@ -1,8 +1,11 @@
-﻿using Menominee.Common.Enums;
+﻿using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.DriversLicenses;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.Persons
 {
     public class PersonToWrite
     {

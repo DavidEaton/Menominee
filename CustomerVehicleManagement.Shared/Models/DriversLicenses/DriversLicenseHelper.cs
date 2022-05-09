@@ -1,17 +1,10 @@
-﻿using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
-using System;
+﻿using Menominee.Common.ValueObjects;
 
-namespace CustomerVehicleManagement.Shared.Models
+namespace CustomerVehicleManagement.Shared.Models.DriversLicenses
 {
-    public class DriversLicenseToRead
+    public class DriversLicenseHelper
     {
-        public string Number { get; set; }
-        public DateTime Issued { get; set; }
-        public DateTime Expiry { get; set; }
-        public State State { get; set; }
-
-        public static DriversLicenseToRead ConvertToDto(DriversLicense driversLicense)
+        public static DriversLicenseToRead ConvertToReadDto(DriversLicense driversLicense)
         {
             if (driversLicense != null)
             {
@@ -26,5 +19,6 @@ namespace CustomerVehicleManagement.Shared.Models
             }
             return null;
         }
+
     }
 }

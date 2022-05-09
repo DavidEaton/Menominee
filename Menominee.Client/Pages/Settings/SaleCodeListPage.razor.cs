@@ -91,7 +91,7 @@ namespace Menominee.Client.Pages.Settings
                 SaleCodeToRead sc = await SaleCodeDataService.GetSaleCodeAsync(SelectedId);
                 if (sc != null)
                 {
-                    SaleCodeToModify = SaleCodeHelper.Transform(sc);
+                    SaleCodeToModify = SaleCodeHelper.CreateSaleCode(sc);
                     EditCodeDialogVisible = true;
                 }
             }

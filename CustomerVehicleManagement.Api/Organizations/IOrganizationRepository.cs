@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         Task<OrganizationToRead> GetOrganizationAsync(long id);
         Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync();
         void UpdateOrganizationAsync(Organization entity);
-        Task DeleteOrganizationAsync(long id);
+        void DeleteOrganization(Organization entity);
         void FixTrackingState();
         Task<bool> OrganizationExistsAsync(long id);
         Task SaveChangesAsync();

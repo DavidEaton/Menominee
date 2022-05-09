@@ -15,7 +15,7 @@
     @if (((int)Phones?.Count()) > 0)
     {
         <ContactableTemplate Items="Phones"
-                             TItem="PhoneToWrite"
+                             TItem="CustomerVehicleManagement.Shared.Models.Contactable.PhoneToWrite"
                              Context="phone"
                              @key="Phone"
                              OnRowClick="Edit">

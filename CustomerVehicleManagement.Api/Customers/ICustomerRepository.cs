@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Api.Customers
     public interface ICustomerRepository
     {
         Task AddCustomerAsync(Customer entity);
-        Task DeleteCustomerAsync(long id);
+        void DeleteCustomer(Customer entity);
         void FixTrackingState();
         Task<bool> CustomerExistsAsync(long id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
@@ -16,5 +16,6 @@ namespace CustomerVehicleManagement.Api.Customers
         Task<IReadOnlyList<CustomerToReadInList>> GetCustomersInListAsync();
         Task<CustomerToRead> GetCustomerAsync(long id);
         Task SaveChangesAsync();
+        Task<Customer> GetCustomerEntityAsync(long id);
     }
 }

@@ -27,9 +27,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
 
         public async Task DeleteSaleCodeAsync(string code)
         {
-            var scFromContext = await context.SaleCodes.FindAsync(code);
-            if (scFromContext != null)
-                context.Remove(scFromContext);
+            var saleCodeFromContext = await context.SaleCodes.FindAsync(code);
+            if (saleCodeFromContext != null)
+                context.Remove(saleCodeFromContext);
         }
 
         public void FixTrackingState()
@@ -39,34 +39,34 @@ namespace CustomerVehicleManagement.Api.SaleCodes
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)
         {
-            var scFromContext = await context.SaleCodes
+            var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
 
-            return SaleCodeHelper.Transform(scFromContext);
+            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
-            var scFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(sc => sc.Id == id);
+            var saleCodeFromContext = await context.SaleCodes
+                .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
 
-            return SaleCodeHelper.Transform(scFromContext);
+            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
         {
-            var scFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(sc => sc.Code == code);
+            var saleCodeFromContext = await context.SaleCodes
+                .FirstOrDefaultAsync(saleCode => saleCode.Code == code);
 
-            return scFromContext;
+            return saleCodeFromContext;
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(long id)
         {
-            var scFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(sc => sc.Id == id);
+            var saleCodeFromContext = await context.SaleCodes
+                .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
 
-            return scFromContext;
+            return saleCodeFromContext;
         }
 
         public async Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync()
@@ -74,13 +74,13 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
-                .Select(saleCode => SaleCodeHelper.ConvertToDto(saleCode))
+                .Select(saleCode => SaleCodeHelper.CreateSaleCodeInList(saleCode))
                 .ToList();
         }
 
         public async Task<bool> SaleCodeExistsAsync(string code)
         {
-            return await context.SaleCodes.AnyAsync(sc => sc.Code == code);
+            return await context.SaleCodes.AnyAsync(saleCode => saleCode.Code == code);
         }
 
         public async Task<bool> SaveChangesAsync()
