@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 using Telerik.DataSource;
 
-namespace Menominee.Client.Pages.Settings
+namespace Menominee.Client.Components.Settings.Pages
 {
-    public partial class SaleCodeListPage
+    public partial class SaleCodeListPage : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }

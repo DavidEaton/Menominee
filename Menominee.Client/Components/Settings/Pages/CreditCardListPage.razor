@@ -1,5 +1,5 @@
 ﻿@page "/settings/creditcards"
-@page "/settings/creditcards/{ItemToSelect:long}"
+@page "/settings/creditcards/{Id:long}"
 
 <SettingsMenu />
 
@@ -7,16 +7,16 @@
     <div class="m-form">
         <div>
             <ContentHeader Header="Credit Cards" />
-            @if (CreditCardList == null)
+            @if (CreditCards == null)
             {
                 <p><em>Loading...</em></p>
             }
 
-            @if (CreditCardList != null)
+            @if (CreditCards != null)
             {
-                <TelerikGrid Data="CreditCardList"
-                             OnRowClick="@OnRowSelected"
-                             OnRowDoubleClick="@OnEditAsync"
+                <TelerikGrid Data="CreditCards"
+                             OnRowClick="OnRowSelected"
+                             OnRowDoubleClick="RowDoubleClickAsync"
                              Sortable="true"
                              Pageable="true"
                              FilterMode="GridFilterMode.None"
@@ -38,18 +38,18 @@
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                <EditNewDeleteButtons OnDone="OnDone" OnEdit="OnEditAsync" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
             }
         </div>
     </div>
 </div>
 
 
-@if (CreditCardToModify != null && EditCardDialogVisible)
+@if ((EditFormMode == FormMode.Add || EditFormMode == FormMode.Edit) && CreditCard != null)
 {
-    <CreditCardEditor CreditCard="@CreditCardToModify"
-                           OnSave="@OnSaveEditAsync"
-                           OnCancel="@OnCancelEdit" />
+    <CreditCardEditor CreditCard="CreditCard"
+                      OnSave="SubmitHandlerAsync"
+                      OnCancel="EndAddEditAsync" />
 }
 
 <style>

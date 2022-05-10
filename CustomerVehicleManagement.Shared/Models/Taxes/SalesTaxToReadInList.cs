@@ -13,5 +13,19 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
         public string TaxIdNumber { get; set; }
         public double PartTaxRate { get; set; }
         public double LaborTaxRate { get; set; }
+        public string PartTaxRateDisplay
+        {
+            get
+            {
+                return PartTaxRate.ToString("#0.00#'%'");
+            }
+        }
+        public string LaborTaxRateDisplay
+        {
+            get
+            {
+                return LaborTaxRate.ToString("#0.00#'%'");
+            }
+        }
     }
 }

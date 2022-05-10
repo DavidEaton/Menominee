@@ -1,5 +1,5 @@
 ﻿@page "/settings/excisefees"
-@page "/settings/excisefees/{FeeToSelect:long}"
+@page "/settings/excisefees/{Id:long}"
 
 <SettingsMenu />
 
@@ -7,16 +7,16 @@
     <div class="m-form">
         <div>
             <ContentHeader Header="Excise / Disposal / HazMat Fees" />
-            @if (ExciseFeeList == null)
+            @if (ExciseFees == null)
             {
                 <p><em>Loading...</em></p>
             }
 
-            @if (ExciseFeeList != null)
+            @if (ExciseFees != null)
             {
-                <TelerikGrid Data="ExciseFeeList"
-                             OnRowClick="@OnRowSelected"
-                             OnRowDoubleClick="@OnEditAsync"
+                <TelerikGrid Data="ExciseFees"
+                             OnRowClick="OnRowSelected"
+                             OnRowDoubleClick="RowDoubleClickAsync"
                              Sortable="true"
                              Pageable="true"
                              FilterMode="GridFilterMode.None"
@@ -39,17 +39,17 @@
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                <EditNewDeleteButtons OnDone="OnDone" OnEdit="OnEditAsync" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
             }
         </div>
     </div>
 </div>
 
-@if (ExciseFeeToModify != null && EditFeeDialogVisible)
+@if ((EditFormMode == FormMode.Add || EditFormMode == FormMode.Edit) && ExciseFee != null)
 {
-    <ExciseFeeEditor ExciseFee="@ExciseFeeToModify"
-                     OnSave="@OnSaveEditAsync"
-                     OnCancel="@OnCancelEdit" />
+    <ExciseFeeEditor ExciseFee="ExciseFee"
+                     OnSave="SubmitHandlerAsync"
+                     OnCancel="EndAddEditAsync" />
 }
 
 <style>

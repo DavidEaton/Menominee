@@ -33,21 +33,19 @@
                             Title="Tax Name">
                         </GridColumn>
                         <GridColumn Width="20%"
-                            Field="@nameof(SalesTaxToReadInList.PartTaxRate)"
+                            Field="@nameof(SalesTaxToReadInList.PartTaxRateDisplay)"
                             Title="Part Rate"
-                            TextAlign="ColumnTextAlign.Right"
-                            DisplayFormat="{0:P}">
+                            TextAlign="ColumnTextAlign.Right">
                         </GridColumn>
                         <GridColumn Width="20%"
-                            Field="@nameof(SalesTaxToReadInList.LaborTaxRate)"
+                            Field="@nameof(SalesTaxToReadInList.LaborTaxRateDisplay)"
                             Title="Labor Rate"
-                            TextAlign="ColumnTextAlign.Right"
-                            DisplayFormat="{0:P}">
+                            TextAlign="ColumnTextAlign.Right">
                         </GridColumn>
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="OnDone" OnEdit="Edit" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
+                <EditNewDeleteButtons OnDone="OnDone" OnEdit="OnEditAsync" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
             }
         }
     </div>

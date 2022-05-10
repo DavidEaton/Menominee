@@ -1,0 +1,2 @@
+﻿window.jsfunction = { focusElement: function (id) { setTimeout(() => { const element = document.getElementById(id); element.focus(); }, 100); } }
+//window.jsfunction = { focusElement: function (id) { const element = document.getElementById(id); element.focus(); } }

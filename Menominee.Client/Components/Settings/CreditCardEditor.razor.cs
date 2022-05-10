@@ -2,6 +2,7 @@
 using Menominee.Client.Services.CreditCards;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,6 +22,9 @@ namespace Menominee.Client.Components.Settings
 
         [Parameter]
         public EventCallback OnCancel { get; set; }
+
+        [Inject]
+        IJSRuntime JsInterop { get; set; }
 
         //private bool parametersSet = false;
 
@@ -43,6 +47,21 @@ namespace Menominee.Client.Components.Settings
 
         //    StateHasChanged();
         //}
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                //await JsInterop.InvokeVoidAsync("focusInputFromBlazor", new[] { ".defaultFocus" });
+                await Focus("name");
+            }
+        }
+
+        public async Task Focus(string elementId)
+        {
+            await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
+        }
 
         private List<FeeTypeListItem> feeTypeList { get; set; } = new List<FeeTypeListItem>();
 

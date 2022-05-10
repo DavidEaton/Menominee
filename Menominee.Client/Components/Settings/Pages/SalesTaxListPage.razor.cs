@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.Settings
+namespace Menominee.Client.Components.Settings.Pages
 {
     public partial class SalesTaxListPage : ComponentBase
     {
@@ -46,17 +46,19 @@ namespace Menominee.Client.Pages.Settings
         {
             Id = 0;
             SalesTaxFormMode = FormMode.Add;
-            SalesTaxes = null;
+            //SalesTaxes = null;
             SalesTax = new();
+            SalesTax.IsAppliedByDefault = true;
+            SalesTax.TaxType = SalesTaxType.Normal;
         }
 
         private async Task RowDoubleClickAsync(GridRowClickEventArgs args)
         {
             Id = (args.Item as SalesTaxToReadInList).Id;
-            await Edit();
+            await OnEditAsync();
         }
 
-        private async Task Edit()
+        private async Task OnEditAsync()
         {
             if (Id > 0)
             {
@@ -87,7 +89,7 @@ namespace Menominee.Client.Pages.Settings
                 }
 
                 SalesTaxFormMode = FormMode.Edit;
-                SalesTaxes = null;
+                //SalesTaxes = null;
             }
         }
 
@@ -113,14 +115,14 @@ namespace Menominee.Client.Pages.Settings
             NavigationManager.NavigateTo("/settings/");
         }
 
-        protected async Task HandleAddSubmit()
+        protected async Task HandleAddSubmitAsync()
         {
             Id = (await SalesTaxDataService.AddSalesTaxAsync(SalesTax)).Id;
             await EndAddEditAsync();
             Grid.Rebind();
         }
 
-        protected async Task HandleEditSubmit()
+        protected async Task HandleEditSubmitAsync()
         {
             await SalesTaxDataService.UpdateSalesTaxAsync(Id, SalesTax);
             await EndAddEditAsync();
@@ -129,9 +131,9 @@ namespace Menominee.Client.Pages.Settings
         protected async Task SubmitHandlerAsync()
         {
             if (SalesTaxFormMode == FormMode.Add)
-                await HandleAddSubmit();
+                await HandleAddSubmitAsync();
             else if (SalesTaxFormMode == FormMode.Edit)
-                await HandleEditSubmit();
+                await HandleEditSubmitAsync();
         }
 
         protected async Task EndAddEditAsync()

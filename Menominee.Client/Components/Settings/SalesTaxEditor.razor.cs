@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,6 +22,9 @@ namespace Menominee.Client.Components.Settings
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        [Inject]
+        IJSRuntime JsInterop { get; set; }
+
         //private bool parametersSet = false;
 
         protected override async Task OnInitializedAsync()
@@ -31,6 +35,20 @@ namespace Menominee.Client.Components.Settings
             }
 
             await base.OnInitializedAsync();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                await Focus("name");
+            }
+        }
+
+        public async Task Focus(string elementId)
+        {
+            await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
         }
 
         //protected override void OnParametersSet()
