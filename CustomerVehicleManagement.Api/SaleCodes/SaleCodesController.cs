@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
     public class SaleCodesController : ApplicationController
     {
         private readonly ISaleCodeRepository repository;
-        private readonly string BasePath = "/api/salecodes";
+        //private readonly string BasePath = "/api/salecodes";
 
         public SaleCodesController(ISaleCodeRepository repository)
         {
@@ -52,21 +52,20 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return result;
         }
 
-        // api/salecodes/a
-        [HttpPut("{code}")]
-        public async Task<IActionResult> UpdateSaleCodeAsync(string code, SaleCodeToWrite scDto)
+        // api/salecodes/1
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite scDto)
         {
             var notFoundMessage = $"Could not find Sale Code to update: {scDto.Name}";
 
-            if (!await repository.SaleCodeExistsAsync(code))
+            if (!await repository.SaleCodeExistsAsync(id))
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var sc = repository.GetSaleCodeEntityAsync(code).Result;
+            var sc = repository.GetSaleCodeEntityAsync(id).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            sc.Code = scDto.Code;
-            sc.Name = scDto.Name;
+            SaleCodeHelper.CopySaleCode(scDto, sc); 
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -75,7 +74,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            repository.UpdateSaleCodeAsync(sc);
+            await repository.UpdateSaleCodeAsync(sc);
 
             await repository.SaveChangesAsync();
 
@@ -86,11 +85,12 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite scCreateDto)
         {
             // 1. Convert dto to domain entity
-            var sc = new SaleCode()
-            {
-                Code = scCreateDto.Code,
-                Name = scCreateDto.Name
-            };
+            //var sc = new SaleCode()
+            //{
+            //    Code = scCreateDto.Code,
+            //    Name = scCreateDto.Name
+            //};
+            var sc = SaleCodeHelper.CreateSaleCode(scCreateDto);
 
             // 2. Add domain entity to repository
             await repository.AddSaleCodeAsync(sc);
@@ -107,14 +107,14 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 SaleCodeHelper.CreateSaleCode(sc));
         }
 
-        [HttpDelete("{code}")]
-        public async Task<IActionResult> DeleteSaleCodeAsync(string code)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteSaleCodeAsync(long id)
         {
-            var scFromRepository = await repository.GetSaleCodeAsync(code);
+            var scFromRepository = await repository.GetSaleCodeAsync(id);
             if (scFromRepository == null)
-                return NotFound($"Could not find Sale Code in the database to delete with Id: {code}.");
+                return NotFound($"Could not find Sale Code in the database to delete with Id: {id}.");
 
-            await repository.DeleteSaleCodeAsync(code);
+            await repository.DeleteSaleCodeAsync(id);
 
             await repository.SaveChangesAsync();
 

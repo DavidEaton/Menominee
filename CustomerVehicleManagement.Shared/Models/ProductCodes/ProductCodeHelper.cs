@@ -62,5 +62,13 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 SaleCode = productCode.SaleCode
             };
         }
+
+        public static void CopyProductCode(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
+        {
+            productCode.Code = productCodeToUpdate.Code;
+            productCode.Manufacturer = productCodeToUpdate.Manufacturer;
+            productCode.Name = productCodeToUpdate.Name;
+            productCode.SaleCode = productCodeToUpdate.SaleCode;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,88 +19,62 @@ namespace Menominee.Client.Components.Settings.Pages
         public ISaleCodeDataService SaleCodeDataService { get; set; }
 
         [Parameter]
-        public long CodeToSelect { get; set; } = 0;
+        public long Id { get; set; } = 0;
 
-        public IReadOnlyList<SaleCodeToReadInList> SaleCodeList;
+        public IReadOnlyList<SaleCodeToReadInList> SaleCodes;
         public IEnumerable<SaleCodeToReadInList> SelectedSaleCodes { get; set; } = Enumerable.Empty<SaleCodeToReadInList>();
         public SaleCodeToReadInList SelectedSaleCode { get; set; }
-        public SaleCodeToWrite SaleCodeToModify { get; set; } = null;
-
-        public long SelectedId
-        {
-            get => selectedId;
-            set
-            {
-                selectedId = value;
-                CanEdit = selectedId > 0;
-                CanDelete = selectedId > 0;
-            }
-        }
-
+        public SaleCodeToWrite SaleCode { get; set; } = null;
         public TelerikGrid<SaleCodeToReadInList> Grid { get; set; }
 
-        private long selectedId;
 
-        private bool CanEdit { get; set; } = false;
-        private bool CanDelete { get; set; } = false;
-        private bool EditCodeDialogVisible { get; set; } = false;
+        private bool CanEdit { get => Id > 0; }
+        private bool CanDelete { get => Id > 0; }
+
+        private FormMode EditFormMode = FormMode.Unknown;
 
         protected override async Task OnInitializedAsync()
         {
-            SaleCodeList = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
 
-            if (SaleCodeList.Count > 0)
+            if (SaleCodes?.Count > 0)
             {
-                if (CodeToSelect == 0)
-                {
-                    SelectedSaleCode = SaleCodeList.FirstOrDefault();
-                }
-                else
-                {
-                    SelectedSaleCode = SaleCodeList.Where(x => x.Id == CodeToSelect).FirstOrDefault();
-                }
-                SelectedId = SelectedSaleCode.Id;
+                SelectedSaleCode = SaleCodes.FirstOrDefault();
+                Id = SelectedSaleCode.Id;
                 SelectedSaleCodes = new List<SaleCodeToReadInList> { SelectedSaleCode };
             }
         }
 
-        protected override async Task OnParametersSetAsync()
-        {
-            GridState<SaleCodeToReadInList> desiredState = new GridState<SaleCodeToReadInList>()
-            {
-                SortDescriptors = new List<SortDescriptor>()
-                {
-                    new SortDescriptor { Member = "Name", SortDirection = ListSortDirection.Descending }
-                }
-            };
-
-            if (Grid != null)
-                await Grid?.SetState(desiredState);
-        }
-
         private void OnAdd()
         {
-            SelectedId = 0;
-            SaleCodeToModify = new();
-            EditCodeDialogVisible = true;
+            //Id = 0;
+            SaleCode = new();
+            EditFormMode = FormMode.Add;
+        }
+
+        private async Task RowDoubleClickAsync(GridRowClickEventArgs args)
+        {
+            Id = (args.Item as SaleCodeToReadInList).Id;
+            await OnEditAsync();
         }
 
         private async Task OnEditAsync()
         {
-            if (SelectedId != 0)
+            if (Id != 0)
             {
-                SaleCodeToRead sc = await SaleCodeDataService.GetSaleCodeAsync(SelectedId);
-                if (sc != null)
+                var saleCode = await SaleCodeDataService.GetSaleCodeAsync(Id);
+                if (saleCode != null)
                 {
-                    SaleCodeToModify = SaleCodeHelper.CreateSaleCode(sc);
-                    EditCodeDialogVisible = true;
+                    SaleCode = SaleCodeHelper.CreateSaleCode(saleCode);
+                    EditFormMode = FormMode.Edit;
                 }
             }
         }
 
         private void OnDelete()
         {
-            SelectedId = 0;
+            //if (Id > 0)
+            //    await SaleCodeDataService.Delete(Id);
         }
 
         protected void OnSelect(IEnumerable<SaleCodeToReadInList> saleCodes)
@@ -110,7 +85,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as SaleCodeToReadInList).Id;
+            Id = (args.Item as SaleCodeToReadInList).Id;
         }
 
         private void OnDone()
@@ -118,35 +93,33 @@ namespace Menominee.Client.Components.Settings.Pages
             NavigationManager.NavigateTo("/settings/");
         }
 
-        private async Task OnSaveEditAsync()
+        protected async Task HandleAddSubmitAsync()
         {
-            if (SelectedId == 0)
-            {
-                SaleCodeToRead sc = await SaleCodeDataService.AddSaleCodeAsync(SaleCodeToModify);
-                if (sc != null)
-                {
-                    SelectedId = sc.Id;
-                }
-            }
-            else
-            {
-                await SaleCodeDataService.UpdateSaleCodeAsync(SaleCodeToModify, SelectedId);
-            }
-
-            if (SelectedId > 0)
-            {
-                SaleCodeList = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
-                SelectedSaleCode = SaleCodeList.Where(x => x.Id == SelectedId).FirstOrDefault();
-                SelectedSaleCodes = new List<SaleCodeToReadInList> { SelectedSaleCode };
-                Grid.Rebind();
-            }
-
-            EditCodeDialogVisible = false;
+            Id = (await SaleCodeDataService.AddSaleCodeAsync(SaleCode)).Id;
+            await EndAddEditAsync();
+            Grid.Rebind();
         }
 
-        private void OnCancelEdit()
+        protected async Task HandleEditSubmitAsync()
         {
-            EditCodeDialogVisible = false;
+            await SaleCodeDataService.UpdateSaleCodeAsync(SaleCode, Id);
+            await EndAddEditAsync();
+        }
+
+        protected async Task SubmitHandlerAsync()
+        {
+            if (EditFormMode == FormMode.Add)
+                await HandleAddSubmitAsync();
+            else if (EditFormMode == FormMode.Edit)
+                await HandleEditSubmitAsync();
+        }
+
+        protected async Task EndAddEditAsync()
+        {
+            EditFormMode = FormMode.Unknown;
+            SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
+            SelectedSaleCode = SaleCodes.Where(x => x.Id == Id).FirstOrDefault();
+            SelectedSaleCodes = new List<SaleCodeToReadInList> { SelectedSaleCode };
         }
     }
 }

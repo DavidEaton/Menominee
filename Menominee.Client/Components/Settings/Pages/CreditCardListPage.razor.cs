@@ -62,7 +62,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private void OnAdd()
         {
-            Id = 0;
+            //Id = 0;
             CreditCard = new();
             CreditCard.FeeType = CreditCardFeeType.None;
             EditFormMode = FormMode.Add;

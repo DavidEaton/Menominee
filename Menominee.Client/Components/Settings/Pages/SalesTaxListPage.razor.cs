@@ -44,7 +44,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private void OnAdd()
         {
-            Id = 0;
+            //Id = 0;
             SalesTaxFormMode = FormMode.Add;
             //SalesTaxes = null;
             SalesTax = new();

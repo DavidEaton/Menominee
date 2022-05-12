@@ -89,5 +89,19 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 DesiredMargin = saleCode.DesiredMargin
             };
         }
+
+        public static void CopySaleCode(SaleCodeToWrite saleCodeToWrite, SaleCode saleCode)
+        {
+            saleCode.Code = saleCodeToWrite.Code;
+            saleCode.Name = saleCodeToWrite.Name;
+            saleCode.DesiredMargin = saleCodeToWrite.DesiredMargin;
+            saleCode.LaborRate = saleCodeToWrite.LaborRate;
+            saleCode.ShopSupplies.IncludeLabor = saleCodeToWrite.ShopSupplies.IncludeLabor;
+            saleCode.ShopSupplies.IncludeParts = saleCodeToWrite.ShopSupplies.IncludeParts;
+            saleCode.ShopSupplies.MaximumCharge = saleCodeToWrite.ShopSupplies.MaximumCharge;
+            saleCode.ShopSupplies.MinimumCharge = saleCodeToWrite.ShopSupplies.MinimumCharge;
+            saleCode.ShopSupplies.MinimumJobAmount = saleCodeToWrite.ShopSupplies.MinimumJobAmount;
+            saleCode.ShopSupplies.Percentage = saleCodeToWrite.ShopSupplies.Percentage;
+        }
     }
 }
