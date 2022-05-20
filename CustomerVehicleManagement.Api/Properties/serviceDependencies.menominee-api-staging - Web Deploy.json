@@ -1,16 +1,16 @@
 {
   "dependencies": {
     "identityapp1": {
-      "type": "identityapp",
-      "connectionId": "",
+      "ignored": "true",
       "suggestion": "true",
-      "ignored": "true"
+      "type": "identityapp",
+      "connectionId": ""
     },
     "mssql1": {
-      "type": "mssql",
-      "connectionId": "",
+      "ignored": "true",
       "suggestion": "true",
-      "ignored": "true"
+      "type": "mssql",
+      "connectionId": ""
     }
   }
 }
