@@ -16,10 +16,17 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string ProductCodeName { get; set; }
         public InventoryItemType ItemType { get; set; }
         public long DetailId { get; set; }
+        public string ItemTypeDisplayText
+        {
+            get
+            {
+                return EnumExtensions.GetDisplayName(ItemType);
+            }
+        }
 
-        //public int QuantityOnHand { get; set; }
-        //public double Cost { get; set; }
-        //public double SuggestedPrice { get; set; }
-        //public double Labor { get; set; }
-    }
+    //public int QuantityOnHand { get; set; }
+    //public double Cost { get; set; }
+    //public double SuggestedPrice { get; set; }
+    //public double Labor { get; set; }
+}
 }

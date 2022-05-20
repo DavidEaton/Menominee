@@ -12,6 +12,7 @@ namespace Menominee.Common.Enums
         Part,
         Labor,
         Tire,
+        Package,
         [Display(Name = "Courtesy Check")]
         CourtesyCheck,
         Donation,

@@ -15,6 +15,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         Task<SaleCodeToRead> GetSaleCodeAsync(string code);
         Task<SaleCodeToRead> GetSaleCodeAsync(long id);
         Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync();
+        Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync();
         Task<SaleCode> UpdateSaleCodeAsync(SaleCode saleCode);
         Task DeleteSaleCodeAsync(long id);
         Task<bool> SaleCodeExistsAsync(long id);

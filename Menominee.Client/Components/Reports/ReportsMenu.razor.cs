@@ -9,6 +9,25 @@ namespace Menominee.Client.Components.Reports
         [Inject]
         private NavigationManager navigationManager { get; set; }
 
+        protected override void OnInitialized()
+        {
+#pragma warning disable BL0005            
+            menuItems = new List<MenuItem>()
+            {
+                new MenuItem
+                {
+                    Text = "Placeholder",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Item 1", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" },
+                        new MenuItem { Text= "Item 2", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                }
+            };
+#pragma warning restore BL0005            
+        }
+
         public void OnItemSelected(string selectedItem)
         {
             if (selectedItem.Length > 0)
@@ -27,19 +46,7 @@ namespace Menominee.Client.Components.Reports
             }
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
-        {
-            new MenuItem
-            {
-                Text = "Placeholder",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Item 1", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" },
-                    new MenuItem { Text= "Item 2", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            }
-         };
+        private List<MenuItem> menuItems = null;
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
         {

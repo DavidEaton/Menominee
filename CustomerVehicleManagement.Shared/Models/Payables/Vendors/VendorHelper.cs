@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             return new()
             {
                 Name = vendor.Name,
-                VendorCode = vendor.VendorCode,
+                VendorCode = vendor.VendorCode.ToUpper(),
                 IsActive = vendor.IsActive
             };
         }

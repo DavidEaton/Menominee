@@ -57,6 +57,20 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetAllSaleCodeShopSuppliesAsync()
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<SaleCodeShopSuppliesToReadInList>>($"{UriSegment}/shopsupplieslist");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message: {ex.Message}");
+            }
+
+            return null;
+        }
+
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
             try
@@ -77,7 +91,7 @@ namespace Menominee.Client.Services.SaleCodes
 
             if (response.IsSuccessStatusCode)
             {
-                toastService.ShowSuccess("Sale Code saved successfully", "Saved");
+                //toastService.ShowSuccess("Sale Code saved successfully", "Saved");
                 return;
             }
 

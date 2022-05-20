@@ -15,9 +15,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemType ItemType { get; set; }
         public long DetailId { get; set; }
 
-        public InventoryItemPart Part { get; private set; }
-        public InventoryItemLabor Labor { get; private set; }
-        public InventoryItemTire Tire { get; private set; }
+        public InventoryItemPart Part { get; set; }
+        public InventoryItemLabor Labor { get; set; }
+        public InventoryItemTire Tire { get; set; }
+        public InventoryItemPackage Package { get; set; }
 
         public InventoryItem(InventoryItemPart part)
         {
@@ -41,6 +42,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             Tire = tire;
             ItemType = InventoryItemType.Tire;
+        }
+
+        public InventoryItem(InventoryItemPackage package)
+        {
+            Guard.ForNull(package, "package == null");
+
+            Package = package;
+            ItemType = InventoryItemType.Package;
         }
 
         #region ORM

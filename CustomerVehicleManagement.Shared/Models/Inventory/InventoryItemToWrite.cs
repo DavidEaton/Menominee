@@ -18,5 +18,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public InventoryPartToWrite Part { get; set; }
         public InventoryLaborToWrite Labor { get; set; }
         public InventoryTireToWrite Tire { get; set; }
+        public InventoryPackageToWrite Package { get; set; }
     }
 }

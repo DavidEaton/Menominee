@@ -8,44 +8,151 @@
         @Title
     </WindowTitle>
     <WindowContent>
-			<div class="form-row">
-				<div class="form-group col col-12 col-md-3">
-					<label class="k-label" for="name">Code</label>
-					<input type="text" class="form-control" id="code" autocomplete="off" onfocus="this.select();" @bind-value="SaleCode.Code">
-				</div>
-			</div>
+        <div class="form-row">
+            <div class="form-group col col-12 col-md-3">
+                <label class="m-label" for="name">Code</label>
+                <input type="text" class="form-control m-uppercase" id="code" autocomplete="off" onfocus="this.select();" @bind-value="SaleCode.Code">
+            </div>
+        </div>
 
-			<div class="form-row">
-				<div class="form-group col col-12">
-					<label class="k-label" for="name">Name</label>
-					<input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="SaleCode.Name">
-				</div>
-			</div>
+        <div class="form-row">
+            <div class="form-group col col-12">
+                <label class="m-label" for="name">Name</label>
+                <input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="SaleCode.Name">
+            </div>
+        </div>
 
-			<div class="form-row">
-				<div class="form-group col col-12 col-md-4">
-						<label class="k-label" for="laborRate">Labor Rate</label>
-						<TelerikNumericTextBox @bind-Value="SaleCode.LaborRate"
-                                           Format="C"
-										   Id="laborRate"
-										   Arrows="false">
-						</TelerikNumericTextBox>
-				</div>
-			</div>
+        <div class="form-row">
+            <div class="form-group col col-6">
+                <div>
+                    <label class="m-label" for="laborRate">Labor Rate</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="SaleCode.LaborRate"
+                                       Format="C"
+                                       Id="laborRate"
+                                       Width="50%"
+                                       Arrows="false">
+                </TelerikNumericTextBox>
+            </div>
+            <div class="form-group col col-6">
+                <div>
+                    <label class="m-label" for="margin">Target Margin</label>
+                </div>
+                <TelerikNumericTextBox @bind-Value="SaleCode.DesiredMargin"
+                                       Format="#0.00#'%'"
+                                       Decimals=3
+                                       Id="margin"
+                                       Width="50%"
+                                       Arrows="false">
+                </TelerikNumericTextBox>
+            </div>
+        </div>
 
-			<div class="form-row">
-				<div class="form-group col col-12 col-md-4">
-						<label class="k-label" for="margin">Target Margin</label>
-						<TelerikNumericTextBox @bind-Value="SaleCode.DesiredMargin"
-										   Format="#0.00#'%'"
-                                           Decimals=3
-										   Id="margin"
-										   Arrows="false">
-						</TelerikNumericTextBox>
-				</div>
-			</div>
+        <div class="form-row m-margin-top">
+            <div class="form-group col">
+                <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tabs k-window">
+                    <TabAnimationSettings>
+                        <TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+                        <TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+                    </TabAnimationSettings>
+                    <TabItems>
+                        <TabItem CssClass="m-tab-item">
+                            <ChildContent>
+                                <TabHeader Text="Shop Supplies"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="m-tab-content-border">
+                                    <div class="m-tab-content">
+                                        <div class="form-row">
+                                            <div class="form-group col col-6">
+                                                <div>
+                                                    <label class="m-label" for="percentage">Percentage</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="SaleCode.ShopSupplies.Percentage"
+                                                                       Format="#0.00'%'"
+                                                                       Decimals=3
+                                                                       Arrows="false"
+                                                                       Width="35%"
+                                                                       Id="percentage">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                            <div class="form-group col col-6">
+                                                <div>
+                                                    <label class="m-label">Minimum Job Amount</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="SaleCode.ShopSupplies.MinimumJobAmount"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="50%">
+                                                </TelerikNumericTextBox>
+                                            </div>
 
-			<SaveDiscardButtons OnSave="OnSave" OnDiscard="OnCancel" />
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col col-6">
+                                                <div>
+                                                    <label class="m-label">Minimum Charge</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="SaleCode.ShopSupplies.MinimumCharge"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="50%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                            <div class="form-group col col-6">
+                                                <div>
+                                                    <label class="m-label">Maximum Charge</label>
+                                                </div>
+                                                <TelerikNumericTextBox @bind-Value="SaleCode.ShopSupplies.MaximumCharge"
+                                                                       Format="C"
+                                                                       Arrows="false"
+                                                                       Width="50%">
+                                                </TelerikNumericTextBox>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col col-6">
+                                                <TelerikCheckBox Id="includeParts" @bind-Value="SaleCode.ShopSupplies.IncludeParts" />
+                                                <label class="m-label" for="includeParts">Apply To Parts Charge</label>
+                                            </div>
+                                            <div class="form-group col col-6">
+                                                <TelerikCheckBox Id="includeLabor" @bind-Value="SaleCode.ShopSupplies.IncludeLabor" />
+                                                <label class="m-label" for="includeLabor">Apply To Labor Charge</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                        <TabItem CssClass="m-tab-item">
+                            <ChildContent>
+                                <TabHeader Text="Royalty"></TabHeader>
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div class="m-tab-content-border">
+                                    <div class="m-tab-content">
+                                        <div class="form-group">
+                                            @*<div>
+                                            <label class="m-label">On Hand</label>
+                                            </div>
+                                            <TelerikNumericTextBox @bind-Value="Item.QuantityOnHand"
+                                            Decimals="2"
+                                            Arrows="false"
+                                            Width="20%">
+                                            </TelerikNumericTextBox>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </ContentTemplate>
+                        </TabItem>
+                    </TabItems>
+                </SfTab>
+            </div>
+        </div>
+
+        <SaveDiscardButtons OnSave="OnSave" OnDiscard="OnCancel" ShowDivider="false" />
 
     </WindowContent>
 </TelerikWindow>
@@ -59,7 +166,6 @@
     .m-section-divider {
         margin-top: .5rem !important;
         margin-bottom: .5rem !important;
-        /*border-color: darkgrey;*/
     }
 
     .dialog-button {
@@ -79,11 +185,6 @@
         margin-bottom: .5rem !important;
     }
 
-    .m-col-margin-right-16 {
-        /*margin-right: 16px;*/
-        /*column-gap: 16px;*/
-    }
-
     .m-no-row-padding {
         padding: 0 !important;
         margin: 0 !important;
@@ -92,10 +193,6 @@
 
     .m-grid-form {
         display: grid;
-    }
-
-    .k-label {
-        margin-bottom: .2rem !important;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {
@@ -119,6 +216,21 @@
         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         font-size: 1rem;
         min-height: 29px;
+    }
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item .e-tab-text {
+        color: black !important;
+        font-size: 1rem !important;
+    }
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item.e-active .e-tab-wrap {
+        background: var(--bg-color-medium) !important;
+        color: white !important;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+
+    .e-tab .e-tab-header.e-vertical {
+        max-width: unset;
     }
 
 </style>

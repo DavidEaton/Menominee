@@ -3,9 +3,9 @@ using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.Inventory
+namespace Menominee.Client.Components.Inventory.Pages
 {
-    public partial class InventoryTireEdit : ComponentBase
+    public partial class InventoryLaborEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }

@@ -1,15 +1,11 @@
-﻿@using Telerik.Blazor.Components
-@using Syncfusion.Blazor.DropDowns
-@using CustomerVehicleManagement.Shared.Models.ProductCodes
-
-<div class="m-form">
-    <Card Title="Edit Tire">
+﻿<div class="m-form">
+    <Card Title="@Title">
         <Content>
             <div class="form-row">
                 <div class="form-group col col-12 col-md-7 col-lg-6">
                     @if (Manufacturers != null)
                     {
-                        <label class="k-label" for="category">Manufacturer</label>
+                        <label class="m-label" for="category">Manufacturer</label>
                         <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
                                              Width="100%"
                                              Data="@Manufacturers"
@@ -26,7 +22,7 @@
                 <div class="form-group col col-12 col-md-6">
                     @if (ProductCodes != null)
                     {
-                        <label class="k-label" for="productCode">Product Line</label>
+                        <label class="m-label" for="productCode">Product Line</label>
                         <SfDropDownList TValue="long"
                                         TItem="ProductCodeToReadInList"
                                         PopupHeight="230px"
@@ -34,11 +30,7 @@
                                         DataSource="@ProductCodes"
                                         @bind-Value="@Item.ProductCodeId">
                             <DropDownListFieldSettings Text="DisplayText" Value="Id" />
-                            <DropDownListEvents TItem="ProductCodeToReadInList" 
-                                                TValue="long" 
-                                                ValueChange="@OnProductCodeChange">
-
-                            </DropDownListEvents>
+                            <DropDownListEvents TItem="ProductCodeToReadInList" TValue="long" ValueChange="@OnProductCodeChange"></DropDownListEvents>
                         </SfDropDownList>
                         @*<TelerikDropDownList @bind-Value="@Item.ProductCodeId"
                                                  Width="100%"
@@ -46,30 +38,31 @@
                                                  TextField="DisplayText"
                                                  ValueField="Id"
                                                  OnChange="OnProductCodeChange"
+                                                 @ref="productCodeDropDownRef"
                                                  Id="productCode">
                             </TelerikDropDownList>*@
                     }
                 </div>
                 <div class="form-group col col-12 col-md-6">
-                    <label for="saleCode">Sale Code</label>
+                    <label class="m-label" for="saleCode">Sale Code</label>
                     <input type="text" class="form-control" id="saleCode" readonly @bind-value="SaleCode">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col col-12 col-md-6">
-                    <label for="partNumber">Part Number</label>
+                    <label class="m-label" for="partNumber">Part Number</label>
                     <input type="text" class="form-control m-uppercase" id="partNumber" autocomplete="off" @bind-value="Item.ItemNumber">
                 </div>
                 <div class="form-group col col-12 col-md-6">
-                    <label for="description">Description</label>
+                    <label class="m-label" for="description">Description</label>
                     <input type="text" class="form-control" id="description" autocomplete="off" @bind-value="Item.Description">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col">
-                    <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tab-height m-tabs">
+                    <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tabs">
                         <TabAnimationSettings>
                             <TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
                             <TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
@@ -80,45 +73,45 @@
                                     <TabHeader Text="Pricing"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    @if (Item.Tire != null)
+                                    @if (Item.Part != null)
                                     {
                                         <div class="m-tab-content-border">
                                             <div class="m-tab-content">
-                                                <div class="field">
+                                                <div class="form-group">
                                                     <div>
-                                                        <label class="col-form-label">List Price</label>
+                                                        <label class="m-label">List Price</label>
                                                     </div>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.List"
+                                                    <TelerikNumericTextBox @bind-Value="Item.Part.List"
                                                                            Format="C"
                                                                            Arrows="false"
                                                                            Width="20%">
                                                     </TelerikNumericTextBox>
                                                 </div>
-                                                <div class="field">
+                                                <div class="form-group">
                                                     <div>
-                                                        <label class="col-form-label">Retail Price</label>
+                                                        <label class="m-label">Retail Price</label>
                                                     </div>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.Retail"
+                                                    <TelerikNumericTextBox @bind-Value="Item.Part.Retail"
                                                                            Format="C"
                                                                            Arrows="false"
                                                                            Width="20%">
                                                     </TelerikNumericTextBox>
                                                 </div>
-                                                <div class="field">
+                                                <div class="form-group">
                                                     <div>
-                                                        <label class="col-form-label">Cost</label>
+                                                        <label class="m-label">Cost</label>
                                                     </div>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.Cost"
+                                                    <TelerikNumericTextBox @bind-Value="Item.Part.Cost"
                                                                            Format="C"
                                                                            Arrows="false"
                                                                            Width="20%">
                                                     </TelerikNumericTextBox>
                                                 </div>
-                                                <div class="field">
+                                                <div class="form-group">
                                                     <div>
-                                                        <label class="col-form-label">Core</label>
+                                                        <label class="m-label">Core</label>
                                                     </div>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.Core"
+                                                    <TelerikNumericTextBox @bind-Value="Item.Part.Core"
                                                                            Format="C"
                                                                            Arrows="false"
                                                                            Width="20%">
@@ -136,57 +129,16 @@
                                 <ContentTemplate>
                                     <div class="m-tab-content-border">
                                         <div class="m-tab-content">
-                                            <div class="form-row">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </ContentTemplate>
-                            </TabItem>
-                            <TabItem CssClass="m-tab-item">
-                                <ChildContent>
-                                    <TabHeader Text="Tire Size"></TabHeader>
-                                </ChildContent>
-                                <ContentTemplate>
-                                    <div class="m-tab-content-border">
-                                        <div class="m-tab-content">
-                                            <div class="form-row m-align-bottoms">
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Vehicle/Service Type</label>
-                                                    <TelerikTextBox @bind-Value="Item.Tire.Type"
-                                                                    Class="m-uppercase">
-                                                    </TelerikTextBox>
+                                                <div class="form-group">
+                                                    <div>
+                                                        <label class="m-label">On Hand</label>
+                                                    </div>
+                                                    @*<TelerikNumericTextBox @bind-Value="Item.QuantityOnHand"
+                                                                               Decimals="2"
+                                                                               Arrows="false"
+                                                                               Width="20%">
+                                                        </TelerikNumericTextBox>*@
                                                 </div>
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Width</label>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.Width"
-                                                                           Arrows="false">
-                                                    </TelerikNumericTextBox>
-                                                </div>
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Aspect Ratio</label>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.AspectRatio"
-                                                                           Arrows="false">
-                                                    </TelerikNumericTextBox>
-                                                </div>
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Diameter</label>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.Diameter"
-                                                                           Arrows="false">
-                                                    </TelerikNumericTextBox>
-                                                </div>
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Load Index</label>
-                                                    <TelerikNumericTextBox @bind-Value="Item.Tire.LoadIndex"
-                                                                           Arrows="false">
-                                                    </TelerikNumericTextBox>
-                                                </div>
-                                                <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
-                                                    <label class="col-form-label">Speed Rating</label>
-                                                    <TelerikTextBox @bind-Value="Item.Tire.SpeedRating"
-                                                                    Class="m-uppercase">
-                                                    </TelerikTextBox>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </ContentTemplate>
@@ -203,23 +155,6 @@
 </div>
 
 <style>
-    .m-tabs {
-        font-size: 1rem;
-    }
-
-    .m-tab-content {
-        padding: 10px;
-    }
-
-    .m-tab-content-header {
-        margin-bottom: .25em;
-    }
-
-    .m-tab-content-border {
-        border: 1px solid darkgrey;
-        background: white;
-        border-radius: 0 0.25rem 0.25rem 0.25rem
-    }
 
     .e-tab.e-background .e-tab-header .e-toolbar-item .e-tab-text {
         color: black !important;
@@ -230,10 +165,6 @@
         background: var(--bg-color-medium) !important;
         color: white !important;
         border-radius: 0.25rem 0.25rem 0 0;
-    }
-
-    .m-tab-item {
-        color: black !important;
     }
 
     .e-tab .e-tab-header.e-vertical {
@@ -261,5 +192,6 @@
         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         font-size: 1rem;
         min-height: 29px;
-    }    
+    }
+
 </style>

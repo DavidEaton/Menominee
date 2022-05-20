@@ -1,5 +1,12 @@
 ﻿<div>
-    <hr class="m-save-discard-divider">
+    @if (ShowDivider)
+    {
+        <hr class="m-save-discard-divider">
+    }
+    else
+    {
+        <div class="m-half-rem-height" />
+    }
     <div>
         <button class="btn btn-primary m-button" type="submit" @onclick="OnSave">Save</button>
         <button class="btn btn-secondary m-button" @onclick="OnDiscard">Discard</button>
@@ -11,6 +18,10 @@
         margin-top: 1em;
         margin-bottom: 1em;
         border-color: darkgrey;
+    }
+
+    .m-half-rem-height {
+        height: .5rem;
     }
 
 </style>

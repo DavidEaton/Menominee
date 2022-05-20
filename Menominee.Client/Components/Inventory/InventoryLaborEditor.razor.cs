@@ -12,7 +12,7 @@ using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Inventory
 {
-    public partial class InventoryLaborForm
+    public partial class InventoryLaborEditor
     {
         [Inject]
         public IManufacturerDataService manufacturerDataService { get; set; }
@@ -24,7 +24,7 @@ namespace Menominee.Client.Components.Inventory
         public InventoryItemToWrite Item { get; set; }
 
         [Parameter]
-        public string Title { get; set; } = "Edit Labor";
+        public string Title { get; set; } = String.Empty;
 
         [Parameter]
         public EventCallback OnValidSubmit { get; set; }
@@ -48,7 +48,9 @@ namespace Menominee.Client.Components.Inventory
         protected override async Task OnInitializedAsync()
         {
             MiscMfrId = (await manufacturerDataService.GetAllManufacturersAsync()).Where(mfr => mfr.Code == "1").FirstOrDefault().Id;
-            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync()).Where(pc => pc.Manufacturer.Code == "1").ToList();
+            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(MiscMfrId)).ToList();
+            //ProductCodes = (await productCodeDataService.GetAllProductCodesAsync()).Where(pc => pc?.Manufacturer?.Code == "1").ToList()
+            //                ?? new List<ProductCodeToReadInList>();
 
             if (Item.Labor != null)
             {
@@ -82,6 +84,12 @@ namespace Menominee.Client.Components.Inventory
                 Item.ManufacturerId = MiscMfrId;
                 Item.Labor = new();
                 Item.ItemType = InventoryItemType.Labor;
+
+                Title = "Add Labor";
+            }
+            else
+            {
+                Title = "Edit Labor";
             }
 
             //laborTypeDropDownRef?.Rebind();

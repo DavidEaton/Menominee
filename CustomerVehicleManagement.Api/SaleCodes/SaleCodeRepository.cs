@@ -79,6 +79,15 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 .ToList();
         }
 
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync()
+        {
+            IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
+
+            return saleCodes
+                .Select(saleCode => SaleCodeHelper.CreateSaleCodeShopSuppliesInList(saleCode))
+                .ToList();
+        }
+
         public async Task<bool> SaleCodeExistsAsync(long id)
         {
             return await context.SaleCodes.AnyAsync(saleCode => saleCode.Id == id);

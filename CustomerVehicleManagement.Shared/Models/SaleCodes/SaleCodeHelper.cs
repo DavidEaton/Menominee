@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 
             return new()
             {
-                Code = saleCode.Code,
+                Code = saleCode.Code.ToUpper(),
                 Name = saleCode.Name,
                 DesiredMargin = saleCode.DesiredMargin,
                 LaborRate = saleCode.LaborRate,
@@ -87,6 +87,25 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 Name = saleCode.Name,
                 LaborRate = saleCode.LaborRate,
                 DesiredMargin = saleCode.DesiredMargin
+            };
+        }
+
+        public static SaleCodeShopSuppliesToReadInList CreateSaleCodeShopSuppliesInList(SaleCode saleCode)
+        {
+            if (saleCode is null)
+                return null;
+
+            return new()
+            {
+                Id = saleCode.Id,
+                Code = saleCode.Code,
+                Name = saleCode.Name,
+                Percentage = saleCode.ShopSupplies.Percentage,
+                MinimumJobAmount = saleCode.ShopSupplies.MinimumJobAmount,
+                MinimumCharge = saleCode.ShopSupplies.MinimumCharge,
+                MaximumCharge = saleCode.ShopSupplies.MaximumCharge,
+                IncludeParts = saleCode.ShopSupplies.IncludeParts,
+                IncludeLabor = saleCode.ShopSupplies.IncludeLabor
             };
         }
 

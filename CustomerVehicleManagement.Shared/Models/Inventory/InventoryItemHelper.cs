@@ -48,6 +48,8 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 ItemToRead.Labor = InventoryLaborHelper.CreateInventoryLabor(item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
                 ItemToRead.Tire = InventoryTireHelper.CreateInventoryTire(item.Tire);
+            else if (item.ItemType == InventoryItemType.Package)
+                ItemToRead.Package = InventoryPackageHelper.CreateInventoryPackage(item.Package);
 
             return ItemToRead;
         }
@@ -73,6 +75,35 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 Item.Labor = InventoryLaborHelper.CreateInventoryLabor(item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
                 Item.Tire = InventoryTireHelper.CreateInventoryTire(item.Tire);
+            else if (item.ItemType == InventoryItemType.Package)
+                Item.Package = InventoryPackageHelper.CreateInventoryPackage(item.Package);
+
+            return Item;
+        }
+
+        public static InventoryItem CreateInventoryItem(InventoryItemToWrite item)
+        {
+            if (item is null)
+                return null;
+
+            var Item = new InventoryItem
+            {
+                ManufacturerId = item.ManufacturerId,
+                ItemNumber = item.ItemNumber,
+                Description = item.Description,
+                ProductCodeId = item.ProductCodeId,
+                ItemType = item.ItemType,
+                DetailId = item.DetailId
+            };
+
+            if (item.ItemType == InventoryItemType.Part)
+                Item.Part = InventoryPartHelper.CreateInventoryPart(item.Part);
+            else if (item.ItemType == InventoryItemType.Labor)
+                Item.Labor = InventoryLaborHelper.CreateInventoryLabor(item.Labor);
+            else if (item.ItemType == InventoryItemType.Tire)
+                Item.Tire = InventoryTireHelper.CreateInventoryTire(item.Tire);
+            else if (item.ItemType == InventoryItemType.Package)
+                Item.Package = InventoryPackageHelper.CreateInventoryPackage(item.Package);
 
             return Item;
         }
@@ -92,6 +123,8 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 InventoryLaborHelper.CopyInventoryLabor(itemToUpdate.Labor, item.Labor);
             else if (item.ItemType == InventoryItemType.Tire)
                 InventoryTireHelper.CopyInventoryTire(itemToUpdate.Tire, item.Tire);
+            else if (item.ItemType == InventoryItemType.Package)
+                InventoryPackageHelper.CopyInventoryPackage(itemToUpdate.Package, item.Package);
         }
     }
 }

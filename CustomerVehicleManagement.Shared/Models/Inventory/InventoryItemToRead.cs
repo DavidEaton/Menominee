@@ -17,6 +17,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public InventoryPartToRead Part { get; set; }
         public InventoryLaborToRead Labor { get; set; }
         public InventoryTireToRead Tire { get; set; }
+        public InventoryPackageToRead Package { get; set; }
 
 
         //public int QuantityOnHand { get; set; }

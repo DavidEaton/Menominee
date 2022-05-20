@@ -11,7 +11,7 @@
     <WindowContent>
 			<div class="form-row">
 				<div class="form-group col col-12">
-					<label class="k-label" for="name">Name</label>
+					<label class="m-label" for="name">Name</label>
 					<input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="CreditCard.Name">
 				</div>
 			</div>
@@ -20,7 +20,7 @@
 				<div class="form-group col col-12 col-md-4">
 					@if (feeTypeList != null)
 					{
-						<label class="k-label" for="feeType">Fee Type</label>
+						<label class="m-label" for="feeType">Fee Type</label>
 						<SfDropDownList TValue="CreditCardFeeType"
 									TItem="FeeTypeListItem"
 									PopupHeight="230px"
@@ -34,7 +34,7 @@
 				<div class="form-group col col-12 col-md-3">
 					@if (CreditCard.FeeType == CreditCardFeeType.Flat)
 					{
-						<label class="k-label" for="flatFee">Amount</label>
+						<label class="m-label" for="flatFee">Amount</label>
 						<TelerikNumericTextBox @bind-Value="CreditCard.Fee"
 										   Format="C"
 										   Id="flatFee"
@@ -44,7 +44,7 @@
 					}
 					else if (CreditCard.FeeType == CreditCardFeeType.Percentage)
 					{
-						<label class="k-label" for="feePercent">Percentage</label>
+						<label class="m-label" for="feePercent">Percentage</label>
 						<TelerikNumericTextBox @bind-Value="CreditCard.Fee"
 										   Format="#0.00#'%'"
                                            Decimals=3
@@ -59,7 +59,7 @@
 			<div class="form-row">
 				<div class="form-group col col-12">
 					<TelerikCheckBox Id="deposit" @bind-Value="CreditCard.IsAddedToDeposit" />
-					<label class="k-label" for="deposit">Add To Deposit</label>
+					<label class="m-label" for="deposit">Add To Deposit</label>
 				</div>
 			</div>
 
@@ -110,10 +110,6 @@
 
     .m-grid-form {
         display: grid;
-    }
-
-    .k-label {
-        margin-bottom: .2rem !important;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {

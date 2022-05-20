@@ -9,7 +9,7 @@ namespace Menominee.Client.Components.Payables
     {
         //[Inject]
         //public HttpClient HttpClient { get; set; }
-        VendorInvoicePaymentToWrite moops;
+        //VendorInvoicePaymentToWrite moops;
        [Inject]
         private NavigationManager navigationManager { get; set; }
 

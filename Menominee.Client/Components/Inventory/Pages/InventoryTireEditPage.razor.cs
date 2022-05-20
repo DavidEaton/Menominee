@@ -1,12 +1,11 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
 using Menominee.Client.Services.Inventory;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.Inventory
+namespace Menominee.Client.Components.Inventory.Pages
 {
-    public partial class InventoryPartEdit : ComponentBase
+    public partial class InventoryTireEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }

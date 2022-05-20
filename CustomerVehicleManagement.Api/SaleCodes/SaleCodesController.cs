@@ -28,6 +28,15 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return Ok(results);
         }
 
+        // api/salecodes/shopsupplieslist
+        [Route("shopsupplieslist")]
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<SaleCodeShopSuppliesToReadInList>>> GetSaleCodeShopSuppliesListAsync()
+        {
+            var results = await repository.GetSaleCodeShopSuppliesListAsync();
+            return Ok(results);
+        }
+
         // api/salecodes/a
         [HttpGet("{code}")]
         public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(string code)

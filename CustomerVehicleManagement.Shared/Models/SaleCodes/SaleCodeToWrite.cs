@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public double LaborRate { get; set; }
         public double DesiredMargin { get; set; }
-        public SaleCodeShopSuppliesToWrite ShopSupplies { get; set; }
+        public SaleCodeShopSuppliesToWrite ShopSupplies { get; set; } = new();
     }
 }

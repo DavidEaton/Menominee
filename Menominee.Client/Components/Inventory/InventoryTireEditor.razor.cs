@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {
-    public partial class InventoryTireForm
+    public partial class InventoryTireEditor
     {
         [Inject]
         public IManufacturerDataService manufacturerDataService { get; set; }
@@ -54,16 +54,19 @@ namespace Menominee.Client.Components.Inventory
             {
                 Item.Tire = new();
                 Item.ItemType = InventoryItemType.Tire;
+
+                Title = "Add Tire";
             }
 
-            if (Item?.ManufacturerId != 0)
-            {
-                // FIX ME ??? is there a more elegant solution to retaining/restoring the Item.ProductCodeId ???
-                var savedPCId = Item.ProductCodeId;
-                ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(Item.ManufacturerId)).ToList();
-                if (savedPCId > 0 && Item.ProductCodeId == 0 && ProductCodes.Any(pc => pc.Id == savedPCId) == true)
-                    Item.ProductCodeId = savedPCId;
-            }
+            //if (Item?.ManufacturerId != 0)
+            //{
+            //    // FIX ME ??? is there a more elegant solution to retaining/restoring the Item.ProductCodeId ???
+            //    var savedPCId = Item.ProductCodeId;
+            //    ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(Item.ManufacturerId)).ToList();
+            //    if (savedPCId > 0 && Item.ProductCodeId == 0 && ProductCodes.Any(pc => pc.Id == savedPCId) == true)
+            //        Item.ProductCodeId = savedPCId;
+            //}
+
             
             await OnManufacturerChangeAsync();
         }
@@ -77,6 +80,10 @@ namespace Menominee.Client.Components.Inventory
                 ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(Item.ManufacturerId)).ToList();
                 if (savedPCId > 0 && Item.ProductCodeId == 0 && ProductCodes.Any(pc => pc.Id == savedPCId) == true)
                     Item.ProductCodeId = savedPCId;
+            }
+            else
+            {
+                ProductCodes = new List<ProductCodeToReadInList>();
             }
 
             OnProductCodeChange();

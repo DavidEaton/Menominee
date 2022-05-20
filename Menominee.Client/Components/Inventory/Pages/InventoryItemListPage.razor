@@ -42,13 +42,17 @@
                         <GridSearchBox Fields="@SearchFields" />
                     </GridToolBar>
                     <GridColumns>
-                        <Telerik.Blazor.Components.GridColumn Width="20%"
+                        <Telerik.Blazor.Components.GridColumn Width="15%"
                                                               Field="@nameof(InventoryItemToReadInList.ItemNumber)"
                                                               Title="Item Number">
                         </Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="40%"
+                        <Telerik.Blazor.Components.GridColumn Width="30%"
                                                               Field="@nameof(InventoryItemToReadInList.Description)"
                                                               Title="Description">
+                        </Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="15%"
+                                                              Field="@nameof(InventoryItemToReadInList.ItemTypeDisplayText)"
+                                                              Title="Item Type">
                         </Telerik.Blazor.Components.GridColumn>
                         <Telerik.Blazor.Components.GridColumn Width="20%"
                                                               Field="@nameof(InventoryItemToReadInList.ManufacturerName)"

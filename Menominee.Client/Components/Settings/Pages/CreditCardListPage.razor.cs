@@ -93,7 +93,7 @@ namespace Menominee.Client.Components.Settings.Pages
             //    await CreditCardDataService.Delete(Id);
         }
 
-            protected void OnSelect(IEnumerable<CreditCardToReadInList> creditCards)
+        protected void OnSelect(IEnumerable<CreditCardToReadInList> creditCards)
         {
             SelectedCreditCard = creditCards.FirstOrDefault();
             SelectedCreditCards = new List<CreditCardToReadInList> { SelectedCreditCard };

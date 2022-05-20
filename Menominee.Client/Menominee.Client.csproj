@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Customers\" />
+    <Folder Include="Pages\Inventory\" />
     <Folder Include="Services\RepairOrders\" />
   </ItemGroup>
 

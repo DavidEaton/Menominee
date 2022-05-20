@@ -2,13 +2,13 @@
 @using Syncfusion.Blazor.DropDowns
 
 <div class="m-form">
-    <Card Title="Edit Labor">
+    <Card Title="@Title">
         <Content>
             <div class="form-row">
                 <div class="form-group col col-12 col-md-6">
                     @if (ProductCodes != null)
                     {
-                        <label class="k-label" for="productCode">Product Code</label>
+                        <label class="m-label" for="productCode">Product Code</label>
                         <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
                                              Width="100%"
                                              Data="@ProductCodes"
@@ -20,18 +20,18 @@
                     }
                 </div>
                 <div class="form-group col col-12 col-md-6">
-                    <label for="saleCode">Sale Code</label>
+                    <label class="m-label" for="saleCode">Sale Code</label>
                     <input type="text" class="form-control" id="saleCode" readonly @bind-value="SaleCode">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col col-12 col-md-6">
-                    <label for="itemNumber">Labor Item Number</label>
+                    <label class="m-label" for="itemNumber">Labor Item Number</label>
                     <input type="text" class="form-control m-uppercase" id="itemNumber" autocomplete="off" @bind-value="Item.ItemNumber">
                 </div>
                 <div class="form-group col col-12 col-md-6">
-                    <label for="description">Description</label>
+                    <label class="m-label" for="description">Description</label>
                     <input type="text" class="form-control" id="description" autocomplete="off" @bind-value="Item.Description">
                 </div>
             </div>
@@ -57,7 +57,7 @@
                                                     <div class="form-group col col-12 col-md-3">
                                                         @if (laborTypeList != null)
                                                         {
-                                                            <label class="k-label" for="laborType">Labor Type</label>
+                                                            <label class="m-label" for="laborType">Labor Type</label>
                                                             @*<TelerikDropDownList @bind-Value="@selectedLaborType"
                                                                                      Width="100%"
                                                                                      Data="@laborTypeList"
@@ -82,7 +82,7 @@
                                                     <div class="form-group col col-12 col-md-3">
                                                         @if (Item.Labor.LaborType == ItemLaborType.Flat)
                                                         {
-                                                            <label for="laborFlat">Amount</label>
+                                                            <label class="m-label" for="laborFlat">Amount</label>
                                                             <TelerikNumericTextBox @bind-Value="Item.Labor.LaborAmount"
                                                                                    Format="C"
                                                                                    Id="laborFlat"
@@ -92,7 +92,7 @@
                                                         }
                                                         else if (Item.Labor.LaborType == ItemLaborType.Time)
                                                         {
-                                                            <label for="laborTime">Time</label>
+                                                            <label class="m-label" for="laborTime">Time</label>
                                                             <TelerikNumericTextBox @bind-Value="Item.Labor.LaborAmount"
                                                                                    Decimals="2"
                                                                                    Id="laborTime"
@@ -106,7 +106,7 @@
                                                     <div class="form-group col col-12 col-md-3">
                                                         @if (laborTypeList != null)
                                                         {
-                                                            <label class="k-label" for="techPayType">Tech Pay Type</label>
+                                                            <label class="m-label" for="techPayType">Tech Pay Type</label>
                                                             @*<TelerikDropDownList @bind-Value="@selectedTechPayType"
                                                                                      Width="100%"
                                                                                      Data="@laborTypeList"
@@ -133,7 +133,7 @@
                                                     <div class="form-group col col-12 col-md-3">
                                                         @if (Item.Labor.TechPayType == ItemLaborType.Flat)
                                                         {
-                                                            <label for="payPayFlat">Amount</label>
+                                                            <label class="m-label" for="payPayFlat">Amount</label>
                                                             <TelerikNumericTextBox @bind-Value="Item.Labor.TechPayAmount"
                                                                                    Format="C"
                                                                                    Id="techPayFlat"
@@ -143,7 +143,7 @@
                                                         }
                                                         else if (Item.Labor.TechPayType == ItemLaborType.Time)
                                                         {
-                                                            <label for="techPayTime">Time</label>
+                                                            <label class="m-label" for="techPayTime">Time</label>
                                                             <TelerikNumericTextBox @bind-Value="Item.Labor.TechPayAmount"
                                                                                    Decimals="2"
                                                                                    Id="techPayTime"
@@ -156,7 +156,7 @@
                                                         <div class="form-group col col-12 col-md-3">
                                                             @if (skillLevelList != null)
                                                             {
-                                                                <label class="k-label" for="skillLevel">Skill Level</label>
+                                                                <label class="m-label" for="skillLevel">Skill Level</label>
                                                                 <TelerikDropDownList @bind-Value="@Item.Labor.SkillLevel"
                                                                                      Width="100%"
                                                                                      Data="@skillLevelList"
@@ -176,7 +176,7 @@
                                                     <div class="form-group col col-12 col-md-3">
                                                         @if (skillLevelList != null)
                                                         {
-                                                            <label class="k-label" for="skillLevel">Skill Level</label>
+                                                            <label class="m-label" for="skillLevel">Skill Level</label>
                                                             <SfDropDownList TValue="SkillLevel"
                                                                             TItem="SkillLevelListItem"
                                                                             PopupHeight="230px"
@@ -205,31 +205,6 @@
 </div>
 
 <style>
-    .m-tabs {
-        font-size: 1rem;
-    }
-
-    .m-tab-height {
-        /*height: calc(100vh - 230px) !important;*/
-    }
-
-    .m-tab-content {
-        padding: 10px;
-    }
-
-    .m-tab-content-header {
-        margin-bottom: .25em;
-    }
-
-    .m-tab-content-border {
-        /*margin-left: 10px;
-        margin-right: 6px;*/
-        border: 1px solid darkgrey;
-        background: white;
-        /*border-radius: 5px;*/
-        /*font-size: 14px;*/
-        border-radius: 0 0.25rem 0.25rem 0.25rem
-    }
 
     .e-tab.e-background .e-tab-header .e-toolbar-item .e-tab-text {
         color: black !important;
@@ -251,10 +226,6 @@
     /*    .e-tab-text {
         color: black !important;
     }*/
-
-    .m-tab-item {
-        color: black !important;
-    }
 
     .e-tab .e-tab-header.e-vertical {
         max-width: unset;

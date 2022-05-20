@@ -110,6 +110,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                 item = new(InventoryLaborHelper.CreateInventoryLabor(itemToAdd.Labor));
             else if (itemToAdd.ItemType == InventoryItemType.Tire)
                 item = new(InventoryTireHelper.CreateInventoryTire(itemToAdd.Tire));
+            else if (itemToAdd.ItemType == InventoryItemType.Package)
+                item = new(InventoryPackageHelper.CreateInventoryPackage(itemToAdd.Package));
 
             item.ManufacturerId = itemToAdd.ManufacturerId;
             item.ItemNumber = itemToAdd.ItemNumber;

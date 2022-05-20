@@ -9,9 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.Inventory
+namespace Menominee.Client.Components.Inventory.Pages
 {
-    public partial class InventoryItemList : ComponentBase
+    public partial class InventoryItemListPage : ComponentBase
     {
         [Inject]
         private NavigationManager NavigationManager { get; set; }
@@ -160,6 +160,8 @@ namespace Menominee.Client.Pages.Inventory
                 NavigationManager.NavigateTo("inventory/labor/0");
             else if (SelectedItemType == InventoryItemType.Tire)
                 NavigationManager.NavigateTo("inventory/tires/0");
+            else if (SelectedItemType == InventoryItemType.Package)
+                NavigationManager.NavigateTo("inventory/packages/0");
         }
 
         private void OnEdit()
@@ -170,6 +172,8 @@ namespace Menominee.Client.Pages.Inventory
                 NavigationManager.NavigateTo($"inventory/labor/{SelectedId}");
             else if (SelectedItem?.ItemType == InventoryItemType.Tire)
                 NavigationManager.NavigateTo($"inventory/tires/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Package)
+                NavigationManager.NavigateTo($"inventory/packages/{SelectedId}");
         }
 
         private void OnDelete()

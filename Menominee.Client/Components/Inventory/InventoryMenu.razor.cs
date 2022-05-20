@@ -9,6 +9,37 @@ namespace Menominee.Client.Components.Inventory
         [Inject]
         private NavigationManager navigationManager { get; set; }
 
+        protected override void OnInitialized()
+        {
+#pragma warning disable BL0005            
+            menuItems = new List<MenuItem>()
+            {
+                new MenuItem
+                {
+                    Text = "Items",
+                    Id = "inventoryList",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Orders",
+                    Id = "orders",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Reports",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Total Value of Stock", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
+                        new MenuItem { Text= "Something Else", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                }
+            };
+#pragma warning restore BL0005            
+        }
+
         public void OnItemSelected(string selectedItem)
         {
             if (selectedItem.Length > 0)
@@ -30,31 +61,7 @@ namespace Menominee.Client.Components.Inventory
             }
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
-        {
-            new MenuItem
-            {
-                Text = "Items",
-                Id = "inventoryList",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Orders",
-                Id = "orders",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Reports",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Total Value of Stock", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
-                    new MenuItem { Text= "Something Else", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            }
-         };
+        private List<MenuItem> menuItems = null;
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
         {

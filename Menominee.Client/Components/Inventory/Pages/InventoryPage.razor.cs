@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.Inventory
+namespace Menominee.Client.Components.Inventory.Pages
 {
-    public partial class Inventory
+    public partial class InventoryPage
     {
     }
 }
