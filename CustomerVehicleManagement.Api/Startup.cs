@@ -137,7 +137,13 @@ namespace CustomerVehicleManagement.Api
             if (HostEnvironment.IsProduction())
             {
                 services.AddDbContext<ApplicationDbContext>();
-                AddControllersWithOptions(services, true);
+
+                // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
+                var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
             }
 
             if (HostEnvironment.IsDevelopment())
