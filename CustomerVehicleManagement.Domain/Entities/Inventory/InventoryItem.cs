@@ -6,11 +6,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItem : Entity
     {
-        public virtual Manufacturer Manufacturer { get; set; }
+        public Manufacturer Manufacturer { get; set; }
         public long ManufacturerId { get; set; }
         public string ItemNumber { get; set; }
         public string Description { get; set; }
-        public virtual ProductCode ProductCode { get; set; }
+        public ProductCode ProductCode { get; set; }
         public long ProductCodeId { get; set; }
         public InventoryItemType ItemType { get; set; }
         public long DetailId { get; set; }

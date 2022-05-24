@@ -1,4 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
@@ -13,14 +15,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             return new()
             {
                 Id = item.Id,
-                Manufacturer = item.Manufacturer,
-                ManufacturerId = item.ManufacturerId,
-                ManufacturerName = item.Manufacturer?.Name,
+                //Manufacturer = item.Manufacturer,
+                Manufacturer = ManufacturerHelper.CreateManufacturer(item.Manufacturer),
+                //ManufacturerId = item.ManufacturerId,
+                //ManufacturerName = item.Manufacturer?.Name,
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                ProductCode = item.ProductCode,
-                ProductCodeId = item.ProductCodeId,
-                ProductCodeName = item.ProductCode?.Name,
+                //ProductCode = item.ProductCode,
+                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
+                //ProductCodeId = item.ProductCodeId,
+                //ProductCodeName = item.ProductCode?.Name,
                 ItemType = item.ItemType,
                 DetailId = item.DetailId
             };
@@ -34,10 +38,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             var ItemToRead = new InventoryItemToRead
             {
                 Id = item.Id,
-                ManufacturerId = item.ManufacturerId,
+                //ManufacturerId = item.ManufacturerId,
+                Manufacturer = ManufacturerHelper.CreateManufacturer(item.Manufacturer),
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                ProductCodeId = item.ProductCodeId,
+                //ProductCodeId = item.ProductCodeId,
+                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                 ItemType = item.ItemType,
                 DetailId = item.DetailId
             };
@@ -61,10 +67,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
             var Item = new InventoryItemToWrite
             {
-                ManufacturerId = item.ManufacturerId,
+                //ManufacturerId = item.ManufacturerId,
+                Manufacturer = ManufacturerHelper.CreateManufacturer(item.Manufacturer),
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                ProductCodeId = item.ProductCodeId,
+                //ProductCodeId = item.ProductCodeId,
+                ProductCode = ProductCodeHelper.CreateProductCode(item.ProductCode),
                 ItemType = item.ItemType,
                 DetailId = item.DetailId
             };
@@ -88,10 +96,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
             var Item = new InventoryItem
             {
-                ManufacturerId = item.ManufacturerId,
+                //ManufacturerId = item.ManufacturerId,
+                Manufacturer = ManufacturerHelper.CreateManufacturer(item.Manufacturer),
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                ProductCodeId = item.ProductCodeId,
+                //ProductCodeId = item.ProductCodeId,
                 ItemType = item.ItemType,
                 DetailId = item.DetailId
             };

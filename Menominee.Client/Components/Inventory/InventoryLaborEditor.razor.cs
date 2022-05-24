@@ -82,6 +82,7 @@ namespace Menominee.Client.Components.Inventory
             if (Item.Labor == null)
             {
                 Item.ManufacturerId = MiscMfrId;
+                Item.ProductCodeId = 4;
                 Item.Labor = new();
                 Item.ItemType = InventoryItemType.Labor;
 

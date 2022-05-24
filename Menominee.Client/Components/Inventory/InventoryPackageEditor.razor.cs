@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using Menominee.Client.Services.Manufacturers;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
@@ -10,6 +11,9 @@ namespace Menominee.Client.Components.Inventory
 {
     public partial class InventoryPackageEditor
     {
+        [Inject]
+        public IManufacturerDataService manufacturerDataService { get; set; }
+
         [Parameter]
         public InventoryItemToWrite Item { get; set; }
 
@@ -28,6 +32,7 @@ namespace Menominee.Client.Components.Inventory
 
         private long ItemId { get; set; } = 0;
         private long PlaceholderId { get; set; } = 0;
+        private long PackageMfrId = 0;
 
         private bool CanDeleteItem { get => ItemId > 0; }
         private bool CanDeletePlaceholder { get => PlaceholderId > 0; }
@@ -42,9 +47,10 @@ namespace Menominee.Client.Components.Inventory
         private InventoryPackagePlaceholderToWrite PlaceholderToAdd { get; set; }
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
 
-        //protected override async Task OnInitializedAsync()
-        //{
-        //}
+        protected override async Task OnInitializedAsync()
+        {
+            PackageMfrId = (await manufacturerDataService.GetAllManufacturersAsync()).Where(mfr => mfr.Code == "2").FirstOrDefault().Id;
+        }
 
         protected override void OnParametersSet()
         {
@@ -55,6 +61,8 @@ namespace Menominee.Client.Components.Inventory
 
             if (Item?.Package == null)
             {
+                Item.ManufacturerId = PackageMfrId;
+                Item.ProductCodeId = 4;
                 Item.Package = new();
                 Item.ItemType = InventoryItemType.Package;
 
