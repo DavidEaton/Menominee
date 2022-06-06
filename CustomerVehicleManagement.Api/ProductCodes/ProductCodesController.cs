@@ -87,7 +87,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             //pc.Code = pcDto.Code;
             //pc.Name = pcDto.Name;
             //pc.SaleCode = pcDto.SaleCode;
-            ProductCodeHelper.CopyProductCode(pcDto, pc);
+            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, pc);
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -114,7 +114,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             //    Name = pcCreateDto.Name,
             //    SaleCode = pcCreateDto.SaleCode
             //};
-            var pc = ProductCodeHelper.CreateProductCode(pcCreateDto);
+            var pc = ProductCodeHelper.ConvertWriteDtoToEntity(pcCreateDto);
 
             // 2. Add domain entity to repository
             await repository.AddProductCodeAsync(pc);
@@ -126,7 +126,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
             return CreatedAtRoute("GetProductCodeAsync",
                                   new { id = pc.Id },
-                                  ProductCodeHelper.CreateProductCode(pc));
+                                  ProductCodeHelper.ConvertEntityToReadDto(pc));
 
         }
 

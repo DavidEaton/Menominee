@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerVehicleManagement.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220506132850_SalesTaxDefaultValues")]
-    partial class SalesTaxDefaultValues
+    [Migration("20220602152328_PkgItemInventoryItemId")]
+    partial class PkgItemInventoryItemId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -121,9 +121,6 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("DetailId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("ItemNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -131,32 +128,17 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<int>("ItemType")
                         .HasColumnType("int");
 
-                    b.Property<long?>("LaborId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("ManufacturerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("PartId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ProductCodeId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("TireId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("LaborId");
 
                     b.HasIndex("ManufacturerId");
 
-                    b.HasIndex("PartId");
-
                     b.HasIndex("ProductCodeId");
-
-                    b.HasIndex("TireId");
 
                     b.ToTable("InventoryItem", "dbo");
                 });
@@ -168,6 +150,9 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("InventoryItemId")
+                        .HasColumnType("bigint");
 
                     b.Property<double>("LaborAmount")
                         .HasColumnType("float");
@@ -186,7 +171,118 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InventoryItemId")
+                        .IsUnique();
+
                     b.ToTable("InventoryItemLabor", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<double>("BaseLaborAmount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BasePartsAmount")
+                        .HasColumnType("float");
+
+                    b.Property<long>("InventoryItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDiscountable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Script")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId")
+                        .IsUnique();
+
+                    b.ToTable("InventoryItemPackage", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<bool>("ExciseFeeIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("InventoryItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("InventoryItemPackageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("LaborAmountIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("PartAmountIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId");
+
+                    b.HasIndex("InventoryItemPackageId");
+
+                    b.ToTable("InventoryItemPackageItem", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackagePlaceholder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ExciseFeeIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("InventoryItemPackageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("LaborAmountIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("PartAmountIsAdditional")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemPackageId");
+
+                    b.ToTable("InventoryItemPackagePlaceholder", "dbo");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart", b =>
@@ -205,6 +301,9 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.Property<bool>("Fractional")
                         .HasColumnType("bit");
+
+                    b.Property<long>("InventoryItemId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("LineCode")
                         .HasColumnType("nvarchar(max)");
@@ -228,6 +327,9 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId")
+                        .IsUnique();
 
                     b.ToTable("InventoryItemPart", "dbo");
                 });
@@ -254,6 +356,9 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.Property<bool>("Fractional")
                         .HasColumnType("bit");
+
+                    b.Property<long>("InventoryItemId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("LineCode")
                         .HasColumnType("nvarchar(max)");
@@ -289,6 +394,9 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InventoryItemId")
+                        .IsUnique();
 
                     b.ToTable("InventoryItemTire", "dbo");
                 });
@@ -329,14 +437,14 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ManufacturerId")
+                    b.Property<long>("ManufacturerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("SaleCodeId")
+                    b.Property<long>("SaleCodeId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -1253,19 +1361,11 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor", "Labor")
-                        .WithMany()
-                        .HasForeignKey("LaborId");
-
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
                         .WithMany()
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart", "Part")
-                        .WithMany()
-                        .HasForeignKey("PartId");
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.ProductCode", "ProductCode")
                         .WithMany()
@@ -1273,30 +1373,86 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemTire", "Tire")
-                        .WithMany()
-                        .HasForeignKey("TireId");
-
-                    b.Navigation("Labor");
-
                     b.Navigation("Manufacturer");
 
-                    b.Navigation("Part");
-
                     b.Navigation("ProductCode");
+                });
 
-                    b.Navigation("Tire");
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", null)
+                        .WithOne("Labor")
+                        .HasForeignKey("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor", "InventoryItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", null)
+                        .WithOne("Package")
+                        .HasForeignKey("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", "InventoryItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageItem", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", "Item")
+                        .WithMany()
+                        .HasForeignKey("InventoryItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", null)
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryItemPackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackagePlaceholder", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", null)
+                        .WithMany("Placeholders")
+                        .HasForeignKey("InventoryItemPackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", null)
+                        .WithOne("Part")
+                        .HasForeignKey("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart", "InventoryItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemTire", b =>
+                {
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", null)
+                        .WithOne("Tire")
+                        .HasForeignKey("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemTire", "InventoryItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.ProductCode", b =>
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
                         .WithMany()
-                        .HasForeignKey("ManufacturerId");
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
                         .WithMany()
-                        .HasForeignKey("SaleCodeId");
+                        .HasForeignKey("SaleCodeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Manufacturer");
 
@@ -1728,6 +1884,24 @@ namespace CustomerVehicleManagement.Api.Migrations
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItem", b =>
+                {
+                    b.Navigation("Labor");
+
+                    b.Navigation("Package");
+
+                    b.Navigation("Part");
+
+                    b.Navigation("Tire");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackage", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Placeholders");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Organization", b =>

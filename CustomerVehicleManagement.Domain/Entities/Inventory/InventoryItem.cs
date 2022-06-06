@@ -13,7 +13,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public ProductCode ProductCode { get; set; }
         public long ProductCodeId { get; set; }
         public InventoryItemType ItemType { get; set; }
-        public long DetailId { get; set; }
 
         public InventoryItemPart Part { get; set; }
         public InventoryItemLabor Labor { get; set; }

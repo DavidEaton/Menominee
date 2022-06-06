@@ -91,7 +91,6 @@
                 <Card Title="">
                     <Content>
                         <TelerikGrid Data="SaleCodes"
-                                 EditMode="GridEditMode.Incell"
                                  OnRowClick="OnRowSelected"
                                  OnUpdate="UpdateHandler"
                                  Sortable="true"
@@ -116,37 +115,113 @@
                                         Field="@nameof(SaleCodeShopSuppliesToReadInList.Percentage)"
                                         DisplayFormat="{0:0.##'%'}"
                                         Title="Percentage">
+                                <Template>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.Percentage"
+                                                           Format="#.##'%'"
+                                                           Arrows="false"
+                                                           OnChange="FieldValueChanged">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </Template>
+                                <EditorTemplate>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.Percentage"
+                                                           Arrows="false">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </EditorTemplate>
                                 </GridColumn>
                                 <GridColumn Width="15%"
                                         Field="@nameof(SaleCodeShopSuppliesToReadInList.MinimumJobAmount)"
                                         DisplayFormat="{0:C}"
                                         Title="Minimum Job Amount">
-                                </GridColumn>
-                                <GridColumn Width="15%"
-                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.MinimumCharge)"
-                                        DisplayFormat="{0:C}"
-                                        Title="Minimum Charge">
-                                </GridColumn>
-                                <GridColumn Width="15%"
-                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.MaximumCharge)"
-                                        DisplayFormat="{0:C}"
-                                        Title="Maximum Charge">
-                                </GridColumn>
-                                <GridColumn Width="15%"
-                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.IncludeParts)"
-                                        Title="Apply To Parts Charge">
                                     <Template>
                                         @{
-                                            SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@SelectedSaleCode.IncludeParts"
-                                                     OnChange="@IncludePartsChanged" />
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
+                                                           Format="C"
+                                                           Arrows="false"
+                                                           OnChange="FieldValueChanged">
+                                        </TelerikNumericTextBox>
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
-                                            SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@SelectedSaleCode.IncludeParts"
-                                                     OnChange="@IncludePartsChanged" />
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
+                                                           Format="C"
+                                                           Arrows="false">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </EditorTemplate>
+                            </GridColumn>
+                            <GridColumn Width="15%"
+                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.MinimumCharge)"
+                                        DisplayFormat="{0:C}"
+                                        Title="Minimum Charge">
+                                <Template>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
+                                                           Format="C"
+                                                           Arrows="false"
+                                                           OnChange="FieldValueChanged">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </Template>
+                                <EditorTemplate>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
+                                                           Format="C"
+                                                           Arrows="false">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </EditorTemplate>
+                            </GridColumn>
+                            <GridColumn Width="15%"
+                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.MaximumCharge)"
+                                        DisplayFormat="{0:C}"
+                                        Title="Maximum Charge">
+                                <Template>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
+                                                           Format="C"
+                                                           Arrows="false"
+                                                           OnChange="FieldValueChanged">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </Template>
+                                <EditorTemplate>
+                                    @{
+                                            var item = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
+                                                           Format="C"
+                                                           Arrows="false">
+                                        </TelerikNumericTextBox>
+                                    }
+                                </EditorTemplate>
+                            </GridColumn>
+                            <GridColumn Width="15%"
+                                        Field="@nameof(SaleCodeShopSuppliesToReadInList.IncludeParts)"
+                                        Title="Apply To Parts Charge">
+                                <Template>
+                                    @{
+                                        //SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
+                                            var saleCode = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeParts"
+                                                     OnChange="FieldValueChanged" />
+                                    }
+                                </Template>
+                                <EditorTemplate>
+                                    @{
+                                        //SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
+                                            var saleCode = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeParts" />
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -155,14 +230,15 @@
                                         Title="Apply To Labor Charge">
                                 <Template>
                                     @{
-                                            SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@SelectedSaleCode.IncludeLabor" />
+                                            var saleCode = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor"
+                                                     OnChange="FieldValueChanged" />
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
-                                            SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@SelectedSaleCode.IncludeLabor" />
+                                            var saleCode = context as SaleCodeShopSuppliesToReadInList;
+                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor" />
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -179,9 +255,9 @@
 
 <style>
     .m-grid {
-/*        min-height: calc(100vh - 388px);
-        max-height: calc(100vh - 388px);
-*/        height: calc(100vh - 592px);
+        /*        min-height: calc(100vh - 388px);
+                    max-height: calc(100vh - 388px);
+            */ height: calc(100vh - 592px);
     }
 
     .k-grid .k-grid-header th .k-cell-inner,

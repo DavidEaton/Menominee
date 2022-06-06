@@ -10,7 +10,7 @@
                     @if (Manufacturers != null)
                     {
                         <label class="m-label" for="category">Manufacturer</label>
-                        <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+                        <TelerikDropDownList @bind-Value="@manufacturerId"
                                              Width="100%"
                                              Data="@Manufacturers"
                                              TextField="DisplayText"
@@ -32,12 +32,12 @@
                                         PopupHeight="230px"
                                         Placeholder="Select a product line"
                                         DataSource="@ProductCodes"
-                                        @bind-Value="@Item.ProductCodeId">
+                                        @bind-Value="@productCodeId"
+                                        OnChange="OnProductCodeChangeAsync">
                             <DropDownListFieldSettings Text="DisplayText" Value="Id" />
                             <DropDownListEvents TItem="ProductCodeToReadInList" 
                                                 TValue="long" 
-                                                ValueChange="@OnProductCodeChange">
-
+                                                ValueChange="@OnProductCodeChangeAsync">
                             </DropDownListEvents>
                         </SfDropDownList>
                         @*<TelerikDropDownList @bind-Value="@Item.ProductCodeId"

@@ -124,7 +124,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleEditSubmitAsync()
         {
-            await SalesTaxDataService.UpdateSalesTaxAsync(Id, SalesTax);
+            await SalesTaxDataService.UpdateSalesTaxAsync(SalesTax, Id);
             await EndAddEditAsync();
         }
 

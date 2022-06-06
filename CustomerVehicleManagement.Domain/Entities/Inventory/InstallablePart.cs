@@ -10,6 +10,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public abstract class InstallablePart : Entity
     {
+        public long InventoryItemId { get; set; }
         public double List { get; set; }
         public double Cost { get; set; }
         public double Core { get; set; }

@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
 
-            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
 
-            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
-                .Select(saleCode => SaleCodeHelper.CreateSaleCodeInList(saleCode))
+                .Select(saleCode => SaleCodeHelper.ConvertEntityToReadInListDto(saleCode))
                 .ToList();
         }
 
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
-                .Select(saleCode => SaleCodeHelper.CreateSaleCodeShopSuppliesInList(saleCode))
+                .Select(saleCode => SaleCodeHelper.ConvertEntityToShopSuppliesToReadInListDto(saleCode))
                 .ToList();
         }
 

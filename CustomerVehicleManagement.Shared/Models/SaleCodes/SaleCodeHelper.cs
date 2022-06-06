@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 {
     public class SaleCodeHelper
     {
-        public static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
+        public static SaleCode ConvertWriteDtoToEntity(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToWrite CreateSaleCode(SaleCodeToRead saleCode)
+        public static SaleCodeToWrite ConvertReadToWriteDto(SaleCodeToRead saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToRead CreateSaleCode(SaleCode saleCode)
+        public static SaleCodeToRead ConvertEntityToReadDto(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToReadInList CreateSaleCodeInList(SaleCode saleCode)
+        public static SaleCodeToReadInList ConvertEntityToReadInListDto(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeShopSuppliesToReadInList CreateSaleCodeShopSuppliesInList(SaleCode saleCode)
+        public static SaleCodeShopSuppliesToReadInList ConvertEntityToShopSuppliesToReadInListDto(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static void CopySaleCode(SaleCodeToWrite saleCodeToWrite, SaleCode saleCode)
+        public static void CopyWriteDtoToEntity(SaleCodeToWrite saleCodeToWrite, SaleCode saleCode)
         {
             saleCode.Code = saleCodeToWrite.Code;
             saleCode.Name = saleCodeToWrite.Name;

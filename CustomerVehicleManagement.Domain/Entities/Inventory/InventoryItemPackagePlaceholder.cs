@@ -5,6 +5,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPackagePlaceholder : Entity
     {
+        public long InventoryItemPackageId { get; set; }
         public int Order { get; set; }
         public PackagePlaceholderItemType ItemType { get; set; }
         public string Description { get; set; }

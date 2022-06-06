@@ -12,6 +12,11 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.ToTable("InventoryItemPackageItem", "dbo");
 
             builder.Ignore(item => item.TrackingState);
+            builder.HasOne(i => i.Item)
+                   .WithMany()
+                   .HasForeignKey(i => i.InventoryItemId)
+                   .OnDelete(DeleteBehavior.Restrict)
+                   .IsRequired();
         }
     }
 }

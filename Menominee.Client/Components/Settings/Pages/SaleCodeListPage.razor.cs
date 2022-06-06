@@ -65,7 +65,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 var saleCode = await SaleCodeDataService.GetSaleCodeAsync(Id);
                 if (saleCode != null)
                 {
-                    SaleCode = SaleCodeHelper.CreateSaleCode(saleCode);
+                    SaleCode = SaleCodeHelper.ConvertReadToWriteDto(saleCode);
                     EditFormMode = FormMode.Edit;
                 }
             }

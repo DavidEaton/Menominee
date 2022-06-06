@@ -1,11 +1,12 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 
 namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {
     public class ProductCodeHelper
     {
-        public static ProductCodeToReadInList CreateProductCodeInList(ProductCode productCode)
+        public static ProductCodeToReadInList ConvertEntityToReadInListDto(ProductCode productCode)
         {
             if (productCode is null)
                 return null;
@@ -13,14 +14,14 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             return new()
             {
                 Id = productCode.Id,
-                Manufacturer = productCode.Manufacturer,
+                Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(productCode.Manufacturer),
                 Code = productCode.Code,
-                SaleCode = productCode.SaleCode,
+                SaleCode = SaleCodeHelper.ConvertEntityToReadDto(productCode.SaleCode),
                 Name = productCode.Name
             };
         }
 
-        public static ProductCodeToRead CreateProductCode(ProductCode productCode)
+        public static ProductCodeToRead ConvertEntityToReadDto(ProductCode productCode)
         {
             if (productCode == null)
                 return new ProductCodeToRead();
@@ -29,46 +30,52 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             {
                 Id = productCode.Id,
                 Code = productCode.Code,
-                Manufacturer = productCode.Manufacturer,
+                Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(productCode.Manufacturer),
                 Name = productCode.Name,
-                SaleCode = productCode.SaleCode
+                SaleCode = SaleCodeHelper.ConvertEntityToReadDto(productCode.SaleCode)
             };
         }
 
-        public static ProductCodeToWrite CreateProductCode(ProductCodeToRead productCode)
+        public static ProductCode ConvertWriteDtoToEntity(ProductCodeToWrite productCode)
+        {
+            if (productCode == null)
+                return new ProductCode();
+
+            return new()
+            {
+                //Id = productCode.Id,
+                Code = productCode.Code,
+                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCode.Manufacturer),
+                ManufacturerId = productCode.Manufacturer.Id,
+                Name = productCode.Name,
+                //SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCode.SaleCode)
+                SaleCodeId = productCode.SaleCode.Id
+            };
+        }
+
+        public static ProductCodeToWrite ConvertReadToWriteDto(ProductCodeToRead productCode)
         {
             if (productCode == null)
                 return new ProductCodeToWrite();
 
             return new()
             {
+                Id = productCode.Id,
                 Code = productCode.Code,
-                Manufacturer = productCode.Manufacturer,
+                Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(productCode.Manufacturer),
                 Name = productCode.Name,
-                SaleCode = productCode.SaleCode
+                SaleCode = SaleCodeHelper.ConvertReadToWriteDto(productCode.SaleCode)
             };
         }
 
-        public static ProductCode CreateProductCode(ProductCodeToWrite productCode)
-        {
-            if (productCode == null)
-                return null;
-
-            return new()
-            {
-                Code = productCode.Code,
-                Manufacturer = productCode.Manufacturer,
-                Name = productCode.Name,
-                SaleCode = productCode.SaleCode
-            };
-        }
-
-        public static void CopyProductCode(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
+        public static void CopyWriteDtoToEntity(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
         {
             productCode.Code = productCodeToUpdate.Code;
-            productCode.Manufacturer = productCodeToUpdate.Manufacturer;
+            //productCode.Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCodeToUpdate.Manufacturer);
+            productCode.ManufacturerId = productCodeToUpdate.Manufacturer.Id;
             productCode.Name = productCodeToUpdate.Name;
-            productCode.SaleCode = productCodeToUpdate.SaleCode;
+            //productCode.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCodeToUpdate.SaleCode);
+            productCode.SaleCodeId = productCodeToUpdate.SaleCode.Id;
         }
     }
 }

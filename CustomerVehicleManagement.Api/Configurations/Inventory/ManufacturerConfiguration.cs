@@ -14,9 +14,9 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.Ignore(manufacturer => manufacturer.TrackingState);
 
             builder.Property(manufacturer => manufacturer.Code)
-                .IsRequired();
+                   .IsRequired();
             builder.Property(manufacturer => manufacturer.Name)
-                .IsRequired();
+                   .IsRequired();
         }
     }
 }

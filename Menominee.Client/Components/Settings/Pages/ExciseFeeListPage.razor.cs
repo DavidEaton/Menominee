@@ -120,7 +120,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleEditSubmitAsync()
         {
-            await ExciseFeeDataService.UpdateExciseFeeAsync(Id, ExciseFee);
+            await ExciseFeeDataService.UpdateExciseFeeAsync(ExciseFee, Id);
             await EndAddEditAsync();
         }
 

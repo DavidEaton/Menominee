@@ -70,6 +70,19 @@ namespace Menominee.Client.Services.Manufacturers
             return null;
         }
 
+        public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/code/{code}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Message: {ex.Message}");
+            }
+            return null;
+        }
+
         public async Task UpdateManufacturerAsync(ManufacturerToWrite manufacturer, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(manufacturer), Encoding.UTF8, MediaType);

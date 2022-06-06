@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryTireHelper
     {
-        public static InventoryTireToWrite CreateInventoryTire(InventoryTireToRead tire)
+        public static InventoryTireToWrite ConvertReadToWriteDto(InventoryTireToRead tire)
         {
             if (tire is null)
                 return null;
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemTire CreateInventoryTire(InventoryTireToWrite tire)
+        public static InventoryItemTire ConvertWriteDtoToEntity(InventoryTireToWrite tire)
         {
             if (tire is null)
                 return null;
@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryTireToRead CreateInventoryTire(InventoryItemTire tire)
+        public static InventoryTireToRead ConvertEntityToReadDto(InventoryItemTire tire)
         {
             if (tire is null)
                 return null;
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyInventoryTire(InventoryTireToWrite tireToUpdate, InventoryItemTire tire)
+        public static void CopyWriteDtoToEntity(InventoryTireToWrite tireToUpdate, InventoryItemTire tire)
         {
             tire.List = tireToUpdate.List;
             tire.Cost = tireToUpdate.Cost;
@@ -104,7 +104,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             tire.SpeedRating = tireToUpdate.SpeedRating;
         }
 
-        public static InventoryTireToReadInList CreateInventoryTireInList(InventoryItemTire tire)
+        public static InventoryTireToReadInList ConvertEntityToReadInListDto(InventoryItemTire tire)
         {
             if (tire is null)
                 return null;

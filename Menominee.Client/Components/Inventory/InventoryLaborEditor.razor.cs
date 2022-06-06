@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -8,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Inventory
 {
@@ -32,32 +32,17 @@ namespace Menominee.Client.Components.Inventory
         [Parameter]
         public EventCallback OnDiscard { get; set; }
 
-        //TelerikDropDownList<SkillLevelListItem, SkillLevel> skillLevelDropDownRef;
-        //TelerikDropDownList<LaborTypeListItem, ItemLaborType> laborTypeDropDownRef;
-        //TelerikDropDownList<LaborTypeListItem, ItemLaborType> techPayTypeDropDownRef;
-
-        //private SkillLevel selectedSkillLevel { get; set; } = SkillLevel.A;
-        //private ItemLaborType selectedLaborType { get; set; } = ItemLaborType.None;
-        //private ItemLaborType selectedTechPayType { get; set; } = ItemLaborType.None;
-
         private IReadOnlyList<ProductCodeToReadInList> ProductCodes = null;
         private string SaleCode = string.Empty;
-        private long MiscMfrId = 0;
         private bool parametersSet = false;
+        private long productCodeId = 0;
+        private long manufacturerId = 0;
 
         protected override async Task OnInitializedAsync()
         {
-            MiscMfrId = (await manufacturerDataService.GetAllManufacturersAsync()).Where(mfr => mfr.Code == "1").FirstOrDefault().Id;
-            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(MiscMfrId)).ToList();
-            //ProductCodes = (await productCodeDataService.GetAllProductCodesAsync()).Where(pc => pc?.Manufacturer?.Code == "1").ToList()
-            //                ?? new List<ProductCodeToReadInList>();
-
-            if (Item.Labor != null)
-            {
-                //selectedSkillLevel = Item.Labor.SkillLevel;
-                //selectedLaborType = Item.Labor.LaborType;
-                //selectedTechPayType = Item.Labor.TechPayType;
-            }
+            manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
+            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
+            ProductCodes.OrderBy(pc => pc.Code);
 
             foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
             {
@@ -72,17 +57,24 @@ namespace Menominee.Client.Components.Inventory
             base.OnInitialized();
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
             if (parametersSet)
                 return;
-
             parametersSet = true;
-            OnProductCodeChange();
+
+            if (Item?.ProductCode != null)
+            {
+                productCodeId = Item.ProductCode.Id;
+            }
+
+            await OnProductCodeChangeAsync();
             if (Item.Labor == null)
             {
-                Item.ManufacturerId = MiscMfrId;
-                Item.ProductCodeId = 4;
+                productCodeId = 0;
+                //Item.ManufacturerId = manufacturerId;
+                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous));
+                Item.ProductCode = new();
                 Item.Labor = new();
                 Item.ItemType = InventoryItemType.Labor;
 
@@ -93,42 +85,21 @@ namespace Menominee.Client.Components.Inventory
                 Title = "Edit Labor";
             }
 
-            //laborTypeDropDownRef?.Rebind();
-            //techPayTypeDropDownRef?.Rebind();
-            //skillLevelDropDownRef?.Rebind();
-
-            //OnLaborTypeChange();
-            //OnTechPayTypeChange();
-
             StateHasChanged();
         }
 
-        private void OnProductCodeChange()
+        private async Task OnProductCodeChangeAsync()
         {
-            if (Item != null && ProductCodes != null)
+            if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
             {
-                var saleCode = ProductCodes.FirstOrDefault(pc => pc.Id == Item.ProductCodeId)?.SaleCode;
-                if (saleCode != null)
-                    SaleCode = saleCode.Code + " - " + saleCode.Name;
-                else
-                    SaleCode = string.Empty;
+                Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(productCodeId));
             }
+
+            if (Item != null && Item.ProductCode != null)
+                SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;
+            else
+                SaleCode = string.Empty;
         }
-
-        //private void OnLaborTypeChange()
-        //{
-        //    Item.Labor.LaborType = selectedLaborType;
-        //}
-
-        //private void OnTechPayTypeChange()
-        //{
-        //    Item.Labor.TechPayType = selectedTechPayType;
-        //}
-
-        //private void OnSkillLevelChange()
-        //{
-        //    Item.Labor.SkillLevel = selectedSkillLevel;
-        //}
 
         private List<LaborTypeListItem> laborTypeList { get; set; } = new List<LaborTypeListItem>();
         private List<SkillLevelListItem> skillLevelList { get; set; } = new List<SkillLevelListItem>();

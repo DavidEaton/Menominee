@@ -35,11 +35,16 @@ namespace Menominee.Client.Components.Inventory
         private IReadOnlyList<ProductCodeToReadInList> ProductCodes = new List<ProductCodeToReadInList>();
         private string SaleCode = string.Empty;
         private bool parametersSet = false;
+        private long manufacturerId = 0;
+        private long productCodeId = 0;
 
         protected override async Task OnInitializedAsync()
         {
             Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
-                                                          .Where(mfr => mfr.Prefix?.Length > 0 && mfr.Code != "0")
+                                                          .Where(mfr => mfr.Prefix?.Length > 0 
+                                                                     && mfr.Code != StaticManufacturerCodes.Custom
+                                                                     && mfr.Code != StaticManufacturerCodes.Package)
+                                                          .OrderBy(mfr => mfr.Prefix)
                                                           .ToList();
         }
 
@@ -47,8 +52,16 @@ namespace Menominee.Client.Components.Inventory
         {
             if (parametersSet)
                 return;
-
             parametersSet = true;
+
+            if (Item?.Manufacturer != null)
+            {
+                manufacturerId = Item.Manufacturer.Id;
+            }
+            if (Item?.ProductCode != null)
+            {
+                productCodeId = Item.ProductCode.Id;
+            }
 
             if (Item?.Part == null)
             {
@@ -58,46 +71,45 @@ namespace Menominee.Client.Components.Inventory
                 Title = "Add Part";
             }
 
-            //if (Item?.ManufacturerId != 0)
-            //{
-            //    // FIX ME ??? is there a more elegant solution to retaining/restoring the Item.ProductCodeId ???
-            //    var savedPCId = Item.ProductCodeId;
-            //    ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(Item.ManufacturerId)).ToList();
-            //    if (savedPCId > 0 && Item.ProductCodeId == 0 && ProductCodes.Any(pc => pc.Id == savedPCId) == true)
-            //        Item.ProductCodeId = savedPCId;
-            //}
-
             await OnManufacturerChangeAsync();
         }
 
         private async Task OnManufacturerChangeAsync()
         {
-            if (Item?.ManufacturerId != 0)
+            if (manufacturerId > 0 && Item.Manufacturer?.Id != manufacturerId)
             {
-                // FIX ME ??? is there a more elegant solution to retaining/restoring the Item.ProductCodeId ???
-                var savedPCId = Item.ProductCodeId;
-                ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(Item.ManufacturerId)).ToList();
-                if (savedPCId > 0 && Item.ProductCodeId == 0 && ProductCodes.Any(pc => pc.Id == savedPCId) == true)
-                    Item.ProductCodeId = savedPCId;
+                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
+            }
+
+            if (Item?.Manufacturer is not null)
+            {
+                long savedProductCodeId = productCodeId;  
+                ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
+                if (savedProductCodeId > 0 && Item.ProductCode?.Id == 0 && ProductCodes.Any(pc => pc.Id == savedProductCodeId) == true)
+                    Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(savedProductCodeId));
+                productCodeId = savedProductCodeId;
             }
             else
             {
+                productCodeId = 0;
                 ProductCodes = new List<ProductCodeToReadInList>();
+                Item.ProductCode = new();
             }
 
-            OnProductCodeChange();
+            await OnProductCodeChangeAsync();
         }
 
-        private void OnProductCodeChange()
+        private async Task OnProductCodeChangeAsync()
         {
-            if (Item != null && ProductCodes != null)
+            if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
             {
-                var saleCode = ProductCodes.FirstOrDefault(pc => pc.Id == Item.ProductCodeId)?.SaleCode;
-                if (saleCode != null)
-                    SaleCode = saleCode.Code + " - " + saleCode.Name;
-                else
-                    SaleCode = string.Empty;
+                Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(productCodeId));
             }
+
+            if (Item != null && Item.ProductCode != null)
+                SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;
+            else
+                SaleCode = string.Empty;
         }
     }
 }

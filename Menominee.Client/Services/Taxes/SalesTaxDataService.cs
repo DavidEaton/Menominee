@@ -69,7 +69,7 @@ namespace Menominee.Client.Services.Taxes
             return null;
         }
 
-        public async Task UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax)
+        public async Task UpdateSalesTaxAsync(SalesTaxToWrite salesTax, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(salesTax), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

@@ -6,7 +6,16 @@
                     @if (Manufacturers != null)
                     {
                         <label class="m-label" for="category">Manufacturer</label>
-                        <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+@*                        <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+                                             Width="100%"
+                                             Data="@Manufacturers"
+                                             TextField="DisplayText"
+                                             ValueField="Id"
+                                             Class="form-control"
+                                             OnChange="OnManufacturerChangeAsync"
+                                             Id="category">
+                        </TelerikDropDownList>*@                        
+                        <TelerikDropDownList @bind-Value="@manufacturerId"
                                              Width="100%"
                                              Data="@Manufacturers"
                                              TextField="DisplayText"
@@ -23,7 +32,7 @@
                     @if (ProductCodes != null)
                     {
                         <label class="m-label" for="productCode">Product Line</label>
-                        <SfDropDownList TValue="long"
+@*                        <SfDropDownList TValue="long"
                                         TItem="ProductCodeToReadInList"
                                         PopupHeight="230px"
                                         Placeholder="Select a product line"
@@ -31,6 +40,19 @@
                                         @bind-Value="@Item.ProductCodeId">
                             <DropDownListFieldSettings Text="DisplayText" Value="Id" />
                             <DropDownListEvents TItem="ProductCodeToReadInList" TValue="long" ValueChange="@OnProductCodeChange"></DropDownListEvents>
+                        </SfDropDownList>*@                        
+                        <SfDropDownList TValue="long"
+                                        TItem="ProductCodeToReadInList"
+                                        PopupHeight="230px"
+                                        Placeholder="Select a product line"
+                                        DataSource="@ProductCodes"
+                                        @bind-Value="@productCodeId"
+                                        OnChange="OnProductCodeChangeAsync">
+                            <DropDownListFieldSettings Text="DisplayText" Value="Id" />
+                            <DropDownListEvents TItem="ProductCodeToReadInList" 
+                                                TValue="long" 
+                                                ValueChange="@OnProductCodeChangeAsync">
+                            </DropDownListEvents>
                         </SfDropDownList>
                         @*<TelerikDropDownList @bind-Value="@Item.ProductCodeId"
                                                  Width="100%"

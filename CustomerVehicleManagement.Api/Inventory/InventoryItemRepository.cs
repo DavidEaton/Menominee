@@ -61,6 +61,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
                                                    .ThenInclude(productCode => productCode.SaleCode)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(productCode => productCode.Manufacturer)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
@@ -107,7 +109,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
+            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
         }
 
         public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
@@ -116,6 +118,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
                                                    .ThenInclude(productCode => productCode.SaleCode)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(productCode => productCode.Manufacturer)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
@@ -129,12 +133,12 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                                .AsNoTracking()
                                                .AsSplitQuery()
-                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId
+                                               .FirstOrDefaultAsync(item => item.Manufacturer.Id == manufacturerId
                                                                          && item.ItemNumber == itemNumber);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
+            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
         }
 
         public async Task<InventoryItem> GetItemEntityAsync(long id)
@@ -143,6 +147,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                 .Include(item => item.Manufacturer)
                                 .Include(item => item.ProductCode)
                                     .ThenInclude(productCode => productCode.SaleCode)
+                                .Include(item => item.ProductCode)
+                                    .ThenInclude(productCode => productCode.Manufacturer)
                                 .Include(item => item.Part)
                                 .Include(item => item.Labor)
                                 .Include(item => item.Tire)
@@ -166,6 +172,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
@@ -182,7 +190,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .ToArrayAsync();
 
             foreach (var item in itemsFromContext)
-                items.Add(InventoryItemHelper.CreateInventoryItem(item));
+                items.Add(InventoryItemHelper.ConvertEntityToReadDto(item));
 
             return items;
         }
@@ -193,6 +201,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
@@ -208,7 +218,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
                                    .ToList();
         }
 
@@ -218,6 +228,8 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
@@ -229,12 +241,12 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                         .ThenInclude(pItem => pItem.Item.ProductCode)
                                                 .Include(item => item.Package)
                                                     .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                                .Where(item => item.ManufacturerId == manufacturerId)
+                                                .Where(item => item.Manufacturer.Id == manufacturerId)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
                                    .ToList();
         }
 

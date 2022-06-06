@@ -90,7 +90,7 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 ItemToModify = new();
                 ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
-                ItemToModify.ManufacturerId = SelectedInventoryItem.ManufacturerId;
+                //ItemToModify.ManufacturerId = SelectedInventoryItem.ManufacturerId;
                 ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
                 //ItemToModify.SaleCodeId = (long)(SelectedInventoryItem.ProductCode?.SaleCode?.Id);
                 ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();

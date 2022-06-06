@@ -9,12 +9,12 @@
                     @if (ProductCodes != null)
                     {
                         <label class="m-label" for="productCode">Product Code</label>
-                        <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
+                        <TelerikDropDownList @bind-Value="@productCodeId"
                                              Width="100%"
                                              Data="@ProductCodes"
                                              TextField="DisplayText"
                                              ValueField="Id"
-                                             OnChange="OnProductCodeChange"
+                                             OnChange="OnProductCodeChangeAsync"
                                              Id="productCode">
                         </TelerikDropDownList>
                     }

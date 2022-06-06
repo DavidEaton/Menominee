@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string Description { get; set; }
         public ProductCodeToRead ProductCode { get; set; }
         public InventoryItemType ItemType { get; set; }
-        public long DetailId { get; set; }
         public InventoryPartToRead Part { get; set; }
         public InventoryLaborToRead Labor { get; set; }
         public InventoryTireToRead Tire { get; set; }

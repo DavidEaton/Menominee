@@ -9,12 +9,26 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
     public class ManufacturerHelper
     {
-        public static ManufacturerToWrite CreateManufacturer(ManufacturerToRead manufacturer)
+        public static ManufacturerToWrite ConvertReadToWriteDto(ManufacturerToRead manufacturer)
         {
             if (manufacturer is null)
                 return new ManufacturerToWrite();
 
             return new ManufacturerToWrite()
+            {
+                Id = manufacturer.Id,
+                Code = manufacturer.Code,
+                Prefix = manufacturer.Prefix,
+                Name = manufacturer.Name
+            };
+        }
+
+        public static Manufacturer ConvertWriteDtoToEntity(ManufacturerToWrite manufacturer)
+        {
+            if (manufacturer is null)
+                return new Manufacturer();
+
+            return new()
             {
                 Code = manufacturer.Code,
                 Prefix = manufacturer.Prefix,
@@ -22,7 +36,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
             };
         }
 
-        public static ManufacturerToRead CreateManufacturer(Manufacturer manufacturer)
+        public static ManufacturerToRead ConvertEntityToReadDto(Manufacturer manufacturer)
         {
             if (manufacturer is null)
                 return null;
@@ -36,7 +50,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
             };
         }
 
-        public static ManufacturerToReadInList CreateManufacturerInList(Manufacturer manufacturer)
+        public static ManufacturerToReadInList ConvertEntityToReadInListDto(Manufacturer manufacturer)
         {
             if (manufacturer is null)
                 return null;

@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var sc = repository.GetSaleCodeEntityAsync(id).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            SaleCodeHelper.CopySaleCode(scDto, sc); 
+            SaleCodeHelper.CopyWriteDtoToEntity(scDto, sc); 
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -99,7 +99,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             //    Code = scCreateDto.Code,
             //    Name = scCreateDto.Name
             //};
-            var sc = SaleCodeHelper.CreateSaleCode(scCreateDto);
+            var sc = SaleCodeHelper.ConvertWriteDtoToEntity(scCreateDto);
 
             // 2. Add domain entity to repository
             await repository.AddSaleCodeAsync(sc);
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 {
                     Id = sc.Id
                 },
-                SaleCodeHelper.CreateSaleCode(sc));
+                SaleCodeHelper.ConvertEntityToReadDto(sc));
         }
 
         [HttpDelete("{id:long}")]

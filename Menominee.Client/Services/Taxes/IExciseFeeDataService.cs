@@ -9,6 +9,6 @@ namespace Menominee.Client.Services.Taxes
         Task<IReadOnlyList<ExciseFeeToReadInList>> GetAllExciseFeesAsync();
         Task<ExciseFeeToRead> GetExciseFeeAsync(long id);
         Task<ExciseFeeToRead> AddExciseFeeAsync(ExciseFeeToWrite exciseFee);
-        Task UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee);
+        Task UpdateExciseFeeAsync(ExciseFeeToWrite exciseFee, long id);
     }
 }

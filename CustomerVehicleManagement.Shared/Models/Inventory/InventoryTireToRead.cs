@@ -10,6 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryTireToRead
     {
+        public long Id { get; set; }
         public double List { get; set; }
         public double Cost { get; set; }
         public double Core { get; set; }
@@ -20,7 +21,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string SubLineCode { get; set; }
         public bool Fractional { get; set; }
         public SkillLevel SkillLevel { get; set; }
-        public long Id { get; set; }
         public string Type { get; set; }
         public double Width { get; set; }
         public double AspectRatio { get; set; }

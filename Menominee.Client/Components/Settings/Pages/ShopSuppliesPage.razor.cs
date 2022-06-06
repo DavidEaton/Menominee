@@ -44,6 +44,7 @@ namespace Menominee.Client.Components.Settings.Pages
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             Id = (args.Item as SaleCodeShopSuppliesToReadInList).Id;
+            SelectedSaleCode = args.Item as SaleCodeShopSuppliesToReadInList;
         }
 
         private void OnDone()
@@ -71,7 +72,7 @@ namespace Menominee.Client.Components.Settings.Pages
             itemToRead.ShopSupplies.IncludeParts = itemInList.IncludeParts;
             itemToRead.ShopSupplies.IncludeLabor = itemInList.IncludeLabor;
 
-            var itemToWrite = SaleCodeHelper.CreateSaleCode(itemToRead);
+            var itemToWrite = SaleCodeHelper.ConvertReadToWriteDto(itemToRead);
 
             await SaleCodeDataService.UpdateSaleCodeAsync(itemToWrite, itemToRead.Id);
 
@@ -80,12 +81,19 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private async Task IncludePartsChanged(object value)
         {
-            if (SelectedSaleCode.IncludeParts != (bool)value)
-            {
-                SelectedSaleCode.IncludeParts = !(bool)value;
-                await UpdateSaleCode(SelectedSaleCode);
-            }
+            await UpdateSaleCode(SelectedSaleCode);
+            //if (SelectedSaleCode.IncludeParts != (bool)value)
+            //{
+            //    SelectedSaleCode.IncludeParts = !(bool)value;
+            //    await UpdateSaleCode(SelectedSaleCode);
+            //}
         }
+        private async Task FieldValueChanged(object value)
+        {
+            //TODO: This gets fired even when the value hasn't changed.  What to do?
+            await UpdateSaleCode(SelectedSaleCode);
+        }
+
 
         public enum ShopSuppliesCostType { None, Percentage, Flat }
         public class ShopSuppliesSettings

@@ -29,7 +29,7 @@ namespace Menominee.Client.Components.Inventory.Pages
                 var readDto = await DataService.GetItemAsync(ItemId);
                 if (readDto != null)
                 {
-                    Item = InventoryItemHelper.CreateInventoryItem(readDto);
+                    Item = InventoryItemHelper.ConvertReadToWriteDto(readDto);
                 }
                 else
                 {

@@ -9,6 +9,6 @@ namespace Menominee.Client.Services.Taxes
         Task<IReadOnlyList<SalesTaxToReadInList>> GetAllSalesTaxesAsync();
         Task<SalesTaxToRead> GetSalesTaxAsync(long id);
         Task<SalesTaxToRead> AddSalesTaxAsync(SalesTaxToWrite salesTax);
-        Task UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax);
+        Task UpdateSalesTaxAsync(SalesTaxToWrite salesTax, long id);
     }
 }

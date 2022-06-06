@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
     {
         #region <---- Create InventoryPackageToRead from InventoryItemPackage ---->
 
-        public static InventoryPackageToRead CreateInventoryPackage(InventoryItemPackage package)
+        public static InventoryPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
         {
             if (package is null)
                 return null;
@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             {
                                 Id = item.Id,
                                 Order = item.Order,
-                                Item = InventoryItemHelper.CreateInventoryItem(item.Item),
+                                Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item),
                                 Quantity = item.Quantity,
                                 PartAmountIsAdditional = item.PartAmountIsAdditional,
                                 LaborAmountIsAdditional = item.LaborAmountIsAdditional,
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         #region <---- Create InventoryItemPackage from InventoryPackageToWrite ---->
 
-        public static InventoryItemPackage CreateInventoryPackage(InventoryPackageToWrite package)
+        public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryPackageToWrite package)
         {
             if (package is null)
                 return null;
@@ -101,7 +101,8 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             {
                                 //Id = item.Id,
                                 Order = item.Order,
-                                Item = InventoryItemHelper.CreateInventoryItem(item.Item),
+                                InventoryItemId = item.Item.Id,
+                                //Item = InventoryItemHelper.ConvertWriteDtoToEntity(item.Item),
                                 Quantity = item.Quantity,
                                 PartAmountIsAdditional = item.PartAmountIsAdditional,
                                 LaborAmountIsAdditional = item.LaborAmountIsAdditional,
@@ -133,7 +134,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         #region <---- Create InventoryPackageToWrite from InventoryPackageToRead ---->
 
-        public static InventoryPackageToWrite CreateInventoryPackage(InventoryPackageToRead package)
+        public static InventoryPackageToWrite ConvertReadToWriteDto(InventoryPackageToRead package)
         {
             if (package is null)
                 return null;
@@ -162,7 +163,8 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             {
                                 Id = item.Id,
                                 Order = item.Order,
-                                Item = InventoryItemHelper.CreateInventoryItem(item.Item),
+                                Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item),
+                                InventoryItemId = item.InventoryItemId,
                                 Quantity = item.Quantity,
                                 PartAmountIsAdditional = item.PartAmountIsAdditional,
                                 LaborAmountIsAdditional = item.LaborAmountIsAdditional,
@@ -193,7 +195,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
         #endregion
 
-        public static void CopyInventoryPackage(InventoryPackageToWrite packageToWrite, InventoryItemPackage package)
+        public static void CopyWriteDtoToEntity(InventoryPackageToWrite packageToWrite, InventoryItemPackage package)
         {
 
             package.BasePartsAmount = packageToWrite.BasePartsAmount;
