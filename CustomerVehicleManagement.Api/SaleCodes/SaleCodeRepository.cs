@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 await context.AddAsync(saleCode);
         }
 
-        public async Task DeleteSaleCodeAsync(string code)
+        public async Task DeleteSaleCodeAsync(long id)
         {
-            var saleCodeFromContext = await context.SaleCodes.FindAsync(code);
+            var saleCodeFromContext = await context.SaleCodes.FindAsync(id);
             if (saleCodeFromContext != null)
                 context.Remove(saleCodeFromContext);
         }
@@ -42,7 +43,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(sc => sc.Code == code);
 
-            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
@@ -50,7 +51,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var saleCodeFromContext = await context.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
 
-            return SaleCodeHelper.CreateSaleCode(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
@@ -74,13 +75,22 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
-                .Select(saleCode => SaleCodeHelper.CreateSaleCodeInList(saleCode))
+                .Select(saleCode => SaleCodeHelper.ConvertEntityToReadInListDto(saleCode))
                 .ToList();
         }
 
-        public async Task<bool> SaleCodeExistsAsync(string code)
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync()
         {
-            return await context.SaleCodes.AnyAsync(saleCode => saleCode.Code == code);
+            IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
+
+            return saleCodes
+                .Select(saleCode => SaleCodeHelper.ConvertEntityToShopSuppliesToReadInListDto(saleCode))
+                .ToList();
+        }
+
+        public async Task<bool> SaleCodeExistsAsync(long id)
+        {
+            return await context.SaleCodes.AnyAsync(saleCode => saleCode.Id == id);
         }
 
         public async Task<bool> SaveChangesAsync()
@@ -88,9 +98,25 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return await context.SaveChangesAsync() > 0;
         }
 
-        public void UpdateSaleCodeAsync(SaleCode saleCode)
+        public async Task<SaleCode> UpdateSaleCodeAsync(SaleCode saleCode)
         {
-            // No code in this implementation
+            Guard.ForNull(saleCode, "saleCode");
+
+            // Tracking IS needed for commands for disconnected data collections
+            context.Entry(saleCode).State = EntityState.Modified;
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await SaleCodeExistsAsync(saleCode.Id))
+                    return null;// something that tells the controller to return NotFound();
+                throw;
+            }
+
+            return null;
         }
     }
 }

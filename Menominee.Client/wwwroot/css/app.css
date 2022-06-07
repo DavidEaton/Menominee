@@ -168,6 +168,11 @@
     padding: .4em !important;
 }
 
+.m-label {
+    margin-bottom: .1rem !important;
+    font-size: 1rem !important;
+}
+
 .m-form-sub-header {
     color: white;
     padding: .1rem .1rem 0 .6rem;
@@ -184,6 +189,27 @@
 
 .m-align-bottoms {
     align-items: baseline;
+}
+.m-tabs {
+    font-size: 1rem;
+}
+
+.m-tab-item {
+    color: black !important;
+}
+
+.m-tab-content {
+    padding: 10px;
+}
+
+.m-tab-content-header {
+    margin-bottom: .25em;
+}
+
+.m-tab-content-border {
+    border: 1px solid darkgrey;
+    background: white;
+    border-radius: 0 0.25rem 0.25rem 0.25rem
 }
 
 .m-btn-divider-top {

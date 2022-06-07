@@ -12,6 +12,60 @@ namespace Menominee.Client.Components.Receivables
         [Inject]
         private NavigationManager navigationManager { get; set; }
 
+        protected override void OnInitialized()
+        {
+#pragma warning disable BL0005            
+            menuItems = new List<MenuItem>()
+            {
+                new MenuItem
+                {
+                    Text = "Accounts",
+                    //IconCss = "em-icons e-file",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Edit", HtmlAttributes=SubItemHtmlAttribute, Id="customerList"/*, ChildContent=ChildContent*/},
+                        new MenuItem { Text= "Credit Hold List", HtmlAttributes=SubItemHtmlAttribute, Id="creditHoldList"}
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new
+                MenuItem {
+                    Text = "Transactions",
+                    //IconCss = "em-icons e-edit",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "New Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" },
+                        new MenuItem { Text= "Batch Files", HtmlAttributes=SubItemHtmlAttribute, Id="" },
+                        new MenuItem { Text= "Apply Open Credits", HtmlAttributes=SubItemHtmlAttribute, Id="" },
+                        new MenuItem { Text= "Clear Paid Transactions", HtmlAttributes=SubItemHtmlAttribute, Id="" },
+                        new MenuItem { Text= "Unapply Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Service Charges",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Create & Post", HtmlAttributes=SubItemHtmlAttribute, Id="" },
+                        new MenuItem { Text= "Waive Charges", HtmlAttributes=SubItemHtmlAttribute, Id="" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Reports",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Setup",
+                    HtmlAttributes=ItemHtmlAttribute
+                }
+            };
+#pragma warning restore BL0005            
+        }
+
         public void OnItemSelected(string selectedItem)
         {
             if (selectedItem.Length > 0)
@@ -33,54 +87,7 @@ namespace Menominee.Client.Components.Receivables
             }
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
-        {
-            new MenuItem
-            {
-                Text = "Accounts",
-                //IconCss = "em-icons e-file",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Edit", HtmlAttributes=SubItemHtmlAttribute, Id="customerList"/*, ChildContent=ChildContent*/},
-                    new MenuItem { Text= "Credit Hold List", HtmlAttributes=SubItemHtmlAttribute, Id="creditHoldList"}
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new
-            MenuItem {
-                Text = "Transactions",
-                //IconCss = "em-icons e-edit",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "New Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                    new MenuItem { Text= "Batch Files", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                    new MenuItem { Text= "Apply Open Credits", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                    new MenuItem { Text= "Clear Paid Transactions", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                    new MenuItem { Text= "Unapply Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Service Charges",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Create & Post", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                    new MenuItem { Text= "Waive Charges", HtmlAttributes=SubItemHtmlAttribute, Id="" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Reports",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Setup",
-                HtmlAttributes=ItemHtmlAttribute
-            }
-         };
+        private List<MenuItem> menuItems = null;
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
         {

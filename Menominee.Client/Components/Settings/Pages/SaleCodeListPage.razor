@@ -1,5 +1,4 @@
 ﻿@page "/settings/salecodes"
-@page "/settings/salecodes/{CodeToSelect:long}"
 
 <SettingsMenu />
 
@@ -7,23 +6,23 @@
     <div class="m-form">
         <div>
             <ContentHeader Header="Sale Codes" />
-            @if (SaleCodeList == null)
+            @if (SaleCodes == null)
             {
                 <p><em>Loading...</em></p>
             }
 
-            @if (SaleCodeList != null)
+            @if (SaleCodes != null)
             {
-                <TelerikGrid Data="SaleCodeList"
-                             OnRowClick="@OnRowSelected"
-                             OnRowDoubleClick="@OnEditAsync"
+                <TelerikGrid Data="SaleCodes"
+                             OnRowClick="OnRowSelected"
+                             OnRowDoubleClick="OnEditAsync"
                              Sortable="true"
                              Pageable="true"
                              FilterMode="GridFilterMode.None"
                              ShowColumnMenu="false"
                              SelectionMode="GridSelectionMode.Single"
                              SelectedItemsChanged="@((IEnumerable<SaleCodeToReadInList> saleCodeList) => OnSelect(saleCodeList))"
-                             SelectedItems="@SelectedSaleCodes"
+                             SelectedItems="SelectedSaleCodes"
                              Class="m-grid"
                              @ref="@Grid">
                     <GridColumns>
@@ -36,12 +35,14 @@
                                     Title="Description">
                         </GridColumn>
                         <GridColumn Width="20%" 
-                                    Field="@nameof(SaleCodeToReadInList.LaborRate)" 
-                                    Title="Labor Rate">
+                                    Field="@nameof(SaleCodeToReadInList.LaborRateDisplayValue)" 
+                                    Title="Labor Rate"
+                                    TextAlign="ColumnTextAlign.Right">
                         </GridColumn>
                         <GridColumn Width="20%" 
-                                    Field="@nameof(SaleCodeToReadInList.DesiredMargin)" 
-                                    Title="Desired Margin">
+                                    Field="@nameof(SaleCodeToReadInList.DesiredMarginDisplayValue)" 
+                                    Title="Desired Margin"
+                                    TextAlign="ColumnTextAlign.Right">
                         </GridColumn>
 @*                        <GridColumn Width="15%" 
                                     Field="@nameof(SaleCodeToReadInList.CorporateRow)" 
@@ -50,19 +51,18 @@
 *@                    </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                <EditNewDeleteButtons OnDone="OnDone" OnEdit="OnEditAsync" OnNew="OnAdd" OnDelete="OnDelete" CanEdit="CanEdit" CanDelete="CanDelete" />
             }
         </div>
     </div>
 </div>
 
-
-@if (SaleCodeToModify != null && EditCodeDialogVisible)
+@if ((EditFormMode == FormMode.Add || EditFormMode == FormMode.Edit) && SaleCode != null)
 {
-@*    <CreditCardEditor CreditCard="@CreditCardToModify"
-                           OnSave="@OnSaveEditAsync"
-                           OnCancel="@OnCancelEdit" />
-*@}
+    <SaleCodeEditor SaleCode="SaleCode"
+                    OnSave="SubmitHandlerAsync"
+                    OnCancel="EndAddEditAsync" />
+}
 
 <style>
     .m-grid {

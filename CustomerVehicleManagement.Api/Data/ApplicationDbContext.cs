@@ -53,19 +53,19 @@ namespace CustomerVehicleManagement.Api.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            if (UserContext != null) // Unit tests do not yet inject UserContext
-                Connection = GetTenantConnection();
+            //if (UserContext != null) // Unit tests do not yet inject UserContext
+            //    Connection = GetTenantConnection();
 
-            if (!options.IsConfigured) // Unit tests will configure context with test provider
-            {
-                if (Environment?.EnvironmentName != "Production")
-                {
-                    options.UseLoggerFactory(CreateLoggerFactory());
-                    options.EnableSensitiveDataLogging(true);
-                }
+            //if (!options.IsConfigured) // Unit tests will configure context with test provider
+            //{
+            //    if (Environment?.EnvironmentName != "Production")
+            //    {
+            //        options.UseLoggerFactory(CreateLoggerFactory());
+            //        options.EnableSensitiveDataLogging(true);
+            //    }
 
-                options.UseSqlServer(Connection);
-            }
+            //    options.UseSqlServer(Connection);
+            //}
 
             base.OnConfiguring(options);
 
@@ -127,6 +127,9 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new InventoryItemPartConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemLaborConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemTireConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemPackageConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemPackageItemConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemPackagePlaceholderConfiguration());
 
             // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
@@ -238,6 +241,9 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<InventoryItemPart> InventoryItemParts { get; set; }
         public DbSet<InventoryItemLabor> InventoryItemLabor { get; set; }
         public DbSet<InventoryItemTire> InventoryItemTires { get; set; }
+        public DbSet<InventoryItemPackage> InventoryItemPackages { get; set; }
+        public DbSet<InventoryItemPackageItem> InventoryItemPackageItems { get; set; }
+        public DbSet<InventoryItemPackagePlaceholder> InventoryItemPackagePlaceholders { get; set; }
 
         // Credit Cards
         public DbSet<CreditCard> CreditCards { get; set; }

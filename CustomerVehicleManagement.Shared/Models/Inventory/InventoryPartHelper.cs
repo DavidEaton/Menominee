@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryPartHelper
     {
-        public static InventoryPartToWrite CreateInventoryPart(InventoryPartToRead part)
+        public static InventoryPartToWrite ConvertReadToWriteDto(InventoryPartToRead part)
         {
             if (part is null)
                 return null;
@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemPart CreateInventoryPart(InventoryPartToWrite part)
+        public static InventoryItemPart ConvertWriteDtoToEntity(InventoryPartToWrite part)
         {
             if (part is null)
                 return null;
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         //    };
         //}
 
-        public static InventoryPartToRead CreateInventoryPart(InventoryItemPart part)
+        public static InventoryPartToRead ConvertEntityToReadDto(InventoryItemPart part)
         {
             if (part is null)
                 return null;
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyInventoryPart(InventoryPartToWrite partToUpdate, InventoryItemPart part)
+        public static void CopyWriteDtoToEntity(InventoryPartToWrite partToUpdate, InventoryItemPart part)
         {
             part.List = partToUpdate.List;
             part.Cost = partToUpdate.Cost;
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             part.SkillLevel = partToUpdate.SkillLevel;
         }
 
-        public static InventoryPartToReadInList CreateInventoryPartInList(InventoryItemPart part)
+        public static InventoryPartToReadInList ConvertEntityToReadInListDto(InventoryItemPart part)
         {
             if (part is null)
                 return null;

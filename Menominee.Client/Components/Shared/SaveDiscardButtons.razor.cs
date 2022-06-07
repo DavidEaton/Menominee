@@ -8,5 +8,7 @@ namespace Menominee.Client.Components.Shared
         public EventCallback OnSave { get; set; }
         [Parameter]
         public EventCallback OnDiscard { get; set; }
+        [Parameter]
+        public bool ShowDivider { get; set; } = true;
     }
 }

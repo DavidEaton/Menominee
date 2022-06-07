@@ -9,6 +9,45 @@ namespace Menominee.Client.Components.Scheduler
         [Inject]
         private NavigationManager navigationManager { get; set; }
 
+        protected override void OnInitialized()
+        {
+#pragma warning disable BL0005            
+            menuItems = new List<MenuItem>()
+            {
+                new MenuItem
+                {
+                    Text = "Appointments",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "New", HtmlAttributes=SubItemHtmlAttribute, Id="placeholder" },
+                        new MenuItem { Text= "Find", HtmlAttributes=SubItemHtmlAttribute, Id="placeholder" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Reports",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Some Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
+                        new MenuItem { Text= "Another Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Reminders",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Some Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" },
+                        new MenuItem { Text= "Another Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" }
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                }
+            };
+#pragma warning restore BL0005            
+        }
+
         public void OnItemSelected(string selectedItem)
         {
             if (selectedItem.Length > 0)
@@ -30,39 +69,7 @@ namespace Menominee.Client.Components.Scheduler
             }
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
-        {
-            new MenuItem
-            {
-                Text = "Appointments",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "New", HtmlAttributes=SubItemHtmlAttribute, Id="placeholder" },
-                    new MenuItem { Text= "Find", HtmlAttributes=SubItemHtmlAttribute, Id="placeholder" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Reports",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Some Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
-                    new MenuItem { Text= "Another Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Reminders",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Some Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" },
-                    new MenuItem { Text= "Another Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" }
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            }
-         };
+        private List<MenuItem> menuItems = null;
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
         {

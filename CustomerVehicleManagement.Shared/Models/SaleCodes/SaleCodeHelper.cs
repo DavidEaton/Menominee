@@ -4,14 +4,14 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 {
     public class SaleCodeHelper
     {
-        public static SaleCode CreateSaleCode(SaleCodeToWrite saleCode)
+        public static SaleCode ConvertWriteDtoToEntity(SaleCodeToWrite saleCode)
         {
             if (saleCode == null)
                 return null;
 
             return new()
             {
-                Code = saleCode.Code,
+                Code = saleCode.Code.ToUpper(),
                 Name = saleCode.Name,
                 DesiredMargin = saleCode.DesiredMargin,
                 LaborRate = saleCode.LaborRate,
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToWrite CreateSaleCode(SaleCodeToRead saleCode)
+        public static SaleCodeToWrite ConvertReadToWriteDto(SaleCodeToRead saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToRead CreateSaleCode(SaleCode saleCode)
+        public static SaleCodeToRead ConvertEntityToReadDto(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             };
         }
 
-        public static SaleCodeToReadInList CreateSaleCodeInList(SaleCode saleCode)
+        public static SaleCodeToReadInList ConvertEntityToReadInListDto(SaleCode saleCode)
         {
             if (saleCode is null)
                 return null;
@@ -88,6 +88,39 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 LaborRate = saleCode.LaborRate,
                 DesiredMargin = saleCode.DesiredMargin
             };
+        }
+
+        public static SaleCodeShopSuppliesToReadInList ConvertEntityToShopSuppliesToReadInListDto(SaleCode saleCode)
+        {
+            if (saleCode is null)
+                return null;
+
+            return new()
+            {
+                Id = saleCode.Id,
+                Code = saleCode.Code,
+                Name = saleCode.Name,
+                Percentage = saleCode.ShopSupplies.Percentage,
+                MinimumJobAmount = saleCode.ShopSupplies.MinimumJobAmount,
+                MinimumCharge = saleCode.ShopSupplies.MinimumCharge,
+                MaximumCharge = saleCode.ShopSupplies.MaximumCharge,
+                IncludeParts = saleCode.ShopSupplies.IncludeParts,
+                IncludeLabor = saleCode.ShopSupplies.IncludeLabor
+            };
+        }
+
+        public static void CopyWriteDtoToEntity(SaleCodeToWrite saleCodeToWrite, SaleCode saleCode)
+        {
+            saleCode.Code = saleCodeToWrite.Code;
+            saleCode.Name = saleCodeToWrite.Name;
+            saleCode.DesiredMargin = saleCodeToWrite.DesiredMargin;
+            saleCode.LaborRate = saleCodeToWrite.LaborRate;
+            saleCode.ShopSupplies.IncludeLabor = saleCodeToWrite.ShopSupplies.IncludeLabor;
+            saleCode.ShopSupplies.IncludeParts = saleCodeToWrite.ShopSupplies.IncludeParts;
+            saleCode.ShopSupplies.MaximumCharge = saleCodeToWrite.ShopSupplies.MaximumCharge;
+            saleCode.ShopSupplies.MinimumCharge = saleCodeToWrite.ShopSupplies.MinimumCharge;
+            saleCode.ShopSupplies.MinimumJobAmount = saleCodeToWrite.ShopSupplies.MinimumJobAmount;
+            saleCode.ShopSupplies.Percentage = saleCodeToWrite.ShopSupplies.Percentage;
         }
     }
 }

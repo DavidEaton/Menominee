@@ -1,0 +1,10 @@
+﻿@page "/inventory/parts/{ItemId:long}"
+
+<InventoryMenu />
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryPartEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

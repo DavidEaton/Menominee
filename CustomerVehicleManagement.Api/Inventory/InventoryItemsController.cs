@@ -2,6 +2,8 @@
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -84,7 +86,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             var item = await itemRepository.GetItemEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            InventoryItemHelper.CopyInventoryItem(itemToWrite, item);
+            InventoryItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
 
             // Update the objects ObjectState and synch the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -100,21 +102,25 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
+        public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToWrite)
         {
             InventoryItem item = null;
 
-            if (itemToAdd.ItemType == InventoryItemType.Part)
-                item = new(InventoryPartHelper.CreateInventoryPart(itemToAdd.Part));
-            else if (itemToAdd.ItemType == InventoryItemType.Labor)
-                item = new(InventoryLaborHelper.CreateInventoryLabor(itemToAdd.Labor));
-            else if (itemToAdd.ItemType == InventoryItemType.Tire)
-                item = new(InventoryTireHelper.CreateInventoryTire(itemToAdd.Tire));
+            if (itemToWrite.ItemType == InventoryItemType.Part)
+                item = new(InventoryPartHelper.ConvertWriteDtoToEntity(itemToWrite.Part));
+            else if (itemToWrite.ItemType == InventoryItemType.Labor)
+                item = new(InventoryLaborHelper.ConvertWriteDtoToEntity(itemToWrite.Labor));
+            else if (itemToWrite.ItemType == InventoryItemType.Tire)
+                item = new(InventoryTireHelper.ConvertWriteDtoToEntity(itemToWrite.Tire));
+            else if (itemToWrite.ItemType == InventoryItemType.Package)
+                item = new(InventoryPackageHelper.ConvertWriteDtoToEntity(itemToWrite.Package));
 
-            item.ManufacturerId = itemToAdd.ManufacturerId;
-            item.ItemNumber = itemToAdd.ItemNumber;
-            item.Description = itemToAdd.Description;
-            item.ProductCodeId = itemToAdd.ProductCodeId;
+            //item.Manufacturer = ManufacturerHelper.ConvertToEntity(itemToWrite.Manufacturer);
+            item.ManufacturerId = itemToWrite.Manufacturer.Id;
+            item.ItemNumber = itemToWrite.ItemNumber;
+            item.Description = itemToWrite.Description;
+            //item.ProductCode = ProductCodeHelper.ConvertToEntity(itemToWrite.ProductCode);
+            item.ProductCodeId = itemToWrite.ProductCode.Id;
 
             await itemRepository.AddItemAsync(item);
 
@@ -122,7 +128,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             return CreatedAtRoute("GetInventoryItemAsync",
                                   new { id = item.Id },
-                                  InventoryItemHelper.CreateInventoryItem(item));
+                                  InventoryItemHelper.ConvertEntityToReadDto(item));
         }
 
         [HttpDelete("{id:long}")]

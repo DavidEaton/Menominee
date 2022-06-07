@@ -83,10 +83,11 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             var pc = repository.GetProductCodeEntityAsync(mfrCode, productCode).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            pc.Manufacturer = pcDto.Manufacturer;
-            pc.Code = pcDto.Code;
-            pc.Name = pcDto.Name;
-            pc.SaleCode = pcDto.SaleCode;
+            //pc.Manufacturer = pcDto.Manufacturer;
+            //pc.Code = pcDto.Code;
+            //pc.Name = pcDto.Name;
+            //pc.SaleCode = pcDto.SaleCode;
+            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, pc);
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -106,13 +107,14 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
         {
             // 1. Convert dto to domain entity
-            var pc = new ProductCode()
-            {
-                Manufacturer = pcCreateDto.Manufacturer,
-                Code = pcCreateDto.Code,
-                Name = pcCreateDto.Name,
-                SaleCode = pcCreateDto.SaleCode
-            };
+            //var pc = new ProductCode()
+            //{
+            //    Manufacturer = pcCreateDto.Manufacturer,
+            //    Code = pcCreateDto.Code,
+            //    Name = pcCreateDto.Name,
+            //    SaleCode = pcCreateDto.SaleCode
+            //};
+            var pc = ProductCodeHelper.ConvertWriteDtoToEntity(pcCreateDto);
 
             // 2. Add domain entity to repository
             await repository.AddProductCodeAsync(pc);
@@ -124,7 +126,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
             return CreatedAtRoute("GetProductCodeAsync",
                                   new { id = pc.Id },
-                                  ProductCodeHelper.CreateProductCode(pc));
+                                  ProductCodeHelper.ConvertEntityToReadDto(pc));
 
         }
 

@@ -12,7 +12,7 @@
     <WindowContent>
 			<div class="form-row">
 				<div class="form-group col col-12">
-					<label class="k-label" for="name">Tax Name</label>
+					<label class="m-label" for="name">Tax Name</label>
 					<input type="text" class="form-control" id="name" autocomplete="off" onfocus="this.select();" @bind-value="SalesTax.Description">
 				</div>
 			</div>
@@ -21,7 +21,7 @@
 				<div class="form-group col col-12 col-md-4">
 					@if (taxTypeList != null)
 					{
-						<label class="k-label" for="taxType">Tax Type</label>
+						<label class="m-label" for="taxType">Tax Type</label>
 						<SfDropDownList TValue="SalesTaxType"
 									TItem="TaxTypeListItem"
 									PopupHeight="230px"
@@ -35,16 +35,16 @@
 
 			<div class="form-row">
 				<div class="form-group col col-12">
-					<label class="k-label" for="taxId">Tax Identification Number</label>
+					<label class="m-label" for="taxId">Tax Identification Number</label>
 					<input type="text" class="form-control" id="taxId" autocomplete="off" @bind-value="SalesTax.TaxIdNumber">
 				</div>
 			</div>
 
 			<div class="form-row">
 				<div class="form-group col col-12 col-md-4">
-						<label class="k-label" for="partsRate">Parts Rate</label>
+						<label class="m-label" for="partsRate">Parts Rate</label>
 						<TelerikNumericTextBox @bind-Value="SalesTax.PartTaxRate"
-										   Format="#.00#'%'"
+										   Format="#0.00#'%'"
                                            Decimals=3
 										   Id="partsRate"
 										   Arrows="false">
@@ -54,7 +54,7 @@
 
 			<div class="form-row">
 				<div class="form-group col col-12 col-md-4">
-						<label class="k-label" for="laborRate">Labor Rate</label>
+						<label class="m-label" for="laborRate">Labor Rate</label>
 						<TelerikNumericTextBox @bind-Value="SalesTax.LaborTaxRate"
 										   Format="#0.00#'%'"
                                            Decimals=3
@@ -67,14 +67,14 @@
 			<div class="form-row">
 				<div class="form-group col col-12">
 					<TelerikCheckBox Id="byDefault" @bind-Value="SalesTax.IsAppliedByDefault" />
-					<label class="k-label" for="byDefault">Tax Applied By Default</label>
+					<label class="m-label" for="byDefault">Tax Applied By Default</label>
 				</div>
 			</div>
 
 			<div class="form-row">
 				<div class="form-group col col-12">
 					<TelerikCheckBox Id="taxable" @bind-Value="SalesTax.IsTaxable" />
-					<label class="k-label" for="taxable">Taxable</label>
+					<label class="m-label" for="taxable">Taxable</label>
 				</div>
 			</div>
 
@@ -125,10 +125,6 @@
 
     .m-grid-form {
         display: grid;
-    }
-
-    .k-label {
-        margin-bottom: .2rem !important;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {

@@ -9,6 +9,52 @@ namespace Menominee.Client.Components.Payables
         [Inject]
         private NavigationManager navigationManager { get; set; }
 
+        protected override void OnInitialized()
+        {
+#pragma warning disable BL0005            
+            menuItems = new List<MenuItem>()
+            {
+                new MenuItem
+                {
+                    Text = "Invoices",
+                    Id = "invoices",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Credit Returns",
+                    Id = "creditReturns",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Statements",
+                    Id = "statements",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Vendors",
+                    Id = "vendors",
+                    HtmlAttributes=ItemHtmlAttribute
+                },
+                new MenuItem
+                {
+                    Text = "Reports",
+                    Items = new List<MenuItem>
+                    {
+                        new MenuItem { Text= "Vendor List", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
+                        new MenuItem { Separator= true, HtmlAttributes=SubItemHtmlAttribute },
+                        new MenuItem { Text= "Vendor Detail", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
+                        new MenuItem { Text= "Vendor Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
+                        new MenuItem { Text= "Invoice Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
+                    },
+                    HtmlAttributes=ItemHtmlAttribute
+                }
+            };
+#pragma warning restore BL0005            
+        }
+
         public void OnItemSelected(string selectedItem)
         {
             if (selectedItem.Length > 0)
@@ -33,46 +79,7 @@ namespace Menominee.Client.Components.Payables
             }
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
-        {
-            new MenuItem
-            {
-                Text = "Invoices",
-                Id = "invoices",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Credit Returns",
-                Id = "creditReturns",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Statements",
-                Id = "statements",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Vendors",
-                Id = "vendors",
-                HtmlAttributes=ItemHtmlAttribute
-            },
-            new MenuItem
-            {
-                Text = "Reports",
-                Items = new List<MenuItem>
-                {
-                    new MenuItem { Text= "Vendor List", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                    new MenuItem { Separator= true, HtmlAttributes=SubItemHtmlAttribute },
-                    new MenuItem { Text= "Vendor Detail", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                    new MenuItem { Text= "Vendor Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                    new MenuItem { Text= "Invoice Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                },
-                HtmlAttributes=ItemHtmlAttribute
-            }
-         };
+        private List<MenuItem> menuItems = null;
 
         static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
         {

@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         //}
 
         // api/manufacturers/xyz
-        [HttpGet("{code}")]
+        [HttpGet("code/{code}")]
         public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(string code)
         {
             var result = await repository.GetManufacturerAsync(code);
@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             //return Created(new Uri($"{BasePath}/{mfr.Code}", UriKind.Relative), new { mfr.Code });
             return CreatedAtRoute("GetManufacturerAsync",
                                   new { id = manufacturer.Id },
-                                  ManufacturerHelper.CreateManufacturer(manufacturer));
+                                  ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
         }
 
         [HttpDelete("{code}")]

@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryLaborHelper
     {
-        public static InventoryLaborToWrite CreateInventoryLabor(InventoryLaborToRead labor)
+        public static InventoryLaborToWrite ConvertReadToWriteDto(InventoryLaborToRead labor)
         {
             if (labor is null)
                 return null;
@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemLabor CreateInventoryLabor(InventoryLaborToWrite labor)
+        public static InventoryItemLabor ConvertWriteDtoToEntity(InventoryLaborToWrite labor)
         {
             if (labor is null)
                 return null;
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryLaborToRead CreateInventoryLabor(InventoryItemLabor labor)
+        public static InventoryLaborToRead ConvertEntityToReadDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyInventoryLabor(InventoryLaborToWrite laborToUpdate, InventoryItemLabor labor)
+        public static void CopyWriteDtoToEntity(InventoryLaborToWrite laborToUpdate, InventoryItemLabor labor)
         {
             labor.LaborType = laborToUpdate.LaborType;
             labor.LaborAmount = laborToUpdate.LaborAmount;
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             labor.SkillLevel = laborToUpdate.SkillLevel;
         }
 
-        public static InventoryLaborToReadInList CreateLaborItemInList(InventoryItemLabor labor)
+        public static InventoryLaborToReadInList ConvertEntityToReadInListDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;

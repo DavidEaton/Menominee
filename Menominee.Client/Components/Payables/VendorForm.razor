@@ -5,9 +5,9 @@
 <div class="form m-form">
     <ContentHeader Header="@Title" />
 
-    <div class="field">
+    <div class="form-group">
         <div>
-            <label class="col-form-label" for="vendorCode">ID</label>
+            <label class="m-label" for="vendorCode">ID</label>
         </div>
         <TelerikTextBox @bind-Value="Vendor.VendorCode"
                         MaxLength="10"
@@ -15,8 +15,8 @@
                         Id="vendorCode">
         </TelerikTextBox>
     </div>
-    <div class="field">
-        <label class="col-form-label">Name</label>
+    <div class="form-group">
+        <label class="m-label">Name</label>
         <TelerikTextBox @bind-Value="Vendor.Name"
                         Width="100%">
         </TelerikTextBox>

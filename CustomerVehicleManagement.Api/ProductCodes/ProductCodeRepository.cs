@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             Guard.ForNull(pcFromContext, "pcFromContext");
 
 
-            return ProductCodeHelper.CreateProductCode(pcFromContext);
+            return ProductCodeHelper.ConvertEntityToReadDto(pcFromContext);
         }
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(long id)
@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             Guard.ForNull(pcFromContext, "pcFromContext");
 
 
-            return ProductCodeHelper.CreateProductCode(pcFromContext);
+            return ProductCodeHelper.ConvertEntityToReadDto(pcFromContext);
         }
 
         public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)
@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .ToArrayAsync();
 
             return pcs.
-                Select(productCode => ProductCodeHelper.CreateProductCodeInList(productCode))
+                Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
                 .ToList();
         }
 
@@ -116,7 +116,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .ToArrayAsync();
 
             return pcs.
-                Select(productCode => ProductCodeHelper.CreateProductCodeInList(productCode))
+                Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
                 .ToList();
         }
 

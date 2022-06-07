@@ -7,5 +7,19 @@
         public string Name { get; set; }
         public double LaborRate { get; set; }
         public double DesiredMargin { get; set; }
+        public string LaborRateDisplayValue
+        {
+            get
+            {
+                return LaborRate.ToString("C");
+            }
+        }
+        public string DesiredMarginDisplayValue
+        {
+            get
+            {
+                return DesiredMargin.ToString("#0.00#'%'");
+            }
+        }
     }
 }

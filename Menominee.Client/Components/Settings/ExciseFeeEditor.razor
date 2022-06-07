@@ -12,7 +12,7 @@
 	<WindowContent>
 		<div class="form-row">
 			<div class="form-group col col-12">
-				<label class="k-label" for="name">Tax Name</label>
+				<label class="m-label" for="name">Tax Name</label>
 				<input type="text" class="form-control" tabindex="0" id="name" autocomplete="off" onfocus="this.select();" @bind-value="ExciseFee.Description">
 			</div>
 		</div>
@@ -21,7 +21,7 @@
 			<div class="form-group col col-12 col-md-4">
 				@if (feeTypeList != null)
 				{
-					<label class="k-label" for="taxType">Fee Type</label>
+					<label class="m-label" for="taxType">Fee Type</label>
 					<SfDropDownList TValue="ExciseFeeType"
 								TItem="FeeTypeListItem"
 								PopupHeight="230px"
@@ -34,7 +34,7 @@
 			<div class="form-group col col-12 col-md-4">
 				@if (ExciseFee.FeeType == ExciseFeeType.Flat)
 				{
-					<label for="FeeFlat">Amount</label>
+					<label class="m-label" for="feeFlat">Amount</label>
 					<TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
                                            Format="C"
                                            Id="feeFlat"
@@ -44,9 +44,9 @@
 				}
 				else if (ExciseFee.FeeType == ExciseFeeType.Percentage)
 				{
-					<label for="feePercent">Percent</label>
+					<label class="m-label" for="feePercent">Percent</label>
 					<TelerikNumericTextBox @bind-Value="ExciseFee.Amount"
-										   Format="#.00#'%'"
+										   Format="#0.00#'%'"
                                            Decimals=3
                                            Id="feePercent"
                                            Arrows="false">

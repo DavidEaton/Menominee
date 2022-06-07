@@ -61,16 +61,55 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
                                                    .ThenInclude(productCode => productCode.SaleCode)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(productCode => productCode.Manufacturer)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item.ProductCode)
+                                               //.Include(item => item.Package)
+                                               //    .ThenInclude(pkgItem => pkgItem.Items)
+                                               //        .ThenInclude(pItem => pItem.Item)
+                                               //            .ThenInclude(item => item.Manufacturer)
+                                               //.Include(item => item.Package)
+                                               //    .ThenInclude(pkgItem => pkgItem.Items)
+                                               //        .ThenInclude(pItem => pItem.Item)
+                                               //            .ThenInclude(item => item.ProductCode)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item)
+                                                           .ThenInclude(item => item.Part)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item)
+                                                           .ThenInclude(item => item.Labor)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item)
+                                                           .ThenInclude(item => item.Tire)
+                                               //.Include(item => item.Package)
+                                               //    .ThenInclude(pkgItem => pkgItem.Items)
+                                               //        .ThenInclude(invItem => invItem.Item)
+                                               //            .ThenInclude(item => item.Manufacturer)
+                                               //.Include(item => item.Package)
+                                               //    .ThenInclude(pkgItem => pkgItem.Items)
+                                               //        .ThenInclude(invItem => invItem.Item)
+                                               //            .ThenInclude(item => item.ProductCode)
+                                               //                .ThenInclude(productCode => productCode.SaleCode)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
+            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
         }
 
         public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
@@ -79,17 +118,27 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Manufacturer)
                                                .Include(item => item.ProductCode)
                                                    .ThenInclude(productCode => productCode.SaleCode)
+                                               .Include(item => item.ProductCode)
+                                                   .ThenInclude(productCode => productCode.Manufacturer)
                                                .Include(item => item.Part)
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(pkgItem => pkgItem.Items)
+                                                       .ThenInclude(pItem => pItem.Item.ProductCode)
+                                               .Include(item => item.Package)
+                                                   .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                                .AsNoTracking()
                                                .AsSplitQuery()
-                                               .FirstOrDefaultAsync(item => item.ManufacturerId == manufacturerId
+                                               .FirstOrDefaultAsync(item => item.Manufacturer.Id == manufacturerId
                                                                          && item.ItemNumber == itemNumber);
 
             Guard.ForNull(itemFromContext, "itemFromContext");
 
-            return InventoryItemHelper.CreateInventoryItem(itemFromContext);
+            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
         }
 
         public async Task<InventoryItem> GetItemEntityAsync(long id)
@@ -98,9 +147,19 @@ namespace CustomerVehicleManagement.Api.Inventory
                                 .Include(item => item.Manufacturer)
                                 .Include(item => item.ProductCode)
                                     .ThenInclude(productCode => productCode.SaleCode)
+                                .Include(item => item.ProductCode)
+                                    .ThenInclude(productCode => productCode.Manufacturer)
                                 .Include(item => item.Part)
                                 .Include(item => item.Labor)
                                 .Include(item => item.Tire)
+                                .Include(item => item.Package)
+                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                    .Include(item => item.Package)
+                                .ThenInclude(pkgItem => pkgItem.Items)
+                                    .ThenInclude(pItem => pItem.Item.ProductCode)
+                                .Include(item => item.Package)
+                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                 .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
@@ -113,15 +172,25 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
             foreach (var item in itemsFromContext)
-                items.Add(InventoryItemHelper.CreateInventoryItem(item));
+                items.Add(InventoryItemHelper.ConvertEntityToReadDto(item));
 
             return items;
         }
@@ -132,14 +201,24 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
                                    .ToList();
         }
 
@@ -149,15 +228,25 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .Include(item => item.Manufacturer)
                                                 .Include(item => item.ProductCode)
                                                     .ThenInclude(productCode => productCode.SaleCode)
+                                                .Include(item => item.ProductCode)
+                                                    .ThenInclude(productCode => productCode.Manufacturer)
                                                 .Include(item => item.Part)
                                                 .Include(item => item.Labor)
                                                 .Include(item => item.Tire)
-                                                .Where(item => item.ManufacturerId == manufacturerId)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(pkgItem => pkgItem.Items)
+                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
+                                                .Include(item => item.Package)
+                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
+                                                .Where(item => item.Manufacturer.Id == manufacturerId)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => InventoryItemHelper.CreateInventoryItemInList(item))
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
                                    .ToList();
         }
 

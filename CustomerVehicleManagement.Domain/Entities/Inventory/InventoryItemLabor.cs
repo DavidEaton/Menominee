@@ -5,6 +5,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemLabor : Entity
     {
+        public long InventoryItemId { get; set; }
         public ItemLaborType LaborType { get; set; }
         public double LaborAmount { get; set; }
         public ItemLaborType TechPayType { get; set; }

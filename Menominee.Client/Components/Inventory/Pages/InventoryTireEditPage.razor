@@ -1,0 +1,10 @@
+﻿@page "/inventory/tires/{ItemId:long}"
+
+<InventoryMenu />
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryTireEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

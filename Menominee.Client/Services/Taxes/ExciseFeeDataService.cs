@@ -69,7 +69,7 @@ namespace Menominee.Client.Services.Taxes
             return null;
         }
 
-        public async Task UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
+        public async Task UpdateExciseFeeAsync(ExciseFeeToWrite exciseFee, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(exciseFee), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

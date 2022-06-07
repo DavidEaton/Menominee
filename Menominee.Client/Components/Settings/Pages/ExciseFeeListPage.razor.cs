@@ -62,7 +62,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         private void OnAdd()
         {
-            Id = 0;
+            //Id = 0;
             EditFormMode = FormMode.Add;
             //ExciseFees = null;
             ExciseFee = new();
@@ -120,7 +120,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleEditSubmitAsync()
         {
-            await ExciseFeeDataService.UpdateExciseFeeAsync(Id, ExciseFee);
+            await ExciseFeeDataService.UpdateExciseFeeAsync(ExciseFee, Id);
             await EndAddEditAsync();
         }
 
