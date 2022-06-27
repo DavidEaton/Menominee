@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
@@ -16,9 +17,19 @@ namespace Menominee.Client.Components.RepairOrders.Pages
         [Parameter]
         public long Id { get; set; }
 
+        [CascadingParameter (Name = "MainLayout")]
+        MainLayout MainLayout { get; set; }
+
         public RepairOrderToRead RepairOrder { get; set; }
-        protected override async Task OnInitializedAsync()
+
+        public bool parametersSet { get; set; } = false;
+
+        protected override async Task OnParametersSetAsync()
         {
+            if (parametersSet)
+                return;
+            parametersSet = true;
+            MainLayout?.ToggleRepairOrderEditMenuDisplay(true);
             if (Id == 0)
             {
                 RepairOrder = new()
@@ -30,6 +41,8 @@ namespace Menominee.Client.Components.RepairOrders.Pages
             {
                 RepairOrder = await DataService.GetRepairOrder(Id);
             }
+
+            await base.OnParametersSetAsync();
         }
 
         private async Task Save()
@@ -65,6 +78,7 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         protected void EndEdit()
         {
+            MainLayout.ToggleRepairOrderEditMenuDisplay(false);
             NavigationManager.NavigateTo($"repairorders/worklog/{Id}");
         }
     }

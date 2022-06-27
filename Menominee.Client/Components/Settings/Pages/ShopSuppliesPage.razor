@@ -1,6 +1,6 @@
 ﻿@page "/settings/shopsupplies"
 
-<SettingsMenu />
+@*<SettingsMenu />*@
 
 <div class="m-main-content">
     <div class="m-form">
@@ -118,19 +118,19 @@
                                 <Template>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.Percentage"
+                                            <TelerikNumericTextBox @bind-Value="item.Percentage"
                                                            Format="#.##'%'"
                                                            Arrows="false"
                                                            OnChange="FieldValueChanged">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.Percentage"
+                                            <TelerikNumericTextBox @bind-Value="item.Percentage"
                                                            Arrows="false">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </EditorTemplate>
                                 </GridColumn>
@@ -141,20 +141,20 @@
                                     <Template>
                                         @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
+                                            <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
                                                            Format="C"
                                                            Arrows="false"
                                                            OnChange="FieldValueChanged">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
+                                            <TelerikNumericTextBox @bind-Value="item.MinimumJobAmount"
                                                            Format="C"
                                                            Arrows="false">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -165,20 +165,20 @@
                                 <Template>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
+                                            <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
                                                            Format="C"
                                                            Arrows="false"
                                                            OnChange="FieldValueChanged">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
+                                            <TelerikNumericTextBox @bind-Value="item.MinimumCharge"
                                                            Format="C"
                                                            Arrows="false">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -189,20 +189,20 @@
                                 <Template>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
+                                            <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
                                                            Format="C"
                                                            Arrows="false"
                                                            OnChange="FieldValueChanged">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
                                             var item = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
+                                            <TelerikNumericTextBox @bind-Value="item.MaximumCharge"
                                                            Format="C"
                                                            Arrows="false">
-                                        </TelerikNumericTextBox>
+                                            </TelerikNumericTextBox>
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -213,7 +213,7 @@
                                     @{
                                         //SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
                                             var saleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeParts"
+                                            <TelerikCheckBox @bind-Value="@saleCode.IncludeParts"
                                                      OnChange="FieldValueChanged" />
                                     }
                                 </Template>
@@ -221,7 +221,7 @@
                                     @{
                                         //SelectedSaleCode = context as SaleCodeShopSuppliesToReadInList;
                                             var saleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeParts" />
+                                            <TelerikCheckBox @bind-Value="@saleCode.IncludeParts" />
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -231,14 +231,14 @@
                                 <Template>
                                     @{
                                             var saleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor"
+                                            <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor"
                                                      OnChange="FieldValueChanged" />
                                     }
                                 </Template>
                                 <EditorTemplate>
                                     @{
                                             var saleCode = context as SaleCodeShopSuppliesToReadInList;
-                                        <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor" />
+                                            <TelerikCheckBox @bind-Value="@saleCode.IncludeLabor" />
                                     }
                                 </EditorTemplate>
                             </GridColumn>
@@ -258,6 +258,7 @@
         /*        min-height: calc(100vh - 388px);
                     max-height: calc(100vh - 388px);
             */ height: calc(100vh - 592px);
+        min-height: 160px;
     }
 
     .k-grid .k-grid-header th .k-cell-inner,

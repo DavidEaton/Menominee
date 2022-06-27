@@ -1,84 +1,45 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
-using System;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Customers
 {
     public partial class CustomersMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/customers";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
-            {
-                new MenuItem
-                {
-                    Text = "Customers",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Customer List", HtmlAttributes=SubItemHtmlAttribute, Id="customerList" },
-                        new MenuItem { Text= "Advanced Search", HtmlAttributes=SubItemHtmlAttribute, Id="advancedSearch" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Reports",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Some Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
-                        new MenuItem { Text= "Another Report", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Utilities",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Some Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" },
-                        new MenuItem { Text= "Another Utility", HtmlAttributes=SubItemHtmlAttribute, Id="utility" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
         }
 
-        public void OnItemSelected(string selectedItem)
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            if (selectedItem.Length > 0)
+            new ModuleMenuItem
             {
-                string url = "/customers";
-
-                switch (selectedItem)
+                Text = "Placeholder",
+                Id = (int)CustomersMenuId.Customers,
+                SubItems = new List<ModuleMenuItem>
                 {
-                    case "customerList":
-                        navigationManager.NavigateTo($"{url}/listing");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                    new ModuleMenuItem { Text="Customer List", Url=$"{ModuleUrl}/listing", Id=(int)CustomersMenuId.CustomerList },
+                    new ModuleMenuItem { Text="Advanced Search", Url=$"{ModuleUrl}", Id=(int)CustomersMenuId.AdvancedSearch }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Reports",
+                Id = (int)CustomersMenuId.Reports,
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Utilities",
+                Id = (int)CustomersMenuId.Utilities,
+                Url = ""
             }
-        }
-
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+         };
     }
 }

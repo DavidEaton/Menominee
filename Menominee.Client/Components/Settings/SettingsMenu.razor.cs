@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Settings
@@ -7,129 +7,64 @@ namespace Menominee.Client.Components.Settings
     public partial class SettingsMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/settings";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
-            {
-                new MenuItem
-                {
-                    Text = "General",
-                    //IconCss = "em-icons e-file",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Company Information", HtmlAttributes=SubItemHtmlAttribute, Id="companyInfo"/*, ChildContent=ChildContent*/},
-                        new MenuItem { Text= "Custom Settings", HtmlAttributes=SubItemHtmlAttribute, Id="customSettings"}
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new
-                MenuItem {
-                    Text = "Shop",
-                    //IconCss = "em-icons e-edit",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Shop Information", HtmlAttributes=SubItemHtmlAttribute, Id="shopInfo" },
-                        new MenuItem { Text= "Credit Cards", HtmlAttributes=SubItemHtmlAttribute, Id="creditCards" },
-                        new MenuItem { Text= "Sale Codes", HtmlAttributes=SubItemHtmlAttribute, Id="saleCodes" },
-                        new MenuItem { Text= "Shop Supplies", HtmlAttributes=SubItemHtmlAttribute, Id="shopSupplies" },
-                        //new MenuItem { Text= "Sales Departments", HtmlAttributes=SubItemHtmlAttribute, Id="salesDepartments" },
-                        new MenuItem { Separator= true, HtmlAttributes=SubItemHtmlAttribute },
-                        new MenuItem { Text= "Ordering & Catalogs", HtmlAttributes=SubItemHtmlAttribute, Id="orderingAndCatalogs" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new
-                MenuItem {
-                    Text = "Taxes",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Sales Taxes", HtmlAttributes=SubItemHtmlAttribute, Id="salesTaxes" },
-                        new MenuItem { Text= "Excise / Disposal / HazMat Fees", HtmlAttributes=SubItemHtmlAttribute, Id="exciseFees" },
-                        new MenuItem { Text= "Customer Tax Profiles", HtmlAttributes=SubItemHtmlAttribute, Id="customerTaxProfiles" },
-                        new MenuItem { Text= "Part Tax Profiles", HtmlAttributes=SubItemHtmlAttribute, Id="partTaxProfiles" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "User",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "User Information", HtmlAttributes=SubItemHtmlAttribute, Id="userInfo" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
         }
 
-        public void OnItemSelected(string selectedItem)
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            if (selectedItem.Length > 0)
+            new ModuleMenuItem
             {
-                string url = "/settings";
-
-                switch (selectedItem)
+                Text = "General",
+                Id = (int)SettingsMenuId.General,
+                SubItems = new List<ModuleMenuItem>
                 {
-                    case "companyInfo":
-                        navigationManager.NavigateTo($"{url}/companyinfo");
-                        break;
-                    case "customSettings":
-                        navigationManager.NavigateTo($"{url}/customsettings");
-                        break;
-                    case "shopInfo":
-                        navigationManager.NavigateTo($"{url}/shopinfo");
-                        break;
-                    case "creditCards":
-                        navigationManager.NavigateTo($"{url}/creditcards");
-                        break;
-                    case "saleCodes":
-                        navigationManager.NavigateTo($"{url}/salecodes");
-                        break;
-                    case "shopSupplies":
-                        navigationManager.NavigateTo($"{url}/shopsupplies");
-                        break;
-                    case "salesDepartments":
-                        navigationManager.NavigateTo($"{url}/salesdepartments");
-                        break;
-                    case "orderingAndCatalogs":
-                        navigationManager.NavigateTo($"{url}/orderingcatalogs");
-                        break;
-                    case "salesTaxes":
-                        navigationManager.NavigateTo($"{url}/salestaxes");
-                        break;
-                    case "exciseFees":
-                        navigationManager.NavigateTo($"{url}/excisefees");
-                        break;
-                    case "customerTaxProfiles":
-                        //navigationManager.NavigateTo($"{url}/salestaxes");
-                        break;
-                    case "partTaxProfiles":
-                        //navigationManager.NavigateTo($"{url}/salestaxes");
-                        break;
-                    case "userInfo":
-                        navigationManager.NavigateTo($"{url}/userinfo");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                    new ModuleMenuItem { Text="Company Information", Url=$"{ModuleUrl}/companyinfo", Id=(int)SettingsMenuId.CompanyInformation },
+                    new ModuleMenuItem { Text="Custom Settings", Url=$"{ModuleUrl}/customsettings", Id=(int)SettingsMenuId.CustomSettings }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Shop",
+                Id = (int)SettingsMenuId.Shop,
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text="Shop Information", Url=$"{ModuleUrl}/shopinfo", Id=(int)SettingsMenuId.ShopInformation },
+                    new ModuleMenuItem { Text="Credit Cards", Url=$"{ModuleUrl}/creditcards", Id=(int)SettingsMenuId.CreditCards },
+                    new ModuleMenuItem { Text="Shop Supplies", Url=$"{ModuleUrl}/shopsupplies", Id=(int)SettingsMenuId.ShopSupplies },
+                    new ModuleMenuItem { Separator=true },
+                    new ModuleMenuItem { Text="Ordering & Catalogs", Url=$"{ModuleUrl}/orderingcatalogs", Id=(int)SettingsMenuId.OrderingAndCatalogs },
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Taxes",
+                Id = (int)SettingsMenuId.Taxes,
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text="Sales Taxes", Url=$"{ModuleUrl}/salestaxes", Id=(int)SettingsMenuId.SalesTaxes },
+                    new ModuleMenuItem { Text="Excise / Disposal / HazMat Fees", Url=$"{ModuleUrl}/excisefees", Id=(int)SettingsMenuId.ExciseDisposalHazMat },
+                    new ModuleMenuItem { Text="Customer Tax Profiles", Url=$"{ModuleUrl}", Id=(int)SettingsMenuId.CustomerTaxProfiles },
+                    new ModuleMenuItem { Text="Part Tax Profiles", Url=$"{ModuleUrl}", Id=(int)SettingsMenuId.PartTaxProfiles }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "User",
+                Id = (int)SettingsMenuId.User,
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text="User Information", Url=$"{ModuleUrl}/userinfo", Id=(int)SettingsMenuId.UserInformation }
+                },
+                Url = ""
             }
-        }
-
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+         };
     }
 }

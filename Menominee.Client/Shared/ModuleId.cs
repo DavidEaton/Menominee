@@ -7,6 +7,7 @@ namespace Menominee.Client.Shared
 {
     public enum ModuleId
     {
+        MainMenu,
         Home,
         Dispatch,
         RepairOrders,

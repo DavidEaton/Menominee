@@ -32,54 +32,79 @@
     font-style: normal;
 }
 
+app {
+    display: flex;
+}
 
-#menuitem-dispatch:hover, .mi-dispatch {
+.content {
+    padding-top: 1.1rem;
+}
+
+#menuitem-home:hover, .mi-home, #menuitem-home.k-drawer-item.k-selected {
+    background-color: var(--bg-color-medium) !important;
+    color: white;
+}
+
+#menuitem-dispatch:hover, .mi-dispatch, #menuitem-dispatch.k-drawer-item.k-selected {
     background-color: var(--dispatch-primary) !important;
+    color: white;
 }
 
-#menuitem-repairorders:hover, .mi-repairorders {
+#menuitem-repairorders:hover, .mi-repairorders, #menuitem-repairorders.k-drawer-item.k-selected {
     background-color: var(--repairorders-primary) !important;
+    color: white;
 }
 
-#menuitem-inspections:hover, .mi-inspections {
+#menuitem-inspections:hover, .mi-inspections, #menuitem-inspections.k-drawer-item.k-selected {
     background-color: var(--inspections-primary) !important;
+    color: white;
 }
 
-#menuitem-schedule:hover, .mi-schedule {
+#menuitem-schedule:hover, .mi-schedule, #menuitem-schedule.k-drawer-item.k-selected {
     background-color: var(--schedule-primary) !important;
+    color: white;
 }
 
-#menuitem-partorders:hover, .mi-partorders {
+#menuitem-partorders:hover, .mi-partorders, #menuitem-partorders.k-drawer-item.k-selected {
     background-color: var(--partorders-primary) !important;
+    color: white;
 }
 
-#menuitem-inventory:hover, .mi-inventory {
+#menuitem-inventory:hover, .mi-inventory, #menuitem-inventory.k-drawer-item.k-selected {
     background-color: var(--inventory-primary) !important;
+    color: white;
 }
 
-#menuitem-reports:hover, .mi-reports {
+#menuitem-reports:hover, .mi-reports, #menuitem-reports.k-drawer-item.k-selected {
     background-color: var(--reports-primary) !important;
+    color: white;
 }
 
-#menuitem-customers:hover, .mi-customers {
+#menuitem-customers:hover, .mi-customers, #menuitem-customers.k-drawer-item.k-selected {
     background-color: var(--customers-primary) !important;
+    color: white;
 }
 
-#menuitem-receivables:hover, .mi-receivables {
+#menuitem-receivables:hover, .mi-receivables, #menuitem-receivables.k-drawer-item.k-selected {
     background-color: var(--receivables-primary) !important;
+    color: white;
 }
 
-#menuitem-payables:hover, .mi-payables {
+#menuitem-payables:hover, .mi-payables, #menuitem-payables.k-drawer-item.k-selected {
     background-color: var(--payables-primary) !important;
+    color: white;
 }
 
-#menuitem-employees:hover, .mi-employees {
+#menuitem-employees:hover, .mi-employees, #menuitem-employees.k-drawer-item.k-selected {
     background-color: var(--employees-primary) !important;
+    color: white;
 }
 
-#menuitem-settings:hover, .mi-settings {
+#menuitem-settings:hover, .mi-settings, #menuitem-settings.k-drawer-item.k-selected {
     background-color: var(--settings-primary) !important;
+    color: white;
 }
+
 
 .m-pad-top {
     padding-top: 1em;
@@ -128,11 +153,11 @@
 
 .m-main-content {
     /*padding: 64px 6px 6px 6px;*/
-    padding: 64px 1rem 1rem 1rem;
+    /*padding: 64px 1rem 1rem 1rem;*/
     overflow-y: auto;
     /*overflow-x: hidden;*/
     /*max-height: calc(100vh - 57px);*/
-    min-height: calc(100vh - 57px);
+    /*min-height: calc(100vh - 57px);*/
 }
 
 .m-form {
@@ -291,3 +316,29 @@
     .button-border-success:hover, .button-border-success:focus, .button-border-success:active, .button-border-success.active {
         border: 3px solid #2e8269;
     }
+
+@media (max-width: 767.98px) {
+    .main .top-row .sms {
+        display: none;
+    }
+
+    .main .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .main .top-row a, .main .top-row .btn-link {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .login-display {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    app {
+        flex-direction: row;
+    }
+}

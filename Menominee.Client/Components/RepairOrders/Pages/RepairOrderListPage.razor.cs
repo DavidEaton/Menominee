@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         [Parameter]
         public long ROToSelect { get; set; } = 0;
+
+        //[CascadingParameter]
+        //MainLayout mainLayout { get; set; }
 
         public IReadOnlyList<RepairOrderToReadInList> ROList;
         public IEnumerable<RepairOrderToReadInList> SelectedList { get; set; } = Enumerable.Empty<RepairOrderToReadInList>();
@@ -64,6 +68,7 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         private void OnAdd()
         {
+            //ToggleEditMenu(true);
             NavigationManager.NavigateTo("repairorders/ro/0");
         }
 

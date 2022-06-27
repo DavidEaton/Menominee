@@ -1,64 +1,33 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
-using System;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inspections
 {
     public partial class InspectionsMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/inspections";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
-            {
-                new MenuItem
-                {
-                    Text = "Placeholder",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Item 1", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" },
-                        new MenuItem { Text= "Item 2", HtmlAttributes=SubItemHtmlAttribute, Id="xxx" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
         }
 
-        public void OnItemSelected(string selectedItem)
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            if (selectedItem.Length > 0)
+            new ModuleMenuItem
             {
-                string url = "/inspections";
-
-                switch (selectedItem)
+                Text = "Placeholder",
+                Id = (int)InspectionsMenuId.Placeholder,
+                SubItems = new List<ModuleMenuItem>
                 {
-                    case "placeholder":
-                        navigationManager.NavigateTo($"{url}/placeholder");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)InspectionsMenuId.Placeholder },
+                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)InspectionsMenuId.Placeholder }
+                },
+                Url = ""
             }
-        }
-
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+         };
     }
 }

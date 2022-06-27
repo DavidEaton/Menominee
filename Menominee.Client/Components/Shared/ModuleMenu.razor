@@ -1,34 +1,50 @@
-﻿@using Syncfusion.Blazor.Navigations
-
-<div class="@ModuleHeaderClass()">
+﻿<div class="sb-header">
     <div class="sb-header-left sb-left sb-table">
-        <div class="sb-header-item m-brand" id="sb-header-text">
-            @*<span class="e-icons @(ModuleIconCss)"></span>*@
-            <span class="material-icons">@ModuleIconCss</span>
+        <div class="sb-header-item sb-table-cell m-brand" id="sb-header-text">
+            <span class="material-icons module-icon">@IconName</span>
             <span>@ModuleName</span>
         </div>
     </div>
-    <div class="sb-table sb-header-right">
+    <div class="sb-header-right sb-left sb-table">
         <div class="sb-table-cell m-hover-white" id="menu-items">
             <div>
-                <SfMenu Items="@MenuItems" TValue="MenuItem">
-                    <MenuEvents TValue="MenuItem" ItemSelected="@OnMenuItemSelected"></MenuEvents>
-                </SfMenu>
+                <TelerikMenu Data="@MenuItems"
+                             ItemsField="@nameof(ModuleMenuItem.SubItems)"
+                             TextField="@nameof(ModuleMenuItem.Text)"
+                             UrlField="@nameof(ModuleMenuItem.Url)"
+                             OnClick="@((ModuleMenuItem item) => OnClickHandler(item))">
+                </TelerikMenu>
             </div>
         </div>
     </div>
 </div>
 
+<script suppress-error="BL9992">
+        function closeMenu() {
+            setTimeout(function () {
+                var mouseLeaveEvent = new Event('mouseleave');
+                var rootNodes = document.querySelectorAll("li.k-menu-item");
+                rootNodes.forEach(function (elem) { elem.dispatchEvent(mouseLeaveEvent); })
+            }, 30);
+        }
+</script>
+
 <style>
     .sb-header {
         height: 50px;
-        background: var(--bg-color-medium);
+        background: #6096ba;
         box-shadow: 0 8px 11px -6px rgb(0 0 0 / 12%);
         z-index: 20;
         overflow: visible;
     }
 
-    .e-view {
+    .material-icons.module-icon {
+        font-size: 24px;
+        height: unset;
+        vertical-align: middle;
+    }
+
+/*    .e-view {
         bottom: 0;
         left: 0;
         overflow: hidden;
@@ -36,7 +52,7 @@
         display: block;
         right: 0;
         top: 0;
-    }
+    }*/
 
     .sb-header div, .sb-header span {
         outline: none;
@@ -45,12 +61,12 @@
         outline-width: initial;
     }
 
-    .sb-header div, .sb-header span {
-        outline: none;
+    .sb-header-left {
+        height: 100%;
     }
 
-    .sb-header-left, .sb-header-right {
-        height: 100%;
+    .sb-header-right {
+        max-height: 50px !important;
     }
 
     .sb-table {
@@ -64,6 +80,7 @@
     .sb-table-cell {
         display: table-cell;
         vertical-align: middle;
+        max-height: 50px !important;
     }
 
     .sb-right {
@@ -75,20 +92,12 @@
         /*font-size: 18px;*/
         font-size: 1.25rem;
         color: white;
-        height: 100%;
         font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif";
-        opacity: 87%;
-        vertical-align: middle;
-    }
-
-    #sb-header-text .material-icons {
-        padding-top: 13px;
-        vertical-align: middle;
-        height: 100%;
+        /*opacity: 87%;*/
     }
 
     .e-icons::before {
-        font-size: 1rem;/*16px;*/
+        font-size: 1rem;
     }
 
     .m-settings-icon::before {
@@ -128,13 +137,13 @@
     }
 
     .e-menu-wrapper .e-menu, .e-menu-container .e-menu {
-        background-color: var(--bg-color-medium);
+        background-color: #6096ba;
         /* background-color: #fff; */
         color: #007bff;
     }
 
     .e-menu-wrapper ul, .e-menu-container ul {
-        background-color: var(--bg-color-medium);
+        background-color: #6096ba;
         color: white;
         /*opacity: 87%;*/
     }
@@ -164,8 +173,28 @@
         color: black;
     }
 
-/*    #menu-items {
-        font-size: 1rem !important;
+    .k-reset.k-header.k-menu.telerik-blazor.k-widget.k-menu-horizontal-menu {
+        background-color: #6096ba;
+        height: 50px;
     }
-*/
+
+    .k-menu:not(.k-context-menu) {
+        background-color: #6096ba;
+        height: 50px;
+        /*color: white !important;*/
+        align-content: center;
+    }
+
+    .k-menu:not(.k-context-menu) > .k-item {
+        color: white;
+    }
+
+    .k-icon.k-i-arrow-60-down {
+        font-family: "WebComponentsIcons" !important;
+        height: unset !important;
+    }
+
+    .k-menu-item {
+        flex-flow: unset;
+    }
 </style>

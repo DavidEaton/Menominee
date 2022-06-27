@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Inventory
@@ -7,70 +7,39 @@ namespace Menominee.Client.Components.Inventory
     public partial class InventoryMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/inventory";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
-            {
-                new MenuItem
-                {
-                    Text = "Items",
-                    Id = "inventoryList",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Orders",
-                    Id = "orders",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Reports",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Total Value of Stock", HtmlAttributes=SubItemHtmlAttribute, Id="report" },
-                        new MenuItem { Text= "Something Else", HtmlAttributes=SubItemHtmlAttribute, Id="report" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
         }
 
-        public void OnItemSelected(string selectedItem)
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            if (selectedItem.Length > 0)
+            new ModuleMenuItem
             {
-                string url = "/inventory";
-
-                switch (selectedItem)
+                Text = "Items",
+                Id = (int)InventoryMenuId.Items,
+                Url = $"{ModuleUrl}/items/listing"
+            },
+            new ModuleMenuItem
+            {
+                Text = "Orders",
+                Id = (int)InventoryMenuId.Orders,
+                Url = $"{ModuleUrl}/orders"
+            },
+            new ModuleMenuItem
+            {
+                Text = "Reports",
+                Id = (int)InventoryMenuId.Reports,
+                SubItems = new List<ModuleMenuItem>
                 {
-                    case "inventoryList":
-                        navigationManager.NavigateTo($"{url}/items/listing");
-                        break;
-                    case "orders":
-                        navigationManager.NavigateTo($"{url}/orders");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                    new ModuleMenuItem { Text="Total Value Of Inventory", Url=$"{ModuleUrl}", Id=(int)InventoryMenuId.TotalValue },
+                    new ModuleMenuItem { Text="Top Sellers", Url=$"{ModuleUrl}", Id=(int)InventoryMenuId.TopSellers }
+                },
+                Url = ""
             }
-        }
-
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+         };
     }
 }

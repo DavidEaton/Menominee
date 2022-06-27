@@ -10,17 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Components\Shared\ModuleMenu.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Components\Shared\ModuleMenu.razor.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Pages\Receivables\Receivables.razor.cs" />
   </ItemGroup>
 
@@ -39,7 +28,7 @@
     <PackageReference Include="Syncfusion.Blazor.Schedule" Version="19.4.0.48" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="3.3.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="3.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
@@ -47,9 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Shared\MainLayout.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
     <Content Update="wwwroot\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

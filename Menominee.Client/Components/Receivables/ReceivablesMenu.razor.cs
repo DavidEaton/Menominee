@@ -1,102 +1,70 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
-using System;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Receivables
 {
     public partial class ReceivablesMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/receivables";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
-            {
-                new MenuItem
-                {
-                    Text = "Accounts",
-                    //IconCss = "em-icons e-file",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Edit", HtmlAttributes=SubItemHtmlAttribute, Id="customerList"/*, ChildContent=ChildContent*/},
-                        new MenuItem { Text= "Credit Hold List", HtmlAttributes=SubItemHtmlAttribute, Id="creditHoldList"}
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new
-                MenuItem {
-                    Text = "Transactions",
-                    //IconCss = "em-icons e-edit",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "New Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                        new MenuItem { Text= "Batch Files", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                        new MenuItem { Text= "Apply Open Credits", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                        new MenuItem { Text= "Clear Paid Transactions", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                        new MenuItem { Text= "Unapply Transaction", HtmlAttributes=SubItemHtmlAttribute, Id="" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Service Charges",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Create & Post", HtmlAttributes=SubItemHtmlAttribute, Id="" },
-                        new MenuItem { Text= "Waive Charges", HtmlAttributes=SubItemHtmlAttribute, Id="" }
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Reports",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Setup",
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
         }
 
-        public void OnItemSelected(string selectedItem)
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            if (selectedItem.Length > 0)
+            new ModuleMenuItem
             {
-                string url = "/receivables";
-
-                switch (selectedItem)
+                Text = "Accounts",
+                Id = (int)ReceivablesMenuId.Accounts,
+                SubItems = new List<ModuleMenuItem>
                 {
-                    case "customerList":
-                        navigationManager.NavigateTo($"{url}/accounts/listing");
-                        break;
-                    case "creditHoldList":
-                        navigationManager.NavigateTo($"{url}/accounts/creditHoldListing");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                    new ModuleMenuItem { Text="Accounts List", Url=$"{ModuleUrl}/accounts/list", Id=(int)ReceivablesMenuId.AccountsList },
+                    new ModuleMenuItem { Text="Credit Hold List", Url=$"{ModuleUrl}/accounts/creditholdlist", Id=(int)ReceivablesMenuId.CreditHoldList }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Transactions",
+                Id = (int)ReceivablesMenuId.Transactions,
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text="New Transaction", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.NewTransaction },
+                    new ModuleMenuItem { Text="Batch Files", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.BatchFiles },
+                    new ModuleMenuItem { Text="Apply Open Credits", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.ApplyOpenCredits },
+                    new ModuleMenuItem { Text="Clear Paid Transactions", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.ClearPaidTransactions },
+                    new ModuleMenuItem { Text="Unapply Transaction", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.UnapplyTransaction }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Service Charges",
+                Id = (int)ReceivablesMenuId.ServiceCharges,
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text="Create & Post", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.CreateAndPost },
+                    new ModuleMenuItem { Text="Waive Charges", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.WaiveCharges }
+                },
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Reports",
+                Id = (int)ReceivablesMenuId.Reports,
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Setup",
+                Id = (int)ReceivablesMenuId.Setup,
+                Url = ""
             }
-        }
-
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+         };
     }
 }

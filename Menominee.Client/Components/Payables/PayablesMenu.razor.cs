@@ -1,94 +1,84 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
-using Syncfusion.Blazor.Navigations;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class PayablesMenu
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager navigationManager { get; set; }
 
-        protected override void OnInitialized()
+        private static string ModuleUrl = "/payables";
+
+        public void OnItemSelected(ModuleMenuItem selectedItem)
         {
-#pragma warning disable BL0005            
-            menuItems = new List<MenuItem>()
+            if (selectedItem.Id >= 0)
             {
-                new MenuItem
-                {
-                    Text = "Invoices",
-                    Id = "invoices",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Credit Returns",
-                    Id = "creditReturns",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Statements",
-                    Id = "statements",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Vendors",
-                    Id = "vendors",
-                    HtmlAttributes=ItemHtmlAttribute
-                },
-                new MenuItem
-                {
-                    Text = "Reports",
-                    Items = new List<MenuItem>
-                    {
-                        new MenuItem { Text= "Vendor List", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                        new MenuItem { Separator= true, HtmlAttributes=SubItemHtmlAttribute },
-                        new MenuItem { Text= "Vendor Detail", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                        new MenuItem { Text= "Vendor Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                        new MenuItem { Text= "Invoice Summary", HtmlAttributes=SubItemHtmlAttribute, Id="vendorListReport" },
-                    },
-                    HtmlAttributes=ItemHtmlAttribute
-                }
-            };
-#pragma warning restore BL0005            
-        }
+                //string url = "/payables/" + selectedItem.Url;
+                //navigationManager.NavigateTo(url);
+                //string url = "/payables";
+                //navigationManager.NavigateTo($"{url}/{selectedItem.Url}");
+                //navigationManager.NavigateTo(selectedItem.Url);
 
-        public void OnItemSelected(string selectedItem)
-        {
-            if (selectedItem.Length > 0)
-            {
-                string url = "/payables";
-
-                switch (selectedItem)
-                {
-                    case "invoices":
-                        navigationManager.NavigateTo($"{url}/invoices/listing");
-                        break;
-                    case "creditReturns":
-                        navigationManager.NavigateTo($"{url}/returns/listing");
-                        break;
-                    case "vendors":
-                        navigationManager.NavigateTo($"{url}/vendors/listing");
-                        break;
-                    default:
-                        navigationManager.NavigateTo(url);
-                        break;
-                }
+                //switch (selectedItem?.Id >= 0)
+                //{
+                //    case "invoices":
+                //        navigationManager.NavigateTo($"{url}/invoices/listing");
+                //        break;
+                //    case "creditReturns":
+                //        navigationManager.NavigateTo($"{url}/returns/listing");
+                //        break;
+                //    case "vendors":
+                //        navigationManager.NavigateTo($"{url}/vendors/listing");
+                //        break;
+                //    default:
+                //        navigationManager.NavigateTo(url);
+                //        break;
+                //}
             }
         }
 
-        private List<MenuItem> menuItems = null;
-
-        static Dictionary<string, object> SubItemHtmlAttribute = new Dictionary<string, object>()
+        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
         {
-            {"class", "m-menu-sub-item" }
-        };
-
-        static Dictionary<string, object> ItemHtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "m-menu-item" }
-        };
+            new ModuleMenuItem
+            {
+                Text = "Invoices",
+                Id = (int)PayablesMenuId.Invoices,
+                Url = $"{ModuleUrl}/invoices/listing"
+            },
+            new ModuleMenuItem
+            {
+                Text = "Credit Returns",
+                Id = (int)PayablesMenuId.CreditReturns,
+                Url = $"{ModuleUrl}/returns/listing"
+            },
+            new ModuleMenuItem
+            {
+                Text = "Statements",
+                Id = (int)PayablesMenuId.Statements,
+                Url = ""
+            },
+            new ModuleMenuItem
+            {
+                Text = "Vendors",
+                Id = (int)PayablesMenuId.Vendors,
+                Url = $"{ModuleUrl}/vendors/listing"
+            },
+            new ModuleMenuItem
+            {
+                Text = "Reports",
+                SubItems = new List<ModuleMenuItem>
+                {
+                    new ModuleMenuItem { Text= "Vendor List", Url="", Id=(int)PayablesMenuId.VendorListReport },
+                    new ModuleMenuItem { Separator= true, Url="" },
+                    new ModuleMenuItem { Text= "Vendor Detail", Url="", Id=(int)PayablesMenuId.VendorDetailReport },
+                    new ModuleMenuItem { Text= "Vendor Summary", Url="", Id=(int)PayablesMenuId.VendorSummaryReport },
+                    new ModuleMenuItem { Text= "Invoice Summary", Url="", Id=(int)PayablesMenuId.InvoiceSummaryReport }
+                },
+                Url = "/"
+            }
+         };
     }
 }

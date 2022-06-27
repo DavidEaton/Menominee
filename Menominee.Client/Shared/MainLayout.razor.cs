@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Navigations;
+﻿using Menominee.Client.Shared;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,207 +10,155 @@ namespace Menominee.Client.Shared
 {
     public partial class MainLayout
     {
-        SfSidebar Sidebar;
-        public bool SidebarExpanded = false;
-
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
-        //TelerikDrawer<DrawerItem> DrawerRef { get; set; }
-        //DrawerItem SelectedItem { get; set; }
-        //IEnumerable<DrawerItem> DrawerItems { get; set; } =
-        //    new List<DrawerItem>
-        //    {
-        //        new DrawerItem { Text = "Home", Icon = "", Url = "/" },
-        //        new DrawerItem { Text = "Dispatch Board", Icon = "", Url = "/" },
-        //        new DrawerItem { Text = "Tickets", Icon = "", Url = "/" },
-        //        new DrawerItem { Text = "Appointments", Icon = "", Url = "schedule" },
-        //        new DrawerItem { Text = "Appointments 2", Icon = "", Url = "telerikschedule" },
-        //        new DrawerItem { Text = "Reports", Icon = "", Url = "/" },
-        //        new DrawerItem { Text = "Inventory", Icon = "", Url = "inventory" },
-        //        new DrawerItem { Text = "Customers", Icon = "", Url = "customers" },
-        //        new DrawerItem { Text = "Receivables", Icon = "", Url = "receivables" },
-        //        new DrawerItem { Text = "Payables", Icon = "", Url = "payables" },
-        //        new DrawerItem { Text = "Settings", Icon = "", Url = "settings" }
-        //    };
+        bool DrawerExpanded { get; set; } = true;
+        DrawerItem SelectedItem { get; set; } 
+        TelerikDrawer<DrawerItem> DrawerRef { get; set; }
+        public bool RepairOrderEditMenuVisible { get; set; } = false;
+
+        // in this sample we hardcode the existing pages, in your case you can
+        // create the list based on your business logic (e.g., based on user roles/access)
+        List<DrawerItem> NavigablePages { get; set; } = new List<DrawerItem>
+        {
+            new DrawerItem { ItemId = ModuleId.MainMenu,     Text = "Main Menu",     ElementId = String.Empty,            Url = String.Empty },
+            new DrawerItem { ItemId = ModuleId.Home,         Text = "Home",          ElementId = "menuitem-home",         Url = "/",       Icon = "home" },
+            new DrawerItem { ItemId = ModuleId.Dispatch,     Text = "Dispatch",      ElementId = "menuitem-dispatch",     Url = "dispatch", Icon = "support_agent" },
+            new DrawerItem { ItemId = ModuleId.RepairOrders, Text = "Repair Orders", ElementId = "menuitem-repairorders", Url = "repairorders/worklog", Icon = "car_repair" },
+            new DrawerItem { ItemId = ModuleId.Inspections,  Text = "Inspections",   ElementId = "menuitem-inspections",  Url = "inspections", Icon = "content_paste_search" },
+            new DrawerItem { ItemId = ModuleId.Schedule,     Text = "Schedule",      ElementId = "menuitem-schedule",     Url = "schedule", Icon = "date_range" },
+            new DrawerItem { ItemId = ModuleId.PartOrders,   Text = "Parts Orders",  ElementId = "menuitem-partorders",   Url = "partsorders", Icon = "shopping_cart" },
+            new DrawerItem { ItemId = ModuleId.Inventory,    Text = "Inventory",     ElementId = "menuitem-inventory",    Url = "inventory", Icon = "warehouse" },
+            new DrawerItem { ItemId = ModuleId.Reports,      Text = "Reports",       ElementId = "menuitem-reports",      Url = "reports", Icon = "bar_chart" },
+            new DrawerItem { ItemId = ModuleId.Customers,    Text = "Customers",     ElementId = "menuitem-customers",    Url = "customers", Icon = "people" },
+            new DrawerItem { ItemId = ModuleId.Receivables,  Text = "Receivables",   ElementId = "menuitem-receivables",  Url = "receivables", Icon = "savings" },
+            new DrawerItem { ItemId = ModuleId.Payables,     Text = "Payables",      ElementId = "menuitem-payables",     Url = "payables", Icon = "payments" },
+            new DrawerItem { ItemId = ModuleId.Employees,    Text = "Employees",     ElementId = "menuitem-employees",    Url = "employees", Icon = "assignment_ind" },
+            new DrawerItem { ItemId = ModuleId.Settings,     Text = "Settings",      ElementId = "menuitem-settings",     Url = "settings", Icon = "settings" }
+        };
+
+        protected override void OnInitialized()
+        {
+            // pre-select the page the user lands on as the user clicks items,
+            // the DOM changes only in the Body and so the selected item stays active
+            var currPage = NavigationManager.Uri;
+            DrawerItem ActivePage = NavigablePages.Where(p => p.Url.ToLowerInvariant() == GetCurrentPage().ToLowerInvariant()).FirstOrDefault();
+            if (ActivePage != null)
+            {
+                SelectedItem = ActivePage;
+            }
+
+            base.OnInitialized();
+        }
+
+        public async Task ToggleDrawerAsync()
+        {
+            await DrawerRef.ToggleAsync();
+        }
+
+        public void ToggleDrawer()
+        {
+            DrawerExpanded = !DrawerExpanded;
+        }
+
+        public string GetCurrentPage()
+        {
+            string uriWithoutQueryString = NavigationManager.Uri.Split("?")[0];
+            string currPage = uriWithoutQueryString.Substring(Math.Min(NavigationManager.Uri.Length, NavigationManager.BaseUri.Length));
+            return string.IsNullOrWhiteSpace(currPage) ? "/" : currPage;
+        }
+
+        private async Task SelectAndNavigateAsync(DrawerItem item)
+        {
+            if (item != null)
+            {
+                if (item.ItemId == ModuleId.MainMenu)
+                    await DrawerRef.ToggleAsync();
+                else
+                {
+                    ToggleRepairOrderEditMenuDisplay(false);
+                    SelectedItem = item;
+                    await DrawerRef.CollapseAsync();
+                    NavigationManager.NavigateTo(SelectedItem.Url);
+                }
+            }
+        }
+
+        public string GetSelectedItemClass(DrawerItem item)
+        {
+            if (SelectedItem == null || item.ItemId == ModuleId.MainMenu)
+                return string.Empty;
+            return SelectedItem.Text.ToLowerInvariant().Equals(item.Text.ToLowerInvariant()) ? "k-selected" : "";
+        }
+        
+        private string MenuItemClass(ModuleId moduleId)
+        {
+            string _class = "k-icon material-icons ";
+            if (SelectedItem?.ItemId == moduleId)
+            {
+                if (moduleId == ModuleId.Home)
+                    _class += "mi-home";
+                else if (moduleId == ModuleId.Dispatch)
+                    _class += "mi-dispatch";
+                else if (moduleId == ModuleId.RepairOrders)
+                    _class += "mi-repairorders";
+                else if (moduleId == ModuleId.Inspections)
+                    _class += "mi-inspections";
+                else if (moduleId == ModuleId.Schedule)
+                    _class += "mi-schedule";
+                else if (moduleId == ModuleId.PartOrders)
+                    _class += "mi-partorders";
+                else if (moduleId == ModuleId.Inventory)
+                    _class += "mi-inventory";
+                else if (moduleId == ModuleId.Reports)
+                    _class += "mi-reports";
+                else if (moduleId == ModuleId.Customers)
+                    _class += "mi-customers";
+                else if (moduleId == ModuleId.Receivables)
+                    _class += "mi-receivables";
+                else if (moduleId == ModuleId.Payables)
+                    _class += "mi-payables";
+                else if (moduleId == ModuleId.Employees)
+                    _class += "mi-employees";
+                else if (moduleId == ModuleId.Settings)
+                    _class += "mi-settings";
+            }
+            return _class;
+        }
+
+        public string GetIconName(DrawerItem item)
+        {
+            string iconName;
+
+            if (item.ItemId == ModuleId.MainMenu)
+            {
+                if (DrawerExpanded)
+                    iconName = "navigate_before";
+                else
+                    iconName = "navigate_next";
+            }
+            else
+                iconName = item.Icon;
+
+            return iconName;
+        }
+
+        public void ToggleRepairOrderEditMenuDisplay(bool display)
+        {
+            RepairOrderEditMenuVisible = display;
+            StateHasChanged();
+        }
 
         //public class DrawerItem
         //{
         //    public string Text { get; set; }
-        //    public string Icon { get; set; }
         //    public string Url { get; set; }
+        //    public string Icon { get; set; }
+        //    public string IconClass { get; set; }
+        //    public string ElementId { get; set; }
+        //    public bool IsSeparator { get; set; }
+        //    public ModuleId ItemId { get; set; }
         //}
-
-        private ModuleId SelectedModule { get; set; } = ModuleId.Home;
-
-        Dictionary<string, object> HtmlAttribute = new Dictionary<string, object>()
-        {
-            {"class", "dockSidebar" }
-        };
-
-        public void Toggle()
-        {
-            SidebarExpanded = !SidebarExpanded;
-        }
-
-        public void ShowHome()
-        {
-            GotoModule(ModuleId.Home);
-        }
-
-        public void ShowDispatch()
-        {
-            GotoModule(ModuleId.Dispatch);
-        }
-
-        public void ShowRepairOrders()
-        {
-            GotoModule(ModuleId.RepairOrders);
-        }
-
-        public void ShowInspections()
-        {
-            GotoModule(ModuleId.Inspections);
-        }
-
-        public void ShowSchedule()
-        {
-            GotoModule(ModuleId.Schedule);
-        }
-
-        public void ShowPartOrders()
-        {
-            GotoModule(ModuleId.PartOrders);
-        }
-
-        public void ShowInventory()
-        {
-            GotoModule(ModuleId.Inventory);
-        }
-
-        public void ShowReports()
-        {
-            GotoModule(ModuleId.Reports);
-        }
-
-        public void ShowCustomers()
-        {
-            GotoModule(ModuleId.Customers);
-        }
-
-        public void ShowReceivables()
-        {
-            GotoModule(ModuleId.Receivables);
-        }
-
-        public void ShowPayables()
-        {
-            GotoModule(ModuleId.Payables);
-        }
-
-        public void ShowEmployees()
-        {
-            GotoModule(ModuleId.Employees);
-        }
-
-        public void ShowSettings()
-        {
-            GotoModule(ModuleId.Settings);
-        }
-
-        //public void ShowSchedule2()
-        //{
-        //    GotoModule("telerikschedule");
-        //}
-
-        public void GotoModule(ModuleId moduleId)
-        {
-            if (SidebarExpanded)
-            {
-                Toggle();
-            }
-
-            SelectedModule = moduleId;
-
-            string url = string.Empty;
-
-            switch (moduleId) 
-            {
-                case ModuleId.Home:
-                    url = string.Empty;
-                    break;
-                case ModuleId.Dispatch:
-                    url = "dispatch";
-                    break;
-                case ModuleId.RepairOrders:
-                    url = "repairorders/worklog";
-                    break;
-                case ModuleId.Inspections:
-                    url = "inspections";
-                    break;
-                case ModuleId.Schedule:
-                    url = "schedule";
-                    break;
-                case ModuleId.PartOrders:
-                    url = "partsorders";
-                    break;
-                case ModuleId.Inventory:
-                    url = "inventory";
-                    break;
-                case ModuleId.Reports:
-                    url = "reports";
-                    break;
-                case ModuleId.Customers:
-                    url = "customers";
-                    break;
-                case ModuleId.Receivables:
-                    url = "receivables";
-                    break;
-                case ModuleId.Payables:
-                    url = "payables";
-                    break;
-                case ModuleId.Employees:
-                    url = "employees";
-                    break;
-                case ModuleId.Settings:
-                    url = "settings";
-                    break;
-                default:
-                    url = string.Empty;
-                    break;
-            };
-
-            navigationManager.NavigateTo($"/{url}");
-        }
-
-        private string MenuItemClass(ModuleId moduleId)
-        {
-            string _class = "sidebar-item";
-            if (moduleId == ModuleId.Dispatch && SelectedModule == ModuleId.Dispatch)
-                _class += " mi-dispatch";
-            else if (moduleId == ModuleId.RepairOrders && SelectedModule == ModuleId.RepairOrders)
-                _class += " mi-repairorders";
-            else if (moduleId == ModuleId.Inspections && SelectedModule == ModuleId.Inspections)
-                _class += " mi-inspections";
-            else if (moduleId == ModuleId.Schedule && SelectedModule == ModuleId.Schedule)
-                _class += " mi-schedule";
-            else if (moduleId == ModuleId.PartOrders && SelectedModule == ModuleId.PartOrders)
-                _class += " mi-partorders";
-            else if (moduleId == ModuleId.Inventory && SelectedModule == ModuleId.Inventory)
-                _class += " mi-inventory";
-            else if (moduleId == ModuleId.Reports && SelectedModule == ModuleId.Reports)
-                _class += " mi-reports";
-            else if (moduleId == ModuleId.Customers && SelectedModule == ModuleId.Customers)
-                _class += " mi-customers";
-            else if (moduleId == ModuleId.Receivables && SelectedModule == ModuleId.Receivables)
-                _class += " mi-receivables";
-            else if (moduleId == ModuleId.Payables && SelectedModule == ModuleId.Payables)
-                _class += " mi-payables";
-            else if (moduleId == ModuleId.Employees && SelectedModule == ModuleId.Employees)
-                _class += " mi-employees";
-            else if (moduleId == ModuleId.Settings && SelectedModule == ModuleId.Settings)
-                _class += " mi-settings";
-            return _class;
-        }
     }
 }
