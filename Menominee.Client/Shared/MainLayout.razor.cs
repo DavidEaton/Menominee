@@ -13,10 +13,12 @@ namespace Menominee.Client.Shared
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        bool DrawerExpanded { get; set; } = true;
+        public bool DrawerExpanded { get; set; } = true;
         DrawerItem SelectedItem { get; set; } 
         TelerikDrawer<DrawerItem> DrawerRef { get; set; }
         public bool RepairOrderEditMenuVisible { get; set; } = false;
+
+        private bool displayIsLarge = false;
 
         // in this sample we hardcode the existing pages, in your case you can
         // create the list based on your business logic (e.g., based on user roles/access)
@@ -60,6 +62,18 @@ namespace Menominee.Client.Shared
         public void ToggleDrawer()
         {
             DrawerExpanded = !DrawerExpanded;
+        }
+
+        private string GetSMSVisibleBreakpoint()
+        {
+            //Console.WriteLine(DrawerExpanded ? "(min-width: 630px)" : "(min-width: 500px)");
+            return DrawerExpanded ? "(min-width: 630px)" : "(min-width: 500px)";
+        }
+
+        public void MediaQueryChange(bool matchesMediaQuery)
+        {
+            displayIsLarge = matchesMediaQuery;
+            //Console.WriteLine(matchesMediaQuery);
         }
 
         public string GetCurrentPage()

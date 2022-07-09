@@ -1,38 +1,55 @@
-﻿<div class="sb-header">
-    <div class="sb-header-left sb-left sb-table">
+﻿@using Syncfusion.Blazor.Navigations
+
+@*<TelerikMediaQuery Media="@SmallBreakpoint" OnChange="@SmallMediaQueryChange"></TelerikMediaQuery>
+<TelerikMediaQuery Media="@MediumBreakpoint" OnChange="@MediumMediaQueryChange"></TelerikMediaQuery>*@
+<TelerikMediaQuery Media="@GetMenuBreakpoint()" OnChange="@MediaQueryChange"></TelerikMediaQuery>
+
+<div class="sb-header">
+    <div class="sb-header-left sb-left sb-table" id="moduleName">
         <div class="sb-header-item sb-table-cell m-brand" id="sb-header-text">
             <span class="material-icons module-icon">@IconName</span>
             <span>@ModuleName</span>
         </div>
     </div>
-    <div class="sb-header-right sb-left sb-table">
-        <div class="sb-table-cell m-hover-white" id="menu-items">
-            <div>
-                <TelerikMenu Data="@MenuItems"
-                             ItemsField="@nameof(ModuleMenuItem.SubItems)"
-                             TextField="@nameof(ModuleMenuItem.Text)"
-                             UrlField="@nameof(ModuleMenuItem.Url)"
-                             OnClick="@((ModuleMenuItem item) => OnClickHandler(item))">
-                </TelerikMenu>
+    @if (CurrentWindowSize == WindowSize.Large)
+    {
+        <div class="sb-header-right sb-left sb-table">
+            <div class="sb-table-cell m-hover-white" id="menu-items">
+                <div>
+                    <TelerikMenu Data="@MenuItems"
+                             @ref="HorizontalMenuObj"
+                             ItemsField="@nameof(MenuItem.Items)"
+                             TextField="@nameof(MenuItem.Text)"
+                             UrlField="@nameof(MenuItem.Url)"
+                             CloseOnClick="true"
+                             OnClick="@((MenuItem item) => OnClickHandler(item))">
+                    </TelerikMenu>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <SfMenu Items="@MenuItems" HamburgerMode="true" ShowItemOnClick="true" @ref="MenuObj">
+            <MenuEvents ItemSelected="OnOtherMenuItemClicked" TValue="MenuItem"></MenuEvents>
+        </SfMenu>
+    }
 </div>
 
-<script suppress-error="BL9992">
-        function closeMenu() {
-            setTimeout(function () {
-                var mouseLeaveEvent = new Event('mouseleave');
-                var rootNodes = document.querySelectorAll("li.k-menu-item");
-                rootNodes.forEach(function (elem) { elem.dispatchEvent(mouseLeaveEvent); })
-            }, 30);
-        }
-</script>
+@*<script suppress-error="BL9992">
+    function closeMenu() {
+        setTimeout(function() {
+            var mouseLeaveEvent = new Event('mouseleave');
+            var rootNodes = document.querySelectorAll("li.k-menu-item");
+            rootNodes.forEach(function(elem) { elem.dispatchEvent(mouseLeaveEvent); })
+        }, 30);
+    }
+</script>*@
 
 <style>
     .sb-header {
         height: 50px;
-        background: #6096ba;
+        background: var(--bg-color-medium);
         box-shadow: 0 8px 11px -6px rgb(0 0 0 / 12%);
         z-index: 20;
         overflow: visible;
@@ -43,16 +60,6 @@
         height: unset;
         vertical-align: middle;
     }
-
-/*    .e-view {
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-        position: absolute;
-        display: block;
-        right: 0;
-        top: 0;
-    }*/
 
     .sb-header div, .sb-header span {
         outline: none;
@@ -89,39 +96,9 @@
 
     #sb-header-text {
         padding-left: 22px;
-        /*font-size: 18px;*/
         font-size: 1.25rem;
         color: white;
         font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif";
-        /*opacity: 87%;*/
-    }
-
-    .e-icons::before {
-        font-size: 1rem;
-    }
-
-    .m-settings-icon::before {
-        content: '\e10b';
-    }
-
-    .m-schedule-icon::before {
-        content: '\e72f';
-    }
-
-    .m-reports-icon::before {
-        content: '\e7dd';
-    }
-
-    .m-customers-icon::before {
-        content: '\e7d3';
-    }
-
-    .m-placeholder-icon::before {
-        content: '\e7a4';
-    }
-
-    .m-empty-icon::before {
-        content: '\e7a0';
     }
 
     * {
@@ -136,22 +113,6 @@
         opacity: 100%;
     }
 
-    .e-menu-wrapper .e-menu, .e-menu-container .e-menu {
-        background-color: #6096ba;
-        /* background-color: #fff; */
-        color: #007bff;
-    }
-
-    .e-menu-wrapper ul, .e-menu-container ul {
-        background-color: #6096ba;
-        color: white;
-        /*opacity: 87%;*/
-    }
-
-    .e-menu-container {
-        vertical-align: middle;
-    }
-
     .m-brand {
         padding-left: 20px;
         padding-right: 20px;
@@ -161,40 +122,117 @@
         color: white !important;
     }
 
-    .m-menu-item, .m-menu-item .e-caret {
-        color: #dedede !important;
-    }
-
-        .m-menu-item:hover, .m-menu-item .e-caret:hover {
-            color: white !important;
-        }
-
-    .m-menu-sub-item {
-        color: black;
-    }
-
     .k-reset.k-header.k-menu.telerik-blazor.k-widget.k-menu-horizontal-menu {
-        background-color: #6096ba;
+        background-color: var(--bg-color-medium);
         height: 50px;
     }
 
     .k-menu:not(.k-context-menu) {
-        background-color: #6096ba;
+        background-color: var(--bg-color-medium);
         height: 50px;
-        /*color: white !important;*/
         align-content: center;
     }
 
-    .k-menu:not(.k-context-menu) > .k-item {
-        color: white;
-    }
+        .k-menu:not(.k-context-menu) > .k-item {
+            color: white;
+        }
 
     .k-icon.k-i-arrow-60-down {
         font-family: "WebComponentsIcons" !important;
         height: unset !important;
+        margin-right: 8px !important;
     }
 
     .k-menu-item {
         flex-flow: unset;
+    }
+
+    .k-menu-popup .k-menu-item:hover {
+        background-color: lightgray;
+    }
+
+    .drawer-sm.k-drawer-expanded .k-drawer.telerik-blazor {
+        width: 100%;
+    }
+
+    .drawer-sm.k-drawer-expanded .k-drawer-wrapper,
+    .drawer-sm.k-drawer-expanded .k-drawer-items {
+        width: 100% !important;
+    }
+
+    .drawer-sm.k-drawer-expanded .k-drawer {
+        max-width: 100vh;
+    }
+
+    .drawer-sm.k-drawer-expanded .k-overlay {
+        display: none;
+    }
+
+    .k-drawer-container {
+        position: relative;
+        width: 100%;
+        height: 95%;
+        min-height: 300px;
+    }
+
+        .k-drawer-container.k-drawer-overlay .k-drawer {
+            position: absolute;
+        }
+
+    .k-drawer-item.k-level-1 {
+        padding-inline-start: 60px;
+    }
+
+    .k-overlay {
+        position: absolute;
+    }
+
+    .e-menu-container, .e-menu-header, .e-menu-container.e-hamburger, .e-menu-container .e-menu-header {
+        height: 50px;
+        line-height: 50px;
+    }
+
+        .e-menu-container :not(.e-hamburger) {
+            height: unset;
+        }
+
+    .e-lib.e-menu.e-control.e-menu-parent {
+        background-color: lightgray;
+    }
+
+    .e-menu-container .e-menu .e-menu-item.e-focused {
+        background-color: #f2f4f6;
+    }
+
+    .e-menu-container.e-hamburger .e-menu-header,
+    .e-menu-container.e-hamburger .e-menu-header .e-menu-icon {
+        color: white !important;
+    }
+
+    .e-menu-container .e-menu .e-menu-item.e-focused {
+        color: black;
+        font-weight: bold;
+    }
+
+        .e-menu-container .e-menu .e-menu-item .e-caret,
+        .e-menu-container .e-menu .e-menu-item.e-selected .e-caret,
+        .e-menu-container .e-menu .e-menu-item.e-selected,
+        a.e-menu-text.e-menu-url,
+        container .e-menu .e-menu-item e-menu-url,
+        .e-menu-container .e-menu .e-menu-item.e-focused .e-caret {
+            color: black !important;
+        }
+
+    .e-menu-container.e-hamburger ul.e-menu {
+        border-bottom: 1px solid lightgray !important;
+    }
+
+    .k-in .k-menu-link {
+        border: none !important;
+    }
+
+    .k-menu-link {
+        border-color: var(--bg-color-medium) !important;
+        outline-color: var(--bg-color-medium) !important;
     }
 </style>

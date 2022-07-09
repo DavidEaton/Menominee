@@ -1,5 +1,6 @@
 ﻿using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Settings
@@ -11,57 +12,59 @@ namespace Menominee.Client.Components.Settings
 
         private static string ModuleUrl = "/settings";
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        public int menuWidth { get; set; } = 336;
+
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "General",
-                Id = (int)SettingsMenuId.General,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)SettingsMenuId.General).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Company Information", Url=$"{ModuleUrl}/companyinfo", Id=(int)SettingsMenuId.CompanyInformation },
-                    new ModuleMenuItem { Text="Custom Settings", Url=$"{ModuleUrl}/customsettings", Id=(int)SettingsMenuId.CustomSettings }
+                    new MenuItem { Text="Company Information", Url=$"{ModuleUrl}/companyinfo", Id=((int)SettingsMenuId.CompanyInformation).ToString() },
+                    new MenuItem { Text="Custom Settings", Url=$"{ModuleUrl}/customsettings", Id=((int)SettingsMenuId.CustomSettings).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Shop",
-                Id = (int)SettingsMenuId.Shop,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)SettingsMenuId.Shop).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Shop Information", Url=$"{ModuleUrl}/shopinfo", Id=(int)SettingsMenuId.ShopInformation },
-                    new ModuleMenuItem { Text="Credit Cards", Url=$"{ModuleUrl}/creditcards", Id=(int)SettingsMenuId.CreditCards },
-                    new ModuleMenuItem { Text="Shop Supplies", Url=$"{ModuleUrl}/shopsupplies", Id=(int)SettingsMenuId.ShopSupplies },
-                    new ModuleMenuItem { Separator=true },
-                    new ModuleMenuItem { Text="Ordering & Catalogs", Url=$"{ModuleUrl}/orderingcatalogs", Id=(int)SettingsMenuId.OrderingAndCatalogs },
+                    new MenuItem { Text="Shop Information", Url=$"{ModuleUrl}/shopinfo", Id=((int)SettingsMenuId.ShopInformation).ToString() },
+                    new MenuItem { Text="Credit Cards", Url=$"{ModuleUrl}/creditcards", Id=((int)SettingsMenuId.CreditCards).ToString() },
+                    new MenuItem { Text="Shop Supplies", Url=$"{ModuleUrl}/shopsupplies", Id=((int)SettingsMenuId.ShopSupplies).ToString() },
+                    new MenuItem { Separator=true },
+                    new MenuItem { Text="Ordering & Catalogs", Url=$"{ModuleUrl}/orderingcatalogs", Id=((int)SettingsMenuId.OrderingAndCatalogs).ToString() },
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Taxes",
-                Id = (int)SettingsMenuId.Taxes,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)SettingsMenuId.Taxes).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Sales Taxes", Url=$"{ModuleUrl}/salestaxes", Id=(int)SettingsMenuId.SalesTaxes },
-                    new ModuleMenuItem { Text="Excise / Disposal / HazMat Fees", Url=$"{ModuleUrl}/excisefees", Id=(int)SettingsMenuId.ExciseDisposalHazMat },
-                    new ModuleMenuItem { Text="Customer Tax Profiles", Url=$"{ModuleUrl}", Id=(int)SettingsMenuId.CustomerTaxProfiles },
-                    new ModuleMenuItem { Text="Part Tax Profiles", Url=$"{ModuleUrl}", Id=(int)SettingsMenuId.PartTaxProfiles }
+                    new MenuItem { Text="Sales Taxes", Url=$"{ModuleUrl}/salestaxes", Id=((int)SettingsMenuId.SalesTaxes).ToString() },
+                    new MenuItem { Text="Excise / Disposal / HazMat Fees", Url=$"{ModuleUrl}/excisefees", Id=((int)SettingsMenuId.ExciseDisposalHazMat).ToString() },
+                    new MenuItem { Text="Customer Tax Profiles", Url=$"{ModuleUrl}", Id=((int)SettingsMenuId.CustomerTaxProfiles).ToString() },
+                    new MenuItem { Text="Part Tax Profiles", Url=$"{ModuleUrl}", Id=((int)SettingsMenuId.PartTaxProfiles).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "User",
-                Id = (int)SettingsMenuId.User,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)SettingsMenuId.User).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="User Information", Url=$"{ModuleUrl}/userinfo", Id=(int)SettingsMenuId.UserInformation }
+                    new MenuItem { Text="User Information", Url=$"{ModuleUrl}/userinfo", Id=((int)SettingsMenuId.UserInformation).ToString() }
                 },
                 Url = ""
             }

@@ -53,7 +53,6 @@ namespace Menominee.Client.Components.Settings
             await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
             {
-                //await JsInterop.InvokeVoidAsync("focusInputFromBlazor", new[] { ".defaultFocus" });
                 await Focus("name");
             }
         }

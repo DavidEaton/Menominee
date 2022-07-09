@@ -15,16 +15,36 @@
     <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
     <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js" defer></script>
     <script src="js/focusElement.js"></script>
-    <script src="js/autofocus.js"></script>
 </head>
 
-<body>
+<body onclick="bodyClick(event)">
     <!--<div id="app">Loading...</div>-->
     <app id="app"><component type="typeof(App)" render-mode="ServerPrerendered" /></app>
 
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f" crossorigin="anonymous"></script>
+
+    <!--This script handles closing hamburger menus when clicking elsewhere-->
+    <script>
+        var GLOBAL = {};
+        GLOBAL.DotNetReference = null;
+        GLOBAL.SetDotnetReference = function (pDotNetReference) {
+            GLOBAL.DotNetReference = pDotNetReference;
+        };
+
+        function bodyClick(e) {
+            if (!document.querySelectorAll('.e-menu-header').length || !document.querySelectorAll('.e-menu-parent').length) {
+                return;
+            }
+            if (!e.target.classList.contains("e-menu-container") && e.target.closest('.e-menu-container') == null) {
+                if (GLOBAL.DotNetReference) {
+                    GLOBAL.DotNetReference.invokeMethodAsync("HamburgerMenu", "documentClick");
+                }
+            }
+        }
+    </script>
+
 </body>
 
 </html>

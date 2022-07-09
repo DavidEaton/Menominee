@@ -1,36 +1,56 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+<TelerikMediaQuery Media="@GetBreakpoint()" OnChange="@MediaQueryChange"></TelerikMediaQuery>
 
 <div class="pt-3">
     <AuthorizeView>
         <Authorized>
-            <p class="log-link">@context.User.Identity.Name</p>
-            <a class="log-link"
+            @if (displayIsLarge)
+            {
+                <p class="log-link">@context.User.Identity.Name</p>
+                <a class="log-link"
                @onclick="BeginSignOut"
                title="Log out user"
-               style="color: #EDE8DC">&nbsp; | &nbsp; Log out</a>
+               style="color: #EDE8DC">&nbsp; | &nbsp; <span class="log-out-text">Log out</span> </a>
+            }
+            else
+            {
+                <button class="btn material-icons log-link-logout" title="Log out user" @onclick="BeginSignOut">logout</button>
+            }
         </Authorized>
         <NotAuthorized>
-            <a href="authentication/login"
+            @if (displayIsLarge)
+            {
+                <a href="authentication/login"
                class="log-link"
                title="Log in to StockTrac">Log in</a>
+            }
+            else
+            {
+                <button class="btn material-icons log-link-login" title="Log in to StockTrac" @onclick="BeginSignIn">login</button>
+            }
         </NotAuthorized>
     </AuthorizeView>
 </div>
 
-@code{
-    private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
-    }
-}
 <style>
-    .log-link {
+    .log-link, .log-link-logout, .log-link-login {
         color: #EDE8DC;
         display: inline;
+    }
+
+        .log-link:not(p):hover, .log-link-logout:hover, .log-link-login:hover {
+            color: white !important;
+        }
+
+    .log-out-text:hover {
+        text-decoration: underline !important;
+    }
+
+    .btn.material-icons {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
     }
 </style>

@@ -1,6 +1,8 @@
 ﻿@using Menominee.Client.Shared
 @inherits LayoutComponentBase
 
+<TelerikMediaQuery Media="@GetSMSVisibleBreakpoint()" OnChange="@MediaQueryChange"></TelerikMediaQuery>
+
 <TelerikRootComponent>
     <TelerikDrawer Data="@NavigablePages"
                    @bind-Expanded="@DrawerExpanded"
@@ -35,15 +37,23 @@
                             <li class="float-left header-style nav-pane">
                                 <span class="red-text">Stock</span>
                                 <span class="white-text">Trac</span>
-                                <span class="sms">Shop Management System</span>
+                                @if (displayIsLarge)
+                                {
+                                    <span class="sms">Shop Management System</span>
+                                }
+                                else
+                                {
+                                    <span class="sms">SMS</span>
+                                }
                             </li>
                         </ul>
-                        <div class="login-display">
-                            <LoginDisplay />
-                        </div>
+                        <CascadingValue Value="this" Name="MainLayout">
+                            <div class="login-display">
+                                <LoginDisplay />
+                            </div>
+                        </CascadingValue>
                     </div>
                 </div>
-                @*<CascadingValue Value="RepairOrderEditMenuVisible" Name="RepairOrderEditMenuVisible">*@
                 <CascadingValue Value="this" Name="MainLayout">
                     <div class="m-module-menu-bar">
                         @switch (SelectedItem?.ItemId)
@@ -109,8 +119,8 @@
     }
 
     /* vertical scroll should happen in the main portion of the content - where the Body is
-                                                                                                                    This keeps the header sticky at the top
-                                                                                                                    */
+                                                                                                                            This keeps the header sticky at the top
+                                                                                                                            */
     .main {
         overflow-y: auto;
         flex: 1;
@@ -158,18 +168,18 @@
         margin: 0;
     }
 
-    .k-icon, .k-drawer-item, .material-icons {
-        /*font-size: 16px !important;*/
-        /*height: 2.7rem;*/
-    }
-
     .k-drawer-item {
         padding: 0.25rem 1rem !important;
     }
 
         .material-icons, .k-drawer-item .k-icon {
-            font-size: 20px;
+            font-size: 22px;
         }
+
+    .k-drawer-container .k-drawer-items .k-icon + .k-item-text {
+        padding-left: 1rem;
+        align-self: center;
+    }
 
     TelerikDrawer .k-icon {
         font-family: "Material Icons";
@@ -247,24 +257,6 @@
         width: 20px;
     }
 
-    /*    .k-drawer-container .k-drawer-items .svg-inline--fa + .k-item-text {
-                                                                                        padding-left: 1rem;
-                                                                                    }
-
-                                                                                    .k-drawer-container .k-drawer-items .svg-inline--fa {
-                                                                                        height: 32px;
-                                                                                        width: 1.25rem;
-                                                                                    }
-                                                                                */
-    /*    .k-drawer-container .k-drawer-items .k-item-text {
-                                                                                        padding-left: 1rem;
-                                                                                    }
-
-                                                                                    .k-drawer-container .k-drawer-items {
-                                                                                        height: 32px;
-                                                                                        width: 1.25rem;
-                                                                                    }*/
-
     .k-drawer.telerik-blazor.k-widget {
         background-color: var(--bg-color-extra-dark);
         color: white;
@@ -276,15 +268,15 @@
     }
 
     .k-drawer-item.k-state-selected, .k-drawer-item.k-state-selected.k-state-focused, .k-drawer-item.k-selected {
-        /*background-color: var(--bg-color-medium) !important;*/
         box-shadow: none;
     }
 
     .login-display {
         float: right;
         justify-self: right;
-        padding-left: 1em;
-        padding-right: 1em;
+        /*padding-left: 1em;*/
+        /*padding-right: 1em;*/
+        height: 55px;
         margin-left: 1em;
         margin-right: 1em;
     }
@@ -312,56 +304,5 @@
         font-size: 20px;
         margin-left: 1.5rem;
     }
-
-    /* Module Menu start */
-    /*    .sb-header {
-                                                                                        top: 55px;
-                                                                                        display: flex;
-                                                                                        height: 50px;
-                                                                                        background: var(--bg-color-medium);
-                                                                                        box-shadow: 0 8px 11px -6px rgb(0 0 0 / 12%);
-                                                                                        z-index: 20;
-                                                                                        overflow: visible;
-                                                                                        position: sticky;
-                                                                                    }
-
-                                                                                    .e-view {
-                                                                                        bottom: 0;
-                                                                                        left: 0;
-                                                                                        overflow: hidden;
-                                                                                        position: absolute;
-                                                                                        display: block;
-                                                                                        right: 0;
-                                                                                        top: 0;
-                                                                                    }
-
-                                                                                    .sb-header div, .sb-header span {
-                                                                                        outline: none;
-                                                                                        outline-color: initial;
-                                                                                        outline-style: none;
-                                                                                        outline-width: initial;
-                                                                                    }
-
-                                                                                    .sb-header-left, .sb-header-right {
-                                                                                        height: 100%;
-                                                                                    }
-
-                                                                                    .sb-table {
-                                                                                        display: table;
-                                                                                    }
-
-                                                                                    .sb-left {
-                                                                                        float: left;
-                                                                                    }
-
-                                                                                    .sb-table-cell {
-                                                                                        display: table-cell;
-                                                                                        vertical-align: middle;
-                                                                                    }
-
-                                                                                    .sb-right {
-                                                                                        float: right;
-                                                                                    }*/
-    /* Module Menu end */
 
 </style>

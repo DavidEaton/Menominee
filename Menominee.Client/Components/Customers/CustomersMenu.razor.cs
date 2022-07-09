@@ -1,5 +1,7 @@
 ﻿using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Customers
@@ -10,34 +12,39 @@ namespace Menominee.Client.Components.Customers
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/customers";
+        public int menuWidth { get; set; } = 270;
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
+            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            //{
+            //    navigationManager.NavigateTo(selectedItem.Url);
+            //}
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
-                Text = "Placeholder",
-                Id = (int)CustomersMenuId.Customers,
-                SubItems = new List<ModuleMenuItem>
+                Text = "Customers",
+                Id = "-1",
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Customer List", Url=$"{ModuleUrl}/listing", Id=(int)CustomersMenuId.CustomerList },
-                    new ModuleMenuItem { Text="Advanced Search", Url=$"{ModuleUrl}", Id=(int)CustomersMenuId.AdvancedSearch }
+                    new MenuItem { Text="Customer List", Url=$"{ModuleUrl}/listing", Id=((int)CustomersMenuId.CustomerList).ToString() },
+                    new MenuItem { Text="Advanced Search", Url=$"{ModuleUrl}", Id=((int)CustomersMenuId.AdvancedSearch).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Reports",
-                Id = (int)CustomersMenuId.Reports,
+                Id = ((int)CustomersMenuId.Reports).ToString(),
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Utilities",
-                Id = (int)CustomersMenuId.Utilities,
+                Id = ((int)CustomersMenuId.Utilities).ToString(),
                 Url = ""
             }
          };

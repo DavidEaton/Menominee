@@ -1,5 +1,6 @@
 ﻿using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
 using System;
 using System.Collections.Generic;
 
@@ -11,73 +12,55 @@ namespace Menominee.Client.Components.Payables
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/payables";
+        public int menuWidth { get; set; } = 470;
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
-            if (selectedItem.Id >= 0)
-            {
-                //string url = "/payables/" + selectedItem.Url;
-                //navigationManager.NavigateTo(url);
-                //string url = "/payables";
-                //navigationManager.NavigateTo($"{url}/{selectedItem.Url}");
-                //navigationManager.NavigateTo(selectedItem.Url);
-
-                //switch (selectedItem?.Id >= 0)
-                //{
-                //    case "invoices":
-                //        navigationManager.NavigateTo($"{url}/invoices/listing");
-                //        break;
-                //    case "creditReturns":
-                //        navigationManager.NavigateTo($"{url}/returns/listing");
-                //        break;
-                //    case "vendors":
-                //        navigationManager.NavigateTo($"{url}/vendors/listing");
-                //        break;
-                //    default:
-                //        navigationManager.NavigateTo(url);
-                //        break;
-                //}
-            }
+            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            //{
+            //    navigationManager.NavigateTo(selectedItem.Url);
+            //}
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Invoices",
-                Id = (int)PayablesMenuId.Invoices,
+                Id = ((int)PayablesMenuId.Invoices).ToString(),
                 Url = $"{ModuleUrl}/invoices/listing"
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Credit Returns",
-                Id = (int)PayablesMenuId.CreditReturns,
+                Id = ((int)PayablesMenuId.CreditReturns).ToString(),
                 Url = $"{ModuleUrl}/returns/listing"
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Statements",
-                Id = (int)PayablesMenuId.Statements,
+                Id = ((int)PayablesMenuId.Statements).ToString(),
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Vendors",
-                Id = (int)PayablesMenuId.Vendors,
+                Id = ((int)PayablesMenuId.Vendors).ToString(),
                 Url = $"{ModuleUrl}/vendors/listing"
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Reports",
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)PayablesMenuId.Reports).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text= "Vendor List", Url="", Id=(int)PayablesMenuId.VendorListReport },
-                    new ModuleMenuItem { Separator= true, Url="" },
-                    new ModuleMenuItem { Text= "Vendor Detail", Url="", Id=(int)PayablesMenuId.VendorDetailReport },
-                    new ModuleMenuItem { Text= "Vendor Summary", Url="", Id=(int)PayablesMenuId.VendorSummaryReport },
-                    new ModuleMenuItem { Text= "Invoice Summary", Url="", Id=(int)PayablesMenuId.InvoiceSummaryReport }
+                    new MenuItem { Text= "Vendor List", Url="", Id=((int)PayablesMenuId.VendorListReport).ToString() },
+                    new MenuItem { Separator= true, Url="" },
+                    new MenuItem { Text= "Vendor Detail", Url="", Id=((int)PayablesMenuId.VendorDetailReport).ToString() },
+                    new MenuItem { Text= "Vendor Summary", Url="", Id=((int)PayablesMenuId.VendorSummaryReport).ToString() },
+                    new MenuItem { Text= "Invoice Summary", Url="", Id=((int)PayablesMenuId.InvoiceSummaryReport).ToString() }
                 },
-                Url = "/"
+                Url = ""
             }
          };
     }

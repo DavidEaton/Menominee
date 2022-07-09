@@ -1,5 +1,7 @@
 ﻿using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Dispatch
@@ -10,21 +12,26 @@ namespace Menominee.Client.Components.Dispatch
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/dispatch";
+        public int menuWidth { get; set; } = 139;
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
+            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            //{
+            //    navigationManager.NavigateTo(selectedItem.Url);
+            //}
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Placeholder",
-                Id = (int)DispatchMenuId.Placeholder,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)DispatchMenuId.Placeholder },
-                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)DispatchMenuId.Placeholder }
+                    new MenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=((int)DispatchMenuId.Placeholder).ToString() },
+                    new MenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=((int)DispatchMenuId.Placeholder).ToString() }
                 },
                 Url = ""
             }

@@ -1,5 +1,7 @@
 ﻿using Menominee.Client.Shared;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Navigations;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Receivables
@@ -10,59 +12,64 @@ namespace Menominee.Client.Components.Receivables
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/receivables";
+        public int menuWidth { get; set; } = 526;
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
+            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            //{
+            //    navigationManager.NavigateTo(selectedItem.Url);
+            //}
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Accounts",
-                Id = (int)ReceivablesMenuId.Accounts,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Accounts List", Url=$"{ModuleUrl}/accounts/list", Id=(int)ReceivablesMenuId.AccountsList },
-                    new ModuleMenuItem { Text="Credit Hold List", Url=$"{ModuleUrl}/accounts/creditholdlist", Id=(int)ReceivablesMenuId.CreditHoldList }
+                    new MenuItem { Text="Accounts List", Url=$"{ModuleUrl}/accounts/list", Id=((int)ReceivablesMenuId.AccountsList).ToString() },
+                    new MenuItem { Text="Credit Hold List", Url=$"{ModuleUrl}/accounts/creditholdlist", Id=((int)ReceivablesMenuId.CreditHoldList).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Transactions",
-                Id = (int)ReceivablesMenuId.Transactions,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="New Transaction", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.NewTransaction },
-                    new ModuleMenuItem { Text="Batch Files", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.BatchFiles },
-                    new ModuleMenuItem { Text="Apply Open Credits", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.ApplyOpenCredits },
-                    new ModuleMenuItem { Text="Clear Paid Transactions", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.ClearPaidTransactions },
-                    new ModuleMenuItem { Text="Unapply Transaction", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.UnapplyTransaction }
+                    new MenuItem { Text="New Transaction", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.NewTransaction).ToString() },
+                    new MenuItem { Text="Batch Files", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.BatchFiles).ToString() },
+                    new MenuItem { Text="Apply Open Credits", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.ApplyOpenCredits).ToString() },
+                    new MenuItem { Text="Clear Paid Transactions", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.ClearPaidTransactions).ToString() },
+                    new MenuItem { Text="Unapply Transaction", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.UnapplyTransaction).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Service Charges",
-                Id = (int)ReceivablesMenuId.ServiceCharges,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="Create & Post", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.CreateAndPost },
-                    new ModuleMenuItem { Text="Waive Charges", Url=$"{ModuleUrl}/", Id=(int)ReceivablesMenuId.WaiveCharges }
+                    new MenuItem { Text="Create & Post", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.CreateAndPost).ToString() },
+                    new MenuItem { Text="Waive Charges", Url=$"{ModuleUrl}/", Id=((int)ReceivablesMenuId.WaiveCharges).ToString() }
                 },
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Reports",
-                Id = (int)ReceivablesMenuId.Reports,
+                Id = ((int)ReceivablesMenuId.Reports).ToString(),
                 Url = ""
             },
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Setup",
-                Id = (int)ReceivablesMenuId.Setup,
+                Id = ((int)ReceivablesMenuId.Setup).ToString(),
                 Url = ""
             }
          };

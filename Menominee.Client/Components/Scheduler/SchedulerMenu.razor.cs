@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Menominee.Client.Shared;
+using Syncfusion.Blazor.Navigations;
 
 namespace Menominee.Client.Components.Scheduler
 {
@@ -10,21 +11,22 @@ namespace Menominee.Client.Components.Scheduler
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/schedule";
+        public int menuWidth { get; set; } = 139;
 
-        public void OnItemSelected(ModuleMenuItem selectedItem)
+        public void OnItemSelected(MenuItem selectedItem)
         {
         }
 
-        private List<ModuleMenuItem> menuItems = new List<ModuleMenuItem>
+        private List<MenuItem> menuItems = new List<MenuItem>
         {
-            new ModuleMenuItem
+            new MenuItem
             {
                 Text = "Placeholder",
-                Id = (int)SchedulerMenuId.Placeholder,
-                SubItems = new List<ModuleMenuItem>
+                Id = "-1",//((int)SchedulerMenuId.Placeholder).ToString(),
+                Items = new List<MenuItem>
                 {
-                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)SchedulerMenuId.Placeholder },
-                    new ModuleMenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=(int)SchedulerMenuId.Placeholder }
+                    new MenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=((int)SchedulerMenuId.Placeholder).ToString() },
+                    new MenuItem { Text="xxx", Url=$"{ModuleUrl}", Id=((int)SchedulerMenuId.Placeholder).ToString() }
                 },
                 Url = ""
             }
