@@ -114,6 +114,13 @@ namespace CustomerVehicleManagement.Api.Inventory
                 item = new(InventoryTireHelper.ConvertWriteDtoToEntity(itemToWrite.Tire));
             else if (itemToWrite.ItemType == InventoryItemType.Package)
                 item = new(InventoryPackageHelper.ConvertWriteDtoToEntity(itemToWrite.Package));
+            else if (itemToWrite.ItemType == InventoryItemType.CourtesyCheck)
+                item = new(InventoryCourtesyCheckHelper.ConvertWriteDtoToEntity(itemToWrite.CourtesyCheck));
+            // Coming soon...
+            //else if (itemToWrite.ItemType == InventoryItemType.Donation)
+            //    item = new(InventoryDonationHelper.ConvertWriteDtoToEntity(itemToWrite.Donation));
+            //else if (itemToWrite.ItemType == InventoryItemType.GiftCertificate)
+            //    item = new(InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(itemToWrite.GiftCertificate));
 
             //item.Manufacturer = ManufacturerHelper.ConvertToEntity(itemToWrite.Manufacturer);
             item.ManufacturerId = itemToWrite.Manufacturer.Id;

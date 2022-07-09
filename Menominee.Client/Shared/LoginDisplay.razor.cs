@@ -23,12 +23,12 @@ namespace Menominee.Client.Shared
         {
             if (MainLayout != null)
             {
-                Console.WriteLine(MainLayout.DrawerExpanded ? "(min-width: 900px)" : "(min-width: 770px)");
+                //Console.WriteLine(MainLayout.DrawerExpanded ? "(min-width: 900px)" : "(min-width: 770px)");
                 return MainLayout.DrawerExpanded ? "(min-width: 900px)" : "(min-width: 770px)";
             }
             else
             {
-                Console.WriteLine("MainLayout null");
+                //Console.WriteLine("MainLayout null");
                 return "";
             }
         }
@@ -36,7 +36,7 @@ namespace Menominee.Client.Shared
         public void MediaQueryChange(bool matchesMediaQuery)
         {
             displayIsLarge = matchesMediaQuery;
-            Console.WriteLine(matchesMediaQuery);
+            //Console.WriteLine(matchesMediaQuery);
         }
 
         private async Task BeginSignOut(MouseEventArgs args)

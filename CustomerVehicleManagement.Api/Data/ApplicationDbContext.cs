@@ -130,6 +130,10 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new InventoryItemPackageConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemPackageItemConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemPackagePlaceholderConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryItemCourtesyCheckConfiguration());
+            // Coming soon...
+            //modelBuilder.ApplyConfiguration(new InventoryItemDonationConfiguration());
+            //modelBuilder.ApplyConfiguration(new InventoryItemGiftCertificateConfiguration());
 
             // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
@@ -244,6 +248,9 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<InventoryItemPackage> InventoryItemPackages { get; set; }
         public DbSet<InventoryItemPackageItem> InventoryItemPackageItems { get; set; }
         public DbSet<InventoryItemPackagePlaceholder> InventoryItemPackagePlaceholders { get; set; }
+        public DbSet<InventoryItemCourtesyCheck> InventoryItemCourtesyChecks { get; set; }
+        //public DbSet<InventoryItemDonation> InventoryItemDonations { get; set; }
+        //public DbSet<InventoryItemGiftCertificate> InventoryItemGiftCertificates { get; set; }
 
         // Credit Cards
         public DbSet<CreditCard> CreditCards { get; set; }

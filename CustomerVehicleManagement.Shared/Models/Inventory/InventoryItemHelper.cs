@@ -54,6 +54,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 ItemToRead.Tire = InventoryTireHelper.ConvertEntityToReadDto(item.Tire);
             else if (item.ItemType == InventoryItemType.Package)
                 ItemToRead.Package = InventoryPackageHelper.ConvertEntityToReadDto(item.Package);
+            else if (item.ItemType == InventoryItemType.CourtesyCheck)
+                ItemToRead.CourtesyCheck = InventoryCourtesyCheckHelper.ConvertEntityToReadDto(item.CourtesyCheck);
+            // Coming soon...
+            //else if (item.ItemType == InventoryItemType.Donation)
+            //    ItemToRead.Donation = InventoryDonationHelper.ConvertEntityToReadDto(item.Donation);
+            //else if (item.ItemType == InventoryItemType.GiftCertificate)
+            //    ItemToRead.GiftCertificate = InventoryGiftCertificateHelper.ConvertEntityToReadDto(item.GiftCertificate);
 
             return ItemToRead;
         }
@@ -83,6 +90,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 Item.Tire = InventoryTireHelper.ConvertReadToWriteDto(item.Tire);
             else if (item.ItemType == InventoryItemType.Package)
                 Item.Package = InventoryPackageHelper.ConvertReadToWriteDto(item.Package);
+            else if (item.ItemType == InventoryItemType.CourtesyCheck)
+                Item.CourtesyCheck = InventoryCourtesyCheckHelper.ConvertReadToWriteDto(item.CourtesyCheck);
+            // Coming soon...
+            //else if (item.ItemType == InventoryItemType.Donation)
+            //    Item.Tire = InventoryDonationHelper.ConvertReadToWriteDto(item.Donation);
+            //else if (item.ItemType == InventoryItemType.GiftCertificate)
+            //    Item.Tire = InventoryGiftCertificateHelper.ConvertReadToWriteDto(item.GiftCertificate);
 
             return Item;
         }
@@ -111,6 +125,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 Item.Tire = InventoryTireHelper.ConvertWriteDtoToEntity(item.Tire);
             else if (item.ItemType == InventoryItemType.Package)
                 Item.Package = InventoryPackageHelper.ConvertWriteDtoToEntity(item.Package);
+            else if (item.ItemType == InventoryItemType.CourtesyCheck)
+                Item.CourtesyCheck = InventoryCourtesyCheckHelper.ConvertWriteDtoToEntity(item.CourtesyCheck);
+            // Coming soon...
+            //else if (item.ItemType == InventoryItemType.Donation)
+            //    Item.Tire = InventoryDonationHelper.ConvertWriteDtoToEntity(item.Donation);
+            //else if (item.ItemType == InventoryItemType.GiftCertificate)
+            //    Item.Tire = InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(item.GiftCertificate);
 
             return Item;
         }
@@ -133,6 +154,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 InventoryTireHelper.CopyWriteDtoToEntity(itemToUpdate.Tire, item.Tire);
             else if (item.ItemType == InventoryItemType.Package)
                 InventoryPackageHelper.CopyWriteDtoToEntity(itemToUpdate.Package, item.Package);
+            else if (item.ItemType == InventoryItemType.CourtesyCheck)
+                InventoryCourtesyCheckHelper.CopyWriteDtoToEntity(itemToUpdate.CourtesyCheck, item.CourtesyCheck);
+            // Coming soon...
+            //else if (item.ItemType == InventoryItemType.Donation)
+            //    InventoryDonationHelper.CopyWriteDtoToEntity(itemToUpdate.Donation, item.Donation);
+            //else if (item.ItemType == InventoryItemType.GiftCertificate)
+            //    InventoryGiftCertificateHelper.CopyWriteDtoToEntity(itemToUpdate.GiftCertificate, item.GiftCertificate);
         }
     }
 }

@@ -2,8 +2,9 @@
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryLaborToReadInList
+    public class InventoryCourtesyCheckToRead
     {
+        public long Id { get; set; }
         public ItemLaborType LaborType { get; set; }
         public double LaborAmount { get; set; }
         public ItemLaborType TechPayType { get; set; }

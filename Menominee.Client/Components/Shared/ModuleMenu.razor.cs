@@ -52,17 +52,15 @@ namespace Menominee.Client.Components.Shared
             {
                 parametersSet = true;
                 ModuleTitleWidth = await _jsModule.InvokeAsync<double>("elementWidthById", "moduleName");
-                Console.WriteLine($"{ModuleTitleWidth}");
+                //Console.WriteLine($"{ModuleTitleWidth}");
             }
         }
 
         private string GetMenuBreakpoint()
         {
-            //int expandedMin = 340 + MenuWidth;
-            //int shrunkenMin = 230 + MenuWidth;
             double expandedMin = 190 + ModuleTitleWidth + MenuWidth;
             double shrunkenMin = 80 + ModuleTitleWidth + MenuWidth;
-            Console.WriteLine(MainLayout.DrawerExpanded ? $"(min-width: {expandedMin}px)" : $"(min-width: {shrunkenMin}px)");
+            //Console.WriteLine(MainLayout.DrawerExpanded ? $"(min-width: {expandedMin}px)" : $"(min-width: {shrunkenMin}px)");
             return MainLayout.DrawerExpanded ? $"(min-width: {expandedMin}px)" : $"(min-width: {shrunkenMin}px)";
         }
 

@@ -162,6 +162,12 @@ namespace Menominee.Client.Components.Inventory.Pages
                 NavigationManager.NavigateTo("inventory/tires/0");
             else if (SelectedItemType == InventoryItemType.Package)
                 NavigationManager.NavigateTo("inventory/packages/0");
+            else if (SelectedItemType == InventoryItemType.CourtesyCheck)
+                NavigationManager.NavigateTo("inventory/courtesychecks/0");
+            else if (SelectedItemType == InventoryItemType.Donation)
+                NavigationManager.NavigateTo("inventory/donations/0");
+            else if (SelectedItemType == InventoryItemType.GiftCertificate)
+                NavigationManager.NavigateTo("inventory/giftcertificates/0");
         }
 
         private void OnEdit()
@@ -174,6 +180,12 @@ namespace Menominee.Client.Components.Inventory.Pages
                 NavigationManager.NavigateTo($"inventory/tires/{SelectedId}");
             else if (SelectedItem?.ItemType == InventoryItemType.Package)
                 NavigationManager.NavigateTo($"inventory/packages/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.CourtesyCheck)
+                NavigationManager.NavigateTo($"inventory/courtesychecks/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.Donation)
+                NavigationManager.NavigateTo($"inventory/donations/{SelectedId}");
+            else if (SelectedItem?.ItemType == InventoryItemType.GiftCertificate)
+                NavigationManager.NavigateTo($"inventory/giftcertificates/{SelectedId}");
         }
 
         private void OnDelete()

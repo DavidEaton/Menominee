@@ -18,5 +18,9 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public InventoryLaborToWrite Labor { get; set; }
         public InventoryTireToWrite Tire { get; set; }
         public InventoryPackageToWrite Package { get; set; }
+        public InventoryCourtesyCheckToWrite CourtesyCheck { get; set; }
+        // Coming soon...
+        //public InventoryDonationToWrite Donation { get; set; }
+        //public InventoryGiftCertificateToWrite GiftCertificate { get; set; }
     }
 }
