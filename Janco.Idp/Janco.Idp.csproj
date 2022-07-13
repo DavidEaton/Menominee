@@ -5,8 +5,7 @@
 	</PropertyGroup>
 
 	<!--Publish generates error for duplicate files in publish output; Duplicate files in the publish output sometimes caused build breaks or unpredictable behavior: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/duplicate-files-in-output-->
-	<!--Uncomment two ItemGroups below to publish:-->
-	<!--<ItemGroup>
+	<ItemGroup>
 		<Content Remove="appsettings.Development.json" />
 		<Content Remove="appsettings.json" />
 	</ItemGroup>
@@ -16,7 +15,7 @@
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 		<None Include="appsettings.json" />
-	</ItemGroup>-->
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
