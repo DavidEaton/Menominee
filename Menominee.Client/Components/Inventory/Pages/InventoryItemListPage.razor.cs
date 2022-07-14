@@ -151,41 +151,44 @@ namespace Menominee.Client.Components.Inventory.Pages
             ItemTypeSelectDialogVisible = true;
         }
 
+        private string ItemTypeUrlSegment(InventoryItemType itemType)
+        {
+            string url = string.Empty;
+
+            if (itemType == InventoryItemType.Part)
+                url = "parts";
+            else if (itemType == InventoryItemType.Labor)
+                url = "labor";
+            else if (itemType == InventoryItemType.Tire)
+                url = "tires";
+            else if (itemType == InventoryItemType.Package)
+                url = "packages";
+            else if (itemType == InventoryItemType.Inspection)
+                url = "inspections";
+            else if (itemType == InventoryItemType.Donation)
+                url = "donations";
+            else if (itemType == InventoryItemType.GiftCertificate)
+                url = "giftcertificates";
+            else if (itemType == InventoryItemType.Warranty)
+                url = "warranties";
+
+            return url;
+        }
+
         private void OnSelectItemType()
         {
             ItemTypeSelectDialogVisible = false;
-            if (SelectedItemType == InventoryItemType.Part)
-                NavigationManager.NavigateTo("inventory/parts/0");
-            else if (SelectedItemType == InventoryItemType.Labor)
-                NavigationManager.NavigateTo("inventory/labor/0");
-            else if (SelectedItemType == InventoryItemType.Tire)
-                NavigationManager.NavigateTo("inventory/tires/0");
-            else if (SelectedItemType == InventoryItemType.Package)
-                NavigationManager.NavigateTo("inventory/packages/0");
-            else if (SelectedItemType == InventoryItemType.CourtesyCheck)
-                NavigationManager.NavigateTo("inventory/courtesychecks/0");
-            else if (SelectedItemType == InventoryItemType.Donation)
-                NavigationManager.NavigateTo("inventory/donations/0");
-            else if (SelectedItemType == InventoryItemType.GiftCertificate)
-                NavigationManager.NavigateTo("inventory/giftcertificates/0");
+
+            string url = ItemTypeUrlSegment(SelectedItemType) ?? string.Empty;
+            if (url.Length > 0)
+                NavigationManager.NavigateTo($"inventory/{url}/0");
         }
 
         private void OnEdit()
         {
-            if (SelectedItem?.ItemType == InventoryItemType.Part)
-                NavigationManager.NavigateTo($"inventory/parts/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.Labor)
-                NavigationManager.NavigateTo($"inventory/labor/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.Tire)
-                NavigationManager.NavigateTo($"inventory/tires/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.Package)
-                NavigationManager.NavigateTo($"inventory/packages/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.CourtesyCheck)
-                NavigationManager.NavigateTo($"inventory/courtesychecks/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.Donation)
-                NavigationManager.NavigateTo($"inventory/donations/{SelectedId}");
-            else if (SelectedItem?.ItemType == InventoryItemType.GiftCertificate)
-                NavigationManager.NavigateTo($"inventory/giftcertificates/{SelectedId}");
+            string url = ItemTypeUrlSegment(SelectedItem.ItemType) ?? string.Empty;
+            if (url.Length > 0)
+                NavigationManager.NavigateTo($"inventory/{url}/{SelectedId}");
         }
 
         private void OnDelete()

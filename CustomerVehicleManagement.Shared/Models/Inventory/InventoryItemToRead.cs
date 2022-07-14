@@ -16,10 +16,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public InventoryLaborToRead Labor { get; set; }
         public InventoryTireToRead Tire { get; set; }
         public InventoryPackageToRead Package { get; set; }
-        public InventoryCourtesyCheckToRead CourtesyCheck { get; set; }
+        public InventoryInspectionToRead Inspection { get; set; }
         // Coming soon...
         //public InventoryDonationToRead Donation { get; set; }
         //public InventoryGiftCertificateToRead GiftCertificate { get; set; }
+        public InventoryWarrantyToRead Warranty { get; set; }
 
 
         //public int QuantityOnHand { get; set; }

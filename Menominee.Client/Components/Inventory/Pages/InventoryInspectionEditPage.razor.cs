@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory.Pages
 {
-    public partial class InventoryCourtesyCheckPage : ComponentBase
+    public partial class InventoryInspectionEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }

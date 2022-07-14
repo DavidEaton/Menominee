@@ -97,7 +97,7 @@
                                 <ContentTemplate>
                                     @if (Item.Part != null)
                                     {
-                                        <div class="m-tab-content-border">
+                                        <div class="m-tab-content-border" id="pricingTab">
                                             <div class="m-tab-content">
                                                 <div class="form-group">
                                                     <div>
@@ -149,7 +149,7 @@
                                     <TabHeader Text="Usage"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    <div class="m-tab-content-border">
+                                    <div class="m-tab-content-border" id="usageTab">
                                         <div class="m-tab-content">
                                                 <div class="form-group">
                                                     <div>
@@ -191,6 +191,10 @@
 
     .e-tab .e-tab-header.e-vertical {
         max-width: unset;
+    }
+
+    #pricingTab, #usageTab {
+        min-height: 341px !important;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {

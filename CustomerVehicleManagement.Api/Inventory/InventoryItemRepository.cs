@@ -103,10 +103,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                //                .ThenInclude(productCode => productCode.SaleCode)
                                                .Include(item => item.Package)
                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.CourtesyCheck)
+                                               .Include(item => item.Inspection)
                                                // Coming soon...
                                                //.Include(item => item.Donation)
                                                //.Include(item => item.GiftCertificate)
+                                               .Include(item => item.Warranty)
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
@@ -135,10 +136,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
                                                .Include(item => item.Package)
                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.CourtesyCheck)
+                                               .Include(item => item.Inspection)
                                                // Coming soon...
                                                //.Include(item => item.Donation)
                                                //.Include(item => item.GiftCertificate)
+                                               .Include(item => item.Warranty)
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Manufacturer.Id == manufacturerId
@@ -168,10 +170,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                     .ThenInclude(pItem => pItem.Item.ProductCode)
                                 .Include(item => item.Package)
                                     .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                .Include(item => item.CourtesyCheck)
+                                .Include(item => item.Inspection)
                                 // Coming soon...
                                 //.Include(item => item.Donation)
                                 //.Include(item => item.GiftCertificate)
+                                .Include(item => item.Warranty)
                                 .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
@@ -197,10 +200,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                         .ThenInclude(pItem => pItem.Item.ProductCode)
                                                 .Include(item => item.Package)
                                                     .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.CourtesyCheck)
+                                               .Include(item => item.Inspection)
                                                 // Coming soon...
                                                 //.Include(item => item.Donation)
                                                 //.Include(item => item.GiftCertificate)
+                                                .Include(item => item.Warranty)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
@@ -230,10 +234,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                         .ThenInclude(pItem => pItem.Item.ProductCode)
                                                 .Include(item => item.Package)
                                                     .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.CourtesyCheck)
+                                               .Include(item => item.Inspection)
                                                 // Coming soon...
                                                 //.Include(item => item.Donation)
                                                 //.Include(item => item.GiftCertificate)
+                                                .Include(item => item.Warranty)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
@@ -261,10 +266,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                         .ThenInclude(pItem => pItem.Item.ProductCode)
                                                 .Include(item => item.Package)
                                                     .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.CourtesyCheck)
+                                               .Include(item => item.Inspection)
                                                 // Coming soon...
                                                 //.Include(item => item.Donation)
                                                 //.Include(item => item.GiftCertificate)
+                                                .Include(item => item.Warranty)
                                                 .Where(item => item.Manufacturer.Id == manufacturerId)
                                                 .AsSplitQuery()
                                                 .AsNoTracking()

@@ -98,17 +98,17 @@
                                                             <Template>
                                                                 @{
                                                                     var item = context as InventoryPackageItemToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                                                    <TelerikNumericTextBox @bind-Value="item.Quantity"
                                                                                    Arrows="false">
-                                                                </TelerikNumericTextBox>
+                                                                    </TelerikNumericTextBox>
                                                             }
                                                         </Template>
                                                         <EditorTemplate>
                                                             @{
                                                                     var item = context as InventoryPackageItemToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                                                    <TelerikNumericTextBox @bind-Value="item.Quantity"
                                                                                    Arrows="false">
-                                                                </TelerikNumericTextBox>
+                                                                    </TelerikNumericTextBox>
                                                             }
                                                         </EditorTemplate>
                                                     </GridColumn>
@@ -119,13 +119,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional"/>
+                                                                            <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional"/>
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -134,13 +134,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -149,13 +149,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -200,25 +200,25 @@
                                                             <Template>
                                                                 @{
                                                                     var placeholder = context as InventoryPackagePlaceholderToWrite;
-                                                                <SfDropDownList TValue="PackagePlaceholderItemType"
+                                                                    <SfDropDownList TValue="PackagePlaceholderItemType"
                                                                             TItem="PlaceholderTypeListItem"
                                                                             PopupHeight="230px"
                                                                             DataSource="@placeholderTypeList"
-                                                                                @bind-Value="@placeholder.ItemType">
-                                                                    <DropDownListFieldSettings Text="Text" Value="Value" />
-                                                                </SfDropDownList>
+                                                                                    @bind-Value="@placeholder.ItemType">
+                                                                        <DropDownListFieldSettings Text="Text" Value="Value" />
+                                                                    </SfDropDownList>
                                                             }
                                                         </Template>
                                                         <EditorTemplate>
                                                             @{
                                                                     var placeholder = context as InventoryPackagePlaceholderToWrite;
-                                                                <SfDropDownList TValue="PackagePlaceholderItemType"
+                                                                    <SfDropDownList TValue="PackagePlaceholderItemType"
                                                                             TItem="PlaceholderTypeListItem"
                                                                             PopupHeight="230px"
                                                                             DataSource="@placeholderTypeList"
-                                                                                @bind-Value="@placeholder.ItemType">
-                                                                    <DropDownListFieldSettings Text="Text" Value="Value" />
-                                                                </SfDropDownList>
+                                                                                    @bind-Value="@placeholder.ItemType">
+                                                                        <DropDownListFieldSettings Text="Text" Value="Value" />
+                                                                    </SfDropDownList>
                                                             }
                                                         </EditorTemplate>
                                                     </GridColumn>
@@ -231,15 +231,15 @@
                                                         <Template>
                                                             @{
                                                                     var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikTextBox @bind-Value="item.Description">
-                                                                </TelerikTextBox>
+                                                                    <TelerikTextBox @bind-Value="item.Description">
+                                                                    </TelerikTextBox>
                                                             }
                                                         </Template>
                                                         <EditorTemplate>
                                                             @{
                                                                     var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikTextBox @bind-Value="item.Description">
-                                                                </TelerikTextBox>
+                                                                    <TelerikTextBox @bind-Value="item.Description">
+                                                                    </TelerikTextBox>
                                                             }
                                                         </EditorTemplate>
                                                     </GridColumn>
@@ -255,17 +255,17 @@
                                                         <Template>
                                                             @{
                                                                     var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                                                    <TelerikNumericTextBox @bind-Value="item.Quantity"
                                                                                    Arrows="false">
-                                                                </TelerikNumericTextBox>
+                                                                    </TelerikNumericTextBox>
                                                             }
                                                         </Template>
                                                         <EditorTemplate>
                                                             @{
                                                                     var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                                                    <TelerikNumericTextBox @bind-Value="item.Quantity"
                                                                                    Arrows="false">
-                                                                </TelerikNumericTextBox>
+                                                                    </TelerikNumericTextBox>
                                                             }
                                                         </EditorTemplate>
                                                     </GridColumn>
@@ -276,13 +276,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -291,13 +291,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -306,13 +306,13 @@
                                                                 <Template>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
                                                                     }
                                                                 </Template>
                                                                 <EditorTemplate>
                                                                     @{
                                                                             var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                                                            <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
                                                                     }
                                                                 </EditorTemplate>
                                                             </GridColumn>
@@ -363,6 +363,7 @@
 {
     <InventoryItemSelectForm DialogVisible="true"
                          @bind-SelectedItem="@SelectedInventoryItem"
+                         FilterPackagableItems="true"
                          OnSelect="@SubmitAddItemHandlerAsync"
                          OnCancel="@EndAddItem" />
 }
@@ -386,6 +387,10 @@
 
     .k-grid {
         min-height: 300px !important;
+    }
+
+    .k-grid td > .k-checkbox {
+        vertical-align: middle;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {

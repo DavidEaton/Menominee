@@ -1,0 +1,8 @@
+﻿@page "/inventory/donations/{ItemId:long}"
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryDonationEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

@@ -18,9 +18,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemLabor Labor { get; set; }
         public InventoryItemTire Tire { get; set; }
         public InventoryItemPackage Package { get; set; }
-        public InventoryItemCourtesyCheck CourtesyCheck { get; set; }
-        //public InventoryItemDonation Donation { get; set; }
-        //public InventoryItemGiftCertificate GiftCertificate { get; set; }
+        public InventoryItemInspection Inspection { get; set; }
+        public InventoryItemDonation Donation { get; set; }
+        public InventoryItemGiftCertificate GiftCertificate { get; set; }
+        public InventoryItemWarranty Warranty { get; set; }
 
         public InventoryItem(InventoryItemPart part)
         {
@@ -54,29 +55,37 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             ItemType = InventoryItemType.Package;
         }
 
-        public InventoryItem(InventoryItemCourtesyCheck courtesyCheck)
+        public InventoryItem(InventoryItemInspection inspection)
         {
-            Guard.ForNull(courtesyCheck, "courtesyCheck == null");
+            Guard.ForNull(inspection, "inspection == null");
 
-            CourtesyCheck = courtesyCheck;
-            ItemType = InventoryItemType.CourtesyCheck;
+            Inspection = inspection;
+            ItemType = InventoryItemType.Inspection;
         }
 
-        //public InventoryItem(InventoryItemDonation donation)
-        //{
-        //    Guard.ForNull(donation, "donation == null");
+        public InventoryItem(InventoryItemDonation donation)
+        {
+            Guard.ForNull(donation, "donation == null");
 
-        //    Donation = donation;
-        //    ItemType = InventoryItemType.Donation;
-        //}
+            Donation = donation;
+            ItemType = InventoryItemType.Donation;
+        }
 
-        //public InventoryItem(InventoryItemGiftCertificate giftCertificate)
-        //{
-        //    Guard.ForNull(giftCertificate, "giftCertificate == null");
+        public InventoryItem(InventoryItemGiftCertificate giftCertificate)
+        {
+            Guard.ForNull(giftCertificate, "giftCertificate == null");
 
-        //    GiftCertificate = giftCertificate;
-        //    ItemType = InventoryItemType.GiftCertificate;
-        //}
+            GiftCertificate = giftCertificate;
+            ItemType = InventoryItemType.GiftCertificate;
+        }
+
+        public InventoryItem(InventoryItemWarranty warranty)
+        {
+            Guard.ForNull(warranty, "warranty == null");
+
+            Warranty = warranty;
+            ItemType = InventoryItemType.Warranty;
+        }
 
         #region ORM
 

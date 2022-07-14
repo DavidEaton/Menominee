@@ -1,0 +1,8 @@
+﻿@page "/inventory/inspections/{ItemId:long}"
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryInspectionEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

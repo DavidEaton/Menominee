@@ -114,13 +114,14 @@ namespace CustomerVehicleManagement.Api.Inventory
                 item = new(InventoryTireHelper.ConvertWriteDtoToEntity(itemToWrite.Tire));
             else if (itemToWrite.ItemType == InventoryItemType.Package)
                 item = new(InventoryPackageHelper.ConvertWriteDtoToEntity(itemToWrite.Package));
-            else if (itemToWrite.ItemType == InventoryItemType.CourtesyCheck)
-                item = new(InventoryCourtesyCheckHelper.ConvertWriteDtoToEntity(itemToWrite.CourtesyCheck));
-            // Coming soon...
-            //else if (itemToWrite.ItemType == InventoryItemType.Donation)
-            //    item = new(InventoryDonationHelper.ConvertWriteDtoToEntity(itemToWrite.Donation));
-            //else if (itemToWrite.ItemType == InventoryItemType.GiftCertificate)
-            //    item = new(InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(itemToWrite.GiftCertificate));
+            else if (itemToWrite.ItemType == InventoryItemType.Inspection)
+                item = new(InventoryInspectionHelper.ConvertWriteDtoToEntity(itemToWrite.Inspection));
+            else if (itemToWrite.ItemType == InventoryItemType.Donation)
+                item = new() { ItemType = InventoryItemType.Donation, Donation = new() };// (InventoryDonationHelper.ConvertWriteDtoToEntity(itemToWrite.Donation));
+            else if (itemToWrite.ItemType == InventoryItemType.GiftCertificate)
+                item = new() { ItemType = InventoryItemType.GiftCertificate, GiftCertificate = new() };// (InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(itemToWrite.GiftCertificate));
+            else if (itemToWrite.ItemType == InventoryItemType.Warranty)
+                item = new(InventoryWarrantyHelper.ConvertWriteDtoToEntity(itemToWrite.Warranty));
 
             //item.Manufacturer = ManufacturerHelper.ConvertToEntity(itemToWrite.Manufacturer);
             item.ManufacturerId = itemToWrite.Manufacturer.Id;

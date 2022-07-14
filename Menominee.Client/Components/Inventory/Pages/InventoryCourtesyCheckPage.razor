@@ -1,8 +1,0 @@
-﻿@page "/inventory/courtesychecks/{ItemId:long}"
-
-@if (Item != null)
-{
-    <div class="m-main-content">
-        <InventoryCourtesyCheckEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
-    </div>
-}

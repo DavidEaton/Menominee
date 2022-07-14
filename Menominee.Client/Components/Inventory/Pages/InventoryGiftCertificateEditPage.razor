@@ -1,0 +1,8 @@
+﻿@page "/inventory/giftcertificates/{ItemId:long}"
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryGiftCertificateEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

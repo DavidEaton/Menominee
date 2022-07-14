@@ -82,7 +82,7 @@
                                 <ContentTemplate>
                                     @if (Item.Tire != null)
                                     {
-                                        <div class="m-tab-content-border">
+                                        <div class="m-tab-content-border" id="pricingTab">
                                             <div class="m-tab-content">
                                                 <div class="form-group">
                                                     <div>
@@ -134,7 +134,7 @@
                                     <TabHeader Text="Usage"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    <div class="m-tab-content-border">
+                                    <div class="m-tab-content-border" id="usageTab">
                                         <div class="m-tab-content">
                                             <div class="form-row">
                                             </div>
@@ -147,7 +147,7 @@
                                     <TabHeader Text="Tire Size"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    <div class="m-tab-content-border">
+                                    <div class="m-tab-content-border" id="sizeTab">
                                         <div class="m-tab-content">
                                             <div class="form-row m-align-bottoms">
                                                 <div class="form-group col col-12 col-sm-6 col-md-3 col-lg-2">
@@ -217,6 +217,10 @@
 
     .e-tab .e-tab-header.e-vertical {
         max-width: unset;
+    }
+
+    #pricingTab, #usageTab, #sizeTab {
+        min-height: 341px !important;
     }
 
     .e-ddl.e-input-group.e-control-wrapper .e-input {

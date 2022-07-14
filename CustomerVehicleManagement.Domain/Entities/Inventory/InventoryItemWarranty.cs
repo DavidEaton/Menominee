@@ -1,16 +1,18 @@
 ﻿using Menominee.Common;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
-    // TODO: No detail for this entitiy.  Can we avoid using this class?
-    public class InventoryItemDonation : Entity
+    public class InventoryItemWarranty : Entity
     {
         public long InventoryItemId { get; set; }
+        public InventoryItemWarrantyPeriodType PeriodType { get; set; }
+        public int Duration { get; set; }
 
         #region ORM
 
         // EF requires an empty constructor
-        public InventoryItemDonation() { }
+        public InventoryItemWarranty() { }
 
         #endregion  
     }

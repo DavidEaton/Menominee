@@ -1,0 +1,8 @@
+﻿@page "/inventory/warranties/{ItemId:long}"
+
+@if (Item != null)
+{
+    <div class="m-main-content">
+        <InventoryWarrantyEditor Item="Item" OnValidSubmit="Save" OnDiscard="Discard" />
+    </div>
+}

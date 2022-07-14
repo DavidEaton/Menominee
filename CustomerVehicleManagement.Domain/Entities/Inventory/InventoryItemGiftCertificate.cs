@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
-    // TODO: Will we need this class?
-    //public class InventoryItemGiftCertificate : Entity
-    //{
-    //    public long InventoryItemId { get; set; }
+    // TODO: No detail for this entitiy.  Can we avoid using this class?
+    public class InventoryItemGiftCertificate : Entity
+    {
+        public long InventoryItemId { get; set; }
 
-    //    #region ORM
+        #region ORM
 
-    //    // EF requires an empty constructor
-    //    public InventoryItemGiftCertificate() { }
+        // EF requires an empty constructor
+        public InventoryItemGiftCertificate() { }
 
-    //    #endregion  
-    //}
+        #endregion  
+    }
 }

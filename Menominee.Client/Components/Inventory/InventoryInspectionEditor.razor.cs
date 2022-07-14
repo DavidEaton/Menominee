@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {
-    public partial class InventoryCourtesyCheckEditor
+    public partial class InventoryInspectionEditor
     {
         [Inject]
         public IManufacturerDataService manufacturerDataService { get; set; }
@@ -37,6 +37,9 @@ namespace Menominee.Client.Components.Inventory
         private bool parametersSet = false;
         private long productCodeId = 0;
         private long manufacturerId = 0;
+        private List<LaborTypeListItem> laborTypeList { get; set; } = new List<LaborTypeListItem>();
+        private List<SkillLevelListItem> skillLevelList { get; set; } = new List<SkillLevelListItem>();
+        private List<InspectionTypeListItem> inspectionTypeList { get; set; } = new List<InspectionTypeListItem>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -54,6 +57,11 @@ namespace Menominee.Client.Components.Inventory
                 skillLevelList.Add(new SkillLevelListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
+            foreach (InventoryItemInspectionType item in Enum.GetValues(typeof(InventoryItemInspectionType)))
+            {
+                inspectionTypeList.Add(new InspectionTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+            }
+
             base.OnInitialized();
         }
 
@@ -69,20 +77,20 @@ namespace Menominee.Client.Components.Inventory
             }
 
             await OnProductCodeChangeAsync();
-            if (Item.CourtesyCheck == null)
+            if (Item.Inspection == null)
             {
                 productCodeId = 0;
                 //Item.ManufacturerId = manufacturerId;
                 Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous));
                 Item.ProductCode = new();
-                Item.CourtesyCheck = new();
-                Item.ItemType = InventoryItemType.CourtesyCheck;
+                Item.Inspection = new();
+                Item.ItemType = InventoryItemType.Inspection;
 
-                Title = "Add Courtesy Check";
+                Title = "Add Inspection";
             }
             else
             {
-                Title = "Edit Courtesy Check";
+                Title = "Edit Inspection";
             }
 
             StateHasChanged();
@@ -101,9 +109,6 @@ namespace Menominee.Client.Components.Inventory
                 SaleCode = string.Empty;
         }
 
-        private List<LaborTypeListItem> laborTypeList { get; set; } = new List<LaborTypeListItem>();
-        private List<SkillLevelListItem> skillLevelList { get; set; } = new List<SkillLevelListItem>();
-
         public class LaborTypeListItem
         {
             public string Text { get; set; }
@@ -114,6 +119,12 @@ namespace Menominee.Client.Components.Inventory
         {
             public string Text { get; set; }
             public SkillLevel Value { get; set; }
+        }
+
+        public class InspectionTypeListItem
+        {
+            public string Text { get; set; }
+            public InventoryItemInspectionType Value { get; set; }
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Menominee.Common;
+﻿using CustomerVehicleManagement.Domain.Enums;
+using Menominee.Common;
 using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
-    public class InventoryItemCourtesyCheck : Entity
+    public class InventoryItemInspection : Entity
     {
         public long InventoryItemId { get; set; }
         public ItemLaborType LaborType { get; set; }
@@ -11,11 +12,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public ItemLaborType TechPayType { get; set; }
         public double TechPayAmount { get; set; }
         public SkillLevel SkillLevel { get; set; }
+        public InventoryItemInspectionType Type { get; set; }
 
         #region ORM
 
         // EF requires an empty constructor
-        public InventoryItemCourtesyCheck() { }
+        public InventoryItemInspection() { }
 
         #endregion    
     }

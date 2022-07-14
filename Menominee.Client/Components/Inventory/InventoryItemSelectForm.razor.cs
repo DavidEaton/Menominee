@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,14 @@ namespace Menominee.Client.Components.Inventory
         [Parameter]
         public EventCallback<InventoryItemToReadInList> SelectedItemChanged { get; set; }
 
+        //[Parameter]
+        //public List<InventoryItemType> ExcludedItemTypes { get; set; }
+
+        [Parameter]
+        public bool FilterPackagableItems { get; set; } = false;
+
+        Predicate<InventoryItemToReadInList> itemMatchesFilter = ItemMatchesFilter;
+
         public IReadOnlyList<InventoryItemToReadInList> ItemsList;
         public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
@@ -44,38 +53,12 @@ namespace Menominee.Client.Components.Inventory
 
         private bool CanSelect { get; set; } = false;
 
-        //private long selectedId = 0;
-        //public long SelectedId
-        //{
-        //    get => selectedId;
-        //    set
-        //    {
-        //        selectedId = value;
-        //        CanSelect = selectedId > 0;
-        //    }
-        //}
-
         protected override async Task OnInitializedAsync()
         {
             SearchFields.Add("PartNumber");
             SearchFields.Add("Description");
 
             await FilterItemsList(0);
-            //ItemsList = (await DataService.GetAllItems()).ToList();
-
-            //if (ItemsList.Count > 0)
-            //{
-            //    SelectedItem = ItemsList.FirstOrDefault();
-            //    await SelectedItemChanged.InvokeAsync(SelectedItem);
-            //    //SelectedId = SelectedItem.Id;
-            //    SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
-            //}
-            //else
-            //{
-            //    //SelectedId = 0;
-            //}
-
-            //CanSelect = ItemsList.Count > 0;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -90,6 +73,7 @@ namespace Menominee.Client.Components.Inventory
                 Prefix = "",
                 Name = "<< All >>"
             });
+
             foreach (var mfr in Manufacturers)
             {
                 if (mfr.Code != "0" && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
@@ -107,10 +91,20 @@ namespace Menominee.Client.Components.Inventory
 
         private async Task FilterItemsList(long mfrId)
         {
-            if (mfrId > 0)
-                ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
+            if (FilterPackagableItems)
+            {
+                if (mfrId > 0)
+                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemMatchesFilter(i)).ToList();
+                else
+                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemMatchesFilter(i)).ToList();
+            }
             else
-                ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+            {
+                if (mfrId > 0)
+                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).ToList();
+                else
+                    ItemsList = (await DataService.GetAllItemsAsync()).ToList();
+            }
 
             if (ItemsList.Count > 0)
             {
@@ -120,6 +114,13 @@ namespace Menominee.Client.Components.Inventory
             }
 
             CanSelect = ItemsList.Count > 0;
+        }
+
+        private static bool ItemMatchesFilter(InventoryItemToReadInList item)
+        {
+            return item.ItemType != InventoryItemType.Package
+                && item.ItemType != InventoryItemType.GiftCertificate
+                && item.ItemType != InventoryItemType.Donation;
         }
 
         private async Task OnSelectMfr()
@@ -156,7 +157,6 @@ namespace Menominee.Client.Components.Inventory
             {
                 get
                 {
-
                     return (Prefix.Length > 0) ? (Prefix + " - " + Name) : Name;
                 }
             }
