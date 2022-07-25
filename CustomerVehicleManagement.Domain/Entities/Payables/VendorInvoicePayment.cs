@@ -4,9 +4,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class VendorInvoicePayment : Entity
     {
-        public long InvoiceId { get; set; }
-        public int PaymentMethod { get; set; }
-        public string PaymentMethodName { get; set; }
+        public long VendorInvoiceId { get; set; }
+        public virtual VendorInvoicePaymentMethod PaymentMethod { get; set; }
+        //public int PaymentMethod { get; set; }
         public double Amount { get; set; }
 
         #region ORM

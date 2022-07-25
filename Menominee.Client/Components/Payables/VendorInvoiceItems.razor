@@ -1,9 +1,4 @@
-﻿
-@*<h5 class="m-bordered-form-header">Items</h5>
-
-    <div class="m-bordered-form">
-        <div>*@
-@if (Items == null)
+﻿@if (Items == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -59,64 +54,9 @@
 
     @if (ItemToModify != null)
     {
-        <VendorInvoiceItemForm Item="@ItemToModify" DialogVisible="@EditDialogVisible" Mode="@ItemFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
+        <VendorInvoiceItemEditor Item="@ItemToModify" DialogVisible="@EditDialogVisible" Mode="@ItemFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
     }
 
     <EditNewDeleteIconButtons OnEdit="@OnEdit" OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" CanEdit="@CanEdit" CanDelete="@CanDelete" />
 }
-@*</div>
-    </div>*@
-@*Height="calc(100vh - 524px)"*@
 
-<!--<div>
-    <SfGrid DataSource="@Items"
-            AllowPaging="true"
-            AllowSorting="true"
-            AllowFiltering="true"
-            AllowTextWrap="true"
-            AllowResizing="true"
-            AllowReordering="true"
-            Width="100%"
-            ID="Grid"
-            @ref="Grid"
-            GridLines="GridLine.None"
-            Height="calc(100vh - 524px)"
-            RowHeight="25">
-        <GridTemplates>
-            <EmptyRecordTemplate>
-                @*<span>No records to display</span> //Leaving the EmptyRecordTemplate empty results in no message*@
-            </EmptyRecordTemplate>
-        </GridTemplates>
-        <GridFilterSettings Mode="FilterBarMode.Immediate" ImmediateModeDelay="200"></GridFilterSettings>
-        @*<GridEvents RowSelected="OnRowSelected"
-                OnRecordDoubleClick="OnEditInvoice"
-                RowDataBound="RowDataBoundHandler"
-                DataBound="DataBoundHandler"
-                TValue="VendorInvoice">
-    </GridEvents>*@
-        <GridColumns>
-            <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(VendorInvoiceItemToWrite.PartNumber)
-                        HeaderText="Part Number"
-                        Width="15%"
-                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
-            </Syncfusion.Blazor.Grids.GridColumn>
-            <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(VendorInvoiceItemToWrite.Description)
-                        HeaderText="Description"
-                        Width="20%"
-                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
-            </Syncfusion.Blazor.Grids.GridColumn>
-            <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(VendorInvoiceItemToWrite.Quantity)
-                        HeaderText="Qty"
-                        Width="10%"
-                        TextAlign="TextAlign.Right"
-                        FilterSettings="@(new FilterSettings{ Operator = Operator.Contains })">
-            </Syncfusion.Blazor.Grids.GridColumn>
-            <Syncfusion.Blazor.Grids.GridColumn Field=@nameof(VendorInvoiceItemToWrite.Cost)
-                        HeaderText="Cost"
-                        Width="15%"
-                        TextAlign="TextAlign.Right"
-                        FilterSettings="@(new FilterSettings{ Operator = Operator.StartsWith })">
-            </Syncfusion.Blazor.Grids.GridColumn>
-        </GridColumns>
-    </SfGrid>
-</div>-->

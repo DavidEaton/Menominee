@@ -10,8 +10,27 @@
             @*<div class="container">*@
             <div class="form-row">
                 <div class="form-group col-12">
-                    <label class="m-label">Part Number</label>
-                    <div class="m-form-control-group" for="partNum">
+                    @if (itemTypes != null && itemTypes.Count > 0)
+                    {
+                        <label class="m-label" for="itemType">Item Type</label>
+                        <div class="m-form-control-group">
+                            <SfDropDownList TValue="VendorInvoiceItemType"
+                                        TItem="InvoiceItemType"
+                                        PopupHeight="230px"
+                                        DataSource="@itemTypes"
+                                        @bind-Value="@Item.Type"
+                                        Id="itemType">
+                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                            </SfDropDownList>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="m-label" for="partNum">Part Number</label>
+                    <div class="m-form-control-group">
                         <TelerikTextBox @bind-Value="@Item.PartNumber"
                                         Width="100%"
                                         Id="partNum">
@@ -68,15 +87,6 @@
 
     .dialog-button {
         margin-right: 0.7rem;
-    }
-
-    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
-        background: #274c77;
-        color: white;
-    }
-
-    .m-form-control-group {
-        margin-bottom: 1rem;
     }
 
 </style>

@@ -46,7 +46,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
-            Vendors = (await vendorDataService.GetAllVendors()).ToList();
+            Vendors = (await vendorDataService.GetAllVendorsAsync()).ToList();
 
             VendorList = new();
             foreach (var vendor in Vendors)

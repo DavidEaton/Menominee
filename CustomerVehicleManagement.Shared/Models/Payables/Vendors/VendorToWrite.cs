@@ -12,6 +12,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         [Required(ErrorMessage = "Vendor Code is required.")]
         public string VendorCode { get; set; } = string.Empty;
 
-        public bool? IsActive { get; set; } = true;
+        public bool? IsActive { get; set; }
     }
 }

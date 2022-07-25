@@ -175,10 +175,11 @@ namespace Menominee.Client.Components.Payables
         private static void CopyItem(VendorInvoiceItemToWrite src, VendorInvoiceItemToWrite dst)
         {
             dst.Id = src.Id;
-            dst.InvoiceId = src.InvoiceId;
+            dst.VendorInvoiceId = src.VendorInvoiceId;
             dst.Type = src.Type;
             dst.PartNumber = src.PartNumber;
-            dst.MfrId = src.MfrId;
+            //dst.MfrId = src.MfrId;
+            dst.Manufacturer = src.Manufacturer;
             dst.Description = src.Description;
             dst.Quantity = src.Quantity;
             dst.Cost = src.Cost;

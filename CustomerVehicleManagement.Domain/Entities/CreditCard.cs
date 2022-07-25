@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public string Name { get; set; }
         public CreditCardFeeType FeeType { get; set; }
         public double Fee { get; set; }
-        public bool IsAddedToDeposit { get; set; }
+        public bool? IsAddedToDeposit { get; set; }
 
         //public virtual CreditCardProcessor Processor { get; set; }
 

@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerVehicleManagement.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220723140316_VendorInvoiceNavProperties")]
+    partial class VendorInvoiceNavProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +38,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<int>("FeeType")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("IsAddedToDeposit")
+                    b.Property<bool>("IsAddedToDeposit")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -713,15 +715,18 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<long?>("PaymentMethodId")
+                    b.Property<long?>("MyPropertyId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
                     b.Property<long>("VendorInvoiceId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("MyPropertyId");
 
                     b.HasIndex("VendorInvoiceId");
 
@@ -1329,12 +1334,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("IsAppliedByDefault")
+                    b.Property<bool>("IsAppliedByDefault")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<bool?>("IsTaxable")
+                    b.Property<bool>("IsTaxable")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -1701,9 +1706,9 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePayment", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePaymentMethod", "PaymentMethod")
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePaymentMethod", "MyProperty")
                         .WithMany()
-                        .HasForeignKey("PaymentMethodId");
+                        .HasForeignKey("MyPropertyId");
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
                         .WithMany("Payments")
@@ -1711,7 +1716,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PaymentMethod");
+                    b.Navigation("MyProperty");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceTax", b =>

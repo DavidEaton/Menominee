@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.Payables
+namespace Menominee.Client.Components.Payables.Pages
 {
-    public partial class VendorInvoiceList : ComponentBase
+    public partial class VendorInvoiceListPage : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }

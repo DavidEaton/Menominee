@@ -6,9 +6,9 @@ namespace Menominee.Client.Services.Payables.Vendors
 {
     public interface IVendorDataService
     {
-        Task<IReadOnlyList<VendorToReadInList>> GetAllVendors();
-        Task<VendorToRead> GetVendor(long id);
-        Task<VendorToRead> AddVendor(VendorToWrite vendor);
-        Task UpdateVendor(VendorToWrite vendor, long id);
+        Task<IReadOnlyList<VendorToReadInList>> GetAllVendorsAsync();
+        Task<VendorToRead> GetVendorAsync(long id);
+        Task<VendorToRead> AddVendorAsync(VendorToWrite vendor);
+        Task UpdateVendorAsync(VendorToWrite vendor, long id);
     }
 }

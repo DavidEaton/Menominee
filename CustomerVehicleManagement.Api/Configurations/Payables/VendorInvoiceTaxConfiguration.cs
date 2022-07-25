@@ -12,10 +12,10 @@ namespace CustomerVehicleManagement.Api.Configurations
             builder.ToTable("VendorInvoiceTax", "dbo");
 
             builder.Ignore(tax => tax.TrackingState);
-            builder.Ignore(tax => tax.TaxName);
+            //builder.Ignore(tax => tax.TaxName);
 
-            builder.Property(tax => tax.InvoiceId)
-                   .IsRequired();
+            //builder.Property(tax => tax.InvoiceId)
+            //       .IsRequired();
         }
     }
 }

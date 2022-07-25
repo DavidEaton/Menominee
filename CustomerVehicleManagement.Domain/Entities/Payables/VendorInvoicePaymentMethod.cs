@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class VendorInvoicePaymentMethod : Entity
     {
-        public string PaymentName { get; set; }
+        public string Name { get; set; }
 
         #region ORM
 

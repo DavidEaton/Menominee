@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Menominee.Common.Utilities;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
@@ -44,63 +45,69 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<VendorInvoiceToRead> GetInvoiceAsync(long id)
         {
             var invoiceFromContext = await context.VendorInvoices
-                                                  .Include(invoice => invoice.LineItems)
-                                                  .Include(invoice => invoice.Payments)
-                                                  .Include(invoice => invoice.Taxes)
                                                   .Include(invoice => invoice.Vendor)
+                                                  .Include(invoice => invoice.LineItems)
+                                                      .ThenInclude(item => item.Manufacturer)
+                                                  //.Include(invoice => invoice.Payments)
+                                                  //    .ThenInclude(payment => payment.PaymentMethod)
+                                                  .Include(invoice => invoice.Taxes)
+                                                      .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()
                                                   .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
+            Guard.ForNull(invoiceFromContext, "invoiceFromContext");
 
-            return new VendorInvoiceToRead()
-            {
-                Id = invoiceFromContext.Id,
-                Vendor = new VendorToRead()
-                {
-                    Id = invoiceFromContext.Vendor.Id,
-                    Name = invoiceFromContext.Vendor.Name,
-                    VendorCode = invoiceFromContext.Vendor.VendorCode,
-                    IsActive = invoiceFromContext.Vendor.IsActive == null ? true : invoiceFromContext.Vendor.IsActive
-                },
-                Name = invoiceFromContext.Vendor?.Name,
-                Date = invoiceFromContext.Date,
-                DatePosted = invoiceFromContext.DatePosted,
-                Status = invoiceFromContext.Status.ToString(),
-                InvoiceNumber = invoiceFromContext.InvoiceNumber,
-                Total = invoiceFromContext.Total,
-                LineItems = invoiceFromContext.LineItems.Select(item => new VendorInvoiceItemToRead()
-                {
-                    Id = item.Id,
-                    InvoiceId = item.InvoiceId,
-                    Type = item.Type,
-                    PartNumber = item.PartNumber,
-                    MfrId = item.MfrId,
-                    Description = item.Description,
-                    Quantity = item.Quantity,
-                    Cost = item.Cost,
-                    Core = item.Core,
-                    PONumber = item.PONumber,
-                    InvoiceNumber = item.InvoiceNumber,
-                    TransactionDate = item.TransactionDate
-                }).ToList(),
-                Payments = invoiceFromContext.Payments.Select(payment => new VendorInvoicePaymentToRead()
-                {
-                    Id = payment.Id,
-                    InvoiceId = payment.InvoiceId,
-                    PaymentMethod = payment.PaymentMethod,
-                    PaymentMethodName = payment.PaymentMethodName,  // fix me
-                    Amount = payment.Amount
-                }).ToList(),
-                Taxes = invoiceFromContext.Taxes.Select(tax => new VendorInvoiceTaxToRead()
-                {
-                    Id = tax.Id,
-                    InvoiceId = tax.InvoiceId,
-                    Order = tax.Order,
-                    TaxId = tax.TaxId,
-                    TaxName = tax.TaxName,  // fix me - when/where does this get populated
-                    Amount = tax.Amount
-                }).ToList()
-            };
+            return VendorInvoiceHelper.ConvertEntityToReadDto(invoiceFromContext);
+
+            //return new VendorInvoiceToRead()
+            //{
+            //    Id = invoiceFromContext.Id,
+            //    Vendor = new VendorToRead()
+            //    {
+            //        Id = invoiceFromContext.Vendor.Id,
+            //        Name = invoiceFromContext.Vendor.Name,
+            //        VendorCode = invoiceFromContext.Vendor.VendorCode,
+            //        IsActive = invoiceFromContext.Vendor.IsActive == null ? true : invoiceFromContext.Vendor.IsActive
+            //    },
+            //    Name = invoiceFromContext.Vendor?.Name,
+            //    Date = invoiceFromContext.Date,
+            //    DatePosted = invoiceFromContext.DatePosted,
+            //    Status = invoiceFromContext.Status.ToString(),
+            //    InvoiceNumber = invoiceFromContext.InvoiceNumber,
+            //    Total = invoiceFromContext.Total,
+            //    LineItems = invoiceFromContext.LineItems.Select(item => new VendorInvoiceItemToRead()
+            //    {
+            //        Id = item.Id,
+            //        VendorInvoiceId = item.VendorInvoiceId,
+            //        Type = item.Type,
+            //        PartNumber = item.PartNumber,
+            //        MfrId = item.MfrId,
+            //        Description = item.Description,
+            //        Quantity = item.Quantity,
+            //        Cost = item.Cost,
+            //        Core = item.Core,
+            //        PONumber = item.PONumber,
+            //        InvoiceNumber = item.InvoiceNumber,
+            //        TransactionDate = item.TransactionDate
+            //    }).ToList(),
+            //    Payments = invoiceFromContext.Payments.Select(payment => new VendorInvoicePaymentToRead()
+            //    {
+            //        Id = payment.Id,
+            //        VendorInvoiceId = payment.VendorInvoiceId,
+            //        PaymentMethod = payment.PaymentMethod,
+            //        //PaymentMethodName = payment.PaymentMethodName,  // fix me
+            //        Amount = payment.Amount
+            //    }).ToList(),
+            //    Taxes = invoiceFromContext.Taxes.Select(tax => new VendorInvoiceTaxToRead()
+            //    {
+            //        Id = tax.Id,
+            //        VendorInvoiceId = tax.VendorInvoiceId,
+            //        Order = tax.Order,
+            //        TaxId = tax.TaxId,
+            //        TaxName = tax.TaxName,  // fix me - when/where does this get populated
+            //        Amount = tax.Amount
+            //    }).ToList()
+            //};
         }
 
         public async Task<Vendor> GetVendorAsync(long id)
@@ -114,8 +121,11 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             var invoiceFromContext = await context.VendorInvoices
                                                   .Include(invoice => invoice.Vendor)
                                                   .Include(invoice => invoice.LineItems)
+                                                      .ThenInclude(item => item.Manufacturer)
                                                   .Include(invoice => invoice.Payments)
+                                                      .ThenInclude(payment => payment.PaymentMethod)
                                                   .Include(invoice => invoice.Taxes)
+                                                      .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()
                                                   .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
@@ -125,33 +135,14 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync()
         {
-            //IReadOnlyList<VendorInvoice> invoices = await context.VendorInvoices
-            //                                                     .Include(invoice => invoice.LineItems)
-            //                                                     .Include(invoice => invoice.Payments)
-            //                                                     .Include(invoice => invoice.Taxes)
-            //                                                     .ToListAsync();
-
-            //IReadOnlyList<VendorInvoice> invoices = await context.VendorInvoices.ToListAsync();
-
             IReadOnlyList<VendorInvoice> invoices = await context.VendorInvoices
                                                                  .Include(invoice => invoice.Vendor)
                                                                  .AsSplitQuery()
                                                                  .AsNoTracking()
                                                                  .ToListAsync();
 
-            return invoices
-                .Select(invoice => new VendorInvoiceToReadInList
-                {
-                    Id = invoice.Id,
-                    VendorId = invoice.Vendor?.Id ?? 0,
-                    VendorCode = invoice.Vendor?.VendorCode,
-                    Name = invoice.Vendor?.Name,
-                    DateCreated = invoice.Date?.ToShortDateString(),
-                    DatePosted = invoice.DatePosted?.ToShortDateString(),
-                    Status = invoice.Status.ToString(),
-                    InvoiceNumber = invoice.InvoiceNumber,
-                    Total = invoice.Total
-                }).ToList();
+            return invoices.Select(invoice => VendorInvoiceHelper.ConvertEntityToReadInListDto(invoice))
+                                   .ToList();
         }
 
         //public async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoicesAsync()

@@ -18,9 +18,9 @@ namespace CustomerVehicleManagement.Api.Configurations
                    .HasMaxLength(255)
                    .IsRequired();
 
-            builder.Property(item => item.MfrId)
-                   .HasMaxLength(10)
-                   .IsRequired();
+            //builder.Property(item => item.MfrId)
+            //       .HasMaxLength(10)
+            //       .IsRequired();
 
             builder.Property(item => item.Description)
                    .HasMaxLength(255)

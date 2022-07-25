@@ -99,6 +99,7 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new VendorInvoiceItemConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoicePaymentMethodConfiguration());
 
             // Repair Orders
             modelBuilder.ApplyConfiguration(new RepairOrderConfiguration());

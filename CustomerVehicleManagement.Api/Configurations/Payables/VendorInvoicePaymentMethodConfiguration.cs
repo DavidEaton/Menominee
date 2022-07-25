@@ -13,7 +13,8 @@ namespace CustomerVehicleManagement.Api.Configurations
 
             builder.Ignore(payment => payment.TrackingState);
 
-            builder.Property(payment => payment.PaymentName)
+            builder.Property(payment => payment.Name)
+                   .HasMaxLength(255)
                    .IsRequired();
         }
 

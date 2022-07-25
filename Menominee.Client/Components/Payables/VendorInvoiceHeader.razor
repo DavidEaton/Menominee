@@ -4,7 +4,15 @@
         <div class="form-group">
             <label class="m-label" for="vendorName">Vendor</label>
             <div class="k-form-field-wrap">
-                <TelerikDropDownList Id="vendorName" Data="@Vendors" TextField="Name" ValueField="Id" Width="240px" DefaultText="Select Vendor" @bind-Value="@Invoice.VendorId"></TelerikDropDownList>
+                <TelerikDropDownList Id="vendorName" 
+                                     Data="@Vendors" 
+                                     TextField="Name" 
+                                     ValueField="Id" 
+                                     Width="240px" 
+                                     DefaultText="Select Vendor" 
+                                     OnChange="OnVendorChangeAsync"
+                                     @bind-Value="@vendorId">
+                </TelerikDropDownList>
             </div>
         </div>
 

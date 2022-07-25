@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Configurations
 
             builder.Ignore(invoice => invoice.TrackingState);
 
-            builder.Property(invoice => invoice.Date);
+            //builder.Property(invoice => invoice.Date);
 
             builder.Property(invoice => invoice.Status)
                 .HasDefaultValue(VendorInvoiceStatus.Open);

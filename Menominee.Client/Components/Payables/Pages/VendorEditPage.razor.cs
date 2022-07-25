@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 
-namespace Menominee.Client.Pages.Payables
+namespace Menominee.Client.Components.Payables.Pages
 {
-    public partial class VendorEdit : ComponentBase
+    public partial class VendorEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }
@@ -26,7 +26,7 @@ namespace Menominee.Client.Pages.Payables
             }
             else
             {
-                var readDto = await vendorDataService.GetVendor(Id);
+                var readDto = await vendorDataService.GetVendorAsync(Id);
                 Vendor = new VendorToWrite()
                 {
                     Id = readDto.Id,
@@ -42,12 +42,12 @@ namespace Menominee.Client.Pages.Payables
             //if (!string.IsNullOrWhiteSpace(VendorToAdd.VendorId) && !string.IsNullOrWhiteSpace(VendorToAdd.Name))
             if (Id == 0)
             {
-                var vendor = await vendorDataService.AddVendor(Vendor);
+                var vendor = await vendorDataService.AddVendorAsync(Vendor);
                 Id = vendor.Id;
             }
             else
             {
-                await vendorDataService.UpdateVendor(Vendor, Id);
+                await vendorDataService.UpdateVendorAsync(Vendor, Id);
             }
 
             EndEdit();

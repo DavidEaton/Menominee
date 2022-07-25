@@ -23,7 +23,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             this.toastService = toastService;
         }
 
-        public async Task<VendorToRead> AddVendor(VendorToWrite vendor)
+        public async Task<VendorToRead> AddVendorAsync(VendorToWrite vendor)
         {
             var options = new JsonSerializerOptions
             {
@@ -43,7 +43,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             return null;
         }
 
-        public async Task<IReadOnlyList<VendorToReadInList>> GetAllVendors()
+        public async Task<IReadOnlyList<VendorToReadInList>> GetAllVendorsAsync()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             return null;
         }
 
-        public async Task<VendorToRead> GetVendor(long id)
+        public async Task<VendorToRead> GetVendorAsync(long id)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             return null;
         }
 
-        public async Task UpdateVendor(VendorToWrite vendor, long id)
+        public async Task UpdateVendorAsync(VendorToWrite vendor, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

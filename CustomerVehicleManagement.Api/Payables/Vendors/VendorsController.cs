@@ -147,7 +147,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             //return Created(new Uri($"{BasePath}/{vendor.Id}", UriKind.Relative), new { id = vendor.Id });
             return CreatedAtRoute("GetVendorAsync",
                                   new { id = vendor.Id },
-                                  VendorHelper.CreateVendor(vendor));
+                                  VendorHelper.ConvertEntityToReadDto(vendor));
         }
 
         [HttpDelete("{id:long}")]

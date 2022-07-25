@@ -75,7 +75,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             {
                 Id = vendor.Id,
                 VendorCode = vendor.VendorCode,
-                Name = vendor.Name
+                Name = vendor.Name,
+                IsActive = vendor.IsActive
             }).ToList();
         }
 

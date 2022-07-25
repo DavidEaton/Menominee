@@ -49,10 +49,11 @@ namespace Menominee.Client.Components.Payables
         {
             if (Payments != null)
             {
-                foreach (var payment in Payments)
-                {
-                    payment.PaymentMethodName = "VISA";
-                }
+                // TODO - Do actual lookup
+                //foreach (var payment in Payments)
+                //{
+                //    payment.PaymentMethodName = "VISA";
+                //}
             }
             base.OnParametersSet();
         }

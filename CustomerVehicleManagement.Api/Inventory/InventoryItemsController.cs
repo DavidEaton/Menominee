@@ -104,31 +104,33 @@ namespace CustomerVehicleManagement.Api.Inventory
         [HttpPost]
         public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToWrite)
         {
-            InventoryItem item = null;
+            InventoryItem item = InventoryItemHelper.ConvertWriteDtoToEntity(itemToWrite);
 
-            if (itemToWrite.ItemType == InventoryItemType.Part)
-                item = new(InventoryPartHelper.ConvertWriteDtoToEntity(itemToWrite.Part));
-            else if (itemToWrite.ItemType == InventoryItemType.Labor)
-                item = new(InventoryLaborHelper.ConvertWriteDtoToEntity(itemToWrite.Labor));
-            else if (itemToWrite.ItemType == InventoryItemType.Tire)
-                item = new(InventoryTireHelper.ConvertWriteDtoToEntity(itemToWrite.Tire));
-            else if (itemToWrite.ItemType == InventoryItemType.Package)
-                item = new(InventoryPackageHelper.ConvertWriteDtoToEntity(itemToWrite.Package));
-            else if (itemToWrite.ItemType == InventoryItemType.Inspection)
-                item = new(InventoryInspectionHelper.ConvertWriteDtoToEntity(itemToWrite.Inspection));
-            else if (itemToWrite.ItemType == InventoryItemType.Donation)
-                item = new() { ItemType = InventoryItemType.Donation, Donation = new() };// (InventoryDonationHelper.ConvertWriteDtoToEntity(itemToWrite.Donation));
-            else if (itemToWrite.ItemType == InventoryItemType.GiftCertificate)
-                item = new() { ItemType = InventoryItemType.GiftCertificate, GiftCertificate = new() };// (InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(itemToWrite.GiftCertificate));
-            else if (itemToWrite.ItemType == InventoryItemType.Warranty)
-                item = new(InventoryWarrantyHelper.ConvertWriteDtoToEntity(itemToWrite.Warranty));
+            //InventoryItem item = null;
 
-            //item.Manufacturer = ManufacturerHelper.ConvertToEntity(itemToWrite.Manufacturer);
-            item.ManufacturerId = itemToWrite.Manufacturer.Id;
-            item.ItemNumber = itemToWrite.ItemNumber;
-            item.Description = itemToWrite.Description;
-            //item.ProductCode = ProductCodeHelper.ConvertToEntity(itemToWrite.ProductCode);
-            item.ProductCodeId = itemToWrite.ProductCode.Id;
+            //if (itemToWrite.ItemType == InventoryItemType.Part)
+            //    item = new(InventoryPartHelper.ConvertWriteDtoToEntity(itemToWrite.Part));
+            //else if (itemToWrite.ItemType == InventoryItemType.Labor)
+            //    item = new(InventoryLaborHelper.ConvertWriteDtoToEntity(itemToWrite.Labor));
+            //else if (itemToWrite.ItemType == InventoryItemType.Tire)
+            //    item = new(InventoryTireHelper.ConvertWriteDtoToEntity(itemToWrite.Tire));
+            //else if (itemToWrite.ItemType == InventoryItemType.Package)
+            //    item = new(InventoryPackageHelper.ConvertWriteDtoToEntity(itemToWrite.Package));
+            //else if (itemToWrite.ItemType == InventoryItemType.Inspection)
+            //    item = new(InventoryInspectionHelper.ConvertWriteDtoToEntity(itemToWrite.Inspection));
+            //else if (itemToWrite.ItemType == InventoryItemType.Donation)
+            //    item = new() { ItemType = InventoryItemType.Donation, Donation = new() };// (InventoryDonationHelper.ConvertWriteDtoToEntity(itemToWrite.Donation));
+            //else if (itemToWrite.ItemType == InventoryItemType.GiftCertificate)
+            //    item = new() { ItemType = InventoryItemType.GiftCertificate, GiftCertificate = new() };// (InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(itemToWrite.GiftCertificate));
+            //else if (itemToWrite.ItemType == InventoryItemType.Warranty)
+            //    item = new(InventoryWarrantyHelper.ConvertWriteDtoToEntity(itemToWrite.Warranty));
+
+            ////item.Manufacturer = ManufacturerHelper.ConvertToEntity(itemToWrite.Manufacturer);
+            //item.ManufacturerId = itemToWrite.Manufacturer.Id;
+            //item.ItemNumber = itemToWrite.ItemNumber;
+            //item.Description = itemToWrite.Description;
+            ////item.ProductCode = ProductCodeHelper.ConvertToEntity(itemToWrite.ProductCode);
+            //item.ProductCodeId = itemToWrite.ProductCode.Id;
 
             await itemRepository.AddItemAsync(item);
 

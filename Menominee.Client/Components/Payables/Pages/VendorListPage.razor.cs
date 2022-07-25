@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Pages.Payables
+namespace Menominee.Client.Components.Payables.Pages
 {
-    public partial class VendorList : ComponentBase 
+    public partial class VendorListPage : ComponentBase 
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -50,7 +50,7 @@ namespace Menominee.Client.Pages.Payables
 
         protected override async Task OnInitializedAsync()
         {
-            VendorsList = (await VendorDataService.GetAllVendors()).ToList();
+            VendorsList = (await VendorDataService.GetAllVendorsAsync()).ToList();
 
             if (VendorsList.Count > 0)
             {

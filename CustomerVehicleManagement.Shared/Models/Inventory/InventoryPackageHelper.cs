@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryPackageHelper
     {
-        #region <---- Create InventoryPackageToRead from InventoryItemPackage ---->
+        #region <---- ConvertEntityToReadDto ---->
 
         public static InventoryPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
         {
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
         #endregion
 
-        #region <---- Create InventoryItemPackage from InventoryPackageToWrite ---->
+        #region <---- ConvertWriteDtoToEntity ---->
 
         public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryPackageToWrite package)
         {
@@ -132,7 +132,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
         #endregion
 
-        #region <---- Create InventoryPackageToWrite from InventoryPackageToRead ---->
+        #region <---- ConvertReadToWriteDto ---->
 
         public static InventoryPackageToWrite ConvertReadToWriteDto(InventoryPackageToRead package)
         {

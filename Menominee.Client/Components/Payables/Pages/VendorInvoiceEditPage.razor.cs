@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
-namespace Menominee.Client.Pages.Payables
+namespace Menominee.Client.Components.Payables.Pages
 {
-    public partial class VendorInvoiceEdit : ComponentBase
+    public partial class VendorInvoiceEditPage : ComponentBase
     {
         [Inject]
         private NavigationManager navigationManager { get; set; }
@@ -29,7 +29,7 @@ namespace Menominee.Client.Pages.Payables
             else
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
-                Invoice = VendorInvoiceHelper.CreateVendorInvoice(readDto);
+                Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Menominee.Client.Pages.Payables
 
         private bool Valid()
         {
-            if (Invoice.VendorId > 0 && Invoice.Date.HasValue)
+            if (Invoice.Vendor?.Id > 0 && Invoice.Date.HasValue)
                 return true;
 
             return false;

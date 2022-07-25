@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.Payables
 {
-    public partial class VendorInvoiceForm
+    public partial class VendorInvoiceEditor
     {
         [Parameter]
         public VendorInvoiceToWrite Invoice { get; set; }
