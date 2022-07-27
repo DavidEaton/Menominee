@@ -21,5 +21,12 @@
                 return DesiredMargin.ToString("#0.00#'%'");
             }
         }
+        public string DisplayText
+        {
+            get
+            {
+                return Code + " - " + Name;
+            }
+        }
     }
 }

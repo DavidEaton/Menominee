@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomerVehicleManagement.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220725163745_VendorInvoiceVendorId")]
+    partial class VendorInvoiceVendorId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -679,8 +681,8 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
 
-                    b.Property<long?>("SaleCodeId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("SaleCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("TransactionDate")
                         .HasColumnType("datetime2");
@@ -690,14 +692,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<long?>("VendorInvoiceId")
+                    b.Property<long>("VendorInvoiceId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("SaleCodeId");
 
                     b.HasIndex("VendorInvoiceId");
 
@@ -1692,19 +1692,15 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany()
                         .HasForeignKey("ManufacturerId");
 
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
-                        .WithMany()
-                        .HasForeignKey("SaleCodeId");
-
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", "Invoice")
                         .WithMany("LineItems")
-                        .HasForeignKey("VendorInvoiceId");
+                        .HasForeignKey("VendorInvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Invoice");
 
                     b.Navigation("Manufacturer");
-
-                    b.Navigation("SaleCode");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePayment", b =>

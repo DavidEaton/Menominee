@@ -41,7 +41,11 @@ namespace Menominee.Client.Components.Inventory
         [Parameter]
         public bool FilterPackagableItems { get; set; } = false;
 
-        Predicate<InventoryItemToReadInList> itemMatchesFilter = ItemMatchesFilter;
+        [Parameter]
+        public bool FilterInstallableItems { get; set; } = false;
+
+        Predicate<InventoryItemToReadInList> itemIsPackagable = ItemMatchesPackageFilter;
+        Predicate<InventoryItemToReadInList> itemIsInstallable = ItemMatchesInstallableFilter;
 
         public IReadOnlyList<InventoryItemToReadInList> ItemsList;
         public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
@@ -94,9 +98,16 @@ namespace Menominee.Client.Components.Inventory
             if (FilterPackagableItems)
             {
                 if (mfrId > 0)
-                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemMatchesFilter(i)).ToList();
+                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemIsPackagable(i)).ToList();
                 else
-                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemMatchesFilter(i)).ToList();
+                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemIsPackagable(i)).ToList();
+            }
+            else if (FilterInstallableItems)
+            {
+                if (mfrId > 0)
+                    ItemsList = (await DataService.GetAllItemsAsync(mfrId)).Where(i => itemIsInstallable(i)).ToList();
+                else
+                    ItemsList = (await DataService.GetAllItemsAsync()).Where(i => itemIsInstallable(i)).ToList();
             }
             else
             {
@@ -116,12 +127,20 @@ namespace Menominee.Client.Components.Inventory
             CanSelect = ItemsList.Count > 0;
         }
 
-        private static bool ItemMatchesFilter(InventoryItemToReadInList item)
+        // TODO: Need a better way to do customized filtering
+        private static bool ItemMatchesPackageFilter(InventoryItemToReadInList item)
         {
             return item.ItemType != InventoryItemType.Package
                 && item.ItemType != InventoryItemType.GiftCertificate
                 && item.ItemType != InventoryItemType.Donation;
         }
+
+        private static bool ItemMatchesInstallableFilter(InventoryItemToReadInList item)
+        {
+            return item.ItemType == InventoryItemType.Part
+                || item.ItemType == InventoryItemType.Tire;
+        }
+
 
         private async Task OnSelectMfr()
         {

@@ -2,12 +2,13 @@
 
     <TelerikWindow Visible="DialogVisible"
                    Modal="true"
+                   Width="450px"
+                   MinWidth="400px"
                    Class="popupWindowClass">
         <WindowTitle>
             @Title
         </WindowTitle>
         <WindowContent>
-            @*<div class="container">*@
             <div class="form-row">
                 <div class="form-group col-12">
                     @if (itemTypes != null && itemTypes.Count > 0)
@@ -16,7 +17,7 @@
                         <div class="m-form-control-group">
                             <SfDropDownList TValue="VendorInvoiceItemType"
                                         TItem="InvoiceItemType"
-                                        PopupHeight="230px"
+                                        PopupHeight="460px"
                                         DataSource="@itemTypes"
                                         @bind-Value="@Item.Type"
                                         Id="itemType">
@@ -29,15 +30,38 @@
 
             <div class="form-row">
                 <div class="form-group col-12">
+                    @if (Manufacturers != null)
+                    {
+                        <label class="m-label" for="category">Manufacturer</label>
+                        <div class="m-form-control-group">
+                            <TelerikDropDownList @bind-Value="@manufacturerId"
+                                             Width="100%"
+                                             Data="@Manufacturers"
+                                             TextField="DisplayText"
+                                             ValueField="Id"
+                                             Class="form-control"
+                                             OnChange="OnManufacturerChangeAsync"
+                                             Id="category">
+                            </TelerikDropDownList>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-12">
                     <label class="m-label" for="partNum">Part Number</label>
                     <div class="m-form-control-group">
-                        <TelerikTextBox @bind-Value="@Item.PartNumber"
-                                        Width="100%"
-                                        Id="partNum">
-                        </TelerikTextBox>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="partNum" @bind-value="@Item.PartNumber">
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="button" @onclick="SelectInventoryItem"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-group col-12">
                     <label class="m-label" for="description">Description</label>
@@ -49,17 +73,61 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-group col-12">
+                    @if (SaleCodes != null)
+                    {
+                        <label class="m-label" for="saleCode">Sale Code</label>
+                        <div class="m-form-control-group">
+                            <SfDropDownList TValue="long"
+                                        TItem="SaleCodeToReadInList"
+                                        PopupHeight="230px"
+                                        Placeholder="Select a sale code"
+                                        DataSource="@SaleCodes"
+                                        @bind-Value="@saleCodeId"
+                                        OnChange="OnSaleCodeChangeAsync">
+                                <DropDownListFieldSettings Text="DisplayText" Value="Id" />
+                            </SfDropDownList>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-6">
                     <label class="m-label" for="qty">Quantity</label>
                     <div class="m-form-control-group">
                         <TelerikNumericTextBox @bind-Value="@Item.Quantity"
-                                               Width="50%"
                                                Id="qty">
                         </TelerikNumericTextBox>
                     </div>
                 </div>
             </div>
+
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <div>
+                        <label class="m-label">Cost</label>
+                    </div>
+                    <TelerikNumericTextBox @bind-Value="Item.Cost"
+                                           Format="$#0.00#"
+                                           Decimals="3"
+                                           Arrows="false">
+                    </TelerikNumericTextBox>
+                </div>
+                <div class="form-group col-6">
+                    <div>
+                        <label class="m-label">Core</label>
+                    </div>
+                    <TelerikNumericTextBox @bind-Value="Item.Core"
+                                           Format="$#0.00#"
+                                           Decimals="3"
+                                           Arrows="false">
+                    </TelerikNumericTextBox>
+                </div>
+            </div>
+
             <hr id="divider">
             <div>
                 <TelerikButton OnClick="OnSave"
@@ -78,6 +146,15 @@
     </TelerikWindow>
 
 </EditForm>
+
+@if (ItemSelectDialogVisible)
+{
+    <InventoryItemSelectForm DialogVisible="@ItemSelectDialogVisible"
+                         @bind-SelectedItem="@SelectedInventoryItem"
+                         FilterInstallableItems="true"
+                         OnSelect="@AddItemAsync"
+                         OnCancel="@CancelAddItem" />
+}
 
 <style>
     #divider {

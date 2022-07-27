@@ -1,7 +1,11 @@
-﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
+using Menominee.Client.Services.SaleCodes;
+using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -19,6 +23,9 @@ namespace Menominee.Client.Components.Payables
         [Inject]
         public IProductCodeDataService productCodeDataService { get; set; }
 
+        [Inject]
+        public ISaleCodeDataService saleCodeDataService { get; set; }
+
         [Parameter]
         public VendorInvoiceItemToWrite Item { get; set; }
 
@@ -32,13 +39,7 @@ namespace Menominee.Client.Components.Payables
             set
             {
                 formMode = value;
-                if (formMode == FormMode.Add)
-                    Title = "Add";
-                else if (formMode == FormMode.Edit)
-                    Title = "Edit";
-                else
-                    Title = "View";
-                Title += " Item";
+                Title = FormTitle.BuildTitle(formMode, "Item");
             }
         }
 
@@ -48,13 +49,17 @@ namespace Menominee.Client.Components.Payables
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
+        private bool ItemSelectDialogVisible { get; set; } = false;
+        public InventoryItemToReadInList SelectedInventoryItem { get; set; }
         private FormMode formMode;
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
         //private IReadOnlyList<ProductCodeToReadInList> ProductCodes = new List<ProductCodeToReadInList>();
-        private string SaleCode = string.Empty;
+        private IReadOnlyList<SaleCodeToReadInList> SaleCodes = null;
+        //private string SaleCode = string.Empty;
+        private long saleCodeId = 0;
         private bool parametersSet = false;
         private long manufacturerId = 0;
-        private long productCodeId = 0;
+        //private long productCodeId = 0;
 
         public string Title { get; set; }
         
@@ -77,6 +82,9 @@ namespace Menominee.Client.Components.Payables
             //manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
             //ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
             //ProductCodes.OrderBy(pc => pc.Code);
+            SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync())
+                                                          .OrderBy(saleCode => saleCode.Code)
+                                                          .ToList();
 
             foreach (VendorInvoiceItemType itemType in Enum.GetValues(typeof(VendorInvoiceItemType)))
             {
@@ -97,10 +105,11 @@ namespace Menominee.Client.Components.Payables
             {
                 manufacturerId = Item.Manufacturer.Id;
             }
-            //if (Item?.ProductCode != null)
-            //{
-            //    productCodeId = Item.ProductCode.Id;
-            //}
+
+            if (Item?.SaleCodeId != 0)
+            {
+                saleCodeId = Item.SaleCodeId ?? 0;
+            }
 
             //if (Item?.Part == null)
             //{
@@ -118,6 +127,7 @@ namespace Menominee.Client.Components.Payables
             if (manufacturerId > 0 && Item.Manufacturer?.Id != manufacturerId)
             {
                 Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
+                Item.ManufacturerId = manufacturerId;
             }
 
             //if (Item?.Manufacturer is not null)
@@ -136,6 +146,45 @@ namespace Menominee.Client.Components.Payables
             //}
 
             //await OnProductCodeChangeAsync();
+        }
+
+        private async Task OnSaleCodeChangeAsync()
+        {
+            if (saleCodeId > 0 && Item.SaleCode?.Id != saleCodeId)
+            {
+                Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(await saleCodeDataService.GetSaleCodeAsync(saleCodeId));
+                Item.SaleCodeId = saleCodeId;
+            }
+        }
+
+        private void SelectInventoryItem()
+        {
+            ItemSelectDialogVisible = true;
+        }
+
+        private async Task AddItemAsync()
+        {
+            ItemSelectDialogVisible = false;
+            if (SelectedInventoryItem != null)
+            {
+                manufacturerId = SelectedInventoryItem.ManufacturerId;
+                var prodCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId);
+
+                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
+                Item.ManufacturerId = manufacturerId;
+                if (prodCode?.SaleCode?.Code.Length > 0)
+                {
+                    Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(prodCode.SaleCode);
+                    Item.SaleCodeId = prodCode.SaleCode.Id;
+                }
+                Item.PartNumber = SelectedInventoryItem.ItemNumber;
+                Item.Description = SelectedInventoryItem.Description;
+            }
+        }
+
+        private void CancelAddItem()
+        {
+            ItemSelectDialogVisible = false;
         }
 
         public class InvoiceItemType

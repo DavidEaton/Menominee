@@ -62,50 +62,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             // 2) Update domain entity with data in data transfer object(DTO)
             VendorInvoiceHelper.CopyWriteDtoToEntity(invoiceToWrite, invoice);
 
-            //invoice.Vendor = ????
-            //invoice.Date = invoiceToEdit.Date;
-            //invoice.DatePosted = invoiceToEdit.DatePosted;
-            //invoice.Status = invoiceToEdit.Status;
-            //invoice.InvoiceNumber = invoiceToEdit.InvoiceNumber;
-            //invoice.Total = invoiceToEdit.Total;
-
-            //if (invoiceToEdit?.LineItems?.Count > 0)
-            //    invoice.SetItems(invoiceToEdit.LineItems.Select(item =>
-            //        new VendorInvoiceItem()
-            //        {
-            //            VendorInvoiceId = item.VendorInvoiceId,
-            //            Type = item.Type,
-            //            PartNumber = item.PartNumber,
-            //            MfrId = item.MfrId,
-            //            Description = item.Description,
-            //            Quantity = item.Quantity,
-            //            Cost = item.Cost,
-            //            Core = item.Core,
-            //            PONumber = item.PONumber,
-            //            InvoiceNumber = item.InvoiceNumber,
-            //            TransactionDate = item.TransactionDate
-            //        }).ToList());
-
-            //if (invoiceToEdit?.Payments?.Count > 0)
-            //    invoice.SetPayments(invoiceToEdit.Payments.Select(payment =>
-            //        new VendorInvoicePayment()
-            //        {
-            //            VendorInvoiceId = payment.VendorInvoiceId,
-            //            PaymentMethod = payment.PaymentMethod,
-            //            Amount = payment.Amount
-            //        }).ToList());
-
-            //if (invoiceToEdit?.Taxes?.Count > 0)
-            //    invoice.SetTaxes(invoiceToEdit.Taxes.Select(tax =>
-            //    new VendorInvoiceTax()
-            //    {
-            //        VendorInvoiceId = tax.VendorInvoiceId,
-            //        Order = tax.Order,
-            //        TaxId = tax.TaxId,
-            //        TaxName = tax.TaxName,
-            //        Amount = tax.Amount
-            //    }).ToList());
-
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
             invoice.SetTrackingState(TrackingState.Modified);
@@ -126,63 +82,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
             var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(invoiceToAdd);
-            //var invoice = new VendorInvoice();
-
-            //if (invoiceToAdd?.Date != null)
-            //    invoice.Date = invoiceToAdd.Date;
-
-            //if (invoiceToAdd?.DatePosted != null)
-            //    invoice.DatePosted = invoiceToAdd.DatePosted;
-
-            //invoice.Status = invoiceToAdd.Status;
-            //invoice.InvoiceNumber = invoiceToAdd.InvoiceNumber;
-            //invoice.Total = invoiceToAdd.Total;
-
-            //if (invoiceToAdd.VendorId > 0)
-            //    invoice.Vendor = await repository.GetVendorAsync(invoiceToAdd.VendorId);
-
-            //if (invoiceToAdd?.LineItems != null)
-            //    invoice.SetItems(invoiceToAdd?.LineItems
-            //                                   .Select(item =>
-            //                                   new VendorInvoiceItem()
-            //                                   {
-            //                                       VendorInvoiceId = item.VendorInvoiceId,
-            //                                       Type = item.Type,
-            //                                       PartNumber = item.PartNumber,
-            //                                       MfrId = item.MfrId,
-            //                                       Description = item.Description,
-            //                                       Quantity = item.Quantity,
-            //                                       Cost = item.Cost,
-            //                                       Core = item.Core,
-            //                                       PONumber = item.PONumber,
-            //                                       InvoiceNumber = item.InvoiceNumber,
-            //                                       TransactionDate = (item?.TransactionDate != null) ? item.TransactionDate : null
-            //                                   })
-            //                                   .ToList());
-
-            //if (invoiceToAdd?.Payments != null)
-            //    invoice.SetPayments(invoiceToAdd?.Payments
-            //                                   .Select(payment =>
-            //                                   new VendorInvoicePayment()
-            //                                   {
-            //                                       VendorInvoiceId = payment.VendorInvoiceId,
-            //                                       PaymentMethod = payment.PaymentMethod,
-            //                                       Amount = payment.Amount
-            //                                   })
-            //                                   .ToList());
-
-            //if (invoiceToAdd?.Taxes != null)
-            //    invoice.SetTaxes(invoiceToAdd?.Taxes
-            //                                   .Select(tax =>
-            //                                   new VendorInvoiceTax()
-            //                                   {
-            //                                       VendorInvoiceId = tax.VendorInvoiceId,
-            //                                       Order = tax.Order,
-            //                                       TaxId = tax.TaxId,
-            //                                       TaxName = tax.TaxName,
-            //                                       Amount = tax.Amount
-            //                                   })
-            //                                   .ToList());
 
             // 2. Add domain entity to repository
             await repository.AddInvoiceAsync(invoice);

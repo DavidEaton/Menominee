@@ -7,7 +7,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class VendorInvoice : Entity
     {
-        public virtual Vendor Vendor { get; set; }
+        public Vendor Vendor { get; set; }
+        public long VendorId { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? DatePosted { get; set; }
         public VendorInvoiceStatus Status { get; set; }

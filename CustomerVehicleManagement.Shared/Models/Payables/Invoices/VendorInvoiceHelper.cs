@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -46,12 +47,14 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             new VendorInvoiceItemToRead()
                             {
                                 Id = item.Id,
-                                VendorInvoiceId = item.VendorInvoiceId,
+                                VendorInvoiceId = item.VendorInvoiceId ?? 0,
                                 Type = item.Type,
                                 PartNumber = item.PartNumber,
                                 Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
-                                //MfrId = item.MfrId,
+                                ManufacturerId = item.ManufacturerId,
                                 Description = item.Description,
+                                SaleCode = SaleCodeHelper.ConvertEntityToReadDto(item.SaleCode),   
+                                SaleCodeId = item.SaleCodeId,
                                 Quantity = item.Quantity,
                                 Cost = item.Cost,
                                 Core = item.Core,
@@ -113,8 +116,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 Status = invoiceToWrite.Status,
                 InvoiceNumber = invoiceToWrite.InvoiceNumber,
                 Total = invoiceToWrite.Total,
-                //VendorId = invoiceToRead.Vendor.Id,
-                Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor),
+                VendorId = invoiceToWrite.Vendor?.Id ?? 0,
+                //Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor),
                 LineItems = ProjectItemsToWrite(invoiceToWrite.LineItems),
                 Payments = ProjectPaymentsToWrite(invoiceToWrite.Payments),
                 Taxes = ProjectTaxesToWrite(invoiceToWrite.Taxes)
@@ -136,9 +139,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                                 VendorInvoiceId = item.VendorInvoiceId,
                                 Type = item.Type,
                                 PartNumber = item.PartNumber,
-                                Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
-                                //MfrId = item.MfrId,
+                                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
+                                ManufacturerId = item.ManufacturerId,
                                 Description = item.Description,
+                                SaleCodeId = item.SaleCodeId,
                                 Quantity = item.Quantity,
                                 Cost = item.Cost,
                                 Core = item.Core,
@@ -223,8 +227,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                                 Type = item.Type,
                                 PartNumber = item.PartNumber,
                                 Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
-                                //MfrId = item.MfrId,
+                                ManufacturerId = item.ManufacturerId,
                                 Description = item.Description,
+                                SaleCode = SaleCodeHelper.ConvertReadToWriteDto(item.SaleCode),
+                                SaleCodeId = item.SaleCodeId,
                                 Quantity = item.Quantity,
                                 Cost = item.Cost,
                                 Core = item.Core,
@@ -299,7 +305,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             invoice.Status = invoiceToWrite.Status;
             invoice.InvoiceNumber = invoiceToWrite.InvoiceNumber;
             invoice.Total = invoiceToWrite.Total;
-            invoice.Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor);
+            //invoice.Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor);
+            invoice.VendorId = invoiceToWrite.Vendor?.Id ?? 0;
             invoice.LineItems = ProjectItemsToWrite(invoiceToWrite.LineItems);
             invoice.Payments = ProjectPaymentsToWrite(invoiceToWrite.Payments);
             invoice.Taxes = ProjectTaxesToWrite(invoiceToWrite.Taxes);

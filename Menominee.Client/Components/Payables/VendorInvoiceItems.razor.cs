@@ -3,6 +3,8 @@ using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables
@@ -11,6 +13,9 @@ namespace Menominee.Client.Components.Payables
     {
         [Parameter]
         public IList<VendorInvoiceItemToWrite> Items { get; set; }
+
+        [CascadingParameter]
+        public DialogFactory Dialogs { get; set; }
 
         public IEnumerable<VendorInvoiceItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<VendorInvoiceItemToWrite>();
         public VendorInvoiceItemToWrite SelectedItem { get; set; }
@@ -97,8 +102,16 @@ namespace Menominee.Client.Components.Payables
             EditDialogVisible = true;
         }
 
-        private void OnDelete()
+        private async Task OnDelete()
         {
+            if (SelectedItem != null
+            && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedItem.PartNumber}?", "Remove Item"))
+            {
+                Items.Remove(SelectedItem);
+                SelectedItem = Items.FirstOrDefault();
+                SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+                Grid.Rebind();
+            }
         }
 
         private void OnSaveEdit()
@@ -112,6 +125,7 @@ namespace Menominee.Client.Components.Payables
                 selectedItemIndex = Items.IndexOf(ItemToModify);
                 SelectedItem = Items[selectedItemIndex];
                 SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+                Grid.Rebind();
             }
             else if (ItemFormMode == FormMode.Edit)
             {
@@ -178,9 +192,11 @@ namespace Menominee.Client.Components.Payables
             dst.VendorInvoiceId = src.VendorInvoiceId;
             dst.Type = src.Type;
             dst.PartNumber = src.PartNumber;
-            //dst.MfrId = src.MfrId;
             dst.Manufacturer = src.Manufacturer;
+            dst.ManufacturerId = src.ManufacturerId;
             dst.Description = src.Description;
+            dst.SaleCode = src.SaleCode;
+            dst.SaleCodeId = src.SaleCodeId;
             dst.Quantity = src.Quantity;
             dst.Cost = src.Cost;
             dst.Core = src.Core;
