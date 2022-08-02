@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .Include(invoice => invoice.Taxes)
                                                       .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()
-                                                  //.AsNoTracking()
+                                                  .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
             Guard.ForNull(invoiceFromContext, "invoiceFromContext");
 
