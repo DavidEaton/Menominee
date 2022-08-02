@@ -1,0 +1,88 @@
+﻿<EditForm Model="PaymentMethod">
+    <TelerikWindow Visible="true"
+                   Modal="true"
+                   Width="650px"
+                   MinWidth="550px"
+                   Class="popupWindowClass">
+        <WindowTitle>
+            @Title
+        </WindowTitle>
+        <WindowContent>
+
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="m-label" for="description">Description</label>
+                    <div class="m-form-control-group">
+                        <TelerikTextBox @bind-Value="@PaymentMethod.Name"
+                                        Width="100%"
+                                        AutoComplete="off"
+                                        Id="description">
+                        </TelerikTextBox>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col col-12">
+                    <TelerikCheckBox Id="isOnAccount" @bind-Value="PaymentMethod.IsOnAccountPaymentType" />
+                    <label class="m-label" for="isOnAccount">Is an "On Account / Charge" payment type</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col col-12">
+                    <TelerikCheckBox Id="isReconciled" @bind-Value="PaymentMethod.IsReconciledByAnotherVendor" />
+                    <label class="m-label" for="isReconciled">Payments by this method are reconciled by a credit card type vendor</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-12">
+                    @if (Vendors != null && PaymentMethod.IsReconciledByAnotherVendor)
+                    {
+                        <label class="m-label" for="vendor">Reconciling Vendor</label>
+                        <div class="m-form-control-group">
+                            <TelerikDropDownList @bind-Value="@vendorId"
+                                             Width="100%"
+                                             Data="@Vendors"
+                                             TextField="Name"
+                                             ValueField="Id"
+                                             Class="form-control"
+                                             OnChange="OnVendorChangeAsync"
+                                             Id="vendor">
+                            </TelerikDropDownList>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <hr id="divider">
+            <div>
+                <TelerikButton OnClick="OnSave"
+                               ButtonType="ButtonType.Button"
+                               ThemeColor="primary"
+                               Class="dialog-button">
+                    <i class="fas fa-check"></i> OK
+                </TelerikButton>
+                <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               Class="dialog-button">
+                    <i class="fas fa-times"></i> Cancel
+                </TelerikButton>
+            </div>
+        </WindowContent>
+    </TelerikWindow>
+
+</EditForm>
+
+<style>
+    #divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+</style>

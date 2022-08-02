@@ -19,6 +19,7 @@ namespace Menominee.Client.Components.Inventory
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "Items",
@@ -43,5 +44,6 @@ namespace Menominee.Client.Components.Inventory
                 Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }

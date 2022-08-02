@@ -2,8 +2,8 @@
 
     <TelerikWindow Visible="DialogVisible"
                    Modal="true"
-                   Width="450px"
-                   MinWidth="400px"
+                   Width="650px"
+                   MinWidth="550px"
                    Class="popupWindowClass">
         <WindowTitle>
             @Title
@@ -107,9 +107,7 @@
 
             <div class="form-row">
                 <div class="form-group col-6">
-                    <div>
-                        <label class="m-label">Cost</label>
-                    </div>
+                    <label class="m-label">Cost</label>
                     <TelerikNumericTextBox @bind-Value="Item.Cost"
                                            Format="$#0.00#"
                                            Decimals="3"
@@ -117,14 +115,29 @@
                     </TelerikNumericTextBox>
                 </div>
                 <div class="form-group col-6">
-                    <div>
-                        <label class="m-label">Core</label>
-                    </div>
+                    <label class="m-label">Core</label>
                     <TelerikNumericTextBox @bind-Value="Item.Core"
                                            Format="$#0.00#"
                                            Decimals="3"
                                            Arrows="false">
                     </TelerikNumericTextBox>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <label class="m-label" for="transDate">Transaction Date</label>
+                    <div class="k-form-field-wrap">
+                        <TelerikDatePicker Id="transDate" @bind-Value="@Item.TransactionDate" />
+                    </div>
+                </div>
+                <div class="form-group col-4">
+                    <label class="m-label" for="poNumber">PO Number</label>
+                    <input type="text" class="form-control" id="poNumber" @bind-value="@Item.PONumber">
+                </div>
+                <div class="form-group col-4">
+                    <label class="m-label" for="invNumber">Invoice Number</label>
+                    <input type="text" class="form-control" id="invNumber" @bind-value="@Item.InvoiceNumber">
                 </div>
             </div>
 

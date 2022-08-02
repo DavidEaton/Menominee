@@ -23,6 +23,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
+#pragma warning disable BL0005
             menuItems.Clear();
 
             if (RepairOrderEditMenuVisible)
@@ -101,6 +102,7 @@ namespace Menominee.Client.Components.RepairOrders
                     Url = ""
                 });
             }
+#pragma warning restore BL0005
         }
 
         private List<MenuItem> menuItems = new List<MenuItem>();

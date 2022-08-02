@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return new()
             {
                 Id = payMethod.Id,
-                Name = payMethod.Name
+                Name = payMethod.Name,
+                IsActive = payMethod.IsActive,
+                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
+                VendorId = payMethod.VendorId ?? null,
+                ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(payMethod.ReconcilingVendor)
             };
         }
 
@@ -28,7 +34,11 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 
             return new()
             {
-                Name = payMethod.Name
+                Name = payMethod.Name,
+                IsActive = payMethod.IsActive,
+                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
+                VendorId = payMethod.VendorId ?? null
             };
         }
 
@@ -40,13 +50,22 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return new()
             {
                 Id = payMethod.Id,
-                Name= payMethod.Name
+                Name= payMethod.Name,
+                IsActive = payMethod.IsActive,
+                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
+                VendorId = payMethod.VendorId ?? null,
+                ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
             };
         }
 
         public static void CopyWriteDtoToEntity(VendorInvoicePaymentMethodToWrite payMethodToUpdate, VendorInvoicePaymentMethod payMethod)
         {
             payMethod.Name = payMethodToUpdate.Name;
+            payMethod.IsActive = payMethodToUpdate.IsActive;
+            payMethod.IsOnAccountPaymentType = payMethodToUpdate.IsOnAccountPaymentType;
+            payMethod.IsReconciledByAnotherVendor = payMethodToUpdate.IsReconciledByAnotherVendor;
+            payMethod.VendorId = payMethodToUpdate.VendorId ?? null;
         }
 
         public static VendorInvoicePaymentMethodToReadInList ConvertEntityToReadInListDto(VendorInvoicePaymentMethod payMethod)
@@ -57,7 +76,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return new()
             {
                 Id = payMethod.Id,
-                Name = payMethod.Name
+                Name = payMethod.Name,
+                IsActive = payMethod.IsActive,
+                ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
             };
         }
     }

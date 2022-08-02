@@ -19,6 +19,10 @@
         VendorListReport,
         VendorDetailReport,
         VendorSummaryReport,
-        InvoiceSummaryReport
+        InvoiceSummaryReport,
+
+        //--------------------
+        Settings,
+        PaymentMethods
     }
 }

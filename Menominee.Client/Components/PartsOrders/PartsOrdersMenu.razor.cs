@@ -19,6 +19,7 @@ namespace Menominee.Client.Components.PartsOrders
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "Placeholder",
@@ -31,5 +32,6 @@ namespace Menominee.Client.Components.PartsOrders
                 Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }

@@ -1,10 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -52,6 +48,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                       .ThenInclude(item => item.SaleCode)
                                                   .Include(invoice => invoice.Payments)
                                                       .ThenInclude(payment => payment.PaymentMethod)
+                                                          .ThenInclude(method => method.ReconcilingVendor)
                                                   .Include(invoice => invoice.Taxes)
                                                       .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()
@@ -78,6 +75,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                       .ThenInclude(item => item.SaleCode)
                                                   .Include(invoice => invoice.Payments)
                                                       .ThenInclude(payment => payment.PaymentMethod)
+                                                          .ThenInclude(method => method.ReconcilingVendor)
                                                   .Include(invoice => invoice.Taxes)
                                                       .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()

@@ -8,6 +8,7 @@ using Menominee.Client.Services.Customers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.Payables.Invoices;
+using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
@@ -108,6 +109,10 @@ namespace Menominee.Client
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IVendorInvoicePaymentMethodDataService, VendorInvoicePaymentMethodDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

@@ -24,6 +24,7 @@ namespace Menominee.Client.Components.Payables
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "Invoices",
@@ -61,7 +62,18 @@ namespace Menominee.Client.Components.Payables
                     new MenuItem { Text= "Invoice Summary", Url="", Id=((int)PayablesMenuId.InvoiceSummaryReport).ToString() }
                 },
                 Url = ""
+            },
+            new MenuItem
+            {
+                Text = "Settings",
+                Id = "-1",
+                Items = new List<MenuItem>
+                {
+                    new MenuItem { Text= "Payment Methods", Url=$"{ModuleUrl}/paymentmethods/listing", Id=((int)PayablesMenuId.PaymentMethods).ToString() }
+                },
+                Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }

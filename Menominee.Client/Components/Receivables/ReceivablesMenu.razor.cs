@@ -24,6 +24,7 @@ namespace Menominee.Client.Components.Receivables
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "Accounts",
@@ -73,5 +74,6 @@ namespace Menominee.Client.Components.Receivables
                 Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }

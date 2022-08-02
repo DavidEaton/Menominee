@@ -20,6 +20,7 @@ namespace Menominee.Client.Components.Settings
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "General",
@@ -69,5 +70,6 @@ namespace Menominee.Client.Components.Settings
                 Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }

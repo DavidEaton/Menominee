@@ -1,0 +1,59 @@
+﻿@page "/payables/paymentmethods/listing"
+@page "/payables/paymentmethods/listing/{PayMethodToSelect:long}"
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Vendor Invoice Payment Methods" />
+
+            @if (PayMethods == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (PayMethods != null)
+            {
+                <TelerikGrid Data="PayMethods"
+                             OnRowClick="@OnRowSelected"
+                             OnRowDoubleClick="@RowDoubleClickAsync"
+                             Sortable="true"
+                             Pageable="true"
+                             FilterMode="GridFilterMode.FilterMenu"
+                             ShowColumnMenu="true"
+                             SelectionMode="GridSelectionMode.Single"
+                             SelectedItemsChanged="@((IEnumerable<VendorInvoicePaymentMethodToReadInList> payMethodList) => OnSelect(payMethodList))"
+                             SelectedItems="@SelectedList"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridToolBar>
+                        <TelerikCheckBox Id="myCheckBox" @bind-Value="@showInactive" />
+                        <label for="myCheckBox">Show Inactive</label>
+@*                        <span class="k-toolbar-spacer"></span>
+                        <span class="k-toolbar-spacer"></span>*@
+                        @*<GridSearchBox />*@
+                    </GridToolBar>
+                    <GridColumns>
+                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.Name)" Title="Payment Name"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.ReconcilingVendorName)" Title="Reconciled By Vendor"></Telerik.Blazor.Components.GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" />
+            }
+        </div>
+    </div>
+</div>
+
+@if ((PayMethodFormMode == FormMode.Add || PayMethodFormMode == FormMode.Edit) && PayMethod != null)
+{
+    <VendorInvoicePaymentMethodEditor PaymentMethod="PayMethod"
+                Mode="PayMethodFormMode"
+                OnSave="SubmitHandlerAsync"
+                OnCancel="EndAddEditAsync" />
+}
+
+<style>
+    .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

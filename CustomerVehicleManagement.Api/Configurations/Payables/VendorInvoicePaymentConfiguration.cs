@@ -12,13 +12,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             builder.ToTable("VendorInvoicePayment", "dbo");
 
             builder.Ignore(payment => payment.TrackingState);
-            //builder.Ignore(payment => payment.PaymentMethodName);
-
-            //builder.Property(payment => payment.InvoiceId)
-            //       .IsRequired();
-
-            //builder.Property(payment => payment.PaymentMethod)
-            //       .IsRequired();
         }
     }
 }

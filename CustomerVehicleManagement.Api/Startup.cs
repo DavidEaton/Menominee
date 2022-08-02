@@ -5,6 +5,7 @@ using CustomerVehicleManagement.Api.Inventory;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Payables.Invoices;
+using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Api.ProductCodes;
@@ -122,6 +123,7 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<ICustomerRepository, CustomerRepository>();
             services.TryAddScoped<IVendorRepository, VendorRepository>();
             services.TryAddScoped<IVendorInvoiceRepository, VendorInvoiceRepository>();
+            services.TryAddScoped<IVendorInvoicePaymentMethodRepository, VendorInvoicePaymentMethodRepository>();
             services.TryAddScoped<IRepairOrderRepository, RepairOrderRepository>();
             services.TryAddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.TryAddScoped<ISaleCodeRepository, SaleCodeRepository>();

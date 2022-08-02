@@ -22,6 +22,7 @@ namespace Menominee.Client.Components.RepairOrders
 
         private List<MenuItem> menuItems = new List<MenuItem>
         {
+#pragma warning disable BL0005
             new MenuItem
             {
                 Text = "Catalogs",
@@ -62,5 +63,6 @@ namespace Menominee.Client.Components.RepairOrders
                 Url = ""
             }
          };
+#pragma warning restore BL0005
     }
 }
