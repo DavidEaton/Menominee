@@ -12,9 +12,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id);
         Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetPaymentMethodListAsync();
         void UpdatePaymentMethod(VendorInvoicePaymentMethod payMethod);
-        Task DeletePaymentMethodAsync(long id);
+        void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod);
         Task<bool> PaymentMethodExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         void FixTrackingState();
     }
 }

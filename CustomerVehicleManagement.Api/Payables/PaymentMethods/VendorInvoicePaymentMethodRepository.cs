@@ -27,13 +27,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             await context.AddAsync(payMethod);
         }
 
-        public async Task DeletePaymentMethodAsync(long id)
+        public void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod)
         {
-            var payMethodFromContext = await context.VendorInvoicePaymentMethods.FindAsync(id);
-
-            Guard.ForNull(payMethodFromContext, "Payment Method");
-
-            context.Remove(payMethodFromContext);
+            context.Remove(payMethod);
         }
 
         public void FixTrackingState()
@@ -58,7 +54,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             var payMethodFromContext = await context.VendorInvoicePaymentMethods
                                                         .Include(method => method.ReconcilingVendor)
                                                         .AsSplitQuery()
-                                                        .AsNoTracking()
                                                         .FirstOrDefaultAsync(method => method.Id == id);
             Guard.ForNull(payMethodFromContext, "payMethodFromContext");
 
@@ -82,9 +77,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             return await context.VendorInvoicePaymentMethods.AnyAsync(payMethod => payMethod.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            await context.SaveChangesAsync();
         }
 
         public void UpdatePaymentMethod(VendorInvoicePaymentMethod payMethod)

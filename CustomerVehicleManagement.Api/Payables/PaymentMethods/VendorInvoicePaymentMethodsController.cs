@@ -62,10 +62,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             repository.FixTrackingState();
 
             repository.UpdatePaymentMethod(payMethod);
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update vendor invoice payment method.  Id = {id}.");
+            return NoContent();
         }
 
         // POST: api/vendorinvoicepaymentmethods
@@ -85,17 +84,15 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePaymentMethodAsync(int id)
         {
-            var payMethodFromRepository = await repository.GetPaymentMethodAsync(id);
+            var payMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
 
             if (payMethodFromRepository == null)
                 return NotFound($"Could not find Vendor Invoice Payment Method in the database to delete with Id: {id}.");
 
-            await repository.DeletePaymentMethodAsync(id);
+            repository.DeletePaymentMethod(payMethodFromRepository);
+            await repository.SaveChangesAsync();
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
-
-            return BadRequest($"Failed to delete Vendor Invoice Payment Method with Id of {id}.");
+            return NoContent();
         }
     }
 }
