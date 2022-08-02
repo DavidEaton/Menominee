@@ -41,7 +41,6 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task DeleteItemAsync(long id)
         {
             var item = await context.InventoryItems
-                                    .AsNoTracking()
                                     .FirstOrDefaultAsync(item => item.Id == id);
 
             Guard.ForNull(item, "item");

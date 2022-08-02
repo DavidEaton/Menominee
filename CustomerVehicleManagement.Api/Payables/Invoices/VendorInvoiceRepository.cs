@@ -117,7 +117,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .Include(invoice => invoice.Payments)
                                                   .Include(invoice => invoice.Taxes)
                                                   .AsSplitQuery()
-                                                  .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return invoiceFromContext;

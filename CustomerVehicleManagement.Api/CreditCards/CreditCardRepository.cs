@@ -39,7 +39,6 @@ namespace CustomerVehicleManagement.Api.CreditCards
         public async Task DeleteCreditCardAsync(long id)
         {
             var cc = await context.CreditCards
-                                  .AsNoTracking()
                                   .FirstOrDefaultAsync(cc => cc.Id == id);
 
             Guard.ForNull(cc, "Credit Card");

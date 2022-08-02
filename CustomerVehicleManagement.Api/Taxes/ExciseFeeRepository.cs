@@ -34,7 +34,6 @@ namespace CustomerVehicleManagement.Api.Taxes
         public async Task DeleteExciseFeeAsync(long id)
         {
             var exciseFee = await context.ExciseFees
-                                         .AsNoTracking()
                                          .FirstOrDefaultAsync(fee => fee.Id == id);
 
             Guard.ForNull(exciseFee, "Excise Fee");

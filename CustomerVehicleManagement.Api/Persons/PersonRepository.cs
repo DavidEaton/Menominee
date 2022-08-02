@@ -38,7 +38,6 @@ namespace CustomerVehicleManagement.Api.Persons
                     .OrderByDescending(phone => phone.IsPrimary))
                 .Include(person => person.Emails
                     .OrderByDescending(email => email.IsPrimary))
-                .AsNoTracking()
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(person => person.Id == id);
 

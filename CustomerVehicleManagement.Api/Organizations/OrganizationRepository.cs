@@ -100,7 +100,8 @@ namespace CustomerVehicleManagement.Api.Organizations
                     .ThenInclude(contact => contact.Phones)
 
                 .AsSplitQuery()
-                //.AsNoTracking() // Disabling ChangeTracker on entity breaks loading of navigation properties
+                //.AsNoTracking() // Disabling ChangeTracker on entity breaks updating
+                // entity via repo.changetracker, loading of navigation properties
 
                 .FirstOrDefaultAsync(organization => organization.Id == id);
 
