@@ -13,17 +13,18 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  consoleNugetConfigPath: 'src/Console/nuget.config'
+  consoleProjectPath: src/Console/Menominee.Client/Menominee.Client.csproj'
 
 steps:
 - task: NuGetToolInstaller@1
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
+    projects: '$(consoleProjectPath)`'
     feedsToUse: 'config'
-    nugetConfigPath: 'src\Web\nuget.config'
+    nugetConfigPath: 'src/Web/nuget.config'
     externalFeedCredentials: 'TelerikFeed'
-
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
