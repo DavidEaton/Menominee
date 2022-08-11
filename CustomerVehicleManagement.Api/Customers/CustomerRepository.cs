@@ -191,7 +191,6 @@ namespace CustomerVehicleManagement.Api.Customers
                 .Include(customer => customer.Organization.Contact.Phones)
                 .Include(customer => customer.Organization.Contact.Emails)
 
-                .AsNoTracking()
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(customer => customer.Id == id);
 

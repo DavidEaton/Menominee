@@ -34,7 +34,6 @@ namespace CustomerVehicleManagement.Api.Taxes
         public async Task DeleteSalesTaxAsync(long id)
         {
             var salesTax = await context.SalesTaxes
-                                         .AsNoTracking()
                                          .FirstOrDefaultAsync(tax => tax.Id == id);
 
             Guard.ForNull(salesTax, "Sales Tax");
