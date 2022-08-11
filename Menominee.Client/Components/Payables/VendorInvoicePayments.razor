@@ -3,31 +3,113 @@
     <p><em>Loading...</em></p>
 }
 
-@if (Payments != null)
+@if (Payments != null && PaymentMethods != null)
 {
     <TelerikGrid Data="Payments"
-                 OnRowClick="@OnRowSelected"
-                 OnRowDoubleClick="@OnEdit"
-                 Sortable="false"
-                 FilterMode="GridFilterMode.None"
-                 ShowColumnMenu="false"
-                 SelectionMode="GridSelectionMode.Single"
-                 @ref="@Grid">
+             OnRowClick="@OnRowSelected"
+             OnRowDoubleClick="@OnEdit"
+             Sortable="false"
+             FilterMode="GridFilterMode.None"
+             ShowColumnMenu="false"
+             SelectionMode="GridSelectionMode.Single"
+             SelectedItemsChanged="@((IEnumerable<VendorInvoicePaymentToWrite> payList) => OnPaymentSelect(payList))"
+             SelectedItems="@SelectedPayments"
+             @ref="@Grid">
         <GridColumns>
-            <GridColumn Width="60%"
-                        Field="@nameof(VendorInvoicePaymentToWrite.PaymentMethod.Name)"
-                        Title="Payment Method">
+            <GridColumn Field="@nameof(VendorInvoicePaymentToWrite.PaymentMethod.Id)"
+                    Title="Payment Method"
+                    Width="55%">
+                <Template>
+                    @{
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        //<SfDropDownList TValue="long"
+                        //        TItem="VendorInvoicePaymentMethodToReadInList"
+                        //        PopupHeight="230px"
+                        //        DataSource="@PaymentMethods"
+                        //            @bind-Value="@payment.PaymentMethod.Id">
+                        //    <DropDownListFieldSettings Text="Name" Value="Id" />
+                        //    <DropDownListEvents TItem="VendorInvoicePaymentMethodToReadInList"
+                        //                TValue="long"
+                        //                ValueChange="@OnPaymentMethodChangeAsync">
+                        //    </DropDownListEvents>
+                        //</SfDropDownList>
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
+                                     Data="PaymentMethods"
+                                     TextField="Name"
+                                     ValueField="Id">
+                        </TelerikDropDownList>
+                    }
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
+                                     Data="PaymentMethods"
+                                     OnChange="OnPaymentMethodChangeAsync"
+                                     TextField="Name"
+                                     ValueField="Id">
+                        </TelerikDropDownList>
+                        //<SfDropDownList TValue="long"
+                        //        TItem="VendorInvoicePaymentMethodToReadInList"
+                        //        PopupHeight="230px"
+                        //        DataSource="@PaymentMethods"
+                        //            @bind-Value="@payment.PaymentMethod.Id">
+                        //    <DropDownListFieldSettings Text="Name" Value="Id" />
+                        //    <DropDownListEvents TItem="VendorInvoicePaymentMethodToReadInList"
+                        //                TValue="long"
+                        //                ValueChange="@OnPaymentMethodChangeAsync">
+                        //    </DropDownListEvents>
+                        //</SfDropDownList>
+                    }
+                </EditorTemplate>
             </GridColumn>
-            <GridColumn Width="40%"
-                        Field="@nameof(VendorInvoicePaymentToWrite.Amount)"
-                        Title="Amount"
-                        DisplayFormat="{0:C}"
-                        TextAlign="ColumnTextAlign.Right">
+
+            <GridColumn Width="35%"
+                    Field="@nameof(VendorInvoicePaymentToWrite.Amount)"
+                    Title="Amount"
+                    DisplayFormat="{0:C}"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
+                    TextAlign="ColumnTextAlign.Right">
+                <Template>
+                    @{
+                        var item = context as VendorInvoicePaymentToWrite;
+                        <TelerikNumericTextBox @bind-Value="item.Amount"
+                                       Format="C"
+                                       Decimals="2"
+                                       Arrows="false">
+                        </TelerikNumericTextBox>
+                    }
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var item = context as VendorInvoicePaymentToWrite;
+                        <TelerikNumericTextBox @bind-Value="item.Amount"
+                                       Format="C"
+                                       Decimals="2"
+                                       Arrows="false">
+                        </TelerikNumericTextBox>
+                    }
+                </EditorTemplate>
             </GridColumn>
+            <GridCommandColumn Width="117px"
+                           Context="VendorInvoicePaymentToWrite">
+                <GridCommandButton Command="_Balance"
+                               IconClass="fas fa-arrow-left"
+                               Size="sm"
+                               Class="m-inline-button"
+                               OnClick="@OnInsertBalanceClick">
+                    Balance
+                </GridCommandButton>
+            </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>
 
-    <EditNewDeleteIconButtons OnEdit="@OnEdit" OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" />
+    @*<EditNewDeleteIconButtons OnEdit="@OnEdit" OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" />*@
+    <EditNewDeleteIconButtons OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" />
 }
 @*<div class="form">
         <h5 class="m-bordered-form-header">Payments</h5>

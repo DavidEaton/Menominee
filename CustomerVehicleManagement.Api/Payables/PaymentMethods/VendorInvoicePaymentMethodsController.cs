@@ -81,8 +81,8 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                                   VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethod));
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeletePaymentMethodAsync(int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeletePaymentMethodAsync(long id)
         {
             var payMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
 

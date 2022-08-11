@@ -82,5 +82,18 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
 
             toastService.ShowError($"Payment method failed to update:  Id = {payMethod.Id}", "Save Failed");
         }
+
+        public async Task DeletePaymentMethodAsync(long id)
+        {
+            var response = await httpClient.DeleteAsync($"{UriSegment}/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                toastService.ShowSuccess("Payment method deleted successfully", "Deleted");
+                return;
+            }
+
+            toastService.ShowError($"Failed to delete payment method:  Id = {id}", "Delete Failed");
+        }
     }
 }

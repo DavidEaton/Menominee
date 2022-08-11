@@ -5,8 +5,9 @@
 		<UserSecretsId>596afd5f-e7c7-4c5b-b2e8-e71352278284</UserSecretsId>
 	</PropertyGroup>
 
-	<!--Publish generates error for duplicate files in publish output; Duplicate files in the publish output sometimes caused build breaks or unpredictable behavior: "Generate error for duplicate files in publish output" https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/duplicate-files-in-output-->
-	<ItemGroup>
+	<!--Publish generates error for duplicate files in publish output; Duplicate files in the publish output sometimes caused build breaks or unpredictable behavior: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/duplicate-files-in-output-->
+	<!--Uncomment two ItemGroups below to publish:-->
+	<!--<ItemGroup>
 		<Content Remove="appsettings.Development.json" />
 	</ItemGroup>
 
@@ -14,7 +15,7 @@
 		<None Include="appsettings.Development.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="11.0.1" />

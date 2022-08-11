@@ -5,7 +5,7 @@
         public long Id { get; set; } = 0;
         public long VendorInvoiceId { get; set; } = 0;
         public VendorInvoicePaymentMethodToWrite PaymentMethod { get; set; }
-        //public string PaymentMethodName { get; set; } = string.Empty;
+        //public long PaymentMethodId { get; set; }
         public double Amount { get; set; } = 0.0;
     }
 }

@@ -64,7 +64,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
         }
 
-
         public async Task<VendorInvoice> GetInvoiceEntityAsync(long id)
         {
             var invoiceFromContext = await context.VendorInvoices
@@ -73,9 +72,13 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                       .ThenInclude(item => item.Manufacturer)
                                                   .Include(invoice => invoice.LineItems)
                                                       .ThenInclude(item => item.SaleCode)
+//                                                  .Include(invoice => invoice.Payments)
+//                                                      .ThenInclude(payment => payment.PaymentMethod)
+//                                                          .AsNoTracking()
                                                   .Include(invoice => invoice.Payments)
                                                       .ThenInclude(payment => payment.PaymentMethod)
                                                           .ThenInclude(method => method.ReconcilingVendor)
+//                                                          .AsNoTracking()
                                                   .Include(invoice => invoice.Taxes)
                                                       .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()

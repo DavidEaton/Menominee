@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables.Pages
@@ -19,6 +20,9 @@ namespace Menominee.Client.Components.Payables.Pages
 
         [Parameter]
         public long PayMethodToSelect { get; set; } = 0;
+
+        [CascadingParameter]
+        public DialogFactory Dialogs { get; set; }
 
         public IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PayMethods = null;
         public IEnumerable<VendorInvoicePaymentMethodToReadInList> SelectedList { get; set; } = Enumerable.Empty<VendorInvoicePaymentMethodToReadInList>();
@@ -89,9 +93,27 @@ namespace Menominee.Client.Components.Payables.Pages
             }
         }
 
-        private void OnDelete()
+        private async Task OnDeleteAsync()
         {
-            //NavigationManager.NavigateTo($"payables/vendors/{SelectedId}");
+            // TODO: Check to see if this has been used.  If so, mark as inactive, otherwise delete it
+            if (SelectedItem != null
+            && await Dialogs.ConfirmAsync($"Are you sure you want to delete the \"{SelectedItem.Name}\" payment method?", "Remove Payment Method?"))
+            {
+                await PaymentMethodDataService.DeletePaymentMethodAsync(SelectedId);
+            }
+
+            SelectedItem = PayMethods.FirstOrDefault();
+            if (SelectedItem != null)
+            {
+                SelectedId = SelectedItem.Id;
+                SelectedList = new List<VendorInvoicePaymentMethodToReadInList> { SelectedItem };
+            }
+            else
+            {
+                SelectedId = 0;
+                SelectedList = Enumerable.Empty<VendorInvoicePaymentMethodToReadInList>();
+            }
+            Grid.Rebind();
         }
 
         protected async Task HandleAddSubmitAsync()
