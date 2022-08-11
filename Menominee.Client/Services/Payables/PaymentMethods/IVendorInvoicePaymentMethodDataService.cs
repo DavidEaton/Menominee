@@ -10,5 +10,6 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
         Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id);
         Task<VendorInvoicePaymentMethodToRead> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod);
         Task UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethod, long id);
+        Task DeletePaymentMethodAsync(long id);
     }
 }

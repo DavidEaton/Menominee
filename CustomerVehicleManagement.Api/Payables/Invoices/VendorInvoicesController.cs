@@ -53,20 +53,14 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (!await repository.InvoiceExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            // 1) Get domain entity from repository
             var invoice = repository.GetInvoiceEntityAsync(id).Result;
 
             if (invoice is null)
                 return NotFound(notFoundMessage);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
             VendorInvoiceHelper.CopyWriteDtoToEntity(invoiceToWrite, invoice);
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
             invoice.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
             repository.UpdateInvoiceAsync(invoice);
@@ -83,21 +77,16 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(invoiceToAdd);
 
-            // 2. Add domain entity to repository
             await repository.AddInvoiceAsync(invoice);
-
-            // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Id from database to consumer after save
-            //return Created(new Uri($"{BasePath}/{invoice.Id}", UriKind.Relative), new { id = invoice.Id });
             return CreatedAtRoute("GetInvoiceAsync",
                                   new { id = invoice.Id },
                                   VendorInvoiceHelper.ConvertEntityToReadDto(invoice));
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteInvoiceAsync(int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteInvoiceAsync(long id)
         {
             var invoiceFromRepository = await repository.GetInvoiceAsync(id);
 

@@ -38,7 +38,9 @@
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDelete" />
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDeleteAsync" 
+                                      CanEdit="@CanEdit"  CanDelete="@CanDelete" />
+
             }
         </div>
     </div>

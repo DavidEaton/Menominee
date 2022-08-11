@@ -4,6 +4,7 @@ using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,9 @@ namespace Menominee.Client.Components.Payables
     {
         [Inject]
         public IVendorDataService vendorDataService { get; set; }
+
+        [Inject]
+        IJSRuntime JsInterop { get; set; }
 
         [Parameter]
         public VendorInvoicePaymentMethodToWrite PaymentMethod { get; set; }
@@ -76,6 +80,20 @@ namespace Menominee.Client.Components.Payables
                 PaymentMethod.ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(await vendorDataService.GetVendorAsync(vendorId ?? 0));
             }
             PaymentMethod.VendorId = vendorId;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                await Focus("description");
+            }
+        }
+
+        public async Task Focus(string elementId)
+        {
+            await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
         }
     }
 }

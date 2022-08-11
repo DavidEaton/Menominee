@@ -77,6 +77,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             {
                                 Id = payment.Id,
                                 VendorInvoiceId = payment.VendorInvoiceId,
+                                //PaymentMethodId = payment.VendorInvoicePaymentMethodId,
                                 PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payment.PaymentMethod),
                                 Amount = payment.Amount
                             };
@@ -164,6 +165,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             new VendorInvoicePayment()
                             {
                                 VendorInvoiceId = payment.VendorInvoiceId,
+                                //VendorInvoicePaymentMethodId = payment.PaymentMethodId,
                                 PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod),
                                 Amount = payment.Amount
                             };
@@ -253,6 +255,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             {
                                 Id = payment.Id,
                                 VendorInvoiceId = payment.VendorInvoiceId,
+                                //PaymentMethodId = payment.PaymentMethodId,
                                 PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(payment.PaymentMethod),
                                 Amount = payment.Amount
                             };
