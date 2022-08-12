@@ -108,11 +108,6 @@ namespace CustomerVehicleManagement.Api.Organizations
             return await organizationFromContext;
         }
 
-        public void UpdateOrganizationAsync(Organization organization)
-        {
-            // No code in this implementation.
-        }
-
         public async Task<bool> OrganizationExistsAsync(long id)
         {
             return await context.Organizations
@@ -130,4 +125,3 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
     }
 }
-

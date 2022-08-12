@@ -3,17 +3,43 @@ using CustomerVehicleManagement.Domain.Entities;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class PhoneHelper
     {
-        public static IReadOnlyList<PhoneToRead> CreatePhones(IList<Phone> phones)
+        public static IList<PhoneToRead> CreatePhones(IList<Phone> phones)
         {
             return phones
                 .Select(phone =>
                         CreatePhone(phone))
                 .ToList();
+        }
+
+        public static IList<PhoneToWrite> CovertReadToWriteDto(IList<PhoneToRead> phones)
+        {
+            return phones
+                .Select(phone =>
+                        CreatePhoneToWrite(phone))
+                .ToList();
+        }
+
+
+        private static PhoneToWrite CreatePhoneToWrite(PhoneToRead phone)
+        {
+            if (phone != null)
+            {
+                return new PhoneToWrite()
+                {
+                    Number = phone.Number,
+                    PhoneType = (PhoneType)Enum.Parse(typeof(PhoneType), phone.PhoneType),
+                    IsPrimary = phone.IsPrimary
+                };
+            }
+
+            return null;
         }
 
         private static PhoneToRead CreatePhone(Phone phone)

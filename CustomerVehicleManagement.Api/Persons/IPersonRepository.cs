@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Persons
         void DeletePerson(Person entity);
         void FixTrackingState();
         Task<bool> PersonExistsAsync(long id);
-        void UpdatePersonAsync(Person person);
         Task<IReadOnlyList<PersonToRead>> GetPersonsAsync();
         Task<IReadOnlyList<PersonToReadInList>> GetPersonsListAsync();
         Task<PersonToRead> GetPersonAsync(long id);

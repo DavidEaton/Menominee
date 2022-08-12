@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
         public AddressToRead Address { get; set; }
         public PersonToRead Contact { get; set; }
         public string Note { get; set; }
-        public IReadOnlyList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
-        public IReadOnlyList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
+        public IList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
+        public IList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
     }
 }
