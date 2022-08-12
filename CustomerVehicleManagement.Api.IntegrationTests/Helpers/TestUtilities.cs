@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -30,9 +31,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Organization>()
             {
-                new Organization(OrganizationName.Create("Koops, Inc.").Value, null, null),
-                new Organization(OrganizationName.Create("Loops, Intl.").Value, null, null),
-                new Organization(OrganizationName.Create("Noops Brothers").Value, null, null),
+                Organization.Create(OrganizationName.Create("Koops, Inc.").Value, null, null).Value,
+                Organization.Create(OrganizationName.Create("Loops, Intl.").Value, null, null).Value,
+                Organization.Create(OrganizationName.Create("Noops Brothers").Value, null, null).Value,
             };
         }
 
@@ -52,7 +53,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             return new List<Customer>()
             {
                 new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null), CustomerType.Retail),
-                new Customer(new Organization(OrganizationName.Create("Moops & Co.").Value, null, null), CustomerType.Retail)
+                new Customer(Organization.Create(OrganizationName.Create("Moops & Co.").Value, null, null).Value, CustomerType.Retail)
             };
         }
 
@@ -81,7 +82,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             long id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = Helper.CreateOrganization();
+                Organization organization = OrganizationHelper.CreateOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
@@ -95,7 +96,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             Organization organization;
             using (var context = new ApplicationDbContext(options))
             {
-                organization = Helper.CreateOrganization();
+                organization = OrganizationHelper.CreateOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
             }

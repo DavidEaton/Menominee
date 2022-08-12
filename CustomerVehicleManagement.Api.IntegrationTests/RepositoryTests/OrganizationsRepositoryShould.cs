@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             // Arrange
             var repository = new OrganizationRepository(context);
-            var organization = Helper.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
 
             // Act
             await repository.AddOrganizationAsync(organization);
@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(Helper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(Helper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -128,8 +128,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepository.SetPhones(Helper.CreatePhoneList());
                 organizationFromRepository.SetEmails(Helper.CreateEmailList());
 
-                repository.UpdateOrganizationAsync(organizationFromRepository);
-
                 await repository.SaveChangesAsync();
             }
 
@@ -159,8 +157,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 organizationFromRepository.SetContact(Helper.CreatePerson());
 
-                repository.UpdateOrganizationAsync(organizationFromRepository);
-
                 await repository.SaveChangesAsync();
             }
 
@@ -188,8 +184,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepository.Contact.SetEmails(Helper.CreateEmailList());
                 organizationFromRepository.Contact.SetPhones(Helper.CreatePhoneList());
 
-                repository.UpdateOrganizationAsync(organizationFromRepository);
-
                 await repository.SaveChangesAsync();
             }
 
@@ -211,7 +205,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(Helper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -267,7 +261,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepo.SetName(OrganizationName.Create(newName).Value);
-                repository.UpdateOrganizationAsync(organizationFromRepo);
 
                 await repository.SaveChangesAsync();
             }
@@ -291,7 +284,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = Helper.CreateOrganization();
+                var organization = OrganizationHelper.CreateOrganization();
                 organization.SetNote(someNotes);
                 context.Organizations.Add(organization);
                 context.SaveChanges();
@@ -305,7 +298,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepo.Note.Should().Be(someNotes);
 
                 organizationFromRepo.SetNote(newNotes);
-                repository.UpdateOrganizationAsync(organizationFromRepo);
 
                 await repository.SaveChangesAsync();
             }
@@ -333,8 +325,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 organizationFromRepo.SetAddress(Helper.CreateAddress());
 
-                repository.UpdateOrganizationAsync(organizationFromRepo);
-
                 await repository.SaveChangesAsync();
             }
 
@@ -360,8 +350,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepo.Contact.Should().BeNull();
 
                 organizationFromRepo.SetContact(Helper.CreatePerson());
-
-                repository.UpdateOrganizationAsync(organizationFromRepo);
 
                 await repository.SaveChangesAsync();
             }

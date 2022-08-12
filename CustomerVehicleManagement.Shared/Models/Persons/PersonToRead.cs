@@ -17,8 +17,8 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
         public DateTime? Birthday { get; set; }
         public DriversLicenseToRead DriversLicense { get; set; }
         public AddressToRead Address { get; set; }
-        public IReadOnlyList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
-        public IReadOnlyList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
+        public IList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
+        public IList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
         public string LastFirstMiddle
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";

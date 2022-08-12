@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization, CustomerType.Retail);

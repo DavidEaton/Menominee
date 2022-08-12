@@ -42,7 +42,30 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
             return null;
         }
 
-        public static IReadOnlyList<EmailToRead> CreateEmails(IEnumerable<Email> emails)
+        public static IList<EmailToWrite> CovertReadToWriteDto(IList<EmailToRead> emails)
+        {
+            return emails
+                .Select(email =>
+                        CreateEmailToWrite(email))
+                .ToList();
+        }
+
+        private static EmailToWrite CreateEmailToWrite(EmailToRead email)
+        {
+            if (email != null)
+            {
+                return new EmailToWrite()
+                {
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                };
+            }
+
+            return null;
+        }
+
+
+        public static IList<EmailToRead> CreateEmails(IEnumerable<Email> emails)
         {
             return emails
                 .Select(email =>

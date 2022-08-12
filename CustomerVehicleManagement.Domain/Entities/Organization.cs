@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.BaseClasses;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.BaseClasses;
+using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
@@ -6,7 +8,14 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Organization : Contactable
     {
-        public Organization(OrganizationName name,
+        public static readonly int NoteMaximumLength = 10000;
+        public static readonly string NoteMaximumLengthMessage = $"Note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string InvalidMessage = $"Invalid organization.";
+
+        public OrganizationName Name { get; private set; }
+        public Person Contact { get; private set; }
+        public string Note { get; private set; }
+        private Organization(OrganizationName name,
                             string note,
                             Person contact,
                             Address address = null,
@@ -19,9 +28,31 @@ namespace CustomerVehicleManagement.Domain.Entities
             Contact = contact;
         }
 
-        public OrganizationName Name { get; private set; }
-        public virtual Person Contact { get; private set; }
-        public string Note { get; private set; }
+        public static Result<Organization> Create(
+            OrganizationName name,
+            string note,
+            Person contact,
+            Address address = null,
+            IList<Email> emails = null,
+            IList<Phone> phones = null)
+        {
+            // ValueObject parameters are already validated by OrganizationValidator,
+            // which runs within the asp.net request pipeline, invoking each
+            // ValueObject's contract validator. For example, AddressValidator :
+            // AbstractValidator<AddressToWrite>
+            // Only the primitive type (vs. ValueObject type) Note property is
+            // transformed and validated (parsed) here in the domaon class that
+            // creates it.
+            note = (note ?? "").Trim().Truncate(NoteMaximumLength);
+
+            if (name is null)
+                return Result.Failure<Organization>(InvalidMessage);
+
+            if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
+                return Result.Failure<Organization>(NoteMaximumLengthMessage);
+
+            return Result.Success(new Organization(name, note, contact, address, emails, phones));
+        }
 
         public void SetName(OrganizationName name)
         {
@@ -30,13 +61,15 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetContact(Person contact)
         {
-            if (contact != null)
-                Contact = contact;
+            Contact = contact;
         }
 
         public void SetNote(string note)
         {
-            Note = note.Trim();
+            // ValueObject parameters are already validated by OrganizationValidator.
+            // Only the primitive type (vs. ValueObject type) Note property is
+            // parsed here in the domain class method that uses it.
+            Note = note.Trim().Truncate(10000);
         }
 
         #region ORM

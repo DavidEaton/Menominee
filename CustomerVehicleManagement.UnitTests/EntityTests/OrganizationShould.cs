@@ -1,5 +1,5 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -23,10 +23,19 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Act
             if (!organizationNameOrError.IsFailure)
-                organization = new Organization(organizationNameOrError.Value, null, null);
+                organization = Organization.Create(organizationNameOrError.Value, null, null).Value;
 
             // Assert
             organization.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void NotCreateEmptyOrganization()
+        {
+            var organizationOrError = Organization.Create(null, null, null);
+
+            organizationOrError.IsFailure.Should().BeTrue();
+            organizationOrError.Error.Should().Contain(Organization.InvalidMessage);
         }
 
         [Fact]
@@ -36,29 +45,13 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organizationNameOrError = OrganizationName.Create(name);
 
             organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Be(OrganizationName.RequiredMessage);
-        }
-
-        [Fact]
-        public void NotCreateOrganizationWithEmptyName()
-        {
-            var name = "";
-
-            try
-            {
-                var organizationNameOrError = OrganizationName.Create(name);
-
-            }
-            catch (ResultFailureException ex)
-            {
-                ex.Error.Should().Be(OrganizationName.RequiredMessage);
-            }
+            organizationNameOrError.Error.Should().Contain(OrganizationName.InvalidMessage);
         }
 
         [Fact]
         public void CreateOrganizationWithAddress()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
@@ -76,7 +69,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void CreateOrganizationWithContact()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
@@ -91,7 +84,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void CreateOrganizationWithPhones()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var phones = new List<Phone>();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
@@ -111,7 +104,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void CreateOrganizationWithEmails()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
@@ -128,7 +121,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void HaveEmptyPhonesOnCreate()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -142,7 +135,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddPhone()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -155,7 +148,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemovePhone()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -175,7 +168,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetPhones()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var phones = new List<Phone>();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
@@ -194,7 +187,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotCreateMoreThanOnePrimaryPhone()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -210,7 +203,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotAddDuplicatePhone()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -225,7 +218,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void AddEmail()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
@@ -237,7 +230,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void RemoveEmail()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
             organization.AddEmail(email0);
@@ -255,7 +248,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetEmails()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
@@ -274,7 +267,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
@@ -291,7 +284,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsWithDuplicateEmails()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
@@ -306,7 +299,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotSetEmailsToNull()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             List<Email> emails = null;
 
             Action action = () => organization.SetEmails(emails);
@@ -317,7 +310,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotCreateMoreThanOnePrimaryEmail()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
             organization.AddEmail(email);
@@ -332,7 +325,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void NotAddDuplicateEmail()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
@@ -347,7 +340,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetName()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var name = "jane's";
             var organizationNameOrError = OrganizationName.Create(name);
 
@@ -359,7 +352,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetContact()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
@@ -373,7 +366,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetAddress()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
@@ -394,12 +387,23 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetNotes()
         {
-            var organization = Utilities.CreateOrganization();
+            var organization = OrganizationHelper.CreateOrganization();
             var notes = "Behold, notes!";
 
             organization.SetNote(notes);
 
             organization.Note.Should().Be(notes);
+        }
+
+        [Fact]
+        public void TruncateNoteToNoteMaximumLength()
+        {
+            var organization = OrganizationHelper.CreateOrganization();
+            var notes = $"Lorem ipsum {Utilities.LoremIpsum(10000)}";
+
+            organization.SetNote(notes);
+
+            organization.Note.Length.Should().Be(Organization.NoteMaximumLength);
         }
     }
 }

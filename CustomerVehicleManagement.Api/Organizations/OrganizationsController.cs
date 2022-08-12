@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models;
 using CustomerVehicleManagement.Shared.Models.Organizations;
 using Menominee.Common.Enums;
@@ -17,15 +16,19 @@ namespace CustomerVehicleManagement.Api.Organizations
     public class OrganizationsController : ApplicationController
     {
         private readonly IOrganizationRepository repository;
+        private readonly IPersonRepository personsRepository;
         private readonly PersonsController personsController;
+        private readonly string BasePath = "/api/organizations";
 
         public OrganizationsController(IOrganizationRepository repository,
-                                       PersonsController personsController)
+                                       PersonsController personsController,
+                                       IPersonRepository personsRepository)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
             this.personsController = personsController ??
                 throw new ArgumentNullException(nameof(personsController));
+            this.personsRepository = personsRepository;
         }
 
         // api/organizations/list
@@ -47,8 +50,8 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizations = await repository.GetOrganizationsAsync();
 
-                if (organizations == null)
-                    return NotFound();
+            if (organizations == null)
+                return NotFound();
 
             return Ok(organizations);
         }
@@ -67,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organizationToUpdate)
+        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organization)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -85,7 +88,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 3. Update the corresponding fields in the Organization
             // 4. Save back to the DB
 
-            var notFoundMessage = $"Could not find Organization to update: {organizationToUpdate.Name}";
+            var notFoundMessage = $"Could not find Organization to update: {organization.Name}";
 
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
@@ -97,38 +100,44 @@ namespace CustomerVehicleManagement.Api.Organizations
                 return NotFound(notFoundMessage);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            var organizationNameOrError = OrganizationName.Create(organizationToUpdate.Name);
+            var organizationNameOrError = OrganizationName.Create(organization.Name);
 
             if (organizationNameOrError.IsSuccess)
                 organizationFromRepository.SetName(organizationNameOrError.Value);
 
-            if (organizationToUpdate?.Address != null)
-                organizationFromRepository.SetAddress(Address.Create(organizationToUpdate.Address.AddressLine,
-                                                                     organizationToUpdate.Address.City,
-                                                                     organizationToUpdate.Address.State,
-                                                                     organizationToUpdate.Address.PostalCode).Value);
-           
-            if (organizationToUpdate?.Address is null)
+            if (organization?.Address != null)
+                organizationFromRepository.SetAddress(
+                    Address.Create(
+                        organization.Address.AddressLine,
+                        organization.Address.City,
+                        organization.Address.State,
+                        organization.Address.PostalCode).Value);
+
+            // Client may send an empty or null Address, signifying removal/replacement
+            if (organization?.Address is null)
                 organizationFromRepository.SetAddress(null);
 
-            organizationFromRepository.SetNote(organizationToUpdate.Note);
+            organizationFromRepository.SetNote(organization.Note);
 
+            // Client may send an empty or null phones collection, signifying removal/replacement
             List<Phone> phones = new();
-            if (organizationToUpdate?.Phones.Count > 0)
+            if (organization?.Phones.Count > 0)
             {
-                phones.AddRange(organizationToUpdate.Phones
+                phones.AddRange(organization.Phones
                     .Select(phone =>
-                            Phone.Create(phone.Number,
-                                         phone.PhoneType,
-                                         phone.IsPrimary).Value));
+                            Phone.Create(
+                                phone.Number,
+                                phone.PhoneType,
+                                phone.IsPrimary).Value));
             }
 
             organizationFromRepository.SetPhones(phones);
 
+            // Client may send an empty or null emails collection, signifying removal/replacement
             List<Email> emails = new();
-            if (organizationToUpdate?.Emails.Count > 0)
+            if (organization?.Emails.Count > 0)
             {
-                emails.AddRange(organizationToUpdate.Emails
+                emails.AddRange(organization.Emails
                     .Select(email =>
                             Email.Create(email.Address,
                                          email.IsPrimary).Value));
@@ -136,20 +145,24 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             organizationFromRepository.SetEmails(emails);
 
-            if (organizationToUpdate?.Contact != null)
+            // Contact
+            if (organization?.Contact != null)
             {
-                var contact = await personsController.UpdatePersonAsync(organizationFromRepository.Contact.Id,
-                                                                        organizationToUpdate.Contact);
-                organizationFromRepository.SetContact((Person)contact);
+                var result = await personsController.UpdatePersonAsync(
+                                    organizationFromRepository.Contact.Id,
+                                    organization.Contact);
+
+                var person = await personsRepository.GetPersonEntityAsync(organizationFromRepository.Contact.Id);
+
+                if (person != null)
+                    organizationFromRepository.SetContact(person);
             }
 
-            // Update the objects ObjectState and sych the EF Change Tracker
+            // Update the objects ObjectState and sync the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
             organizationFromRepository.SetTrackingState(TrackingState.Modified);
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
-
-            repository.UpdateOrganizationAsync(organizationFromRepository);
 
             /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);
@@ -174,7 +187,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrganizationToRead>> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
+        public async Task<IActionResult> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -198,14 +211,10 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Id and Organization from database to consumer after save
-            return CreatedAtRoute("GetOrganizationAsync",
-                new
-                {
-                    Id = organization.Id
-                },
-                OrganizationHelper.CreateOrganization(organization));
-                //OrganizationToRead.ConvertToDto(organization));
+            // 4. Return new id and route to new resource after save
+            return Created(new Uri($"{BasePath}/{organization.Id}",
+                               UriKind.Relative),
+                               new { id = organization.Id });
         }
 
 
@@ -222,7 +231,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             var notFoundMessage = $"Could not find Organization in the database to delete with Id: {id}.";
 
             if (!await repository.OrganizationExistsAsync(id))
-                    return NotFound(notFoundMessage);
+                return NotFound(notFoundMessage);
 
             var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
             if (organizationFromRepository == null)

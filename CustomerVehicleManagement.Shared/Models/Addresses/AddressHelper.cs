@@ -20,5 +20,23 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
             }
             return null;
         }
+
+        public static AddressToWrite CovertReadToWriteDto(AddressToRead address)
+        {
+            if (address != null)
+            {
+                var addressReadDto = new AddressToWrite
+                {
+                    AddressLine = address.AddressLine,
+                    City = address.City,
+                    State = address.State,
+                    PostalCode = address.PostalCode
+                };
+
+                return addressReadDto;
+            }
+            return null;
+        }
+
     }
 }
