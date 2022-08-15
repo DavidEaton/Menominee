@@ -14,6 +14,6 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
         public string TaxIdNumber { get; set; }
         public double PartTaxRate { get; set; }
         public double LaborTaxRate { get; set; }
-        public List<ExciseFeeToRead> TaxedExciseFees { get; set; } = new List<ExciseFeeToRead>();
+        public List<SalesTaxTaxableExciseFeeToRead> TaxedExciseFees { get; set; } = new List<SalesTaxTaxableExciseFeeToRead>();
     }
 }

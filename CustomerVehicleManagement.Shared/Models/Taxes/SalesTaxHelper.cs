@@ -6,22 +6,21 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
     {
         public static SalesTax CreateSalesTax(SalesTaxToWrite taxToWrite)
         {
-            if (taxToWrite == null)
+            if (taxToWrite is null)
                 return null;
 
-            var tax = new SalesTax()
-            {
-                Description = taxToWrite.Description,
-                TaxType = taxToWrite.TaxType,
-                Order= taxToWrite.Order,
-                IsAppliedByDefault = taxToWrite.IsAppliedByDefault,
-                IsTaxable = taxToWrite.IsTaxable,
-                TaxIdNumber = taxToWrite.TaxIdNumber,
-                PartTaxRate = taxToWrite.PartTaxRate,
-                LaborTaxRate = taxToWrite.LaborTaxRate
-            };
+            var tax = SalesTax.Create(
+                taxToWrite.Description,
+                taxToWrite.TaxType,
+                taxToWrite.Order,
+                taxToWrite.IsAppliedByDefault,
+                taxToWrite.IsTaxable,
+                taxToWrite.TaxIdNumber,
+                taxToWrite.PartTaxRate,
+                taxToWrite.LaborTaxRate).Value;
 
-            tax.TaxedExciseFees = new();
+            taxToWrite.TaxedExciseFees = new();
+
             if (taxToWrite?.TaxedExciseFees?.Count > 0)
             {
                 foreach (var fee in taxToWrite.TaxedExciseFees)
@@ -30,6 +29,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                     //tax.TaxedExciseFees.Add(ExciseFeeHelper.Transform(fee));
                 }
             }
+
             return tax;
         }
 
@@ -47,10 +47,10 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 IsTaxable = taxToRead.IsTaxable,
                 TaxIdNumber = taxToRead.TaxIdNumber,
                 PartTaxRate = taxToRead.PartTaxRate,
-                LaborTaxRate = taxToRead.LaborTaxRate
+                LaborTaxRate = taxToRead.LaborTaxRate,
+                TaxedExciseFees = new()
             };
 
-            taxToWrite.TaxedExciseFees = new();
             if (taxToRead?.TaxedExciseFees?.Count > 0)
             {
                 foreach (var fee in taxToRead.TaxedExciseFees)
@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             if (salesTax is null)
                 return null;
 
-            var taxToRead = new SalesTaxToRead()
+            var taxToRead = new SalesTaxToRead
             {
                 Id = salesTax.Id,
                 Description = salesTax.Description,
@@ -78,10 +78,10 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 IsTaxable = salesTax.IsTaxable,
                 TaxIdNumber = salesTax.TaxIdNumber,
                 PartTaxRate = salesTax.PartTaxRate,
-                LaborTaxRate = salesTax.LaborTaxRate
+                LaborTaxRate = salesTax.LaborTaxRate,
+                TaxedExciseFees = new()
             };
 
-            taxToRead.TaxedExciseFees = new();
             if (salesTax?.TaxedExciseFees?.Count > 0)
             {
                 foreach (var fee in salesTax.TaxedExciseFees)
@@ -96,21 +96,20 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
 
         public static SalesTaxToReadInList CreateSalesTaxInList(SalesTax tax)
         {
-            if (tax is null)
-                return null;
-
-            return new()
-            {
-                Id = tax.Id,
-                Description = tax.Description,
-                TaxType = tax.TaxType,
-                Order = tax.Order,
-                IsAppliedByDefault = tax.IsAppliedByDefault,
-                IsTaxable = tax.IsTaxable,
-                TaxIdNumber = tax.TaxIdNumber,
-                PartTaxRate = tax.PartTaxRate,
-                LaborTaxRate = tax.LaborTaxRate
-            };
+            return tax is null
+                ? null
+                : new()
+                {
+                    Id = tax.Id,
+                    Description = tax.Description,
+                    TaxType = tax.TaxType,
+                    Order = tax.Order,
+                    IsAppliedByDefault = tax.IsAppliedByDefault,
+                    IsTaxable = tax.IsTaxable,
+                    TaxIdNumber = tax.TaxIdNumber,
+                    PartTaxRate = tax.PartTaxRate,
+                    LaborTaxRate = tax.LaborTaxRate
+                };
         }
     }
 }

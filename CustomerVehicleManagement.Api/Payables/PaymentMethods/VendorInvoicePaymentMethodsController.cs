@@ -45,23 +45,23 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         // PUT: api/vendorinvoicepaymentmethods/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToWrite, long id)
+        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethod, long id)
         {
             var notFoundMessage = $"Could not find Vendor Invoice Payment Method to update with Id = {id}.";
 
             if (!await repository.PaymentMethodExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var payMethod = repository.GetPaymentMethodEntityAsync(id).Result;
-            if (payMethod is null)
+            var paymentMethodFromRepository = repository.GetPaymentMethodEntityAsync(id).Result;
+            if (paymentMethodFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            VendorInvoicePaymentMethodHelper.CopyWriteDtoToEntity(payMethodToWrite, payMethod);
+            paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(paymentMethod);
 
-            payMethod.SetTrackingState(TrackingState.Modified);
+            paymentMethodFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
 
-            repository.UpdatePaymentMethod(payMethod);
+            repository.UpdatePaymentMethod(paymentMethodFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

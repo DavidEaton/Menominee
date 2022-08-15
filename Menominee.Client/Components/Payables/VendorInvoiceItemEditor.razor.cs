@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -27,7 +27,7 @@ namespace Menominee.Client.Components.Payables
         public ISaleCodeDataService saleCodeDataService { get; set; }
 
         [Parameter]
-        public VendorInvoiceItemToWrite Item { get; set; }
+        public VendorInvoiceLineItemToWrite Item { get; set; }
 
         [Parameter]
         public bool DialogVisible { get; set; }

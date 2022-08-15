@@ -4,8 +4,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 {
     public class SalesTaxTaxableExciseFee : Entity
     {
-        public virtual SalesTax SalesTax { get; set; }
-        public virtual ExciseFee ExciseFee { get; set; }
+        public SalesTax SalesTax { get; set; }
+        public ExciseFee ExciseFee { get; set; }
 
         #region ORM
 

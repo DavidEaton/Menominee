@@ -12,24 +12,24 @@
                  FilterMode="GridFilterMode.FilterMenu"
                  ShowColumnMenu="true"
                  SelectionMode="GridSelectionMode.Single"
-                 SelectedItemsChanged="@((IEnumerable<VendorInvoiceItemToWrite> itemList) => OnSelect(itemList))"
+                 SelectedItemsChanged="@((IEnumerable<VendorInvoiceLineItemToWrite> itemList) => OnSelect(itemList))"
                  SelectedItems="@SelectedItems"
                  @ref="@Grid">
         <GridColumns>
             <GridColumn Width="25%"
-                        Field="@nameof(VendorInvoiceItemToWrite.PartNumber)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.PartNumber)"
                         Title="Part Number"
                         ShowColumnChooser="false"
                         Lockable="false">
             </GridColumn>
             <GridColumn Width="35%"
-                        Field="@nameof(VendorInvoiceItemToWrite.Description)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.Description)"
                         Title="Description"
                         ShowColumnChooser="false"
                         Lockable="false">
             </GridColumn>
             <GridColumn Width="20%"
-                        Field="@nameof(VendorInvoiceItemToWrite.Quantity)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.Quantity)"
                         Title="Quantity"
                         ShowColumnChooser="false"
                         Lockable="false"
@@ -39,7 +39,7 @@
                         TextAlign="ColumnTextAlign.Right">
             </GridColumn>
             <GridColumn Width="20%"
-                        Field="@nameof(VendorInvoiceItemToWrite.Cost)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.Cost)"
                         Title="Cost"
                         ShowColumnChooser="false"
                         Lockable="false"

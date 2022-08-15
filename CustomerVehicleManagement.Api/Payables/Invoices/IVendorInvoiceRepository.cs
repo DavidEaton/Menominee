@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
         Task<Vendor> GetVendorAsync(long id);
         Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync();
-        void UpdateInvoiceAsync(VendorInvoice invoice);
         Task DeleteInvoiceAsync(long id);
         Task<bool> InvoiceExistsAsync(long id);
         Task<bool> SaveChangesAsync();

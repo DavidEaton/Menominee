@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             if (!Enum.IsDefined(typeof(PhoneType), phoneType))
                 return Result.Failure<Phone>(PhoneTypeInvalidMessage);
 
-            number = (number ?? "").Trim();
+            number = (number ?? string.Empty).Trim();
 
             var phoneAttribute = new PhoneAttribute();
 

@@ -1,11 +1,9 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
@@ -13,6 +11,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
     public class VendorInvoicesController : ApplicationController
     {
         private readonly IVendorInvoiceRepository repository;
+        private readonly string BasePath = "/api/vendorinvoices";
 
         public VendorInvoicesController(IVendorInvoiceRepository repository)
         {
@@ -46,29 +45,44 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         // PUT: api/vendorinvoices/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoiceToWrite)
+        public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoice)
         {
             var notFoundMessage = $"Could not find Vendor Invoice to update with Id = {id}.";
 
             if (!await repository.InvoiceExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var invoice = repository.GetInvoiceEntityAsync(id).Result;
+            var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
 
-            if (invoice is null)
+            if (invoiceFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            VendorInvoiceHelper.CopyWriteDtoToEntity(invoiceToWrite, invoice);
+            // Favor functions that return a value over commands that mutate objects and
+            // hide their side effects. Much easier to reason about and fix bugs when
+            // methods signatures are "honest", especially when we can see the chain of
+            // return values in a set of steps. For example, 
+            // var trimmed = name.Trim();
+            // var encoded = Encode(trimmed);
+            // var salutedName = SaluteName(encoded);
+            // VS:
+            // name.Trim();
+            // Encode(name);
+            // SaluteName(name);
+            // That is, we can tell just from the method signature what the code is doing
+            // without the need to read and understand the details of command internals
+            // that mutate our objects and return void. 
+            // Functions that return a value describe all possible outputs in their signatures.
+            // Commands that return void are dishonest in that their method signatures don't
+            // tell the reader everything they can do, and hide their side effects.
+            invoiceFromRepository = VendorInvoiceHelper.ConvertWriteDtoToEntity(invoice);
 
-            invoice.SetTrackingState(TrackingState.Modified);
+            invoiceFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
-
-            repository.UpdateInvoiceAsync(invoice);
 
             if (await repository.SaveChangesAsync())
                 return NoContent();
 
-            return BadRequest($"Failed to update vendor invoice.  Id = {invoiceToWrite.Id}.");
+            return BadRequest($"Failed to update vendor invoice.  Id = {id}.");
         }
 
         // POST: api/vendorinvoices

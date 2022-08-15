@@ -41,10 +41,9 @@ namespace Menominee.Common.ValueObjects
             if (string.IsNullOrWhiteSpace(firstName))
                 return Result.Failure<PersonName>(FirstNameRequiredMessage);
 
-
-            lastName = lastName.Trim();
-            firstName = firstName.Trim();
-            middleName = (middleName == null || middleName == string.Empty)? null : middleName.Trim();
+            lastName = (lastName ?? string.Empty).Trim();
+            firstName = (firstName ?? string.Empty).Trim();
+            middleName = (middleName is null || middleName == string.Empty) ? null : middleName.Trim();
 
             if (lastName.Length < LastNameMinimumLength)
                 return Result.Failure<PersonName>(LastNameMinimumLengthMessage);

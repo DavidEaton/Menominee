@@ -43,9 +43,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             var invoiceFromContext = await context.VendorInvoices
                                                   .Include(invoice => invoice.Vendor)
                                                   .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Manufacturer)
+                                                      .ThenInclude(item => item.Item.Manufacturer)
                                                   .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.SaleCode)
+                                                      .ThenInclude(item => item.Item.SaleCode)
                                                   .Include(invoice => invoice.Payments)
                                                       .ThenInclude(payment => payment.PaymentMethod)
                                                           .ThenInclude(method => method.ReconcilingVendor)
@@ -69,9 +69,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             var invoiceFromContext = await context.VendorInvoices
                                                   .Include(invoice => invoice.Vendor)
                                                   .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Manufacturer)
+                                                      .ThenInclude(item => item.Item.Manufacturer)
                                                   .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.SaleCode)
+                                                      .ThenInclude(item => item.Item.SaleCode)
 //                                                  .Include(invoice => invoice.Payments)
 //                                                      .ThenInclude(payment => payment.PaymentMethod)
 //                                                          .AsNoTracking()

@@ -60,9 +60,9 @@ namespace Menominee.Common.ValueObjects
             if (string.IsNullOrWhiteSpace(postalCode))
                 return Result.Failure<Address>(PostalCodeRequiredMessage);
 
-            addressLine = addressLine.Trim();
-            city = city.Trim();
-            postalCode = postalCode.Trim();
+            addressLine = (addressLine ?? "").Trim();
+            city = (city ?? "").Trim();
+            postalCode = (postalCode ?? "").Trim();
 
             if (addressLine.Length < AddressMinimumLength)
                 return Result.Failure<Address>(AddressMinimumLengthMessage);

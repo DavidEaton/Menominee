@@ -1,4 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
@@ -6,56 +8,62 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
     {
         public static ExciseFee CreateExciseFee(ExciseFeeToWrite exciseFee)
         {
-            if (exciseFee == null)
-                return null;
-
-            return new()
-            {
-                Description = exciseFee.Description,
-                FeeType = exciseFee.FeeType,
-                Amount = exciseFee.Amount
-            };
+            return exciseFee is null
+                ? null
+                : ExciseFee.Create(exciseFee.Description, exciseFee.FeeType, exciseFee.Amount)
+                .Value;
         }
 
         public static ExciseFeeToWrite CreateExciseFee(ExciseFeeToRead exciseFee)
         {
-            if (exciseFee == null)
-                return null;
-
-            return new()
-            {
-                Description = exciseFee.Description,
-                FeeType = exciseFee.FeeType,
-                Amount = exciseFee.Amount
-            };
+            return exciseFee is null
+                ? null
+                : new()
+                {
+                    Description = exciseFee.Description,
+                    FeeType = exciseFee.FeeType,
+                    Amount = exciseFee.Amount
+                };
         }
 
         public static ExciseFeeToRead CreateExciseFee(ExciseFee exciseFee)
         {
-            if (exciseFee is null)
-                return null;
-
-            return new()
-            {
-                Id = exciseFee.Id,
-                Description = exciseFee.Description,
-                FeeType = exciseFee.FeeType,
-                Amount = exciseFee.Amount
-            };
+            return exciseFee is null
+                ? null
+                : new()
+                {
+                    Id = exciseFee.Id,
+                    Description = exciseFee.Description,
+                    FeeType = exciseFee.FeeType,
+                    Amount = exciseFee.Amount
+                };
         }
 
         public static ExciseFeeToReadInList CreateExciseFeeInList(ExciseFee excisefee)
         {
-            if (excisefee is null)
-                return null;
+            return excisefee is null
+                ? null
+                : new()
+                {
+                    Id = excisefee.Id,
+                    Description = excisefee.Description,
+                    FeeType = excisefee.FeeType,
+                    Amount = excisefee.Amount
+                };
+        }
 
-            return new()
-            {
-                Id = excisefee.Id,
-                Description = excisefee.Description,
-                FeeType = excisefee.FeeType,
-                Amount = excisefee.Amount
-            };
+        public static List<SalesTaxTaxableExciseFeeToRead> ConvertEntitiesToReadDtos(List<SalesTaxTaxableExciseFee> excisefees)
+        {
+            return
+                excisefees?.Select(fee =>
+                new SalesTaxTaxableExciseFeeToRead()
+                {
+                    Id = fee.Id,
+                    ExciseFee = CreateExciseFee(fee.ExciseFee),
+                    SalesTax = SalesTaxHelper.CreateSalesTax(fee.SalesTax)
+                }).ToList()
+            ??
+                 new List<SalesTaxTaxableExciseFeeToRead>();
         }
     }
 }

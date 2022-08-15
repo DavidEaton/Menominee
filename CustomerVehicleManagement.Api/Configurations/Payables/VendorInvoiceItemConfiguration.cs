@@ -5,26 +5,30 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CustomerVehicleManagement.Api.Configurations
 {
-    public class VendorInvoiceItemConfiguration : EntityConfiguration<VendorInvoiceItem>
+    public class VendorInvoiceItemConfiguration : EntityConfiguration<VendorInvoiceLineItem>
     {
-        public override void Configure(EntityTypeBuilder<VendorInvoiceItem> builder)
+        public override void Configure(EntityTypeBuilder<VendorInvoiceLineItem> builder)
         {
             base.Configure(builder);
             builder.ToTable("VendorInvoiceItem", "dbo");
 
-            builder.Ignore(item => item.TrackingState);
-
-            builder.Property(item => item.PartNumber)
+            // Value Object: VendorInvoiceLineItem
+            builder.OwnsOne(lineItem => lineItem.Item)
+                   .Property(item => item.Description)
+                   .HasColumnName("Description")
                    .HasMaxLength(255)
                    .IsRequired();
-
-            //builder.Property(item => item.MfrId)
-            //       .HasMaxLength(10)
-            //       .IsRequired();
-
-            builder.Property(item => item.Description)
+            builder.OwnsOne(lineItem => lineItem.Item)
+                   .Property(item => item.PartNumber)
+                   .HasColumnName("PartNumber")
                    .HasMaxLength(255)
                    .IsRequired();
+            builder.OwnsOne(lineItem => lineItem.Item)
+                   .Property(item => item.Manufacturer.Id)
+                   .HasColumnName("ManufacturerId");
+            builder.OwnsOne(lineItem => lineItem.Item)
+                   .Property(item => item.SaleCode.Id)
+                   .HasColumnName("SaleCodeId");
 
             builder.Property(item => item.Type)
                    .HasDefaultValue(VendorInvoiceItemType.Purchase)

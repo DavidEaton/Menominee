@@ -15,12 +15,13 @@ namespace CustomerVehicleManagement.Domain.Entities
         public OrganizationName Name { get; private set; }
         public Person Contact { get; private set; }
         public string Note { get; private set; }
-        private Organization(OrganizationName name,
-                            string note,
-                            Person contact,
-                            Address address = null,
-                            IList<Email> emails = null,
-                            IList<Phone> phones = null)
+        private Organization(
+            OrganizationName name,
+            string note,
+            Person contact,
+            Address address = null,
+            IList<Email> emails = null,
+            IList<Phone> phones = null)
             : base(address, phones, emails)
         {
             Name = name;
@@ -43,7 +44,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             // Only the primitive type (vs. ValueObject type) Note property is
             // transformed and validated (parsed) here in the domaon class that
             // creates it.
-            note = (note ?? "").Trim().Truncate(NoteMaximumLength);
+            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
             if (name is null)
                 return Result.Failure<Organization>(InvalidMessage);

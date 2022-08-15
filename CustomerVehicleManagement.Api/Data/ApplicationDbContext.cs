@@ -53,19 +53,19 @@ namespace CustomerVehicleManagement.Api.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            //if (UserContext != null) // Unit tests do not yet inject UserContext
-            //    Connection = GetTenantConnection();
+            if (UserContext != null) // Unit tests do not yet inject UserContext
+                Connection = GetTenantConnection();
 
-            //if (!options.IsConfigured) // Unit tests will configure context with test provider
-            //{
-            //    if (Environment?.EnvironmentName != "Production")
-            //    {
-            //        options.UseLoggerFactory(CreateLoggerFactory());
-            //        options.EnableSensitiveDataLogging(true);
-            //    }
+            if (!options.IsConfigured) // Unit tests will configure context with test provider
+            {
+                if (Environment?.EnvironmentName != "Production")
+                {
+                    options.UseLoggerFactory(CreateLoggerFactory());
+                    options.EnableSensitiveDataLogging(true);
+                }
 
-            //    options.UseSqlServer(Connection);
-            //}
+                options.UseSqlServer(Connection);
+            }
 
             base.OnConfiguring(options);
 
@@ -215,6 +215,7 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<VendorInvoice> VendorInvoices { get; set; }
+        public DbSet<VendorInvoiceLineItem> VendorInvoiceLineItems { get; set; }
         public DbSet<VendorInvoiceItem> VendorInvoiceItems { get; set; }
         public DbSet<VendorInvoicePayment> VendorInvoicePayments { get; set; }
         public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }

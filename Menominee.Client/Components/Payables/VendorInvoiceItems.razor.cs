@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
@@ -12,16 +12,16 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoiceItems : ComponentBase
     {
         [Parameter]
-        public IList<VendorInvoiceItemToWrite> Items { get; set; }
+        public IList<VendorInvoiceLineItemToWrite> Items { get; set; }
 
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
-        public IEnumerable<VendorInvoiceItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<VendorInvoiceItemToWrite>();
-        public VendorInvoiceItemToWrite SelectedItem { get; set; }
-        public VendorInvoiceItemToWrite ItemToModify { get; set; } = null;
+        public IEnumerable<VendorInvoiceLineItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<VendorInvoiceLineItemToWrite>();
+        public VendorInvoiceLineItemToWrite SelectedItem { get; set; }
+        public VendorInvoiceLineItemToWrite ItemToModify { get; set; } = null;
 
-        public TelerikGrid<VendorInvoiceItemToWrite> Grid { get; set; }
+        public TelerikGrid<VendorInvoiceLineItemToWrite> Grid { get; set; }
 
         public long SelectedId
         {
@@ -54,7 +54,7 @@ namespace Menominee.Client.Components.Payables
                 {
                     if (ItemFormMode == FormMode.Add)
                     {
-                        ItemToModify = new VendorInvoiceItemToWrite();
+                        ItemToModify = new VendorInvoiceLineItemToWrite();
                         ItemToModify.Id = --nextId;
                     }
                     if (ItemFormMode == FormMode.Edit || ItemFormMode == FormMode.View)
@@ -75,7 +75,7 @@ namespace Menominee.Client.Components.Payables
                         //    TransactionDate = SelectedItem.TransactionDate
                         //};
                         //ItemToModify = SelectedItem;
-                        ItemToModify = new VendorInvoiceItemToWrite();
+                        ItemToModify = new VendorInvoiceLineItemToWrite();
                         CopyItem(SelectedItem, ItemToModify);
                     }
                 }
@@ -109,7 +109,7 @@ namespace Menominee.Client.Components.Payables
             {
                 Items.Remove(SelectedItem);
                 SelectedItem = Items.FirstOrDefault();
-                SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+                SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
                 Grid.Rebind();
             }
         }
@@ -124,7 +124,7 @@ namespace Menominee.Client.Components.Payables
                 Items.Add(ItemToModify);
                 selectedItemIndex = Items.IndexOf(ItemToModify);
                 SelectedItem = Items[selectedItemIndex];
-                SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+                SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
                 Grid.Rebind();
             }
             else if (ItemFormMode == FormMode.Edit)
@@ -146,13 +146,13 @@ namespace Menominee.Client.Components.Payables
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedItem = args.Item as VendorInvoiceItemToWrite;
+            SelectedItem = args.Item as VendorInvoiceLineItemToWrite;
             SelectedId = SelectedItem.Id;
             selectedItemIndex = Items.IndexOf(SelectedItem);
-            SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+            SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
         }
 
-        protected void OnSelect(IEnumerable<VendorInvoiceItemToWrite> items)
+        protected void OnSelect(IEnumerable<VendorInvoiceLineItemToWrite> items)
         {
             //SelectedItem = items.FirstOrDefault();
             //SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
@@ -172,7 +172,7 @@ namespace Menominee.Client.Components.Payables
                 }
                 selectedItemIndex = Items.IndexOf(SelectedItem);
                 SelectedId = SelectedItem.Id;
-                SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
+                SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
             }
         }
 
@@ -186,7 +186,7 @@ namespace Menominee.Client.Components.Payables
         //    return items;
         //}
 
-        private static void CopyItem(VendorInvoiceItemToWrite src, VendorInvoiceItemToWrite dst)
+        private static void CopyItem(VendorInvoiceLineItemToWrite src, VendorInvoiceLineItemToWrite dst)
         {
             dst.Id = src.Id;
             dst.VendorInvoiceId = src.VendorInvoiceId;

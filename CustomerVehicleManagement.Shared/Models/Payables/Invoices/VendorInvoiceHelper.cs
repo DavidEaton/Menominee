@@ -1,10 +1,13 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
+using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -29,165 +32,121 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 InvoiceNumber = invoice.InvoiceNumber,
                 Total = invoice.Total,
                 Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
-                LineItems = ProjectItems(invoice.LineItems),
-                Payments = ProjectPayments(invoice.Payments),
-                Taxes = ProjectTaxes(invoice.Taxes)
+                LineItems = ConvertLineItemEntitiesToReadDtos(invoice.LineItems),
+                Payments = ConvertPaymentEntitiesToReadDtos(invoice.Payments),
+                Taxes = ConvertTaxEntitiesToReadDtos(invoice.Taxes)
             };
         }
 
-        private static List<VendorInvoiceItemToRead> ProjectItems(IList<VendorInvoiceItem> items)
+        private static List<VendorInvoiceLineItemToRead> ConvertLineItemEntitiesToReadDtos(IList<VendorInvoiceLineItem> items)
         {
-            return items?.Select(TransformItemToRead()).ToList()
-                ?? new List<VendorInvoiceItemToRead>();
+            return items?.Select(ConvertLineItemToReadDto()).ToList()
+                ?? new List<VendorInvoiceLineItemToRead>();
         }
 
-        private static Func<VendorInvoiceItem, VendorInvoiceItemToRead> TransformItemToRead()
+        private static Func<VendorInvoiceLineItem, VendorInvoiceLineItemToRead> ConvertLineItemToReadDto()
         {
-            return item =>
-                            new VendorInvoiceItemToRead()
+            return lineItem =>
+                            new VendorInvoiceLineItemToRead()
                             {
-                                Id = item.Id,
-                                VendorInvoiceId = item.VendorInvoiceId ?? 0,
-                                Type = item.Type,
-                                PartNumber = item.PartNumber,
-                                Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
-                                ManufacturerId = item.ManufacturerId,
-                                Description = item.Description,
-                                SaleCode = SaleCodeHelper.ConvertEntityToReadDto(item.SaleCode),   
-                                SaleCodeId = item.SaleCodeId,
-                                Quantity = item.Quantity,
-                                Cost = item.Cost,
-                                Core = item.Core,
-                                PONumber = item.PONumber,
-                                InvoiceNumber = item.InvoiceNumber,
-                                TransactionDate = item.TransactionDate
+                                Id = lineItem.Id,
+                                Type = lineItem.Type,
+                                Item = ConvertItemEntityToReadDto(lineItem.Item),
+                                Quantity = lineItem.Quantity,
+                                Cost = lineItem.Cost,
+                                Core = lineItem.Core,
+                                PONumber = lineItem.PONumber,
+                                TransactionDate = lineItem.TransactionDate
                             };
         }
 
-        private static List<VendorInvoicePaymentToRead> ProjectPayments(IList<VendorInvoicePayment> payments)
+        private static VendorInvoiceItemToRead ConvertItemEntityToReadDto(VendorInvoiceItem item)
         {
-            return payments?.Select(TransformPaymentToRead()).ToList()
+            return
+                new VendorInvoiceItemToRead()
+                {
+                    Description = item.Description,
+                    Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
+                    PartNumber = item.PartNumber,
+                    SaleCode = SaleCodeHelper.ConvertEntityToReadDto(item.SaleCode)
+                };
+        }
+
+        private static List<VendorInvoicePaymentToRead> ConvertPaymentEntitiesToReadDtos(IList<VendorInvoicePayment> payments)
+        {
+            return payments?.Select(ConvertPaymentEntityToReadDto()).ToList()
                 ?? new List<VendorInvoicePaymentToRead>();
         }
 
-        private static Func<VendorInvoicePayment, VendorInvoicePaymentToRead> TransformPaymentToRead()
+        private static Func<VendorInvoicePayment, VendorInvoicePaymentToRead> ConvertPaymentEntityToReadDto()
         {
             return payment =>
-                            new VendorInvoicePaymentToRead()
-                            {
-                                Id = payment.Id,
-                                VendorInvoiceId = payment.VendorInvoiceId,
-                                //PaymentMethodId = payment.VendorInvoicePaymentMethodId,
-                                PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payment.PaymentMethod),
-                                Amount = payment.Amount
-                            };
+                new VendorInvoicePaymentToRead()
+                {
+                    Id = payment.Id,
+                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payment.PaymentMethod),
+                    Amount = payment.Amount
+                };
         }
 
-        private static List<VendorInvoiceTaxToRead> ProjectTaxes(IList<VendorInvoiceTax> taxes)
+        private static List<VendorInvoiceTaxToRead> ConvertTaxEntitiesToReadDtos(IList<VendorInvoiceTax> taxes)
         {
-            return taxes?.Select(TransformTaxToRead()).ToList()
+            return taxes?.Select(ConvertTaxEntityToReadDto()).ToList()
                 ?? new List<VendorInvoiceTaxToRead>();
         }
 
-        private static Func<VendorInvoiceTax, VendorInvoiceTaxToRead> TransformTaxToRead()
+        private static Func<VendorInvoiceTax, VendorInvoiceTaxToRead> ConvertTaxEntityToReadDto()
         {
             return tax =>
                             new VendorInvoiceTaxToRead()
                             {
                                 Id = tax.Id,
-                                VendorInvoiceId = tax.VendorInvoiceId,
+                                SalesTax = ConvertSalesTaxEntityToReadDto(tax.SalesTax),
                                 Order = tax.Order,
                                 TaxId = tax.TaxId,
                                 Amount = tax.Amount
                             };
+        }
+
+        private static SalesTaxToRead ConvertSalesTaxEntityToReadDto(SalesTax salesTax)
+        {
+            return new SalesTaxToRead()
+            {
+                Description = salesTax.Description,
+                Id = salesTax.Id,
+                IsAppliedByDefault = salesTax.IsAppliedByDefault,
+                IsTaxable = salesTax.IsTaxable,
+                LaborTaxRate = salesTax.LaborTaxRate,
+                Order = salesTax.Order,
+                PartTaxRate = salesTax.PartTaxRate,
+                TaxedExciseFees = ExciseFeeHelper.ConvertEntitiesToReadDtos(salesTax.TaxedExciseFees),
+                TaxIdNumber = salesTax.TaxIdNumber,
+                TaxType = salesTax.TaxType
+            };
         }
 
         #endregion
 
         #region <---- ConvertWriteDtoToEntity ---->
+
         public static VendorInvoice ConvertWriteDtoToEntity(VendorInvoiceToWrite invoiceToWrite)
         {
             if (invoiceToWrite is null)
                 return null;
 
-            return new()
-            {
-                Date = invoiceToWrite.Date,
-                DatePosted = invoiceToWrite.DatePosted,
-                Status = invoiceToWrite.Status,
-                InvoiceNumber = invoiceToWrite.InvoiceNumber,
-                Total = invoiceToWrite.Total,
-                VendorId = invoiceToWrite.Vendor?.Id ?? 0,
-                //Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor),
-                LineItems = ProjectItemsToWrite(invoiceToWrite.LineItems),
-                Payments = ProjectPaymentsToWrite(invoiceToWrite.Payments),
-                Taxes = ProjectTaxesToWrite(invoiceToWrite.Taxes)
-            };
+            return VendorInvoice.Create(
+                VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor),
+                invoiceToWrite.Date,
+                invoiceToWrite.DatePosted,
+                invoiceToWrite.Status,
+                invoiceToWrite.InvoiceNumber,
+                invoiceToWrite.Total,
+                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoiceToWrite.LineItems),
+                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(invoiceToWrite.Payments),
+                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoiceToWrite.Taxes))
+                .Value;
         }
 
-        private static List<VendorInvoiceItem> ProjectItemsToWrite(IList<VendorInvoiceItemToWrite> items)
-        {
-            return items?.Select(TransformItem()).ToList()
-                ?? new List<VendorInvoiceItem>();
-        }
-
-        private static Func<VendorInvoiceItemToWrite, VendorInvoiceItem> TransformItem()
-        {
-            return item =>
-                            new VendorInvoiceItem()
-                            {
-                                //Id = item.Id,
-                                VendorInvoiceId = item.VendorInvoiceId,
-                                Type = item.Type,
-                                PartNumber = item.PartNumber,
-                                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
-                                ManufacturerId = item.ManufacturerId,
-                                Description = item.Description,
-                                SaleCodeId = item.SaleCodeId,
-                                Quantity = item.Quantity,
-                                Cost = item.Cost,
-                                Core = item.Core,
-                                PONumber = item.PONumber,
-                                InvoiceNumber = item.InvoiceNumber,
-                                TransactionDate = item.TransactionDate
-                            };
-        }
-
-        private static List<VendorInvoicePayment> ProjectPaymentsToWrite(IList<VendorInvoicePaymentToWrite> payments)
-        {
-            return payments?.Select(TransformPayment()).ToList()
-                ?? new List<VendorInvoicePayment>();
-        }
-
-        private static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> TransformPayment()
-        {
-            return payment =>
-                            new VendorInvoicePayment()
-                            {
-                                VendorInvoiceId = payment.VendorInvoiceId,
-                                //VendorInvoicePaymentMethodId = payment.PaymentMethodId,
-                                PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod),
-                                Amount = payment.Amount
-                            };
-        }
-
-        private static List<VendorInvoiceTax> ProjectTaxesToWrite(IList<VendorInvoiceTaxToWrite> taxes)
-        {
-            return taxes?.Select(TransformTax()).ToList()
-                ?? new List<VendorInvoiceTax>();
-        }
-
-        private static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> TransformTax()
-        {
-            return tax =>
-                            new VendorInvoiceTax()
-                            {
-                                VendorInvoiceId = tax.VendorInvoiceId,
-                                Order = tax.Order,
-                                TaxId = tax.TaxId,
-                                Amount = tax.Amount
-                            };
-        }
 
         #endregion
 
@@ -199,86 +158,18 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 
             return new()
             {
-                Id = invoiceToRead.Id,
                 Date = invoiceToRead.Date,
                 DatePosted = invoiceToRead.DatePosted,
                 Status = (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoiceToRead.Status),
                 InvoiceNumber = invoiceToRead.InvoiceNumber,
                 Total = invoiceToRead.Total,
-                //VendorId = invoiceToRead.Vendor.Id,
                 Vendor = VendorHelper.ConvertReadToWriteDto(invoiceToRead.Vendor),
-                LineItems = ProjectItemsToRead(invoiceToRead.LineItems),
-                Payments = ProjectPaymentsToRead(invoiceToRead.Payments),
-                Taxes = ProjectTaxesToRead(invoiceToRead.Taxes)
+                LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoiceToRead.LineItems),
+                Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoiceToRead.Payments),
+                Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoiceToRead.Taxes)
             };
         }
 
-        private static List<VendorInvoiceItemToWrite> ProjectItemsToRead(IReadOnlyList<VendorInvoiceItemToRead> items)
-        {
-            return items?.Select(TransformItemToWrite()).ToList()
-                ?? new List<VendorInvoiceItemToWrite>();
-        }
-
-        private static Func<VendorInvoiceItemToRead, VendorInvoiceItemToWrite> TransformItemToWrite()
-        {
-            return item =>
-                            new VendorInvoiceItemToWrite()
-                            {
-                                Id = item.Id,
-                                VendorInvoiceId = item.VendorInvoiceId,
-                                Type = item.Type,
-                                PartNumber = item.PartNumber,
-                                Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
-                                ManufacturerId = item.ManufacturerId,
-                                Description = item.Description,
-                                SaleCode = SaleCodeHelper.ConvertReadToWriteDto(item.SaleCode),
-                                SaleCodeId = item.SaleCodeId,
-                                Quantity = item.Quantity,
-                                Cost = item.Cost,
-                                Core = item.Core,
-                                PONumber = item.PONumber,
-                                InvoiceNumber = item.InvoiceNumber,
-                                TransactionDate = item.TransactionDate
-                            };
-        }
-
-        private static List<VendorInvoicePaymentToWrite> ProjectPaymentsToRead(IReadOnlyList<VendorInvoicePaymentToRead> payments)
-        {
-            return payments?.Select(TransformPaymentToWrite()).ToList()
-                ?? new List<VendorInvoicePaymentToWrite>();
-        }
-
-        private static Func<VendorInvoicePaymentToRead, VendorInvoicePaymentToWrite> TransformPaymentToWrite()
-        {
-            return payment =>
-                            new VendorInvoicePaymentToWrite()
-                            {
-                                Id = payment.Id,
-                                VendorInvoiceId = payment.VendorInvoiceId,
-                                //PaymentMethodId = payment.PaymentMethodId,
-                                PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(payment.PaymentMethod),
-                                Amount = payment.Amount
-                            };
-        }
-
-        private static List<VendorInvoiceTaxToWrite> ProjectTaxesToRead(IReadOnlyList<VendorInvoiceTaxToRead> taxes)
-        {
-            return taxes?.Select(TransformTaxToWrite()).ToList()
-                ?? new List<VendorInvoiceTaxToWrite>();
-        }
-
-        private static Func<VendorInvoiceTaxToRead, VendorInvoiceTaxToWrite> TransformTaxToWrite()
-        {
-            return tax =>
-                            new VendorInvoiceTaxToWrite()
-                            {
-                                Id = tax.Id,
-                                VendorInvoiceId = tax.VendorInvoiceId,
-                                Order = tax.Order,
-                                TaxId = tax.TaxId,
-                                Amount = tax.Amount
-                            };
-        }
 
         #endregion
 
@@ -300,99 +191,5 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 Total = invoice.Total
             };
         }
-
-        public static void CopyWriteDtoToEntity(VendorInvoiceToWrite invoiceToWrite, VendorInvoice invoice)
-        {
-            invoice.Date = invoiceToWrite.Date;
-            invoice.DatePosted = invoiceToWrite.DatePosted;
-            invoice.Status = invoiceToWrite.Status;
-            invoice.InvoiceNumber = invoiceToWrite.InvoiceNumber;
-            invoice.Total = invoiceToWrite.Total;
-            //invoice.Vendor = VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor);
-            invoice.VendorId = invoiceToWrite.Vendor?.Id ?? 0;
-            invoice.LineItems = ProjectItemsToWrite(invoiceToWrite.LineItems);
-            invoice.Payments = ProjectPaymentsToWrite(invoiceToWrite.Payments);
-            invoice.Taxes = ProjectTaxesToWrite(invoiceToWrite.Taxes);
-        }
-
-        //private static List<VendorInvoiceItem> ProjectItems(List<VendorInvoiceItemToWrite> items)
-        //{
-        //    return items?.Select(TransformItem()).ToList()
-        //        ?? new List<VendorInvoiceItem>();
-        //}
-
-        //private static Func<VendorInvoiceItemToWrite, VendorInvoiceItem> TransformItem()
-        //{
-        //    return item =>
-        //                    new VendorInvoiceItem()
-        //                    {
-        //                        VendorInvoiceId = item.VendorInvoiceId,
-        //                        Type = item.Type,
-        //                        PartNumber = item.PartNumber,
-        //                        MfrId = item.MfrId,
-        //                        Description = item.Description,
-        //                        Quantity = item.Quantity,
-        //                        Cost = item.Cost,
-        //                        Core = item.Core,
-        //                        PONumber = item.PONumber,
-        //                        InvoiceNumber = item.InvoiceNumber,
-        //                        TransactionDate = item.TransactionDate
-        //                    };
-        //}
-
-        //private static List<VendorInvoicePayment> ProjectPayments(List<VendorInvoicePaymentToWrite> payments)
-        //{
-        //    return payments?.Select(TransformPayment()).ToList()
-        //        ?? new List<VendorInvoicePayment>();
-        //}
-
-        //private static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> TransformPayment()
-        //{
-        //    return payment =>
-        //                    new VendorInvoicePayment()
-        //                    {
-        //                        //Id = payment.Id,
-        //                        VendorInvoiceId = payment.VendorInvoiceId,
-        //                        PaymentMethod = payment.PaymentMethod,
-        //                        Amount = payment.Amount
-        //                    };
-        //}
-
-        //private static List<VendorInvoiceTax> ProjectTaxes(List<VendorInvoiceTaxToWrite> taxes)
-        //{
-        //    return taxes?.Select(TransformTax()).ToList()
-        //        ?? new List<VendorInvoiceTax>();
-        //}
-
-        //private static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> TransformTax()
-        //{
-        //    return tax =>
-        //                    new VendorInvoiceTax()
-        //                    {
-        //                        VendorInvoiceId = tax.VendorInvoiceId,
-        //                        Order = tax.Order,
-        //                        TaxId = tax.TaxId,
-        //                        Amount = tax.Amount
-        //                    };
-        //}
-
-        //private static List<VendorInvoiceTaxToWrite> ProjectTaxes(IReadOnlyList<VendorInvoiceTaxToRead> taxes)
-        //{
-        //    return taxes?.Select(TransformTaxToWrite()).ToList()
-        //        ?? new List<VendorInvoiceTaxToWrite>();
-        //}
-
-        //private static Func<VendorInvoiceTaxToRead, VendorInvoiceTaxToWrite> TransformTaxToWrite()
-        //{
-        //    return tax =>
-        //                    new VendorInvoiceTaxToWrite()
-        //                    {
-        //                        Id = tax.Id,
-        //                        VendorInvoiceId = tax.VendorInvoiceId,
-        //                        Order = tax.Order,
-        //                        TaxId = tax.TaxId,
-        //                        Amount = tax.Amount
-        //                    };
-        //}
     }
 }

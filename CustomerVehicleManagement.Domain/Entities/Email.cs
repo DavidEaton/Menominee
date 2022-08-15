@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             if (string.IsNullOrWhiteSpace(address))
                 return Result.Failure<Email>(EmptyMessage);
 
-            address = (address ?? "").Trim();
+            address = (address ?? string.Empty).Trim();
 
             if (address.Length < MinimumLength)
                 return Result.Failure<Email>(MinimumLengthMessage);
