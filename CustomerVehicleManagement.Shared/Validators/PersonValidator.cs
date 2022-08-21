@@ -35,6 +35,7 @@ namespace CustomerVehicleManagement.Shared.Validators
                                     .WithMessage("Please enter a valid Birthday")
                                     .When(person => person.Birthday != null);
 
+            // DON'T THE NEXT TWO RULES ALREADY GET CHECKED IN THE CREATE INVOCATION?
             RuleFor(person => person.DriversLicense.Issued)
                                     .Must(PreceedToday)
                                     .WithMessage("Issued date must not occur in the future")

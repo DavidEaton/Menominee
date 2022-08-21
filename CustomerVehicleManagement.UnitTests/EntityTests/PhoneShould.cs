@@ -70,72 +70,42 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void EquateTwoPhoneInstancesHavingSameValuesOnEqualsByProperty()
+        public void UpdatePhoneNumberOnSetNumber()
         {
             var number = "989.627.9206";
-
-            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
-            var phone2 = Phone.Create(number, PhoneType.Home, true).Value;
-
-            Phone.EqualsByProperty(phone1, phone2).Should().BeTrue();
-        }
-
-        [Fact]
-        public void NotEquateTwoPhoneInstancesHavingDifferentValuesOnEqualsByProperty()
-        {
-            var number = "989.627.9206";
-            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
-            var phone2 = Phone.Create(number, PhoneType.Home, false).Value;
-            Phone.EqualsByProperty(phone1, phone2).Should().BeFalse();
-        }
-
-        [Fact]
-        public void NotEquateTwoPhoneInstancesHavingDifferingValues()
-        {
-            var number = "989.627.9206";
-            var newNumber = "555-555-5555";
-            var phone1 = Phone.Create(number, PhoneType.Home, true).Value;
-            var phone2 = Phone.Create(number, PhoneType.Home, false).Value;
-
-            phone2 = phone2.NewNumber(newNumber);
-
-            Phone.EqualsByProperty(phone1, phone2).Should().BeFalse();
-        }
-
-        [Fact]
-        public void ReturnNewPhoneOnNewNumber()
-        {
-            var number = "989.627.9206";
-            var newNumber = "555-555-5555";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
 
-            phone = phone.NewNumber(newNumber);
+            var newNumber = "555-555-5555";
+
+            phone.Number.Should().Be(number);
+            phone.SetNumber(newNumber);
 
             phone.Number.Should().Be(newNumber);
         }
 
         [Fact]
-        public void ReturnNewPhoneOnNewPhoneType()
+        public void UpdatePhoneTypeOnSetPhoneType()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
 
-            phone = phone.NewPhoneType(PhoneType.Mobile);
+            phone.PhoneType.Should().Be(PhoneType.Home);
+            phone.SetPhoneType(PhoneType.Mobile);
 
             phone.PhoneType.Should().Be(PhoneType.Mobile);
         }
 
         [Fact]
-        public void ReturnNewPhoneOnNewPrimary()
+        public void UpdatePhoneIsPrimaryOnSetIsPrimary()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
 
             phone.IsPrimary.Should().BeTrue();
-            phone = phone.NewPrimary(false);
+            phone.SetIsPrimary(false);
 
             phone.IsPrimary.Should().BeFalse();
         }
@@ -174,31 +144,31 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             phone.ToString().Should().Be("896279206");
 
-            phone = phone.NewNumber("96279206");
+            phone.SetNumber("96279206");
 
             phone.ToString().Should().Be("96279206");
 
-            phone = phone.NewNumber("279206");
+            phone.SetNumber("279206");
 
             phone.ToString().Should().Be("279206");
 
-            phone = phone.NewNumber("79206");
+            phone.SetNumber("79206");
 
             phone.ToString().Should().Be("79206");
 
-            phone = phone.NewNumber("9206");
+            phone.SetNumber("9206");
 
             phone.ToString().Should().Be("9206");
 
-            phone = phone.NewNumber("206");
+            phone.SetNumber("206");
 
             phone.ToString().Should().Be("206");
 
-            phone = phone.NewNumber("06");
+            phone.SetNumber("06");
 
             phone.ToString().Should().Be("06");
 
-            phone = phone.NewNumber("6");
+            phone.SetNumber("6");
 
             phone.ToString().Should().Be("6");
         }

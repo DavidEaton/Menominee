@@ -1,36 +1,32 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
     public class SalesTaxHelper
     {
-        public static SalesTax CreateSalesTax(SalesTaxToWrite taxToWrite)
+        public static SalesTax ConvertWriteDtoToEntity(SalesTaxToWrite tax)
         {
-            if (taxToWrite is null)
+            if (tax is null)
                 return null;
 
-            var tax = SalesTax.Create(
-                taxToWrite.Description,
-                taxToWrite.TaxType,
-                taxToWrite.Order,
-                taxToWrite.IsAppliedByDefault,
-                taxToWrite.IsTaxable,
-                taxToWrite.TaxIdNumber,
-                taxToWrite.PartTaxRate,
-                taxToWrite.LaborTaxRate).Value;
+            List<ExciseFee> fees = new();
 
-            taxToWrite.TaxedExciseFees = new();
+            if (tax?.ExciseFees is not null && tax?.ExciseFees.Count > 0)
+                fees = ExciseFeeHelper.CreateExciseFees(tax.ExciseFees);
 
-            if (taxToWrite?.TaxedExciseFees?.Count > 0)
-            {
-                foreach (var fee in taxToWrite.TaxedExciseFees)
-                {
-                    // TODO - ExciseFee or SalesTaxTaxableExciseFee ???
-                    //tax.TaxedExciseFees.Add(ExciseFeeHelper.Transform(fee));
-                }
-            }
-
-            return tax;
+            return SalesTax.Create(
+                tax.Description,
+                tax.TaxType,
+                tax.Order,
+                tax.IsAppliedByDefault,
+                tax.IsTaxable,
+                tax.TaxIdNumber,
+                tax.PartTaxRate,
+                tax.LaborTaxRate,
+                fees)
+                .Value;
         }
 
         public static SalesTaxToWrite CreateSalesTax(SalesTaxToRead taxToRead)
@@ -48,12 +44,12 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 TaxIdNumber = taxToRead.TaxIdNumber,
                 PartTaxRate = taxToRead.PartTaxRate,
                 LaborTaxRate = taxToRead.LaborTaxRate,
-                TaxedExciseFees = new()
+                ExciseFees = new()
             };
 
-            if (taxToRead?.TaxedExciseFees?.Count > 0)
+            if (taxToRead?.ExciseFees?.Count > 0)
             {
-                foreach (var fee in taxToRead.TaxedExciseFees)
+                foreach (var fee in taxToRead.ExciseFees)
                 {
                     // TODO - ExciseFee or SalesTaxTaxableExciseFee ???
                     //taxToWrite.TaxedExciseFees.Add(ExciseFeeHelper.Transform(fee));
@@ -79,12 +75,12 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 TaxIdNumber = salesTax.TaxIdNumber,
                 PartTaxRate = salesTax.PartTaxRate,
                 LaborTaxRate = salesTax.LaborTaxRate,
-                TaxedExciseFees = new()
+                ExciseFees = new()
             };
 
-            if (salesTax?.TaxedExciseFees?.Count > 0)
+            if (salesTax?.ExciseFees?.Count > 0)
             {
-                foreach (var fee in salesTax.TaxedExciseFees)
+                foreach (var fee in salesTax.ExciseFees)
                 {
                     // TODO - ExciseFee or SalesTaxTaxableExciseFee ???
                     //taxToRead.TaxedExciseFees.Add(ExciseFeeHelper.Transform(fee));

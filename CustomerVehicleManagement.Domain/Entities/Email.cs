@@ -1,10 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
+using Menominee.Common.Utilities;
+using System;
 using System.ComponentModel.DataAnnotations;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Email : Menominee.Common.Entity, IHasPrimary
+    public class Email : Entity, IHasPrimary
     {
         public static readonly string InvalidMessage = "Email address and/or its format is invalid";
         public static readonly int MinimumLength = 1;
@@ -13,8 +16,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public static readonly string MaximumLengthMessage = $"Email address cannot be over {MaximumLength} characters in length.";
         public static readonly string EmptyMessage = $"Email address cannot be empty.";
 
-        public string Address { get; }
-        public bool IsPrimary { get; }
+        public string Address { get; private set; }
+        public bool IsPrimary { get; private set; }
 
         private Email(string address, bool isPrimary)
         {
@@ -44,38 +47,23 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(new Email(address, isPrimary));
         }
 
-        public Email NewAddress(string newAddress)
+        public void SetAddress(string address)
         {
-            return Create(newAddress, IsPrimary).Value;
+            Guard.ForNullOrEmpty(address, "address");
+
+            address = address.Trim();
+
+            var emailAddressAttribute = new EmailAddressAttribute();
+
+            if (!emailAddressAttribute.IsValid(address))
+                throw new ArgumentOutOfRangeException(nameof(address), InvalidMessage);
+
+            Address = address;
         }
 
-        public Email NewPrimary(bool newPrimary)
+        public void SetIsPrimary(bool isPrimary)
         {
-            return new Email(Address, newPrimary);
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as Menominee.Common.Entity;
-
-            if (other is null)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            if (GetType() != other.GetType())
-                return false;
-
-            if (((Email)obj).Address == Address)
-                return true;
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return (GetType().ToString() + Id).GetHashCode();
+            IsPrimary = isPrimary;
         }
 
         #region ORM

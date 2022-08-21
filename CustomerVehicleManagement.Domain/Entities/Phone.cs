@@ -1,14 +1,16 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities
 {
-    public class Phone : Menominee.Common.Entity, IHasPrimary
+    public class Phone : Entity, IHasPrimary
     {
         public static readonly string InvalidMessage = "Email address and/or its format is invalid";
         public static readonly string EmptyMessage = "Phone number cannot be empty";
@@ -43,20 +45,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         public PhoneType PhoneType { get; private set; }
         public bool IsPrimary { get; private set; }
 
-        public Phone NewNumber(string newNumber)
-        {
-            return new Phone(newNumber, PhoneType, IsPrimary);
-        }
-
-        public Phone NewPhoneType(PhoneType newPhoneType)
-        {
-            return new Phone(Number, newPhoneType, IsPrimary);
-        }
-        public Phone NewPrimary(bool primary)
-        {
-            return new Phone(Number, PhoneType, primary);
-        }
-
         public override string ToString()
         {
             Number = RemoveNonNumericCharacters(Number);
@@ -69,17 +57,31 @@ namespace CustomerVehicleManagement.Domain.Entities
             };
         }
 
-        /// <summary>
-        /// EqualsByProperty compares each member property and returns true of they are all equal between phone1 and phone2.
-        /// </summary>
-        /// <param name="phone1"></param>
-        /// <param name="phone2"></param>
-        /// <returns>True if all properties are equal comparing phone1 and phone2; False if one or more properties are not equal.</returns>
-        public static bool EqualsByProperty(Phone phone1, Phone phone2)
+        public void SetNumber(string number)
         {
-            return phone1.Number == phone2.Number
-                && phone1.PhoneType == phone2.PhoneType
-                && phone1.IsPrimary == phone2.IsPrimary;
+            Guard.ForNullOrEmpty(number, "number");
+
+            number = number.Trim();
+
+            var phoneAttribute = new PhoneAttribute();
+
+            if (!phoneAttribute.IsValid(number))
+                throw new ArgumentOutOfRangeException(nameof(number), InvalidMessage);
+
+            Number = number;
+        }
+
+        public void SetPhoneType(PhoneType phoneType)
+        {
+            if (!Enum.IsDefined(typeof(PhoneType), phoneType))
+                throw new ArgumentOutOfRangeException(typeof(PhoneType).ToString(), InvalidMessage); ;
+
+            PhoneType = phoneType;
+        }
+
+        public void SetIsPrimary(bool isPrimary)
+        {
+            IsPrimary = isPrimary;
         }
 
         private static string RemoveNonNumericCharacters(string input)

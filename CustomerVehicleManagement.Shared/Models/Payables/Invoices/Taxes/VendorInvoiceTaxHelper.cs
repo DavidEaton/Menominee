@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
         {
             return tax =>
                 VendorInvoiceTax.Create(
-                    SalesTaxHelper.CreateSalesTax(tax.SalesTax),
+                    SalesTaxHelper.ConvertWriteDtoToEntity(tax.SalesTax),
                     tax.Order,
                     tax.TaxName,
                     tax.Amount)

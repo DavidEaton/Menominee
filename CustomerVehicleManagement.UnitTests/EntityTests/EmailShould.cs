@@ -55,18 +55,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Equate_Email_Instances_Having_Same_Values()
-        {
-            var address = "john@doe.com";
-            var primary = true;
-
-            var email1 = Email.Create(address, primary).Value;
-            var email2 = Email.Create(address, primary).Value;
-
-            email1.Should().BeEquivalentTo(email2);
-        }
-
-        [Fact]
         public void Not_Equate_Email_Instances_Having_Differing_Values()
         {
             var address = "john@doe.com";
@@ -86,31 +74,31 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var email = Create_Primary_Email();
             var newAddress = "new@address.com";
 
-            email = email.NewAddress(newAddress);
+            email.SetAddress(newAddress);
 
             email.Address.Should().Be(newAddress);
         }
 
         [Fact]
-        public void Return_New_Email_On_New_Address()
+        public void Update_Email_On_SetAddress()
         {
             var email = Create_Primary_Email();
             var newAddress = "new@address.com";
 
-            email = email.NewAddress(newAddress);
+            email.SetAddress(newAddress);
 
             email.Address.Should().Be(newAddress);
         }
 
         [Fact]
-        public void Return_New_Email_On_New_Primary()
+        public void Update_Email_On_SetIsPrimary()
         {
             var email = Create_Primary_Email();
-            var newPrimary = false;
 
-            email = email.NewPrimary(newPrimary);
+            email.IsPrimary.Should().Be(true);
+            email.SetIsPrimary(false);
 
-            email.IsPrimary.Should().Be(newPrimary);
+            email.IsPrimary.Should().Be(false);
         }
 
         internal static Email Create_Primary_Email()

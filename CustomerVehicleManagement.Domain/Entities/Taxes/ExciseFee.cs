@@ -44,6 +44,28 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             return Result.Success(new ExciseFee(description, feeType, amount));
         }
 
+        public void SetDescription(string description)
+        {
+            if (description is not null)
+            {
+                description = description.Trim();
+
+                if (description.Length <= DescriptionMaximumLength)
+                    Description = description;
+            }
+        }
+
+        public void SetFeeType(ExciseFeeType feeType)
+        {
+            if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
+                FeeType = feeType;
+        }
+
+        public void SetAmount(double amount)
+        {
+            if (amount < MinimumValue)
+                Amount = amount;
+        }
 
         #region ORM
 

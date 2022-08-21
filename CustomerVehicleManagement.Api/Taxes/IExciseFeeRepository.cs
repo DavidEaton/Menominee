@@ -7,14 +7,13 @@ namespace CustomerVehicleManagement.Api.Taxes
 {
     public interface IExciseFeeRepository
     {
-        Task AddExciseFeeAsync(ExciseFee exciseFee);
+        Task AddExciseFeeAsync(ExciseFee entity);
         Task<ExciseFee> GetExciseFeeEntityAsync(long id);
         Task<ExciseFeeToRead> GetExciseFeeAsync(long id);
         Task<IReadOnlyList<ExciseFeeToReadInList>> GetExciseFeeListAsync();
-        Task<ExciseFee> UpdateExciseFeeAsync(ExciseFee exciseFee);
-        Task DeleteExciseFeeAsync(long id);
+        void DeleteExciseFee(ExciseFee entity);
         Task<bool> ExciseFeeExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         void FixTrackingState();
     }
 }

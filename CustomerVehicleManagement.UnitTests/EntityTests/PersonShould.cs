@@ -213,14 +213,15 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Throw_Exception_On_SetEmails_To_Null()
+        public void SetEmails_To_EmptyList()
         {
-            var person = Utilities.CreatePerson();
-            List<Email> emails = null;
+            var person = Utilities.CreatePersonWithEmails();
+            List<Email> emails = new();
 
-            Action action = () => person.SetEmails(emails);
+            person.Emails.Count.Should().NotBe(0);
+            person.SetEmails(emails);
 
-            action.Should().Throw<ArgumentException>();
+            person.Emails.Count.Should().Be(0);
         }
 
         [Fact]

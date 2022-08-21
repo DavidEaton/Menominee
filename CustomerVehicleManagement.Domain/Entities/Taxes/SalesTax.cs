@@ -1,7 +1,9 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Taxes
@@ -25,7 +27,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public string TaxIdNumber { get; private set; }
         public double PartTaxRate { get; private set; }
         public double LaborTaxRate { get; private set; }
-        public List<SalesTaxTaxableExciseFee> TaxedExciseFees { get; private set; } = new List<SalesTaxTaxableExciseFee>();
+        public List<ExciseFee> ExciseFees { get; private set; } = new List<ExciseFee>();
 
         private SalesTax(
             string description,
@@ -35,7 +37,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             bool? isTaxable,
             string taxIdNumber,
             double partTaxRate,
-            double laborTaxRate)
+            double laborTaxRate,
+            List<ExciseFee> exciseFees)
         {
             Description = description;
             TaxType = taxType;
@@ -45,6 +48,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             TaxIdNumber = taxIdNumber;
             PartTaxRate = partTaxRate;
             LaborTaxRate = laborTaxRate;
+            ExciseFees = exciseFees;
         }
 
         public static Result<SalesTax> Create(
@@ -55,7 +59,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             bool? isTaxable,
             string taxIdNumber,
             double partTaxRate,
-            double laborTaxRate)
+            double laborTaxRate,
+            List<ExciseFee> exciseFees)
         {
             if (description is null)
                 return Result.Failure<SalesTax>(RequiredMessage);
@@ -83,10 +88,104 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 isTaxable,
                 taxIdNumber,
                 partTaxRate,
-                laborTaxRate));
+                laborTaxRate,
+                exciseFees));
         }
 
-        // TODO - Should we have a list of taxable taxes too?
+        public void SetPartTaxRate(double partTaxRate)
+        {
+            if (partTaxRate < MinimumValue)
+                throw new ArgumentOutOfRangeException("partTaxRate");
+
+            PartTaxRate = partTaxRate;
+        }
+
+        public void SetLaborTaxRate(double laborTaxRate)
+        {
+            if (laborTaxRate < MinimumValue)
+                throw new ArgumentOutOfRangeException("laborTaxRate");
+
+            LaborTaxRate = laborTaxRate;
+        }
+
+        public void SetTaxIdNumber(string taxIdNumber)
+        {
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
+                throw new ArgumentOutOfRangeException("taxIdNumber");
+
+            TaxIdNumber = taxIdNumber;
+        }
+
+        public void SetIsTaxable(bool? isTaxable)
+        {
+            if (isTaxable.HasValue)
+                IsTaxable = isTaxable.Value;
+        }
+
+        public void SetIsAppliedByDefault(bool? isAppliedByDefault)
+        {
+            if (isAppliedByDefault.HasValue)
+                IsAppliedByDefault = isAppliedByDefault.Value;
+        }
+
+        public void SetOrder(int order)
+        {
+            Order = order;
+        }
+
+        public void SetTaxType(SalesTaxType taxType)
+        {
+            Guard.ForNull(taxType, "taxType");
+
+            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
+                throw new ArgumentOutOfRangeException(nameof(taxType));
+
+            TaxType = taxType;
+        }
+
+        public void SetDescription(string description)
+        {
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException("description");
+
+            Description = description;
+        }
+
+
+        public void SetExciseFees(List<ExciseFee> exciseFees)
+        {
+            if (exciseFees is null || exciseFees?.Count == 0)
+                ExciseFees = exciseFees;
+
+            if (exciseFees?.Count > 0)
+            {
+                // Remove not found phones (phones that caller removed)
+                foreach (var fee in exciseFees)
+                {
+                    if (!ExciseFees.Any(x => x.Id == fee.Id))
+                        exciseFees.Remove(fee);
+                }
+
+                // Find and Update each
+                foreach (var fee in exciseFees)
+                {
+                    var foundFee = ExciseFees.FirstOrDefault(f => f.Id == fee.Id);
+                    foundFee.SetDescription(fee.Description);
+                    foundFee.SetFeeType(fee.FeeType);
+                    foundFee.SetAmount(fee.Amount);
+                }
+
+                // Validate the collection
+
+            }
+        }
+
+
+
 
         #region ORM
 

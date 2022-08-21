@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task AddOrganizationAsync(Organization organization)
         {
-            if (organization != null)
+            if (organization is not null)
                 await context.AddAsync(organization);
         }
 
@@ -34,9 +34,20 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<OrganizationToRead> GetOrganizationAsync(long id)
         {
-            Organization organizationFromContext = await GetOrganizationEntityAsync(id);
+            var organizationFromContext = await context.Organizations
+                .Include(organization => organization.Phones)
+                .Include(organization => organization.Emails)
 
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Emails)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Phones)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(organization => organization.Id == id);
+    
             Guard.ForNull(organizationFromContext, "organizationFromContext");
+
             return OrganizationHelper.CreateOrganization(organizationFromContext);
         }
 

@@ -2,16 +2,13 @@
 
 The benefits of versioned policies are:
 
-- All policy changes will go through code review so everyone will be on board with the baseline, and when policy changes
-  happen, they can be systematically communicated to all affected stakeholders.
+- All policy changes will go through code review so everyone will be on board with the baseline, and when policy changes happen, they can be systematically communicated to all affected stakeholders.
 
-- Reduce the waste of making and recalling process decisions over and over again.  We can recall a decision by consulting the
-  documents rather than interrupting someone with a question.
+- Reduce the waste of making and recalling process decisions over and over again.  We can recall a decision by consulting the documents rather than interrupting someone with a question.
 
 - Reading the process documents will be a much faster way to get new hires up to speed than transmission by tribal knowledge.
 
-- Continual refinement of the policy documents will help us become more conscious of the development process and help us think of ways
-  it can be optimized and automated.
+- Continual refinement of the policy documents will help us become more conscious of the development process and help us think of ways it can be optimized and automated.
 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines">Naming Standards</a>
 This application follows <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/">Microsoft Framework Design Guidelines for .NET</a>
@@ -36,7 +33,7 @@ propertyDescriptor ioStream htmlTag
 
 ✔️ DO use PascalCasing for all public member, type, and namespace names consisting of multiple words.
 
-✔️ DO use camelCasing for parameter names.
+✔️ DO use camelCasing for parameter names and private members.
 
 ### <a href="https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/general-naming-conventions">General Naming Conventions</a>
 #### Word Choice
@@ -57,7 +54,7 @@ The property name `CanScrollHorizontally` is better than `ScrollableX` (an obscu
 #### Using Abbreviations and Acronyms
 ❌ DO NOT use abbreviations or contractions as part of identifier names.
 
-For example, use `GetWindow`` rather than `GetWin`.
+For example, use `GetWindow` rather than `GetWin`.
 
 ❌ DO NOT use any acronyms that are not widely accepted, and even if they are, only when necessary. This application uses the widely accepted abbreviation `Dto` for `Data Transfer Object`.
 
@@ -72,7 +69,7 @@ For example, a method converting to Int64 should be named `ToInt64`, not `ToLong
 
 ✔️ DO use a common name, such as `value` or `item`, rather than repeating the type name, in the rare cases when an identifier has no semantic meaning and the type of the parameter is not important.
 
-## This application was designed with <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles in mind.
+## This application design was guided by <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles.
 
 The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus most of our efforts, keeping it fully encapsulated, covered well by tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated. We adhere to the Always-Valid Domain Model philosophy. 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>

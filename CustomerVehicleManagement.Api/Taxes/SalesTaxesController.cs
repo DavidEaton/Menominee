@@ -40,33 +40,33 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         // api/salestaxes/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateSalesTaxAsync(long id, SalesTaxToWrite taxToWrite)
+        public async Task<IActionResult> UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax)
         {
             if (!await repository.SalesTaxExistsAsync(id))
-                return NotFound($"Could not find Sales Tax to update: {taxToWrite.Description}");
+                return NotFound($"Could not find Sales Tax to update: {salesTax.Description}");
 
             //1) Get domain entity from repository
-            var tax = repository.GetSalesTaxEntityAsync(id).Result;
+            SalesTax taxFromRepository = repository.GetSalesTaxEntityAsync(id).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            tax.Description = taxToWrite.Description;
-            tax.TaxType = taxToWrite.TaxType;
-            tax.Order = taxToWrite.Order;
-            tax.IsAppliedByDefault = taxToWrite.IsAppliedByDefault;
-            tax.IsTaxable = taxToWrite.IsTaxable;
-            tax.TaxIdNumber = taxToWrite.TaxIdNumber;
-            tax.PartTaxRate = taxToWrite.PartTaxRate;
-            tax.LaborTaxRate = taxToWrite.LaborTaxRate;
-            // TODO - also add TaxedExciseFees
+            taxFromRepository.SetDescription(salesTax.Description);
+            taxFromRepository.SetTaxType(salesTax.TaxType);
+            taxFromRepository.SetOrder(salesTax.Order);
+            taxFromRepository.SetIsAppliedByDefault(salesTax.IsAppliedByDefault);
+            taxFromRepository.SetIsTaxable(salesTax.IsTaxable);
+            taxFromRepository.SetTaxIdNumber(salesTax.TaxIdNumber);
+            taxFromRepository.SetPartTaxRate(salesTax.PartTaxRate);
+            taxFromRepository.SetLaborTaxRate(salesTax.LaborTaxRate);
+            taxFromRepository.SetExciseFees(ExciseFeeHelper.CreateExciseFees(salesTax.ExciseFees));
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
-            tax.SetTrackingState(TrackingState.Modified);
+            taxFromRepository.SetTrackingState(TrackingState.Modified);
 
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            await repository.UpdateSalesTaxAsync(tax);
+            await repository.UpdateSalesTaxAsync(taxFromRepository);
 
             await repository.SaveChangesAsync();
 
@@ -77,18 +77,17 @@ namespace CustomerVehicleManagement.Api.Taxes
         public async Task<ActionResult<SalesTaxToRead>> AddSalesTaxAsync(SalesTaxToWrite taxToWrite)
         {
             // 1. Convert dto to domain entity
-            var tax = new SalesTax()
-            {
-                Description = taxToWrite.Description,
-                TaxType = taxToWrite.TaxType,
-                Order = taxToWrite.Order,
-                IsAppliedByDefault = taxToWrite.IsAppliedByDefault,
-                IsTaxable = taxToWrite.IsTaxable,
-                TaxIdNumber = taxToWrite.TaxIdNumber,
-                PartTaxRate = taxToWrite.PartTaxRate,
-                LaborTaxRate = taxToWrite.LaborTaxRate
-                // TODO - deal with TaxedExciseFees
-            };
+            var tax = SalesTax.Create(
+                taxToWrite.Description,
+                taxToWrite.TaxType,
+                taxToWrite.Order,
+                taxToWrite.IsAppliedByDefault,
+                taxToWrite.IsTaxable,
+                taxToWrite.TaxIdNumber,
+                taxToWrite.PartTaxRate,
+                taxToWrite.LaborTaxRate,
+                ExciseFeeHelper.CreateExciseFees(taxToWrite.ExciseFees)
+            ).Value;
 
             // 2. Add domain entity to repository
             await repository.AddSalesTaxAsync(tax);
@@ -98,10 +97,7 @@ namespace CustomerVehicleManagement.Api.Taxes
 
             // 4. Return new tax from database to consumer after save
             return CreatedAtRoute("GetSalesTaxAsync",
-                new
-                {
-                    Id = tax.Id
-                },
+                new { tax.Id },
                 SalesTaxHelper.CreateSalesTax(tax));
         }
 

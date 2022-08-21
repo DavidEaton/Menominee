@@ -140,7 +140,6 @@ namespace CustomerVehicleManagement.Api.Data
             // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
             modelBuilder.ApplyConfiguration(new SalesTaxConfiguration());
-            modelBuilder.ApplyConfiguration(new SalesTaxTaxableExciseFeeConfiguration());
 
             // Credit Cards
             modelBuilder.ApplyConfiguration(new CreditCardConfiguration());
@@ -262,8 +261,6 @@ namespace CustomerVehicleManagement.Api.Data
         // Taxes/Fees
         public DbSet<ExciseFee> ExciseFees { get; set; }
         public DbSet<SalesTax> SalesTaxes { get; set; }
-        public DbSet<SalesTaxTaxableExciseFee> SalesTaxTaxableExciseFees { get; set; }
-
         #endregion
     }
 

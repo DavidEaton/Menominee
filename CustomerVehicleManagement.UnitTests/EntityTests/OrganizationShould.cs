@@ -297,14 +297,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void NotSetEmailsToNull()
+        public void SetEmailsToNull()
         {
             var organization = OrganizationHelper.CreateOrganization();
-            List<Email> emails = null;
+            List<Email> emails = new();
 
-            Action action = () => organization.SetEmails(emails);
+            organization.SetEmails(emails);
 
-            action.Should().Throw<ArgumentException>();
+            organization.Emails.Count.Should().Be(0);
         }
 
         [Fact]

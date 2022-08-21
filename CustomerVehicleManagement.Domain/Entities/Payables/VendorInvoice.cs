@@ -8,9 +8,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class VendorInvoice : Entity
     {
-        // We can make these message more specific and/or define an Error class to send to client
+        // We can make these messages more specific and/or define an Error class to send to client,
         // where we can decide exactly how to handle those errors and display them uniformly to 
-        // user; keeping it simple for now.
+        // user; keeping it simple here for now.
 
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string DateInvalidMessage = $"Date cannot be in the future.";

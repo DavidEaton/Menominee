@@ -23,12 +23,6 @@ namespace CustomerVehicleManagement.Api.Configurations
                    .HasColumnName("PartNumber")
                    .HasMaxLength(255)
                    .IsRequired();
-            builder.OwnsOne(lineItem => lineItem.Item)
-                   .Property(item => item.Manufacturer.Id)
-                   .HasColumnName("ManufacturerId");
-            builder.OwnsOne(lineItem => lineItem.Item)
-                   .Property(item => item.SaleCode.Id)
-                   .HasColumnName("SaleCodeId");
 
             builder.Property(item => item.Type)
                    .HasDefaultValue(VendorInvoiceItemType.Purchase)

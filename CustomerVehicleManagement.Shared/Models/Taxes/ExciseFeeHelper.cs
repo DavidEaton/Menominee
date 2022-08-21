@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,18 +53,27 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        public static List<SalesTaxTaxableExciseFeeToRead> ConvertEntitiesToReadDtos(List<SalesTaxTaxableExciseFee> excisefees)
+        public static List<ExciseFeeToRead> CreateExciseFees(List<ExciseFee> excisefees)
         {
             return
                 excisefees?.Select(fee =>
-                new SalesTaxTaxableExciseFeeToRead()
+                new ExciseFeeToRead()
                 {
                     Id = fee.Id,
-                    ExciseFee = CreateExciseFee(fee.ExciseFee),
-                    SalesTax = SalesTaxHelper.CreateSalesTax(fee.SalesTax)
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount
                 }).ToList()
-            ??
-                 new List<SalesTaxTaxableExciseFeeToRead>();
+                ??
+                new List<ExciseFeeToRead>();
+        }
+
+        public static List<ExciseFee> CreateExciseFees(List<ExciseFeeToWrite> exciseFees)
+        {
+            return
+                exciseFees?.Select(fee => CreateExciseFee(fee)).ToList()
+                ??
+                new List<ExciseFee>();
         }
     }
 }

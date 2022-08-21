@@ -35,10 +35,10 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             Guard.ForNull(phone, "phone");
 
             if (ContactableHasPhone(phone))
-                throw new Exception("Contactable already has this phone");
+                throw new Exception("Duplicate phone");
 
             if (ContactableHasPrimaryPhone() && phone.IsPrimary)
-                throw new Exception("Contactable already has primary phone.");
+                throw new Exception("Primary phone has already been entered.");
 
             Phones.Add(phone);
         }
@@ -49,20 +49,39 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             Phones.Remove(phone);
         }
 
-        // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
         public void SetPhones(IList<Phone> phones)
         {
-            // Client may send an empty or null phones collection, signifying removal/replacement
+            // Caller may send an empty or null collection, signifying removal/replacement
             if (phones is null || phones?.Count == 0)
                 Phones = phones;
 
             if (phones?.Count > 0)
             {
-                Phones.Clear();
-                var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
+                // Remove not found phones (phones that caller removed)
+                foreach (var phone in Phones)
+                    if (!Phones.Any(x => x.Id == phone.Id))
+                        RemovePhone(phone);
 
-                foreach (var phone in sortedPhones)
-                    AddPhone(phone);
+                // Find and Update each with caller changes
+                foreach (var phone in phones)
+                {
+                    var foundPhone = Phones.FirstOrDefault(p => p.Id == phone.Id);
+
+                    if (foundPhone is not null)
+                    {
+                        foundPhone.SetNumber(phone.Number);
+                        foundPhone.SetPhoneType(phone.PhoneType);
+                        foundPhone.SetIsPrimary(phone.IsPrimary);
+                    }
+                }
+
+                // Add each NEW phone
+                foreach (var phone in phones)
+                    if (phone.Id == 0)
+                        AddPhone(phone);
+
+                // Validate the collection
+
             }
         }
 
@@ -87,18 +106,35 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void SetEmails(IList<Email> emails)
         {
-            Guard.ForNull(emails, "emails");
+            // Client may send an empty or null collection, signifying removal/replacement
+            if (emails is null || emails?.Count == 0)
+                Emails = emails;
 
             if (emails.Count > 0)
             {
-                Emails.Clear();
-                // If a primary email exists before the end of the list, AddEmail()
-                // fails at check ContactableHasPrimaryEmail() since the primary email
-                // in the list was already added. This code will work when list is
-                // sorted and the Primary email is added last:
-                var sortedEmails = emails.OrderBy(e => e.IsPrimary).ToList();
-                foreach (var email in sortedEmails)
-                    AddEmail(email);
+                // Remove not found phones (phones that caller removed)
+                foreach (var email in emails)
+                    if (!Emails.Any(x => x.Id == email.Id))
+                        RemoveEmail(email);
+
+                // Find and Update each with caller changes
+                foreach (var email in emails)
+                {
+                    var foundEmail = Emails.FirstOrDefault(p => p.Id == email.Id);
+
+                    if (foundEmail is not null)
+                    {
+                        foundEmail.SetAddress(email.Address);
+                        foundEmail.SetIsPrimary(email.IsPrimary);
+                    }
+                }
+                // Add each NEW email
+                foreach (var email in emails)
+                    if (email.Id == 0)
+                        AddEmail(email);
+
+                // Validate the collection
+
             }
         }
 

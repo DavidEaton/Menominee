@@ -16,28 +16,26 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         public ExciseFeeRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddExciseFeeAsync(ExciseFee exciseFee)
         {
-            Guard.ForNull(exciseFee, "Excise Fee");
+            // The Id of a new ExciseFee will never == an existing
+            // Id because new domain objects don't get their Id
+            // value until context.SaveChanges.
+            //if (await ExciseFeeExistsAsync(exciseFee.Id))
+            //    throw new Exception("Excise Fee already exists");
 
-            if (await ExciseFeeExistsAsync(exciseFee.Id))
-                throw new Exception("Excise Fee already exists");
+            if (exciseFee is not null)
+                await context.AddAsync(exciseFee);
 
             await context.AddAsync(exciseFee);
         }
 
-        public async Task DeleteExciseFeeAsync(long id)
+        public void DeleteExciseFee(ExciseFee exciseFee)
         {
-            var exciseFee = await context.ExciseFees
-                                         .FirstOrDefaultAsync(fee => fee.Id == id);
-
-            Guard.ForNull(exciseFee, "Excise Fee");
-
             context.Remove(exciseFee);
         }
 
@@ -76,30 +74,9 @@ namespace CustomerVehicleManagement.Api.Taxes
                 .ToList();
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<ExciseFee> UpdateExciseFeeAsync(ExciseFee exciseFee)
-        {
-            Guard.ForNull(exciseFee, "exciseFee");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(exciseFee).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ExciseFeeExistsAsync(exciseFee.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
-
-            return null;
+            await context.SaveChangesAsync();
         }
     }
 }

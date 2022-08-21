@@ -75,11 +75,11 @@ namespace Menominee.Client.Components.Settings.Pages
                     TaxType = readDto.TaxType
                 };
 
-                if (readDto?.TaxedExciseFees.Count > 0)
+                if (readDto?.ExciseFees.Count > 0)
                 {
-                    foreach (var tax in readDto.TaxedExciseFees)
+                    foreach (var tax in readDto.ExciseFees)
                     {
-                        SalesTax.TaxedExciseFees.Add(new ExciseFeeToWrite
+                        SalesTax.ExciseFees.Add(new ExciseFeeToWrite
                         {
                             Amount = tax.Amount,
                             Description = tax.Description,

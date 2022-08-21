@@ -13,6 +13,14 @@ namespace Menominee.Common.Utilities
             }
         }
 
+        public static void ForGreaterThanOrEqualToZero(int value, string parameterName)
+        {
+            if (value >= 0)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+
         public static void ForPrecedesDate(DateTime value, DateTime dateToPrecede, string parameterName)
         {
             if (value >= dateToPrecede)
