@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Taxes
         public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToWrite exciseFeeToAdd)
         {
             // 1. Convert dto to domain entity
-            var exciseFee = ExciseFeeHelper.CreateExciseFee(exciseFeeToAdd);
+            var exciseFee = ExciseFeeHelper.ConvertWriteDtoToEntity(exciseFeeToAdd);
 
             // 2. Add domain entity to repository
             await repository.AddExciseFeeAsync(exciseFee);
@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 4. Return new fee from database to consumer after save
             return CreatedAtRoute("GetExciseFeeAsync",
                 new { exciseFee.Id },
-                ExciseFeeHelper.CreateExciseFee(exciseFee));
+                ExciseFeeHelper.ConvertEntityToReadDto(exciseFee));
         }
 
         [HttpDelete("{id:long}")]

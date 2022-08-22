@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
@@ -38,6 +37,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return ((item.PartType == PartType.Part || item.PartType == PartType.Tire) && item.QuantitySold > 0 /*&& item.IsBuyout*/);
         }
 
+        // TODO: Move "Missing" methods into separate class
         public static int WarrantyRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
         {
             int missingWarrantyCount = 0;
@@ -61,6 +61,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return missingWarrantyCount;
         }
 
+        // TODO: Move "Missing" methods into separate class
         public static int SerialNumberRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
         {
             int missingSerialNumberCount = 0;
@@ -87,6 +88,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return missingSerialNumberCount;
         }
 
+        // TODO: Move "Missing" methods into separate class
         public static int PurchaseRequiredMissingCount(IList<RepairOrderServiceToWrite> services)
         {
             int missingSerialNumberCount = 0;
@@ -110,6 +112,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return missingSerialNumberCount;
         }
 
+        // TODO: Move "Build" methods into separate class
         public static List<SerialNumberListItem> BuildSerialNumberList(IList<RepairOrderServiceToWrite> services)
         {
             var list = new List<SerialNumberListItem>();
@@ -134,6 +137,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        // TODO: Move "Build" methods into separate class
         public static List<WarrantyListItem> BuildWarrantyList(List<RepairOrderServiceToWrite> services)
         {
             var list = new List<WarrantyListItem>();
@@ -159,6 +163,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        // TODO: Move "Build" methods into separate class
         public static List<PurchaseListItem> BuildPurchaseList(List<RepairOrderServiceToWrite> services)
         {
             var list = new List<PurchaseListItem>();
@@ -193,7 +198,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return !(quantitySold % 1 == 0);
         }
 
-        public static RepairOrderToWrite Transform(RepairOrderToRead repairOrder)
+        public static RepairOrderToWrite CovertReadToWriteDto(RepairOrderToRead repairOrder)
         {
             var repairOrderToWrite = new RepairOrderToWrite
             {
@@ -219,6 +224,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return repairOrderToWrite;
         }
 
+        // TODO: Move "Missing" methods into separate class
         private static IEnumerable<RepairOrderPurchaseToRead> MissingRequiredPurchases(RepairOrderItemToRead item)
         {
             var list = new List<RepairOrderPurchaseToRead>();
@@ -242,6 +248,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        // TODO: Move "Missing" methods into separate class
         private static List<RepairOrderWarrantyToRead> MissingRequiredWarranties(RepairOrderItemToRead item)
         {
             var list = new List<RepairOrderWarrantyToRead>();
@@ -265,6 +272,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return list;
         }
 
+        // TODO: Move "Missing" methods into separate class
         private static List<RepairOrderSerialNumberToRead> MissingRequiredSerialNumbers(RepairOrderItemToRead item)
         {
             var list = new List<RepairOrderSerialNumberToRead>();
@@ -303,7 +311,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return false;
         }
 
-        public static RepairOrder Transform(RepairOrderToWrite repairOrder)
+        public static RepairOrder ConvertWriteDtoToEntity(RepairOrderToWrite repairOrder)
         {
             if (repairOrder is null)
                 return null;

@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
 {
     public class CustomerHelper
     {
-        public static CustomerToWrite CreateWriteFromReadDto(CustomerToRead customer)
+        public static CustomerToWrite CovertReadToWriteDto(CustomerToRead customer)
         {
             var Customer = new CustomerToWrite
             {
@@ -23,13 +23,13 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
 
             if (customer.EntityType == EntityType.Organization)
             {
-                Customer.Organization = OrganizationHelper.CreateOrganization(customer.Organization);
+                Customer.Organization = OrganizationHelper.CovertReadToWriteDto(customer.Organization);
             }
 
             return Customer;
         }
 
-        public static CustomerToRead ConvertToDto(Customer customer)
+        public static CustomerToRead ConvertEntityToReadDto(Customer customer)
         {
             if (customer is not null)
             {
@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
 
                 if (customer.EntityType == EntityType.Organization)
                 {
-                    customerReadDto.Organization = OrganizationHelper.CreateOrganization(customer.Organization);
+                    customerReadDto.Organization = OrganizationHelper.ConvertEntityToReadDto(customer.Organization);
                     customerReadDto.Address = AddressHelper.ConvertToDto(customer.Organization?.Address);
                     customerReadDto.Name = customerReadDto.Organization.Name;
                     customerReadDto.Note = customerReadDto.Organization?.Note;

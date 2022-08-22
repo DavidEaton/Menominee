@@ -244,7 +244,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPost]
         public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var repairOrder = RepairOrderHelper.Transform(repairOrderToAdd);
+            var repairOrder = RepairOrderHelper.ConvertWriteDtoToEntity(repairOrderToAdd);
 
             await repository.AddRepairOrderAsync(repairOrder);
             await repository.SaveChangesAsync();

@@ -203,7 +203,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 4. Return to consumer */
 
             // 1. Convert dto to domain entity
-            var organization = OrganizationHelper.CreateOrganization(organizationToAdd);
+            var organization = OrganizationHelper.ConvertWriteDtoToEntity(organizationToAdd);
 
             // 2. Add domain entity to repository
             await repository.AddOrganizationAsync(organization);

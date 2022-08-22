@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             // Arrange
             var repository = new OrganizationRepository(context);
-            var organization = OrganizationHelper.CreateOrganization();
+            var organization = OrganizationHelper.CreateTestOrganization();
 
             // Act
             await repository.AddOrganizationAsync(organization);
@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(OrganizationHelper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateTestOrganization());
                 context.SaveChanges();
             }
 
@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(OrganizationHelper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateTestOrganization());
                 context.SaveChanges();
             }
 
@@ -205,7 +205,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(OrganizationHelper.CreateOrganization());
+                context.Organizations.Add(OrganizationHelper.CreateTestOrganization());
                 context.SaveChanges();
             }
 
@@ -284,7 +284,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = OrganizationHelper.CreateOrganization();
+                var organization = OrganizationHelper.CreateTestOrganization();
                 organization.SetNote(someNotes);
                 context.Organizations.Add(organization);
                 context.SaveChanges();

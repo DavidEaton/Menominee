@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Taxes
 
             Guard.ForNull(feeFromContext, "Excise Fee");
 
-            return ExciseFeeHelper.CreateExciseFee(feeFromContext);
+            return ExciseFeeHelper.ConvertEntityToReadDto(feeFromContext);
         }
 
         public async Task<ExciseFee> GetExciseFeeEntityAsync(long id)
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<ExciseFee> exciseFees = await context.ExciseFees.ToListAsync();
 
             return exciseFees
-                .Select(fee => ExciseFeeHelper.CreateExciseFeeInList(fee))
+                .Select(fee => ExciseFeeHelper.ConvertEntityToReadInListDto(fee))
                 .ToList();
         }
 

@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     
             Guard.ForNull(organizationFromContext, "organizationFromContext");
 
-            return OrganizationHelper.CreateOrganization(organizationFromContext);
+            return OrganizationHelper.ConvertEntityToReadDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync()
@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext
                 .Select(organization =>
-                        OrganizationHelper.CreateOrganization(organization))
+                        OrganizationHelper.ConvertEntityToReadDto(organization))
                 .ToList();
         }
 
@@ -92,7 +92,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext.
                 Select(organization =>
-                       OrganizationHelper.CreateOrganizationInList(organization))
+                       OrganizationHelper.ConvertEntityToReadInListDto(organization))
                .OrderBy(organization => organization.Name)
                .ToList();
         }

@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 LaborTaxRate = salesTax.LaborTaxRate,
                 Order = salesTax.Order,
                 PartTaxRate = salesTax.PartTaxRate,
-                ExciseFees = ExciseFeeHelper.CreateExciseFees(salesTax.ExciseFees),
+                ExciseFees = ExciseFeeHelper.ConvertEntitiesToReadDtos(salesTax.ExciseFees),
                 TaxIdNumber = salesTax.TaxIdNumber,
                 TaxType = salesTax.TaxType
             };

@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
     public class ExciseFeeHelper
     {
-        public static ExciseFee CreateExciseFee(ExciseFeeToWrite exciseFee)
+        public static ExciseFee ConvertWriteDtoToEntity(ExciseFeeToWrite exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 .Value;
         }
 
-        public static ExciseFeeToWrite CreateExciseFee(ExciseFeeToRead exciseFee)
+        public static ExciseFeeToWrite CovertReadToWriteDto(ExciseFeeToRead exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        public static ExciseFeeToRead CreateExciseFee(ExciseFee exciseFee)
+        public static ExciseFeeToRead ConvertEntityToReadDto(ExciseFee exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        public static ExciseFeeToReadInList CreateExciseFeeInList(ExciseFee excisefee)
+        public static ExciseFeeToReadInList ConvertEntityToReadInListDto(ExciseFee excisefee)
         {
             return excisefee is null
                 ? null
@@ -53,10 +53,24 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        public static List<ExciseFeeToRead> CreateExciseFees(List<ExciseFee> excisefees)
+        internal static List<ExciseFeeToWrite> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
         {
             return
-                excisefees?.Select(fee =>
+                exciseFees?.Select(fee =>
+                new ExciseFeeToWrite()
+                {
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount
+                }).ToList()
+                ??
+                new List<ExciseFeeToWrite>();
+        }
+
+        public static List<ExciseFeeToRead> ConvertEntitiesToReadDtos(List<ExciseFee> exciseFees)
+        {
+            return
+                exciseFees?.Select(fee =>
                 new ExciseFeeToRead()
                 {
                     Id = fee.Id,
@@ -68,10 +82,10 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 new List<ExciseFeeToRead>();
         }
 
-        public static List<ExciseFee> CreateExciseFees(List<ExciseFeeToWrite> exciseFees)
+        public static List<ExciseFee> ConvertWriteDtosToEntities(List<ExciseFeeToWrite> exciseFees)
         {
             return
-                exciseFees?.Select(fee => CreateExciseFee(fee)).ToList()
+                exciseFees?.Select(fee => ConvertWriteDtoToEntity(fee)).ToList()
                 ??
                 new List<ExciseFee>();
         }

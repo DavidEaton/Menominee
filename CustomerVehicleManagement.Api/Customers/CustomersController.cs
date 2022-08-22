@@ -108,7 +108,7 @@ namespace CustomerVehicleManagement.Api.Customers
                 customer = new(PersonHelper.ConvertToEntity(customerToAdd.Person), customerToAdd.CustomerType);
 
             if (customerToAdd.EntityType == EntityType.Organization)
-                customer = new(OrganizationHelper.CreateOrganization(customerToAdd.Organization), customerToAdd.CustomerType);
+                customer = new(OrganizationHelper.ConvertWriteDtoToEntity(customerToAdd.Organization), customerToAdd.CustomerType);
 
             await customerRepository.AddCustomerAsync(customer);
 

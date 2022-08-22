@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = OrganizationHelper.CreateOrganization();
+                var organization = OrganizationHelper.CreateTestOrganization();
                 await context.AddAsync(organization);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = OrganizationHelper.CreateOrganization();
+                var organization = OrganizationHelper.CreateTestOrganization();
                 await context.AddAsync(organization);
 
                 Customer customer = new(organization, CustomerType.Retail);

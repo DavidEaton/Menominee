@@ -27,8 +27,8 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                         ? AddressHelper.ConvertToDto(person.Address)
                         : null,
                     Birthday = person?.Birthday,
-                    Phones = PhoneHelper.CreatePhones(person.Phones),
-                    Emails = EmailHelper.CreateEmails(person.Emails)
+                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(person.Phones),
+                    Emails = EmailHelper.ConvertEntitiesToReadDtos(person.Emails)
                 }
                 : null;
         }

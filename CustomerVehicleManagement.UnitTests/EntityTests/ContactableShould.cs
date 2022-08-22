@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = OrganizationHelper.CreateOrganization();
+            var organization = OrganizationHelper.CreateTestOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization, CustomerType.Retail);

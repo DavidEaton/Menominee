@@ -1,60 +1,54 @@
-﻿using Base = CustomerVehicleManagement.Domain.BaseClasses;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using Menominee.Common.Enums;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System;
-using Menominee.Common.Enums;
+using Base = CustomerVehicleManagement.Domain.BaseClasses;
 
 namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class PhoneHelper
     {
-        public static IList<PhoneToRead> CreatePhones(IList<Phone> phones)
+        public static IList<PhoneToRead> ConvertEntitiesToReadDtos(IList<Phone> phones)
         {
             return phones
                 .Select(phone =>
-                        CreatePhone(phone))
+                        ConvertEntityToReadDto(phone))
                 .ToList();
         }
 
-        public static IList<PhoneToWrite> CovertReadToWriteDto(IList<PhoneToRead> phones)
+        public static IList<PhoneToWrite> CovertReadToWriteDtos(IList<PhoneToRead> phones)
         {
             return phones
                 .Select(phone =>
-                        CreatePhoneToWrite(phone))
+                        CovertReadToWriteDto(phone))
                 .ToList();
         }
 
 
-        private static PhoneToWrite CreatePhoneToWrite(PhoneToRead phone)
+        private static PhoneToWrite CovertReadToWriteDto(PhoneToRead phone)
         {
-            if (phone is not null)
-            {
-                return new PhoneToWrite()
-                {
-                    Number = phone.Number,
-                    PhoneType = (PhoneType)Enum.Parse(typeof(PhoneType), phone.PhoneType),
-                    IsPrimary = phone.IsPrimary
-                };
-            }
-
-            return null;
+            return (phone is not null)
+                ? new PhoneToWrite()
+                    {
+                        Number = phone.Number,
+                        PhoneType = (PhoneType)Enum.Parse(typeof(PhoneType), phone.PhoneType),
+                        IsPrimary = phone.IsPrimary
+                    }
+                : null;
         }
 
-        private static PhoneToRead CreatePhone(Phone phone)
+        private static PhoneToRead ConvertEntityToReadDto(Phone phone)
         {
-            if (phone is not null)
-            {
-                return new PhoneToRead()
-                {
-                    Number = phone.Number,
-                    PhoneType = phone.PhoneType.ToString(),
-                    IsPrimary = phone.IsPrimary
-                };
-            }
-
-            return null;
+            return (phone is null)
+                ? new PhoneToRead()
+                    {
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType.ToString(),
+                        IsPrimary = phone.IsPrimary
+                    }
+                : null;
         }
 
         public static string GetPrimaryPhone(Base.Contactable entity)

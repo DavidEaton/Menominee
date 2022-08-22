@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
@@ -64,58 +63,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                 .Options;
         }
 
-
-        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out long id)
-        {
-            // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options))
-            {
-                customer = Helper.CreateOrganizationCustomer();
-                context.Customers.Add(customer);
-                context.SaveChanges();
-                id = customer.Id;
-            }
-        }
-
         public static long CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
         {
             long id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = OrganizationHelper.CreateOrganization();
+                Organization organization = OrganizationHelper.CreateTestOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
             }
 
             return id;
-        }
-
-        public static Organization CreateAndSaveValidOrganization(DbContextOptions<ApplicationDbContext> options)
-        {
-            Organization organization;
-            using (var context = new ApplicationDbContext(options))
-            {
-                organization = OrganizationHelper.CreateOrganization();
-                context.Organizations.Add(organization);
-                context.SaveChanges();
-            }
-
-            return organization;
-        }
-
-
-        public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out long id)
-        {
-            // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options))
-            {
-                person = Helper.CreatePersonWithEmails();
-                person.SetPhones(Helper.CreatePhoneList());
-                context.Persons.Add(person);
-                context.SaveChanges();
-                id = person.Id;
-            }
         }
     }
 }

@@ -10,19 +10,19 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 {
     public class OrganizationHelper
     {
-        public static Organization CreateOrganization()
+        public static Organization CreateTestOrganization()
         {
             var name = Utilities.LoremIpsum(10);
             Organization organization = null;
             var organizationNameOrError = OrganizationName.Create(name);
 
             if (!organizationNameOrError.IsFailure)
-                organization = Organization.Create(organizationNameOrError.Value, null, null, null, null, null).Value;
+                organization = Organization.Create(organizationNameOrError.Value, "note").Value;
 
             return organization;
         }
 
-        public static Organization CreateOrganization(OrganizationToWrite organization)
+        public static Organization ConvertWriteDtoToEntity(OrganizationToWrite organization)
         {
             Address organizationAddress = null;
             List<Phone> phones = new();
@@ -53,48 +53,41 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                                     phones).Value;
         }
 
-        public static OrganizationToWrite CreateOrganization(OrganizationToRead organization)
+        public static OrganizationToWrite CovertReadToWriteDto(OrganizationToRead organization)
         {
-            OrganizationToWrite Organization = new()
-            {
-                Name = organization.Name,
-                Note = organization?.Note,
-                Address = AddressHelper.CovertReadToWriteDto(organization.Address),
-                Phones = PhoneHelper.CovertReadToWriteDto(organization.Phones),
-                Emails = EmailHelper.CovertReadToWriteDto(organization.Emails),
-
-            };
-
-            if (organization?.Contact is not null)
-                Organization.Contact = PersonHelper.ConvertReadToWriteDto(organization?.Contact);
-
-            return Organization;
+            return organization is not null
+                ? new OrganizationToWrite()
+                {
+                    Name = organization.Name,
+                    Note = organization?.Note,
+                    Address = AddressHelper.CovertReadToWriteDto(organization.Address),
+                    Phones = PhoneHelper.CovertReadToWriteDtos(organization.Phones),
+                    Emails = EmailHelper.CovertReadToWriteDto(organization.Emails),
+                    Contact = PersonHelper.ConvertReadToWriteDto(organization?.Contact)
+                }
+                : null;
         }
 
-        public static OrganizationToRead CreateOrganization(Organization organization)
+        public static OrganizationToRead ConvertEntityToReadDto(Organization organization)
         {
-            if (organization is not null)
-            {
-                return new OrganizationToRead()
+            return organization is not null
+                ? new OrganizationToRead()
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
                     Address = AddressHelper.ConvertToDto(organization.Address),
                     Note = organization.Note,
-                    Phones = PhoneHelper.CreatePhones(organization.Phones),
-                    Emails = EmailHelper.CreateEmails(organization.Emails),
+                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(organization.Phones),
+                    Emails = EmailHelper.ConvertEntitiesToReadDtos(organization.Emails),
                     Contact = PersonHelper.ConvertToReadDto(organization.Contact)
-                };
-            }
-
-            return null;
+                }
+                : null;
         }
 
-        public static OrganizationToReadInList CreateOrganizationInList(Organization organization)
+        public static OrganizationToReadInList ConvertEntityToReadInListDto(Organization organization)
         {
-            if (organization is not null)
-            {
-                return new OrganizationToReadInList
+            return organization is not null
+                ? new OrganizationToReadInList
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
@@ -110,10 +103,8 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                     PrimaryPhone = PhoneHelper.GetPrimaryPhone(organization),
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(organization),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(organization)
-                };
-            }
-
-            return null;
+                }
+                : null;
         }
     }
 }

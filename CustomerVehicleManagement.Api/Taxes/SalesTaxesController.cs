@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             taxFromRepository.SetTaxIdNumber(salesTax.TaxIdNumber);
             taxFromRepository.SetPartTaxRate(salesTax.PartTaxRate);
             taxFromRepository.SetLaborTaxRate(salesTax.LaborTaxRate);
-            taxFromRepository.SetExciseFees(ExciseFeeHelper.CreateExciseFees(salesTax.ExciseFees));
+            taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                 taxToWrite.TaxIdNumber,
                 taxToWrite.PartTaxRate,
                 taxToWrite.LaborTaxRate,
-                ExciseFeeHelper.CreateExciseFees(taxToWrite.ExciseFees)
+                ExciseFeeHelper.ConvertWriteDtosToEntities(taxToWrite.ExciseFees)
             ).Value;
 
             // 2. Add domain entity to repository
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 4. Return new tax from database to consumer after save
             return CreatedAtRoute("GetSalesTaxAsync",
                 new { tax.Id },
-                SalesTaxHelper.CreateSalesTax(tax));
+                SalesTaxHelper.ConvertEntityToReadDto(tax));
         }
 
         [HttpDelete("{id:long}")]

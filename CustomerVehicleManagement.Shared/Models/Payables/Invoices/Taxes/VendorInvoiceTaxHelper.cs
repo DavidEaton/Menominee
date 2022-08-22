@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
             return tax =>
                 new VendorInvoiceTaxToWrite()
                 {
-                    SalesTax = SalesTaxHelper.CreateSalesTax(tax.SalesTax),
+                    SalesTax = SalesTaxHelper.CovertReadToWriteDto(tax.SalesTax),
                     Order = tax.Order,
                     TaxId = tax.TaxId,
                     TaxName = tax.TaxName,

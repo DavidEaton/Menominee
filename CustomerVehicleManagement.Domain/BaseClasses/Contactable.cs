@@ -78,10 +78,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                 foreach (var phone in phones)
                     if (phone.Id == 0)
                         AddPhone(phone);
-
-                // Validate the collection
-                if (!HasOnlyOnePrimaryPhone(phones))
-                    throw new Exception("Primary phone has already been entered.");
             }
         }
 
@@ -132,8 +128,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                 foreach (var email in emails)
                     if (email.Id == 0)
                         AddEmail(email);
-
-                // Validate the collection
             }
         }
 

@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Api.Customers
             var customerFromContext = await GetCustomerEntityAsync(id);
 
             Guard.ForNull(customerFromContext, "customerFromContext");
-            return CustomerHelper.ConvertToDto(customerFromContext);
+            return CustomerHelper.ConvertEntityToReadDto(customerFromContext);
         }
 
         public async Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync()
@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Customers
                                                     .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
-                customers.Add(CustomerHelper.ConvertToDto(customer));
+                customers.Add(CustomerHelper.ConvertEntityToReadDto(customer));
 
             return customers;
         }

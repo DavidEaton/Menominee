@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         }
 
 
-        public static EmailToRead CreateEmail(Email email)
+        public static EmailToRead ConvertEntityToReadDto(Email email)
         {
             if (email is not null)
             {
@@ -46,11 +46,11 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return emails
                 .Select(email =>
-                        CreateEmailToWrite(email))
+                        CovertReadToWriteDto(email))
                 .ToList();
         }
 
-        private static EmailToWrite CreateEmailToWrite(EmailToRead email)
+        private static EmailToWrite CovertReadToWriteDto(EmailToRead email)
         {
             if (email is not null)
             {
@@ -65,11 +65,11 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         }
 
 
-        public static IList<EmailToRead> CreateEmails(IEnumerable<Email> emails)
+        public static IList<EmailToRead> ConvertEntitiesToReadDtos(IEnumerable<Email> emails)
         {
             return emails
                 .Select(email =>
-                        CreateEmail(email))
+                        ConvertEntityToReadDto(email))
                 .ToList();
         }
     }
