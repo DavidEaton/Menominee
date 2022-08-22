@@ -96,7 +96,6 @@ namespace CustomerVehicleManagement.Api.Data
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
-            modelBuilder.ApplyConfiguration(new VendorInvoiceItemConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentMethodConfiguration());
