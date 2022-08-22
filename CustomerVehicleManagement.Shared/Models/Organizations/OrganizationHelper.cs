@@ -24,6 +24,9 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 
         public static Organization ConvertWriteDtoToEntity(OrganizationToWrite organization)
         {
+            if (organization is null)
+                return null;
+
             Address organizationAddress = null;
             List<Phone> phones = new();
             List<Email> emails = new();
@@ -47,7 +50,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 
             return Organization.Create(organizationName,
                                     organization.Note,
-                                    PersonHelper.ConvertToEntity(organization?.Contact),
+                                    PersonHelper.ConvertWriteDtoToEntity(organization?.Contact),
                                     organizationAddress,
                                     emails,
                                     phones).Value;

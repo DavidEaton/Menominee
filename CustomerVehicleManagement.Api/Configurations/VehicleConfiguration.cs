@@ -10,7 +10,6 @@ namespace CustomerVehicleManagement.Api.Configurations
         {
             base.Configure(builder);
             builder.ToTable("Vehicle", "dbo");
-            builder.Ignore(vehicle => vehicle.TrackingState);
         }
     }
 }

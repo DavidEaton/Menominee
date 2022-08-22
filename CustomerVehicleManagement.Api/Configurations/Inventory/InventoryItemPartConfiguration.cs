@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPart", "dbo");
 
-            builder.Ignore(item => item.TrackingState);
         }
     }
 }

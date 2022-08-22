@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("Phone", "dbo");
 
-            builder.Ignore(phone => phone.TrackingState);
-
             builder.Property(phone => phone.Number)
                 .HasMaxLength(50)
                 .IsRequired();

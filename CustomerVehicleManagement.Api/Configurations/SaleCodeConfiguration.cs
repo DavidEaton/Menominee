@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("SaleCode", "dbo");
 
-            builder.Ignore(saleCode => saleCode.TrackingState);
-
             builder.Property(saleCode => saleCode.Code)
                 .IsRequired();
             builder.Property(saleCode => saleCode.Name)

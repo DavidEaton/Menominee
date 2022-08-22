@@ -7,20 +7,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class VendorInvoiceLineItem : Entity
     {
-        public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly double MinimumValue = 0;
-        public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
-        public static readonly int PONumberMaximumLength = 255;
+        public static readonly string MinimumValueMessage = "Value(s) cannot be negative.";
+        public static readonly int PONumberMaximumLength = 40;
         public static readonly string PONumberMaximumLengthMessage = $"PO Number cannot be over {PONumberMaximumLength} characters in length.";
-        public static readonly string TransactionDateInvalidMessage = $"Date cannot be in the future.";
+        public static readonly string TransactionDateInvalidMessage = "Transaction Date cannot be in the future.";
 
-        public VendorInvoiceItemType Type { get; private set; }
-        public VendorInvoiceItem Item { get; private set; }
-        public double Quantity { get; private set; }
-        public double Cost { get; private set; }
-        public double Core { get; private set; }
-        public string PONumber { get; private set; }
-        public DateTime? TransactionDate { get; set; }
+        public VendorInvoiceItemType Type { get; private set; } // required
+        public VendorInvoiceItem Item { get; private set; } // required
+        public double Quantity { get; private set; } // required, must be > 0
+        public double Cost { get; private set; } // >= 0
+        public double Core { get; private set; } // >= 0
+        public string PONumber { get; private set; } // not required, 40 length
+        public DateTime? TransactionDate { get; set; } // cannot be in the future
 
         private VendorInvoiceLineItem(
             VendorInvoiceItemType type,
@@ -55,7 +55,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (item is null)
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
-            if (quantity < MinimumValue || cost < MinimumValue || core < MinimumValue)
+            if (quantity <= MinimumValue)
+                return Result.Failure<VendorInvoiceLineItem>("Quantity must be greater than zero");
+
+            if (cost < MinimumValue || core < MinimumValue)
                 return Result.Failure<VendorInvoiceLineItem>(MinimumValueMessage);
 
             poNumber = (poNumber ?? string.Empty).Trim();

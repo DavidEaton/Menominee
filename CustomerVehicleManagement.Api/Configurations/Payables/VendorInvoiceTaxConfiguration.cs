@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("VendorInvoiceTax", "dbo");
 
-            builder.Ignore(tax => tax.TrackingState);
             //builder.Ignore(tax => tax.TaxName);
 
             //builder.Property(tax => tax.InvoiceId)

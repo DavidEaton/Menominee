@@ -19,6 +19,17 @@ namespace CustomerVehicleManagement.Shared.Validators
                 .SetValidator(new AddressValidator())
                 .When(organization => organization.Address is not null);
 
+            // All validation should be done inside domain class: keep
+            // the act of validation together with the act of object
+            // creation. We do that in every case here excpet for 
+            // organization.Note. Even tho in the next RuleFor(), we
+            // are not trimming the Note before validating, which DOES
+            // separate validation from object creation, it will only
+            // reject a few edge cases. We did not create a separate
+            // value object for organization.Note because it only has
+            // a single invariant: Length. So we adhere to the guide-
+            // line: create a value object class if invariants > 1.
+            // This is a minor concession, and acceptible compromise.
             RuleFor(organization => organization.Note)
                 .Length(0, 10000)
                 .When(organization => organization.Note is not null);

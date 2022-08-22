@@ -10,7 +10,6 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         {
             base.Configure(builder);
             builder.ToTable("RepairOrderSerialNumber", "dbo");
-            builder.Ignore(item => item.TrackingState);
 
             builder.Property(item => item.SerialNumber)
                 .HasMaxLength(50)

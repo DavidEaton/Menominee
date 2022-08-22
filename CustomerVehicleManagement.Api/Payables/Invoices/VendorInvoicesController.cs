@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
     public class VendorInvoicesController : ApplicationController
     {
         private readonly IVendorInvoiceRepository repository;
+        private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
         private readonly string BasePath = "/api/vendorinvoices";
 
         public VendorInvoicesController(IVendorInvoiceRepository repository)
@@ -74,7 +76,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             // Functions that return a value describe all possible outputs in their signatures.
             // Commands that return void are dishonest in that their method signatures don't
             // tell the reader everything they can do, and hide their side effects.
-            invoiceFromRepository = VendorInvoiceHelper.ConvertWriteDtoToEntity(invoice);
+            invoiceFromRepository = VendorInvoiceHelper.ConvertWriteDtoToEntity(
+                invoice,
+                await paymentMethodRepository.GetPaymentMethodNames());
 
             invoiceFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
@@ -89,14 +93,16 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPost]
         public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
-            var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(invoiceToAdd);
+            var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(
+                invoiceToAdd,
+                await paymentMethodRepository.GetPaymentMethodNames());
 
             await repository.AddInvoiceAsync(invoice);
             await repository.SaveChangesAsync();
 
-            return CreatedAtRoute("GetInvoiceAsync",
-                                  new { id = invoice.Id },
-                                  VendorInvoiceHelper.ConvertEntityToReadDto(invoice));
+            return Created(new Uri($"{BasePath}/{invoice.Id}",
+                UriKind.Relative),
+                new { invoice.Id });
         }
 
         [HttpDelete("{id:long}")]

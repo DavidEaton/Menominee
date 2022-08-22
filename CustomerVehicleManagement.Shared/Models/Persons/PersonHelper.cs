@@ -13,8 +13,9 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
     {
         public static PersonToRead ConvertToReadDto(Person person)
         {
-            return person is not null
-                ? new PersonToRead()
+            return person is null
+                ? null
+                : new()
                 {
                     Id = person.Id,
                     FirstName = person.Name.FirstName,
@@ -29,11 +30,10 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     Birthday = person?.Birthday,
                     Phones = PhoneHelper.ConvertEntitiesToReadDtos(person.Phones),
                     Emails = EmailHelper.ConvertEntitiesToReadDtos(person.Emails)
-                }
-                : null;
+                };
         }
 
-        public static Person ConvertToEntity(PersonToWrite person)
+        public static Person ConvertWriteDtoToEntity(PersonToWrite person)
         {
             if (person is null)
                 return null;
@@ -132,9 +132,9 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
 
         public static PersonToReadInList ConvertEntityToReadInListDto(Person person)
         {
-            if (person is not null)
-            {
-                return new PersonToReadInList()
+            return person is null
+                ? null
+                : new()
                 {
                     AddressLine = person?.Address?.AddressLine,
                     Birthday = person?.Birthday,
@@ -147,9 +147,6 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)
                 };
-            }
-
-            return null;
         }
     }
 }

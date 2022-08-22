@@ -8,12 +8,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MaximumLength = 255;
-        public static readonly string MaximumLengthMessage = $"Cannot be over {MaximumLength} characters in length.";
+        public static readonly string MaximumLengthMessage = $"Cannot be over {MaximumLength} character(s) in length.";
+        public static readonly int MinimumLength = 1;
+        public static readonly string MinimumLengthMessage = $"Cannot be under {MinimumLength} character(s) in length.";
 
-        public string PartNumber { get; private set; } // Really just a string?
-        public Manufacturer Manufacturer { get; private set; }
-        public string Description { get; private set; }
-        public SaleCode SaleCode { get; private set; }
+        public string PartNumber { get; private set; } // required, 1..255 or maybe less. Really just a string?
+        public Manufacturer Manufacturer { get; private set; } // not required for every item type
+        public string Description { get; private set; } // required, 1.255
+        public SaleCode SaleCode { get; private set; } // not required
 
         private VendorInvoiceItem(
             string partNumber,
@@ -39,10 +41,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (partNumber.Length > MaximumLength || description.Length > MaximumLength)
                 return Result.Failure<VendorInvoiceItem>(MaximumLengthMessage);
 
-            if (manufacturer is null)
-                return Result.Failure<VendorInvoiceItem>(RequiredMessage);
+            if (partNumber.Length < MinimumLength || description.Length < MinimumLength)
+                return Result.Failure<VendorInvoiceItem>(MinimumLengthMessage);
 
-            if (saleCode is null)
+            if (manufacturer is null)
                 return Result.Failure<VendorInvoiceItem>(RequiredMessage);
 
             return Result.Success(new VendorInvoiceItem(

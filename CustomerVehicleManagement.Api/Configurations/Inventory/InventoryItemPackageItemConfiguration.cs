@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPackageItem", "dbo");
 
-            builder.Ignore(item => item.TrackingState);
             builder.HasOne(i => i.Item)
                    .WithMany()
                    .HasForeignKey(i => i.InventoryItemId)

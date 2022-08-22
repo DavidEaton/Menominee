@@ -12,12 +12,11 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("VendorInvoice", "dbo");
 
-            builder.Ignore(invoice => invoice.TrackingState);
-
-            //builder.Property(invoice => invoice.Date);
-
             builder.Property(invoice => invoice.Status)
                 .HasDefaultValue(VendorInvoiceStatus.Open);
+
+            builder.Property(invoice => invoice.InvoiceNumber)
+                .HasMaxLength(255);
         }
     }
 }

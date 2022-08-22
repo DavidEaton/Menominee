@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CustomerVehicleManagement.Api.Configurations
 {
-    public class VendorInvoiceItemConfiguration : EntityConfiguration<VendorInvoiceLineItem>
+    public class VendorInvoiceItemConfiguration : EntityConfiguration<VendorInvoiceItem>
     {
-        public override void Configure(EntityTypeBuilder<VendorInvoiceLineItem> builder)
+        public override void Configure(EntityTypeBuilder<VendorInvoiceItem> builder)
         {
             base.Configure(builder);
             builder.ToTable("VendorInvoiceItem", "dbo");
@@ -18,6 +18,7 @@ namespace CustomerVehicleManagement.Api.Configurations
                    .HasColumnName("Description")
                    .HasMaxLength(255)
                    .IsRequired();
+
             builder.OwnsOne(lineItem => lineItem.Item)
                    .Property(item => item.PartNumber)
                    .HasColumnName("PartNumber")

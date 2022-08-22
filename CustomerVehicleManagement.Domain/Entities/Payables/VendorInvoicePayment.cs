@@ -6,11 +6,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
     public class VendorInvoicePayment : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly double MinimumValue = 0;
-        public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
+        public static readonly double InvalidValue = 0;
+        public static readonly string InvalidValueMessage = $"Value cannot be zero.";
 
         public VendorInvoicePaymentMethod PaymentMethod { get; private set; }
-        public double Amount { get; private set; }
+        public double Amount { get; private set; } // <> 0, can be negative
 
         private VendorInvoicePayment(VendorInvoicePaymentMethod paymentMethod, double amount)
         {
@@ -23,8 +23,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (paymentMethod is null)
                 return Result.Failure<VendorInvoicePayment>(RequiredMessage);
 
-            if (amount < MinimumValue)
-                return Result.Failure<VendorInvoicePayment>(MinimumValueMessage);
+            if (amount == InvalidValue)
+                return Result.Failure<VendorInvoicePayment>(InvalidValueMessage);
 
             return Result.Success(new VendorInvoicePayment(paymentMethod, amount));
 

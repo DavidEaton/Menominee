@@ -7,28 +7,30 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentHelper
     {
-        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IList<VendorInvoicePaymentToWrite> payments)
+        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IEnumerable<string> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
         {
-            return payments?.Select(ConvertWriteDtoToEntity()).ToList()
+            return payments?.Select(ConvertWriteDtoToEntity(paymentMethods)).ToList()
                 ?? new List<VendorInvoicePayment>();
         }
 
-        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity()
+        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity(IEnumerable<string> paymentMethods)
         {
             return payment =>
                 VendorInvoicePayment.Create(
-                    VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod),
+                    VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod, paymentMethods),
                     payment.Amount)
                 .Value;
         }
 
-        public static VendorInvoicePayment ConvertWriteDtoToEntity(VendorInvoicePaymentToWrite payment)
+        public static VendorInvoicePayment ConvertWriteDtoToEntity(
+            VendorInvoicePaymentToWrite payment,
+            IEnumerable<string> paymentMethods)
         {
             if (payment is null)
                 return null;
 
             return VendorInvoicePayment.Create(
-                VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod),
+                VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod, paymentMethods),
                 payment.Amount)
                 .Value;
         }

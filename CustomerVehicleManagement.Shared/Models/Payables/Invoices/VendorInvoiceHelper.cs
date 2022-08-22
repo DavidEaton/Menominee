@@ -20,22 +20,22 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         #region <---- ConvertEntityToReadDto ---->
         public static VendorInvoiceToRead ConvertEntityToReadDto(VendorInvoice invoice)
         {
-            if (invoice == null)
-                return null;
-
-            return new()
-            {
-                Id = invoice.Id,
-                Date = invoice.Date,
-                DatePosted = invoice.DatePosted,
-                Status = EnumExtensions.GetDisplayName(invoice.Status),//   (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
-                InvoiceNumber = invoice.InvoiceNumber,
-                Total = invoice.Total,
-                Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
-                LineItems = ConvertLineItemEntitiesToReadDtos(invoice.LineItems),
-                Payments = ConvertPaymentEntitiesToReadDtos(invoice.Payments),
-                Taxes = ConvertTaxEntitiesToReadDtos(invoice.Taxes)
-            };
+            return invoice == null
+                ? null
+                :
+                new()
+                {
+                    Id = invoice.Id,
+                    Date = invoice.Date,
+                    DatePosted = invoice.DatePosted,
+                    Status = EnumExtensions.GetDisplayName(invoice.Status),//   (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    Total = invoice.Total,
+                    Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
+                    LineItems = ConvertLineItemEntitiesToReadDtos(invoice.LineItems),
+                    Payments = ConvertPaymentEntitiesToReadDtos(invoice.Payments),
+                    Taxes = ConvertTaxEntitiesToReadDtos(invoice.Taxes)
+                };
         }
 
         private static List<VendorInvoiceLineItemToRead> ConvertLineItemEntitiesToReadDtos(IList<VendorInvoiceLineItem> items)
@@ -98,14 +98,11 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         private static Func<VendorInvoiceTax, VendorInvoiceTaxToRead> ConvertTaxEntityToReadDto()
         {
             return tax =>
-                            new VendorInvoiceTaxToRead()
-                            {
-                                Id = tax.Id,
-                                SalesTax = ConvertSalesTaxEntityToReadDto(tax.SalesTax),
-                                Order = tax.Order,
-                                TaxId = tax.TaxId,
-                                Amount = tax.Amount
-                            };
+                new VendorInvoiceTaxToRead()
+                {
+                    Id = tax.Id,
+                    SalesTax = ConvertSalesTaxEntityToReadDto(tax.SalesTax)
+                };
         }
 
         private static SalesTaxToRead ConvertSalesTaxEntityToReadDto(SalesTax salesTax)
@@ -129,21 +126,22 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 
         #region <---- ConvertWriteDtoToEntity ---->
 
-        public static VendorInvoice ConvertWriteDtoToEntity(VendorInvoiceToWrite invoiceToWrite)
+        public static VendorInvoice ConvertWriteDtoToEntity(
+            VendorInvoiceToWrite invoice,
+            IEnumerable<string> paymentMethods)
         {
-            if (invoiceToWrite is null)
-                return null;
-
-            return VendorInvoice.Create(
-                VendorHelper.ConvertWriteDtoToEntity(invoiceToWrite.Vendor),
-                invoiceToWrite.Date,
-                invoiceToWrite.DatePosted,
-                invoiceToWrite.Status,
-                invoiceToWrite.InvoiceNumber,
-                invoiceToWrite.Total,
-                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoiceToWrite.LineItems),
-                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(invoiceToWrite.Payments),
-                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoiceToWrite.Taxes))
+            return invoice is null
+                ? null
+                : VendorInvoice.Create(
+                VendorHelper.ConvertWriteDtoToEntity(invoice.Vendor),
+                invoice.Date,
+                invoice.DatePosted,
+                invoice.Status,
+                invoice.InvoiceNumber,
+                invoice.Total,
+                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems),
+                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(paymentMethods, invoice.Payments),
+                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes))
                 .Value;
         }
 
@@ -151,23 +149,23 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         #endregion
 
         #region <---- ConvertReadToWriteDto ---->
-        public static VendorInvoiceToWrite ConvertReadToWriteDto(VendorInvoiceToRead invoiceToRead)
+        public static VendorInvoiceToWrite ConvertReadToWriteDto(VendorInvoiceToRead invoice)
         {
-            if (invoiceToRead == null)
-                return null;
-
-            return new()
-            {
-                Date = invoiceToRead.Date,
-                DatePosted = invoiceToRead.DatePosted,
-                Status = (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoiceToRead.Status),
-                InvoiceNumber = invoiceToRead.InvoiceNumber,
-                Total = invoiceToRead.Total,
-                Vendor = VendorHelper.ConvertReadToWriteDto(invoiceToRead.Vendor),
-                LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoiceToRead.LineItems),
-                Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoiceToRead.Payments),
-                Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoiceToRead.Taxes)
-            };
+            return invoice is null
+                ? null
+                :
+                new()
+                {
+                    Date = invoice.Date,
+                    DatePosted = invoice.DatePosted,
+                    Status = (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    Total = invoice.Total,
+                    Vendor = VendorHelper.ConvertReadToWriteDto(invoice.Vendor),
+                    LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoice.LineItems),
+                    Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoice.Payments),
+                    Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoice.Taxes)
+                };
         }
 
 
@@ -175,21 +173,20 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 
         public static VendorInvoiceToReadInList ConvertEntityToReadInListDto(VendorInvoice invoice)
         {
-            if (invoice is null)
-                return null;
-
-            return new()
-            {
-                Id = invoice.Id,
-                VendorId = invoice.Vendor?.Id ?? 0,
-                VendorCode = invoice.Vendor?.VendorCode,
-                Name = invoice.Vendor?.Name,
-                DateCreated = invoice.Date?.ToShortDateString(),
-                DatePosted = invoice.DatePosted?.ToShortDateString(),
-                Status = invoice.Status.ToString(),
-                InvoiceNumber = invoice.InvoiceNumber,
-                Total = invoice.Total
-            };
+            return invoice is null
+                ? null
+                : new()
+                {
+                    Id = invoice.Id,
+                    VendorId = invoice.Vendor?.Id ?? 0,
+                    VendorCode = invoice.Vendor?.VendorCode,
+                    Name = invoice.Vendor?.Name,
+                    DateCreated = invoice.Date?.ToShortDateString(),
+                    DatePosted = invoice.DatePosted?.ToShortDateString(),
+                    Status = invoice.Status.ToString(),
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    Total = invoice.Total
+                };
         }
     }
 }

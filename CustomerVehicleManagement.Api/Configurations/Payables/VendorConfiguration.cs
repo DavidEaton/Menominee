@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
             base.Configure(builder);
             builder.ToTable("Vendor", "dbo");
 
-            builder.Ignore(vendor => vendor.TrackingState);
-
             builder.Property(vendor => vendor.VendorCode)
                 .HasMaxLength(10)
                 .IsRequired();

@@ -11,10 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder); // <--
             builder.ToTable("Customer", "dbo");
 
-            // TODO: Classes that inherit from EntityConfiguration<Customer> don't need to
-            // Ignore TrackingState
-            //builder.Ignore(customer => customer.TrackingState);
-
             // Value Object: ContactPreferences
             builder.OwnsOne(customer => customer.ContactPreferences)
                    .Property(contactPreferences => contactPreferences.AllowEmail)

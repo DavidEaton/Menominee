@@ -4,7 +4,6 @@ using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
@@ -56,12 +55,13 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             if (paymentMethodFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(paymentMethod);
+            paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
+                paymentMethod,
+                await repository.GetPaymentMethodNames());
 
             paymentMethodFromRepository.SetTrackingState(TrackingState.Modified);
             repository.FixTrackingState();
 
-            repository.UpdatePaymentMethod(paymentMethodFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
@@ -71,7 +71,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         [HttpPost]
         public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
-            var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payMethodToAdd);
+            var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
+                payMethodToAdd,
+                await repository.GetPaymentMethodNames());
 
             await repository.AddPaymentMethodAsync(payMethod);
             await repository.SaveChangesAsync();

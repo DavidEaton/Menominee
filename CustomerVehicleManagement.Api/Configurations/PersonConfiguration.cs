@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Api.Configurations
         {
             base.Configure(builder);
             builder.ToTable("Person", "dbo");
-            builder.Ignore(person => person.TrackingState);
 
             // Value Object: Name
             builder.OwnsOne(person => person.Name)

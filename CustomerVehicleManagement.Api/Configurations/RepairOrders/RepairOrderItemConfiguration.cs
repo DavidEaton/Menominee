@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         {
             base.Configure(builder);
             builder.ToTable("RepairOrderItem", "dbo");
-            builder.Ignore(item => item.TrackingState);
 
             builder.Property(item => item.SaleType)
                .HasDefaultValue(SaleType.Regular)

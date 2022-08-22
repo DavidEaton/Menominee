@@ -10,7 +10,6 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         {
             base.Configure(builder);
             builder.ToTable("RepairOrderTech", "dbo");
-            builder.Ignore(item => item.TrackingState);
         }
     }
 }

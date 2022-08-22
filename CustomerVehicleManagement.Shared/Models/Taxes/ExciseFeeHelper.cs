@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +10,10 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
         {
             return exciseFee is null
                 ? null
-                : ExciseFee.Create(exciseFee.Description, exciseFee.FeeType, exciseFee.Amount)
+                : ExciseFee.Create(
+                    exciseFee.Description,
+                    exciseFee.FeeType,
+                    exciseFee.Amount)
                 .Value;
         }
 

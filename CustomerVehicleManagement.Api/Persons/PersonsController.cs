@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            Person person = PersonHelper.ConvertToEntity(personToAdd);
+            Person person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
 
             await repository.AddPersonAsync(person);
             await repository.SaveChangesAsync();
