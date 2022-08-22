@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
     {
         public static PersonToRead ConvertToReadDto(Person person)
         {
-            return person != null
+            return person is not null
                 ? new PersonToRead()
                 {
                     Id = person.Id,
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     Gender = person.Gender,
                     DriversLicense = DriversLicenseHelper.ConvertToReadDto(person.DriversLicense),
                     Address =
-                        person?.Address != null
+                        person?.Address is not null
                         ? AddressHelper.ConvertToDto(person.Address)
                         : null,
                     Birthday = person?.Birthday,
@@ -33,19 +33,19 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                 : null;
         }
 
-        public static Person CreateEntityFromWriteDto(PersonToWrite person)
+        public static Person ConvertToEntity(PersonToWrite person)
         {
             if (person is null)
                 return null;
 
             Address address = null;
+            DriversLicense driversLicense = null;
             List<Phone> phones = new();
             List<Email> emails = new();
-            DriversLicense driversLicense = null;
 
             var personName = PersonName.Create(person.Name.LastName, person.Name.FirstName, person.Name.MiddleName).Value;
 
-            if (person?.Address != null)
+            if (person?.Address is not null)
                 address = Address.Create(person.Address.AddressLine, person.Address.City, person.Address.State, person.Address.PostalCode).Value;
 
             if (person?.Phones.Count > 0)
@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                 foreach (var email in person.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
-            if (person?.DriversLicense != null)
+            if (person?.DriversLicense is not null)
             {
                 DateTimeRange dateTimeRange = DateTimeRange.Create(
                     person.DriversLicense.Issued,
@@ -67,9 +67,9 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     dateTimeRange).Value;
             }
 
-            return new(personName, person.Gender, address, emails, phones, person.Birthday, driversLicense);
+            return Person.Create(personName, person.Gender, person.Birthday, emails, phones, address, driversLicense).Value;
         }
-        public static PersonToWrite CreateWriteDtoFromReadDto(PersonToRead person)
+        public static PersonToWrite ConvertReadToWriteDto(PersonToRead person)
         {
             PersonToWrite Person = new()
             {
@@ -128,6 +128,28 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
             }
 
             return Person;
+        }
+
+        public static PersonToReadInList ConvertEntityToReadInListDto(Person person)
+        {
+            if (person is not null)
+            {
+                return new PersonToReadInList()
+                {
+                    AddressLine = person?.Address?.AddressLine,
+                    Birthday = person?.Birthday,
+                    City = person?.Address?.City,
+                    Id = person.Id,
+                    Name = person.Name.LastFirstMiddle,
+                    PostalCode = person?.Address?.PostalCode,
+                    State = person?.Address?.State.ToString(),
+                    PrimaryPhone = PhoneHelper.GetPrimaryPhone(person) ?? PhoneHelper.GetOrdinalPhone(person, 0),
+                    PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
+                    PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)
+                };
+            }
+
+            return null;
         }
     }
 }

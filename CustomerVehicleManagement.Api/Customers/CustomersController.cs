@@ -105,7 +105,7 @@ namespace CustomerVehicleManagement.Api.Customers
             Customer customer = null;
 
             if (customerToAdd.EntityType == EntityType.Person)
-                customer = new(PersonHelper.CreateEntityFromWriteDto(customerToAdd.Person), customerToAdd.CustomerType);
+                customer = new(PersonHelper.ConvertToEntity(customerToAdd.Person), customerToAdd.CustomerType);
 
             if (customerToAdd.EntityType == EntityType.Organization)
                 customer = new(OrganizationHelper.CreateOrganization(customerToAdd.Organization), customerToAdd.CustomerType);

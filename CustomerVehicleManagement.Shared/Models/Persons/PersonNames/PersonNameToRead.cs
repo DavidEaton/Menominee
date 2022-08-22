@@ -1,10 +1,11 @@
-﻿namespace CustomerVehicleManagement.Shared.Models.Persons
+﻿namespace CustomerVehicleManagement.Shared.Models.Persons.PersonNames
 {
-    public class PersonNameToWrite
+    public class PersonNameToRead
     {
-        public string LastName { get; set; } = string.Empty;
-        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
         public string MiddleName { get; set; } = string.Empty;
+
         public string LastFirstMiddle
         {
             get => string.IsNullOrWhiteSpace(MiddleName) ? $"{LastName}, {FirstName}" : $"{LastName}, {FirstName} {MiddleName}";

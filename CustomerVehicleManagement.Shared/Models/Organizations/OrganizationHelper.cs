@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
             OrganizationName organizationName;
 
             organizationName = OrganizationName.Create(organization.Name).Value;
-            if (organization?.Address != null)
+            if (organization?.Address is not null)
                 organizationAddress = Address.Create(
                     organization.Address.AddressLine,
                     organization.Address.City,
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 
             return Organization.Create(organizationName,
                                     organization.Note,
-                                    PersonHelper.CreateEntityFromWriteDto(organization?.Contact),
+                                    PersonHelper.ConvertToEntity(organization?.Contact),
                                     organizationAddress,
                                     emails,
                                     phones).Value;
@@ -65,15 +65,15 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 
             };
 
-            if (organization?.Contact != null)
-                Organization.Contact = PersonHelper.CreateWriteDtoFromReadDto(organization?.Contact);
+            if (organization?.Contact is not null)
+                Organization.Contact = PersonHelper.ConvertReadToWriteDto(organization?.Contact);
 
             return Organization;
         }
 
         public static OrganizationToRead CreateOrganization(Organization organization)
         {
-            if (organization != null)
+            if (organization is not null)
             {
                 return new OrganizationToRead()
                 {
@@ -92,7 +92,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 
         public static OrganizationToReadInList CreateOrganizationInList(Organization organization)
         {
-            if (organization != null)
+            if (organization is not null)
             {
                 return new OrganizationToReadInList
                 {

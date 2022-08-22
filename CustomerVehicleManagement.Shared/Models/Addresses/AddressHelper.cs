@@ -6,7 +6,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
     {
         public static AddressToRead ConvertToDto(Address address)
         {
-            if (address != null)
+            if (address is not null)
             {
                 var addressReadDto = new AddressToRead
                 {
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
 
         public static AddressToWrite CovertReadToWriteDto(AddressToRead address)
         {
-            if (address != null)
+            if (address is not null)
             {
                 var addressReadDto = new AddressToWrite
                 {

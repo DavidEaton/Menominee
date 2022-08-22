@@ -851,7 +851,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         public static RepairOrderToRead Transform(RepairOrder repairOrder)
         {
-            if (repairOrder != null)
+            if (repairOrder is not null)
             {
                 return new RepairOrderToRead()
                 {
@@ -1000,7 +1000,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 
         public static RepairOrderToReadInList TransformInList(RepairOrder repairOrder)
         {
-            if (repairOrder != null)
+            if (repairOrder is not null)
             {
                 return new RepairOrderToReadInList
                 {

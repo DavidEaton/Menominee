@@ -41,10 +41,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Person>()
             {
-                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null),
-                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null),
-                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null),
-                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null),
+                Person.Create(PersonName.Create("Smith", "Jane").Value, Gender.Female).Value,
+                Person.Create(PersonName.Create("Jones", "Latisha").Value, Gender.Female).Value,
+                Person.Create(PersonName.Create("Lee", "Wong").Value, Gender.Male).Value,
+                Person.Create(PersonName.Create("Kelly", "Junice").Value, Gender.Female).Value,
             };
         }
 
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Customer>()
             {
-                new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null), CustomerType.Retail),
+                new Customer(Person.Create(PersonName.Create("Smith", "Jane").Value, Gender.Female).Value, CustomerType.Retail),
                 new Customer(Organization.Create(OrganizationName.Create("Moops & Co.").Value, null, null).Value, CustomerType.Retail)
             };
         }

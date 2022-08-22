@@ -22,18 +22,19 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
 
             // Assert
             person.Should().NotBeNull();
         }
 
         [Fact]
-        public void Throw_Exception_On_CreateWithNullName()
+        public void Return_Failure_On_Create_With_Null_Name()
         {
-            var person = new Person(null, Gender.Female, null, null, null);
+            var person = Person.Create(null, Gender.Female);
 
-            person.Should().NotBeNull();
+            person.IsFailure.Should().BeTrue();
+            person.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -259,7 +260,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
             firstName = "Jill";
             lastName = "Done";
             name = PersonName.Create(lastName, firstName).Value;
@@ -276,7 +277,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
 
             Action action = () => person.SetName(null);
 

@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameMinimumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameInvalidLengthMessage);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameMaximumLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.LastNameInvalidLengthMessage);
         }
 
         [Fact]

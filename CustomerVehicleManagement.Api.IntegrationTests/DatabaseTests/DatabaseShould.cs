@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
             var efDefaultId = person.Id;
 
             context.Persons.Add(person);
@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             var firstName = "Tasha";
             var lastName = "Yar";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
 
             context.Persons.Add(person);
             context.SaveChanges();
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             var firstName = "Tasha";
             var lastName = "Yar";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
 
             context.Persons.Add(person);
             context.SaveChanges();
@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             var firstName = "Dianna";
             var lastName = "Troy";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = new Person(name, Gender.Female, null, null, null, null, null);
+            var person = Person.Create(name, Gender.Female).Value;
 
             context.Persons.Add(person);
             context.SaveChanges();

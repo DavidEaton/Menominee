@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public static Result<Organization> Create(
             OrganizationName name,
             string note,
-            Person contact,
+            Person contact = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)

@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
 
             if (customer.EntityType == EntityType.Person)
             {
-                Customer.Person = PersonHelper.CreateWriteDtoFromReadDto(customer.Person);
+                Customer.Person = PersonHelper.ConvertReadToWriteDto(customer.Person);
             }
 
             if (customer.EntityType == EntityType.Organization)
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
 
         public static CustomerToRead ConvertToDto(Customer customer)
         {
-            if (customer != null)
+            if (customer is not null)
             {
                 var customerReadDto = new CustomerToRead
                 {
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
                     customerReadDto.Note = customerReadDto.Organization?.Note;
                     customerReadDto.Phones = customerReadDto.Organization?.Phones;
                     customerReadDto.Emails = customerReadDto.Organization?.Emails;
-                    if (customer.Organization.Contact != null)
+                    if (customer.Organization.Contact is not null)
                         customerReadDto.Contact = PersonHelper.ConvertToReadDto(customer.Organization.Contact);
                 }
 

@@ -7,7 +7,7 @@ namespace Menominee.Common.ValueObjects
 {
     public class DateTimeRange : AppValueObject
     {
-        public static readonly string DateTimeRangeInvalidMessage = "End date cannot occur before Start date";
+        public static readonly string EndBeforeStartMessage = "End date cannot occur before Start date";
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
 
@@ -20,7 +20,7 @@ namespace Menominee.Common.ValueObjects
         public static Result<DateTimeRange> Create(DateTime start, DateTime end)
         {
             if (start >= end)
-                return Result.Failure<DateTimeRange>(DateTimeRangeInvalidMessage);
+                return Result.Failure<DateTimeRange>(EndBeforeStartMessage);
 
             return Result.Success(new DateTimeRange(start, end));
         }

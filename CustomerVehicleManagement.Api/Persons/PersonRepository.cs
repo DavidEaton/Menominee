@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Api.Persons
 
             return personsFromContext
                 .Select(person =>
-                        PersonToReadInList.ConvertToDto(person))
+                        PersonHelper.ConvertEntityToReadInListDto(person))
                 .ToList();
         }
 

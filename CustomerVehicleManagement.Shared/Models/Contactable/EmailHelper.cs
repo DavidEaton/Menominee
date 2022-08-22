@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 
         public static EmailToRead CreateEmail(Email email)
         {
-            if (email != null)
+            if (email is not null)
             {
                 return new EmailToRead()
                 {
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 
         private static EmailToWrite CreateEmailToWrite(EmailToRead email)
         {
-            if (email != null)
+            if (email is not null)
             {
                 return new EmailToWrite()
                 {

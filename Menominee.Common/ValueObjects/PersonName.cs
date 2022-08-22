@@ -8,20 +8,19 @@ namespace Menominee.Common.ValueObjects
     {
         public static readonly int LastNameMinimumLength = 2;
         public static readonly int LastNameMaximumLength = 255;
-        public static readonly string LastNameMinimumLengthMessage = $"Last name cannot be less than {LastNameMinimumLength} character(s) in length";
-        public static readonly string LastNameMaximumLengthMessage = $"Last name cannot be over {LastNameMaximumLength} characters in length";
+        public static readonly string LastNameInvalidLengthMessage = $"Last name must be between {LastNameMinimumLength} character(s) {LastNameMaximumLength} and in length";
         public static readonly string LastNameRequiredMessage = $"Last name is required";
 
         public static readonly int FirstNameMinimumLength = 1;
         public static readonly int FirstNameMaximumLength = 255;
-        public static readonly string FirstNameMinimumLengthMessage = $"First name cannot be less than {FirstNameMinimumLength} character(s) in length";
-        public static readonly string FirstNameMaximumLengthMessage = $"First name cannot be over {FirstNameMaximumLength} characters in length";
+        public static readonly string FirstNameInvalidLengthMessage = $"First name must be between {FirstNameMinimumLength} character(s) {FirstNameMaximumLength} and in length";
+
         public static readonly string FirstNameRequiredMessage = $"First name is required";
 
         public static readonly int MiddleNameMinimumLength = 1;
         public static readonly int MiddleNameMaximumLength = 255;
-        public static readonly string MiddleNameMinimumLengthMessage = $"Middle name cannot be less than {MiddleNameMinimumLength} character(s) in length";
-        public static readonly string MiddleNameMaximumLengthMessage = $"Middle name cannot be over {MiddleNameMaximumLength} characters in length";
+        public static readonly string MiddleNameInvalidLengthMessage = $"Middle name must be between {MiddleNameMinimumLength} character(s) {MiddleNameMaximumLength} and in length";
+
         private PersonName(string lastName, string firstName, string middleName = null)
         {
             LastName = lastName;
@@ -45,23 +44,20 @@ namespace Menominee.Common.ValueObjects
             firstName = (firstName ?? string.Empty).Trim();
             middleName = (middleName is null || middleName == string.Empty) ? null : middleName.Trim();
 
-            if (lastName.Length < LastNameMinimumLength)
-                return Result.Failure<PersonName>(LastNameMinimumLengthMessage);
+            if (lastName.Length < LastNameMinimumLength
+                ||
+                lastName.Length > LastNameMaximumLength)
+                return Result.Failure<PersonName>(LastNameInvalidLengthMessage);
 
-            if (lastName.Length > LastNameMaximumLength)
-                return Result.Failure<PersonName>(LastNameMaximumLengthMessage);
+            if (firstName.Length < FirstNameMinimumLength
+                ||
+                firstName.Length > FirstNameMaximumLength)
+                return Result.Failure<PersonName>(FirstNameInvalidLengthMessage);
 
-            if (firstName.Length < FirstNameMinimumLength)
-                return Result.Failure<PersonName>(FirstNameMinimumLengthMessage);
-
-            if (firstName.Length > FirstNameMaximumLength)
-                return Result.Failure<PersonName>(FirstNameMaximumLengthMessage);
-
-            if (middleName?.Length < MiddleNameMinimumLength)
-                return Result.Failure<PersonName>(MiddleNameMinimumLengthMessage);
-
-            if (middleName?.Length > MiddleNameMaximumLength)
-                return Result.Failure<PersonName>(MiddleNameMaximumLengthMessage);
+            if (middleName?.Length < MiddleNameMinimumLength
+                ||
+                middleName?.Length > MiddleNameMaximumLength)
+                return Result.Failure<PersonName>(MiddleNameInvalidLengthMessage);
 
             return Result.Success(new PersonName(lastName, firstName, middleName));
         }

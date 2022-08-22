@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 
         private static PhoneToWrite CreatePhoneToWrite(PhoneToRead phone)
         {
-            if (phone != null)
+            if (phone is not null)
             {
                 return new PhoneToWrite()
                 {
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 
         private static PhoneToRead CreatePhone(Phone phone)
         {
-            if (phone != null)
+            if (phone is not null)
             {
                 return new PhoneToRead()
                 {

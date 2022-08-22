@@ -32,7 +32,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var dateRangeOrError = DateTimeRange.Create(start, end);
 
             dateRangeOrError.IsFailure.Should().BeTrue();
-            dateRangeOrError.Error.Should().Be(DateTimeRange.DateTimeRangeInvalidMessage);
         }
 
         [Fact]

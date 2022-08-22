@@ -18,18 +18,17 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public Contactable(Address address, IList<Phone> phones, IList<Email> emails)
         {
             if (address != null)
-                Address = address;
+                SetAddress(address);
 
             if (phones != null)
-                Phones = phones;
+                SetPhones(phones);
 
             if (emails != null)
-                Emails = emails;
+                SetEmails(emails);
         }
 
         public void AddPhone(Phone phone)
         {
-            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check.
             /* Null check silently swallows exception, hiding potential bugs. Use a guard to throw exception in
              * this exceptional case: we don't expect a null to ever reach here, so there must be a bug. -DE */
             Guard.ForNull(phone, "phone");
@@ -81,7 +80,8 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                         AddPhone(phone);
 
                 // Validate the collection
-
+                if (!HasOnlyOnePrimaryPhone(phones))
+                    throw new Exception("Primary phone has already been entered.");
             }
         }
 
@@ -90,10 +90,10 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             Guard.ForNull(email, "email");
 
             if (ContactableHasEmail(email))
-                throw new Exception("Contactable already has this email.");
+                throw new Exception("Duplicate email.");
 
             if (ContactableHasPrimaryEmail() && email.IsPrimary)
-                throw new Exception("Contactable already has primary email.");
+                throw new Exception("Primary email has already been entered.");
 
             Emails.Add(email);
         }
@@ -134,7 +134,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                         AddEmail(email);
 
                 // Validate the collection
-
             }
         }
 
@@ -167,6 +166,27 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         private bool ContactableHasEmail(Email email)
         {
             return Emails.Any(x => x.Address == email.Address);
+        }
+
+        private static bool HasOnlyOnePrimaryPhone(IList<Phone> phones)
+        {
+            int primaryCount = 0;
+
+            foreach (var phone in phones)
+            {
+                if (phone is null)
+                    continue;
+
+                if (phone.IsPrimary)
+                    primaryCount += 1;
+            }
+
+            if (primaryCount > 1)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         // EF requires empty constructor

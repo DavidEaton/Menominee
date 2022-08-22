@@ -1,5 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
+using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.Persons;
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 
@@ -9,22 +12,16 @@ namespace CustomerVehicleManagement.Shared.Validators
     {
         public OrganizationValidator()
         {
-            //RuleFor(x => x).MustBeEntity(x => Organization.Create(OrganizationName.Create, x.Note, ));
-
             RuleFor(organization => organization.Name)
-                                                .MustBeValueObject(OrganizationName.Create);
+                .MustBeValueObject(OrganizationName.Create);
 
             RuleFor(organization => organization.Address)
-                                                .NotEmpty()
-                                                .MustBeValueObject(address => Address.Create(address.AddressLine,
-                                                                                             address.City,
-                                                                                             address.State,
-                                                                                             address.PostalCode))
-                                                .When(organization => organization.Address != null);
+                .SetValidator(new AddressValidator())
+                .When(organization => organization.Address is not null);
 
             RuleFor(organization => organization.Note)
                 .Length(0, 10000)
-                .When(organization => organization.Note != null);
+                .When(organization => organization.Note is not null);
 
             RuleFor(organization => organization.Emails)
                 .NotNull()
@@ -36,7 +33,13 @@ namespace CustomerVehicleManagement.Shared.Validators
 
             RuleFor(organization => organization.Contact)
                 .SetValidator(new PersonValidator())
-                .When(organization => organization.Contact != null);
+                .When(organization => organization.Contact is not null);
+
+            RuleFor(organization => organization)
+                .MustBeEntity(
+                    organization => Organization.Create(
+                        OrganizationName.Create(organization.Name).Value,
+                        organization.Note));
         }
     }
 }

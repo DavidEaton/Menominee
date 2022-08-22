@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite person)
         {
-            var notFoundMessage = $"Could not find Person to update: {person.Name.FirstMiddleLast}";
+            var notFoundMessage = $"Could not find {person.Name.FirstName} {person.Name.LastName} to update";
 
             if (!await repository.PersonExistsAsync(id))
                 return NotFound(notFoundMessage);
@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            Person person = PersonHelper.CreateEntityFromWriteDto(personToAdd);
+            Person person = PersonHelper.ConvertToEntity(personToAdd);
 
             await repository.AddPersonAsync(person);
             await repository.SaveChangesAsync();

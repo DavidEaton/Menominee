@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = new Person(personName, Gender.Female, null, null, null, null, null);
+            var contact = Person.Create(personName, Gender.Female).Value;
 
             organization.SetContact(contact);
 
@@ -356,7 +356,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = new Person(personName, Gender.Female, null, null, null, null, null);
+            var contact = Person.Create(personName, Gender.Female).Value;
 
             organization.SetContact(contact);
 

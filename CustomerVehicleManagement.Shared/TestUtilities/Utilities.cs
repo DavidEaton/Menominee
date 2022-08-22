@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
             var lastName = "Doe";
             var nameOrError = PersonName.Create(lastName, firstName);
 
-            return new Person(nameOrError.Value, Gender.Female, null, null, null, null, null);
+            return Person.Create(nameOrError.Value, Gender.Female).Value;
         }
 
         public static Person CreatePersonWithPhones()
