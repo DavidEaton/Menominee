@@ -96,6 +96,7 @@ namespace CustomerVehicleManagement.Api.Data
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceLineItemConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentMethodConfiguration());
@@ -214,7 +215,6 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<VendorInvoice> VendorInvoices { get; set; }
         public DbSet<VendorInvoiceLineItem> VendorInvoiceLineItems { get; set; }
-        public DbSet<VendorInvoiceItem> VendorInvoiceItems { get; set; }
         public DbSet<VendorInvoicePayment> VendorInvoicePayments { get; set; }
         public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }
         public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }

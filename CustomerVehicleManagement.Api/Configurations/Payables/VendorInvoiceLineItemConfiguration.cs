@@ -18,24 +18,26 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                 .IsRequired();
 
             // Value Object: VendorInvoiceItem
-            builder.Property(lineItem => lineItem.Item)
-                .IsRequired();
-
             builder.OwnsOne(lineItem => lineItem.Item)
                 .Property(item => item.PartNumber)
                 .HasColumnName("PartNumber")
                 .HasMaxLength(255)
                 .IsRequired();
 
-            builder.OwnsOne(lineItem => lineItem.Item)
-                .Property(item => item.Manufacturer)
-                .HasColumnName("Manufacturer");
+            //builder.OwnsOne(lineItem => lineItem.Item)
+            //    .Property(item => item.Manufacturer)
+            //    .HasColumnName("Manufacturer");
 
             builder.OwnsOne(lineItem => lineItem.Item)
                .Property(item => item.Description)
                .HasColumnName("Description")
                .HasMaxLength(255)
                .IsRequired();
+
+            //builder.OwnsOne(lineItem => lineItem.Item)
+            //    .Property(item => item.SaleCode)
+            //    .HasColumnName("SaleCode");
+
 
         }
     }

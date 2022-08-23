@@ -1,10 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
+using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
-    public class VendorInvoiceItem : ValueObject
+    public class VendorInvoiceItem : AppValueObject
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MaximumLength = 255;

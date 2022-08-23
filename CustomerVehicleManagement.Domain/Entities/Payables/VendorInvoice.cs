@@ -87,14 +87,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendor, date, datePosted, status, invoiceNumber, total, lineItems, payments, taxes));
         }
 
-        public void AddItem(VendorInvoiceLineItem item)
+        public void AddLineItem(VendorInvoiceLineItem lineItem)
         {
-            LineItems.Add(item);
+            LineItems.Add(lineItem);
         }
 
-        public void RemoveItem(VendorInvoiceLineItem item)
+        public void RemoveLineItem(VendorInvoiceLineItem lineItem)
         {
-            LineItems.Remove(item);
+            LineItems.Remove(lineItem);
         }
 
         public void AddPayment(VendorInvoicePayment payment)
@@ -123,7 +123,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             {
                 LineItems.Clear();
                 foreach (var item in items)
-                    AddItem(item);
+                    AddLineItem(item);
             }
         }
 
