@@ -1,4 +1,7 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using Menominee.Common.ValueObjects;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
@@ -8,13 +11,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         {
             if (vendor is null)
                 return null;
-
-            return new()
-            {
-                Name = vendor.Name,
-                VendorCode = vendor.VendorCode.ToUpper(),
-                IsActive = vendor.IsActive
-            };
+            
+            return Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
         }
 
         public static VendorToWrite ConvertReadToWriteDto(VendorToRead vendor)

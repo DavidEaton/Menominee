@@ -14,8 +14,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         private readonly ApplicationDbContext context;
 
-        public OrganizationRepository(
-            ApplicationDbContext context)
+        public OrganizationRepository(ApplicationDbContext context)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));

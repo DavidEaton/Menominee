@@ -32,14 +32,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private VendorInvoice(
             Vendor vendor, 
-            DateTime? date,
-            DateTime? datePosted,
             VendorInvoiceStatus status,
             string invoiceNumber,
             double total,
-            IList<VendorInvoiceLineItem> lineItems,
-            IList<VendorInvoicePayment> payments,
-            IList<VendorInvoiceTax> taxes)
+            DateTime? date = null,
+            DateTime? datePosted = null,
+            IList<VendorInvoiceLineItem> lineItems = null,
+            IList<VendorInvoicePayment> payments = null,
+            IList<VendorInvoiceTax> taxes = null)
         {
             Vendor = vendor;
             Date = date;
@@ -54,14 +54,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public static Result<VendorInvoice> Create(
             Vendor vendor,
-            DateTime? date,
-            DateTime? datePosted,
             VendorInvoiceStatus status,
             string invoiceNumber,
             double total,
-            IList<VendorInvoiceLineItem> lineItems,
-            IList<VendorInvoicePayment> payments,
-            IList<VendorInvoiceTax> taxes)
+            DateTime? date = null,
+            DateTime? datePosted = null,
+            IList<VendorInvoiceLineItem> lineItems = null,
+            IList<VendorInvoicePayment> payments = null,
+            IList<VendorInvoiceTax> taxes = null)
         {
             if (vendor is null)
                 return Result.Failure<VendorInvoice>(RequiredMessage);
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(MinimumValueMessage);
 
             return Result.Success(new VendorInvoice(
-                vendor, date, datePosted, status, invoiceNumber, total, lineItems, payments, taxes));
+                vendor, status, invoiceNumber, total, date, datePosted, lineItems, payments, taxes));
         }
 
         public void AddLineItem(VendorInvoiceLineItem lineItem)

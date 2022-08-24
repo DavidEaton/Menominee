@@ -214,7 +214,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 4. Return new id and route to new resource after save
             return Created(new Uri($"{BasePath}/{organization.Id}",
                                UriKind.Relative),
-                               new { id = organization.Id });
+                               new { organization.Id });
         }
 
 

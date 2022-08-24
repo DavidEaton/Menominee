@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,15 +23,12 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
         public async Task<Vendor> GetVendorEntityAsync(long id)
         {
-            var vendorFromContext = await context.Vendors
-                                                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
-
-            return vendorFromContext;
+            return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
         }
 
-        public async Task CreateVendorAsync(Vendor vendor)
+        public async Task AddVendorAsync(Vendor vendor)
         {
-            if (vendor != null)
+            if (vendor is not null)
                 await context.AddAsync(vendor);
         }
 
@@ -44,6 +43,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 //    .ThenInclude(contact => contact.Emails)
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
 
+            Guard.ForNull(vendorFromContext, "vendorFromContext");
+
             return new VendorToRead()
             {
                 Id = vendorFromContext.Id,
@@ -55,7 +56,9 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
         public async Task<IReadOnlyList<VendorToRead>> GetVendorsAsync()
         {
-            IReadOnlyList<Vendor> vendorsFromContext = await context.Vendors.ToListAsync();
+            IReadOnlyList<Vendor> vendorsFromContext = await context.Vendors
+                .AsNoTracking()
+                .ToListAsync();
 
             return vendorsFromContext
                 .Select(vendor => new VendorToRead()
@@ -69,7 +72,9 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
         public async Task<IReadOnlyList<VendorToReadInList>> GetVendorsListAsync()
         {
-            IReadOnlyList<Vendor> vendors = await context.Vendors.ToListAsync();
+            IReadOnlyList<Vendor> vendors = await context.Vendors
+                .AsNoTracking()
+                .ToListAsync();
 
             return vendors.Select(vendor => new VendorToReadInList
             {
@@ -80,20 +85,14 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             }).ToList();
         }
 
-        public void UpdateVendorAsync(Vendor vendor)
+        public void DeleteVendor(Vendor vendor)
         {
-            // No code in this implementation.
-        }
-
-        public async Task DeleteVendorAsync(long id)
-        {
-            var vendorFromContext = await context.Vendors.FindAsync(id);
-            context.Remove(vendorFromContext);
+            context.Remove(vendor);
         }
 
         public async Task<bool> VendorExistsAsync(long id)
         {
-            return await context.Vendors.AnyAsync(o => o.Id == id);
+            return await context.Vendors.AnyAsync(vendor => vendor.Id == id);
         }
 
         public async Task SaveChangesAsync()
