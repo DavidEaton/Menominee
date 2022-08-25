@@ -13,8 +13,10 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
             builder.ToTable("ExciseFee", "dbo");
 
             builder.Property(fee => fee.Description)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(10000);
             builder.Property(fee => fee.FeeType)
+                .IsRequired()
                 .HasDefaultValue(ExciseFeeType.Flat);
             builder.Property(fee => fee.Amount)
                 .HasDefaultValue(0);

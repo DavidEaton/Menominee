@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
+using Menominee.Common.Utilities;
 using System;
+using System.Xml.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Taxes
@@ -25,7 +27,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             Amount = amount;
         }
 
-        public static Result<ExciseFee> Create(string description, ExciseFeeType feeType, double amount)
+        public static Result<ExciseFee> Create(
+            string description,
+            ExciseFeeType feeType,
+            double amount)
         {
             if (description is null)
                 return Result.Failure<ExciseFee>(RequiredMessage);
@@ -39,9 +44,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             description = (description ?? string.Empty).Trim();
 
             if (description.Length > DescriptionMaximumLength)
-                return Result.Failure<ExciseFee>(DescriptionMaximumLengthMessage);
+                return Result.Failure<ExciseFee>
+                    (DescriptionMaximumLengthMessage);
 
-            return Result.Success(new ExciseFee(description, feeType, amount));
+            return Result.Success(
+                new ExciseFee(description, feeType, amount));
         }
 
         public void SetDescription(string description)
@@ -50,21 +57,27 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             {
                 description = description.Trim();
 
-                if (description.Length <= DescriptionMaximumLength)
-                    Description = description;
+                if (description.Length > DescriptionMaximumLength)
+                    throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+
+                Description = description;
             }
         }
 
         public void SetFeeType(ExciseFeeType feeType)
         {
             if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
-                FeeType = feeType;
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            FeeType = feeType;
         }
 
         public void SetAmount(double amount)
         {
             if (amount < MinimumValue)
-                Amount = amount;
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Amount = amount;
         }
 
         #region ORM
