@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizations = await repository.GetOrganizationsListAsync();
 
-            if (organizations == null)
+            if (organizations is null)
                 return NotFound();
 
             return Ok(organizations);
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organizations = await repository.GetOrganizationsAsync();
 
-            if (organizations == null)
+            if (organizations is null)
                 return NotFound();
 
             return Ok(organizations);
@@ -62,7 +62,7 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             var organization = await repository.GetOrganizationAsync(id);
 
-            if (organization == null)
+            if (organization is null)
                 return NotFound();
 
             return organization;

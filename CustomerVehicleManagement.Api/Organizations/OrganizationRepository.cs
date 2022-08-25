@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Organizations;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -44,8 +43,6 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .AsNoTracking()
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(organization => organization.Id == id);
-    
-            Guard.ForNull(organizationFromContext, "organizationFromContext");
 
             return OrganizationHelper.ConvertEntityToReadDto(organizationFromContext);
         }
@@ -89,11 +86,11 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .AsSplitQuery()
                 .ToArrayAsync();
 
-            return organizationsFromContext.
-                Select(organization =>
+            return organizationsFromContext
+                .Select(organization =>
                        OrganizationHelper.ConvertEntityToReadInListDto(organization))
-               .OrderBy(organization => organization.Name)
-               .ToList();
+                .OrderBy(organization => organization.Name)
+                .ToList();
         }
 
         public async Task<Organization> GetOrganizationEntityAsync(long id)
