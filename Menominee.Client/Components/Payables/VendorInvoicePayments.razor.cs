@@ -64,9 +64,9 @@ namespace Menominee.Client.Components.Payables
         {
             //if (paymentMethodId > 0)
             //    SelectedPayment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(await paymentMethodDataService.GetPaymentMethodAsync(paymentMethodId));
-            SelectedPayment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(await paymentMethodDataService.GetPaymentMethodAsync(SelectedPayment.PaymentMethod.Id));
+            //SelectedPayment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(await paymentMethodDataService.GetPaymentMethodAsync(SelectedPayment.PaymentMethod.Id));
             //SelectedPayment.PaymentMethodId = SelectedPayment.PaymentMethod.Id;
-            paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
+            //paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
         }
 
         private void OnEdit()
@@ -96,12 +96,12 @@ namespace Menominee.Client.Components.Payables
         {
             SelectedPayment = payments.FirstOrDefault();
             SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
-            paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
+            //paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
+            //SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
         }
 
         //public class PaymentMethodListItem

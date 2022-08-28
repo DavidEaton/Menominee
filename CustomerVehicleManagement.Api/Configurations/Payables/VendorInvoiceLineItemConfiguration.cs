@@ -18,25 +18,33 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                 .IsRequired();
 
             // Value Object: VendorInvoiceItem
+            builder.OwnsOne(
+                lineItem => lineItem.Item, ownershipBuilder =>
+                {
+                    ownershipBuilder.WithOwner();
+                    ownershipBuilder.Navigation(item => item.Manufacturer)
+                        .UsePropertyAccessMode(PropertyAccessMode.Property);
+                });
+
+            builder.OwnsOne(
+                lineItem => lineItem.Item, ownershipBuilder =>
+                {
+                    ownershipBuilder.WithOwner();
+                    ownershipBuilder.Navigation(item => item.SaleCode)
+                        .UsePropertyAccessMode(PropertyAccessMode.Property);
+                });
+
             builder.OwnsOne(lineItem => lineItem.Item)
                 .Property(item => item.PartNumber)
-                .HasColumnName("PartNumber")
+                .HasColumnName("ItemPartNumber")
                 .HasMaxLength(255)
                 .IsRequired();
 
-            //builder.OwnsOne(lineItem => lineItem.Item)
-            //    .Property(item => item.Manufacturer)
-            //    .HasColumnName("Manufacturer");
-
             builder.OwnsOne(lineItem => lineItem.Item)
                .Property(item => item.Description)
-               .HasColumnName("Description")
+               .HasColumnName("ItemDescription")
                .HasMaxLength(255)
-               .IsRequired();
-
-            //builder.OwnsOne(lineItem => lineItem.Item)
-            //    .Property(item => item.SaleCode)
-            //    .HasColumnName("SaleCode");
+            .IsRequired();
 
 
         }

@@ -80,7 +80,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
                 return;
             }
 
-            toastService.ShowError($"Payment method failed to update:  Id = {payMethod.Id}", "Save Failed");
+            toastService.ShowError($"Payment method failed to update:  Id = {id}", "Save Failed");
         }
 
         public async Task DeletePaymentMethodAsync(long id)

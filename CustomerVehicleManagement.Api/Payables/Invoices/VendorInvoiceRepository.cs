@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Menominee.Common.Utilities;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
@@ -54,9 +53,11 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .AsSplitQuery()
                                                   .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
-            Guard.ForNull(invoiceFromContext, "invoiceFromContext");
 
-            return VendorInvoiceHelper.ConvertEntityToReadDto(invoiceFromContext);
+            return
+                invoiceFromContext is null
+                ? VendorInvoiceHelper.ConvertEntityToReadDto(invoiceFromContext)
+                : null;
         }
 
         public async Task<Vendor> GetVendorAsync(long id)
@@ -72,13 +73,13 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                       .ThenInclude(item => item.Item.Manufacturer)
                                                   .Include(invoice => invoice.LineItems)
                                                       .ThenInclude(item => item.Item.SaleCode)
-//                                                  .Include(invoice => invoice.Payments)
-//                                                      .ThenInclude(payment => payment.PaymentMethod)
-//                                                          .AsNoTracking()
+                                                  //                                                  .Include(invoice => invoice.Payments)
+                                                  //                                                      .ThenInclude(payment => payment.PaymentMethod)
+                                                  //                                                          .AsNoTracking()
                                                   .Include(invoice => invoice.Payments)
                                                       .ThenInclude(payment => payment.PaymentMethod)
                                                           .ThenInclude(method => method.ReconcilingVendor)
-//                                                          .AsNoTracking()
+                                                  //                                                          .AsNoTracking()
                                                   .Include(invoice => invoice.Taxes)
                                                       .ThenInclude(tax => tax.SalesTax)
                                                   .AsSplitQuery()

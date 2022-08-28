@@ -130,7 +130,7 @@ namespace Menominee.Client.Pages.Persons
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
+            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
             {
                 await PersonDataService.AddPerson(PersonToWrite);
                 await EndAddEditAsync();
@@ -139,7 +139,7 @@ namespace Menominee.Client.Pages.Persons
 
         protected async Task HandleEditSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
+            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
             {
                 await PersonDataService.UpdatePerson(PersonToWrite, Id);
                 await EndAddEditAsync();
@@ -148,7 +148,7 @@ namespace Menominee.Client.Pages.Persons
 
         protected async Task SubmitHandlerAsync()
         {
-            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstMiddleLast))
+            if (!string.IsNullOrWhiteSpace(PersonToWrite.Name.FirstName))
             {
                 if (PersonFormMode == FormMode.Add)
                     await HandleAddSubmit();

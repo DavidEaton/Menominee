@@ -82,7 +82,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 ExciseFeeToRead fee = await ExciseFeeDataService.GetExciseFeeAsync(Id);
                 if (fee != null)
                 {
-                    ExciseFee = ExciseFeeHelper.CreateExciseFee(fee);
+                    ExciseFee = ExciseFeeHelper.CovertReadToWriteDto(fee);
                 }
                 EditFormMode = FormMode.Edit;
                 //ExciseFees = null;

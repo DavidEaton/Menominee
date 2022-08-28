@@ -160,16 +160,16 @@ In ApplicationDbContext.OnConfiguring(), comment all but last line:
 
 Run in Package Manager console:  
 
-            add - migration Initial - Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
-            update - database - Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
+            add-migration Initial -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
+            update-database -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
 
 If updating the Users database in IdentityServer4:
 
-            Script - Migration - Idempotent - Context Janco.Idp.Data.Contexts.UserDbContext
+            Script-Migration -Idempotent -Context Janco.Idp.Data.Contexts.UserDbContext
 
 Create idempotent script for tenants/Tenant Manager:  
 
-            Script - Migration - Idempotent - Context CustomerVehicleManagement
+            Script-Migration -Idempotent -Context CustomerVehicleManagement
                 .Api.Data.ApplicationDbContext
 
 

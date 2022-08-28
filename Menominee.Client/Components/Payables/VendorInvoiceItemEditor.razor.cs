@@ -27,7 +27,7 @@ namespace Menominee.Client.Components.Payables
         public ISaleCodeDataService saleCodeDataService { get; set; }
 
         [Parameter]
-        public VendorInvoiceLineItemToWrite Item { get; set; }
+        public VendorInvoiceLineItemToWrite LineItem { get; set; }
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -101,14 +101,14 @@ namespace Menominee.Client.Components.Payables
             parametersSet = true;
 
             //if (Item?.MfrId .Manufacturer != null)
-            if (Item?.Manufacturer != null)
+            if (LineItem?.Item.Manufacturer != null)
             {
-                manufacturerId = Item.Manufacturer.Id;
+                manufacturerId = LineItem.Item.Manufacturer.Id;
             }
 
-            if (Item?.SaleCodeId != 0)
+            if (LineItem?.Item.SaleCode.Id != 0)
             {
-                saleCodeId = Item.SaleCodeId ?? 0;
+                saleCodeId = LineItem.Item.SaleCode.Id;
             }
 
             //if (Item?.Part == null)
@@ -124,10 +124,9 @@ namespace Menominee.Client.Components.Payables
 
         private async Task OnManufacturerChangeAsync()
         {
-            if (manufacturerId > 0 && Item.Manufacturer?.Id != manufacturerId)
+            if (manufacturerId > 0 && LineItem.Item.Manufacturer?.Id != manufacturerId)
             {
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
-                Item.ManufacturerId = manufacturerId;
+                LineItem.Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
             }
 
             //if (Item?.Manufacturer is not null)
@@ -150,10 +149,9 @@ namespace Menominee.Client.Components.Payables
 
         private async Task OnSaleCodeChangeAsync()
         {
-            if (saleCodeId > 0 && Item.SaleCode?.Id != saleCodeId)
+            if (saleCodeId > 0 && LineItem.Item.SaleCode?.Id != saleCodeId)
             {
-                Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(await saleCodeDataService.GetSaleCodeAsync(saleCodeId));
-                Item.SaleCodeId = saleCodeId;
+                LineItem.Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(await saleCodeDataService.GetSaleCodeAsync(saleCodeId));
             }
         }
 
@@ -170,15 +168,13 @@ namespace Menominee.Client.Components.Payables
                 manufacturerId = SelectedInventoryItem.ManufacturerId;
                 var prodCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId);
 
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
-                Item.ManufacturerId = manufacturerId;
+                LineItem.Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
+
                 if (prodCode?.SaleCode?.Code.Length > 0)
-                {
-                    Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(prodCode.SaleCode);
-                    Item.SaleCodeId = prodCode.SaleCode.Id;
-                }
-                Item.PartNumber = SelectedInventoryItem.ItemNumber;
-                Item.Description = SelectedInventoryItem.Description;
+                    LineItem.Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(prodCode.SaleCode);
+
+                LineItem.Item.PartNumber = SelectedInventoryItem.ItemNumber;
+                LineItem.Item.Description = SelectedInventoryItem.Description;
             }
         }
 

@@ -32,11 +32,11 @@ namespace Menominee.Client.Services
 
             if (response.IsSuccessStatusCode)
             {
-                toastService.ShowSuccess($"{person.Name.LastFirstMiddle} added successfully", "Added");
+                toastService.ShowSuccess($"{person.Name.LastName}, {person.Name.FirstName} added successfully", "Added");
                 return await JsonSerializer.DeserializeAsync<PersonToRead>(await response.Content.ReadAsStreamAsync());
             }
 
-            toastService.ShowError($"{person.Name.LastFirstMiddle} failed to add. {response.ReasonPhrase}.", "Add Failed");
+            toastService.ShowError($"{person.Name.LastName}, {person.Name.FirstName} failed to add. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 
@@ -87,11 +87,11 @@ namespace Menominee.Client.Services
 
             if (response.IsSuccessStatusCode)
             {
-                toastService.ShowSuccess($"{person.Name.LastFirstMiddle} updated successfully", "Saved");
+                toastService.ShowSuccess($"{person.Name.LastName}, {person.Name.FirstName} updated successfully", "Saved");
                 return;
             }
 
-            toastService.ShowError($"{person.Name.LastFirstMiddle} failed to update", "Save Failed");
+            toastService.ShowError($"{person.Name.LastName}, {person.Name.FirstName} failed to update", "Save Failed");
         }
 
         public async Task<PersonToRead> GetPerson(long id)

@@ -1,4 +1,4 @@
-﻿<EditForm Model="Item">
+﻿<EditForm Model="LineItem">
 
     <TelerikWindow Visible="DialogVisible"
                    Modal="true"
@@ -19,7 +19,7 @@
                                         TItem="InvoiceItemType"
                                         PopupHeight="460px"
                                         DataSource="@itemTypes"
-                                        @bind-Value="@Item.Type"
+                                        @bind-Value="@LineItem.Type"
                                         Id="itemType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
@@ -53,7 +53,7 @@
                     <label class="m-label" for="partNum">Part Number</label>
                     <div class="m-form-control-group">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="partNum" @bind-value="@Item.PartNumber">
+                            <input type="text" class="form-control" id="partNum" @bind-value="@LineItem.Item.PartNumber">
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" type="button" @onclick="SelectInventoryItem"><i class="fas fa-search"></i></button>
                             </div>
@@ -66,7 +66,7 @@
                 <div class="form-group col-12">
                     <label class="m-label" for="description">Description</label>
                     <div class="m-form-control-group">
-                        <TelerikTextBox @bind-Value="@Item.Description"
+                        <TelerikTextBox @bind-Value="@LineItem.Item.Description"
                                         Width="100%"
                                         Id="description">
                         </TelerikTextBox>
@@ -98,7 +98,7 @@
                 <div class="form-group col-6">
                     <label class="m-label" for="qty">Quantity</label>
                     <div class="m-form-control-group">
-                        <TelerikNumericTextBox @bind-Value="@Item.Quantity"
+                        <TelerikNumericTextBox @bind-Value="@LineItem.Quantity"
                                                Id="qty">
                         </TelerikNumericTextBox>
                     </div>
@@ -108,7 +108,7 @@
             <div class="form-row">
                 <div class="form-group col-6">
                     <label class="m-label">Cost</label>
-                    <TelerikNumericTextBox @bind-Value="Item.Cost"
+                    <TelerikNumericTextBox @bind-Value="LineItem.Cost"
                                            Format="$#0.00#"
                                            Decimals="3"
                                            Arrows="false">
@@ -116,7 +116,7 @@
                 </div>
                 <div class="form-group col-6">
                     <label class="m-label">Core</label>
-                    <TelerikNumericTextBox @bind-Value="Item.Core"
+                    <TelerikNumericTextBox @bind-Value="LineItem.Core"
                                            Format="$#0.00#"
                                            Decimals="3"
                                            Arrows="false">
@@ -128,17 +128,17 @@
                 <div class="form-group col-4">
                     <label class="m-label" for="transDate">Transaction Date</label>
                     <div class="k-form-field-wrap">
-                        <TelerikDatePicker Id="transDate" @bind-Value="@Item.TransactionDate" />
+                        <TelerikDatePicker Id="transDate" @bind-Value="@LineItem.TransactionDate" />
                     </div>
                 </div>
                 <div class="form-group col-4">
                     <label class="m-label" for="poNumber">PO Number</label>
-                    <input type="text" class="form-control" id="poNumber" @bind-value="@Item.PONumber">
+                    <input type="text" class="form-control" id="poNumber" @bind-value="@LineItem.PONumber">
                 </div>
-                <div class="form-group col-4">
+@*                <div class="form-group col-4">
                     <label class="m-label" for="invNumber">Invoice Number</label>
-                    <input type="text" class="form-control" id="invNumber" @bind-value="@Item.InvoiceNumber">
-                </div>
+                    <input type="text" class="form-control" id="invNumber" @bind-value="@LineItem.InvoiceNumber">
+                </div>*@
             </div>
 
             <hr id="divider">

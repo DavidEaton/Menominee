@@ -81,7 +81,7 @@ namespace Menominee.Client.Services.Payables.Invoices
                 return;
             }
 
-            toastService.ShowError($"Invoice failed to update:  Id = {invoice.Id}", "Save Failed");
+            toastService.ShowError($"Invoice failed to update:  Id = {id}", "Save Failed");
         }
     }
 }

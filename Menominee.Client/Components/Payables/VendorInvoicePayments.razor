@@ -16,7 +16,7 @@
              SelectedItems="@SelectedPayments"
              @ref="@Grid">
         <GridColumns>
-            <GridColumn Field="@nameof(VendorInvoicePaymentToWrite.PaymentMethod.Id)"
+            <GridColumn Field="@nameof(VendorInvoicePaymentToWrite.PaymentMethod)"
                     Title="Payment Method"
                     Width="55%">
                 <Template>
@@ -33,7 +33,7 @@
                         //                ValueChange="@OnPaymentMethodChangeAsync">
                         //    </DropDownListEvents>
                         //</SfDropDownList>
-                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod"
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id">
@@ -43,7 +43,7 @@
                 <EditorTemplate>
                     @{
                         var payment = context as VendorInvoicePaymentToWrite;
-                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod"
                                      Data="PaymentMethods"
                                      OnChange="OnPaymentMethodChangeAsync"
                                      TextField="Name"

@@ -68,7 +68,7 @@ namespace Menominee.Client.Components.Payables
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
+            //SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
         }
 
         //protected override Task OnInitializedAsync()

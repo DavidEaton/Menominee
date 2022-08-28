@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Organizations;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Customers
 {
@@ -68,6 +69,11 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
             }
 
             return null;
+        }
+
+        public static CustomerToWrite ConvertReadToWriteDto(CustomerToRead customerReadDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

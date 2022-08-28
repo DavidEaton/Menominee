@@ -17,13 +17,13 @@
                  @ref="@Grid">
         <GridColumns>
             <GridColumn Width="25%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.PartNumber)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.Item.PartNumber)"
                         Title="Part Number"
                         ShowColumnChooser="false"
                         Lockable="false">
             </GridColumn>
             <GridColumn Width="35%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.Description)"
+                        Field="@nameof(VendorInvoiceLineItemToWrite.Item.Description)"
                         Title="Description"
                         ShowColumnChooser="false"
                         Lockable="false">
