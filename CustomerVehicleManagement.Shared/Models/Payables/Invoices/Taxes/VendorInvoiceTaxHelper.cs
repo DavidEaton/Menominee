@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
         public static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> ConvertWriteDtoToEntity()
         {
             return tax =>
-                VendorInvoiceTax.Create(SalesTaxHelper.ConvertWriteDtoToEntity(tax.SalesTax))
+                VendorInvoiceTax.Create(SalesTaxHelper.ConvertWriteDtoToEntity(tax.SalesTax), tax.TaxId)
                 .Value;
         }
 
