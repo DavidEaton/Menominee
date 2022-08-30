@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -10,7 +11,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string InvalidValueMessage = $"Value cannot be zero.";
 
         public VendorInvoicePaymentMethod PaymentMethod { get; private set; }
-        public double Amount { get; private set; } // <> 0, can be negative
+        public double Amount { get; private set; }
 
         private VendorInvoicePayment(VendorInvoicePaymentMethod paymentMethod, double amount)
         {
@@ -27,7 +28,22 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoicePayment>(InvalidValueMessage);
 
             return Result.Success(new VendorInvoicePayment(paymentMethod, amount));
+        }
 
+        public void SetPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
+        {
+            if (paymentMethod is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            PaymentMethod = paymentMethod;
+        }
+
+        public void SetAmount(double amount)
+        {
+            if (amount == InvalidValue)
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+
+            Amount = amount;
         }
 
         #region ORM

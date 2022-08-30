@@ -97,26 +97,5 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         {
             return await context.SaveChangesAsync() > 0;
         }
-
-        public async Task<SaleCode> UpdateSaleCodeAsync(SaleCode saleCode)
-        {
-            Guard.ForNull(saleCode, "saleCode");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(saleCode).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await SaleCodeExistsAsync(saleCode.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
-
-            return null;
-        }
     }
 }

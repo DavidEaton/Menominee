@@ -163,7 +163,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
             if (exciseFees?.Count > 0)
             {
-                // Remove not found phones (phones that caller removed)
+                // Remove not found items (items that caller removed)
                 foreach (var fee in exciseFees)
                 {
                     if (!ExciseFees.Any(x => x.Id == fee.Id))

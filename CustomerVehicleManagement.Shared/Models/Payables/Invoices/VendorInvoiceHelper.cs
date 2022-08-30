@@ -23,8 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             return
                 invoice == null
                 ? null
-                :
-                new()
+                : new()
                 {
                     Id = invoice.Id,
                     Date = invoice.Date,

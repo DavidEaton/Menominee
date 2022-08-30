@@ -13,16 +13,19 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void CreateVendorInvoiceLineItem()
         {
             // Arrange
-            Manufacturer manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
-            SaleCode saleCode = new() { Code = "SC1", Name = "Sale Code One", DesiredMargin = .25, LaborRate = 100.00 };
+            var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
+            var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
+            var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
             var item = VendorInvoiceItem.Create("BR549", manufacturer, "a description", saleCode).Value;
-            var vendorInvoiceLineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1, "001", null).Value;
-
 
             // Act
+            var vendorInvoiceLineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1, "001", null).Value;
 
             // Assert
             vendorInvoiceLineItem.Should().NotBeNull();
+            vendorInvoiceLineItem.Item.Manufacturer.Should().Be(manufacturer);
+            vendorInvoiceLineItem.Item.SaleCode.Should().Be(saleCode);
+            vendorInvoiceLineItem.Item.SaleCode.ShopSupplies.Should().Be(saleCode.ShopSupplies);
         }
     }
 }

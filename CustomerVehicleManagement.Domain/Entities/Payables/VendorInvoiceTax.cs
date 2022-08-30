@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -11,17 +12,32 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public SalesTax SalesTax { get; private set; }
         public int TaxId { get; private set; }
 
-        private VendorInvoiceTax(SalesTax salesTax)
+        private VendorInvoiceTax(SalesTax salesTax, int taxId)
         {
             SalesTax = salesTax;
+            TaxId = taxId;
         }
 
-        public static Result<VendorInvoiceTax> Create(SalesTax salesTax)
+        public static Result<VendorInvoiceTax> Create(SalesTax salesTax, int taxId)
         {
             return salesTax is null
                 ? Result.Failure<VendorInvoiceTax>(RequiredMessage)
-                : Result.Success(new VendorInvoiceTax(salesTax));
+                : Result.Success(new VendorInvoiceTax(salesTax, taxId));
         }
+
+        public void SetSalesTax(SalesTax salesTax)
+        {
+            if (salesTax is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            SalesTax = salesTax;
+        }
+
+        public void SetTaxId(int taxId)
+        {
+            TaxId = taxId;
+        }
+
         #region ORM
 
         // EF requires an empty constructor
