@@ -1,14 +1,28 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
+    public class TestData
+    {
+        public static IEnumerable<object[]> Data
+        {
+            get
+            {
+                yield return new object[] { Vendor.MinimumLength - 1 };
+                yield return new object[] { Vendor.MaximumLength + 1 };
+            }
+        }
+    }
+
     public class VendorShould
     {
         [Fact]
-        public void CreateVendor()
+        public void Create_Vendor()
         {
             // Arrange
             var name = "Vendor One";
@@ -23,10 +37,22 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void NotCreateInvalidVendor()
+        public void Not_Create_Vendor_With_Null_Name()
         {
-            var name = "V";
-            var vendorCode = "V1";
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+            string name = null;
+
+            var vendorOrError = Vendor.Create(name, vendorCode);
+
+            vendorOrError.IsFailure.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Create_Vendor_With_Invalid_Name(int length)
+        {
+            var name = Utilities.RandomCharacters(length);
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
@@ -34,7 +60,30 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void SetName()
+        public void Not_Create_Vendor_With_Null_Code()
+        {
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            string code = null;
+
+            var vendorOrError = Vendor.Create(name, code);
+
+            vendorOrError.IsFailure.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Create_Vendor_With_Invalid_Code(int length)
+        {
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = Utilities.RandomCharacters(length);
+
+            var vendorOrError = Vendor.Create(name, vendorCode);
+
+            vendorOrError.IsFailure.Should().Be(true);
+        }
+
+        [Fact]
+        public void Set_Name()
         {
             var name = "Vendor One";
             var vendorCode = "V1";
@@ -47,19 +96,34 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void NotSetInvalidName()
+        public void Not_Set_Name_With_Null_Name()
         {
-            var name = "Vendor One";
-            var vendorCode = "V1";
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+
             var vendor = Vendor.Create(name, vendorCode).Value;
 
-            var newName = "V";
+            string newName = null;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetName(newName));
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Set_Name_With_Invalid_Name(int length)
+        {
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+
+            var vendor = Vendor.Create(name, vendorCode).Value;
+
+            var newName = Utilities.RandomCharacters(length);
 
             Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetName(newName));
         }
 
         [Fact]
-        public void SetVendorCode()
+        public void Set_Vendor_Code()
         {
             var name = "Vendor One";
             var vendorCode = "V1";
@@ -71,14 +135,27 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             vendor.VendorCode.Should().Be(newVendorCode);
         }
 
-        [Fact]
-        public void NotSetInvalidVendorCode()
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Set_Invalid_Vendor_Code(int length)
         {
-            var name = "Vendor One";
-            var vendorCode = "V1";
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
             var vendor = Vendor.Create(name, vendorCode).Value;
 
-            var newVendorCode = "V";
+            var newVendorCode = Utilities.RandomCharacters(length);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetVendorCode(newVendorCode));
+        }
+
+        [Fact]
+        public void Not_Set_Null_Vendor_Code()
+        {
+            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendor = Vendor.Create(name, vendorCode).Value;
+
+            string newVendorCode = null;
 
             Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetVendorCode(newVendorCode));
         }

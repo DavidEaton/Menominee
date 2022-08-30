@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Utilities;
 using System;
 using Entity = Menominee.Common.Entity;
