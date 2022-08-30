@@ -184,9 +184,9 @@ ExciseFeeToReadInList
 
 "InList" contracts are used for lookups/dropdowns, and omit child collections, which would make no sense in a dropdown, but damage performance.
 
-<h3 style="color:#00bfff">Create a Validator for each Data Contract</h3>
+<h3 style="color:#00bfff">Create a Validator for each "ToWrite" Data Contract</h3>
 
-Validator classes inherit from AbstractValidator in the FluentValidation package. Create a validator class for each domain class "ToWrite" data contract. Reads do not require validation; values from the database were validated before ingress. 
+Validator classes inherit from AbstractValidator in the FluentValidation package. Create a validator class for each domain class "ToWrite" data contract. Reads do not require validation; values from the database were validated prior to their ingress. 
 	
 We define our property constraints inside each domain class private constructor. That's where the transformation (e.g., name.Trim()) and parsing (e.g., if (name is null)) of values from the outside world happens. 
 
@@ -204,7 +204,7 @@ FluentValidation classes invoke domain class Create factory methods to validate 
         }
     }
 
-So no need to duplicate those rules inside controllers because the domain class invariants already get validated when the Create method is invoked by its data contract data Validator class. Therefore all (more likely all but a few edge cases, practically speaking) of our business rules can live in the domain classes where they belong (accoring to DDD guidance).
+So no need to duplicate those rules inside controllers because the domain class invariants already get validated when the Create method is invoked by its data contract Validator class. Therefore all (more likely all but a few edge cases, practically speaking) of our business rules can live in the domain classes where they belong (accoring to DDD guidance).
 
 Controllers look like they aren't checking much because the ASP.NET request pipeline has already invoked the domain class validators.
 

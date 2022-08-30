@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
     {
         public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly double MinimumValue = 0;
-        public static readonly string MinimumValueMessage = "Value(s) cannot be negative.";
+        public static readonly string MinimumValueMessage = $"Value(s) must be greater than {MinimumValue}.";
         public static readonly int PONumberMaximumLength = 40;
         public static readonly string PONumberMaximumLengthMessage = $"PO Number cannot be over {PONumberMaximumLength} characters in length.";
         public static readonly string TransactionDateInvalidMessage = "Transaction Date cannot be in the future.";
@@ -56,20 +56,85 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
             if (quantity <= MinimumValue)
-                return Result.Failure<VendorInvoiceLineItem>("Quantity must be greater than zero");
+                return Result.Failure<VendorInvoiceLineItem>(MinimumValueMessage);
 
             if (cost < MinimumValue || core < MinimumValue)
                 return Result.Failure<VendorInvoiceLineItem>(MinimumValueMessage);
+
+            if (string.IsNullOrWhiteSpace(poNumber))
+                return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
             poNumber = (poNumber ?? string.Empty).Trim();
 
             if (poNumber.Length > PONumberMaximumLength)
                 return Result.Failure<VendorInvoiceLineItem>(PONumberMaximumLengthMessage);
 
-            return transactionDate.HasValue && transactionDate.Value > DateTime.Today
-                ? Result.Failure<VendorInvoiceLineItem>(TransactionDateInvalidMessage)
-                : Result.Success(
-                new VendorInvoiceLineItem(type, item, quantity, cost, core, poNumber, transactionDate));
+            if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
+                return Result.Failure<VendorInvoiceLineItem>(TransactionDateInvalidMessage);
+                
+            return Result.Success(new VendorInvoiceLineItem(
+                type, item, quantity, cost, core, poNumber, transactionDate));
+        }
+
+        public void SetType(VendorInvoiceItemType type)
+        {
+            if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Type = type;
+        }
+
+        public void SetItem(VendorInvoiceItem item)
+        {
+            if (item is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Item = item;
+        }
+
+        public void SetQuantity(double quantity)
+        {
+            if (quantity <= MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Quantity = quantity;
+        }
+
+        public void SetCost(double cost)
+        {
+            if (cost < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Cost = cost;
+        }
+
+        public void SetCore(double core)
+        {
+            if (core < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Core = core;
+        }
+
+        public void SetPONumber(string poNumber)
+        {
+            if (string.IsNullOrWhiteSpace(poNumber))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            poNumber = (poNumber ?? string.Empty).Trim();
+
+            if (poNumber.Length > PONumberMaximumLength)
+                throw new ArgumentOutOfRangeException(PONumberMaximumLengthMessage);
+
+            PONumber = poNumber;
+        }
+
+        public void SetTransactionDate(DateTime? transactionDate)
+        {
+            if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
+                throw new ArgumentOutOfRangeException(TransactionDateInvalidMessage);
+
+            TransactionDate = transactionDate;
         }
 
         #region ORM

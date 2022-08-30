@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.ValueObjects;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -45,12 +46,49 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (partNumber.Length < MinimumLength || description.Length < MinimumLength)
                 return Result.Failure<VendorInvoiceItem>(MinimumLengthMessage);
 
-            if (manufacturer is null)
+            if (manufacturer is null || saleCode is null)
                 return Result.Failure<VendorInvoiceItem>(RequiredMessage);
 
             return Result.Success(new VendorInvoiceItem(
                 partNumber, manufacturer, description, saleCode));
         }
+
+        public void SetPartNumber(string partNumber)
+        {
+            partNumber = (partNumber ?? string.Empty).Trim();
+
+            if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+
+            PartNumber = partNumber;
+        }
+
+        public void SetManufacturer(Manufacturer manufacturer)
+        {
+            if (manufacturer is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Manufacturer = manufacturer;
+        }
+
+        public void SetDescription(string description)
+        {
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length < MinimumLength || description.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+
+            Description = description;
+        }
+
+        public void SetSaleCode(SaleCode saleCode)
+        {
+            if (saleCode is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            SaleCode = saleCode;
+        }
+
 
         #region ORM
 

@@ -73,9 +73,9 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             var manufacturer = repository.GetManufacturerEntityAsync(code).Result;
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            manufacturer.Code = mfrDto.Code;
-            manufacturer.Name = mfrDto.Name;
-            manufacturer.Prefix = mfrDto.Prefix;
+            manufacturer.SetCode(mfrDto.Code);
+            manufacturer.SetName(mfrDto.Name);
+            manufacturer.SetPrefix(mfrDto.Prefix);
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -95,12 +95,10 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<ActionResult<ManufacturerToRead>> AddManufacturerAsync(ManufacturerToWrite mfrCreateDto)
         {
             // 1. Convert dto to domain entity
-            var manufacturer = new Manufacturer()
-            {
-                Code = mfrCreateDto.Code,
-                Name = mfrCreateDto.Name,
-                Prefix = mfrCreateDto.Prefix
-            };
+            var manufacturer = Manufacturer.Create(
+                mfrCreateDto.Name,
+                mfrCreateDto.Prefix, 
+                mfrCreateDto.Code).Value;
 
             // 2. Add domain entity to repository
             await repository.AddManufacturerAsync(manufacturer);

@@ -1,8 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using System;
-using System.Xml.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Taxes

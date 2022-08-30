@@ -20,7 +20,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         #region <---- ConvertEntityToReadDto ---->
         public static VendorInvoiceToRead ConvertEntityToReadDto(VendorInvoice invoice)
         {
-            return invoice == null
+            return
+                invoice == null
                 ? null
                 :
                 new()
@@ -28,7 +29,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Id = invoice.Id,
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
-                    Status = EnumExtensions.GetDisplayName(invoice.Status),//   (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
+                    Status = EnumExtensions.GetDisplayName(invoice.Status),
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
@@ -180,8 +181,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Id = invoice.Id,
                     VendorId = invoice.Vendor?.Id ?? 0,
                     VendorCode = invoice.Vendor?.VendorCode,
-                    Name = invoice.Vendor?.Name,
-                    DateCreated = invoice.Date?.ToShortDateString(),
+                    VendorName = invoice.Vendor?.Name,
+                    Date = invoice.Date?.ToShortDateString(),
                     DatePosted = invoice.DatePosted?.ToShortDateString(),
                     Status = invoice.Status.ToString(),
                     InvoiceNumber = invoice.InvoiceNumber,

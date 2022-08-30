@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
     {
         public long Id { get; set; }
         public VendorToRead Vendor { get; set; }
-        public string Name { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? DatePosted { get; set; }
         public string Status { get; set; }

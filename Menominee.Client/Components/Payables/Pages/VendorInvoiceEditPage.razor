@@ -3,7 +3,7 @@
 
 @*<PayablesMenu />*@
 
-@if (Invoice != null)
+@if (Invoice is not null)
 {
     <div class="m-main-content m-boxshadow">
         <VendorInvoiceEditor Invoice="Invoice" OnValidSubmit="Save" OnDiscard="Discard" />

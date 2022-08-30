@@ -20,18 +20,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
 
         public Vendor Vendor { get; private set; }
-        public DateTime? Date { get; private set; }
-        public DateTime? DatePosted { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
         public string InvoiceNumber { get; private set; }
         public double Total { get; private set; }
+        public DateTime? Date { get; private set; }
+        public DateTime? DatePosted { get; private set; }
 
         public IList<VendorInvoiceLineItem> LineItems { get; private set; }
         public IList<VendorInvoicePayment> Payments { get; private set; }
         public IList<VendorInvoiceTax> Taxes { get; private set; }
 
         private VendorInvoice(
-            Vendor vendor, 
+            Vendor vendor,
             VendorInvoiceStatus status,
             string invoiceNumber,
             double total,
@@ -66,12 +66,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (vendor is null)
                 return Result.Failure<VendorInvoice>(RequiredMessage);
 
-            if (date.HasValue && date.Value > DateTime.Today)
-                return Result.Failure<VendorInvoice>(DateInvalidMessage);
-
-            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
-                return Result.Failure<VendorInvoice>(DateInvalidMessage);
-
             if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
                 return Result.Failure<VendorInvoice>(RequiredMessage);
 
@@ -83,8 +77,66 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (total < MinimumValue)
                 return Result.Failure<VendorInvoice>(MinimumValueMessage);
 
+            if (date.HasValue && date.Value > DateTime.Today)
+                return Result.Failure<VendorInvoice>(DateInvalidMessage);
+
+            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
+                return Result.Failure<VendorInvoice>(DateInvalidMessage);
+
             return Result.Success(new VendorInvoice(
                 vendor, status, invoiceNumber, total, date, datePosted, lineItems, payments, taxes));
+        }
+
+        public void SetVendor(Vendor vendor)
+        {
+            if (vendor is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Vendor = vendor;
+        }
+
+        public void SetVendorInvoiceStatus(VendorInvoiceStatus status)
+        {
+            if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Status = status;
+        }
+
+        public void SetInvoiceNumber(string invoiceNumber)
+        {
+            invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
+
+            if (invoiceNumber.Length > InvoiceNumberMaximumLength)
+                throw new ArgumentOutOfRangeException(InvoiceNumberMaximumLengthMessage);
+
+            InvoiceNumber = invoiceNumber;
+        }
+
+        public void SetTotal(double total)
+        {
+            if (total < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Total = total;
+        }
+
+        public void SetDate(DateTime? date)
+        {
+            if (date.HasValue && date.Value > DateTime.Today)
+                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+            // Caller may send a null, signaling that we should clear the value.
+            Date = date.Value;
+        }
+
+        public void SetDatePosted(DateTime? datePosted)
+        {
+            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
+                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+            // Caller may send a null, signaling that we should clear the value.
+            DatePosted = datePosted.Value;
         }
 
         public void AddLineItem(VendorInvoiceLineItem lineItem)
@@ -117,12 +169,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Taxes.Remove(tax);
         }
 
-        public void SetItems(IList<VendorInvoiceLineItem> items)
+        public void SetLineItems(IList<VendorInvoiceLineItem> lineItems)
         {
-            if (items.Count > 0)
+            if (lineItems.Count > 0)
             {
                 LineItems.Clear();
-                foreach (var item in items)
+                foreach (var item in lineItems)
                     AddLineItem(item);
             }
         }

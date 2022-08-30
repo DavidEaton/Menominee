@@ -1,62 +1,71 @@
-﻿@if (Items == null)
+﻿@if (LineItems is null)
 {
     <p><em>Loading...</em></p>
 }
 
-@if (Items != null)
+@if (LineItems is not null)
 {
-    <TelerikGrid Data="Items"
-                 OnRowClick="@OnRowSelected"
-                 OnRowDoubleClick="@OnEdit"
-                 Sortable="true"
-                 FilterMode="GridFilterMode.FilterMenu"
-                 ShowColumnMenu="true"
-                 SelectionMode="GridSelectionMode.Single"
-                 SelectedItemsChanged="@((IEnumerable<VendorInvoiceLineItemToWrite> itemList) => OnSelect(itemList))"
-                 SelectedItems="@SelectedItems"
-                 @ref="@Grid">
+    <TelerikGrid Data="LineItems"
+             OnRowClick="@OnRowSelected"
+             OnRowDoubleClick="@OnEdit"
+             Sortable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             ShowColumnMenu="true"
+             SelectionMode="GridSelectionMode.Single"
+             SelectedItemsChanged="@((IEnumerable<VendorInvoiceLineItemToWrite> itemList) => OnSelect(itemList))"
+             SelectedItems="@SelectedItems"
+             @ref="@Grid">
         <GridColumns>
             <GridColumn Width="25%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.Item.PartNumber)"
-                        Title="Part Number"
-                        ShowColumnChooser="false"
-                        Lockable="false">
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Item.PartNumber)"
+                    Title="Part Number"
+                    ShowColumnChooser="false"
+                    Lockable="false">
             </GridColumn>
             <GridColumn Width="35%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.Item.Description)"
-                        Title="Description"
-                        ShowColumnChooser="false"
-                        Lockable="false">
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Item.Description)"
+                    Title="Description"
+                    ShowColumnChooser="false"
+                    Lockable="false">
             </GridColumn>
             <GridColumn Width="20%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.Quantity)"
-                        Title="Quantity"
-                        ShowColumnChooser="false"
-                        Lockable="false"
-                        ShowColumnMenu="false"
-                        Sortable="false"
-                        Filterable="false"
-                        TextAlign="ColumnTextAlign.Right">
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Quantity)"
+                    Title="Quantity"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
+                    TextAlign="ColumnTextAlign.Right">
             </GridColumn>
             <GridColumn Width="20%"
-                        Field="@nameof(VendorInvoiceLineItemToWrite.Cost)"
-                        Title="Cost"
-                        ShowColumnChooser="false"
-                        Lockable="false"
-                        ShowColumnMenu="false"
-                        Sortable="false"
-                        Filterable="false"
-                        DisplayFormat="{0:C}"
-                        TextAlign="ColumnTextAlign.Right">
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Cost)"
+                    Title="Cost"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
+                    DisplayFormat="{0:C}"
+                    TextAlign="ColumnTextAlign.Right">
             </GridColumn>
         </GridColumns>
     </TelerikGrid>
 
-    @if (ItemToModify != null)
+    @if (ItemToModify is not null)
     {
-        <VendorInvoiceItemEditor Item="@ItemToModify" DialogVisible="@EditDialogVisible" Mode="@ItemFormMode" OnSave="@OnSaveEdit" OnCancel="@OnCancelEdit" />
+        <VendorInvoiceItemEditor LineItem="ItemToModify"
+                         DialogVisible="EditDialogVisible"
+                         Mode="ItemFormMode"
+                         OnSave="OnSaveEdit"
+                         OnCancel="OnCancelEdit" />
     }
 
-    <EditNewDeleteIconButtons OnEdit="@OnEdit" OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+    <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          OnNew="OnNew"
+                          OnDelete="OnDelete"
+                          ShowDivider="false"
+                          CanEdit="CanEdit"
+                          CanDelete="CanDelete" />
 }
 

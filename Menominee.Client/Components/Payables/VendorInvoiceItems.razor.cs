@@ -12,7 +12,7 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoiceItems : ComponentBase
     {
         [Parameter]
-        public IList<VendorInvoiceLineItemToWrite> Items { get; set; }
+        public IList<VendorInvoiceLineItemToWrite> LineItems { get; set; }
 
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
@@ -105,8 +105,8 @@ namespace Menominee.Client.Components.Payables
             if (SelectedItem != null
             && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedItem.Item.PartNumber}?", "Remove Item"))
             {
-                Items.Remove(SelectedItem);
-                SelectedItem = Items.FirstOrDefault();
+                LineItems.Remove(SelectedItem);
+                SelectedItem = LineItems.FirstOrDefault();
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
                 Grid.Rebind();
             }
@@ -119,9 +119,9 @@ namespace Menominee.Client.Components.Payables
 
             if (ItemFormMode == FormMode.Add)
             {
-                Items.Add(ItemToModify);
-                selectedItemIndex = Items.IndexOf(ItemToModify);
-                SelectedItem = Items[selectedItemIndex];
+                LineItems.Add(ItemToModify);
+                selectedItemIndex = LineItems.IndexOf(ItemToModify);
+                SelectedItem = LineItems[selectedItemIndex];
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
                 Grid.Rebind();
             }
@@ -129,7 +129,7 @@ namespace Menominee.Client.Components.Payables
             {
                 //Items[selectedItemIndex] = ItemToModify;
                 //SelectedItem = ItemToModify;
-                CopyItem(ItemToModify, Items[selectedItemIndex]);
+                CopyItem(ItemToModify, LineItems[selectedItemIndex]);
             }
             //SelectedId = SelectedItem.Id;
             EditDialogVisible = false;
@@ -146,7 +146,7 @@ namespace Menominee.Client.Components.Payables
         {
             SelectedItem = args.Item as VendorInvoiceLineItemToWrite;
             //SelectedId = SelectedItem.Id;
-            selectedItemIndex = Items.IndexOf(SelectedItem);
+            selectedItemIndex = LineItems.IndexOf(SelectedItem);
             SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
         }
 
@@ -158,15 +158,15 @@ namespace Menominee.Client.Components.Payables
 
         protected override void OnInitialized()
         {
-            if (Items.Count > 0)
+            if (LineItems.Count > 0)
             {
                 if (itemToSelect == 0)
-                    SelectedItem = Items.FirstOrDefault();
+                    SelectedItem = LineItems.FirstOrDefault();
 
                 //if (itemToSelect != 0)
                 //    SelectedItem = Items.Where(x => x.Id == itemToSelect).FirstOrDefault();
 
-                selectedItemIndex = Items.IndexOf(SelectedItem);
+                selectedItemIndex = LineItems.IndexOf(SelectedItem);
                 //SelectedId = SelectedItem.Id;
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
             }

@@ -54,10 +54,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                                   .AsNoTracking()
                                                   .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
-            return
-                invoiceFromContext is null
-                ? VendorInvoiceHelper.ConvertEntityToReadDto(invoiceFromContext)
-                : null;
+            return invoiceFromContext is null
+            ? null
+            : VendorInvoiceHelper.ConvertEntityToReadDto(invoiceFromContext);
         }
 
         public async Task<Vendor> GetVendorAsync(long id)
@@ -68,22 +67,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<VendorInvoice> GetInvoiceEntityAsync(long id)
         {
             var invoiceFromContext = await context.VendorInvoices
-                                                  .Include(invoice => invoice.Vendor)
-                                                  .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Item.Manufacturer)
-                                                  .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Item.SaleCode)
-                                                  //                                                  .Include(invoice => invoice.Payments)
-                                                  //                                                      .ThenInclude(payment => payment.PaymentMethod)
-                                                  //                                                          .AsNoTracking()
-                                                  .Include(invoice => invoice.Payments)
-                                                      .ThenInclude(payment => payment.PaymentMethod)
-                                                          .ThenInclude(method => method.ReconcilingVendor)
-                                                  //                                                          .AsNoTracking()
-                                                  .Include(invoice => invoice.Taxes)
-                                                      .ThenInclude(tax => tax.SalesTax)
-                                                  .AsSplitQuery()
-                                                  .FirstOrDefaultAsync(invoice => invoice.Id == id);
+                .Include(invoice => invoice.Vendor)
+                .Include(invoice => invoice.LineItems)
+                    .ThenInclude(item => item.Item.Manufacturer)
+                .Include(invoice => invoice.LineItems)
+                    .ThenInclude(item => item.Item.SaleCode)
+                .Include(invoice => invoice.Payments)
+                    .ThenInclude(payment => payment.PaymentMethod)
+                .Include(invoice => invoice.Payments)
+                    .ThenInclude(payment => payment.PaymentMethod)
+                        .ThenInclude(method => method.ReconcilingVendor)
+                .Include(invoice => invoice.Taxes)
+                    .ThenInclude(tax => tax.SalesTax)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return invoiceFromContext;
         }
@@ -91,10 +88,10 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync()
         {
             IReadOnlyList<VendorInvoice> invoices = await context.VendorInvoices
-                                                                 .Include(invoice => invoice.Vendor)
-                                                                 .AsSplitQuery()
-                                                                 .AsNoTracking()
-                                                                 .ToListAsync();
+                .Include(invoice => invoice.Vendor)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .ToListAsync();
 
             return invoices.Select(invoice => VendorInvoiceHelper.ConvertEntityToReadInListDto(invoice))
                                    .ToList();
@@ -103,11 +100,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<bool> SaveChangesAsync()
         {
             return await context.SaveChangesAsync() > 0;
-        }
-
-        public void UpdateInvoiceAsync(VendorInvoice invoice)
-        {
-            // No code in this implementation
         }
 
         public async Task<bool> InvoiceExistsAsync(long id)

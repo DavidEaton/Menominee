@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Utilities;
 using System;
 using Entity = Menominee.Common.Entity;
@@ -11,14 +12,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
-        public string VendorCode { get; private set; }
         public string Name { get; private set; }
+        public string VendorCode { get; private set; }
         public bool? IsActive { get; private set; }
 
-        private Vendor(string vendorCode, string name)
+        private Vendor(string name, string vendorCode)
         {
-            VendorCode = vendorCode;
             Name = name;
+            VendorCode = vendorCode;
             IsActive = true; // We won't be creating any new inactive Vendors
         }
 
@@ -33,12 +34,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
 
-            if (name.Length <= MinimumLength || name.Length <= MinimumLength
+            if (name.Length < MinimumLength || name.Length > MaximumLength
                 ||
-                name.Length >= MaximumLength || name.Length >= MaximumLength)
+                vendorCode.Length < MinimumLength || vendorCode.Length > MaximumLength)
+            {
                 return Result.Failure<Vendor>(InvalidLengthMessage);
+            }
 
-            return new Vendor(vendorCode, name);
+            return Result.Success(new Vendor(name, vendorCode));
         }
 
         public void SetName(string name)
@@ -47,7 +50,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             name = (name ?? string.Empty).Trim();
 
-            if (name.Length <= MinimumLength || name.Length >= MaximumLength)
+            if (name.Length < MinimumLength || name.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
             Name = name;
@@ -55,18 +58,23 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public void SetVendorCode(string vendorCode)
         {
             Guard.ForNullOrEmpty(vendorCode, "VendorCode");
+
             vendorCode = (vendorCode ?? string.Empty).Trim();
 
-            if (vendorCode.Length <= MinimumLength || vendorCode.Length >= MaximumLength)
+            if (vendorCode.Length < MinimumLength || vendorCode.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
             VendorCode = vendorCode;
         }
 
-        public void SetIsActive(bool? isActive)
+        public void Enable()
         {
-            if (IsActive.HasValue)
-                IsActive = isActive;
+            IsActive = true;
+        }
+
+        public void Disable()
+        {
+            IsActive = false;
         }
 
         #region ORM

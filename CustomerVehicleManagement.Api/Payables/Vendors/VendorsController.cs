@@ -82,10 +82,17 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             var vendorFromRepository = await repository.GetVendorEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            //vendor.Id = vendorUpdateDto.Id;
             vendorFromRepository.SetVendorCode(vendor.VendorCode);
             vendorFromRepository.SetName(vendor.Name);
-            vendorFromRepository.SetIsActive(vendor.IsActive);
+
+            if (vendorFromRepository.IsActive.HasValue)
+            {
+                if (vendorFromRepository.IsActive.Value.Equals(true))
+                    vendorFromRepository.Enable();
+
+                if (vendorFromRepository.IsActive.Value.Equals(false))
+                    vendorFromRepository.Disable();
+            }
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified

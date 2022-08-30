@@ -18,6 +18,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                 .IsRequired();
 
             // Value Object: VendorInvoiceItem
+            // Configure Value Object to contain two Entity references
             builder.OwnsOne(
                 lineItem => lineItem.Item, ownershipBuilder =>
                 {
