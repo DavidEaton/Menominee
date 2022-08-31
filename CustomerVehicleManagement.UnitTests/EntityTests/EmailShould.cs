@@ -95,10 +95,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var email = Create_Primary_Email();
 
-            email.IsPrimary.Should().Be(true);
+            email.IsPrimary.Should().BeTrue();
             email.SetIsPrimary(false);
 
-            email.IsPrimary.Should().Be(false);
+            email.IsPrimary.Should().BeFalse();
         }
 
         internal static Email Create_Primary_Email()

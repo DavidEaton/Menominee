@@ -15,27 +15,27 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string MinimumLengthMessage = $"Cannot be under {MinimumLength} character(s) in length.";
 
         public string PartNumber { get; private set; } // required, 1..255 or maybe less. Really just a string?
-        public Manufacturer Manufacturer { get; private set; } // not required for every item type
         public string Description { get; private set; } // required, 1.255
+        public Manufacturer Manufacturer { get; private set; } // not required for every item type
         public SaleCode SaleCode { get; private set; } // not required
 
         private VendorInvoiceItem(
             string partNumber,
-            Manufacturer manufacturer,
             string description,
-            SaleCode saleCode)
+            Manufacturer manufacturer = null,
+            SaleCode saleCode = null)
         {
             PartNumber = partNumber;
-            Manufacturer = manufacturer;
             Description = description;
+            Manufacturer = manufacturer;
             SaleCode = saleCode;
         }
 
         public static Result<VendorInvoiceItem> Create(
             string partNumber,
-            Manufacturer manufacturer,
             string description,
-            SaleCode saleCode)
+            Manufacturer manufacturer = null,
+            SaleCode saleCode = null)
         {
             partNumber = (partNumber ?? string.Empty).Trim();
             description = (description ?? string.Empty).Trim();
@@ -46,11 +46,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (partNumber.Length < MinimumLength || description.Length < MinimumLength)
                 return Result.Failure<VendorInvoiceItem>(MinimumLengthMessage);
 
-            if (manufacturer is null || saleCode is null)
-                return Result.Failure<VendorInvoiceItem>(RequiredMessage);
-
             return Result.Success(new VendorInvoiceItem(
-                partNumber, manufacturer, description, saleCode));
+                partNumber, description, manufacturer, saleCode));
         }
 
         public void SetPartNumber(string partNumber)
@@ -63,14 +60,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             PartNumber = partNumber;
         }
 
-        public void SetManufacturer(Manufacturer manufacturer)
-        {
-            if (manufacturer is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            Manufacturer = manufacturer;
-        }
-
         public void SetDescription(string description)
         {
             description = (description ?? string.Empty).Trim();
@@ -81,6 +70,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Description = description;
         }
 
+        public void SetManufacturer(Manufacturer manufacturer)
+        {
+            if (manufacturer is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            Manufacturer = manufacturer;
+        }
+
+        public void ClearManufacturer() => Manufacturer = null;
+
         public void SetSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
@@ -89,6 +88,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             SaleCode = saleCode;
         }
 
+        public void ClearSaleCode() => SaleCode = null;
 
         #region ORM
 

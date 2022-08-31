@@ -10,8 +10,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
         {
             return VendorInvoiceItem.Create(
                 item.PartNumber,
-                ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
                 item.Description,
+                ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
                 SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode))
                 .Value;
         }

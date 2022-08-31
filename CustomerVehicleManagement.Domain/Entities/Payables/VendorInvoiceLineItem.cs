@@ -28,8 +28,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             double quantity,
             double cost,
             double core,
-            string poNumber,
-            DateTime? transactionDate)
+            string poNumber = null,
+            DateTime? transactionDate = null)
         {
             Type = type;
             Item = item;
@@ -46,8 +46,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             double quantity,
             double cost,
             double core,
-            string poNumber,
-            DateTime? transactionDate)
+            string poNumber = null,
+            DateTime? transactionDate = null)
         {
             if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
@@ -60,9 +60,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             if (cost < MinimumValue || core < MinimumValue)
                 return Result.Failure<VendorInvoiceLineItem>(MinimumValueMessage);
-
-            if (string.IsNullOrWhiteSpace(poNumber))
-                return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
             poNumber = (poNumber ?? string.Empty).Trim();
 
@@ -129,6 +126,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             PONumber = poNumber;
         }
 
+        public void ClearPONumber() => PONumber = string.Empty;
+
         public void SetTransactionDate(DateTime? transactionDate)
         {
             if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
@@ -136,6 +135,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             TransactionDate = transactionDate;
         }
+
+        public void ClearTransactionDate() => TransactionDate = null;
 
         #region ORM
 

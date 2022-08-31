@@ -23,31 +23,31 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
     public class VendorInvoiceShould
     {
         [Fact]
-        public void Create_Vendor_Invoice()
+        public void Create_VendorInvoice()
         {
             // Arrange
             var vendorOrError = Vendor.Create("Vendor One", "V1");
 
             // Act
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendorOrError.Value,
                 VendorInvoiceStatus.Open,
                 null,
                 1);
 
             // Assert
-            vendorInvoice.IsFailure.Should().Be(false);
-            vendorInvoice.Should().NotBeNull();
-            vendorInvoice.Value.Should().BeOfType<VendorInvoice>();
+            vendorInvoiceOrError.IsFailure.Should().BeFalse();
+            vendorInvoiceOrError.Should().NotBeNull();
+            vendorInvoiceOrError.Value.Should().BeOfType<VendorInvoice>();
         }
 
         [Fact]
-        public void Create_Vendor_Invoice_With_Optional_InvoiceNumber()
+        public void Create_VendorInvoice_With_Optional_InvoiceNumber()
         {
-            var vendorOne = Vendor.Create("Vendor One", "V1");
+            var vendorOneOrError = Vendor.Create("Vendor One", "V1");
 
             var vendorInvoice = VendorInvoice.Create(
-                vendorOne.Value,
+                vendorOneOrError.Value,
                 VendorInvoiceStatus.Open,
                 "001",
                 1).Value;
@@ -56,12 +56,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Create_Vendor_Invoice_With_Optional_DatePosted()
+        public void Create_VendorInvoice_With_Optional_DatePosted()
         {
             var datePosted = DateTime.Today;
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 "001",
@@ -69,18 +69,18 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 null,
                 datePosted);
 
-            vendorInvoice.IsFailure.Should().Be(false);
-            vendorInvoice.Should().NotBeNull();
-            vendorInvoice.Value.Should().BeOfType<VendorInvoice>();
+            vendorInvoiceOrError.IsFailure.Should().BeFalse();
+            vendorInvoiceOrError.Should().NotBeNull();
+            vendorInvoiceOrError.Value.Should().BeOfType<VendorInvoice>();
         }
 
         [Fact]
-        public void Create_Vendor_Invoice_With_Optional_Date()
+        public void Create_VendorInvoice_With_Optional_Date()
         {
             var date = DateTime.Today;
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 "001",
@@ -88,18 +88,18 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 date,
                 null);
 
-            vendorInvoice.IsFailure.Should().Be(false);
-            vendorInvoice.Should().NotBeNull();
-            vendorInvoice.Value.Should().BeOfType<VendorInvoice>();
+            vendorInvoiceOrError.IsFailure.Should().BeFalse();
+            vendorInvoiceOrError.Should().NotBeNull();
+            vendorInvoiceOrError.Value.Should().BeOfType<VendorInvoice>();
         }
 
         [Fact]
-        public void Create_Vendor_Invoice_With_Open_Status()
+        public void Create_VendorInvoice_With_Open_Status()
         {
-            var vendorOne = Vendor.Create("Vendor One", "V1");
+            var vendorOneOrError = Vendor.Create("Vendor One", "V1");
 
             var vendorInvoice = VendorInvoice.Create(
-                vendorOne.Value,
+                vendorOneOrError.Value,
                 VendorInvoiceStatus.Open,
                 "001",
                 1).Value;
@@ -108,75 +108,75 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Null_Vendor()
+        public void Not_Create_VendorInvoice_With_Null_Vendor()
         {
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 null,
                 VendorInvoiceStatus.Open,
                 "001",
                 1);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Invalid_Status()
+        public void Not_Create_VendorInvoice_With_Invalid_Status()
         {
             var invalidStatus = (VendorInvoiceStatus)(-1);
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 invalidStatus,
                 "001",
                 1);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Invalid_Total()
+        public void Not_Create_VendorInvoice_With_Invalid_Total()
         {
             var invalidTotal = -1;
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 "001",
                 invalidTotal);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Invalid_Date()
+        public void Not_Create_VendorInvoice_With_Invalid_Date()
         {
             var invalidDate = DateTime.Today.AddDays(1);
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 "001",
                 1,
                 invalidDate);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Invalid_DatePosted()
+        public void Not_Create_VendorInvoice_With_Invalid_DatePosted()
         {
             var date = DateTime.Today;
             var invalidDatePosted = DateTime.Today.AddDays(1);
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 "001",
@@ -184,24 +184,24 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 date,
                 invalidDatePosted);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
-        public void Not_Create_Vendor_Invoice_With_Invalid_InvoiceNumber()
+        public void Not_Create_VendorInvoice_With_Invalid_InvoiceNumber()
         {
             var invalidInvoiceNumber = Utilities.RandomCharacters(VendorInvoice.InvoiceNumberMaximumLength + 1);
             var vendor = Vendor.Create("Vendor One", "V1").Value;
 
-            var vendorInvoice = VendorInvoice.Create(
+            var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
                 invalidInvoiceNumber,
                 1);
 
-            vendorInvoice.IsFailure.Should().Be(true);
-            vendorInvoice.Error.Should().NotBeNull();
+            vendorInvoiceOrError.IsFailure.Should().BeTrue();
+            vendorInvoiceOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Vendor_Invoice_Status()
+        public void Set_VendorInvoice_Status()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -365,7 +365,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Not_Set_Invalid_Vendor_Invoice_Status()
+        public void Not_Set_Invalid_VendorInvoice_Status()
         {
             var invalidStatus = (VendorInvoiceStatus)(-1);
             var vendorOne = Vendor.Create("Vendor One", "V1");
@@ -438,7 +438,5 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetDatePosted(date));
         }
-
-
     }
 }

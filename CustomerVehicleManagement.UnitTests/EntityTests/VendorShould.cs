@@ -7,7 +7,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
-    public class VendorShouldTestData
+    internal class TestData
     {
         public static IEnumerable<object[]> Data
         {
@@ -44,11 +44,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
-            vendorOrError.IsFailure.Should().Be(true);
+            vendorOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
-        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_Vendor_With_Invalid_Name(int length)
         {
             var name = Utilities.RandomCharacters(length);
@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
-            vendorOrError.IsFailure.Should().Be(true);
+            vendorOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -67,11 +67,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var vendorOrError = Vendor.Create(name, code);
 
-            vendorOrError.IsFailure.Should().Be(true);
+            vendorOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
-        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_Vendor_With_Invalid_Code(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
-            vendorOrError.IsFailure.Should().Be(true);
+            vendorOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Name_With_Invalid_Name(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
@@ -136,7 +136,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Vendor_Code(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
@@ -169,7 +169,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             vendor.Disable();
 
-            vendor.IsActive.Should().Be(false);
+            vendor.IsActive.Should().BeFalse();
         }
 
         [Fact]
@@ -180,10 +180,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var vendor = Vendor.Create(name, vendorCode).Value;
 
             vendor.Disable();
-            vendor.IsActive.Should().Be(false);
+            vendor.IsActive.Should().BeFalse();
 
             vendor.Enable();
-            vendor.IsActive.Should().Be(true);
+            vendor.IsActive.Should().BeTrue();
         }
 
     }

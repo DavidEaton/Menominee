@@ -140,10 +140,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             // property.
         }
 
-        public void ClearDate()
-        {
-            Date = null;
-        }
+        public void ClearDate() => Date = null;
 
         public void SetDatePosted(DateTime? datePosted)
         {
@@ -159,10 +156,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             }
         }
 
-        public void ClearDatePosted()
-        {
-            DatePosted = null;
-        }
+        public void ClearDatePosted() => DatePosted = null;
 
         public void AddLineItem(VendorInvoiceLineItem lineItem)
         {

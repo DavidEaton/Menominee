@@ -66,15 +66,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             VendorCode = vendorCode;
         }
 
-        public void Enable()
-        {
-            IsActive = true;
-        }
+        public void Enable() => IsActive = true;
 
-        public void Disable()
-        {
-            IsActive = false;
-        }
+        public void Disable() => IsActive = false;
 
         #region ORM
 
