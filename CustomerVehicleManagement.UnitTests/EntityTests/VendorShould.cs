@@ -7,7 +7,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
-    public class TestData
+    public class VendorShouldTestData
     {
         public static IEnumerable<object[]> Data
         {
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
         public void Not_Create_Vendor_With_Invalid_Name(int length)
         {
             var name = Utilities.RandomCharacters(length);
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
         public void Not_Create_Vendor_With_Invalid_Code(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
         public void Not_Set_Name_With_Invalid_Name(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
@@ -136,7 +136,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        [MemberData(nameof(VendorShouldTestData.Data), MemberType = typeof(VendorShouldTestData))]
         public void Not_Set_Invalid_Vendor_Code(int length)
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);

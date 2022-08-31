@@ -14,10 +14,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string DateInvalidMessage = $"Date cannot be in the future.";
-        public static readonly int InvoiceNumberMaximumLength = 255;
         public static readonly string InvoiceNumberMaximumLengthMessage = $"Invoice Number cannot be over {InvoiceNumberMaximumLength} characters in length.";
-        public static readonly double MinimumValue = 0;
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
+        public static readonly double MinimumValue = 0;
+        public static readonly int InvoiceNumberMaximumLength = 255;
 
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
@@ -123,20 +123,45 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public void SetDate(DateTime? date)
         {
-            if (date.HasValue && date.Value > DateTime.Today)
+            if (date is null)
                 throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-            // Caller may send a null, signaling that we should clear the value.
-            Date = date.Value;
+            if (date.HasValue)
+            {
+                if (date.Value > DateTime.Today)
+                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+                Date = date.Value;
+            }
+
+            // If we got here, caller passed a null.
+            // Set methods should return results, not
+            // silently fail validation and NOT Set the
+            // property.
+        }
+
+        public void ClearDate()
+        {
+            Date = null;
         }
 
         public void SetDatePosted(DateTime? datePosted)
         {
-            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
+            if (datePosted is null)
                 throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-            // Caller may send a null, signaling that we should clear the value.
-            DatePosted = datePosted.Value;
+            if (datePosted.HasValue)
+            {
+                if (datePosted.Value > DateTime.Today)
+                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+                DatePosted = datePosted.Value;
+            }
+        }
+
+        public void ClearDatePosted()
+        {
+            DatePosted = null;
         }
 
         public void AddLineItem(VendorInvoiceLineItem lineItem)
