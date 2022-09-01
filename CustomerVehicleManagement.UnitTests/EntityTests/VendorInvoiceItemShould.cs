@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
 
-            var itemOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer);
+            var itemOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer: manufacturer);
 
             itemOrError.IsFailure.Should().BeFalse();
             itemOrError.Should().NotBeNull();
@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
             var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
 
-            var itemOrError = VendorInvoiceItem.Create("a part", "a description", null, saleCode);
+            var itemOrError = VendorInvoiceItem.Create("a part", "a description", saleCode: saleCode);
 
             itemOrError.IsFailure.Should().BeFalse();
             itemOrError.Should().NotBeNull();
@@ -95,7 +95,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_PartNumber()
+        public void SetPartNumber()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
@@ -108,7 +108,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Description()
+        public void SetDescription()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
@@ -121,7 +121,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Manufacturer()
+        public void SetManufacturer()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
@@ -133,7 +133,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_SaleCode()
+        public void SetSaleCode()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
@@ -147,7 +147,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Clear_Manufacturer()
+        public void ClearManufacturer()
         {
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer).Value;
@@ -159,7 +159,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Clear_SaleCode()
+        public void ClearSaleCode()
         {
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;

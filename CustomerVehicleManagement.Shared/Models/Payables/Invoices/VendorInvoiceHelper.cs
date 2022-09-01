@@ -135,8 +135,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 : VendorInvoice.Create(
                 VendorHelper.ConvertWriteDtoToEntity(invoice.Vendor),
                 invoice.Status,
-                invoice.InvoiceNumber,
                 invoice.Total,
+                invoice.InvoiceNumber,
                 invoice.Date,
                 invoice.DatePosted,
                 VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems),

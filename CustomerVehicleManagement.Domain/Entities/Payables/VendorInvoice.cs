@@ -21,8 +21,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
-        public string InvoiceNumber { get; private set; }
         public double Total { get; private set; }
+        public string InvoiceNumber { get; private set; }
         public DateTime? Date { get; private set; }
         public DateTime? DatePosted { get; private set; }
 
@@ -33,8 +33,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         private VendorInvoice(
             Vendor vendor,
             VendorInvoiceStatus status,
-            string invoiceNumber,
             double total,
+            string invoiceNumber = null,
             DateTime? date = null,
             DateTime? datePosted = null,
             IList<VendorInvoiceLineItem> lineItems = null,
@@ -42,11 +42,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IList<VendorInvoiceTax> taxes = null)
         {
             Vendor = vendor;
+            Status = status;
+            Total = total;
+            InvoiceNumber = invoiceNumber;
             Date = date;
             DatePosted = datePosted;
-            Status = status;
-            InvoiceNumber = invoiceNumber;
-            Total = total;
             LineItems = lineItems ?? new List<VendorInvoiceLineItem>();
             Payments = payments ?? new List<VendorInvoicePayment>();
             Taxes = taxes ?? new List<VendorInvoiceTax>();
@@ -55,8 +55,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static Result<VendorInvoice> Create(
             Vendor vendor,
             VendorInvoiceStatus status,
-            string invoiceNumber,
             double total,
+            string invoiceNumber = null,
             DateTime? date = null,
             DateTime? datePosted = null,
             IList<VendorInvoiceLineItem> lineItems = null,
@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(DateInvalidMessage);
 
             return Result.Success(new VendorInvoice(
-                vendor, status, invoiceNumber, total, date, datePosted, lineItems, payments, taxes));
+                vendor, status, total, invoiceNumber, date, datePosted, lineItems, payments, taxes));
         }
 
         public void SetVendor(Vendor vendor)
