@@ -9,18 +9,6 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
-    internal class VendorInvoiceItemShouldTestData
-    {
-        public static IEnumerable<object[]> Data
-        {
-            get
-            {
-                yield return new object[] { VendorInvoiceItem.MaximumLength + 1 };
-                yield return new object[] { VendorInvoiceItem.MinimumLength - 1 };
-            }
-        }
-    }
-
     public class VendorInvoiceItemShould
     {
         [Fact]
@@ -71,7 +59,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceItemShouldTestData.Data), MemberType = typeof(VendorInvoiceItemShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_VendorInvoiceItem_With_Invalid_PartNumber(int length)
         {
             var partNumber = Utilities.RandomCharacters(length);
@@ -83,7 +71,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceItemShouldTestData.Data), MemberType = typeof(VendorInvoiceItemShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_VendorInvoiceItem_With_Invalid_Description(int length)
         {
             var description = Utilities.RandomCharacters(length);
@@ -173,7 +161,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceItemShouldTestData.Data), MemberType = typeof(VendorInvoiceItemShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_PartNumber(int length)
         {
             var invalidPartNumber = Utilities.RandomCharacters(length);
@@ -183,7 +171,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceItemShouldTestData.Data), MemberType = typeof(VendorInvoiceItemShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Description(int length)
         {
             var invalidDescription = Utilities.RandomCharacters(length);
@@ -206,6 +194,17 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
             Assert.Throws<ArgumentOutOfRangeException>(() => item.SetSaleCode(null));
+        }
+        internal class TestData
+        {
+            public static IEnumerable<object[]> Data
+            {
+                get
+                {
+                    yield return new object[] { VendorInvoiceItem.MaximumLength + 1 };
+                    yield return new object[] { VendorInvoiceItem.MinimumLength - 1 };
+                }
+            }
         }
     }
 }

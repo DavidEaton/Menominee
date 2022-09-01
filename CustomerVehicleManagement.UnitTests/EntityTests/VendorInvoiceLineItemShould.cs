@@ -12,17 +12,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
     public class VendorInvoiceLineItemShould
     {
-        internal class TestData
-        {
-            public static IEnumerable<object[]> Data
-            {
-                get
-                {
-                    yield return new object[] { VendorInvoiceLineItem.MinimumValue };
-                    yield return new object[] { VendorInvoiceLineItem.PONumberMaximumLength + 1 };
-                }
-            }
-        }
 
         internal class VendorCodeTestData
         {
@@ -49,7 +38,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
 
             // Assert
-            lineItem.Should().NotBeNull();
             lineItem.Should().BeOfType<VendorInvoiceLineItem>();
             lineItem.Item.Manufacturer.Should().Be(manufacturer);
             lineItem.Item.SaleCode.Should().Be(saleCode);
@@ -362,6 +350,17 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetTransactionDate(invalidTransactionDate));
         }
 
+        internal class TestData
+        {
+            public static IEnumerable<object[]> Data
+            {
+                get
+                {
+                    yield return new object[] { VendorInvoiceLineItem.MinimumValue };
+                    yield return new object[] { VendorInvoiceLineItem.PONumberMaximumLength + 1 };
+                }
+            }
+        }
 
     }
 }

@@ -8,18 +8,6 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
-    public class VendorInvoiceShouldTestData
-    {
-        public static IEnumerable<object[]> Data
-        {
-            get
-            {
-                yield return new object[] { null };
-                yield return new object[] { DateTime.Today.AddDays(1) };
-            }
-        }
-    }
-
     public class VendorInvoiceShould
     {
         [Fact]
@@ -196,7 +184,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Vendor()
+        public void SetVendor()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -213,7 +201,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_VendorInvoice_Status()
+        public void SetVendorInvoiceStatus()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -231,7 +219,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Invoice_Number()
+        public void SetInvoiceNumber()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
             var invoiceNumber = "001";
@@ -250,7 +238,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Total()
+        public void SetTotal()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -268,7 +256,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Date()
+        public void SetDate()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -286,7 +274,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Clear_Date()
+        public void ClearDate()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
             DateTime? date = new(2000, 1, 1);
@@ -305,7 +293,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Date_Posted()
+        public void SetDatePosted()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -323,7 +311,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Clear_DatePosted()
+        public void ClearDatePosted()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
             DateTime? datePosted = new(2000, 1, 1);
@@ -397,7 +385,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceShouldTestData.Data), MemberType = typeof(VendorInvoiceShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Date(DateTime? date)
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
@@ -411,7 +399,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Theory]
-        [MemberData(nameof(VendorInvoiceShouldTestData.Data), MemberType = typeof(VendorInvoiceShouldTestData))]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_DatePosted(DateTime? datePosted)
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
@@ -422,6 +410,18 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 1).Value;
 
             Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetDatePosted(datePosted));
+        }
+
+        public class TestData
+        {
+            public static IEnumerable<object[]> Data
+            {
+                get
+                {
+                    yield return new object[] { null };
+                    yield return new object[] { DateTime.Today.AddDays(1) };
+                }
+            }
         }
     }
 }

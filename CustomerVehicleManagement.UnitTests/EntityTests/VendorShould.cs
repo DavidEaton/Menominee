@@ -7,18 +7,6 @@ using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
-    internal class TestData
-    {
-        public static IEnumerable<object[]> Data
-        {
-            get
-            {
-                yield return new object[] { Vendor.MinimumLength - 1 };
-                yield return new object[] { Vendor.MaximumLength + 1 };
-            }
-        }
-    }
-
     public class VendorShould
     {
         [Fact]
@@ -83,7 +71,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Name()
+        public void SetName()
         {
             var name = "Vendor One";
             var vendorCode = "V1";
@@ -123,7 +111,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Set_Vendor_Code()
+        public void SetVendorCode()
         {
             var name = "Vendor One";
             var vendorCode = "V1";
@@ -186,5 +174,16 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             vendor.IsActive.Should().BeTrue();
         }
 
+        internal class TestData
+        {
+            public static IEnumerable<object[]> Data
+            {
+                get
+                {
+                    yield return new object[] { Vendor.MinimumLength - 1 };
+                    yield return new object[] { Vendor.MaximumLength + 1 };
+                }
+            }
+        }
     }
 }
