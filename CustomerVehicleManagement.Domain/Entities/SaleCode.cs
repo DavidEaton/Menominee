@@ -51,9 +51,6 @@ namespace CustomerVehicleManagement.Domain.Entities
                 string.IsNullOrWhiteSpace(code))
                 return Result.Failure<SaleCode>(RequiredMessage);
 
-            if (string.IsNullOrWhiteSpace(code))
-                return Result.Failure<SaleCode>(RequiredMessage);
-
             name = (name ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
 

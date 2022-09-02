@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -50,16 +49,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (name is null)
                 return Result.Failure<VendorInvoicePaymentMethod>(RequiredMessage);
 
-             name = (name ?? string.Empty).Trim();
-
-           if (name.Length > MaximumLength || name.Length < MinimumLength)
-                return Result.Failure<VendorInvoicePaymentMethod>(InvalidLengthMessage);
-
-            if (paymentMethods.Contains(name))
-                return Result.Failure<VendorInvoicePaymentMethod>(UniqueMessage);
+            name = (name ?? string.Empty).Trim();
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
                 return Result.Failure<VendorInvoicePaymentMethod>($"{InvalidLengthMessage} You entered {name.Length} character(s).");
+
+            if (paymentMethods.Contains(name))
+                return Result.Failure<VendorInvoicePaymentMethod>(UniqueMessage);
 
             return Result.Success(new VendorInvoicePaymentMethod(
                 name, isActive, isOnAccountPaymentType, reconcilingVendor));

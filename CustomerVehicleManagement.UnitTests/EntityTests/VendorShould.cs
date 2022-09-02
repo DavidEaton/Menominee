@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using System;
@@ -88,12 +89,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var name = Utilities.RandomCharacters(Vendor.MinimumLength);
             var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
-
-            var vendor = Vendor.Create(name, vendorCode).Value;
+            var vendor = Vendor.Create(name, vendorCode);
+            vendor.IsSuccess.Should().BeTrue();
 
             string newName = null;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetName(newName));
+            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.Value.SetName(newName));
         }
 
         [Theory]
