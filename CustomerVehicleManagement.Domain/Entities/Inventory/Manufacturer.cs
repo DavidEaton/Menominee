@@ -14,11 +14,24 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public string Name { get; private set; }
         public string Prefix { get; private set; }
         public string Code { get; private set; }
-        //public xxx Country { get; private set; }
-        //public xxx Franchise { get; private set; }
 
         private Manufacturer(string name, string prefix, string code)
         {
+            if (string.IsNullOrWhiteSpace(name) ||
+                string.IsNullOrWhiteSpace(prefix) ||
+                string.IsNullOrWhiteSpace(code))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            name = (name ?? string.Empty).Trim();
+            prefix = (prefix ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim();
+
+            if (name.Length > MaximumLength || name.Length < MinimumLength ||
+                prefix.Length > MaximumLength || prefix.Length < MinimumLength ||
+                code.Length > MaximumLength || code.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
+
             Name = name;
             Prefix = prefix;
             Code = code;
@@ -26,25 +39,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<Manufacturer> Create(string name, string prefix, string code)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                return Result.Failure<Manufacturer>(RequiredMessage);
-
-            if (string.IsNullOrWhiteSpace(prefix))
-                return Result.Failure<Manufacturer>(RequiredMessage);
-
-            if (string.IsNullOrWhiteSpace(code))
+            if (string.IsNullOrWhiteSpace(name) ||
+                string.IsNullOrWhiteSpace(prefix) ||
+                string.IsNullOrWhiteSpace(code))
                 return Result.Failure<Manufacturer>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
             prefix = (prefix ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
 
-            if (name.Length > MaximumLength || name.Length < MinimumLength
-                ||
-                prefix.Length > MaximumLength || prefix.Length < MinimumLength
-                ||
-                code.Length > MaximumLength || code.Length < MinimumLength
-                )
+            if (name.Length > MaximumLength || name.Length < MinimumLength ||
+                prefix.Length > MaximumLength || prefix.Length < MinimumLength ||
+                code.Length > MaximumLength || code.Length < MinimumLength)
                 return Result.Failure<Manufacturer>(InvalidLengthMessage);
 
             return Result.Success(new Manufacturer(name, prefix, code));

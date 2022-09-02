@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,15 +39,39 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             double laborTaxRate,
             List<ExciseFee> exciseFees)
         {
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+
+            description = (description ?? string.Empty).Trim();
+
+            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
+                throw new ArgumentOutOfRangeException(nameof(taxType));
+
             Description = description;
             TaxType = taxType;
             Order = order;
-            IsAppliedByDefault = isAppliedByDefault;
-            IsTaxable = isTaxable;
+
+            if (isAppliedByDefault.HasValue)
+                IsAppliedByDefault = isAppliedByDefault.Value;
+
+            if (isTaxable.HasValue)
+                IsTaxable = isTaxable.Value;
+
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
+                throw new ArgumentOutOfRangeException("taxIdNumber");
+
+            if (partTaxRate < MinimumValue)
+                throw new ArgumentOutOfRangeException("partTaxRate");
+
+            if (laborTaxRate < MinimumValue)
+                throw new ArgumentOutOfRangeException("laborTaxRate");
+
             TaxIdNumber = taxIdNumber;
             PartTaxRate = partTaxRate;
             LaborTaxRate = laborTaxRate;
-            ExciseFees = exciseFees;
+            SetExciseFees(exciseFees);
         }
 
         public static Result<SalesTax> Create(
@@ -137,8 +160,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         public void SetTaxType(SalesTaxType taxType)
         {
-            Guard.ForNull(taxType, "taxType");
-
             if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
                 throw new ArgumentOutOfRangeException(nameof(taxType));
 

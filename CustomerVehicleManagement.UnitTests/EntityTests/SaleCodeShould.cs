@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
     public class SaleCodeShould
     {
         [Fact]
-        public void CreateSaleCode()
+        public void Create_SaleCode()
         {
             // Arrange
             string name = "Sale Code One";

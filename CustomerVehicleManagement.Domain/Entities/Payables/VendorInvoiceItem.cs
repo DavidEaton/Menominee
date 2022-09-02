@@ -25,10 +25,23 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Manufacturer manufacturer = null,
             SaleCode saleCode = null)
         {
+            partNumber = (partNumber ?? string.Empty).Trim();
+            description = (description ?? string.Empty).Trim();
+
+            if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+
+            if (description.Length < MinimumLength || description.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+
             PartNumber = partNumber;
             Description = description;
-            Manufacturer = manufacturer;
-            SaleCode = saleCode;
+
+            if (manufacturer is not null)
+                Manufacturer = manufacturer;
+
+            if (saleCode is not null)
+                SaleCode = saleCode;
         }
 
         public static Result<VendorInvoiceItem> Create(

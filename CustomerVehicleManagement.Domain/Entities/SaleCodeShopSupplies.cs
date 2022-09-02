@@ -25,6 +25,12 @@ namespace CustomerVehicleManagement.Domain.Entities
             bool includeParts,
             bool includeLabor)
         {
+            if (percentage < MinimumValue ||
+                minimumJobAmount < MinimumValue ||
+                minimumCharge < MinimumValue ||
+                maximumCharge < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
             Percentage = percentage;
             MinimumJobAmount = minimumJobAmount;
             MinimumCharge = minimumCharge;

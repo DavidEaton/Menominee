@@ -20,6 +20,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         private ExciseFee(string description, ExciseFeeType feeType, double amount)
         {
+            if (description is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+
+            if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (amount < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+            
             Description = description;
             FeeType = feeType;
             Amount = amount;
@@ -51,15 +65,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         public void SetDescription(string description)
         {
-            if (description is not null)
-            {
-                description = description.Trim();
+            if (description is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
 
-                if (description.Length > DescriptionMaximumLength)
-                    throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+            description = (description ?? string.Empty).Trim();
 
-                Description = description;
-            }
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+
+            Description = description;
         }
 
         public void SetFeeType(ExciseFeeType feeType)

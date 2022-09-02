@@ -14,15 +14,19 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private VendorInvoiceTax(SalesTax salesTax, int taxId)
         {
+            if (salesTax is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
             SalesTax = salesTax;
             TaxId = taxId;
         }
 
         public static Result<VendorInvoiceTax> Create(SalesTax salesTax, int taxId)
         {
-            return salesTax is null
-                ? Result.Failure<VendorInvoiceTax>(RequiredMessage)
-                : Result.Success(new VendorInvoiceTax(salesTax, taxId));
+            if (salesTax is null)
+                return Result.Failure<VendorInvoiceTax>(RequiredMessage);
+
+            return Result.Success(new VendorInvoiceTax(salesTax, taxId));
         }
 
         public void SetSalesTax(SalesTax salesTax)

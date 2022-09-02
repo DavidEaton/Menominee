@@ -22,15 +22,33 @@ namespace CustomerVehicleManagement.Domain.Entities
         // TODO - Should royalty be split out???
         private SaleCode(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
+            if (string.IsNullOrWhiteSpace(name) ||
+                string.IsNullOrWhiteSpace(code))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            name = (name ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim();
+
+            if (name.Length > MaximumLength || name.Length < MinimumLength ||
+                code.Length > MaximumLength || code.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
+            if (laborRate < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            if (desiredMargin < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
             Name = name;
             Code = code;
             LaborRate = laborRate;
             DesiredMargin = desiredMargin;
-            ShopSupplies = shopSupplies;
+            ShopSupplies = shopSupplies;  // By the time we get here, ShopSupplies validation has already occurred; no need to repeat here.
         }
         public static Result<SaleCode> Create(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name) ||
+                string.IsNullOrWhiteSpace(code))
                 return Result.Failure<SaleCode>(RequiredMessage);
 
             if (string.IsNullOrWhiteSpace(code))
@@ -39,8 +57,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             name = (name ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
 
-            if (name.Length > MaximumLength || name.Length < MinimumLength
-                ||
+            if (name.Length > MaximumLength || name.Length < MinimumLength ||
                 code.Length > MaximumLength || code.Length < MinimumLength)
                 return Result.Failure<SaleCode>(InvalidLengthMessage);
 

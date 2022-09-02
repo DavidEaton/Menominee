@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -25,6 +26,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             bool isOnAccountPaymentType,
             Vendor reconcilingVendor)
         {
+            if (name is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            name = (name ?? string.Empty).Trim();
+
+            if (name.Length > MaximumLength || name.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
             Name = name;
             IsActive = isActive;
             IsOnAccountPaymentType = isOnAccountPaymentType;
@@ -86,6 +95,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public void SetReconcilingVendor(Vendor reconcilingVendor)
         {
+            if (reconcilingVendor is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
             ReconcilingVendor = reconcilingVendor;
         }
 

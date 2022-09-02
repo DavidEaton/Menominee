@@ -41,12 +41,40 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IList<VendorInvoicePayment> payments = null,
             IList<VendorInvoiceTax> taxes = null)
         {
+            if (vendor is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (total < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
+
+            if (invoiceNumber.Length > InvoiceNumberMaximumLength)
+                throw new ArgumentOutOfRangeException(InvoiceNumberMaximumLengthMessage);
+
+            if (date.HasValue)
+            {
+                if (date.Value > DateTime.Today)
+                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+                Date = date.Value;
+            }
+
+            if (datePosted.HasValue)
+            {
+                if (datePosted.Value > DateTime.Today)
+                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+
+                DatePosted = datePosted.Value;
+            }
+
             Vendor = vendor;
             Status = status;
             Total = total;
             InvoiceNumber = invoiceNumber;
-            Date = date;
-            DatePosted = datePosted;
             LineItems = lineItems ?? new List<VendorInvoiceLineItem>();
             Payments = payments ?? new List<VendorInvoicePayment>();
             Taxes = taxes ?? new List<VendorInvoiceTax>();
@@ -105,6 +133,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public void SetInvoiceNumber(string invoiceNumber)
         {
+            if (invoiceNumber is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
             invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
 
             if (invoiceNumber.Length > InvoiceNumberMaximumLength)
@@ -126,13 +157,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (date is null)
                 throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-            if (date.HasValue)
-            {
-                if (date.Value > DateTime.Today)
-                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+            if (date.HasValue && date.Value > DateTime.Today)
+                throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-                Date = date.Value;
-            }
+            Date = date.Value;
 
             // If we got here, caller passed a null.
             // Set methods should return results, not
@@ -147,13 +175,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (datePosted is null)
                 throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-            if (datePosted.HasValue)
-            {
-                if (datePosted.Value > DateTime.Today)
-                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
+            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
+                throw new ArgumentOutOfRangeException(DateInvalidMessage);
 
-                DatePosted = datePosted.Value;
-            }
+            DatePosted = datePosted.Value;
         }
 
         public void ClearDatePosted() => DatePosted = null;

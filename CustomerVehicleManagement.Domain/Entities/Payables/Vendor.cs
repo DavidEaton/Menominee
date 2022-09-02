@@ -17,6 +17,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private Vendor(string name, string vendorCode)
         {
+            Guard.ForNullOrEmpty(name, "name");
+            Guard.ForNullOrEmpty(vendorCode, "vendorCode");
+
+            name = (name ?? string.Empty).Trim();
+            vendorCode = (vendorCode ?? string.Empty).Trim();
+
+            if (name.Length < MinimumLength ||
+                name.Length > MaximumLength ||
+                vendorCode.Length < MinimumLength ||
+                vendorCode.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
             Name = name;
             VendorCode = vendorCode;
             IsActive = true; // We won't be creating any new inactive Vendors
@@ -33,12 +45,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
 
-            if (name.Length < MinimumLength || name.Length > MaximumLength
-                ||
-                vendorCode.Length < MinimumLength || vendorCode.Length > MaximumLength)
-            {
+            if (name.Length < MinimumLength ||
+                name.Length > MaximumLength ||
+                vendorCode.Length < MinimumLength ||
+                vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
-            }
 
             return Result.Success(new Vendor(name, vendorCode));
         }
