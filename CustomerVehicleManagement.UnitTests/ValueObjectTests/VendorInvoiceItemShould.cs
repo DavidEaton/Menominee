@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace CustomerVehicleManagement.UnitTests.EntityTests
+namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 {
     public class VendorInvoiceItemShould
     {

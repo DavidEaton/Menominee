@@ -61,7 +61,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 name, isActive, isOnAccountPaymentType, reconcilingVendor));
         }
 
-        public void SetName(string name)
+        public void SetName(string name, IEnumerable<string> paymentMethods)
         {
             if (name is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -70,6 +70,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             if (name.Length > MaximumLength || name.Length < MinimumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
+            if (paymentMethods.Contains(name))
+                throw new ArgumentException(UniqueMessage);
 
             Name = name;
         }
