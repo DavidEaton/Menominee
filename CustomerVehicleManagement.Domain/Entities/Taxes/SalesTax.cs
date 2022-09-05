@@ -12,8 +12,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public static readonly int DescriptionMaximumLength = 10000;
         public static readonly string DescriptionMaximumLengthMessage = $"Description cannot be over {DescriptionMaximumLength} characters in length.";
         public static readonly string InvalidMessage = $"Invalid value(s). Please be sure all entries are valid";
+        public static readonly int TaxIdNumberMinumumLength = 1;
         public static readonly int TaxIdNumberMaximumLength = 255;
-        public static readonly string TaxIdNumberMaximumLengthMessage = $"Tax Id Number cannot be over {TaxIdNumberMaximumLength} characters in length.";
+        public static readonly string TaxIdNumberInvalidLengthMessage = $"Tax Id Number must be between {TaxIdNumberMinumumLength} and {TaxIdNumberMaximumLength} characters in length.";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly double MinimumValue = 0;
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
@@ -32,24 +33,42 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             string description,
             SalesTaxType taxType,
             int order,
-            bool? isAppliedByDefault,
-            bool? isTaxable,
             string taxIdNumber,
             double partTaxRate,
             double laborTaxRate,
-            List<ExciseFee> exciseFees)
+            List<ExciseFee> exciseFees = null,
+            bool? isAppliedByDefault = null,
+            bool? isTaxable = null)
         {
-            if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+            if (description is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
 
             description = (description ?? string.Empty).Trim();
+
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
 
             if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
                 throw new ArgumentOutOfRangeException(nameof(taxType));
 
+            if (order < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
             Description = description;
             TaxType = taxType;
             Order = order;
+
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
+                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
+
+            if (partTaxRate < MinimumValue || laborTaxRate < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            TaxIdNumber = taxIdNumber;
+            PartTaxRate = partTaxRate;
+            LaborTaxRate = laborTaxRate;
 
             if (isAppliedByDefault.HasValue)
                 IsAppliedByDefault = isAppliedByDefault.Value;
@@ -57,20 +76,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (isTaxable.HasValue)
                 IsTaxable = isTaxable.Value;
 
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
-
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
-                throw new ArgumentOutOfRangeException("taxIdNumber");
-
-            if (partTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException("partTaxRate");
-
-            if (laborTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException("laborTaxRate");
-
-            TaxIdNumber = taxIdNumber;
-            PartTaxRate = partTaxRate;
-            LaborTaxRate = laborTaxRate;
             SetExciseFees(exciseFees);
         }
 
@@ -78,27 +83,31 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             string description,
             SalesTaxType taxType,
             int order,
-            bool? isAppliedByDefault,
-            bool? isTaxable,
             string taxIdNumber,
             double partTaxRate,
             double laborTaxRate,
-            List<ExciseFee> exciseFees)
+            List<ExciseFee> exciseFees = null,
+            bool? isAppliedByDefault = null,
+            bool? isTaxable = null)
         {
             if (description is null)
                 return Result.Failure<SalesTax>(RequiredMessage);
 
-            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
-                return Result.Failure<SalesTax>(InvalidMessage);
-
             description = (description ?? string.Empty).Trim();
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
 
             if (description.Length > DescriptionMaximumLength)
                 return Result.Failure<SalesTax>(DescriptionMaximumLengthMessage);
 
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
-                return Result.Failure<SalesTax>(TaxIdNumberMaximumLengthMessage);
+            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
+                return Result.Failure<SalesTax>(InvalidMessage);
+
+            if (order < MinimumValue)
+                return Result.Failure<SalesTax>(MinimumValueMessage);
+
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
+                return Result.Failure<SalesTax>(TaxIdNumberInvalidLengthMessage);
 
             if (partTaxRate < MinimumValue || laborTaxRate < MinimumValue)
                 return Result.Failure<SalesTax>(MinimumValueMessage);
@@ -107,18 +116,58 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 description,
                 taxType,
                 order,
-                isAppliedByDefault,
-                isTaxable,
                 taxIdNumber,
                 partTaxRate,
                 laborTaxRate,
-                exciseFees));
+                exciseFees,
+                isAppliedByDefault,
+                isTaxable
+                ));
+        }
+
+        public void SetDescription(string description)
+        {
+            if (description is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+
+            Description = description;
+        }
+
+        public void SetTaxType(SalesTaxType taxType)
+        {
+            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
+                throw new ArgumentOutOfRangeException(nameof(taxType));
+
+            TaxType = taxType;
+        }
+
+        public void SetOrder(int order)
+        {
+            if (order < MinimumValue)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+
+            Order = order;
+        }
+
+        public void SetTaxIdNumber(string taxIdNumber)
+        {
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
+                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
+
+            TaxIdNumber = taxIdNumber;
         }
 
         public void SetPartTaxRate(double partTaxRate)
         {
             if (partTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException("partTaxRate");
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
             PartTaxRate = partTaxRate;
         }
@@ -126,19 +175,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public void SetLaborTaxRate(double laborTaxRate)
         {
             if (laborTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException("laborTaxRate");
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
             LaborTaxRate = laborTaxRate;
-        }
-
-        public void SetTaxIdNumber(string taxIdNumber)
-        {
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
-
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
-                throw new ArgumentOutOfRangeException("taxIdNumber");
-
-            TaxIdNumber = taxIdNumber;
         }
 
         public void SetIsTaxable(bool? isTaxable)
@@ -151,29 +190,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         {
             if (isAppliedByDefault.HasValue)
                 IsAppliedByDefault = isAppliedByDefault.Value;
-        }
-
-        public void SetOrder(int order)
-        {
-            Order = order;
-        }
-
-        public void SetTaxType(SalesTaxType taxType)
-        {
-            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
-                throw new ArgumentOutOfRangeException(nameof(taxType));
-
-            TaxType = taxType;
-        }
-
-        public void SetDescription(string description)
-        {
-            description = (description ?? string.Empty).Trim();
-
-            if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException("description");
-
-            Description = description;
         }
 
 

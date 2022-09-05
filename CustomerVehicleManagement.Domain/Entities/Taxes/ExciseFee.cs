@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (description.Length > DescriptionMaximumLength)
                 throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
 
-            if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
+            if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             if (amount < MinimumValue)

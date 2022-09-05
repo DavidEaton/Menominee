@@ -81,13 +81,12 @@ namespace CustomerVehicleManagement.Api.Taxes
                 taxToWrite.Description,
                 taxToWrite.TaxType,
                 taxToWrite.Order,
-                taxToWrite.IsAppliedByDefault,
-                taxToWrite.IsTaxable,
                 taxToWrite.TaxIdNumber,
                 taxToWrite.PartTaxRate,
                 taxToWrite.LaborTaxRate,
-                ExciseFeeHelper.ConvertWriteDtosToEntities(taxToWrite.ExciseFees)
-            ).Value;
+                ExciseFeeHelper.ConvertWriteDtosToEntities(taxToWrite.ExciseFees),
+                taxToWrite.IsAppliedByDefault,
+                taxToWrite.IsTaxable).Value;
 
             // 2. Add domain entity to repository
             await repository.AddSalesTaxAsync(tax);

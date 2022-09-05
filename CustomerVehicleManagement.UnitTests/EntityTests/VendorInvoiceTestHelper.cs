@@ -1,5 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.TestUtilities;
+using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -39,6 +42,27 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var paymentMethod = CreateVendorInvoicePaymentMethod();
             double amount = VendorInvoicePayment.InvalidValue + 1;
             return VendorInvoicePayment.Create(paymentMethod, amount).Value;
+        }
+
+        internal static List<ExciseFee> CreateExciseFees()
+        {
+            // TODO: This test method creates and returns an entity list
+            // with all Id == 0. That breaks identity comaprisons like
+            // if (!ExciseFees.Any(x => x.Id == fee.Id))... inside our
+            // domain class SalesTax.SetExciseFees creation/validation
+            // MUST TEST COLLECTIONS WITH INTEGRATION, NOT UNIT TESTS
+            var fees = new List<ExciseFee>();
+            int length = 5;
+
+            for (int i = 0; i < length; i++)
+            {
+                fees.Add(ExciseFee.Create(
+                    Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - length),
+                    ExciseFeeType.Flat,
+                    ExciseFee.MinimumValue + length).Value);
+            }
+
+            return fees;
         }
     }
 }

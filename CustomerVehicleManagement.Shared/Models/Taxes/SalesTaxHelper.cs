@@ -12,12 +12,12 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 tax.Description,
                 tax.TaxType,
                 tax.Order,
-                tax.IsAppliedByDefault,
-                tax.IsTaxable,
                 tax.TaxIdNumber,
                 tax.PartTaxRate,
                 tax.LaborTaxRate,
-                ExciseFeeHelper.ConvertWriteDtosToEntities(tax.ExciseFees))
+                ExciseFeeHelper.ConvertWriteDtosToEntities(tax.ExciseFees),
+                tax.IsAppliedByDefault,
+                tax.IsTaxable)
                 .Value;
         }
 
