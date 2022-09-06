@@ -22,10 +22,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = Person.Create(name, Gender.Female).Value;
+            var personOrError = Person.Create(name, Gender.Female);
 
             // Assert
-            person.Should().NotBeNull();
+            personOrError.Value.Should().BeOfType<Person>();
+            personOrError.IsFailure.Should().BeFalse();
+
         }
 
         [Fact]

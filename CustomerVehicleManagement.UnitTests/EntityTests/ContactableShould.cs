@@ -20,10 +20,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var organization = OrganizationHelper.CreateTestOrganization();
 
             organization.SetAddress(addressOrError.Value);
-            var customer = new Customer(organization, CustomerType.Retail);
-            var janes = customer.Organization;
+            var customerOrError = new Customer(organization, CustomerType.Retail);
+            var janes = customerOrError.Organization;
 
-            customer.EntityType.Should().Be(EntityType.Organization);
+            customerOrError.Should().BeOfType<Customer>();
+            customerOrError.EntityType.Should().Be(EntityType.Organization);
             janes.Address.AddressLine.Should().Be(addressLine);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);

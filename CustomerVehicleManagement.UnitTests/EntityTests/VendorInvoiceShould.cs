@@ -23,9 +23,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 1);
 
             // Assert
-            vendorInvoiceOrError.IsFailure.Should().BeFalse();
-            vendorInvoiceOrError.Should().NotBeNull();
             vendorInvoiceOrError.Value.Should().BeOfType<VendorInvoice>();
+            vendorInvoiceOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]

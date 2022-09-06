@@ -12,9 +12,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var address = "john@doe.com";
             var primary = true;
 
-            var email = Email.Create(address, primary).Value;
+            var emailFeeOrError = Email.Create(address, primary);
 
-            email.Should().BeOfType<Email>();
+            emailFeeOrError.Value.Should().BeOfType<Email>();
+            emailFeeOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]

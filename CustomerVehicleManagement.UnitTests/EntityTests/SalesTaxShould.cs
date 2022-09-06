@@ -42,9 +42,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var salesTaxOrError = SalesTax.Create(description, taxType, order, taxIdNumber, partTaxRate, laborTaxRate, isAppliedByDefault: isAppliedByDefault, isTaxable: isTaxable);
 
             // Assert
-            salesTaxOrError.IsFailure.Should().BeFalse();
-            salesTaxOrError.Should().NotBeNull();
             salesTaxOrError.Value.Should().BeOfType<SalesTax>();
+            salesTaxOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]

@@ -22,8 +22,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var exciseFeeOrError = ExciseFee.Create(description, feeType, amount);
 
             // Assert
-            exciseFeeOrError.IsFailure.Should().BeFalse();
             exciseFeeOrError.Value.Should().BeOfType<ExciseFee>();
+            exciseFeeOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]

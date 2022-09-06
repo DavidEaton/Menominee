@@ -19,17 +19,18 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var includeLabor = true;
 
             // Act
-            var supplies = SaleCodeShopSupplies.Create(
+            var suppliesOrError = SaleCodeShopSupplies.Create(
                 percentage, minimumJobAmount, minimumCharge, maximumCharge, includeParts, includeLabor)
-                .Value;
+                ;
 
             // Assert
-            supplies.Should().BeOfType<SaleCodeShopSupplies>();
-            supplies.Percentage.Should().Be(percentage);
-            supplies.MinimumJobAmount.Should().Be(minimumJobAmount);
-            supplies.MaximumCharge.Should().Be(maximumCharge);
-            supplies.IncludeParts.Should().Be(includeParts);
-            supplies.IncludeLabor.Should().Be(includeLabor);
+            suppliesOrError.Value.Should().BeOfType<SaleCodeShopSupplies>();
+            suppliesOrError.IsSuccess.Should().BeTrue();
+            suppliesOrError.Value.Percentage.Should().Be(percentage);
+            suppliesOrError.Value.MinimumJobAmount.Should().Be(minimumJobAmount);
+            suppliesOrError.Value.MaximumCharge.Should().Be(maximumCharge);
+            suppliesOrError.Value.IncludeParts.Should().Be(includeParts);
+            suppliesOrError.Value.IncludeLabor.Should().Be(includeLabor);
         }
 
         [Fact]

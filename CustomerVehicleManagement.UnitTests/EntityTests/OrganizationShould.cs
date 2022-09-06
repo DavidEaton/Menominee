@@ -18,15 +18,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             // Arrange
             var name = "   Jane's";
-            Organization organization = null;
-            var organizationNameOrError = OrganizationName.Create(name);
 
             // Act
-            if (!organizationNameOrError.IsFailure)
-                organization = Organization.Create(organizationNameOrError.Value, null, null).Value;
+            var organizationOrError = Organization.Create(OrganizationName.Create(name).Value, null, null);
 
             // Assert
-            organization.Should().NotBeNull();
+            organizationOrError.Value.Should().BeOfType<Organization>();
+            organizationOrError.IsFailure.Should().BeFalse();
+            organizationOrError.Value.Name.Name.Should().Be(name.Trim());
         }
 
         [Fact]

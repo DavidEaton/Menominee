@@ -20,14 +20,16 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             SaleCodeShopSupplies shopSupplies = new();
 
             // Act
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
+            var saleCodeOrError = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
 
             // Assert
-            saleCode.Name.Should().Be(name);
-            saleCode.Code.Should().Be(code);
-            saleCode.LaborRate.Should().Be(laborRate);
-            saleCode.DesiredMargin.Should().Be(desiredMargin);
-            saleCode.ShopSupplies.Should().Be(shopSupplies);
+            saleCodeOrError.Value.Should().BeOfType<SaleCode>();
+            saleCodeOrError.IsSuccess.Should().BeTrue();
+            saleCodeOrError.Value.Name.Should().Be(name);
+            saleCodeOrError.Value.Code.Should().Be(code);
+            saleCodeOrError.Value.LaborRate.Should().Be(laborRate);
+            saleCodeOrError.Value.DesiredMargin.Should().Be(desiredMargin);
+            saleCodeOrError.Value.ShopSupplies.Should().Be(shopSupplies);
         }
 
         [Theory]

@@ -16,12 +16,13 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             double amount = VendorInvoicePayment.InvalidValue + 1.0;
 
             // Act
-            var payment = VendorInvoicePayment.Create(paymentMethod, amount)
-                .Value;
+            var paymentOrError = VendorInvoicePayment.Create(paymentMethod, amount);
 
             // Assert
-            payment.PaymentMethod.Should().Be(paymentMethod);
-            payment.Amount.Should().Be(amount);
+            paymentOrError.Value.Should().BeOfType<VendorInvoicePayment>();
+            paymentOrError.IsFailure.Should().BeFalse();
+            paymentOrError.Value.PaymentMethod.Should().Be(paymentMethod);
+            paymentOrError.Value.Amount.Should().Be(amount);
         }
 
         [Fact]

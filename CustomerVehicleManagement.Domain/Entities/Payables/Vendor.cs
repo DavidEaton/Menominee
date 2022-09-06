@@ -17,8 +17,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private Vendor(string name, string vendorCode)
         {
-            Guard.ForNullOrEmpty(name, "name");
-            Guard.ForNullOrEmpty(vendorCode, "vendorCode");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(RequiredMessage);
+
+            if (string.IsNullOrWhiteSpace(vendorCode))
+                throw new ArgumentNullException(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
@@ -31,7 +34,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Name = name;
             VendorCode = vendorCode;
-            IsActive = true; // We won't be creating any new inactive Vendors
+            IsActive = true;
         }
 
         public static Result<Vendor> Create(string name, string vendorCode)
@@ -54,16 +57,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(new Vendor(name, vendorCode));
         }
 
-        public void SetName(string name)
+        public Result<string> SetName(string name)
         {
-            Guard.ForNullOrEmpty(name, "Name");
+            if (string.IsNullOrWhiteSpace(name))
+                return Result.Failure<string>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Name = name;
+            return Result.Success(Name = name);
         }
         public void SetVendorCode(string vendorCode)
         {

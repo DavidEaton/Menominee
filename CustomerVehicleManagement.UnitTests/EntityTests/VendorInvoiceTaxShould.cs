@@ -20,7 +20,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 
             // Assert
             vendorInvoiceTaxOrError.IsFailure.Should().BeFalse();
-            vendorInvoiceTaxOrError.Should().NotBeNull();
             vendorInvoiceTaxOrError.Value.Should().BeOfType<VendorInvoiceTax>();
         }
 

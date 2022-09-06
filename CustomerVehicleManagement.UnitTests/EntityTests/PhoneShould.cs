@@ -15,10 +15,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var phoneType = PhoneType.Home;
 
             // Act
-            var phone = Phone.Create(number, phoneType, true).Value;
+            var phoneOrError = Phone.Create(number, phoneType, true);
 
             // Assert
-            phone.Should().NotBeNull();
+            phoneOrError.Value.Should().BeOfType<Phone>();
+            phoneOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]

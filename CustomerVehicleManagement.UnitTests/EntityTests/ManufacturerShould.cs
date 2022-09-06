@@ -18,13 +18,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var code = "V1";
 
             // Act
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturerOrError = Manufacturer.Create(name, prefix, code);
 
             // Assert
-            manufacturer.Should().BeOfType<Manufacturer>();
-            manufacturer.Name.Should().Be(name);
-            manufacturer.Prefix.Should().Be(prefix);
-            manufacturer.Code.Should().Be(code);
+            manufacturerOrError.IsFailure.Should().BeFalse();
+            manufacturerOrError.Value.Should().BeOfType<Manufacturer>();
+            manufacturerOrError.Value.Name.Should().Be(name);
+            manufacturerOrError.Value.Prefix.Should().Be(prefix);
+            manufacturerOrError.Value.Code.Should().Be(code);
         }
 
         [Theory]

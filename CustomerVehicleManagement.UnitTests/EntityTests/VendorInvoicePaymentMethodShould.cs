@@ -21,14 +21,16 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             IList<string> paymentMethodNames = CreatePaymentMethodNames();
 
             // Act
-            var vendorInvoicePaymentMethod = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
+            var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
+                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor);
 
             // Assert
-            vendorInvoicePaymentMethod.Name.Should().Be(name);
-            vendorInvoicePaymentMethod.IsActive.Should().Be(isActive);
-            vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().Be(isOnAccountPaymentType);
-            vendorInvoicePaymentMethod.ReconcilingVendor.Should().Be(reconcilingVendor);
+            vendorInvoicePaymentMethodOrError.Value.Should().BeOfType<VendorInvoicePaymentMethod>();
+            vendorInvoicePaymentMethodOrError.IsFailure.Should().BeFalse();
+            vendorInvoicePaymentMethodOrError.Value.Name.Should().Be(name);
+            vendorInvoicePaymentMethodOrError.Value.IsActive.Should().Be(isActive);
+            vendorInvoicePaymentMethodOrError.Value.IsOnAccountPaymentType.Should().Be(isOnAccountPaymentType);
+            vendorInvoicePaymentMethodOrError.Value.ReconcilingVendor.Should().Be(reconcilingVendor);
         }
 
         [Fact]

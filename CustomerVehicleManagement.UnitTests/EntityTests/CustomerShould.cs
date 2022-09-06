@@ -23,6 +23,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var customer = new Customer(person, CustomerType.Retail);
 
             // Assert
+            customer.Should().BeOfType<Customer>();
             customer.EntityType.Should().Be(EntityType.Person);
         }
 

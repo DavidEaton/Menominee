@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -35,13 +36,14 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var item = VendorInvoiceItem.Create("BR549", "a description", manufacturer, saleCode).Value;
 
             // Act
-            var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
+            var lineItemOrError = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1);
 
             // Assert
-            lineItem.Should().BeOfType<VendorInvoiceLineItem>();
-            lineItem.Item.Manufacturer.Should().Be(manufacturer);
-            lineItem.Item.SaleCode.Should().Be(saleCode);
-            lineItem.Item.SaleCode.ShopSupplies.Should().Be(saleCode.ShopSupplies);
+            lineItemOrError.Value.Should().BeOfType<VendorInvoiceLineItem>();
+            lineItemOrError.IsFailure.Should().BeFalse();
+            lineItemOrError.Value.Item.Manufacturer.Should().Be(manufacturer);
+            lineItemOrError.Value.Item.SaleCode.Should().Be(saleCode);
+            lineItemOrError.Value.Item.SaleCode.ShopSupplies.Should().Be(saleCode.ShopSupplies);
         }
 
         [Fact]
