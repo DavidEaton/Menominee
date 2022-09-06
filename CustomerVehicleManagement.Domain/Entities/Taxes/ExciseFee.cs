@@ -12,6 +12,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public static readonly string InvalidMessage = $"Invalid value(s). Please be sure all entries are valid";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly double MinimumValue = 0;
+        public static readonly double MaximumValue = 99999;
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
 
         public string Description { get; private set; }
@@ -31,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            if (amount < MinimumValue)
+            if (amount < MinimumValue || amount > MaximumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
             
             Description = description;
@@ -50,7 +51,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
                 return Result.Failure<ExciseFee>(InvalidMessage);
 
-            if (amount < MinimumValue)
+            if (amount < MinimumValue || amount > MaximumValue)
                 return Result.Failure<ExciseFee>(MinimumValueMessage);
 
             description = (description ?? string.Empty).Trim();
@@ -78,7 +79,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         public void SetFeeType(ExciseFeeType feeType)
         {
-            if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
+            if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             FeeType = feeType;
@@ -86,7 +87,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         public void SetAmount(double amount)
         {
-            if (amount < MinimumValue)
+            if (amount < MinimumValue || amount > MaximumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
             Amount = amount;
