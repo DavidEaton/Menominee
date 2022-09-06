@@ -328,7 +328,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Not_Set_Invalid_Vendor()
+        public void Not_Set_Null_Vendor()
         {
             var vendorOne = Vendor.Create("Vendor One", "V1");
 
@@ -338,7 +338,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 1)
                 .Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetVendor(null));
+            var resultOrError = vendorInvoice.SetVendor(null);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -352,7 +354,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 VendorInvoiceStatus.Open,
                 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetVendorInvoiceStatus(invalidStatus));
+            var resultOrError = vendorInvoice.SetVendorInvoiceStatus(invalidStatus);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -366,7 +370,25 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 VendorInvoiceStatus.Open,
                 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetInvoiceNumber(invalidInvoiceNumber));
+            var resultOrError = vendorInvoice.SetInvoiceNumber(invalidInvoiceNumber);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Set_Null_Invoice_Number()
+        {
+            string nullInvoiceNumber = null;
+            var vendor = Vendor.Create("Vendor One", "V1");
+
+            var vendorInvoice = VendorInvoice.Create(
+                vendor.Value,
+                VendorInvoiceStatus.Open,
+                1).Value;
+
+            var resultOrError = vendorInvoice.SetInvoiceNumber(nullInvoiceNumber);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -380,7 +402,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 VendorInvoiceStatus.Open,
                 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetTotal(invalidTotal));
+            var resultOrError = vendorInvoice.SetTotal(invalidTotal);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -394,7 +418,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 VendorInvoiceStatus.Open,
                 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetDate(date));
+            var resultOrError = vendorInvoice.SetDate(date);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -408,7 +434,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 VendorInvoiceStatus.Open,
                 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoice.SetDatePosted(datePosted));
+            var resultOrError = vendorInvoice.SetDatePosted(datePosted);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         public class TestData

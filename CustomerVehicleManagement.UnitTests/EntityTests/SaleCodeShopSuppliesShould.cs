@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -175,7 +174,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var supplies = CreateSaleCodeShopSupplies();
             var invalidPercentage = SaleCodeShopSupplies.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => supplies.SetPercentage(invalidPercentage));
+            var resultOrError = supplies.SetPercentage(invalidPercentage);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -184,7 +185,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var supplies = CreateSaleCodeShopSupplies();
             var invalidMinimumJobAmount = SaleCodeShopSupplies.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => supplies.SetMinimumJobAmount(invalidMinimumJobAmount));
+            var resultOrError = supplies.SetMinimumJobAmount(invalidMinimumJobAmount);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -193,7 +196,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var supplies = CreateSaleCodeShopSupplies();
             var invalidMinimumCharge = SaleCodeShopSupplies.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => supplies.SetMinimumCharge(invalidMinimumCharge));
+            var resultOrError = supplies.SetMinimumCharge(invalidMinimumCharge);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -202,7 +207,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var supplies = CreateSaleCodeShopSupplies();
             var invalidMaximumCharge = SaleCodeShopSupplies.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => supplies.SetMaximumCharge(invalidMaximumCharge));
+            var resultOrError = supplies.SetMaximumCharge(invalidMaximumCharge);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         private SaleCodeShopSupplies CreateSaleCodeShopSupplies()

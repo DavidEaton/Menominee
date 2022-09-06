@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.UnitTests.EntityTests.VendorInvoiceTestHelper;
@@ -88,13 +87,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendorOrError = CreateVendor();
 
-            //vendorOrError.Name.Should().BeTrue();
+            var resultOrError = vendorOrError.SetName(null);
 
-            //vendorOrError.Value.SetName(null);
-
-            //vendorOrError.IsSuccess.Should().BeTrue();
-
-            true.Should().BeFalse();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -106,9 +101,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var vendorOrError = Vendor.Create(name, vendorCode);
 
             var invalidName = Utilities.RandomCharacters(length);
-            vendorOrError.Value.SetName(invalidName);
+            var resultOrError = vendorOrError.Value.SetName(invalidName);
 
-            vendorOrError.IsSuccess.Should().BeTrue();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -130,8 +125,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var vendor = CreateVendor();
 
             var invalidVendorCode = Utilities.RandomCharacters(length);
+            var resultOrError = vendor.SetVendorCode(invalidVendorCode);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetVendorCode(invalidVendorCode));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -139,9 +135,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendor = CreateVendor();
 
-            string nullVendorCode = null;
+            var resultOrError = vendor.SetVendorCode(null);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendor.SetVendorCode(nullVendorCode));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]

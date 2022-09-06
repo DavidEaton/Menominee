@@ -115,70 +115,65 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendor, status, total, invoiceNumber, date, datePosted, lineItems, payments, taxes));
         }
 
-        public void SetVendor(Vendor vendor)
+        public Result<Vendor> SetVendor(Vendor vendor)
         {
             if (vendor is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<Vendor>(RequiredMessage);
 
-            Vendor = vendor;
+            return Result.Success(Vendor = vendor);
         }
 
-        public void SetVendorInvoiceStatus(VendorInvoiceStatus status)
+        public Result<VendorInvoiceStatus> SetVendorInvoiceStatus(VendorInvoiceStatus status)
         {
             if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<VendorInvoiceStatus>(RequiredMessage);
 
-            Status = status;
+            return Result.Success(Status = status);
         }
 
-        public void SetInvoiceNumber(string invoiceNumber)
+        public Result<string> SetInvoiceNumber(string invoiceNumber)
         {
             if (invoiceNumber is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
 
             if (invoiceNumber.Length > InvoiceNumberMaximumLength)
-                throw new ArgumentOutOfRangeException(InvoiceNumberMaximumLengthMessage);
+                return Result.Failure<string>(InvoiceNumberMaximumLengthMessage);
 
-            InvoiceNumber = invoiceNumber;
+            return Result.Success(InvoiceNumber = invoiceNumber);
         }
 
-        public void SetTotal(double total)
+        public Result<double> SetTotal(double total)
         {
             if (total < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            Total = total;
+            return Result.Success(Total = total);
         }
 
-        public void SetDate(DateTime? date)
+        public Result<DateTime?> SetDate(DateTime? date)
         {
             if (date is null)
-                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+                return Result.Failure<DateTime?>(DateInvalidMessage);
 
             if (date.HasValue && date.Value > DateTime.Today)
-                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+                return Result.Failure<DateTime?>(DateInvalidMessage);
 
-            Date = date.Value;
-
-            // If we got here, caller passed a null.
-            // Set methods should return results, not
-            // silently fail validation and NOT Set the
-            // property.
+            return Result.Success(Date = date.Value);
         }
 
         public void ClearDate() => Date = null;
 
-        public void SetDatePosted(DateTime? datePosted)
+        public Result<DateTime?> SetDatePosted(DateTime? datePosted)
         {
             if (datePosted is null)
-                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+                return Result.Failure<DateTime?>(DateInvalidMessage);
 
             if (datePosted.HasValue && datePosted.Value > DateTime.Today)
-                throw new ArgumentOutOfRangeException(DateInvalidMessage);
+                return Result.Failure<DateTime?>(DateInvalidMessage);
 
-            DatePosted = datePosted.Value;
+            return Result.Success(DatePosted = datePosted.Value);
         }
 
         public void ClearDatePosted() => DatePosted = null;

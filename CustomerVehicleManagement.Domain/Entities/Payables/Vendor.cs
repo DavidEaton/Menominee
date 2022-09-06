@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Utilities;
 using System;
 using Entity = Menominee.Common.Entity;
 
@@ -69,16 +68,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             return Result.Success(Name = name);
         }
-        public void SetVendorCode(string vendorCode)
+
+        public Result<string> SetVendorCode(string vendorCode)
         {
-            Guard.ForNullOrEmpty(vendorCode, "VendorCode");
+            if (string.IsNullOrWhiteSpace(vendorCode))
+                return Result.Failure<string>(RequiredMessage);
 
             vendorCode = (vendorCode ?? string.Empty).Trim();
 
             if (vendorCode.Length < MinimumLength || vendorCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            VendorCode = vendorCode;
+            return Result.Success(VendorCode = vendorCode);
         }
 
         public void Enable() => IsActive = true;

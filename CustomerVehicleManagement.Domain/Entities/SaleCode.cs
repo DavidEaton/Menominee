@@ -70,54 +70,54 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(new SaleCode(name, code, laborRate, desiredMargin, shopSupplies));
         }
 
-        public void SetName(string name)
+        public Result<string> SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumLength || name.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Name = name;
+            return Result.Success(Name = name);
         }
 
-        public void SetCode(string code)
+        public Result<string> SetCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             code = (code ?? string.Empty).Trim();
 
             if (code.Length > MaximumLength || code.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Code = code;
+            return Result.Success(Code = code);
         }
 
-        public void SetLaborRate(double laborRate)
+        public Result<double> SetLaborRate(double laborRate)
         {
             if (laborRate < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            LaborRate = laborRate;
+            return Result.Success(LaborRate = laborRate);
         }
 
-        public void SetDesiredMargin(double desiredMargin)
+        public Result<double> SetDesiredMargin(double desiredMargin)
         {
             if (desiredMargin < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            DesiredMargin = desiredMargin;
+            return Result.Success(DesiredMargin = desiredMargin);
         }
 
-        public void SetShopSupplies(SaleCodeShopSupplies shopSupplies)
+        public Result<SaleCodeShopSupplies> SetShopSupplies(SaleCodeShopSupplies shopSupplies)
         {
             if (shopSupplies is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<SaleCodeShopSupplies>(MinimumValueMessage);
 
-            ShopSupplies = shopSupplies;
+            return Result.Success(ShopSupplies = shopSupplies);
         }
 
 

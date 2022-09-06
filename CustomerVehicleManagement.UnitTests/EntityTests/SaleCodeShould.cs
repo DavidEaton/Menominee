@@ -163,134 +163,105 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [Fact]
         public void SetShopSupplies()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
+            var saleCode = CreateSaleCode();
 
+            SaleCodeShopSupplies originalShopSupplies = saleCode.ShopSupplies;
             SaleCodeShopSupplies newShopSupplies = new();
-            saleCode.Value.SetShopSupplies(newShopSupplies);
+            saleCode.SetShopSupplies(newShopSupplies);
 
-            shopSupplies.Should().NotBe(newShopSupplies);
-            saleCode.Value.ShopSupplies.Should().Be(newShopSupplies);
+            saleCode.ShopSupplies.Should().NotBe(originalShopSupplies);
+            saleCode.ShopSupplies.Should().Be(newShopSupplies);
         }
 
         [Fact]
         public void Not_Set_Null_Name()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
+            var saleCode = CreateSaleCode();
 
             string nullName = null;
+            var resultOrError = saleCode.SetName(nullName);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetName(nullName));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Name(int length)
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
+            var saleCode = CreateSaleCode();
 
             var invalidNName = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetName(invalidNName));
+            var resultOrError = saleCode.SetName(invalidNName);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
 
         [Fact]
         public void Not_Set_Null_Code()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
+            var saleCode = CreateSaleCode();
 
-            string nullCode = null;
+            var resultOrError = saleCode.SetCode(null);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetCode(nullCode));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Code(int length)
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
-
+            var saleCode = CreateSaleCode();
             var invalidCode = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetCode(invalidCode));
+            var resultOrError = saleCode.SetCode(invalidCode);
+        
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Invalid_LaborRate()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
-
+            var saleCode = CreateSaleCode();
             var invalidLaborRate = SaleCode.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetLaborRate(invalidLaborRate));
+            var resultOrError = saleCode.SetLaborRate(invalidLaborRate);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Invalid_DesiredMargin()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
-
+            var saleCode = CreateSaleCode();
             var invalidDesiredMargin = SaleCode.MinimumValue - .01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetDesiredMargin(invalidDesiredMargin));
+            var resultOrError = saleCode.SetDesiredMargin(invalidDesiredMargin);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Null_ShopSupplies()
+        {
+            var saleCode = CreateSaleCode();
+
+            var resultOrError = saleCode.SetShopSupplies(null);
+        
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        private SaleCode CreateSaleCode()
         {
             string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
             string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
             double laborRate = SaleCode.MinimumValue;
             double desiredMargin = SaleCode.MinimumValue;
             SaleCodeShopSupplies shopSupplies = new();
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
-            saleCode.IsSuccess.Should().BeTrue();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => saleCode.Value.SetShopSupplies(null));
+            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
         }
-
         internal class TestData
         {
             public static IEnumerable<object[]> Data

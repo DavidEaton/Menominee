@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
                 throw new ArgumentOutOfRangeException(TransactionDateInvalidMessage);
-            
+
             Type = type;
             Item = item;
             Quantity = quantity;
@@ -99,70 +99,70 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 type, item, quantity, cost, core, poNumber, transactionDate));
         }
 
-        public void SetType(VendorInvoiceItemType type)
+        public Result<VendorInvoiceItemType> SetType(VendorInvoiceItemType type)
         {
             if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<VendorInvoiceItemType>(RequiredMessage);
 
-            Type = type;
+            return Result.Success(Type = type);
         }
 
-        public void SetItem(VendorInvoiceItem item)
+        public Result<VendorInvoiceItem> SetItem(VendorInvoiceItem item)
         {
             if (item is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<VendorInvoiceItem>(RequiredMessage);
 
-            Item = item;
+            return Result.Success(Item = item);
         }
 
-        public void SetQuantity(double quantity)
+        public Result<double> SetQuantity(double quantity)
         {
             if (quantity <= MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            Quantity = quantity;
+            return Result.Success(Quantity = quantity);
         }
 
-        public void SetCost(double cost)
+        public Result<double> SetCost(double cost)
         {
             if (cost < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            Cost = cost;
+            return Result.Success(Cost = cost);
         }
 
-        public void SetCore(double core)
+        public Result<double> SetCore(double core)
         {
             if (core < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            Core = core;
+            return Result.Success(Core = core);
         }
 
-        public void SetPONumber(string poNumber)
+        public Result<string> SetPONumber(string poNumber)
         {
             if (string.IsNullOrWhiteSpace(poNumber))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             poNumber = (poNumber ?? string.Empty).Trim();
 
             if (poNumber.Length > PONumberMaximumLength)
-                throw new ArgumentOutOfRangeException(PONumberMaximumLengthMessage);
+                return Result.Failure<string>(PONumberMaximumLengthMessage);
 
-            PONumber = poNumber;
+            return Result.Success(PONumber = poNumber);
         }
 
         public void ClearPONumber() => PONumber = string.Empty;
 
-        public void SetTransactionDate(DateTime? transactionDate)
+        public Result<DateTime?> SetTransactionDate(DateTime? transactionDate)
         {
             if (transactionDate is null)
-                throw new ArgumentOutOfRangeException(TransactionDateInvalidMessage);
-            
-            if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
-                throw new ArgumentOutOfRangeException(TransactionDateInvalidMessage);
+                return Result.Failure<DateTime?>(TransactionDateInvalidMessage);
 
-            TransactionDate = transactionDate;
+            if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
+                return Result.Failure<DateTime?>(TransactionDateInvalidMessage);
+
+            return Result.Success(TransactionDate = transactionDate);
         }
 
         public void ClearTransactionDate() => TransactionDate = null;

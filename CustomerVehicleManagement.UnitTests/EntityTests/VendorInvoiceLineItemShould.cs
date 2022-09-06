@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -13,19 +12,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
     public class VendorInvoiceLineItemShould
     {
-
-        internal class VendorCodeTestData
-        {
-            public static IEnumerable<object[]> Data
-            {
-                get
-                {
-                    yield return new object[] { VendorInvoiceLineItem.MinimumValue };
-                    yield return new object[] { VendorInvoiceLineItem.PONumberMaximumLength + 1 };
-                }
-            }
-        }
-
         [Fact]
         public void Create_VendorInvoiceLineItem()
         {
@@ -85,12 +71,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Not_Create_VendorInvoiceLineItem_With_Invalid_VendorInvoiceItem()
+        public void Not_Create_VendorInvoiceLineItem_With_Null_VendorInvoiceItem()
         {
-            var item = VendorInvoiceItem.Create("BR549", "a description").Value;
-            var invalidType = (VendorInvoiceItemType)(-1);
+            VendorInvoiceItem nullItem = null;
 
-            var lineItemOrError = VendorInvoiceLineItem.Create(invalidType, item, 1, 1, 1);
+            var lineItemOrError = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, nullItem, 1, 1, 1);
 
             lineItemOrError.IsFailure.Should().BeTrue();
             lineItemOrError.Error.Should().NotBeNull();
@@ -163,8 +148,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var type = VendorInvoiceItemType.Purchase;
             var lineItem = VendorInvoiceLineItem.Create(type, item, 1, 1, 1).Value;
             var typeSet = VendorInvoiceItemType.CoreReturn;
-
             lineItem.Type.Should().Be(type);
+
             lineItem.SetType(typeSet);
 
             lineItem.Type.Should().Be(typeSet);
@@ -176,8 +161,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
             var itemSet = VendorInvoiceItem.Create("BR549Replacement", "another description").Value;
-
             lineItem.Item.Should().Be(item);
+
             lineItem.SetItem(itemSet);
 
             lineItem.Item.Should().Be(itemSet);
@@ -190,8 +175,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var quantity = 1.0;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, quantity, 1, 1).Value;
             var quantitySet = 2.0;
-
             lineItem.Quantity.Should().Be(quantity);
+
             lineItem.SetQuantity(quantitySet);
 
             lineItem.Quantity.Should().Be(quantitySet);
@@ -204,8 +189,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var cost = 1.0;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, cost, 1, 1).Value;
             var costSet = 2.0;
-
             lineItem.Cost.Should().Be(cost);
+
             lineItem.SetCost(costSet);
 
             lineItem.Cost.Should().Be(costSet);
@@ -218,8 +203,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var core = 1.0;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, core).Value;
             var coreSet = 2.0;
-
             lineItem.Core.Should().Be(core);
+
             lineItem.SetCore(coreSet);
 
             lineItem.Core.Should().Be(coreSet);
@@ -232,8 +217,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var poNumber = "001";
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1, poNumber: poNumber).Value;
             var poNumberSet = "002";
-
             lineItem.PONumber.Should().Be(poNumber);
+
             lineItem.SetPONumber(poNumberSet);
 
             lineItem.PONumber.Should().Be(poNumberSet);
@@ -245,8 +230,8 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var poNumber = "001";
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1, poNumber: poNumber).Value;
-
             lineItem.PONumber.Should().Be(poNumber);
+
             lineItem.ClearPONumber();
 
             lineItem.PONumber.Should().Be(string.Empty);
@@ -257,10 +242,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var transactionDate = DateTime.Today;
-
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
-
             lineItem.TransactionDate.Should().BeNull();
+
             lineItem.SetTransactionDate(transactionDate);
 
             lineItem.TransactionDate.Should().Be(transactionDate);
@@ -271,9 +255,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var transactionDate = DateTime.Today;
-
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1, transactionDate: transactionDate).Value;
             lineItem.TransactionDate.Should().Be(transactionDate);
+            
             lineItem.ClearTransactionDate();
 
             lineItem.TransactionDate.Should().BeNull();
@@ -286,17 +270,21 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var invalidType = (VendorInvoiceItemType)(-1);
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetType(invalidType));
+            var resultOrError = lineItem.SetType(invalidType);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Not_Set_Invalid_Item()
+        public void Not_Set_Null_Item()
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
-            VendorInvoiceItem invalidItem = null;
+            VendorInvoiceItem nullItem = null;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetItem(invalidItem));
+            var resultOrError = lineItem.SetItem(nullItem);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -304,9 +292,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
-            var invalidQuantity = 0.0;
+            var invalidQuantity = VendorInvoiceLineItem.MinimumValue - 1;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetQuantity(invalidQuantity));
+            var resultOrError = lineItem.SetQuantity(invalidQuantity);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -316,7 +306,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
             var invalidCost = -.01;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetCost(invalidCost));
+            var resultOrError = lineItem.SetCost(invalidCost);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -325,8 +317,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
             var invalidCore = -.01;
+            var resultOrError = lineItem.SetCore(invalidCore);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetCore(invalidCore));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -335,10 +328,23 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
-
             var invalidPONumber = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetPONumber(invalidPONumber));
+            var resultOrError = lineItem.SetPONumber(invalidPONumber);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Set_Null_TransactionDate()
+        {
+            var item = VendorInvoiceItem.Create("BR549", "a description").Value;
+            var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
+            DateTime? nullTransactionDate = null;
+
+            var resultOrError = lineItem.SetTransactionDate(nullTransactionDate);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -346,10 +352,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var item = VendorInvoiceItem.Create("BR549", "a description").Value;
             var lineItem = VendorInvoiceLineItem.Create(VendorInvoiceItemType.Purchase, item, 1, 1, 1).Value;
-
             var invalidTransactionDate = DateTime.Today.AddDays(1);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => lineItem.SetTransactionDate(invalidTransactionDate));
+            var resultOrError = lineItem.SetTransactionDate(invalidTransactionDate);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         internal class TestData
@@ -363,6 +370,5 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 }
             }
         }
-
     }
 }

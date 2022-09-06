@@ -10,9 +10,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MaximumLength = 255;
-        public static readonly string MaximumLengthMessage = $"Cannot be over {MaximumLength} character(s) in length.";
         public static readonly int MinimumLength = 1;
-        public static readonly string MinimumLengthMessage = $"Cannot be under {MinimumLength} character(s) in length.";
+        public static readonly string InvalidLengthMessage = $"Must be within {MinimumLength} to {MaximumLength} character(s) in length.";
 
         public string PartNumber { get; private set; } // required, 1..255 or maybe less. Really just a string?
         public string Description { get; private set; } // required, 1.255
@@ -29,10 +28,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             description = (description ?? string.Empty).Trim();
 
             if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
             if (description.Length < MinimumLength || description.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
             PartNumber = partNumber;
             Description = description;
@@ -54,51 +53,51 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             description = (description ?? string.Empty).Trim();
 
             if (partNumber.Length > MaximumLength || description.Length > MaximumLength)
-                return Result.Failure<VendorInvoiceItem>(MaximumLengthMessage);
+                return Result.Failure<VendorInvoiceItem>(InvalidLengthMessage);
 
             if (partNumber.Length < MinimumLength || description.Length < MinimumLength)
-                return Result.Failure<VendorInvoiceItem>(MinimumLengthMessage);
+                return Result.Failure<VendorInvoiceItem>(InvalidLengthMessage);
 
             return Result.Success(new VendorInvoiceItem(
                 partNumber, description, manufacturer, saleCode));
         }
 
-        public void SetPartNumber(string partNumber)
+        public Result<string> SetPartNumber(string partNumber)
         {
             partNumber = (partNumber ?? string.Empty).Trim();
 
             if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            PartNumber = partNumber;
+            return Result.Success(PartNumber = partNumber);
         }
 
-        public void SetDescription(string description)
+        public Result<string> SetDescription(string description)
         {
             description = (description ?? string.Empty).Trim();
 
             if (description.Length < MinimumLength || description.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(MaximumLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Description = description;
+            return Result.Success(Description = description);
         }
 
-        public void SetManufacturer(Manufacturer manufacturer)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
         {
             if (manufacturer is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<Manufacturer>(RequiredMessage);
 
-            Manufacturer = manufacturer;
+            return Result.Success(Manufacturer = manufacturer);
         }
 
         public void ClearManufacturer() => Manufacturer = null;
 
-        public void SetSaleCode(SaleCode saleCode)
+        public Result<SaleCode> SetSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<SaleCode>(RequiredMessage);
 
-            SaleCode = saleCode;
+            return Result.Success(SaleCode = saleCode);
         }
 
         public void ClearSaleCode() => SaleCode = null;

@@ -61,20 +61,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 name, isActive, isOnAccountPaymentType, reconcilingVendor));
         }
 
-        public void SetName(string name, IEnumerable<string> paymentMethods)
+        public Result<string> SetName(string name, IEnumerable<string> paymentMethods)
         {
             if (name is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumLength || name.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
             if (paymentMethods.Contains(name))
-                throw new ArgumentException(UniqueMessage);
+                return Result.Failure<string>(UniqueMessage);
 
-            Name = name;
+            return Result.Success(Name = name);
         }
 
         public void Enable()
@@ -92,12 +92,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IsOnAccountPaymentType = isOnAccountPaymentType;
         }
 
-        public void SetReconcilingVendor(Vendor reconcilingVendor)
+        public Result<Vendor> SetReconcilingVendor(Vendor reconcilingVendor)
         {
             if (reconcilingVendor is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<Vendor>(RequiredMessage);
 
-            ReconcilingVendor = reconcilingVendor;
+            return Result.Success(ReconcilingVendor = reconcilingVendor);
         }
 
         #region ORM

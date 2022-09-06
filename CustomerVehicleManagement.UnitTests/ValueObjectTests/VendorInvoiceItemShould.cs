@@ -20,7 +20,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             // Assert
             itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Should().NotBeNull();
             itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
@@ -32,7 +31,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var itemOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer: manufacturer);
 
             itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Should().NotBeNull();
             itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
@@ -45,7 +43,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var itemOrError = VendorInvoiceItem.Create("a part", "a description", saleCode: saleCode);
 
             itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Should().NotBeNull();
             itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
@@ -55,7 +52,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var itemOrError = VendorInvoiceItem.Create(null, "a description");
 
             itemOrError.IsFailure.Should().BeTrue();
-            itemOrError.Error.Should().NotBeNull();
         }
 
         [Theory]
@@ -67,7 +63,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var itemOrError = VendorInvoiceItem.Create(partNumber, "a description");
 
             itemOrError.IsFailure.Should().BeTrue();
-            itemOrError.Error.Should().NotBeNull();
         }
 
         [Theory]
@@ -79,7 +74,6 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var itemOrError = VendorInvoiceItem.Create("a part", description);
 
             itemOrError.IsFailure.Should().BeTrue();
-            itemOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -167,7 +161,9 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var invalidPartNumber = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => item.SetPartNumber(invalidPartNumber));
+            var resultOrError = item.SetPartNumber(invalidPartNumber);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -177,23 +173,29 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var invalidDescription = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => item.SetDescription(invalidDescription));
+            var resultOrError = item.SetDescription(invalidDescription);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Not_Set_Invalid_Manufacturer()
+        public void Not_Set_Null_Manufacturer()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => item.SetManufacturer(null));
+            var resultOrError = item.SetManufacturer(null);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Not_Set_Invalid_SaleCode()
+        public void Not_Set_Null_SaleCode()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => item.SetSaleCode(null));
+            var resultOrError = item.SetSaleCode(null);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         internal class TestData

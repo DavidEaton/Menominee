@@ -62,36 +62,36 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(new SaleCodeShopSupplies(percentage, minimumJobAmount, minimumCharge, maximumCharge, includeParts, includeLabor));
         }
 
-        public void SetPercentage(double percentage)
+        public Result<double> SetPercentage(double percentage)
         {
             if (percentage < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            Percentage = percentage;
+            return Result.Success(Percentage = percentage);
         }
 
-        public void SetMinimumJobAmount(double minimumJobAmount)
+        public Result<double> SetMinimumJobAmount(double minimumJobAmount)
         {
             if (minimumJobAmount < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            MinimumJobAmount = minimumJobAmount;
+            return Result.Success(MinimumJobAmount = minimumJobAmount);
         }
 
-        public void SetMinimumCharge(double minimumCharge)
+        public Result<double> SetMinimumCharge(double minimumCharge)
         {
             if (minimumCharge < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            MinimumCharge = minimumCharge;
+            return Result.Success(MinimumCharge = minimumCharge);
         }
 
-        public void SetMaximumCharge(double maximumCharge)
+        public Result<double> SetMaximumCharge(double maximumCharge)
         {
             if (maximumCharge < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            MaximumCharge = maximumCharge;
+            return Result.Success(MaximumCharge = maximumCharge);
         }
 
         public void SetIncludeParts(bool includeParts)

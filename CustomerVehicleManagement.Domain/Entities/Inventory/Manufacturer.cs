@@ -31,7 +31,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 code.Length > MaximumLength || code.Length < MinimumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
-
             Name = name;
             Prefix = prefix;
             Code = code;
@@ -56,43 +55,43 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new Manufacturer(name, prefix, code));
         }
 
-        public void SetName(string name)
+        public Result<string> SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumLength || name.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Name = name;
+            return Result.Success(Name = name);
         }
 
-        public void SetPrefix(string prefix)
+        public Result<string> SetPrefix(string prefix)
         {
             if (string.IsNullOrWhiteSpace(prefix))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             prefix = (prefix ?? string.Empty).Trim();
 
             if (prefix.Length > MaximumLength || prefix.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Prefix = prefix;
+            return Result.Success(Prefix = prefix);
         }
 
-        public void SetCode(string code)
+        public Result<string> SetCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             code = (code ?? string.Empty).Trim();
 
             if (code.Length > MaximumLength || code.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
-            Code = code;
+            return Result.Success(Code = code);
         }
 
         #region ORM

@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.UnitTests.EntityTests.VendorInvoiceTestHelper;
@@ -143,12 +142,13 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
             var paymentMethodNames = CreatePaymentMethodNames();
-
-            var vendorInvoicePaymentMethod= VendorInvoicePaymentMethod.Create(
+            var vendorInvoicePaymentMethod = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
             paymentMethodNames.Add(name);
 
-            Assert.Throws<ArgumentException>(() => vendorInvoicePaymentMethod.SetName(name, paymentMethodNames));
+            var resultOrError = vendorInvoicePaymentMethod.SetName(name, paymentMethodNames);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -156,11 +156,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
-
-            string newName = null;
             var paymentMethodNames = CreatePaymentMethodNames();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoicePaymentMethod.SetName(newName, paymentMethodNames));
+            var resultOrError = vendorInvoicePaymentMethod.SetName(null, paymentMethodNames);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
@@ -169,11 +169,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
-
             string invalidName = Utilities.RandomCharacters(length);
             var paymentMethodNames = CreatePaymentMethodNames();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames));
+            var resultOrError = vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -182,7 +183,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBeNull();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoicePaymentMethod.SetReconcilingVendor(null));
+            var resultOrError = vendorInvoicePaymentMethod.SetReconcilingVendor(null);
+ 
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         internal class TestData

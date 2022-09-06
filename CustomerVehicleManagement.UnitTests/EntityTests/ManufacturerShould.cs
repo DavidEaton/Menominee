@@ -39,7 +39,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(invalidName, prefix, code);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -52,7 +51,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(invalidName, prefix, code);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Theory]
@@ -66,7 +64,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(name, invalidPrefix, code);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -78,7 +75,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(name, invalidPrefix, code);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Theory]
@@ -92,7 +88,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(name, prefix, invalidCode);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -105,7 +100,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var manufacturerOrError = Manufacturer.Create(name, prefix, invalidCode);
 
             manufacturerOrError.IsFailure.Should().BeTrue();
-            manufacturerOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -157,89 +151,78 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Name_With_Invalid_Name(int length)
         {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
-
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
-
+            var manufacturer = CreateManufacturer();
             var newName = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetName(newName));
+            var resultOrError = manufacturer.SetName(newName);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Name_With_Null_Name()
         {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
+            var manufacturer = CreateManufacturer();
 
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var resultOrError = manufacturer.SetName(null);
 
-            string newName = null;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetName(newName));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Prefix_With_Invalid_Prefix(int length)
         {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
-
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturer = CreateManufacturer();
 
             var newPrefix = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetPrefix(newPrefix));
+            var resultOrError = manufacturer.SetPrefix(newPrefix);
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Prefix_With_Null_Prefix()
         {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
-
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturer = CreateManufacturer();
 
             string newPrefix = null;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetPrefix(newPrefix));
+            var resultOrError = manufacturer.SetPrefix(newPrefix);
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Code_With_Invalid_Code(int length)
         {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
-
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturer = CreateManufacturer();
 
             var newCode = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetCode(newCode));
+            var resultOrError = manufacturer.SetCode(newCode);
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Code_With_Null_Code()
         {
+            var manufacturer = CreateManufacturer();
+
+            string newCode = null;
+
+            var resultOrError = manufacturer.SetCode(newCode);
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        private Manufacturer CreateManufacturer()
+        {
             var name = "Manufacturer One";
             var prefix = "M1";
             var code = "V1";
 
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
-
-            string newCode = null;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => manufacturer.SetCode(newCode));
+            return Manufacturer.Create(name, prefix, code).Value;
         }
-
         internal class TestData
         {
             public static IEnumerable<object[]> Data
