@@ -5,7 +5,7 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using Xunit;
-//using static CustomerVehicleManagement.UnitTests.EntityTests.VendorInvoiceTestHelper;
+using static CustomerVehicleManagement.UnitTests.EntityTests.VendorInvoiceTestHelper;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
@@ -353,20 +353,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             salesTax.SetIsTaxable(false);
 
             salesTax.IsTaxable.Should().BeFalse();
-        }
-
-        private static SalesTax CreateSalesTax()
-        {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
-            var taxType = SalesTaxType.Normal;
-            var order = (int)SalesTax.MinimumValue + 10;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
-            var partTaxRate = SalesTax.MinimumValue + .1;
-            var laborTaxRate = SalesTax.MinimumValue + .25;
-            bool? isAppliedByDefault = true;
-            bool? isTaxable = true;
-
-            return SalesTax.Create(description, taxType, order, taxIdNumber, partTaxRate, laborTaxRate, isAppliedByDefault: isAppliedByDefault, isTaxable: isTaxable).Value;
         }
 
         public class TestData

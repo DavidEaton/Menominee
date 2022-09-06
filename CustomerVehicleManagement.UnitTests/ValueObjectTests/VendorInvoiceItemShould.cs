@@ -195,6 +195,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
 
             Assert.Throws<ArgumentOutOfRangeException>(() => item.SetSaleCode(null));
         }
+
         internal class TestData
         {
             public static IEnumerable<object[]> Data

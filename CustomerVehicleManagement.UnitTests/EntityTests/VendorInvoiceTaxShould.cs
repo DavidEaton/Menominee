@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
+using FluentAssertions;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
@@ -9,24 +13,89 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Create_VendorInvoiceTax()
         {
             // Arrange
-            //SalesTax salesTax =
-            //int taxId = 1;
-            //var vendorOrError = VendorInvoiceTax.Create("Vendor One", "V1");
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
-            //// Act
-            //var vendorInvoiceOrError = VendorInvoice.Create(
-            //    vendorOrError.Value,
-            //    VendorInvoiceStatus.Open,
-            //    1);
+            // Act
+            var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(salesTax, 1);
 
-            //// Assert
-            //vendorInvoiceOrError.IsFailure.Should().BeFalse();
-            //vendorInvoiceOrError.Should().NotBeNull();
-            //vendorInvoiceOrError.Value.Should().BeOfType<VendorInvoice>();
+            // Assert
+            vendorInvoiceTaxOrError.IsFailure.Should().BeFalse();
+            vendorInvoiceTaxOrError.Should().NotBeNull();
+            vendorInvoiceTaxOrError.Value.Should().BeOfType<VendorInvoiceTax>();
+        }
 
+        [Fact]
+        public void Not_Create_VendorInvoiceTax_With_Null_SalesTax()
+        {
+            SalesTax nullSalesTax = null;
 
+            var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(nullSalesTax, 1);
 
-            true.Should().BeFalse();
+            vendorInvoiceTaxOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Create_VendorInvoiceTax_With_Invalid_TaxId(long invalidTaxId)
+        {
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
+
+            var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(salesTax, (int)invalidTaxId);
+
+            vendorInvoiceTaxOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void SetSalesTax()
+        {
+            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
+
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax(1);
+            vendorInvoiceTax.SetSalesTax(salesTax);
+
+            vendorInvoiceTax.SalesTax.Should().Be(salesTax);
+        }
+
+        [Fact]
+        public void Not_Set_Null_SalesTax()
+        {
+            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
+
+            SalesTax nullSalesTax = null;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoiceTax.SetSalesTax(nullSalesTax));
+        }
+
+        [Fact]
+        public void SetTaxId()
+        {
+            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
+
+            int taxId = 2;
+            vendorInvoiceTax.SetTaxId(taxId);
+
+            vendorInvoiceTax.TaxId.Should().Be(taxId);
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
+        public void Not_Set_Invalid_TaxId(long invalidTaxId)
+        {
+            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoiceTax.SetTaxId((int)invalidTaxId));
+        }
+
+        internal class TestData
+        {
+            public static IEnumerable<object[]> Data
+            {
+                get
+                {
+                    yield return new object[] { (long)int.MaxValue + 1 };
+                    yield return new object[] { (long)int.MinValue - 1 };
+                }
+            }
         }
     }
 }
