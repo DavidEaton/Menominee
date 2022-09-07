@@ -36,20 +36,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(new VendorInvoicePayment(paymentMethod, amount));
         }
 
-        public void SetPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
+        public Result<VendorInvoicePaymentMethod> SetPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
         {
             if (paymentMethod is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<VendorInvoicePaymentMethod>(RequiredMessage);
 
-            PaymentMethod = paymentMethod;
+            return Result.Success(PaymentMethod = paymentMethod);
         }
 
-        public void SetAmount(double amount)
+        public Result<double> SetAmount(double amount)
         {
             if (amount == InvalidValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
-            Amount = amount;
+            return Result.Success(Amount = amount);
         }
 
         #region ORM

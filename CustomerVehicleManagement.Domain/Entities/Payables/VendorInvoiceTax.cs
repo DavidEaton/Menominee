@@ -36,20 +36,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(new VendorInvoiceTax(salesTax, taxId));
         }
 
-        public void SetSalesTax(SalesTax salesTax)
+        public Result<SalesTax> SetSalesTax(SalesTax salesTax)
         {
             if (salesTax is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<SalesTax>(RequiredMessage);
 
-            SalesTax = salesTax;
+            return Result.Success(SalesTax = salesTax);
         }
 
-        public void SetTaxId(int taxId)
+        public Result<int> SetTaxId(int taxId)
         {
             if (taxId >= int.MaxValue || taxId < 0)
-                throw new ArgumentOutOfRangeException(InvalidTaxIdMessage);
+                return Result.Failure<int>(InvalidTaxIdMessage);
 
-            TaxId = taxId;
+            return Result.Success(TaxId = taxId);
         }
 
         #region ORM

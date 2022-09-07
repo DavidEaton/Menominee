@@ -196,19 +196,20 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var salesTax = CreateSalesTax();
 
-            string nullDescription = null;
+            var resultOrError =  salesTax.SetDescription(null);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetDescription(nullDescription));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Invalid_Description()
         {
             var salesTax = CreateSalesTax();
-
             string invalidDescription = Utilities.RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetDescription(invalidDescription));
+            var resultOrError =  salesTax.SetDescription(invalidDescription);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -226,10 +227,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Invalid_TaxType()
         {
             var salesTax = CreateSalesTax();
-
             var invalidSalesTaxType = (SalesTaxType)(-1);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetTaxType(invalidSalesTaxType));
+            var resultOrError =  salesTax.SetTaxType(invalidSalesTaxType);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -247,10 +249,11 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Invalid_Order()
         {
             var salesTax = CreateSalesTax();
-
             salesTax.Order.Should().Be((int)SalesTax.MinimumValue + 10);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetOrder((int)SalesTax.MinimumValue - 1));
+            var resultOrError =  salesTax.SetOrder((int)SalesTax.MinimumValue - 1);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -270,22 +273,23 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Invalid_TaxIdNumber(int length)
         {
             var salesTax = CreateSalesTax();
-
             salesTax.TaxIdNumber.Length.Should().Be(Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
             var invalidTaxIdNumber = Utilities.RandomCharacters(length);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetTaxIdNumber(invalidTaxIdNumber));
+            var resultOrError =  salesTax.SetTaxIdNumber(invalidTaxIdNumber);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void Not_Set_Null_TaxIdNumber()
         {
             var salesTax = CreateSalesTax();
-
             salesTax.TaxIdNumber.Length.Should().Be(Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
-            string invalidTaxIdNumber = null;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetTaxIdNumber(invalidTaxIdNumber));
+            var resultOrError =  salesTax.SetTaxIdNumber(null);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -303,11 +307,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Invalid_PartTaxRate()
         {
             var salesTax = CreateSalesTax();
-
             salesTax.PartTaxRate.Should().Be(SalesTax.MinimumValue + .1);
             var invalidPartTaxRate = SalesTax.MinimumValue - .1;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetPartTaxRate(invalidPartTaxRate));
+            var resultOrError =  salesTax.SetPartTaxRate(invalidPartTaxRate);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -325,11 +330,12 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Invalid_LaborTaxRate()
         {
             var salesTax = CreateSalesTax();
-
             salesTax.LaborTaxRate.Should().Be(SalesTax.MinimumValue + .25);
             var invalidLaborTaxRate = SalesTax.MinimumValue - .1;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => salesTax.SetLaborTaxRate(invalidLaborTaxRate));
+            var resultOrError =  salesTax.SetLaborTaxRate(invalidLaborTaxRate);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]

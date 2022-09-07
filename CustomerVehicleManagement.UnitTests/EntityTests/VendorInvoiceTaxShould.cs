@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -60,9 +59,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
 
-            SalesTax nullSalesTax = null;
+            var resultOrError = vendorInvoiceTax.SetSalesTax(null);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoiceTax.SetSalesTax(nullSalesTax));
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -82,7 +81,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), 1).Value;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoiceTax.SetTaxId((int)invalidTaxId));
+            var resultOrError = vendorInvoiceTax.SetTaxId((int)invalidTaxId);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         internal class TestData

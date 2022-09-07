@@ -75,7 +75,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             VendorInvoicePaymentMethod vendorInvoicePaymentMethod = null;
             var vendorInvoicePayment = CreateVendorInvoicePayment();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoicePayment.SetPaymentMethod(vendorInvoicePaymentMethod));
+            var resultOrError = vendorInvoicePayment.SetPaymentMethod(vendorInvoicePaymentMethod);
+        
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -84,7 +86,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var invalidAmount = VendorInvoicePayment.InvalidValue;
             var vendorInvoicePayment = CreateVendorInvoicePayment();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => vendorInvoicePayment.SetAmount(invalidAmount));
+            var resultOrError = vendorInvoicePayment.SetAmount(invalidAmount);
+
+            resultOrError.IsFailure.Should().BeTrue();
         }
     }
 }

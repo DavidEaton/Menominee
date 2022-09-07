@@ -125,73 +125,74 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 ));
         }
 
-        public void SetDescription(string description)
+        public Result<string> SetDescription(string description)
         {
             if (description is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             description = (description ?? string.Empty).Trim();
 
             if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+                return Result.Failure<string>(DescriptionMaximumLengthMessage);
 
-            Description = description;
+            return Result.Success(Description = description);
         }
 
-        public void SetTaxType(SalesTaxType taxType)
+        public Result<SalesTaxType> SetTaxType(SalesTaxType taxType)
         {
             if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
-                throw new ArgumentOutOfRangeException(nameof(taxType));
+                return Result.Failure<SalesTaxType>(InvalidMessage);
 
-            TaxType = taxType;
+            return Result.Success(TaxType = taxType);
         }
 
-        public void SetOrder(int order)
+        public Result<int> SetOrder(int order)
         {
             if (order < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<int>(MinimumValueMessage);
 
-            Order = order;
+            return Result.Success(Order = order);
         }
 
-        public void SetTaxIdNumber(string taxIdNumber)
+        public Result<string> SetTaxIdNumber(string taxIdNumber)
         {
             taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
 
             if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
-                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
+                return Result.Failure<string>(TaxIdNumberInvalidLengthMessage);
 
-            TaxIdNumber = taxIdNumber;
+            return Result.Success(TaxIdNumber = taxIdNumber);
         }
 
-        public void SetPartTaxRate(double partTaxRate)
+        public Result<double> SetPartTaxRate(double partTaxRate)
         {
             if (partTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            PartTaxRate = partTaxRate;
+            return Result.Success(PartTaxRate = partTaxRate);
         }
 
-        public void SetLaborTaxRate(double laborTaxRate)
+        public Result<double> SetLaborTaxRate(double laborTaxRate)
         {
             if (laborTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(MinimumValueMessage);
 
-            LaborTaxRate = laborTaxRate;
+            return Result.Success(LaborTaxRate = laborTaxRate);
         }
 
-        public void SetIsTaxable(bool? isTaxable)
+        public Result<bool?> SetIsTaxable(bool? isTaxable)
         {
-            if (isTaxable.HasValue)
-                IsTaxable = isTaxable.Value;
+            return isTaxable.HasValue
+                ? Result.Success(IsTaxable = isTaxable.Value)
+                : Result.Success(IsTaxable = null);
         }
 
-        public void SetIsAppliedByDefault(bool? isAppliedByDefault)
+        public Result<bool?> SetIsAppliedByDefault(bool? isAppliedByDefault)
         {
-            if (isAppliedByDefault.HasValue)
-                IsAppliedByDefault = isAppliedByDefault.Value;
+            return isAppliedByDefault.HasValue
+                ? Result.Success(IsAppliedByDefault = isAppliedByDefault.Value)
+                : Result.Success(IsAppliedByDefault = null);
         }
-
 
         public void SetExciseFees(List<ExciseFee> exciseFees)
         {
@@ -217,7 +218,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 }
 
                 // Validate the collection
-
             }
         }
 

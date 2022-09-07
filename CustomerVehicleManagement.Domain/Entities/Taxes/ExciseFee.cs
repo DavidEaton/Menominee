@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly double MinimumValue = 0;
         public static readonly double MaximumValue = 99999;
-        public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
+        public static readonly string InvalidValueMessage = $"Value(s) must be within {MinimumValue} and {MaximumValue}.";
 
         public string Description { get; private set; }
         public ExciseFeeType FeeType { get; private set; }
@@ -30,10 +30,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
 
             if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                throw new ArgumentOutOfRangeException(InvalidMessage);
 
             if (amount < MinimumValue || amount > MaximumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
             
             Description = description;
             FeeType = feeType;
@@ -52,45 +52,44 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 return Result.Failure<ExciseFee>(InvalidMessage);
 
             if (amount < MinimumValue || amount > MaximumValue)
-                return Result.Failure<ExciseFee>(MinimumValueMessage);
+                return Result.Failure<ExciseFee>(InvalidValueMessage);
 
             description = (description ?? string.Empty).Trim();
 
             if (description.Length > DescriptionMaximumLength)
-                return Result.Failure<ExciseFee>
-                    (DescriptionMaximumLengthMessage);
+                return Result.Failure<ExciseFee>(DescriptionMaximumLengthMessage);
 
             return Result.Success(
                 new ExciseFee(description, feeType, amount));
         }
 
-        public void SetDescription(string description)
+        public Result<string> SetDescription(string description)
         {
             if (description is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<string>(RequiredMessage);
 
             description = (description ?? string.Empty).Trim();
 
             if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
+                return Result.Failure<string>(DescriptionMaximumLengthMessage);
 
-            Description = description;
+            return Result.Success(Description = description);
         }
 
-        public void SetFeeType(ExciseFeeType feeType)
+        public Result<ExciseFeeType> SetFeeType(ExciseFeeType feeType)
         {
             if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<ExciseFeeType>(InvalidMessage);
 
-            FeeType = feeType;
+            return Result.Success(FeeType = feeType);
         }
 
-        public void SetAmount(double amount)
+        public Result<double> SetAmount(double amount)
         {
             if (amount < MinimumValue || amount > MaximumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
-            Amount = amount;
+            return Result.Success(Amount = amount);
         }
 
         #region ORM

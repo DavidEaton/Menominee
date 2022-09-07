@@ -89,11 +89,10 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         public void Not_Set_Null_Description()
         {
             var exciseFee = CreateExciseFee();
-            string nullDescription = null;
 
-            Action action = () => exciseFee.SetDescription(nullDescription);
+            var resultOrError =  exciseFee.SetDescription(null);
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -102,17 +101,17 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var exciseFee = CreateExciseFee();
             var invalidDescription = Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength + 1);
 
-            Action action = () => exciseFee.SetDescription(invalidDescription);
+            var resultOrError =  exciseFee.SetDescription(invalidDescription);
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
         public void SetFeeType()
         {
             var exciseFee = CreateExciseFee();
-
             exciseFee.FeeType.Should().Be(ExciseFeeType.Flat);
+
             exciseFee.SetFeeType(ExciseFeeType.Percentage);
 
             exciseFee.FeeType.Should().Be(ExciseFeeType.Percentage);
@@ -124,9 +123,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             var exciseFee = CreateExciseFee();
             var invalidFeeType = (ExciseFeeType)(-1);
 
-            Action action = () => exciseFee.SetFeeType(invalidFeeType);
+            var resultOrError =  exciseFee.SetFeeType(invalidFeeType);
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -146,9 +145,9 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         {
             var exciseFee = CreateExciseFee();
 
-            Action action = () => exciseFee.SetAmount(invalidAmount);
+            var resultOrError =  exciseFee.SetAmount(invalidAmount);
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         private ExciseFee CreateExciseFee()
