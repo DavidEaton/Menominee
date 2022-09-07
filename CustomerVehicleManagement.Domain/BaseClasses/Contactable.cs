@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common;
-using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -31,7 +30,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         {
             /* Null check silently swallows exception, hiding potential bugs. Use a guard to throw exception in
              * this exceptional case: we don't expect a null to ever reach here, so there must be a bug. -DE */
-            Guard.ForNull(phone, "phone");
 
             if (ContactableHasPhone(phone))
                 throw new Exception("Duplicate phone");
@@ -44,7 +42,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void RemovePhone(Phone phone)
         {
-            Guard.ForNull(phone, "phone");
             Phones.Remove(phone);
         }
 
@@ -83,7 +80,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void AddEmail(Email email)
         {
-            Guard.ForNull(email, "email");
 
             if (ContactableHasEmail(email))
                 throw new Exception("Duplicate email.");
@@ -96,7 +92,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public void RemoveEmail(Email email)
         {
-            Guard.ForNull(email, "email");
             Emails.Remove(email);
         }
 

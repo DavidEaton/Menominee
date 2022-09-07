@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,9 +54,9 @@ namespace CustomerVehicleManagement.Api.Taxes
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(fee => fee.Id == id);
 
-            Guard.ForNull(feeFromContext, "Excise Fee");
-
-            return ExciseFeeHelper.ConvertEntityToReadDto(feeFromContext);
+            return feeFromContext is not null
+                ? ExciseFeeHelper.ConvertEntityToReadDto(feeFromContext)
+                : null;
         }
 
         public async Task<ExciseFee> GetExciseFeeEntityAsync(long id)

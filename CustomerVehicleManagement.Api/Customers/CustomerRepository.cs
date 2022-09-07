@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Customers;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,8 @@ namespace CustomerVehicleManagement.Api.Customers
 
         public async Task AddCustomerAsync(Customer customer)
         {
-            Guard.ForNull(customer, "customer");
+            if (customer is null)
+                throw new ArgumentOutOfRangeException(nameof(customer), "customer");
 
             if (await CustomerExistsAsync(customer.Id))
                 throw new Exception("Customer already exists");
@@ -40,7 +40,9 @@ namespace CustomerVehicleManagement.Api.Customers
         {
             var customerFromContext = await GetCustomerEntityAsync(id);
 
-            Guard.ForNull(customerFromContext, "customerFromContext");
+            if (customerFromContext is null)
+                throw new ArgumentOutOfRangeException(nameof(customerFromContext), "customerFromContext");
+
             return CustomerHelper.ConvertEntityToReadDto(customerFromContext);
         }
 

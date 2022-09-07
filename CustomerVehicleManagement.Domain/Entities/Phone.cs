@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -59,7 +58,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetNumber(string number)
         {
-            Guard.ForNullOrEmpty(number, "number");
+            if (number is null)
+                throw new ArgumentOutOfRangeException(nameof(number), "payment");
 
             number = number.Trim();
 

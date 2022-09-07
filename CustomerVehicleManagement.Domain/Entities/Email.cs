@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
-using Menominee.Common.Utilities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Entity = Menominee.Common.Entity;
@@ -49,7 +48,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetAddress(string address)
         {
-            Guard.ForNullOrEmpty(address, "address");
 
             address = address.Trim();
 

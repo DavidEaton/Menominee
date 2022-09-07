@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,20 +21,22 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task AddItemAsync(InventoryItem item)
         {
-            Guard.ForNull(item, "item");
+            if (item is not null)
+            {
+                if (await ItemExistsAsync(item.Id))
+                    throw new Exception("Inventory Item already exists");
 
-            if (await ItemExistsAsync(item.Id))
-                throw new Exception("Inventory Item already exists");
-
-            await context.AddAsync(item);
+                await context.AddAsync(item);
+            }
         }
 
         public void DeleteInventoryItem(InventoryItem item)
         {
-            Guard.ForNull(item, "item");
-
-            context.Remove(item);
-            context.SaveChanges();
+            if (item is not null)
+            {
+                context.Remove(item);
+                context.SaveChanges();
+            }
         }
 
         public async Task DeleteItemAsync(long id)
@@ -43,10 +44,11 @@ namespace CustomerVehicleManagement.Api.Inventory
             var item = await context.InventoryItems
                                     .FirstOrDefaultAsync(item => item.Id == id);
 
-            Guard.ForNull(item, "item");
-
-            context.Remove(item);
-            context.SaveChanges();
+            if (item is not null)
+            {
+                context.Remove(item);
+                context.SaveChanges();
+            }
         }
 
         public void FixTrackingState()
@@ -111,9 +113,9 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
-            Guard.ForNull(itemFromContext, "itemFromContext");
-
-            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
+            return itemFromContext is not null
+                ? InventoryItemHelper.ConvertEntityToReadDto(itemFromContext)
+                : null;
         }
 
         public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
@@ -145,9 +147,9 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .FirstOrDefaultAsync(item => item.Manufacturer.Id == manufacturerId
                                                                          && item.ItemNumber == itemNumber);
 
-            Guard.ForNull(itemFromContext, "itemFromContext");
-
-            return InventoryItemHelper.ConvertEntityToReadDto(itemFromContext);
+            return itemFromContext is not null
+                ? InventoryItemHelper.ConvertEntityToReadDto(itemFromContext)
+                : null;
         }
 
         public async Task<InventoryItem> GetItemEntityAsync(long id)
@@ -291,20 +293,21 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)
         {
-            Guard.ForNull(item, "item");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(item).State = EntityState.Modified;
-
-            try
+            if (item is not null)
             {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ItemExistsAsync(item.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
+                // Tracking IS needed for commands for disconnected data collections
+                context.Entry(item).State = EntityState.Modified;
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await ItemExistsAsync(item.Id))
+                        return null;// something that tells the controller to return NotFound();
+                    throw;
+                }
             }
 
             return null;

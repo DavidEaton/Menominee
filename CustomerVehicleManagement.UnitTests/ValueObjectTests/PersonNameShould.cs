@@ -154,7 +154,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var name = PersonName.Create(lastName, firstName).Value;
             var newLastName = "Smith";
 
-            name = name.NewLastName(newLastName);
+            name = name.NewLastName(newLastName).Value;
 
             name.LastName.Should().Be(newLastName);
         }
@@ -167,7 +167,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var name = PersonName.Create(lastName, firstName).Value;
             var newFirstName = "Smith";
 
-            name = name.NewFirstName(newFirstName);
+            name = name.NewFirstName(newFirstName).Value;
 
             name.FirstName.Should().Be(newFirstName);
         }
@@ -181,7 +181,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var name = PersonName.Create(lastName, firstName, middleName).Value;
             var newMiddleName = "Allabaster";
 
-            name = name.NewMiddleName(newMiddleName);
+            name = name.NewMiddleName(newMiddleName).Value;
 
             name.MiddleName.Should().Be(newMiddleName);
         }

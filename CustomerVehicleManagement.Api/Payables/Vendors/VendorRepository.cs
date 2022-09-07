@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -43,15 +42,15 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 //    .ThenInclude(contact => contact.Emails)
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
 
-            Guard.ForNull(vendorFromContext, "vendorFromContext");
-
-            return new VendorToRead()
-            {
-                Id = vendorFromContext.Id,
-                VendorCode = vendorFromContext.VendorCode,
-                Name = vendorFromContext.Name,
-                IsActive = vendorFromContext.IsActive
-            };
+            return vendorFromContext is not null
+                ? new VendorToRead()
+                {
+                    Id = vendorFromContext.Id,
+                    VendorCode = vendorFromContext.VendorCode,
+                    Name = vendorFromContext.Name,
+                    IsActive = vendorFromContext.IsActive
+                }
+                : null;
         }
 
         public async Task<IReadOnlyList<VendorToRead>> GetVendorsAsync()

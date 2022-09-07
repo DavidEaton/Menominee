@@ -235,7 +235,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var address2 = Utilities.CreateAddress();
             var newAddressLine = "54321";
 
-            address2 = address2.NewAddressLine(newAddressLine);
+            address2 = address2.NewAddressLine(newAddressLine).Value;
 
             address1.Should().NotBeSameAs(address2);
         }
@@ -247,7 +247,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var address = Utilities.CreateAddress();
             var newAddressLine = "5432 One Street";
 
-            address = address.NewAddressLine("5432 One Street");
+            address = address.NewAddressLine("5432 One Street").Value;
 
             address.AddressLine.Should().Be(newAddressLine);
         }
@@ -257,7 +257,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         {
             var address = Utilities.CreateAddress();
 
-            Action action = () => address = address.NewAddressLine(null);
+            Action action = () => address = address.NewAddressLine(null).Value;
 
             action.Should().Throw<Exception>();
         }
@@ -268,7 +268,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var address = Utilities.CreateAddress();
             var newCity = "Oomapopalis";
 
-            address = address.NewCity(newCity);
+            address = address.NewCity(newCity).Value;
 
             address.City.Should().Be(newCity);
         }
@@ -278,7 +278,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         {
             var address = Utilities.CreateAddress();
 
-            Action action = () => address = address.NewCity(null);
+            Action action = () => address = address.NewCity(null).Value;
 
             action.Should().Throw<Exception>();
         }
@@ -288,7 +288,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         {
             var address = Utilities.CreateAddress();
             var newState = State.HI;
-            address = address.NewState(newState);
+            address = address.NewState(newState).Value;
 
             address.State.Should().Be(newState);
         }
@@ -299,7 +299,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
             var address = Utilities.CreateAddress();
             var newPostalCode = "55555";
 
-            address = address.NewPostalCode(newPostalCode);
+            address = address.NewPostalCode(newPostalCode).Value;
 
             address.PostalCode.Should().Be(newPostalCode);
         }
@@ -309,7 +309,7 @@ namespace CustomerVehicleManagement.UnitTests.ValueObjectTests
         {
             var address = Utilities.CreateAddress();
 
-            Action action = () => address = address = address.NewPostalCode(null);
+            Action action = () => address = address = address.NewPostalCode(null).Value;
 
             action.Should().Throw<Exception>();
         }

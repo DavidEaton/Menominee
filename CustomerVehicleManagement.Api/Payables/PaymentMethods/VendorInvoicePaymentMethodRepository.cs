@@ -1,8 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,15 +15,14 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         public VendorInvoicePaymentMethodRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddPaymentMethodAsync(VendorInvoicePaymentMethod payMethod)
         {
-            Guard.ForNull(payMethod, "Payment Method");
-
-            await context.AddAsync(payMethod);
+            if (payMethod is not null)
+                await context.AddAsync(payMethod);
         }
 
         public void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod)
@@ -44,9 +43,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .AsNoTracking()
                 .FirstOrDefaultAsync(method => method.Id == id);
 
-            Guard.ForNull(payMethodFromContext, "payMethodFromContext");
-
-            return VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethodFromContext);
+            return payMethodFromContext is not null
+                ? VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethodFromContext)
+                : null;
         }
 
         public async Task<VendorInvoicePaymentMethod> GetPaymentMethodEntityAsync(long id)
@@ -56,9 +55,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(method => method.Id == id);
 
-            Guard.ForNull(payMethodFromContext, "payMethodFromContext");
-
-            return payMethodFromContext;
+            return payMethodFromContext is not null
+                ? payMethodFromContext
+                : null;
         }
 
         public async Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetPaymentMethodListAsync()

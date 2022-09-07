@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -60,7 +59,9 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetName(PersonName name)
         {
-            Guard.ForNullOrEmpty(name, "PersonName");
+            if (name is null)
+                throw new ArgumentOutOfRangeException(nameof(name), "PersonName");
+
             Name = name;
         }
 

@@ -1,5 +1,4 @@
 ﻿using Menominee.Common;
-using Menominee.Common.Utilities;
 using System;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -11,7 +10,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public Employee(Person person)
         {
-            Guard.ForNull(person, "person == null");
             Person = person;
             Hired = DateTime.Today;
         }

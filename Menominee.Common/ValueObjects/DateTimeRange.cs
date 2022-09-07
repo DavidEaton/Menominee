@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -36,7 +35,9 @@ namespace Menominee.Common.ValueObjects
 
         public DateTimeRange NewEnd(DateTime newEnd)
         {
-            Guard.ForPrecedesDate(Start, newEnd, "newEnd");
+            if (Start >= newEnd)
+                throw new ArgumentOutOfRangeException(EndBeforeStartMessage);
+
             return new DateTimeRange(Start, newEnd);
         }
 
@@ -47,7 +48,9 @@ namespace Menominee.Common.ValueObjects
 
         public DateTimeRange NewStart(DateTime newStart)
         {
-            Guard.ForPrecedesDate(newStart, End, "newStart");
+            if (newStart >= End)
+                throw new ArgumentOutOfRangeException(EndBeforeStartMessage);
+
             return new DateTimeRange(newStart, End);
         }
 

@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Common.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace Menominee.Common.ValueObjects
@@ -23,6 +23,28 @@ namespace Menominee.Common.ValueObjects
 
         private PersonName(string lastName, string firstName, string middleName = null)
         {
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new ArgumentOutOfRangeException(LastNameRequiredMessage);
+
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new ArgumentOutOfRangeException(FirstNameRequiredMessage);
+
+            lastName = (lastName ?? string.Empty).Trim();
+            firstName = (firstName ?? string.Empty).Trim();
+            middleName = (middleName is null || middleName == string.Empty) ? null : middleName.Trim();
+
+            if (lastName.Length < LastNameMinimumLength ||
+                lastName.Length > LastNameMaximumLength)
+                throw new ArgumentOutOfRangeException(LastNameInvalidLengthMessage);
+
+            if (firstName.Length < FirstNameMinimumLength ||
+                firstName.Length > FirstNameMaximumLength)
+                throw new ArgumentOutOfRangeException(FirstNameInvalidLengthMessage);
+
+            if (middleName?.Length < MiddleNameMinimumLength ||
+                middleName?.Length > MiddleNameMaximumLength)
+                throw new ArgumentOutOfRangeException(MiddleNameInvalidLengthMessage);
+
             LastName = lastName;
             FirstName = firstName;
             MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : middleName;
@@ -44,43 +66,58 @@ namespace Menominee.Common.ValueObjects
             firstName = (firstName ?? string.Empty).Trim();
             middleName = (middleName is null || middleName == string.Empty) ? null : middleName.Trim();
 
-            if (lastName.Length < LastNameMinimumLength
-                ||
+            if (lastName.Length < LastNameMinimumLength ||
                 lastName.Length > LastNameMaximumLength)
                 return Result.Failure<PersonName>(LastNameInvalidLengthMessage);
 
-            if (firstName.Length < FirstNameMinimumLength
-                ||
+            if (firstName.Length < FirstNameMinimumLength ||
                 firstName.Length > FirstNameMaximumLength)
                 return Result.Failure<PersonName>(FirstNameInvalidLengthMessage);
 
-            if (middleName?.Length < MiddleNameMinimumLength
-                ||
+            if (middleName?.Length < MiddleNameMinimumLength ||
                 middleName?.Length > MiddleNameMaximumLength)
                 return Result.Failure<PersonName>(MiddleNameInvalidLengthMessage);
 
             return Result.Success(new PersonName(lastName, firstName, middleName));
         }
 
-        public PersonName NewLastName(string newLastName)
+        public Result<PersonName> NewLastName(string newLastName)
         {
-            Guard.ForNullOrEmpty(newLastName, "newLastName");
+            if (string.IsNullOrWhiteSpace(newLastName))
+                return Result.Failure<PersonName>(LastNameRequiredMessage);
+
             newLastName = (newLastName ?? string.Empty).Trim();
-            return new PersonName(newLastName, FirstName, MiddleName);
+
+            if (newLastName.Length < LastNameMinimumLength ||
+                newLastName.Length > LastNameMaximumLength)
+                return Result.Failure<PersonName>(LastNameInvalidLengthMessage);
+            
+            return Result.Success(new PersonName(newLastName, FirstName, MiddleName));
         }
 
-        public PersonName NewFirstName(string newFirstName)
+        public Result<PersonName> NewFirstName(string newFirstName)
         {
-            Guard.ForNullOrEmpty(newFirstName, "newFirstName");
+            if (string.IsNullOrWhiteSpace(newFirstName))
+                return Result.Failure<PersonName>(FirstNameRequiredMessage);
+
             newFirstName = (newFirstName ?? string.Empty).Trim();
-            return new PersonName(LastName, newFirstName, MiddleName);
+
+            if (newFirstName.Length < FirstNameMinimumLength ||
+                newFirstName.Length > FirstNameMaximumLength)
+                return Result.Failure<PersonName>(FirstNameInvalidLengthMessage);
+
+            return Result.Success(new PersonName(LastName, newFirstName, MiddleName));
         }
 
-        public PersonName NewMiddleName(string newMiddleName)
+        public Result<PersonName> NewMiddleName(string newMiddleName)
         {
-            Guard.ForNullOrEmpty(newMiddleName, "newMiddleName");
-            newMiddleName = (newMiddleName ?? string.Empty).Trim();
-            return new PersonName(LastName, FirstName, newMiddleName);
+            newMiddleName = (newMiddleName is null || newMiddleName == string.Empty) ? null : newMiddleName.Trim();
+
+            if (newMiddleName?.Length < MiddleNameMinimumLength ||
+                newMiddleName?.Length > MiddleNameMaximumLength)
+                return Result.Failure<PersonName>(MiddleNameInvalidLengthMessage);
+            
+            return Result.Success(new PersonName(LastName, FirstName, newMiddleName));
         }
 
         public string LastFirstMiddle

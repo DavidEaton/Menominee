@@ -1,5 +1,4 @@
 ﻿using Menominee.Common;
-using Menominee.Common.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -28,37 +27,49 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void AddService(RepairOrderService service)
         {
-            Guard.ForNull(service, "service");
+            if (service is null)
+                throw new ArgumentOutOfRangeException(nameof(service), "service");
+
             Services.Add(service);
         }
 
         public void RemoveService(RepairOrderService service)
         {
-            Guard.ForNull(service, "service");
+            if (service is null)
+                throw new ArgumentOutOfRangeException(nameof(service), "service");
+
             Services.Remove(service);
         }
 
         public void AddTax(RepairOrderTax tax)
         {
-            Guard.ForNull(tax, "tax");
+            if (tax is null)
+                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
+
             Taxes.Add(tax);
         }
 
         public void RemoveTax(RepairOrderTax tax)
         {
-            Guard.ForNull(tax, "tax");
+            if (tax is null)
+                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
+
             Taxes.Remove(tax);
         }
 
         public void AddPayment(RepairOrderPayment payment)
         {
-            Guard.ForNull(payment, "payment");
+            if (payment is null)
+                throw new ArgumentOutOfRangeException(nameof(payment), "payment");
+
             Payments.Add(payment);
         }
 
         public void RemovePayment(RepairOrderPayment payment)
         {
-            Guard.ForNull(payment, "payment");
+            if (payment is null)
+                throw new ArgumentOutOfRangeException(nameof(payment), "payment");
+
             Payments.Remove(payment);
         }
 

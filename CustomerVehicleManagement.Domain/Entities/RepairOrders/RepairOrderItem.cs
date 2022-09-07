@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
@@ -41,49 +41,64 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
         {
-            Guard.ForNull(serialNumber, "serialNumber");
+            if (serialNumber is null)
+                throw new ArgumentOutOfRangeException(nameof(serialNumber), "serialNumber");
+
             SerialNumbers.Add(serialNumber);
         }
 
         public void RemoveSerialNumber(RepairOrderSerialNumber serialNumber)
         {
-            Guard.ForNull(serialNumber, "serialNumber");
+            if (serialNumber is null)
+                throw new ArgumentOutOfRangeException(nameof(serialNumber), "serialNumber");
             SerialNumbers.Remove(serialNumber);
         }
 
         public void AddWarranty(RepairOrderWarranty warranty)
         {
-            Guard.ForNull(warranty, "warranty");
+            if (warranty is null)
+                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty");
+
             Warranties.Add(warranty);
         }
 
         public void RemoveWarranty(RepairOrderWarranty warranty)
         {
-            Guard.ForNull(warranty, "warranty");
+            if (warranty is null)
+                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty");
+
             Warranties.Remove(warranty);
         }
 
         public void AddTax(RepairOrderItemTax tax)
         {
-            Guard.ForNull(tax, "tax");
+            if (tax is null)
+                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
+
             Taxes.Add(tax);
         }
 
         public void RemoveTax(RepairOrderItemTax tax)
         {
-            Guard.ForNull(tax, "tax");
+            if (tax is null)
+                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
+
             Taxes.Remove(tax);
         }
 
         public void AddPurchase(RepairOrderPurchase purchase)
         {
-            Guard.ForNull(purchase, "purchase");
+            if (purchase is null)
+                throw new ArgumentOutOfRangeException(nameof(purchase), "purchase");
+
             Purchases.Add(purchase);
         }
 
         public void RemovePurchase(RepairOrderPurchase purchase)
         {
-            Guard.ForNull(purchase, "purchase");
+            if (purchase is null)
+                throw new ArgumentOutOfRangeException(nameof(purchase), "purchase");
+
             Purchases.Remove(purchase);
         }
 
