@@ -14,8 +14,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemGiftCertificate() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemGiftCertificate() { }
 
         #endregion  
     }

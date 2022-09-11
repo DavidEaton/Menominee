@@ -240,8 +240,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         #region ORM
 
-        // EF requires an empty constructor
-        public VendorInvoice() { }
+        // EF requires a parameterless constructor
+        protected VendorInvoice() { }
 
         #endregion
     }

@@ -94,8 +94,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         #region ORM
 
-        // EF requires an empty constructor
-        public ExciseFee() { }
+        // EF requires a parameterless constructor
+        protected ExciseFee() { }
 
         #endregion
     }

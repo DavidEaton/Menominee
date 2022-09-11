@@ -123,8 +123,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         #region ORM
 
-        // EF requires an empty constructor
-        public SaleCode() { }
+        // EF requires a parameterless constructor
+        protected SaleCode() { }
 
         #endregion 
     }

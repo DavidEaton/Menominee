@@ -26,6 +26,17 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
                 .HasDefaultValue(0);
             builder.Property(st => st.LaborTaxRate)
                 .HasDefaultValue(0);
+
+            //builder.HasMany(salesTax => salesTax.ExciseFees)
+            //    .WithOne()
+            //    .IsRequired()
+            //    .HasForeignKey(exciseFee => exciseFee.Id)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //builder.Metadata
+            //    .FindNavigation("ExciseFees")
+            //    .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         }
     }
 }

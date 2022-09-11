@@ -169,8 +169,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         #region ORM
 
-        // EF requires an empty constructor
-        public VendorInvoiceLineItem() { }
+        // EF requires a parameterless constructor
+        protected VendorInvoiceLineItem() { }
 
         #endregion
     }

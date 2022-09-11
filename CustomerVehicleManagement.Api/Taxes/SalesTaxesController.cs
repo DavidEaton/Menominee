@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             taxFromRepository.SetTaxIdNumber(salesTax.TaxIdNumber);
             taxFromRepository.SetPartTaxRate(salesTax.PartTaxRate);
             taxFromRepository.SetLaborTaxRate(salesTax.LaborTaxRate);
-            taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
+            //taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
@@ -74,19 +74,19 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult<SalesTaxToRead>> AddSalesTaxAsync(SalesTaxToWrite taxToWrite)
+        public async Task<ActionResult<SalesTaxToRead>> AddSalesTaxAsync(SalesTaxToWrite taxToAdd)
         {
             // 1. Convert dto to domain entity
             var tax = SalesTax.Create(
-                taxToWrite.Description,
-                taxToWrite.TaxType,
-                taxToWrite.Order,
-                taxToWrite.TaxIdNumber,
-                taxToWrite.PartTaxRate,
-                taxToWrite.LaborTaxRate,
-                ExciseFeeHelper.ConvertWriteDtosToEntities(taxToWrite.ExciseFees),
-                taxToWrite.IsAppliedByDefault,
-                taxToWrite.IsTaxable).Value;
+                taxToAdd.Description,
+                taxToAdd.TaxType,
+                taxToAdd.Order,
+                taxToAdd.TaxIdNumber,
+                taxToAdd.PartTaxRate,
+                taxToAdd.LaborTaxRate,
+                ExciseFeeHelper.ConvertWriteDtosToEntities(taxToAdd.ExciseFees),
+                taxToAdd.IsAppliedByDefault,
+                taxToAdd.IsTaxable).Value;
 
             // 2. Add domain entity to repository
             await repository.AddSalesTaxAsync(tax);

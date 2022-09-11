@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,7 +70,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 new List<ExciseFeeToWrite>();
         }
 
-        public static List<ExciseFeeToRead> ConvertEntitiesToReadDtos(List<ExciseFee> exciseFees)
+        public static List<ExciseFeeToRead> ConvertEntitiesToReadDtos(IReadOnlyList<ExciseFee> exciseFees)
         {
             return
                 exciseFees?.Select(fee =>

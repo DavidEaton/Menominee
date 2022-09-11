@@ -27,7 +27,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public string TaxIdNumber { get; private set; }
         public double PartTaxRate { get; private set; }
         public double LaborTaxRate { get; private set; }
-        public List<ExciseFee> ExciseFees { get; private set; } = new List<ExciseFee>();
+
+        private IList<ExciseFee> exciseFees;
+        public IReadOnlyList<ExciseFee> ExciseFees => exciseFees.ToList();
 
         private SalesTax(
             string description,
@@ -76,7 +78,19 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (isTaxable.HasValue)
                 IsTaxable = isTaxable.Value;
 
-            SetExciseFees(exciseFees);
+            if (exciseFees is not null)
+                foreach (var fee in exciseFees)
+                    AddExciseFee(fee);
+        }
+
+        // TODO: Make AddExciseFee signature honest: replace void return
+        // type with Result<ExciseFee>; replace exception with Result.Failure
+        private void AddExciseFee(ExciseFee fee)
+        {
+            if (fee is null)
+                throw new ArgumentNullException(RequiredMessage);
+
+            exciseFees.Add(fee);
         }
 
         public static Result<SalesTax> Create(
@@ -194,40 +208,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 : Result.Success(IsAppliedByDefault = null);
         }
 
-        public void SetExciseFees(List<ExciseFee> exciseFees)
-        {
-            if (exciseFees is null || exciseFees?.Count == 0)
-                ExciseFees = exciseFees;
-
-            if (exciseFees?.Count > 0)
-            {
-                // Remove not found items (items that caller removed)
-                foreach (var fee in exciseFees)
-                {
-                    if (!ExciseFees.Any(x => x.Id == fee.Id))
-                        exciseFees.Remove(fee);
-                }
-
-                // Find and Update each
-                foreach (var fee in exciseFees)
-                {
-                    var foundFee = ExciseFees.FirstOrDefault(f => f.Id == fee.Id);
-                    foundFee.SetDescription(fee.Description);
-                    foundFee.SetFeeType(fee.FeeType);
-                    foundFee.SetAmount(fee.Amount);
-                }
-
-                // Validate the collection
-            }
-        }
-
-
-
-
         #region ORM
 
-        // EF requires an empty constructor
-        public SalesTax() { }
+        // EF requires a parameterless constructor
+        protected SalesTax()
+        {
+            exciseFees = new List<ExciseFee>();
+        }
 
         #endregion  
     }

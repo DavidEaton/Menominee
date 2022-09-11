@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         // Code that pollutes our domain class (very minor impact in this case), but
         // is necessary for EntityFramework, makes our model <100% persistence ignorant.
 
-        // EF requires an empty constructor
+        // EF requires a parameterless constructor
         protected Organization() { }
 
         #endregion

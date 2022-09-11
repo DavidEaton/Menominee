@@ -93,18 +93,13 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite scCreateDto)
+        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite saleCodeToAdd)
         {
             // 1. Convert dto to domain entity
-            //var sc = new SaleCode()
-            //{
-            //    Code = scCreateDto.Code,
-            //    Name = scCreateDto.Name
-            //};
-            var sc = SaleCodeHelper.ConvertWriteDtoToEntity(scCreateDto);
+            var saleCode = SaleCodeHelper.ConvertWriteDtoToEntity(saleCodeToAdd);
 
             // 2. Add domain entity to repository
-            await repository.AddSaleCodeAsync(sc);
+            await repository.AddSaleCodeAsync(saleCode);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
@@ -113,9 +108,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return CreatedAtRoute("GetSaleCodeAsync",
                 new
                 {
-                    Id = sc.Id
+                    Id = saleCode.Id
                 },
-                SaleCodeHelper.ConvertEntityToReadDto(sc));
+                SaleCodeHelper.ConvertEntityToReadDto(saleCode));
         }
 
         [HttpDelete("{id:long}")]
