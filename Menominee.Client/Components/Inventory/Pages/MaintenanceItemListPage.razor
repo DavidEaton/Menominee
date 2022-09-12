@@ -1,0 +1,64 @@
+﻿@page "/inventory/maintenanceitems"
+
+<div class="m-main-content">
+    <div class="m-form">
+        <div>
+            <ContentHeader Header="Maintenance Items" />
+
+            @if (ItemsList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+
+            @if (ItemsList != null)
+            {
+                <TelerikGrid Data="ItemsList"
+                             OnRowClick="@OnRowSelected"
+                             Pageable="true"
+                             Sortable="false"
+                             FilterMode="GridFilterMode.None"
+                             SelectionMode="GridSelectionMode.Single"
+                         SelectedItemsChanged="@((IEnumerable<MaintenanceItemToReadInList> itemList) => OnSelect(itemList))"
+                             SelectedItems="@SelectedList"
+                             Class="m-grid"
+                             @ref="@Grid">
+                    <GridColumns>
+                        <Telerik.Blazor.Components.GridColumn Width="35%"
+                                                          Field="@nameof(MaintenanceItemToReadInList.ItemNumber)"
+                                                              Title="Item Number">
+                        </Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Width="65%"
+                                                          Field="@nameof(MaintenanceItemToReadInList.Description)"
+                                                              Title="Description">
+                        </Telerik.Blazor.Components.GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+
+                @*<EditNewDeleteButtons OnDone="@OnDone" OnNew="@OnAdd" OnDelete="@OnDelete" CanDelete="@ItemSelected" />*@
+
+                <div>
+                    <hr class="m-btn-group-divider">
+                    <div>
+                        <button class="btn btn-primary m-button" @onclick="OnDone"><i class="fas fa-check"></i> Done</button>
+                        <button class="btn m-button m-add-btn" @onclick="OnAdd"><i class="fas fa-plus"></i> New</button>
+                        <button class="btn m-button m-delete-btn" @onclick="OnDeleteAsync" disabled="@(ItemSelected ? false : true)"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="btn m-button m-generic-btn" @onclick="OnMoveUpAsync" disabled="@(ItemSelected ? false : true)"><i class="fas fa-arrow-up"></i> Move Up</button>
+                        <button class="btn m-button m-generic-btn" @onclick="OnMoveDownAsync" disabled="@(ItemSelected ? false : true)"><i class="fas fa-arrow-down"></i> Move Down</button>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+<InventoryItemSelectForm DialogVisible="@ShowItemSelector"
+                         @bind-SelectedItem="@SelectedInventoryItem"
+                         OnSelect="@SubmitAddItemHandlerAsync"
+                         OnCancel="@EndAddItem" />
+
+<style>
+    .m-gid-container, .m-grid {
+        min-height: calc(100vh - 248px);
+    }
+</style>

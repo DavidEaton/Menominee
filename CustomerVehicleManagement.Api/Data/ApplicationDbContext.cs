@@ -136,6 +136,7 @@ namespace CustomerVehicleManagement.Api.Data
             //modelBuilder.ApplyConfiguration(new InventoryItemDonationConfiguration());
             //modelBuilder.ApplyConfiguration(new InventoryItemGiftCertificateConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemWarrantyConfiguration());
+            modelBuilder.ApplyConfiguration(new MaintenanceItemConfiguration());
 
             // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
@@ -254,6 +255,7 @@ namespace CustomerVehicleManagement.Api.Data
         //public DbSet<InventoryItemDonation> InventoryItemDonations { get; set; }
         //public DbSet<InventoryItemGiftCertificate> InventoryItemGiftCertificates { get; set; }
         public DbSet<InventoryItemWarranty> InventoryItemWarranties { get; set; }
+        public DbSet<MaintenanceItem> MaintenanceItems { get; set; }
 
         // Credit Cards
         public DbSet<CreditCard> CreditCards { get; set; }

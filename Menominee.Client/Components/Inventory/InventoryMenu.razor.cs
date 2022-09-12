@@ -23,8 +23,13 @@ namespace Menominee.Client.Components.Inventory
             new MenuItem
             {
                 Text = "Items",
-                Id = ((int)InventoryMenuId.Items).ToString(),
-                Url = $"{ModuleUrl}/items/listing"
+                Id = "-1",
+                Items = new List<MenuItem>
+                {
+                    new MenuItem { Text="Item List", Url=$"{ModuleUrl}/items/listing", Id=((int)InventoryMenuId.ItemList).ToString() },
+                    new MenuItem { Text="Maintenance Items", Url=$"{ModuleUrl}/maintenanceitems", Id=((int)InventoryMenuId.MaintenanceItems).ToString() }
+                },
+                Url = ""
             },
             new MenuItem
             {

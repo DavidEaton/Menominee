@@ -129,6 +129,7 @@ namespace CustomerVehicleManagement.Api
             services.TryAddScoped<ISaleCodeRepository, SaleCodeRepository>();
             services.TryAddScoped<IProductCodeRepository, ProductCodeRepository>();
             services.TryAddScoped<IInventoryItemRepository, InventoryItemRepository>();
+            services.TryAddScoped<IMaintenanceItemRepository, MaintenanceItemRepository>();
             services.TryAddScoped<ICreditCardRepository, CreditCardRepository>();
             services.TryAddScoped<IExciseFeeRepository, ExciseFeeRepository>();
             services.TryAddScoped<ISalesTaxRepository, SalesTaxRepository>();

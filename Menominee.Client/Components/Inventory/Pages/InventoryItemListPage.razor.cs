@@ -25,6 +25,7 @@ namespace Menominee.Client.Components.Inventory.Pages
         [Parameter]
         public long ItemToSelect { get; set; } = 0;
 
+
         public IReadOnlyList<InventoryItemToReadInList> ItemsList;
         public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
         public InventoryItemToReadInList SelectedItem { get; set; }

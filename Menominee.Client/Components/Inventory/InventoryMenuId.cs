@@ -4,6 +4,8 @@
     {
         //----------------
         Items,
+        ItemList,
+        MaintenanceItems,
 
         //----------------
         Orders,
