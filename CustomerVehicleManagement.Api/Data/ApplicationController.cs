@@ -6,7 +6,7 @@ namespace CustomerVehicleManagement.Api.Data
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policies.RequireAuthenticatedUser)]
+    //[Authorize(Policies.RequireAuthenticatedUser)]
     public class ApplicationController : ControllerBase
     {
     }

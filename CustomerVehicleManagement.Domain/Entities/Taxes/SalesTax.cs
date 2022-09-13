@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public double PartTaxRate { get; private set; }
         public double LaborTaxRate { get; private set; }
 
-        private IList<ExciseFee> exciseFees;
+        private IList<ExciseFee> exciseFees = new List<ExciseFee>();
         public IReadOnlyList<ExciseFee> ExciseFees => exciseFees.ToList();
 
         private SalesTax(
@@ -78,19 +78,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (isTaxable.HasValue)
                 IsTaxable = isTaxable.Value;
 
-            if (exciseFees is not null)
-                foreach (var fee in exciseFees)
-                    AddExciseFee(fee);
-        }
-
-        // TODO: Make AddExciseFee signature honest: replace void return
-        // type with Result<ExciseFee>; replace exception with Result.Failure
-        private void AddExciseFee(ExciseFee fee)
-        {
-            if (fee is null)
-                throw new ArgumentNullException(RequiredMessage);
-
-            exciseFees.Add(fee);
+            this.exciseFees ??= exciseFees;
         }
 
         public static Result<SalesTax> Create(
@@ -133,10 +121,35 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 taxIdNumber,
                 partTaxRate,
                 laborTaxRate,
-                exciseFees,
+                exciseFees is null ? null : exciseFees,
                 isAppliedByDefault,
                 isTaxable
                 ));
+        }
+
+        public Result<ExciseFee> AddExciseFee(ExciseFee fee)
+        {
+            if (fee is null)
+                return Result.Failure<ExciseFee>(RequiredMessage);
+
+            exciseFees ??= new List<ExciseFee>();
+
+            // Can the next two lines be accomplished with one?
+            exciseFees.Add(fee);
+            return Result.Success(fee);
+        }
+
+        public Result<ExciseFee> RemoveExciseFee(ExciseFee fee)
+        {
+            if (fee is null)
+                return Result.Failure<ExciseFee>(RequiredMessage);
+
+            // Better to remove the ? opperator and add a null check?
+            // Using the ? operatror seems like it might potentially
+            // silently swallow a bug:
+            exciseFees?.Remove(fee);
+
+            return Result.Success(fee);
         }
 
         public Result<string> SetDescription(string description)

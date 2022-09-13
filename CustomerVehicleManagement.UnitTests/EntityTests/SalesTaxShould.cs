@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -358,6 +359,63 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             salesTax.SetIsTaxable(false);
 
             salesTax.IsTaxable.Should().BeFalse();
+        }
+
+        [Fact]
+        public void AddExciseFee()
+        {
+            var salesTax = CreateSalesTax();
+            var fee = ExciseFee.Create(
+                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                ExciseFeeType.Flat,
+                ExciseFee.MinimumValue + 1.0).Value;
+
+            salesTax.AddExciseFee(fee);
+
+            salesTax.ExciseFees[0].Should().Be(fee);
+        }
+
+        [Fact]
+        public void RemoveExciseFee()
+        {
+            var salesTax = CreateSalesTax();
+            var fee = ExciseFee.Create(
+                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                ExciseFeeType.Flat,
+                ExciseFee.MinimumValue + 1.0).Value;
+            salesTax.AddExciseFee(fee);
+
+            salesTax.ExciseFees.Count.Should().Be(1);
+            salesTax.RemoveExciseFee(fee);
+
+            salesTax.ExciseFees.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Not_Remove_NulL_ExciseFee()
+        {
+            var salesTax = CreateSalesTax();
+            var fee = ExciseFee.Create(
+                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                ExciseFeeType.Flat,
+                ExciseFee.MinimumValue + 1.0).Value;
+            salesTax.AddExciseFee(fee);
+            salesTax.ExciseFees.Count.Should().Be(1);
+
+            var result = salesTax.RemoveExciseFee(null);
+
+            result.IsFailure.Should().BeTrue();
+            salesTax.ExciseFees.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Not_Add_Null_ExciseFee()
+        {
+            var salesTax = CreateSalesTax();
+
+            var result = salesTax.AddExciseFee(null);
+
+            result.IsFailure.Should().BeTrue();
         }
 
         public class TestData
