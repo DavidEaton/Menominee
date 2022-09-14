@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrder)
         {
-            var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
+            var repairOrderFromRepository = await repository.GetRepairOrderEntityAsync(id);
             if (repairOrderFromRepository is null)
                 return NotFound($"Could not find Repair Order #{id} to update.");
 

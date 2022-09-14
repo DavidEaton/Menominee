@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                 return NotFound($"Could not find Sales Tax to update: {salesTax.Description}");
 
             //1) Get domain entity from repository
-            SalesTax taxFromRepository = repository.GetSalesTaxEntityAsync(id).Result;
+            SalesTax taxFromRepository = await repository.GetSalesTaxEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
             taxFromRepository.SetDescription(salesTax.Description);

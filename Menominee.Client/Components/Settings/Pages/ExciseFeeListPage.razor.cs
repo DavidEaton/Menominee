@@ -24,7 +24,7 @@ namespace Menominee.Client.Components.Settings.Pages
         public IReadOnlyList<ExciseFeeToReadInList> ExciseFees;
         public IEnumerable<ExciseFeeToReadInList> SelectedExciseFees { get; set; } = Enumerable.Empty<ExciseFeeToReadInList>();
         public ExciseFeeToReadInList SelectedExciseFee { get; set; }
-        public ExciseFeeToWrite ExciseFee { get; set; } = null;
+        public ExciseFeeToUpdate ExciseFee { get; set; } = null;
 
         public TelerikGrid<ExciseFeeToReadInList> Grid { get; set; }
 

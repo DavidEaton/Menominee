@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
 {
     public class ExciseFeeHelper
     {
-        public static ExciseFee ConvertWriteDtoToEntity(ExciseFeeToWrite exciseFee)
+        public static ExciseFee ConvertWriteDtoToEntity(ExciseFeeToUpdate exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -18,7 +17,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 .Value;
         }
 
-        public static ExciseFeeToWrite CovertReadToWriteDto(ExciseFeeToRead exciseFee)
+        public static ExciseFeeToUpdate CovertReadToWriteDto(ExciseFeeToRead exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -56,18 +55,18 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        internal static List<ExciseFeeToWrite> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
+        internal static List<ExciseFeeToUpdate> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
         {
             return
                 exciseFees?.Select(fee =>
-                new ExciseFeeToWrite()
+                new ExciseFeeToUpdate()
                 {
                     Description = fee.Description,
                     FeeType = fee.FeeType,
                     Amount = fee.Amount
                 }).ToList()
                 ??
-                new List<ExciseFeeToWrite>();
+                new List<ExciseFeeToUpdate>();
         }
 
         public static List<ExciseFeeToRead> ConvertEntitiesToReadDtos(IReadOnlyList<ExciseFee> exciseFees)
@@ -85,12 +84,23 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 new List<ExciseFeeToRead>();
         }
 
-        public static List<ExciseFee> ConvertWriteDtosToEntities(List<ExciseFeeToWrite> exciseFees)
+        public static List<ExciseFee> ConvertWriteDtosToEntities(List<ExciseFeeToUpdate> exciseFees)
         {
             return
                 exciseFees?.Select(fee => ConvertWriteDtoToEntity(fee)).ToList()
                 ??
                 new List<ExciseFee>();
+        }
+
+        public static ExciseFee ConvertAddDtoToEntity(ExciseFeeToAdd excisefee)
+        {
+            return excisefee is null
+                ? null
+                : ExciseFee.Create(
+                    excisefee.Description,
+                    excisefee.FeeType,
+                    excisefee.Amount)
+                .Value;
         }
     }
 }

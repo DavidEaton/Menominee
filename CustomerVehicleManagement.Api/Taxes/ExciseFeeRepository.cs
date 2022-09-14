@@ -21,16 +21,19 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         public async Task AddExciseFeeAsync(ExciseFee exciseFee)
         {
+            // TODO:
             // The Id of a new ExciseFee will never == an existing
             // Id because new domain objects don't get their Id
             // value until context.SaveChanges.
             //if (await ExciseFeeExistsAsync(exciseFee.Id))
             //    throw new Exception("Excise Fee already exists");
 
-            if (exciseFee is not null)
-                await context.AddAsync(exciseFee);
-
-            await context.AddAsync(exciseFee);
+            // TODO:
+            // Is this a good use of "Use discard '_'"?
+            // Is this a good use of exceptions?
+            _ = exciseFee is not null
+                ? await context.AddAsync(exciseFee)
+                : throw new ArgumentNullException(nameof(context));
         }
 
         public void DeleteExciseFee(ExciseFee exciseFee)

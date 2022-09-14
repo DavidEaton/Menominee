@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var saleCodeFromRepository = repository.GetSaleCodeEntityAsync(id).Result;
+            var saleCodeFromRepository = await repository.GetSaleCodeEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
             saleCodeFromRepository.SetName(saleCode.Name);

@@ -18,7 +18,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
     [Category("Database")]
     public class DatabaseShould : IDisposable
     {
-        private const string Connection = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+        private const string ConnectionString = "Server=localhost;Database=MenomineeTest;Trusted_Connection=True;";
+        private const string EnvironmentName = "Hosting:Testing";
 
         [Fact]
         public void InsertPersonIntoDatabase()
@@ -156,12 +157,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         private static ApplicationDbContext CreateTestContext()
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(Connection, null);
+            optionsBuilder.UseSqlServer(ConnectionString);
 
             new Mock<IHostEnvironment>()
-                   .Setup(e => e.EnvironmentName)
-                   .Returns("Hosting:Testing");
-            var context = new ApplicationDbContext(Connection);
+                   .Setup(hostEnvironment => hostEnvironment.EnvironmentName)
+                   .Returns(EnvironmentName);
+
+            var context = new ApplicationDbContext(ConnectionString);
 
             // Set test database to known state
             context.Database.EnsureDeleted();
@@ -172,14 +174,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         public void Dispose()
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(Connection);
+            optionsBuilder.UseSqlServer(ConnectionString);
             var mockConfiguration = new Mock<IConfiguration>();
             var mockLogger = new Mock<ILogger<ApplicationDbContext>>();
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
                    .Returns("Hosting:UnitTestEnvironment");
-            var context = new ApplicationDbContext(Connection);
+            var context = new ApplicationDbContext(ConnectionString);
             context.Database.EnsureDeleted();
             GC.SuppressFinalize(this);
         }

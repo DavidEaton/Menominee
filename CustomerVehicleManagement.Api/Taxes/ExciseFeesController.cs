@@ -41,13 +41,13 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         // api/excisefees/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
+        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToUpdate exciseFee)
         {
             if (!await repository.ExciseFeeExistsAsync(id))
                 return NotFound($"Could not find Excise Fee to update: {exciseFee.Description}");
 
             //1) Get domain entity from repository
-            ExciseFee exciseFeeFromRepository = repository.GetExciseFeeEntityAsync(id).Result;
+            var exciseFeeFromRepository = await repository.GetExciseFeeEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
 
@@ -69,10 +69,10 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToWrite exciseFeeToAdd)
+        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToAdd exciseFeeToAdd)
         {
             // 1. Convert dto to domain entity
-            var exciseFee = ExciseFeeHelper.ConvertWriteDtoToEntity(exciseFeeToAdd);
+            var exciseFee = ExciseFeeHelper.ConvertAddDtoToEntity(exciseFeeToAdd);
 
             // 2. Add domain entity to repository
             await repository.AddExciseFeeAsync(exciseFee);

@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             if (!await repository.PaymentMethodExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var paymentMethodFromRepository = repository.GetPaymentMethodEntityAsync(id).Result;
+            var paymentMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
             if (paymentMethodFromRepository is null)
                 return NotFound(notFoundMessage);
 

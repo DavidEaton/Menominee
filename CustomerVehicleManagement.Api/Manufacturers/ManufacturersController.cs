@@ -62,29 +62,29 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         // api/manufacturers/xyz
         [HttpPut("{code}")]
-        public async Task<IActionResult> UpdateManufacturerAsync(string code, ManufacturerToWrite mfrDto)
+        public async Task<IActionResult> UpdateManufacturerAsync(string code, ManufacturerToWrite manufacturer)
         {
-            var notFoundMessage = $"Could not find Manufacturer to update: {mfrDto.Name}";
+            var notFoundMessage = $"Could not find Manufacturer to update: {manufacturer.Name}";
 
             if (!await repository.ManufacturerExistsAsync(code))
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var manufacturer = repository.GetManufacturerEntityAsync(code).Result;
+            var manufacturerFromRepository = await repository.GetManufacturerEntityAsync(code);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            manufacturer.SetCode(mfrDto.Code);
-            manufacturer.SetName(mfrDto.Name);
-            manufacturer.SetPrefix(mfrDto.Prefix);
+            manufacturerFromRepository.SetCode(manufacturer.Code);
+            manufacturerFromRepository.SetName(manufacturer.Name);
+            manufacturerFromRepository.SetPrefix(manufacturer.Prefix);
 
             // Update the objects ObjectState and sych the EF Change Tracker
             // 3) Set entity's TrackingState to Modified
-            manufacturer.SetTrackingState(TrackingState.Modified);
+            manufacturerFromRepository.SetTrackingState(TrackingState.Modified);
 
             // 4) FixTrackingState: moves entity state tracking into the context
             repository.FixTrackingState();
 
-            repository.UpdateManufacturerAsync(manufacturer);
+            repository.UpdateManufacturerAsync(manufacturerFromRepository);
 
             await repository.SaveChangesAsync();
 
