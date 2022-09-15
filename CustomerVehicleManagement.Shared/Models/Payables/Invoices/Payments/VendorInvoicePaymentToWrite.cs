@@ -2,7 +2,7 @@
 {
     public class VendorInvoicePaymentToWrite
     {
-        public VendorInvoicePaymentMethodToWrite PaymentMethod { get; set; }
+        public VendorInvoicePaymentMethodToRead PaymentMethod { get; set; }
         public double Amount { get; set; } = 0.0;
     }
 }

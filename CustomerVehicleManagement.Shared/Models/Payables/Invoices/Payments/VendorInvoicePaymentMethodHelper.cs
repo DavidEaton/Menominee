@@ -33,6 +33,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 ).Value;
         }
 
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IEnumerable<string> paymentMethods)
+        {
+            return paymentMethod is null
+                ? null
+                : VendorInvoicePaymentMethod.Create(
+                    paymentMethods,
+                    paymentMethod.Name,
+                    paymentMethod.IsActive,
+                    paymentMethod.IsOnAccountPaymentType,
+                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                ).Value;
+        }
+
         public static VendorInvoicePaymentMethodToRead ConvertEntityToReadDto(VendorInvoicePaymentMethod payMethod)
         {
             return payMethod is null

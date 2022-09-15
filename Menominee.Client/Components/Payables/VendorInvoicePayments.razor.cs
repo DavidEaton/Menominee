@@ -1,5 +1,8 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.Contactable;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Client.Services.Payables.PaymentMethods;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +21,7 @@ namespace Menominee.Client.Components.Payables
 
         [Parameter]
         public IList<VendorInvoicePaymentToWrite> Payments { get; set; }
+        public VendorInvoicePaymentToWrite Payment { get; set; }
 
         public TelerikGrid<VendorInvoicePaymentToWrite> Grid { get; set; }
 
@@ -75,13 +79,18 @@ namespace Menominee.Client.Components.Payables
 
         private void OnNew()
         {
-            paymentMethodId = 0;
-            VendorInvoicePaymentToWrite paymentToAdd = new();
-            paymentToAdd.PaymentMethod = new();
-            Payments.Add(paymentToAdd);
+            //paymentMethodId = 0;
+            //VendorInvoicePaymentToWrite paymentToAdd = new();
+            //paymentToAdd.PaymentMethod = new();
+            //Payments.Add(paymentToAdd);
+            //Grid.Rebind();
+            //SelectedPayment = paymentToAdd;
+            //SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
+            Payment = new();
+            Payments.Add(Payment);
             Grid.Rebind();
-            SelectedPayment = paymentToAdd;
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
+            //FormMode = FormMode.Add;
+
         }
 
         private void OnDelete()
@@ -94,9 +103,8 @@ namespace Menominee.Client.Components.Payables
 
         protected void OnPaymentSelect(IEnumerable<VendorInvoicePaymentToWrite> payments)
         {
-            SelectedPayment = payments.FirstOrDefault();
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
-            //paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
+            //SelectedPayment = payments.FirstOrDefault();
+            //SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)

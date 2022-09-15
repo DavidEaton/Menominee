@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return payment =>
                 new VendorInvoicePaymentToWrite()
                 {
-                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(payment.PaymentMethod),
+                    PaymentMethod = payment.PaymentMethod,
                     Amount = payment.Amount
                 };
         }

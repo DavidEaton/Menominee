@@ -11,6 +11,13 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                 : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
         }
 
+        public static Vendor ConvertWriteDtoToEntity(VendorToRead vendor)
+        {
+            return vendor is null
+                ? null
+                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+        }
+
         public static VendorToWrite ConvertReadToWriteDto(VendorToRead vendor)
         {
             return vendor is null
