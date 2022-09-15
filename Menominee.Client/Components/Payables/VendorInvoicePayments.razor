@@ -14,12 +14,12 @@
              SelectionMode="GridSelectionMode.Single"
              @ref="@Grid">
         <GridColumns>
-            <GridColumn Field="@nameof(Payment.PaymentMethod)"
+            <GridColumn Field="@nameof(Payment.PaymentMethodId)"
                     Title="Payment Method"
                     Width="55%">
                 <Template>
                     @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod"
+                        <TelerikDropDownList @bind-Value="Payment.PaymentMethodId"
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id">
@@ -28,7 +28,7 @@
                 </Template>
                 <EditorTemplate>
                     @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod"
+                        <TelerikDropDownList @bind-Value="Payment.PaymentMethodId"
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id">

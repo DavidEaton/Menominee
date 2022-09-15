@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
@@ -20,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             };
         }
 
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToWrite paymentMethod, IEnumerable<string> paymentMethods)
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToWrite paymentMethod, IList<string> paymentMethods)
         {
             return paymentMethod is null
                 ? null
@@ -33,7 +34,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 ).Value;
         }
 
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IEnumerable<string> paymentMethods)
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IList<string> paymentMethods)
         {
             return paymentMethod is null
                 ? null
@@ -70,6 +71,17 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
                     ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
+                };
+        }
+
+        internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment)
+        {
+            return
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    //Id = 1,
+                    //Name = payment.ToString(),
+                    //IsActive = payment.
                 };
         }
     }

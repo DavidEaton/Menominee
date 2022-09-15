@@ -7,31 +7,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentHelper
     {
-        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IEnumerable<string> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
+        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IList<string> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
         {
             return payments?.Select(ConvertWriteDtoToEntity(paymentMethods)).ToList()
                 ?? new List<VendorInvoicePayment>();
         }
 
-        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity(IEnumerable<string> paymentMethods)
+        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity(IList<string> paymentMethods)
         {
             return payment =>
                 VendorInvoicePayment.Create(
-                    VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod, paymentMethods),
+                    VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
+                        VendorInvoicePaymentMethodHelper.ConvertWriteToReadDto(payment), paymentMethods),
                     payment.Amount)
-                .Value;
-        }
-
-        public static VendorInvoicePayment ConvertWriteDtoToEntity(
-            VendorInvoicePaymentToWrite payment,
-            IEnumerable<string> paymentMethods)
-        {
-            if (payment is null)
-                return null;
-
-            return VendorInvoicePayment.Create(
-                VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payment.PaymentMethod, paymentMethods),
-                payment.Amount)
                 .Value;
         }
 
@@ -46,7 +34,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return payment =>
                 new VendorInvoicePaymentToWrite()
                 {
-                    PaymentMethod = payment.PaymentMethod,
+                    PaymentMethodId = payment.PaymentMethod.Id,
                     Amount = payment.Amount
                 };
         }

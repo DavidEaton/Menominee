@@ -128,7 +128,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 
         public static VendorInvoice ConvertWriteDtoToEntity(
             VendorInvoiceToWrite invoice,
-            IEnumerable<string> paymentMethods)
+            IList<string> paymentMethods)
         {
             return invoice is null
                 ? null

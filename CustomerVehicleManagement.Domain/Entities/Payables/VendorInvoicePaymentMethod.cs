@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         }
 
         public static Result<VendorInvoicePaymentMethod> Create(
-            IEnumerable<string> paymentMethods,
+            IList<string> paymentMethods,
             string name,
             bool isActive,
             bool isOnAccountPaymentType,

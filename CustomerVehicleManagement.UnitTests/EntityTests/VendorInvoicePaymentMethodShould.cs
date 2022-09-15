@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames();
 
             // Act
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(

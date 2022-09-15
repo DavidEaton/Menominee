@@ -1,8 +1,11 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.UnitTests.EntityTests
 {
@@ -15,13 +18,34 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
                 Utilities.RandomCharacters(Vendor.MinimumLength)).Value;
         }
 
-        public static IList<string> CreatePaymentMethodNames()
+        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods()
         {
-            IList<string> paymentMethodNames = new List<string>();
-            paymentMethodNames.Add(Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength));
-            paymentMethodNames.Add(Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 10));
-            paymentMethodNames.Add(Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 20));
-            return paymentMethodNames;
+            return new List<VendorInvoicePaymentMethodToRead>
+            {
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                },
+
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 10),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                },
+
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 20),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                }
+            };
         }
 
         public static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
@@ -30,7 +54,7 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames();
 
             return VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
@@ -77,6 +101,19 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
             }
 
             return fees;
+        }
+
+        internal static IList<string> CreatePaymentMethodNames()
+        {
+            IList<string> result = new List<string>();
+            var list = CreateVendorInvoicePaymentMethods();
+
+            foreach (var method in list)
+            {
+                result.Add(method.Name);
+            }
+
+            return result;
         }
     }
 }
