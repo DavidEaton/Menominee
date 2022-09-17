@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Address = Menominee.Common.ValueObjects.Address;
+using Phone = CustomerVehicleManagement.Domain.Entities.Phone;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
@@ -70,16 +72,16 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         // api/organizations/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organization)
+        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organizationFromCaller)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
                 2) Update domain entity with data in data transfer object (DTO)
                 3) Set entity's TrackingState to Modified
                 4) FixTrackingState: moves entity state tracking back out of
-                the object and into the context to track entity state in this
-                disconnected application. In other words, sych the EF Change
-                Tracker with our disconnected entitys TrackingState.
+                   the object and into the context to track entity state in this
+                   disconnected application. In other words, sych the EF Change
+                   Tracker with our disconnected entity's TrackingState.
                 5) Save changes
                 6) return NoContent()
             */
@@ -88,69 +90,77 @@ namespace CustomerVehicleManagement.Api.Organizations
             // 3. Update the corresponding fields in the Organization
             // 4. Save back to the DB
 
-            var notFoundMessage = $"Could not find Organization to update: {organization.Name}";
+            var notFoundMessage = $"Could not find Organization to update: {organizationFromCaller.Name}";
 
             if (!await repository.OrganizationExistsAsync(id))
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
+            Organization organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
             if (organizationFromRepository is null)
                 return NotFound(notFoundMessage);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            var organizationNameOrError = OrganizationName.Create(organization.Name);
+            var organizationNameOrError = OrganizationName.Create(organizationFromCaller.Name);
 
             if (organizationNameOrError.IsSuccess)
                 organizationFromRepository.SetName(organizationNameOrError.Value);
 
-            if (organization?.Address != null)
+            if (organizationFromCaller?.Address != null)
                 organizationFromRepository.SetAddress(
                     Address.Create(
-                        organization.Address.AddressLine,
-                        organization.Address.City,
-                        organization.Address.State,
-                        organization.Address.PostalCode).Value);
+                        organizationFromCaller.Address.AddressLine,
+                        organizationFromCaller.Address.City,
+                        organizationFromCaller.Address.State,
+                        organizationFromCaller.Address.PostalCode).Value);
 
-            // Client may send an empty or null Address, signifying removal/replacement
-            if (organization?.Address is null)
+            // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
+            if (organizationFromCaller?.Address is null)
                 organizationFromRepository.SetAddress(null);
 
-            organizationFromRepository.SetNote(organization.Note);
+            organizationFromRepository.SetNote(organizationFromCaller.Note);
 
-            // Client may send an empty or null phones collection, signifying removal/replacement
-            List<Phone> phones = new();
-            if (organization?.Phones.Count > 0)
+            // Client may send an empty or null phones collection of ENTITIES, signifying
+            // NO CHANGE TO COLLECTION
+            foreach (var phone in organizationFromCaller?.Phones)
             {
-                phones.AddRange(organization.Phones
-                    .Select(phone =>
-                            Phone.Create(
-                                phone.Number,
-                                phone.PhoneType,
-                                phone.IsPrimary).Value));
+                if (phone.Id == 0 && phone.TrackingState == TrackingState.Added)
+                    organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+                if (phone.Id != 0 && phone.TrackingState == TrackingState.Modified)
+                {
+                    var contextPhone = organizationFromRepository.Phones.FirstOrDefault(contextPhone => contextPhone.Id == phone.Id);
+                    contextPhone.SetNumber(phone.Number);
+                    contextPhone.SetIsPrimary(phone.IsPrimary);
+                    contextPhone.SetPhoneType(phone.PhoneType);
+                    contextPhone.SetTrackingState(TrackingState.Modified);
+                }
+
+                if (phone.Id != 0 && phone.TrackingState == TrackingState.Deleted)
+                    organizationFromRepository.RemovePhone(
+                        organizationFromRepository.Phones.FirstOrDefault(
+                            contextPhone =>
+                            contextPhone.Id == phone.Id));
             }
 
-            organizationFromRepository.SetPhones(phones);
-
-            // Client may send an empty or null emails collection, signifying removal/replacement
+            // Client may send an empty or null emails collection, signifying
+            // NO CHANGE TO COLLECTION
             List<Email> emails = new();
-            if (organization?.Emails.Count > 0)
+            if (organizationFromCaller?.Emails.Count > 0)
             {
-                emails.AddRange(organization.Emails
+                emails.AddRange(organizationFromCaller.Emails
                     .Select(email =>
                             Email.Create(email.Address,
                                          email.IsPrimary).Value));
             }
 
-            organizationFromRepository.SetEmails(emails);
-
             // Contact
-            if (organization?.Contact != null)
+            if (organizationFromCaller?.Contact != null)
             {
                 var result = await personsController.UpdatePersonAsync(
                                     organizationFromRepository.Contact.Id,
-                                    organization.Contact);
+                                    organizationFromCaller.Contact);
 
                 var person = await personsRepository.GetPersonEntityAsync(organizationFromRepository.Contact.Id);
 
@@ -159,10 +169,10 @@ namespace CustomerVehicleManagement.Api.Organizations
             }
 
             // Update the objects ObjectState and sync the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
+            // 3) Set parent entitys TrackingState to Modified
             organizationFromRepository.SetTrackingState(TrackingState.Modified);
             // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
+            repository.FixTrackingState(); //TODO: TEST AND CONFIRM
 
             /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);
@@ -233,7 +243,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
 
             repository.DeleteOrganization(organizationFromRepository);
-            
+
             await repository.SaveChangesAsync();
 
             return NoContent();

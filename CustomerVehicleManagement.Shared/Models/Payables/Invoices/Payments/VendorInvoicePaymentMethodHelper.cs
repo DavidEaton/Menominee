@@ -34,12 +34,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 ).Value;
         }
 
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IList<string> paymentMethods)
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IList<string> paymentMethodNames)
         {
             return paymentMethod is null
                 ? null
                 : VendorInvoicePaymentMethod.Create(
-                    paymentMethods,
+                    paymentMethodNames,
                     paymentMethod.Name,
                     paymentMethod.IsActive,
                     paymentMethod.IsOnAccountPaymentType,
@@ -74,15 +74,20 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 };
         }
 
-        internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment)
+        internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment, VendorInvoicePaymentMethodToRead method)
         {
-            return
-                new VendorInvoicePaymentMethodToRead()
-                {
-                    //Id = 1,
-                    //Name = payment.ToString(),
-                    //IsActive = payment.
-                };
+            if (payment.PaymentMethodId == method.Id && payment is not null)
+                return
+                    new VendorInvoicePaymentMethodToRead()
+                    {
+                        Id = payment.PaymentMethodId,
+                        Name = method.Name,
+                        IsActive = method.IsActive,
+                        IsOnAccountPaymentType = method.IsOnAccountPaymentType,
+                        ReconcilingVendor = method.ReconcilingVendor
+                    };
+
+            throw new ArgumentException("Unable to ConvertWriteToReadDto");
         }
     }
 }

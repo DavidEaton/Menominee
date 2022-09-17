@@ -15,9 +15,10 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
         private readonly string BasePath = "/api/vendorinvoices";
 
-        public VendorInvoicesController(IVendorInvoiceRepository repository)
+        public VendorInvoicesController(IVendorInvoiceRepository repository, IVendorInvoicePaymentMethodRepository paymentMethodRepository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));
         }
 
         // GET: api/vendorinvoices/list
@@ -78,15 +79,15 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             // tell the reader everything they can do, and hide their side effects.
             invoiceFromRepository = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoice,
-                await paymentMethodRepository.GetPaymentMethodNames());
+                await paymentMethodRepository.GetPaymentMethodsAsync());
 
             invoiceFromRepository.SetTrackingState(TrackingState.Modified);
+
             repository.FixTrackingState();
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update vendor invoice.  Id = {id}.");
+            return NoContent();
         }
 
         // POST: api/vendorinvoices
@@ -95,7 +96,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
-                await paymentMethodRepository.GetPaymentMethodNames());
+                await paymentMethodRepository.GetPaymentMethodsAsync());
 
             await repository.AddInvoiceAsync(invoice);
             await repository.SaveChangesAsync();
@@ -108,17 +109,16 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteInvoiceAsync(long id)
         {
-            var invoiceFromRepository = await repository.GetInvoiceAsync(id);
+            var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
 
-            if (invoiceFromRepository == null)
+            if (invoiceFromRepository is null)
                 return NotFound($"Could not find Vendor Invoice in the database to delete with Id: {id}.");
 
-            await repository.DeleteInvoiceAsync(id);
+            repository.DeleteInvoice(invoiceFromRepository);
 
-            if (await repository.SaveChangesAsync())
-                return NoContent();
+            await repository.SaveChangesAsync();
 
-            return BadRequest($"Failed to delete Vendor Invoice with Id of {id}.");
+            return NoContent();
         }
     }
 }

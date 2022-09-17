@@ -7,18 +7,23 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentHelper
     {
-        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IList<string> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
+        public static IList<VendorInvoicePayment> ConvertWriteDtosToEntities(IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
         {
             return payments?.Select(ConvertWriteDtoToEntity(paymentMethods)).ToList()
                 ?? new List<VendorInvoicePayment>();
         }
 
-        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity(IList<string> paymentMethods)
+        public static Func<VendorInvoicePaymentToWrite, VendorInvoicePayment> ConvertWriteDtoToEntity(IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods)
         {
+            var paymentMethodNames = new List<string>();
+
             return payment =>
                 VendorInvoicePayment.Create(
                     VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
-                        VendorInvoicePaymentMethodHelper.ConvertWriteToReadDto(payment), paymentMethods),
+                        VendorInvoicePaymentMethodHelper.ConvertWriteToReadDto
+                        (payment, paymentMethods.First(
+                            paymentMethod => paymentMethod.Id == payment.PaymentMethodId)),
+                        paymentMethodNames),
                     payment.Amount)
                 .Value;
         }

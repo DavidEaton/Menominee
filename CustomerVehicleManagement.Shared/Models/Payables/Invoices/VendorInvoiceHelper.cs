@@ -122,13 +122,30 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             };
         }
 
+
+        public static VendorInvoiceToReadInList ConvertEntityToReadInListDto(VendorInvoice invoice)
+        {
+            return invoice is null
+                ? null
+                : new()
+                {
+                    Id = invoice.Id,
+                    VendorId = invoice.Vendor?.Id ?? 0,
+                    VendorCode = invoice.Vendor?.VendorCode,
+                    VendorName = invoice.Vendor?.Name,
+                    Date = invoice.Date?.ToShortDateString(),
+                    DatePosted = invoice.DatePosted?.ToShortDateString(),
+                    Status = invoice.Status.ToString(),
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    Total = invoice.Total
+                };
+        }
+        
         #endregion
 
         #region <---- ConvertWriteDtoToEntity ---->
-
-        public static VendorInvoice ConvertWriteDtoToEntity(
-            VendorInvoiceToWrite invoice,
-            IList<string> paymentMethods)
+        public static VendorInvoice ConvertWriteDtoToEntity(VendorInvoiceToWrite invoice,
+            IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods)
         {
             return invoice is null
                 ? null
@@ -145,10 +162,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 .Value;
         }
 
-
         #endregion
 
         #region <---- ConvertReadToWriteDto ---->
+
         public static VendorInvoiceToWrite ConvertReadToWriteDto(VendorInvoiceToRead invoice)
         {
             return invoice is null
@@ -168,25 +185,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-
         #endregion
-
-        public static VendorInvoiceToReadInList ConvertEntityToReadInListDto(VendorInvoice invoice)
-        {
-            return invoice is null
-                ? null
-                : new()
-                {
-                    Id = invoice.Id,
-                    VendorId = invoice.Vendor?.Id ?? 0,
-                    VendorCode = invoice.Vendor?.VendorCode,
-                    VendorName = invoice.Vendor?.Name,
-                    Date = invoice.Date?.ToShortDateString(),
-                    DatePosted = invoice.DatePosted?.ToShortDateString(),
-                    Status = invoice.Status.ToString(),
-                    InvoiceNumber = invoice.InvoiceNumber,
-                    Total = invoice.Total
-                };
-        }
     }
 }

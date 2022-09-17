@@ -16,6 +16,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         Task<bool> PaymentMethodExistsAsync(long id);
         Task SaveChangesAsync();
         void FixTrackingState();
-        Task<IList<string>> GetPaymentMethodNames();
+        Task<IList<string>> GetPaymentMethodNamesAsync();
     }
 }

@@ -97,14 +97,19 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                    .ToList();
         }
 
-        public async Task<bool> SaveChangesAsync()
-        {
-            return await context.SaveChangesAsync() > 0;
-        }
-
         public async Task<bool> InvoiceExistsAsync(long id)
         {
             return await context.VendorInvoices.AnyAsync(invoice => invoice.Id == id);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await context.SaveChangesAsync();
+        }
+
+        public void DeleteInvoice(VendorInvoice invoice)
+        {
+            context.Remove(invoice);
         }
     }
 }

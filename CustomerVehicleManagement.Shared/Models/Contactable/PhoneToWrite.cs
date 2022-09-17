@@ -4,6 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class PhoneToWrite
     {
+        public long Id { get; set; }
         public string Number { get; set; } = string.Empty;
         public PhoneType PhoneType { get; set; } = PhoneType.Other;
         public bool IsPrimary { get; set; } = false;
@@ -11,5 +12,6 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return PhoneHelper.FormatPhoneNumber(Number);
         }
+        public TrackingState TrackingState { get; set; } = TrackingState.Unchanged;
     }
 }

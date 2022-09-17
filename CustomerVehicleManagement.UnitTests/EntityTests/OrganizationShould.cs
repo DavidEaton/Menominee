@@ -264,33 +264,29 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void NotSetEmailsHavingMoreThanOnePrimaryEmail()
+        public void NotAddEmailsHavingMoreThanOnePrimaryEmail()
         {
             var organization = OrganizationHelper.CreateTestOrganization();
-            var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
-            emails.Add(email);
-            address = "june@done.com";
+            organization.AddEmail(email);
+            address = "june@due.com";
             email = Email.Create(address, true).Value;
-            emails.Add(email);
 
-            Action action = () => organization.SetEmails(emails);
+            Action action = () => organization.AddEmail(email);
 
             action.Should().Throw<Exception>();
         }
 
         [Fact]
-        public void NotSetEmailsWithDuplicateEmails()
+        public void NotAddEmailsWithDuplicateEmails()
         {
             var organization = OrganizationHelper.CreateTestOrganization();
-            var emails = new List<Email>();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
-            emails.Add(email);
-            emails.Add(email);
+            organization.AddEmail(email);
 
-            Action action = () => organization.SetEmails(emails);
+            Action action = () => organization.AddEmail(email);
 
             action.Should().Throw<Exception>();
         }

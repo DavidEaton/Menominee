@@ -12,9 +12,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
         Task<Vendor> GetVendorAsync(long id);
         Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync();
-        Task DeleteInvoiceAsync(long id);
+        void DeleteInvoice(VendorInvoice entity);
         Task<bool> InvoiceExistsAsync(long id);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         void FixTrackingState();
     }
 }

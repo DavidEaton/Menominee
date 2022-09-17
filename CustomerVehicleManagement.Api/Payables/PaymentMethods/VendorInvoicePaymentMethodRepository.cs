@@ -72,15 +72,20 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                              .ToList();
         }
 
-        public async Task<IList<string>> GetPaymentMethodNames()
+        public async Task<IList<string>> GetPaymentMethodNamesAsync()
         {
             IList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
                 .AsSplitQuery()
                 .AsNoTracking()
                 .ToListAsync();
 
-            return (IList<string>)payMethods.Select(paymentMethod => new string(paymentMethod.Name));
+            var result = new List<string>();
 
+
+            foreach (var method in payMethods)
+                result.Add(method.Name);
+
+            return result;
         }
 
         public async Task<IReadOnlyList<VendorInvoicePaymentMethodToRead>> GetPaymentMethodsAsync()
@@ -103,11 +108,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
-        }
-
-        Task<IList<string>> IVendorInvoicePaymentMethodRepository.GetPaymentMethodNames()
-        {
-            throw new NotImplementedException();
         }
     }
 }

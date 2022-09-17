@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepository.SetNote(note);
                 organizationFromRepository.SetAddress(Helper.CreateAddress());
                 organizationFromRepository.SetContact(Helper.CreatePerson());
-                organizationFromRepository.SetPhones(Helper.CreatePhoneList());
+                //organizationFromRepository.SetPhones(Helper.CreatePhoneList());
                 organizationFromRepository.SetEmails(Helper.CreateEmailList());
 
                 await repository.SaveChangesAsync();
@@ -138,7 +138,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 organizationFromRepository.Note.Should().Be(note);
                 organizationFromRepository.Address.Should().NotBeNull();
-                organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
+                //organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Emails.Count().Should().BeGreaterThan(0);
                 organizationFromRepository.Contact.Should().NotBeNull();
             };
@@ -182,7 +182,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 organizationFromRepository.SetContact(Helper.CreatePerson());
                 organizationFromRepository.Contact.SetEmails(Helper.CreateEmailList());
-                organizationFromRepository.Contact.SetPhones(Helper.CreatePhoneList());
+                //organizationFromRepository.Contact.SetPhones(Helper.CreatePhoneList());
 
                 await repository.SaveChangesAsync();
             }
@@ -193,7 +193,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
                 organizationFromRepository.Contact.Should().NotBeNull();
-                organizationFromRepository.Contact.Phones.Count().Should().BeGreaterOrEqualTo(1);
+                //organizationFromRepository.Contact.Phones.Count().Should().BeGreaterOrEqualTo(1);
                 organizationFromRepository.Contact.Emails.Count().Should().BeGreaterOrEqualTo(1);
             };
         }

@@ -183,51 +183,6 @@ namespace CustomerVehicleManagement.UnitTests.EntityTests
         }
 
         [Fact]
-        public void Throw_Exception_On_SetEmails_Having_GreaterThan_One_PrimaryEmail()
-        {
-            var person = Utilities.CreatePerson();
-            var emails = new List<Email>();
-            var address = "jane@doe.com";
-            var email = Email.Create(address, true).Value;
-            emails.Add(email);
-            address = "june@done.com";
-            email = Email.Create(address, true).Value;
-            emails.Add(email);
-
-            Action action = () => person.SetEmails(emails);
-
-            action.Should().Throw<Exception>();
-        }
-
-        [Fact]
-        public void Throw_Exception_On_SetEmails_With_Duplicates()
-        {
-            var person = Utilities.CreatePerson();
-            var emails = new List<Email>();
-            var address = "jane@doe.com";
-            var email = Email.Create(address, true).Value;
-
-            emails.Add(email);
-            emails.Add(email);
-
-            Action action = () => person.SetEmails(emails);
-
-            action.Should().Throw<Exception>();
-        }
-
-        [Fact]
-        public void SetEmails_To_EmptyList()
-        {
-            var person = Utilities.CreatePersonWithEmails();
-            List<Email> emails = new();
-
-            person.Emails.Count.Should().NotBe(0);
-            person.SetEmails(emails);
-
-            person.Emails.Count.Should().Be(0);
-        }
-
-        [Fact]
         public void Throw_Exception_On_Add_GreaterThan_One_Primary_Email()
         {
             var person = Utilities.CreatePerson();

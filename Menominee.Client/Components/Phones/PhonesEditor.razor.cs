@@ -25,8 +25,10 @@ namespace Menominee.Client.Components.Phones
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
-        private PhoneToWrite phoneOriginal;
+        private PhoneToWrite phoneUnchanged;
 
+        private List<PhoneToWrite> DeletedPhones { get; set; } = new();
+        
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
 
         protected override void OnInitialized()
@@ -39,9 +41,13 @@ namespace Menominee.Client.Components.Phones
 
         public void Reset()
         {
-            Phone.Number = phoneOriginal.Number;
-            Phone.PhoneType = phoneOriginal.PhoneType;
-            Phone.IsPrimary = phoneOriginal.IsPrimary;
+            if (FormMode == FormMode.Add)
+                Phone = new();
+
+            if (FormMode == FormMode.Edit)
+                Phone = phoneUnchanged;
+
+            FormMode = FormMode.Unknown;
         }
 
         private void Edit(PhoneToWrite phone)
@@ -49,48 +55,70 @@ namespace Menominee.Client.Components.Phones
             if (phone is not null)
             {
                 Phone = phone;
+                Phone.TrackingState = TrackingState.Modified;
                 FormMode = FormMode.Edit;
-
-                phoneOriginal = new PhoneToWrite
-                {
-                    Number = Phone.Number,
-                    PhoneType = Phone.PhoneType,
-                    IsPrimary = Phone.IsPrimary
-                };
+                phoneUnchanged = SetPhoneToUnchange(phone);
             }
+        }
+
+        private PhoneToWrite SetPhoneToUnchange(PhoneToWrite phone)
+        {
+            return new PhoneToWrite
+            {
+                Id = phone.Id,
+                Number = phone.Number,
+                PhoneType = phone.PhoneType,
+                IsPrimary = phone.IsPrimary,
+                TrackingState = TrackingState.Unchanged
+            };
         }
 
         private void Add()
         {
-            Phone = new();
+            Phone = new()
+            {
+                TrackingState = TrackingState.Added
+            };
+
             FormMode = FormMode.Add;
         }
 
         private void Save()
         {
-            if (Phone != null && FormMode == FormMode.Add)
-                Phones.Add(Phone);
+            if (Phone is not null && FormMode == FormMode.Add)
+                if (Phone.TrackingState == TrackingState.Added)
+                    Phones.Add(Phone);
 
-            FormMode = FormMode.Unknown;
-        }
-
-        private void Cancel()
-        {
-            if (Phone != null && FormMode == FormMode.Add)
-                Phone = new();
-
-            if (Phone != null && FormMode == FormMode.Edit)
-                Reset();
+            // Restore phones marked for deletion before saving to data service
+            foreach (var phone in DeletedPhones)
+                Phones.Add(phone);
 
             FormMode = FormMode.Unknown;
         }
 
         private async Task RemoveAsync()
         {
-            if (await RemoveConfirm())
+            if (FormMode == FormMode.Add || FormMode == FormMode.Edit)
             {
-                Phones.Remove(Phone);
-                FormMode = FormMode.Unknown;
+                if (await RemoveConfirm())
+                {
+                    // Existing phone from database has id not equal to zero.
+                    if (Phone is not null
+                        &&
+                        Phone?.Id != 0)
+                        Phone.TrackingState = TrackingState.Deleted;
+
+                    // User added phone but now is removing it; has id equal to zero.
+                    if (Phone is not null
+                        &&
+                        Phone?.Id == 0)
+                        Phones.Remove(Phone);
+
+                    // Hide phone marked for deletion from user
+                    DeletedPhones.Add(Phone);
+                    Phones.Remove(Phone);
+                    Reset();
+                }
             }
         }
 

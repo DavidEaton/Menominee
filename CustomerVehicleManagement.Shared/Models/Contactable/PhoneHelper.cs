@@ -41,9 +41,10 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 
         private static PhoneToRead ConvertEntityToReadDto(Phone phone)
         {
-            return (phone is null)
+            return (phone is not null)
                 ? new PhoneToRead()
                     {
+                        Id = phone.Id,
                         Number = phone.Number,
                         PhoneType = phone.PhoneType.ToString(),
                         IsPrimary = phone.IsPrimary
@@ -106,5 +107,17 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return new string(input.Where(character => char.IsDigit(character)).ToArray());
         }
+
+        //    public static Phone UpdatePhone(Base.Contactable entity, PhoneToWrite phone)
+        //    {
+        //        var phoneToUpdate = entity.Phones.FirstOrDefault(basePhone => basePhone.Id == phone.Id);
+
+        //        phoneToUpdate.SetNumber(phone.Number);
+        //        phoneToUpdate.SetPhoneType(phone.PhoneType);
+        //        phoneToUpdate.SetIsPrimary(phone.IsPrimary);
+        //        phoneToUpdate.SetTrackingState(TrackingState.Modified);
+
+        //        return phoneToUpdate;
+        //    }
     }
 }

@@ -70,7 +70,7 @@ namespace Menominee.Client.Pages.Organizations
         {
             Id = (args.Item as OrganizationToReadInList).Id;
             OrganizationFormMode = FormMode.Edit;
-            Organizations = null;
+            Organizations = null; // TODO: Huh?
 
             var readDto = await OrganizationDataService.GetOrganization(Id);
             Organization = new OrganizationToWrite
@@ -90,29 +90,24 @@ namespace Menominee.Client.Pages.Organizations
                 };
             }
 
-            if (readDto?.Emails.Count > 0)
+            foreach (var email in readDto?.Emails)
             {
-                foreach (var email in readDto.Emails)
+                Organization.Emails.Add(new EmailToWrite
                 {
-                    Organization.Emails.Add(new EmailToWrite
-                    {
-                        Address = email.Address,
-                        IsPrimary = email.IsPrimary
-                    });
-                }
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                });
             }
 
-            if (readDto?.Phones.Count > 0)
+            foreach (var phone in readDto?.Phones)
             {
-                foreach (var phone in readDto.Phones)
+                Organization.Phones.Add(new PhoneToWrite
                 {
-                    Organization.Phones.Add(new PhoneToWrite
-                    {
-                        Number = phone.Number,
-                        PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
-                        IsPrimary = phone.IsPrimary
-                    });
-                }
+                    Id = phone.Id,
+                    Number = phone.Number,
+                    PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
+                    IsPrimary = phone.IsPrimary
+                });
             }
 
         }

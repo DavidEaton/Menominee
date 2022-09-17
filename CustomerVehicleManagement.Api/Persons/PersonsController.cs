@@ -94,8 +94,6 @@ namespace CustomerVehicleManagement.Api.Persons
             foreach (var phone in person?.Phones)
                 phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-            personFromRepository.SetPhones(phones);
-
             List<Email> emails = new();
 
             if (person?.Emails.Count > 0)
