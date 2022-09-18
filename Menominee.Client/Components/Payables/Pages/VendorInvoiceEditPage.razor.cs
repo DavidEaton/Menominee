@@ -37,39 +37,15 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Valid())
             {
-                //if (Invoice.LineItems != null)
-                //{
-                //    foreach (var item in Invoice.LineItems)
-                //    {
-                //        if (item.Id < 0)
-                //            item.Id = 0;
-                //    }
-                //}
 
-                //if (Invoice.Taxes != null)
-                //{
-                //    foreach (var tax in Invoice.Taxes)
-                //    {
-                //        if (tax.Id < 0)
-                //            tax.Id = 0;
-                //    }
-                //}
-
-                //if (Invoice.Payments != null)
-                //{
-                //    foreach (var payment in Invoice.Payments)
-                //    {
-                //        if (payment.Id < 0)
-                //            payment.Id = 0;
-                //    }
-                //}
 
                 if (Id == 0)
                 {
                     var invoice = await vendorInvoiceDataService.AddInvoice(Invoice);
                     Id = invoice.Id;
                 }
-                else
+
+                if (Id != 0)
                 {
                     await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
                 }

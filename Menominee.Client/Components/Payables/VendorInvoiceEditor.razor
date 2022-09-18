@@ -19,21 +19,17 @@
                             </Card>
                         </div>
                         <div class="tax-payment-row">
-                            @*<div class="col col-12 col-md-6">*@
                             <Card Title="Taxes">
                                 <Content>
                                     <VendorInvoiceTaxes Taxes="Invoice.Taxes" />
                                 </Content>
                             </Card>
-                            @*</div>
-                            <div class="col col-12 col-md-6">*@
                             <Card Title="Payments">
                                 <Content>
                                     <VendorInvoicePayments Payments="Invoice.Payments" />
                                 </Content>
                             </Card>
-                            @*</div>*@
-                        </div>
+                       </div>
                     </div>
                     <div class="col col-12 col-md-3 col-lg-2 totals-col">
                         <Card Title="Totals">
@@ -44,7 +40,7 @@
                     </div>
                 </div>
             </div>
-            <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+            <SaveDiscardButtons OnSave="OnValidSubmit" OnDiscard="OnDiscard" />
         </Content>
     </Card>
 </div>

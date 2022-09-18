@@ -6,13 +6,13 @@
 @if (Payments != null && PaymentMethods != null)
 {
     <TelerikGrid Data="Payments"
-             OnRowClick="@OnRowSelected"
-             OnRowDoubleClick="@OnEdit"
+             OnRowClick="OnRowSelected"
+             OnRowDoubleClick="OnEdit"
              Sortable="false"
              FilterMode="GridFilterMode.None"
              ShowColumnMenu="false"
              SelectionMode="GridSelectionMode.Single"
-             @ref="@Grid">
+             @ref="Grid">
         <GridColumns>
             <GridColumn Field="@nameof(Payment.PaymentMethodId)"
                     Title="Payment Method"
@@ -72,12 +72,12 @@
                                IconClass="fas fa-arrow-left"
                                Size="sm"
                                Class="m-inline-button"
-                               OnClick="@OnInsertBalanceClick">
+                               OnClick="OnInsertBalanceClick">
                     Balance
                 </GridCommandButton>
             </GridCommandColumn>
         </GridColumns>
     </TelerikGrid>
 
-    <EditNewDeleteIconButtons OnNew="@OnNew" OnDelete="@OnDelete" ShowDivider="false" />
+    <EditNewDeleteIconButtons OnNew="Add" OnDelete="OnDelete" ShowDivider="false" />
 }
