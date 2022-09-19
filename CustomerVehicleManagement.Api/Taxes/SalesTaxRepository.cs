@@ -55,6 +55,11 @@ namespace CustomerVehicleManagement.Api.Taxes
                 : null;
         }
 
+        public async Task<IReadOnlyList<SalesTax>> GetSalesTaxEntities()
+        {
+            return await context.SalesTaxes.ToListAsync();
+        }
+
         public async Task<SalesTax> GetSalesTaxEntityAsync(long id)
         {
             return await context.SalesTaxes.FirstOrDefaultAsync(tax => tax.Id == id);

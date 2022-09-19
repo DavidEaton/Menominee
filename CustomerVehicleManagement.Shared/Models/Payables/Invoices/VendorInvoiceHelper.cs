@@ -145,6 +145,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 
         #region <---- ConvertWriteDtoToEntity ---->
         public static VendorInvoice ConvertWriteDtoToEntity(VendorInvoiceToWrite invoice,
+            IReadOnlyList<SalesTax> salesTaxes,
             IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods)
         {
             return invoice is null
@@ -158,7 +159,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 invoice.DatePosted,
                 VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems),
                 VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(paymentMethods, invoice.Payments),
-                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes))
+                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes, salesTaxes))
                 .Value;
         }
 

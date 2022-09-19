@@ -1,8 +1,11 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
+using CustomerVehicleManagement.Api.Taxes;
 using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,16 +20,19 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         private readonly IVendorInvoiceRepository repository;
         private readonly IVendorRepository vendorRepository;
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
+        private readonly ISalesTaxRepository salesTaxRepository;
         private readonly string BasePath = "/api/vendorinvoices";
 
         public VendorInvoicesController(
             IVendorInvoiceRepository repository,
             IVendorRepository vendorRepository,
-            IVendorInvoicePaymentMethodRepository paymentMethodRepository)
+            IVendorInvoicePaymentMethodRepository paymentMethodRepository,
+            ISalesTaxRepository salesTaxRepository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository)); ;
             this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));
+            this.salesTaxRepository = salesTaxRepository ?? throw new ArgumentNullException(nameof(salesTaxRepository));
         }
 
         // GET: api/vendorinvoices/list
@@ -96,20 +102,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted);
 
             //IList<VendorInvoiceLineItem> LineItems
-            foreach (var lineItem in invoiceFromRepository?.LineItems)
+            foreach (var lineItem in invoiceFromCaller?.LineItems)
             {
                 // Added
                 if (lineItem.Id == 0 && lineItem.TrackingState == TrackingState.Added)
                     invoiceFromRepository.AddLineItem(
                         VendorInvoiceLineItem.Create(
-                            lineItem.Type, lineItem.Item, lineItem.Quantity, lineItem.Cost, lineItem.Core, lineItem.PONumber, lineItem.TransactionDate)
+                            lineItem.Type, VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item), lineItem.Quantity, lineItem.Cost, lineItem.Core, lineItem.PONumber, lineItem.TransactionDate)
                         .Value);
                 // Updated
                 if (lineItem.Id != 0 && lineItem.TrackingState == TrackingState.Modified)
                 {
                     var contextLineItem = invoiceFromRepository?.LineItems.FirstOrDefault(contextLineItem => contextLineItem.Id == lineItem.Id);
                     contextLineItem.SetType(lineItem.Type);
-                    contextLineItem.SetItem(lineItem.Item);
+                    contextLineItem.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item));
                     contextLineItem.SetQuantity(lineItem.Quantity);
                     contextLineItem.SetCost(lineItem.Cost);
                     contextLineItem.SetCore(lineItem.Core);
@@ -125,17 +131,21 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                             contextLineItem.Id == lineItem.Id));
             }
             //IList<VendorInvoicePayment> Payments
-            foreach (var payment in invoiceFromRepository?.Payments)
+            foreach (var payment in invoiceFromCaller?.Payments)
             {
                 // Added
                 if (payment.Id == 0 && payment.TrackingState == TrackingState.Added)
                     invoiceFromRepository.AddPayment(
-                        VendorInvoicePayment.Create(payment.PaymentMethod, payment.Amount).Value);
+                        VendorInvoicePayment.Create(
+                            await paymentMethodRepository.GetPaymentMethodEntityAsync(
+                                payment.PaymentMethodId), payment.Amount)
+                        .Value);
                 // Updated
                 if (payment.Id != 0 && payment.TrackingState == TrackingState.Modified)
                 {
                     var contextPayment = invoiceFromRepository?.Payments.FirstOrDefault(contextPayment => contextPayment.Id == payment.Id);
-                    contextPayment.SetPaymentMethod(payment.PaymentMethod);
+                    contextPayment.SetPaymentMethod(
+                        await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethodId));
                     contextPayment.SetAmount(payment.Amount);
                     contextPayment.SetTrackingState(TrackingState.Modified);
                 }
@@ -147,17 +157,18 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                             contextPayment.Id == payment.Id));
             }
             //IList<VendorInvoiceTax> Taxes
-            foreach (var tax in invoiceFromRepository?.Taxes)
+            foreach (var tax in invoiceFromCaller?.Taxes)
             {
                 // Added
                 if (tax.Id == 0 && tax.TrackingState == TrackingState.Added)
                     invoiceFromRepository.AddTax(
-                        VendorInvoiceTax.Create(tax.SalesTax, tax.TaxId).Value);
+                        VendorInvoiceTax.Create(
+                            await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id), tax.TaxId).Value);
                 // Updated
                 if (tax.Id != 0 && tax.TrackingState == TrackingState.Modified)
                 {
                     var contextTax = invoiceFromRepository?.Taxes.FirstOrDefault(contextTax => contextTax.Id == tax.Id);
-                    contextTax.SetSalesTax(tax.SalesTax);
+                    contextTax.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id));
                     contextTax.SetTaxId(tax.TaxId);
                     contextTax.SetTrackingState(TrackingState.Modified);
                 }
@@ -181,8 +192,11 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPost]
         public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
+            IReadOnlyList<SalesTax> salesTaxes = await salesTaxRepository.GetSalesTaxEntities();
+
             var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
+                salesTaxes,
                 await paymentMethodRepository.GetPaymentMethodsAsync());
 
             await repository.AddInvoiceAsync(invoice);

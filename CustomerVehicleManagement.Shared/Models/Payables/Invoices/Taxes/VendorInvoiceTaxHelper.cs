@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Taxes;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +9,16 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
     public class VendorInvoiceTaxHelper
     {
 
-        public static IList<VendorInvoiceTax> ConvertWriteDtosToEntities(IList<VendorInvoiceTaxToWrite> taxes)
+        public static IList<VendorInvoiceTax> ConvertWriteDtosToEntities(IList<VendorInvoiceTaxToWrite> taxes, IReadOnlyList<SalesTax> salesTaxes)
         {
-            return taxes?.Select(ConvertWriteDtoToEntity()).ToList()
+            return taxes?.Select(ConvertWriteDtoToEntity(salesTaxes)).ToList()
                 ?? new List<VendorInvoiceTax>();
         }
 
-        public static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> ConvertWriteDtoToEntity()
+        public static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> ConvertWriteDtoToEntity(IReadOnlyList<SalesTax> salesTaxes)
         {
             return tax =>
-                VendorInvoiceTax.Create(SalesTaxHelper.ConvertWriteDtoToEntity(tax.SalesTax), tax.TaxId)
+                VendorInvoiceTax.Create(salesTaxes.FirstOrDefault(x => x.Id == tax.SalesTax.Id), tax.TaxId)
                 .Value;
         }
 
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
             return tax =>
                 new VendorInvoiceTaxToWrite()
                 {
-                    SalesTax = SalesTaxHelper.CovertReadToWriteDto(tax.SalesTax),
+                    SalesTax = tax.SalesTax,
                     Order = tax.Order,
                     TaxId = tax.TaxId,
                     TaxName = tax.TaxName,

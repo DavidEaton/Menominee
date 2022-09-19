@@ -16,5 +16,6 @@ namespace CustomerVehicleManagement.Api.Taxes
         Task<bool> SalesTaxExistsAsync(long id);
         Task<bool> SaveChangesAsync();
         void FixTrackingState();
+        Task<IReadOnlyList<SalesTax>> GetSalesTaxEntities();
     }
 }
