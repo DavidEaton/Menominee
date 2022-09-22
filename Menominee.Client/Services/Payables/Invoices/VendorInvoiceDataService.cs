@@ -63,6 +63,7 @@ namespace Menominee.Client.Services.Payables.Invoices
 
             if (response.IsSuccessStatusCode)
             {
+                toastService.ShowSuccess($"Added vendor invoice.", "Added");
                 return await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 

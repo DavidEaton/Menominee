@@ -34,7 +34,7 @@ namespace Menominee.Client.Components.Payables
             }
         }
 
-        private long itemToSelect { get; set; } = 0;
+        private long itemIdToSelect { get; set; } = 0;
         private long selectedId = 0;
         private long nextId = 0;
         private int selectedItemIndex = 0;
@@ -44,6 +44,27 @@ namespace Menominee.Client.Components.Payables
         private bool CanDelete { get; set; } = false;
 
         private FormMode ItemFormMode { get; set; } = FormMode.Unknown;
+
+        protected override void OnParametersSet()
+        {
+            if (LineItems is not null)
+                System.Console.WriteLine($"LineItems: {LineItems}");
+
+            if (SelectedItems is not null)
+                System.Console.WriteLine($"SelectedItems: {SelectedItems.Count()}");
+
+            if (SelectedItem is not null)
+                System.Console.WriteLine($"LineItems: {SelectedItem}");
+
+            if (ItemToModify is not null)
+                System.Console.WriteLine($"LineItems: {ItemToModify}");
+
+            //System.Console.WriteLine($"SelectedId: {SelectedId}");
+            //System.Console.WriteLine($"selectedId: {selectedId}");
+            //System.Console.WriteLine($"itemIdToSelect: {itemIdToSelect}");
+            //System.Console.WriteLine($"selectedItemIndex: {selectedItemIndex}");
+            //System.Console.WriteLine($"editDialogVisible: {editDialogVisible}");
+        }
 
         private bool EditDialogVisible
         {
@@ -57,29 +78,13 @@ namespace Menominee.Client.Components.Payables
 
                     if (ItemFormMode == FormMode.Edit || ItemFormMode == FormMode.View)
                     {
-                        //ItemToModify = new VendorInvoiceItemToWrite()
-                        //{
-                        //    Id = SelectedItem.Id,
-                        //    InvoiceId = SelectedItem.InvoiceId,
-                        //    Type = SelectedItem.Type,
-                        //    PartNumber = SelectedItem.PartNumber,
-                        //    MfrId = SelectedItem.MfrId,
-                        //    Description = SelectedItem.Description,
-                        //    Quantity = SelectedItem.Quantity,
-                        //    Cost = SelectedItem.Cost,
-                        //    Core = SelectedItem.Core,
-                        //    PONumber = SelectedItem.PONumber,
-                        //    InvoiceNumber = SelectedItem.InvoiceNumber,
-                        //    TransactionDate = SelectedItem.TransactionDate
-                        //};
-                        //ItemToModify = SelectedItem;
                         ItemToModify = new VendorInvoiceLineItemToWrite();
                         CopyItem(SelectedItem, ItemToModify);
                     }
                 }
                 else
                 {
-                    if (ItemToModify != null)
+                    if (ItemToModify is not null)
                         ItemToModify = null;
                     ItemFormMode = FormMode.Unknown;
                 }
@@ -102,7 +107,7 @@ namespace Menominee.Client.Components.Payables
 
         private async Task OnDelete()
         {
-            if (SelectedItem != null
+            if (SelectedItem is not null
             && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedItem.Item.PartNumber}?", "Remove Item"))
             {
                 LineItems.Remove(SelectedItem);
@@ -114,7 +119,7 @@ namespace Menominee.Client.Components.Payables
 
         private void OnSaveEdit()
         {
-            if (ItemFormMode != FormMode.Add && ItemFormMode != FormMode.Edit)
+            if (ItemFormMode is not FormMode.Add && ItemFormMode is not FormMode.Edit)
                 return;
 
             if (ItemFormMode == FormMode.Add)
@@ -160,7 +165,7 @@ namespace Menominee.Client.Components.Payables
         {
             if (LineItems.Count > 0)
             {
-                if (itemToSelect == 0)
+                if (itemIdToSelect == 0)
                     SelectedItem = LineItems.FirstOrDefault();
 
                 //if (itemToSelect != 0)

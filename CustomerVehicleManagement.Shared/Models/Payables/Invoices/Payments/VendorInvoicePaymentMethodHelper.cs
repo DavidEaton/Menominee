@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System;
 using System.Collections.Generic;
@@ -76,11 +77,11 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 
         internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment, VendorInvoicePaymentMethodToRead method)
         {
-            if (payment.PaymentMethodId == method.Id && payment is not null)
+            if (payment.PaymentMethod.Id == method.Id && payment is not null)
                 return
                     new VendorInvoicePaymentMethodToRead()
                     {
-                        Id = payment.PaymentMethodId,
+                        Id = payment.PaymentMethod.Id,
                         Name = method.Name,
                         IsActive = method.IsActive,
                         IsOnAccountPaymentType = method.IsOnAccountPaymentType,
@@ -88,6 +89,20 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     };
 
             throw new ArgumentException("Unable to ConvertWriteToReadDto");
+        }
+
+        public static VendorInvoicePaymentMethodToRead ConvertReadInListToReadDto(VendorInvoicePaymentMethodToReadInList paymentMethod)
+        {
+            return
+            paymentMethod is null
+                ? null
+                : new()
+                {
+                    Id = paymentMethod.Id,
+                    Name = paymentMethod.Name,
+                    IsActive = paymentMethod.IsActive,
+                    //ReconcilingVendor = paymentMethod.ReconcilingVendorName
+                };
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
@@ -32,6 +33,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         }
 
         public static VendorToRead ConvertEntityToReadDto(Vendor vendor)
+        {
+            return vendor is null
+                ? null
+                : new()
+                {
+                    Id = vendor.Id,
+                    Name = vendor.Name,
+                    VendorCode = vendor.VendorCode,
+                    IsActive = vendor.IsActive
+                };
+        }
+
+        public static VendorToReadInList ConvertReadToReadInListDto(VendorToRead vendor)
         {
             return vendor is null
                 ? null

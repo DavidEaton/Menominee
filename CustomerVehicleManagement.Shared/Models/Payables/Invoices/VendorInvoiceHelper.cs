@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
@@ -144,20 +146,24 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         #endregion
 
         #region <---- ConvertWriteDtoToEntity ---->
-        public static VendorInvoice ConvertWriteDtoToEntity(VendorInvoiceToWrite invoice,
+        public static VendorInvoice ConvertWriteDtoToEntity(
+            VendorInvoiceToWrite invoice,
+            Vendor vendor,
+            IReadOnlyList<Manufacturer> manufacturers,
+            IReadOnlyList<SaleCode> saleCodes,
             IReadOnlyList<SalesTax> salesTaxes,
             IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods)
         {
             return invoice is null
                 ? null
                 : VendorInvoice.Create(
-                VendorHelper.ConvertWriteDtoToEntity(invoice.Vendor),
+                vendor,
                 invoice.Status,
                 invoice.Total,
-                invoice.InvoiceNumber,
-                invoice.Date,
-                invoice.DatePosted,
-                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems),
+            invoice.InvoiceNumber,
+            invoice.Date,
+            invoice.DatePosted,
+            VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems, manufacturers, saleCodes),
                 VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(paymentMethods, invoice.Payments),
                 VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes, salesTaxes))
                 .Value;
@@ -176,10 +182,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 {
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
-                    Status = (VendorInvoiceStatus)Enum.Parse(typeof(VendorInvoiceStatus), invoice.Status),
+                    Status = invoice.Status.GetValueFromName<VendorInvoiceStatus>(),
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
-                    Vendor = VendorHelper.ConvertReadToWriteDto(invoice.Vendor),
+                    Vendor = VendorHelper.ConvertReadToReadInListDto(invoice.Vendor),
                     LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoice.LineItems),
                     Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoice.Payments),
                     Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoice.Taxes)

@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,20 +40,27 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
         {
-            var manufacturerFromContext = await context.Manufacturers
+            return ManufacturerHelper.ConvertEntityToReadDto(
+                await context.Manufacturers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code);
-
-            return ManufacturerHelper.ConvertEntityToReadDto(manufacturerFromContext);
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code));
         }
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
         {
             var mfrFromContext = await context.Manufacturers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(mfr => mfr.Id == id);
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id);
 
             return ManufacturerHelper.ConvertEntityToReadDto(mfrFromContext);
+        }
+
+        public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids)
+        {
+            return await context.Manufacturers
+            .AsNoTracking()
+                .Where(manufacturer => ids.Contains(manufacturer.Id))
+                .ToListAsync();
         }
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)

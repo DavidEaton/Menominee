@@ -6,8 +6,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
     public class VendorInvoiceItemToWrite
     {
         public string PartNumber { get; set; } = string.Empty;
-        public ManufacturerToWrite Manufacturer { get; set; }
+        public ManufacturerToRead Manufacturer { get; set; }
         public string Description { get; set; } = string.Empty;
-        public SaleCodeToWrite SaleCode { get; set; }
+        public SaleCodeToRead SaleCode { get; set; }
     }
 }

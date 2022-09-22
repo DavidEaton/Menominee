@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using System;
 using System.Collections.Generic;
@@ -8,18 +10,26 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
 {
     public class VendorInvoiceLineItemHelper
     {
-        public static List<VendorInvoiceLineItem> ConvertWriteDtosToEntities(IList<VendorInvoiceLineItemToWrite> lineItems)
+        public static List<VendorInvoiceLineItem> ConvertWriteDtosToEntities(
+            IList<VendorInvoiceLineItemToWrite> lineItems,
+            IReadOnlyList<Manufacturer> manufacturer, 
+            IReadOnlyList<SaleCode> saleCode)
         {
-            return lineItems?.Select(ConvertWriteDtoToEntity()).ToList()
-                ?? new List<VendorInvoiceLineItem>();
+            return lineItems?.Select(ConvertWriteDtoToEntity(
+                manufacturer, 
+                saleCode)).ToList()
+                ??
+                new List<VendorInvoiceLineItem>();
         }
 
-        public static Func<VendorInvoiceLineItemToWrite, VendorInvoiceLineItem> ConvertWriteDtoToEntity()
+        public static Func<VendorInvoiceLineItemToWrite, VendorInvoiceLineItem> ConvertWriteDtoToEntity(
+            IReadOnlyList<Manufacturer> manufacturers, 
+            IReadOnlyList<SaleCode> saleCodes)
         {
             return lineItem =>
                 VendorInvoiceLineItem.Create(
                     lineItem.Type,
-                    VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item),
+                    VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item, manufacturers, saleCodes),
                     lineItem.Quantity,
                     lineItem.Cost,
                     lineItem.Core,
@@ -39,6 +49,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
             return lineItem =>
                 new VendorInvoiceLineItemToWrite()
                 {
+                    Id = lineItem.Id,
                     Type = lineItem.Type,
                     Item = VendorInvoiceItemHelper.ConvertReadDtoToWriteDto(lineItem.Item),
                     Quantity = lineItem.Quantity,

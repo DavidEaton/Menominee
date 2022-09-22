@@ -1,7 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Vendors;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,8 +20,8 @@ namespace Menominee.Client.Components.Payables
         public VendorInvoiceToWrite Invoice { get; set; }
 
         public IReadOnlyList<VendorToReadInList> Vendors;
+        private IList<VendorInvoiceStatusEnumModel> VendorInvoiceStatusEnumData { get; set; } = new List<VendorInvoiceStatusEnumModel>();
 
-        private bool parametersSet = false;
         private long vendorId = 0;
 
         protected override async Task OnInitializedAsync()
@@ -28,44 +31,29 @@ namespace Menominee.Client.Components.Payables
                                               .OrderBy(vendor => vendor.VendorCode)
                                               .ToList();
         }
-
-        protected override async Task OnParametersSetAsync()
+        protected override void OnInitialized()
         {
-            if (parametersSet)
-                return;
-            parametersSet = true;
-
+            foreach (VendorInvoiceStatus status in Enum.GetValues(typeof(VendorInvoiceStatus)))
+                VendorInvoiceStatusEnumData.Add(new VendorInvoiceStatusEnumModel { DisplayText = status.ToString(), Value = status });
+        }
+        protected override void OnParametersSet()
+        {
             if (Invoice?.Vendor?.Id != null)
             {
                 vendorId = Invoice.Vendor.Id;
             }
         }
 
-        private async Task OnVendorChangeAsync()
+        private void OnVendorChange()
         {
             if (vendorId > 0 && Invoice.Vendor?.Id != vendorId)
-            {
-                Invoice.Vendor = VendorHelper.ConvertReadToWriteDto(await VendorDataService.GetVendorAsync(vendorId));
-            }
-
-            //if (Item?.Manufacturer is not null)
-            //{
-            //    long savedProductCodeId = productCodeId;
-            //    ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
-            //    if (savedProductCodeId > 0 && Item.ProductCode?.Id == 0 && ProductCodes.Any(pc => pc.Id == savedProductCodeId) == true)
-            //        Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(savedProductCodeId));
-            //    productCodeId = savedProductCodeId;
-            //}
-            //else
-            //{
-            //    productCodeId = 0;
-            //    ProductCodes = new List<ProductCodeToReadInList>();
-            //    Item.ProductCode = new();
-            //}
-
-            //await OnProductCodeChangeAsync();
+                Invoice.Vendor = Vendors.FirstOrDefault(x => x.Id == vendorId);
         }
 
-
+        internal class VendorInvoiceStatusEnumModel
+        {
+            public VendorInvoiceStatus Value { get; set; }
+            public string DisplayText { get; set; }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
@@ -56,6 +57,25 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
                 Prefix = manufacturer.Prefix,
                 Name = manufacturer.Name
             };
+        }
+
+        public static ManufacturerToRead ConvertReadInListToReadDto(ManufacturerToReadInList manufacturer)
+        {
+            return
+            manufacturer is null
+                ? null
+                : new()
+                {
+                    Id = manufacturer.Id,
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
+        }
+
+        internal static Manufacturer ConvertWriteToReadDto(ManufacturerToRead manufacturer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

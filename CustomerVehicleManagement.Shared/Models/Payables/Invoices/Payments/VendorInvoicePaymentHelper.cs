@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
                         VendorInvoicePaymentMethodHelper.ConvertWriteToReadDto
                         (payment, paymentMethods.First(
-                            paymentMethod => paymentMethod.Id == payment.PaymentMethodId)),
+                            paymentMethod => paymentMethod.Id == payment.PaymentMethod.Id)),
                         paymentMethodNames),
                     payment.Amount)
                 .Value;
@@ -39,7 +39,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             return payment =>
                 new VendorInvoicePaymentToWrite()
                 {
-                    PaymentMethodId = payment.PaymentMethod.Id,
+                    Id = payment.Id,
+                    PaymentMethod = payment.PaymentMethod,
                     Amount = payment.Amount
                 };
         }

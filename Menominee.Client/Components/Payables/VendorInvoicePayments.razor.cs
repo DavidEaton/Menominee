@@ -1,6 +1,8 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +23,7 @@ namespace Menominee.Client.Components.Payables
 
         private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PaymentMethods = new List<VendorInvoicePaymentMethodToReadInList>();
 
+        private long paymentMethodId = 0;
         protected override async Task OnInitializedAsync()
         {
             PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
@@ -43,6 +46,13 @@ namespace Menominee.Client.Components.Payables
 
         private void OnInsertBalanceClick()
         {
+        }
+
+        private void OnPaymentMethodChange()
+        {
+            if (paymentMethodId > 0 && Payment?.PaymentMethod?.Id != paymentMethodId)
+                Payment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadInListToReadDto(
+                    PaymentMethods.FirstOrDefault(paymentMethod => paymentMethod.Id == paymentMethodId));
         }
 
         protected void OnPaymentSelect(IEnumerable<VendorInvoicePaymentToWrite> payments)

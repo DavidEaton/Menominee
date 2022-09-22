@@ -8,12 +8,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
     {
         public long Id { get; set; }
         public VendorInvoiceItemType Type { get; set; } = VendorInvoiceItemType.Purchase;
-        public VendorInvoiceItemToWrite Item { get; set; }
+        public VendorInvoiceItemToWrite Item { get; set; } = new();
         public double Quantity { get; set; } = 0.0;
         public double Cost { get; set; } = 0.0;
         public double Core { get; set; } = 0.0;
         public string PONumber { get; set; } = string.Empty;
-        public DateTime? TransactionDate { get; set; }
+        public DateTime? TransactionDate { get; set; } = DateTime.Today;
         public TrackingState TrackingState { get; set; } = TrackingState.Unchanged;
     }
 }

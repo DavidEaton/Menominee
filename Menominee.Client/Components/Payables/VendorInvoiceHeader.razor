@@ -4,14 +4,13 @@
         <div class="form-group">
             <label class="m-label" for="vendorName">Vendor</label>
             <div class="k-form-field-wrap">
-                <TelerikDropDownList Id="vendorName" 
-                                     Data="@Vendors" 
-                                     TextField="Name" 
-                                     ValueField="Id" 
-                                     Width="240px" 
-                                     DefaultText="Select Vendor" 
-                                     OnChange="OnVendorChangeAsync"
-                                     @bind-Value="@vendorId">
+                <TelerikDropDownList @bind-Value="@vendorId"
+                                     Data="Vendors"
+                                     TextField="Name"
+                                     ValueField="Id"
+                                     Width="240px"
+                                     DefaultText="Select Vendor"
+                                     OnChange="OnVendorChange">
                 </TelerikDropDownList>
             </div>
         </div>
@@ -40,7 +39,12 @@
         <div class="form-group">
             <label class="m-label" for="status">Status</label>
             <div class="k-form-field-wrap">
-                <TelerikTextBox Id="status" Width="140px" AutoComplete="off" @bind-Value="@Invoice.InvoiceNumber" />
+                <TelerikDropDownList @bind-Value="@Invoice.Status"
+                                     Data="VendorInvoiceStatusEnumData"
+                                     Width="140px"
+                                     TextField="DisplayText"
+                                     ValueField="Value">
+                </TelerikDropDownList>
             </div>
         </div>
 

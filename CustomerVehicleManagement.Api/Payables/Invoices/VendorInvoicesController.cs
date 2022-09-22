@@ -1,7 +1,11 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
+using CustomerVehicleManagement.Api.SaleCodes;
 using CustomerVehicleManagement.Api.Taxes;
+using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
@@ -21,18 +25,24 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         private readonly IVendorRepository vendorRepository;
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
         private readonly ISalesTaxRepository salesTaxRepository;
+        private readonly IManufacturerRepository manufacturerRepository;
+        private readonly ISaleCodeRepository saleCodeRepository;
         private readonly string BasePath = "/api/vendorinvoices";
 
         public VendorInvoicesController(
             IVendorInvoiceRepository repository,
             IVendorRepository vendorRepository,
             IVendorInvoicePaymentMethodRepository paymentMethodRepository,
-            ISalesTaxRepository salesTaxRepository)
+            ISalesTaxRepository salesTaxRepository,
+            IManufacturerRepository manufacturerRepository,
+            ISaleCodeRepository saleCodeRepository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository)); ;
             this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));
             this.salesTaxRepository = salesTaxRepository ?? throw new ArgumentNullException(nameof(salesTaxRepository));
+            this.manufacturerRepository = manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
+            this.saleCodeRepository = saleCodeRepository ?? throw new ArgumentNullException(nameof(saleCodeRepository));
         }
 
         // GET: api/vendorinvoices/list
@@ -74,48 +84,52 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (invoiceFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            // Favor functions that return a value over commands that mutate objects and
-            // hide their side effects. Much easier to reason about and fix bugs when
-            // methods signatures are "honest", especially when we can see the chain of
-            // return values in a set of steps. For example, 
-            // var trimmed = name.Trim();
-            // var encoded = Encode(trimmed);
-            // var salutedName = SaluteName(encoded);
-            // vs.
-            // name.Trim();
-            // Encode(name);
-            // SaluteName(name);
-            // That is, we can tell just from the method signature what the code is doing
-            // without the need to read and understand the details of command internals
-            // that mutate our objects and return void. 
-            // Functions that return a value describe all possible outputs in their signatures.
-            // Commands that return void are dishonest in that their method signatures don't
-            // tell the reader everything they can do, and hide their side effects.
-
             // Update each member of VendorInvoice
-            //VendorInvoice
-            var result = invoiceFromRepository.SetVendor(await vendorRepository.GetVendorEntityAsync(invoiceFromCaller.Vendor.Id));
-            invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status);
-            invoiceFromRepository.SetTotal(invoiceFromCaller.Total);
-            invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber);
-            invoiceFromRepository.SetDate(invoiceFromCaller.Date);
-            invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted);
+            // Aggregate root entity VendorInvoice:
+            if (invoiceFromRepository.SetVendor(await vendorRepository.GetVendorEntityAsync(invoiceFromCaller.Vendor.Id)).IsFailure)
+                return BadRequest();
 
-            //IList<VendorInvoiceLineItem> LineItems
+            if (invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status).IsFailure)
+                return BadRequest();
+
+            if (invoiceFromRepository.SetTotal(invoiceFromCaller.Total).IsFailure)
+                return BadRequest();
+
+            if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber).IsFailure)
+                return BadRequest();
+
+            if (invoiceFromRepository.SetDate(invoiceFromCaller.Date).IsFailure)
+                return BadRequest();
+
+            if (invoiceFromCaller.DatePosted is not null)
+                if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
+                    return BadRequest();
+
             foreach (var lineItem in invoiceFromCaller?.LineItems)
             {
                 // Added
-                if (lineItem.Id == 0 && lineItem.TrackingState == TrackingState.Added)
+                if (lineItem.Id == 0)
                     invoiceFromRepository.AddLineItem(
                         VendorInvoiceLineItem.Create(
-                            lineItem.Type, VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item), lineItem.Quantity, lineItem.Cost, lineItem.Core, lineItem.PONumber, lineItem.TransactionDate)
+                            lineItem.Type, VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
+                                lineItem.Item,
+                                await GetManufacturers(invoiceFromCaller),
+                                await GetSaleCodes(invoiceFromCaller)),
+                            lineItem.Quantity,
+                            lineItem.Cost,
+                            lineItem.Core,
+                            lineItem.PONumber,
+                            lineItem.TransactionDate)
                         .Value);
                 // Updated
-                if (lineItem.Id != 0 && lineItem.TrackingState == TrackingState.Modified)
+                if (lineItem.Id != 0)
                 {
                     var contextLineItem = invoiceFromRepository?.LineItems.FirstOrDefault(contextLineItem => contextLineItem.Id == lineItem.Id);
                     contextLineItem.SetType(lineItem.Type);
-                    contextLineItem.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item));
+                    contextLineItem.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
+                        lineItem.Item,
+                        await GetManufacturers(invoiceFromCaller),
+                        await GetSaleCodes(invoiceFromCaller)));
                     contextLineItem.SetQuantity(lineItem.Quantity);
                     contextLineItem.SetCost(lineItem.Cost);
                     contextLineItem.SetCore(lineItem.Core);
@@ -123,65 +137,72 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     contextLineItem.SetTransactionDate(lineItem.TransactionDate);
                     contextLineItem.SetTrackingState(TrackingState.Modified);
                 }
-                // Deleted
-                if (lineItem.Id != 0 && lineItem.TrackingState == TrackingState.Deleted)
-                    invoiceFromRepository.RemoveLineItem(
-                        invoiceFromRepository.LineItems.FirstOrDefault(
-                            contextLineItem =>
-                            contextLineItem.Id == lineItem.Id));
+                // TODO: Deleted
+                //if (lineItem.Id != 0)
+                //    invoiceFromRepository.RemoveLineItem(
+                //        invoiceFromRepository.LineItems.FirstOrDefault(
+                //            contextLineItem =>
+                //            contextLineItem.Id == lineItem.Id));
             }
             //IList<VendorInvoicePayment> Payments
             foreach (var payment in invoiceFromCaller?.Payments)
             {
                 // Added
-                if (payment.Id == 0 && payment.TrackingState == TrackingState.Added)
+                if (payment.Id == 0)
                     invoiceFromRepository.AddPayment(
                         VendorInvoicePayment.Create(
                             await paymentMethodRepository.GetPaymentMethodEntityAsync(
-                                payment.PaymentMethodId), payment.Amount)
+                                payment.PaymentMethod.Id), payment.Amount)
                         .Value);
                 // Updated
-                if (payment.Id != 0 && payment.TrackingState == TrackingState.Modified)
+                if (payment.Id != 0)
                 {
                     var contextPayment = invoiceFromRepository?.Payments.FirstOrDefault(contextPayment => contextPayment.Id == payment.Id);
                     contextPayment.SetPaymentMethod(
-                        await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethodId));
+                        await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethod.Id));
                     contextPayment.SetAmount(payment.Amount);
-                    contextPayment.SetTrackingState(TrackingState.Modified);
+                    //contextPayment.SetTrackingState(TrackingState.Modified);
                 }
-                // Deleted
-                if (payment.Id != 0 && payment.TrackingState == TrackingState.Deleted)
-                    invoiceFromRepository.RemovePayment(
-                        invoiceFromRepository.Payments.FirstOrDefault(
-                            contextPayment =>
-                            contextPayment.Id == payment.Id));
+                // TODO: Deleted
+                //if (payment.Id != 0)
+                //    invoiceFromRepository.RemovePayment(
+                //        invoiceFromRepository.Payments.FirstOrDefault(
+                //            contextPayment =>
+                //            contextPayment.Id == payment.Id));
             }
             //IList<VendorInvoiceTax> Taxes
             foreach (var tax in invoiceFromCaller?.Taxes)
             {
                 // Added
-                if (tax.Id == 0 && tax.TrackingState == TrackingState.Added)
+                if (tax.Id == 0)
                     invoiceFromRepository.AddTax(
                         VendorInvoiceTax.Create(
                             await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id), tax.TaxId).Value);
                 // Updated
-                if (tax.Id != 0 && tax.TrackingState == TrackingState.Modified)
+                if (tax.Id != 0)
                 {
                     var contextTax = invoiceFromRepository?.Taxes.FirstOrDefault(contextTax => contextTax.Id == tax.Id);
                     contextTax.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id));
                     contextTax.SetTaxId(tax.TaxId);
                     contextTax.SetTrackingState(TrackingState.Modified);
                 }
-                // Deleted
-                if (tax.Id != 0 && tax.TrackingState == TrackingState.Deleted)
-                    invoiceFromRepository.RemoveTax(
-                        invoiceFromRepository.Taxes.FirstOrDefault(
-                            contextTax =>
-                            contextTax.Id == tax.Id));
+                // TODO: Deleted
+                //if (tax.Id != 0)
+                //    invoiceFromRepository.RemoveTax(
+                //        invoiceFromRepository.Taxes.FirstOrDefault(
+                //            contextTax =>
+                //            contextTax.Id == tax.Id));
             }
-            invoiceFromRepository.SetTrackingState(TrackingState.Modified);
 
-            repository.FixTrackingState();
+
+            // Remove Julie Lerman's superior implementation in favor of EF
+            // Core 6 flawed way of treating attached objects: marking them
+            // as Modified when they should be marked as Unchanged until
+            // they are modified while context tracks it.
+            //invoiceFromRepository.SetTrackingState(TrackingState.Modified);
+            //repository.FixTrackingState();
+
+            repository.InspectTrackingStates(invoiceFromRepository);
 
             await repository.SaveChangesAsync();
 
@@ -192,14 +213,17 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPost]
         public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
-            IReadOnlyList<SalesTax> salesTaxes = await salesTaxRepository.GetSalesTaxEntities();
+            var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
             var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
-                salesTaxes,
+                vendor,
+                await GetManufacturers(invoiceToAdd),
+                await GetSaleCodes(invoiceToAdd),
+                await salesTaxRepository.GetSalesTaxEntities(),
                 await paymentMethodRepository.GetPaymentMethodsAsync());
 
-            await repository.AddInvoiceAsync(invoice);
+            repository.AddInvoice(invoice);
             await repository.SaveChangesAsync();
 
             return Created(new Uri($"{BasePath}/{invoice.Id}",
@@ -221,5 +245,22 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             return NoContent();
         }
+
+        private async Task<IReadOnlyList<Manufacturer>> GetManufacturers(VendorInvoiceToWrite invoice)
+        {
+            return await manufacturerRepository.GetManufacturerEntitiesAsync(
+                invoice.LineItems?.Select(
+                    lineItem => lineItem.Item.Manufacturer.Id)
+                .ToList());
+        }
+
+        private async Task<IReadOnlyList<SaleCode>> GetSaleCodes(VendorInvoiceToWrite invoiceToAdd)
+        {
+            return await saleCodeRepository.GetSaleCodeEntitiesAsync(
+                invoiceToAdd.LineItems?.Select(
+                    lineItem => lineItem.Item.SaleCode.Id)
+                .ToList());
+        }
+
     }
 }

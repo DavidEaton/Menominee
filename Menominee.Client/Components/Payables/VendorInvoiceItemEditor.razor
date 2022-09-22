@@ -1,5 +1,4 @@
 ﻿<EditForm Model="LineItem">
-
     <TelerikWindow Visible="DialogVisible"
                    Modal="true"
                    Width="650px"
@@ -11,14 +10,14 @@
         <WindowContent>
             <div class="form-row">
                 <div class="form-group col-12">
-                    @if (itemTypes != null && itemTypes.Count > 0)
+                    @if (ItemTypes is not null && ItemTypes?.Count > 0)
                     {
                         <label class="m-label" for="itemType">Item Type</label>
                         <div class="m-form-control-group">
                             <SfDropDownList TValue="VendorInvoiceItemType"
                                         TItem="InvoiceItemType"
                                         PopupHeight="460px"
-                                        DataSource="@itemTypes"
+                                        DataSource="@ItemTypes"
                                         @bind-Value="@LineItem.Type"
                                         Id="itemType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
@@ -30,7 +29,7 @@
 
             <div class="form-row">
                 <div class="form-group col-12">
-                    @if (Manufacturers != null)
+                    @if (Manufacturers is not null)
                     {
                         <label class="m-label" for="category">Manufacturer</label>
                         <div class="m-form-control-group">
@@ -40,7 +39,7 @@
                                              TextField="DisplayText"
                                              ValueField="Id"
                                              Class="form-control"
-                                             OnChange="OnManufacturerChangeAsync"
+                                             OnChange="OnManufacturerChange"
                                              Id="category">
                             </TelerikDropDownList>
                         </div>
@@ -80,15 +79,14 @@
                     {
                         <label class="m-label" for="saleCode">Sale Code</label>
                         <div class="m-form-control-group">
-                            <SfDropDownList TValue="long"
-                                        TItem="SaleCodeToReadInList"
-                                        PopupHeight="230px"
-                                        Placeholder="Select a sale code"
-                                        DataSource="@SaleCodes"
-                                        @bind-Value="@saleCodeId"
-                                        OnChange="OnSaleCodeChangeAsync">
-                                <DropDownListFieldSettings Text="DisplayText" Value="Id" />
-                            </SfDropDownList>
+                            <TelerikDropDownList @bind-Value="@saleCodeId"
+                                             Width="100%"
+                                             Data="@SaleCodes"
+                                             TextField="DisplayText"
+                                             ValueField="Id"
+                                             Class="form-control"
+                                             OnChange="OnSaleCodeChange">
+                            </TelerikDropDownList>
                         </div>
                     }
                 </div>
@@ -135,9 +133,9 @@
                     <label class="m-label" for="poNumber">PO Number</label>
                     <input type="text" class="form-control" id="poNumber" @bind-value="@LineItem.PONumber">
                 </div>
-@*                <div class="form-group col-4">
-                    <label class="m-label" for="invNumber">Invoice Number</label>
-                    <input type="text" class="form-control" id="invNumber" @bind-value="@LineItem.InvoiceNumber">
+                @*                <div class="form-group col-4">
+                <label class="m-label" for="invNumber">Invoice Number</label>
+                <input type="text" class="form-control" id="invNumber" @bind-value="@LineItem.InvoiceNumber">
                 </div>*@
             </div>
 

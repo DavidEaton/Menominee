@@ -14,10 +14,20 @@
              SelectionMode="GridSelectionMode.Single"
              @ref="Grid">
         <GridColumns>
-            <GridColumn Field="@nameof(Payment.PaymentMethodId)"
+            <GridColumn Field="PaymentMethod.Name"
                     Title="Payment Method"
                     Width="55%">
-                <Template>
+@*                <Template>
+                    @{
+                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod"
+                                     Data="PaymentMethods"
+                                     TextField="Name"
+                                     ValueField="Id"
+                                     OnChange="OnPaymentMethodChange">
+                        </TelerikDropDownList>
+                    }
+                </Template>*@
+@*                <EditorTemplate>
                     @{
                         <TelerikDropDownList @bind-Value="Payment.PaymentMethodId"
                                      Data="PaymentMethods"
@@ -25,16 +35,7 @@
                                      ValueField="Id">
                         </TelerikDropDownList>
                     }
-                </Template>
-                <EditorTemplate>
-                    @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethodId"
-                                     Data="PaymentMethods"
-                                     TextField="Name"
-                                     ValueField="Id">
-                        </TelerikDropDownList>
-                    }
-                </EditorTemplate>
+                </EditorTemplate>*@
             </GridColumn>
 
             <GridColumn Width="35%"
@@ -47,7 +48,7 @@
                     Sortable="false"
                     Filterable="false"
                     TextAlign="ColumnTextAlign.Right">
-                <Template>
+@*                <Template>
                     @{
                         <TelerikNumericTextBox @bind-Value="Payment.Amount"
                                        Format="C"
@@ -55,7 +56,7 @@
                                        Arrows="false">
                         </TelerikNumericTextBox>
                     }
-                </Template>
+                </Template>*@
                 <EditorTemplate>
                     @{
                         <TelerikNumericTextBox @bind-Value="Payment.Amount"

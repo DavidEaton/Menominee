@@ -26,7 +26,8 @@ namespace Menominee.Client.Components.Payables.Pages
                 Invoice = new();
                 Invoice.Date = DateTime.Today;
             }
-            else
+
+            if (Id != 0)
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
                 Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
@@ -37,18 +38,16 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Valid())
             {
-
-
                 if (Id == 0)
                 {
                     var invoice = await vendorInvoiceDataService.AddInvoice(Invoice);
                     Id = invoice.Id;
+                    EndEdit();
+                    return;
                 }
 
                 if (Id != 0)
-                {
                     await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
-                }
 
                 EndEdit();
             }
@@ -56,10 +55,12 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private bool Valid()
         {
-            if (Invoice.Vendor?.Id > 0 && Invoice.Date.HasValue)
-                return true;
+            // Child components will validate thier own data:
+            // VendorInvoiceItems
+            // VendorInvoicePayments
+            // VendorInvoiceTaxes
 
-            return false;
+            return Invoice?.Vendor is not null && Invoice.Date.HasValue;
         }
 
         private void Discard()

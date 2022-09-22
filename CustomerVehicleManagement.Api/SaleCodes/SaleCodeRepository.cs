@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -39,18 +40,23 @@ namespace CustomerVehicleManagement.Api.SaleCodes
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)
         {
-            var saleCodeFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(sc => sc.Code == code);
-
-            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(await context.SaleCodes
+                .FirstOrDefaultAsync(saleCode => saleCode.Code == code));
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
-            var saleCodeFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
+            return SaleCodeHelper.ConvertEntityToReadDto(
+                await context.SaleCodes.FirstOrDefaultAsync(
+                    saleCode => saleCode.Id == id));
+        }
 
-            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
+        public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids)
+        {
+            return await context.SaleCodes
+            .AsNoTracking()
+                .Where(manufacturer => ids.Contains(manufacturer.Id))
+                .ToListAsync();
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)

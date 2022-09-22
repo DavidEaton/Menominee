@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 {
@@ -51,15 +52,19 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                     Name = saleCode.Name,
                     DesiredMargin = saleCode.DesiredMargin,
                     LaborRate = saleCode.LaborRate,
-                    ShopSupplies = new()
-                    {
-                        IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
-                        IncludeParts = saleCode.ShopSupplies.IncludeParts,
-                        MaximumCharge = saleCode.ShopSupplies.MaximumCharge,
-                        MinimumCharge = saleCode.ShopSupplies.MinimumCharge,
-                        MinimumJobAmount = saleCode.ShopSupplies.MinimumJobAmount,
-                        Percentage = saleCode.ShopSupplies.Percentage
-                    }
+                    ShopSupplies =
+                        saleCode.ShopSupplies is not null
+                        ?
+                        new()
+                        {
+                            IncludeLabor = saleCode.ShopSupplies.IncludeLabor,
+                            IncludeParts = saleCode.ShopSupplies.IncludeParts,
+                            MaximumCharge = saleCode.ShopSupplies.MaximumCharge,
+                            MinimumCharge = saleCode.ShopSupplies.MinimumCharge,
+                            MinimumJobAmount = saleCode.ShopSupplies.MinimumJobAmount,
+                            Percentage = saleCode.ShopSupplies.Percentage
+                        }
+                        : null
                 };
         }
 
@@ -93,6 +98,25 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                     IncludeParts = saleCode.ShopSupplies.IncludeParts,
                     IncludeLabor = saleCode.ShopSupplies.IncludeLabor
                 };
+        }
+
+        public static SaleCodeToRead ConvertTorReadInListToReadDto(SaleCodeToReadInList saleCode)
+        {
+            return saleCode is null
+                ? null
+                : new()
+                {
+                    Id = saleCode.Id,
+                    Code = saleCode.Code,
+                    Name = saleCode.Name,
+                    DesiredMargin = saleCode.DesiredMargin,
+                    LaborRate = saleCode.LaborRate
+                };
+        }
+
+        internal static SaleCode ConvertWriteDtoToEntity(SaleCodeToRead saleCode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,18 +1,21 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items
 {
     public class VendorInvoiceItemHelper
     {
-        public static VendorInvoiceItem ConvertWriteDtoToEntity(VendorInvoiceItemToWrite item)
+        public static VendorInvoiceItem ConvertWriteDtoToEntity(
+            VendorInvoiceItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
         {
             return VendorInvoiceItem.Create(
                 item.PartNumber,
                 item.Description,
-                ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
-                SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode))
+                manufacturers.FirstOrDefault(x => x.Id == item.Manufacturer.Id),
+                saleCodes.FirstOrDefault(x => x.Id == item.SaleCode.Id))
                 .Value;
         }
 
@@ -21,9 +24,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
             return new VendorInvoiceItemToWrite()
             {
                 Description = item.Description,
-                Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
+                Manufacturer = item.Manufacturer,
                 PartNumber = item.PartNumber,
-                SaleCode = SaleCodeHelper.ConvertReadToWriteDto(item.SaleCode)
+                SaleCode = item.SaleCode
             };
         }
     }
