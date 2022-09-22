@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using CustomerVehicleManagement.Shared.Models.Organizations;
-using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -77,13 +76,8 @@ namespace CustomerVehicleManagement.Api.Organizations
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
                 2) Update domain entity with data in data transfer object (DTO)
-                3) Set entity's TrackingState to Modified
-                4) FixTrackingState: moves entity state tracking back out of
-                   the object and into the context to track entity state in this
-                   disconnected application. In other words, sych the EF Change
-                   Tracker with our disconnected entity's TrackingState.
-                5) Save changes
-                6) return NoContent()
+                3) Save changes
+                4) return NoContent()
             */
             // VK: here, the logic should be:
             // 1. Get the Organization entity (not DTO) from the DB

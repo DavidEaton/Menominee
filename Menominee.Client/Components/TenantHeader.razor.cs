@@ -38,10 +38,5 @@ namespace Menominee.Client.Components
             string path = $"{basePath}{tenant.Name}/{tenant.Name}";
             return path;
         }
-
-        protected static void ImageClick(MouseEventArgs e)
-        {
-            Console.WriteLine("Tenant image clicked! ");
-        }
     }
 }

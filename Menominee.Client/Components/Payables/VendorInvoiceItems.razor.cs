@@ -44,28 +44,6 @@ namespace Menominee.Client.Components.Payables
         private bool CanDelete { get; set; } = false;
 
         private FormMode ItemFormMode { get; set; } = FormMode.Unknown;
-
-        protected override void OnParametersSet()
-        {
-            if (LineItems is not null)
-                System.Console.WriteLine($"LineItems: {LineItems}");
-
-            if (SelectedItems is not null)
-                System.Console.WriteLine($"SelectedItems: {SelectedItems.Count()}");
-
-            if (SelectedItem is not null)
-                System.Console.WriteLine($"LineItems: {SelectedItem}");
-
-            if (ItemToModify is not null)
-                System.Console.WriteLine($"LineItems: {ItemToModify}");
-
-            //System.Console.WriteLine($"SelectedId: {SelectedId}");
-            //System.Console.WriteLine($"selectedId: {selectedId}");
-            //System.Console.WriteLine($"itemIdToSelect: {itemIdToSelect}");
-            //System.Console.WriteLine($"selectedItemIndex: {selectedItemIndex}");
-            //System.Console.WriteLine($"editDialogVisible: {editDialogVisible}");
-        }
-
         private bool EditDialogVisible
         {
             get => editDialogVisible;

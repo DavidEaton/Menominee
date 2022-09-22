@@ -58,17 +58,14 @@ namespace CustomerVehicleManagement.Api.Data
 
             if (!options.IsConfigured) // Unit tests will configure context with test provider
             {
-                if (Environment?.EnvironmentName != "Production")
-                {
-                    options.UseLoggerFactory(CreateLoggerFactory());
-                    options.EnableSensitiveDataLogging(true);
-                }
-
+#if DEBUG
+                options.UseLoggerFactory(CreateLoggerFactory());
+                options.EnableSensitiveDataLogging(true);
+#endif
                 options.UseSqlServer(Connection);
             }
 
             base.OnConfiguring(options);
-
         }
 
         private static ILoggerFactory CreateLoggerFactory()

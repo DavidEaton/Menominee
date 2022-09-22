@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         Task<RepairOrderToRead> GetRepairOrderAsync(long id);
         //Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync();
         Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync();
-        void UpdateRepairOrderAsync(RepairOrder repairOrder);
         Task DeleteRepairOrderAsync(long id);
         Task<bool> RepairOrderExistsAsync(long id);
         Task SaveChangesAsync();

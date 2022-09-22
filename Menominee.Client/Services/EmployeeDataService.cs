@@ -24,7 +24,7 @@ namespace Menominee.Client.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message :{ex.Message}");
+                // TODO: log exception
             }
 
             return null;

@@ -125,14 +125,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             catch (Exception ex)
             {
                 // TODO: log exception
-                Console.WriteLine(ex);
                 throw;
             }
-        }
-
-        public void UpdateRepairOrderAsync(RepairOrder repairOrder)
-        {
-            // No code in this implementation
         }
     }
 }

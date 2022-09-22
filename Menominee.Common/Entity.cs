@@ -39,9 +39,5 @@
         {
             return (GetType().ToString() + Id).GetHashCode();
         }
-
-        // One small dent in our domain model encapsulation:
-        // EF Core requires a parameterless contructor
-        public Entity() { }
     }
 }

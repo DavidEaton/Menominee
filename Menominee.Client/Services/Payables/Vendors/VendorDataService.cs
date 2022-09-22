@@ -51,7 +51,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -65,7 +65,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message :{ex.Message}");
+                // TODO: log exception
             }
             return null;
         }
