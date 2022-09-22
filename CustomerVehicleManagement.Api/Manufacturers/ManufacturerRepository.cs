@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,7 +57,6 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids)
         {
             return await context.Manufacturers
-            .AsNoTracking()
                 .Where(manufacturer => ids.Contains(manufacturer.Id))
                 .ToListAsync();
         }

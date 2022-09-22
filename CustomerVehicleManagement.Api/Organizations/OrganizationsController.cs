@@ -125,10 +125,10 @@ namespace CustomerVehicleManagement.Api.Organizations
             // NO CHANGE TO COLLECTION
             foreach (var phone in organizationFromCaller?.Phones)
             {
-                if (phone.Id == 0 && phone.TrackingState == TrackingState.Added)
+                if (phone.Id == 0)
                     organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-                if (phone.Id != 0 && phone.TrackingState == TrackingState.Modified)
+                if (phone.Id != 0)
                 {
                     var contextPhone = organizationFromRepository.Phones.FirstOrDefault(contextPhone => contextPhone.Id == phone.Id);
                     contextPhone.SetNumber(phone.Number);
@@ -137,7 +137,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                     contextPhone.SetTrackingState(TrackingState.Modified);
                 }
 
-                if (phone.Id != 0 && phone.TrackingState == TrackingState.Deleted)
+                if (phone.Id != 0)
                     organizationFromRepository.RemovePhone(
                         organizationFromRepository.Phones.FirstOrDefault(
                             contextPhone =>

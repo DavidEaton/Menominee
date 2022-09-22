@@ -14,8 +14,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
             return VendorInvoiceItem.Create(
                 item.PartNumber,
                 item.Description,
-                manufacturers.FirstOrDefault(x => x.Id == item.Manufacturer.Id),
-                saleCodes.FirstOrDefault(x => x.Id == item.SaleCode.Id))
+                manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
+                saleCodes.FirstOrDefault(saleCode => saleCode.Id == item.SaleCode.Id))
                 .Value;
         }
 

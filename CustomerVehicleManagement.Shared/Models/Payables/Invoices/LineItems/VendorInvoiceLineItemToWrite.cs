@@ -14,6 +14,5 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
         public double Core { get; set; } = 0.0;
         public string PONumber { get; set; } = string.Empty;
         public DateTime? TransactionDate { get; set; } = DateTime.Today;
-        public TrackingState TrackingState { get; set; } = TrackingState.Unchanged;
     }
 }

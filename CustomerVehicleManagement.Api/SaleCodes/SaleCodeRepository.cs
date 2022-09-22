@@ -54,7 +54,6 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids)
         {
             return await context.SaleCodes
-            .AsNoTracking()
                 .Where(manufacturer => ids.Contains(manufacturer.Id))
                 .ToListAsync();
         }

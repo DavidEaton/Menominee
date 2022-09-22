@@ -12,6 +12,5 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return PhoneHelper.FormatPhoneNumber(Number);
         }
-        public TrackingState TrackingState { get; set; } = TrackingState.Unchanged;
     }
 }

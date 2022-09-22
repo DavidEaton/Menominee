@@ -7,7 +7,6 @@ using CustomerVehicleManagement.Api.Taxes;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using Menominee.Common.Enums;
@@ -84,6 +83,14 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (invoiceFromRepository is null)
                 return NotFound(notFoundMessage);
 
+            // Load lookup lists once
+            IReadOnlyList<Manufacturer> manufacturers = await GetManufacturers(invoiceFromCaller);
+            IReadOnlyList<SaleCode> salesCodes = await GetSaleCodes(invoiceFromCaller);
+
+            // VendorInvoiceLineItem is an Entity that contains the VendorInvoiceItem Value Object
+            // VendorInvoiceItem is a Value Object (no Id) that contains the Item (aka Part)
+
+
             // Update each member of VendorInvoice
             // Aggregate root entity VendorInvoice:
             if (invoiceFromRepository.SetVendor(await vendorRepository.GetVendorEntityAsync(invoiceFromCaller.Vendor.Id)).IsFailure)
@@ -105,37 +112,39 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
                     return BadRequest();
 
-            foreach (var lineItem in invoiceFromCaller?.LineItems)
+            // Line Items
+            foreach (var lineItemFromCaller in invoiceFromCaller?.LineItems)
             {
                 // Added
-                if (lineItem.Id == 0)
+                if (lineItemFromCaller.Id == 0)
                     invoiceFromRepository.AddLineItem(
                         VendorInvoiceLineItem.Create(
-                            lineItem.Type, VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
-                                lineItem.Item,
-                                await GetManufacturers(invoiceFromCaller),
-                                await GetSaleCodes(invoiceFromCaller)),
-                            lineItem.Quantity,
-                            lineItem.Cost,
-                            lineItem.Core,
-                            lineItem.PONumber,
-                            lineItem.TransactionDate)
+                            lineItemFromCaller.Type,
+                            item: VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
+                                lineItemFromCaller.Item,
+                                manufacturers,
+                                salesCodes),
+                            lineItemFromCaller.Quantity,
+                            lineItemFromCaller.Cost,
+                            lineItemFromCaller.Core,
+                            lineItemFromCaller.PONumber,
+                            lineItemFromCaller.TransactionDate)
                         .Value);
                 // Updated
-                if (lineItem.Id != 0)
+                if (lineItemFromCaller.Id != 0)
                 {
-                    var contextLineItem = invoiceFromRepository?.LineItems.FirstOrDefault(contextLineItem => contextLineItem.Id == lineItem.Id);
-                    contextLineItem.SetType(lineItem.Type);
-                    contextLineItem.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
-                        lineItem.Item,
-                        await GetManufacturers(invoiceFromCaller),
-                        await GetSaleCodes(invoiceFromCaller)));
-                    contextLineItem.SetQuantity(lineItem.Quantity);
-                    contextLineItem.SetCost(lineItem.Cost);
-                    contextLineItem.SetCore(lineItem.Core);
-                    contextLineItem.SetPONumber(lineItem.PONumber);
-                    contextLineItem.SetTransactionDate(lineItem.TransactionDate);
-                    contextLineItem.SetTrackingState(TrackingState.Modified);
+                    var lineItemFromContext = invoiceFromRepository?.LineItems.FirstOrDefault(contextLineItem => contextLineItem.Id == lineItemFromCaller.Id);
+                    lineItemFromContext.SetType(lineItemFromCaller.Type);
+                    lineItemFromContext.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
+                        lineItemFromCaller.Item,
+                        manufacturers,
+                        salesCodes));
+                    lineItemFromContext.SetQuantity(lineItemFromCaller.Quantity);
+                    lineItemFromContext.SetCost(lineItemFromCaller.Cost);
+                    lineItemFromContext.SetCore(lineItemFromCaller.Core);
+                    lineItemFromContext.SetPONumber(lineItemFromCaller.PONumber);
+                    lineItemFromContext.SetTransactionDate(lineItemFromCaller.TransactionDate);
+                    //contextLineItem.SetTrackingState(TrackingState.Modified);
                 }
                 // TODO: Deleted
                 //if (lineItem.Id != 0)
@@ -144,7 +153,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 //            contextLineItem =>
                 //            contextLineItem.Id == lineItem.Id));
             }
-            //IList<VendorInvoicePayment> Payments
+            // Payments
             foreach (var payment in invoiceFromCaller?.Payments)
             {
                 // Added
@@ -170,7 +179,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 //            contextPayment =>
                 //            contextPayment.Id == payment.Id));
             }
-            //IList<VendorInvoiceTax> Taxes
+            // Taxes
             foreach (var tax in invoiceFromCaller?.Taxes)
             {
                 // Added
@@ -197,12 +206,13 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             // Remove Julie Lerman's superior implementation in favor of EF
             // Core 6 flawed way of treating attached objects: marking them
-            // as Modified when they should be marked as Unchanged until
-            // they are modified while context tracks it.
+            // as Modified (when they should have been marked as Unchanged until
+            // they are modified by the context that tracks them).
+
             //invoiceFromRepository.SetTrackingState(TrackingState.Modified);
             //repository.FixTrackingState();
 
-            repository.InspectTrackingStates(invoiceFromRepository);
+            //repository.InspectTrackingStates(invoiceFromRepository);
 
             await repository.SaveChangesAsync();
 
@@ -254,10 +264,10 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 .ToList());
         }
 
-        private async Task<IReadOnlyList<SaleCode>> GetSaleCodes(VendorInvoiceToWrite invoiceToAdd)
+        private async Task<IReadOnlyList<SaleCode>> GetSaleCodes(VendorInvoiceToWrite invoice)
         {
             return await saleCodeRepository.GetSaleCodeEntitiesAsync(
-                invoiceToAdd.LineItems?.Select(
+                invoice.LineItems?.Select(
                     lineItem => lineItem.Item.SaleCode.Id)
                 .ToList());
         }

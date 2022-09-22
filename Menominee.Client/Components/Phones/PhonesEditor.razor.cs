@@ -28,7 +28,7 @@ namespace Menominee.Client.Components.Phones
         private PhoneToWrite phoneUnchanged;
 
         private List<PhoneToWrite> DeletedPhones { get; set; } = new();
-        
+
         List<PhoneTypeEnumModel> PhoneTypeEnumData { get; set; } = new List<PhoneTypeEnumModel>();
 
         protected override void OnInitialized()
@@ -55,39 +55,32 @@ namespace Menominee.Client.Components.Phones
             if (phone is not null)
             {
                 Phone = phone;
-                Phone.TrackingState = TrackingState.Modified;
                 FormMode = FormMode.Edit;
                 phoneUnchanged = SetPhoneToUnchange(phone);
             }
         }
 
-        private PhoneToWrite SetPhoneToUnchange(PhoneToWrite phone)
+        private static PhoneToWrite SetPhoneToUnchange(PhoneToWrite phone)
         {
             return new PhoneToWrite
             {
                 Id = phone.Id,
                 Number = phone.Number,
                 PhoneType = phone.PhoneType,
-                IsPrimary = phone.IsPrimary,
-                TrackingState = TrackingState.Unchanged
+                IsPrimary = phone.IsPrimary
             };
         }
 
         private void Add()
         {
-            Phone = new()
-            {
-                TrackingState = TrackingState.Added
-            };
-
+            Phone = new();
             FormMode = FormMode.Add;
         }
 
         private void Save()
         {
             if (Phone is not null && FormMode == FormMode.Add)
-                if (Phone.TrackingState == TrackingState.Added)
-                    Phones.Add(Phone);
+                Phones.Add(Phone);
 
             // Restore phones marked for deletion before saving to data service
             foreach (var phone in DeletedPhones)
@@ -106,7 +99,6 @@ namespace Menominee.Client.Components.Phones
                     if (Phone is not null
                         &&
                         Phone?.Id != 0)
-                        Phone.TrackingState = TrackingState.Deleted;
 
                     // User added phone but now is removing it; has id equal to zero.
                     if (Phone is not null
