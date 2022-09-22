@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Api.Inventory
     {
         Task AddItemAsync(InventoryItem item);
         Task DeleteItemAsync(long id);
-        void FixTrackingState();
         Task<bool> ItemExistsAsync(long id);
         Task<InventoryItem> UpdateItemAsync(InventoryItem item);
         Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync();

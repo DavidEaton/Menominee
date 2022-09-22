@@ -75,11 +75,6 @@ namespace CustomerVehicleManagement.Api.Customers
             await context.SaveChangesAsync();
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<Customer> UpdateCustomerAsync(Customer customer)
         {
             if (customer == null)

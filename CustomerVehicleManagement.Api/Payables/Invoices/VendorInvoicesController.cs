@@ -9,7 +9,6 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -193,7 +192,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     var contextTax = invoiceFromRepository?.Taxes.FirstOrDefault(contextTax => contextTax.Id == tax.Id);
                     contextTax.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id));
                     contextTax.SetTaxId(tax.TaxId);
-                    contextTax.SetTrackingState(TrackingState.Modified);
                 }
                 // TODO: Deleted
                 //if (tax.Id != 0)
@@ -202,15 +200,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 //            contextTax =>
                 //            contextTax.Id == tax.Id));
             }
-
-
-            // Remove Julie Lerman's superior implementation in favor of EF
-            // Core 6 flawed way of treating attached objects: marking them
-            // as Modified (when they should have been marked as Unchanged until
-            // they are modified by the context that tracks them).
-
-            //invoiceFromRepository.SetTrackingState(TrackingState.Modified);
-            //repository.FixTrackingState();
 
             //repository.InspectTrackingStates(invoiceFromRepository);
 

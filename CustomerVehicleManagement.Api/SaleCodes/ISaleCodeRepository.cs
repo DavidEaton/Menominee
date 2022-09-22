@@ -17,7 +17,6 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         Task DeleteSaleCodeAsync(long id);
         Task<bool> SaleCodeExistsAsync(long id);
         Task<bool> SaveChangesAsync();
-        void FixTrackingState();
         Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids);
     }
 }

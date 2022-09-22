@@ -1,15 +1,11 @@
-﻿using Menominee.Common.Enums;
-
-namespace Menominee.Common
+﻿namespace Menominee.Common
 {
     public abstract class Entity
     {
         public virtual long Id { get; private set; }
         public override bool Equals(object obj)
         {
-            var other = obj as Entity;
-
-            if (ReferenceEquals(other, null))
+            if (obj is not Entity other)
                 return false;
 
             if (ReferenceEquals(this, other))
@@ -26,10 +22,10 @@ namespace Menominee.Common
 
         public static bool operator ==(Entity a, Entity b)
         {
-            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+            if (a is null && b is null)
                 return true;
 
-            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+            if (a is null || b is null)
                 return false;
 
             return a.Equals(b);
@@ -44,22 +40,8 @@ namespace Menominee.Common
             return (GetType().ToString() + Id).GetHashCode();
         }
 
-        #region ORM
-
-        public Entity()
-        {
-            // Keep EF informed of object state in disconnected api
-            TrackingState = TrackingState.Added;
-        }
-
-        // EF State management for disconnected data
-        public void SetTrackingState(TrackingState state)
-        {
-            TrackingState = state;
-        }
-
-        public TrackingState TrackingState { get; private set; }
-
-        #endregion
+        // One small dent in our domain model encapsulation:
+        // EF Core requires a parameterless contructor
+        public Entity() { }
     }
 }

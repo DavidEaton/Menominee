@@ -14,6 +14,5 @@ namespace CustomerVehicleManagement.Api.Taxes
         void DeleteExciseFee(ExciseFee entity);
         Task<bool> ExciseFeeExistsAsync(long id);
         Task SaveChangesAsync();
-        void FixTrackingState();
     }
 }

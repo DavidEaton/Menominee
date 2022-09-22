@@ -134,7 +134,6 @@ namespace CustomerVehicleManagement.Api.Organizations
                     contextPhone.SetNumber(phone.Number);
                     contextPhone.SetIsPrimary(phone.IsPrimary);
                     contextPhone.SetPhoneType(phone.PhoneType);
-                    contextPhone.SetTrackingState(TrackingState.Modified);
                 }
 
                 if (phone.Id != 0)
@@ -167,12 +166,6 @@ namespace CustomerVehicleManagement.Api.Organizations
                 if (person != null)
                     organizationFromRepository.SetContact(person);
             }
-
-            // Update the objects ObjectState and sync the EF Change Tracker
-            // 3) Set parent entitys TrackingState to Modified
-            organizationFromRepository.SetTrackingState(TrackingState.Modified);
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState(); //TODO: TEST AND CONFIRM
 
             /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);

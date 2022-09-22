@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -31,11 +30,6 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             var saleCodeFromContext = await context.SaleCodes.FindAsync(id);
             if (saleCodeFromContext != null)
                 context.Remove(saleCodeFromContext);
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)

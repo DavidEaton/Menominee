@@ -30,11 +30,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             context.Remove(payMethod);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id)
         {
             var payMethodFromContext = await context.VendorInvoicePaymentMethods

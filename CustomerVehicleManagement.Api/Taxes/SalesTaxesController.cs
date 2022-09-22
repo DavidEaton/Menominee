@@ -59,13 +59,6 @@ namespace CustomerVehicleManagement.Api.Taxes
             taxFromRepository.SetLaborTaxRate(salesTax.LaborTaxRate);
             //taxFromRepository.SetExciseFees(ExciseFeeHelper.ConvertWriteDtosToEntities(salesTax.ExciseFees));
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            taxFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
             await repository.UpdateSalesTaxAsync(taxFromRepository);
 
             await repository.SaveChangesAsync();

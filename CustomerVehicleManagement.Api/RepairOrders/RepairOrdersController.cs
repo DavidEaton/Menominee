@@ -62,9 +62,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             //UpdatePayments(repairOrder, repairOrderFromRepository);
             //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
-            repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
             repository.UpdateRepairOrderAsync(repairOrderFromRepository);
             await repository.SaveChangesAsync();
 

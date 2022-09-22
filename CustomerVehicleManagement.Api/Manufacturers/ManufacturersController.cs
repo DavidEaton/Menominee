@@ -77,13 +77,6 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             manufacturerFromRepository.SetName(manufacturer.Name);
             manufacturerFromRepository.SetPrefix(manufacturer.Prefix);
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            manufacturerFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
             repository.UpdateManufacturerAsync(manufacturerFromRepository);
 
             await repository.SaveChangesAsync();

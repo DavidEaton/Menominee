@@ -31,17 +31,12 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             }
         }
 
-        public async Task DeleteProductCodeAsync(string manufacturerCode, string code)
+        public async Task DeleteProductCodeAsync(string manufacturerCode, string productCode)
         {
-            var pcFromContext = await context.ProductCodes.FindAsync(manufacturerCode, code); ;
+            var pcFromContext = await context.ProductCodes.FindAsync(manufacturerCode, productCode); ;
 
             if (pcFromContext is not null)
                 context.Remove(pcFromContext);
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
         }
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code)
@@ -100,12 +95,12 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId)
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long manufacturerId)
         {
             var pcs = await context.ProductCodes
                                    .Include(productCode => productCode.Manufacturer)
                                    .Include(productCode => productCode.SaleCode)
-                                   .Where(productCode => productCode.Manufacturer.Id == mfrId)
+                                   .Where(productCode => productCode.Manufacturer.Id == manufacturerId)
                                    .AsSplitQuery()
                                    .AsNoTracking()
                                    .ToArrayAsync();

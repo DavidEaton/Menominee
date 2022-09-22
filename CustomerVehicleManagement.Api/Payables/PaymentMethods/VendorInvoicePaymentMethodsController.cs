@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -58,9 +57,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
                 paymentMethod,
                 await repository.GetPaymentMethodNamesAsync());
-
-            paymentMethodFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
 
             await repository.SaveChangesAsync();
 

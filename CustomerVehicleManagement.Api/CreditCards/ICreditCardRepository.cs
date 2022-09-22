@@ -15,6 +15,5 @@ namespace CustomerVehicleManagement.Api.CreditCards
         Task DeleteCreditCardAsync(long id);
         Task<bool> CreditCardExistsAsync(long id);
         Task<bool> SaveChangesAsync();
-        void FixTrackingState();
     }
 }

@@ -125,10 +125,5 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             await context.SaveChangesAsync();
         }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
     }
 }

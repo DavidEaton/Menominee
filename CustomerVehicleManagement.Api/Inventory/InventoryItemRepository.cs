@@ -51,11 +51,6 @@ namespace CustomerVehicleManagement.Api.Inventory
             }
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<InventoryItemToRead> GetItemAsync(long id)
         {
             var itemFromContext = await context.InventoryItems

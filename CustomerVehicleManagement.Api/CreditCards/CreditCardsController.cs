@@ -58,13 +58,6 @@ namespace CustomerVehicleManagement.Api.CreditCards
             creditCardFromRepository.IsAddedToDeposit = creditCard.IsAddedToDeposit;
             //cc.Processor = ccDto.Processor;
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            creditCardFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
             await repository.UpdateCreditCardAsync(creditCardFromRepository);
 
             await repository.SaveChangesAsync();

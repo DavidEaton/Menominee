@@ -111,9 +111,6 @@ namespace CustomerVehicleManagement.Api.Persons
                     person.DriversLicense.Expiry).Value).Value);
             }
 
-            personFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
             await repository.SaveChangesAsync();
 
             return NoContent();

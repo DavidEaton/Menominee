@@ -88,13 +88,6 @@ namespace CustomerVehicleManagement.Api.Inventory
             // 2) Update domain entity with data in data transfer object(DTO)
             InventoryItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
 
-            // Update the objects ObjectState and synch the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            item.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            itemRepository.FixTrackingState();
-
             if (await itemRepository.SaveChangesAsync())
                 return NoContent();
 

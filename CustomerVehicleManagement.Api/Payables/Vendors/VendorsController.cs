@@ -94,13 +94,6 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                     vendorFromRepository.Disable();
             }
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            vendorFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
             /* Returning the updated resource is acceptible, for example:
                  return Ok(personFromRepository);
                even preferred over returning NoContent if updated resource

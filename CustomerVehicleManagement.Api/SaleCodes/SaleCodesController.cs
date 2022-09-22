@@ -80,13 +80,6 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
             //saleCodeFromRepository.SetShopSupplies(saleCode.ShopSupplies);
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            saleCodeFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
             await repository.SaveChangesAsync();
 
             return NoContent();

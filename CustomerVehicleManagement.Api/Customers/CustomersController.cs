@@ -91,8 +91,6 @@ namespace CustomerVehicleManagement.Api.Customers
             if (customerFromRepository.EntityType == EntityType.Person)
                 await personsController.UpdatePersonAsync(customerFromRepository.Person.Id, customerToWrite.Person);
 
-            customerRepository.FixTrackingState();
-
             await customerRepository.SaveChangesAsync();
 
             return NoContent();

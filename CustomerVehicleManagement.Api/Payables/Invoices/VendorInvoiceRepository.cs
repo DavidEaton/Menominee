@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -72,10 +71,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 context.Remove(invoiceFromContext);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
 
         public async Task<VendorInvoiceToRead> GetInvoiceAsync(long id)
         {
@@ -152,61 +147,46 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             context.Remove(invoice);
         }
 
-        public void InspectTrackingStates(VendorInvoice invoice)
+        internal void InspectTrackingStates(VendorInvoice invoice)
         {
             EntityState stateInvoice = context.Entry(invoice).State;
-            TrackingState trackingStateInvoice = invoice.TrackingState;
             EntityState stateVendor = context.Entry(invoice.Vendor).State;
-            TrackingState trackingStateVendor = invoice.Vendor.TrackingState;
 
             foreach (var lineItem in invoice.LineItems)
             {
                 EntityState stateLineItem = context.Entry(lineItem).State;
-                TrackingState trackingStateLineItem = lineItem.TrackingState;
-
                 EntityState stateItem = context.Entry(lineItem.Item).State;
-                TrackingState trackingStateItem = lineItem.Item.TrackingState;
 
                 if (lineItem.Item.Manufacturer is not null)
                 {
                     EntityState stateItemManufacturer = context.Entry(lineItem.Item.Manufacturer).State;
-                    TrackingState trackingStateItemManufacturer = lineItem.Item.Manufacturer.TrackingState;
                 }
 
                 if (lineItem.Item.SaleCode is not null)
                 {
                     EntityState stateItemSaleCode = context.Entry(lineItem.Item.SaleCode).State;
-                    TrackingState trackingStateItemSaleCode = lineItem.Item.SaleCode.TrackingState;
                 }
             }
 
             foreach (var payment in invoice.Payments)
             {
                 EntityState statePayment = context.Entry(payment).State;
-                TrackingState trackingStatePayment = payment.TrackingState;
-
                 EntityState statePaymentMethod = context.Entry(payment.PaymentMethod).State;
-                TrackingState trackingStatePaymentMethod = payment.PaymentMethod.TrackingState;
 
                 if (payment.PaymentMethod.ReconcilingVendor is not null)
                 {
                     EntityState statePaymentReconcilingVendor = context.Entry(payment.PaymentMethod.ReconcilingVendor).State;
-                    TrackingState trackingStatePaymentReconcilingVendor = payment.PaymentMethod.ReconcilingVendor.TrackingState;
                 }
             }
 
             foreach (var tax in invoice.Taxes)
             {
                 EntityState stateTax = context.Entry(tax).State;
-                TrackingState trackingStateTax = tax.TrackingState;
-
                 EntityState stateSalesTax = context.Entry(tax.SalesTax).State;
-                TrackingState trackingStateSalesTax = tax.SalesTax.TrackingState;
 
                 foreach (var fee in tax.SalesTax.ExciseFees)
                 {
                     EntityState stateSalesTaxFee = context.Entry(fee).State;
-                    TrackingState trackingStateSalesTaxFee = fee.TrackingState;
                 }
             }
         }

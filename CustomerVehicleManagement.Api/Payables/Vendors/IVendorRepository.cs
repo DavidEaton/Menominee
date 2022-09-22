@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         Task<VendorToRead> GetVendorAsync(long id);
         Task<IReadOnlyList<VendorToReadInList>> GetVendorsListAsync();
         void DeleteVendor(Vendor entity);
-        void FixTrackingState();
         Task<bool> VendorExistsAsync(long id);
         Task SaveChangesAsync();
         Task<Vendor> GetVendorEntityAsync(long id);

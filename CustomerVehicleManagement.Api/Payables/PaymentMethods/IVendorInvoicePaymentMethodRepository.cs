@@ -15,7 +15,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod);
         Task<bool> PaymentMethodExistsAsync(long id);
         Task SaveChangesAsync();
-        void FixTrackingState();
         Task<IList<string>> GetPaymentMethodNamesAsync();
     }
 }

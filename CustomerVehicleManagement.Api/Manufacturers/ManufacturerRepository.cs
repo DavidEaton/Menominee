@@ -32,11 +32,6 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 context.Remove(manufacturerFromContext);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
         {
             return ManufacturerHelper.ConvertEntityToReadDto(

@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Api.Customers
     {
         Task AddCustomerAsync(Customer entity);
         void DeleteCustomer(Customer entity);
-        void FixTrackingState();
         Task<bool> CustomerExistsAsync(long id);
         Task<Customer> UpdateCustomerAsync(Customer entity);
         Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync();

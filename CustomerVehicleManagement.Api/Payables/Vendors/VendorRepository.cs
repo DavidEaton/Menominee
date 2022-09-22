@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Microsoft.EntityFrameworkCore;
@@ -98,11 +97,5 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         {
             await context.SaveChangesAsync();
         }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
     }
 }

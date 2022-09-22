@@ -46,11 +46,6 @@ namespace CustomerVehicleManagement.Api.CreditCards
                 context.Remove(creditCard);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<CreditCardToRead> GetCreditCardAsync(long id)
         {
             var creditCardFromContext = await context.CreditCards

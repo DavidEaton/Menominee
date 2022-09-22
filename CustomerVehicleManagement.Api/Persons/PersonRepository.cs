@@ -91,11 +91,6 @@ namespace CustomerVehicleManagement.Api.Persons
             await context.SaveChangesAsync();
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<bool> PersonExistsAsync(long id)
         {
             return await context.Persons

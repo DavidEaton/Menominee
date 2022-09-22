@@ -39,11 +39,6 @@ namespace CustomerVehicleManagement.Api.Taxes
                 context.Remove(salesTax);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<SalesTaxToRead> GetSalesTaxAsync(long id)
         {
             var taxFromContext = await context.SalesTaxes

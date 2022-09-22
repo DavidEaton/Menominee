@@ -12,7 +12,6 @@ namespace CustomerVehicleManagement.Api.Organizations
         Task<OrganizationToRead> GetOrganizationAsync(long id);
         Task<IReadOnlyList<OrganizationToReadInList>> GetOrganizationsListAsync();
         void DeleteOrganization(Organization entity);
-        void FixTrackingState();
         Task<bool> OrganizationExistsAsync(long id);
         Task SaveChangesAsync();
         Task<Organization> GetOrganizationEntityAsync(long id);

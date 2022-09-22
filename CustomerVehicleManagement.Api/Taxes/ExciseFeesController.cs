@@ -51,17 +51,9 @@ namespace CustomerVehicleManagement.Api.Taxes
 
             // 2) Update domain entity with data in data transfer object(DTO)
 
-
             exciseFeeFromRepository.SetDescription(exciseFee.Description);
             exciseFeeFromRepository.SetFeeType(exciseFee.FeeType);
             exciseFeeFromRepository.SetAmount(exciseFee.Amount);
-
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            exciseFeeFromRepository.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
 
             await repository.SaveChangesAsync();
 

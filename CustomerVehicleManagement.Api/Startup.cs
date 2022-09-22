@@ -179,6 +179,12 @@ namespace CustomerVehicleManagement.Api
                 // uses reflection to find and register ALL validators in our assembly.
                 options.RegisterValidatorsFromAssemblyContaining<OrganizationValidator>();
             });
+
+#if DEBUG
+
+
+
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

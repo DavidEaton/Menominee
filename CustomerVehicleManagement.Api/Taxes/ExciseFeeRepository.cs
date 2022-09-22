@@ -46,11 +46,6 @@ namespace CustomerVehicleManagement.Api.Taxes
             return await context.ExciseFees.AnyAsync(fee => fee.Id == id);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<ExciseFeeToRead> GetExciseFeeAsync(long id)
         {
             var feeFromContext = await context.ExciseFees

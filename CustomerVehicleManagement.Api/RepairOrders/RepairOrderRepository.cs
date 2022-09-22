@@ -32,11 +32,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 context.Remove(repairOrderFromContext);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<RepairOrderToRead> GetRepairOrderAsync(long id)
         {
             var repairOrderFromContext = await context.RepairOrders
