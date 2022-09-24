@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Api.IntegrationTests", "CustomerVehicleManagement.Api.IntegrationTests\CustomerVehicleManagement.Api.IntegrationTests.csproj", "{1E6810F2-097A-4214-9663-5650306E5EA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.UnitTests", "CustomerVehicleManagement.UnitTests\CustomerVehicleManagement.UnitTests.csproj", "{1C4F199D-AC75-4339-8156-5FFAED3FC230}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Tests", "CustomerVehicleManagement.Tests\CustomerVehicleManagement.Tests.csproj", "{1C4F199D-AC75-4339-8156-5FFAED3FC230}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerVehicleManagement.Shared", "CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj", "{4B24AD27-361B-4ECE-AF60-3467E7A473A9}"
 EndProject
