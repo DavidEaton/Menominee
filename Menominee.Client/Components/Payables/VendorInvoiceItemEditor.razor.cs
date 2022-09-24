@@ -53,12 +53,11 @@ namespace Menominee.Client.Components.Payables
         private bool ItemSelectDialogVisible { get; set; } = false;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
         private FormMode formMode;
-        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
+        private IReadOnlyList<ManufacturerToReadInList> Manufacturers;
         private IList<InvoiceItemType> ItemTypes { get; set; } = new List<InvoiceItemType>();
-        private IReadOnlyList<ProductCodeToReadInList> ProductCodes { get; set; } = new List<ProductCodeToReadInList>();
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes { get; set; } = new List<SaleCodeToReadInList>();
+
         private long saleCodeId = 0;
-        private bool parametersSet = false;
         private long manufacturerId = 0;
         public string Title { get; set; }
 
@@ -70,8 +69,6 @@ namespace Menominee.Client.Components.Payables
                                                                      && mfr.Code != StaticManufacturerCodes.Package)
                                                           .OrderBy(mfr => mfr.Prefix)
                                                           .ToList();
-
-            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
 
             SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync())
                                                           .OrderBy(saleCode => saleCode.Code)
@@ -87,18 +84,12 @@ namespace Menominee.Client.Components.Payables
 
         protected override void OnParametersSet()
         {
-            //if (parametersSet)
-            //    return;
-            //parametersSet = true;
-
             if (LineItem?.Item?.Manufacturer is not null)
                 manufacturerId = LineItem.Item.Manufacturer.Id;
 
             if (LineItem is not null && LineItem.Item is not null && LineItem.Item.SaleCode is not null)
                 if (LineItem.Item.SaleCode.Id != 0)
                     saleCodeId = LineItem.Item.SaleCode.Id;
-
-            //OnManufacturerChange();
         }
 
         private void OnManufacturerChange()

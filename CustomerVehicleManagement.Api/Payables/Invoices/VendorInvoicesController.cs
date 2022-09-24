@@ -192,8 +192,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 if (paymentFromCaller.Id != 0)
                 {
                     var paymentFromRepository = invoiceFromRepository?.Payments.FirstOrDefault(
-                        contextPayment =>
-                        contextPayment.Id == paymentFromCaller.Id);
+                        paymentFromRepository =>
+                        paymentFromRepository.Id == paymentFromCaller.Id);
 
                     if (paymentFromRepository.PaymentMethod.Id != paymentFromCaller.PaymentMethod.Id)
                         paymentFromRepository.SetPaymentMethod(

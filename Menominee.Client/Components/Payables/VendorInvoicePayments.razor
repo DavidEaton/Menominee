@@ -19,7 +19,7 @@
                     Width="55%">
 @*                <Template>
                     @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod"
+                        <TelerikDropDownList @bind-Value="paymentMethodId"
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id"
@@ -27,15 +27,17 @@
                         </TelerikDropDownList>
                     }
                 </Template>*@
-@*                <EditorTemplate>
-                    @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethodId"
-                                     Data="PaymentMethods"
-                                     TextField="Name"
-                                     ValueField="Id">
-                        </TelerikDropDownList>
-                    }
-                </EditorTemplate>*@
+
+                @*<EditorTemplate>
+            @{
+            <TelerikDropDownList @bind-Value="Payment.PaymentMethod.Id"
+            Data="PaymentMethods"
+            TextField="Name"
+            ValueField="Id">
+            </TelerikDropDownList>
+            }
+            </EditorTemplate>*@
+
             </GridColumn>
 
             <GridColumn Width="35%"
@@ -48,15 +50,15 @@
                     Sortable="false"
                     Filterable="false"
                     TextAlign="ColumnTextAlign.Right">
-@*                <Template>
-                    @{
-                        <TelerikNumericTextBox @bind-Value="Payment.Amount"
-                                       Format="C"
-                                       Decimals="2"
-                                       Arrows="false">
-                        </TelerikNumericTextBox>
-                    }
-                </Template>*@
+                @*                <Template>
+            @{
+            <TelerikNumericTextBox @bind-Value="Payment.Amount"
+            Format="C"
+            Decimals="2"
+            Arrows="false">
+            </TelerikNumericTextBox>
+            }
+            </Template>*@
                 <EditorTemplate>
                     @{
                         <TelerikNumericTextBox @bind-Value="Payment.Amount"

@@ -1,8 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,20 +22,45 @@ namespace Menominee.Client.Components.Payables
 
         private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PaymentMethods = new List<VendorInvoicePaymentMethodToReadInList>();
 
+        private long SelectedId = 0;
         private long paymentMethodId = 0;
         protected override async Task OnInitializedAsync()
         {
             PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+
         }
 
-        private void OnEdit()
+        private void OnEdit(GridRowClickEventArgs args)
         {
+            //Payment = 
+            if (args is not null)
+                SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
+
+            // open dialog with FormMode == Edit
+
+            // TEMPORARILY Edit an existing payment TO TEST
+            //var payment = Payments.FirstOrDefault(payment => payment.Id == SelectedId);
+
+            //payment.Amount = 99.9;
         }
 
         private void Add()
         {
-            Payment = new();
-            Payments.Add(Payment);
+            // open dialog with FormMode == Add
+
+            // TEMPORARILY Add a new tax to collection TO TEST
+            //Payments.Add(new()
+            //{
+            //    Amount = 88.0,
+            //    PaymentMethod = new()
+            //    {
+            //        Id = 1,
+            //        Name = "Credit Card",
+            //        IsActive = true,
+            //        IsOnAccountPaymentType = false
+            //    }
+            //});
+
             Grid.Rebind();
         }
 
@@ -63,7 +87,7 @@ namespace Menominee.Client.Components.Payables
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            //SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
+            SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
         }
     }
 }

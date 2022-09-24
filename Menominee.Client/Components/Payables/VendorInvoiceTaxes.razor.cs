@@ -40,37 +40,9 @@ namespace Menominee.Client.Components.Payables
             tax.Amount = 3.6;
         }
 
-        protected override void OnInitialized()
-        {
-            foreach (var tax in Taxes)
-            {
-                System.Console.WriteLine(tax.Amount);
-
-            }
-            base.OnInitialized();
-        }
         private void OnNew()
         {
             // open dialog with FormMode == Add
-
-            // TEMPORARILY Add a new tax to collection TO TEST
-            Taxes.Add(new()
-            {
-                Amount = 88.0,
-                TaxId = 0,
-                SalesTax = new()
-                {
-                    Id = 2,
-                    Description = "Tax Loops",
-                    TaxType = Common.Enums.SalesTaxType.GST,
-                    Order = 2,
-                    IsAppliedByDefault = false,
-                    IsTaxable = true,
-                    TaxIdNumber = "1",
-                    PartTaxRate = .2,
-                    LaborTaxRate = .2
-                }
-            });
         }
 
         private void OnDelete()
