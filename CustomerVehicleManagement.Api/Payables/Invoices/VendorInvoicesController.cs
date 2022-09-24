@@ -8,6 +8,7 @@ using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -82,34 +83,44 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (invoiceFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            // Load lookup lists once
-            IReadOnlyList<Manufacturer> manufacturers = await GetManufacturers(invoiceFromCaller);
-            IReadOnlyList<SaleCode> salesCodes = await GetSaleCodes(invoiceFromCaller);
+            // Getting the following limited entity lists keeps all objects tracked
+            // by the same db context instance, preventing spurious updates to unmodified
+            // related entities.
+            // Create entity lists, limited to those contained in invoiceFromCaller:
+            IReadOnlyList<Manufacturer> manufacturers = await GetManufacturersInInvoice(invoiceFromCaller);
+            IReadOnlyList<SaleCode> salesCodes = await GetSaleCodesInInvoice(invoiceFromCaller);
+            IReadOnlyList<Vendor> vendors = await GetVendorsInInvoice(invoiceFromCaller);
 
-            // VendorInvoiceLineItem is an Entity that contains the VendorInvoiceItem Value Object
-            // VendorInvoiceItem is a Value Object (no Id) that contains the Item (aka Part)
-
-
-            // Update each member of VendorInvoice
+            // Update each member of VendorInvoice, returning a Bad Resuest response
+            // in case of Failure.
             // Aggregate root entity VendorInvoice:
-            if (invoiceFromRepository.SetVendor(await vendorRepository.GetVendorEntityAsync(invoiceFromCaller.Vendor.Id)).IsFailure)
-                return BadRequest();
+            if (invoiceFromRepository.Vendor.Id != invoiceFromCaller.Vendor.Id)
+                if (invoiceFromRepository.SetVendor(
+                    vendors.FirstOrDefault(
+                        vendor => vendor.Id == invoiceFromCaller.Vendor.Id))
+                        .IsFailure)
+                    return BadRequest();
 
-            if (invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status).IsFailure)
-                return BadRequest();
+            if (invoiceFromRepository.Vendor.Id != invoiceFromCaller.Vendor.Id)
+                if (invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status).IsFailure)
+                    return BadRequest();
 
-            if (invoiceFromRepository.SetTotal(invoiceFromCaller.Total).IsFailure)
-                return BadRequest();
+            if (invoiceFromRepository.Total != invoiceFromCaller.Total)
+                if (invoiceFromRepository.SetTotal(invoiceFromCaller.Total).IsFailure)
+                    return BadRequest();
 
-            if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber).IsFailure)
-                return BadRequest();
+            if (invoiceFromRepository.InvoiceNumber != invoiceFromCaller.InvoiceNumber)
+                if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber).IsFailure)
+                    return BadRequest();
 
-            if (invoiceFromRepository.SetDate(invoiceFromCaller.Date).IsFailure)
-                return BadRequest();
+            if (invoiceFromRepository.Date != invoiceFromCaller.Date)
+                if (invoiceFromRepository.SetDate(invoiceFromCaller.Date).IsFailure)
+                    return BadRequest();
 
             if (invoiceFromCaller.DatePosted is not null)
-                if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
-                    return BadRequest();
+                if (invoiceFromRepository.DatePosted != invoiceFromCaller.DatePosted)
+                    if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
+                        return BadRequest();
 
             // Line Items
             foreach (var lineItemFromCaller in invoiceFromCaller?.LineItems)
@@ -132,76 +143,93 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 // Updated
                 if (lineItemFromCaller.Id != 0)
                 {
-                    var lineItemFromContext = invoiceFromRepository?.LineItems.FirstOrDefault(contextLineItem => contextLineItem.Id == lineItemFromCaller.Id);
-                    lineItemFromContext.SetType(lineItemFromCaller.Type);
-                    lineItemFromContext.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
-                        lineItemFromCaller.Item,
-                        manufacturers,
-                        salesCodes));
-                    lineItemFromContext.SetQuantity(lineItemFromCaller.Quantity);
-                    lineItemFromContext.SetCost(lineItemFromCaller.Cost);
-                    lineItemFromContext.SetCore(lineItemFromCaller.Core);
-                    lineItemFromContext.SetPONumber(lineItemFromCaller.PONumber);
-                    lineItemFromContext.SetTransactionDate(lineItemFromCaller.TransactionDate);
-                    //contextLineItem.SetTrackingState(TrackingState.Modified);
+                    var lineItemFromRepository = invoiceFromRepository?.LineItems.FirstOrDefault(
+                        contextLineItem =>
+                        contextLineItem.Id == lineItemFromCaller.Id);
+
+                    if (lineItemFromRepository.Type != lineItemFromCaller.Type)
+                        lineItemFromRepository.SetType(lineItemFromCaller.Type);
+
+                    // Each VendorInvoiceLineItem (in LineItems) is an Entity that
+                    // contains the VendorInvoiceItem Value Object.
+                    // VendorInvoiceItem (LineItem.Item) is a Value Object (no Id)
+                    // that contains the Item (aka Part).
+                    if (ItemHasEdits(lineItemFromCaller, lineItemFromRepository))
+                        lineItemFromRepository.SetItem(VendorInvoiceItemHelper.ConvertWriteDtoToEntity(
+                            lineItemFromCaller.Item,
+                            manufacturers,
+                            salesCodes));
+
+                    if (lineItemFromRepository.Quantity != lineItemFromRepository.Quantity)
+                        lineItemFromRepository.SetQuantity(lineItemFromCaller.Quantity);
+
+                    if (lineItemFromRepository.Cost != lineItemFromRepository.Cost)
+                        lineItemFromRepository.SetCost(lineItemFromCaller.Cost);
+
+                    if (lineItemFromRepository.Core != lineItemFromRepository.Core)
+                        lineItemFromRepository.SetCore(lineItemFromCaller.Core);
+
+                    if (lineItemFromRepository.PONumber != lineItemFromRepository.PONumber)
+                        lineItemFromRepository.SetPONumber(lineItemFromCaller.PONumber);
+
+                    if (lineItemFromRepository.TransactionDate is not null)
+                        if (lineItemFromRepository.TransactionDate != lineItemFromRepository.TransactionDate)
+                            lineItemFromRepository.SetTransactionDate(lineItemFromCaller.TransactionDate);
                 }
                 // TODO: Deleted
-                //if (lineItem.Id != 0)
-                //    invoiceFromRepository.RemoveLineItem(
-                //        invoiceFromRepository.LineItems.FirstOrDefault(
-                //            contextLineItem =>
-                //            contextLineItem.Id == lineItem.Id));
             }
             // Payments
-            foreach (var payment in invoiceFromCaller?.Payments)
+            foreach (var paymentFromCaller in invoiceFromCaller?.Payments)
             {
                 // Added
-                if (payment.Id == 0)
+                if (paymentFromCaller.Id == 0)
                     invoiceFromRepository.AddPayment(
                         VendorInvoicePayment.Create(
                             await paymentMethodRepository.GetPaymentMethodEntityAsync(
-                                payment.PaymentMethod.Id), payment.Amount)
+                                paymentFromCaller.PaymentMethod.Id), paymentFromCaller.Amount)
                         .Value);
                 // Updated
-                if (payment.Id != 0)
+                if (paymentFromCaller.Id != 0)
                 {
-                    var contextPayment = invoiceFromRepository?.Payments.FirstOrDefault(contextPayment => contextPayment.Id == payment.Id);
-                    contextPayment.SetPaymentMethod(
-                        await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethod.Id));
-                    contextPayment.SetAmount(payment.Amount);
-                    //contextPayment.SetTrackingState(TrackingState.Modified);
+                    var paymentFromRepository = invoiceFromRepository?.Payments.FirstOrDefault(
+                        contextPayment =>
+                        contextPayment.Id == paymentFromCaller.Id);
+
+                    if (paymentFromRepository.PaymentMethod.Id != paymentFromCaller.PaymentMethod.Id)
+                        paymentFromRepository.SetPaymentMethod(
+                            await paymentMethodRepository.GetPaymentMethodEntityAsync(paymentFromCaller.PaymentMethod.Id));
+
+                    if (paymentFromRepository.Amount != paymentFromCaller.Amount)
+                        paymentFromRepository.SetAmount(paymentFromCaller.Amount);
                 }
                 // TODO: Deleted
-                //if (payment.Id != 0)
-                //    invoiceFromRepository.RemovePayment(
-                //        invoiceFromRepository.Payments.FirstOrDefault(
-                //            contextPayment =>
-                //            contextPayment.Id == payment.Id));
             }
             // Taxes
-            foreach (var tax in invoiceFromCaller?.Taxes)
+            foreach (var taxFromCaller in invoiceFromCaller?.Taxes)
             {
                 // Added
-                if (tax.Id == 0)
+                if (taxFromCaller.Id == 0)
                     invoiceFromRepository.AddTax(
                         VendorInvoiceTax.Create(
-                            await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id), tax.TaxId).Value);
+                            await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id), taxFromCaller.Amount, taxFromCaller.TaxId).Value);
                 // Updated
-                if (tax.Id != 0)
+                if (taxFromCaller.Id != 0)
                 {
-                    var contextTax = invoiceFromRepository?.Taxes.FirstOrDefault(contextTax => contextTax.Id == tax.Id);
-                    contextTax.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id));
-                    contextTax.SetTaxId(tax.TaxId);
+                    var taxFromRepository = invoiceFromRepository?.Taxes.FirstOrDefault(
+                        taxFromRepository =>
+                        taxFromRepository.Id == taxFromCaller.Id);
+
+                    if (taxFromRepository.SalesTax.Id != taxFromCaller.SalesTax.Id)
+                        taxFromRepository.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id));
+
+                    if (taxFromRepository.TaxId != taxFromCaller.TaxId)
+                        taxFromRepository.SetTaxId(taxFromCaller.TaxId);
+
+                    if (taxFromRepository.Amount != taxFromCaller.Amount)
+                        taxFromRepository.SetAmount(taxFromCaller.Amount);
                 }
                 // TODO: Deleted
-                //if (tax.Id != 0)
-                //    invoiceFromRepository.RemoveTax(
-                //        invoiceFromRepository.Taxes.FirstOrDefault(
-                //            contextTax =>
-                //            contextTax.Id == tax.Id));
             }
-
-            //repository.InspectTrackingStates(invoiceFromRepository);
 
             await repository.SaveChangesAsync();
 
@@ -214,20 +242,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
-            var invoice = VendorInvoiceHelper.ConvertWriteDtoToEntity(
+            var invoiceEntity = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
                 vendor,
-                await GetManufacturers(invoiceToAdd),
-                await GetSaleCodes(invoiceToAdd),
+                await GetManufacturersInInvoice(invoiceToAdd),
+                await GetSaleCodesInInvoice(invoiceToAdd),
                 await salesTaxRepository.GetSalesTaxEntities(),
                 await paymentMethodRepository.GetPaymentMethodsAsync());
 
-            repository.AddInvoice(invoice);
+            repository.AddInvoice(invoiceEntity);
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{invoice.Id}",
+            return Created(new Uri($"{BasePath}/{invoiceEntity.Id}",
                 UriKind.Relative),
-                new { invoice.Id });
+                new { invoiceEntity.Id });
         }
 
         [HttpDelete("{id:long}")]
@@ -245,7 +273,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return NoContent();
         }
 
-        private async Task<IReadOnlyList<Manufacturer>> GetManufacturers(VendorInvoiceToWrite invoice)
+        private async Task<IReadOnlyList<Manufacturer>> GetManufacturersInInvoice(VendorInvoiceToWrite invoice)
         {
             return await manufacturerRepository.GetManufacturerEntitiesAsync(
                 invoice.LineItems?.Select(
@@ -253,12 +281,42 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 .ToList());
         }
 
-        private async Task<IReadOnlyList<SaleCode>> GetSaleCodes(VendorInvoiceToWrite invoice)
+        private async Task<IReadOnlyList<SaleCode>> GetSaleCodesInInvoice(VendorInvoiceToWrite invoice)
         {
             return await saleCodeRepository.GetSaleCodeEntitiesAsync(
                 invoice.LineItems?.Select(
                     lineItem => lineItem.Item.SaleCode.Id)
                 .ToList());
+        }
+
+        private async Task<IReadOnlyList<Vendor>> GetVendorsInInvoice(VendorInvoiceToWrite invoice)
+        {
+            var result = new List<Vendor>
+            {
+                await vendorRepository.GetVendorEntityAsync(invoice.Vendor.Id)
+            };
+
+            List<long> ids = new();
+
+            foreach (var payment in invoice.Payments)
+            {
+                if (payment.PaymentMethod.ReconcilingVendor is not null)
+                    ids.Add(payment.PaymentMethod.ReconcilingVendor.Id);
+            }
+
+            result.AddRange(
+                await vendorRepository.GetVendorEntitiesAsync(ids));
+
+            return result;
+        }
+
+        private static bool ItemHasEdits(VendorInvoiceLineItemToWrite lineItemFromCaller, VendorInvoiceLineItem lineItemFromRepository)
+        {
+            return
+                  lineItemFromRepository.Item.Description != lineItemFromCaller.Item.Description
+                || lineItemFromRepository.Item.Manufacturer.Id != lineItemFromCaller.Item.Manufacturer.Id
+                || lineItemFromRepository.Item.PartNumber != lineItemFromCaller.Item.PartNumber
+                || lineItemFromRepository.Item.SaleCode.Id != lineItemFromCaller.Item.SaleCode.Id;
         }
 
     }

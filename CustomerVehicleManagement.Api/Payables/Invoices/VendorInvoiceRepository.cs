@@ -21,47 +21,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         public void AddInvoice(VendorInvoice invoice)
         {
-            // Inspect tracking states BEFORE attaching invoice to context;
-            // attaching invoice to context makes EF start tracking changes.
-            //InspectTrackingStates(invoice);
-
-            // Add() marks the entire aggregate and its childernas Added;
-            // use Attach() instead.
             if (invoice != null)
                 context.Attach(invoice);
-
-            // Inspect tracking states AFTER attaching invoice to context.
-            //InspectTrackingStates(invoice);
-
-            // EF Core 6 unfortunately (and incorrectly) marks EXISTING
-            // entities as Added when using Add(); Prevent updating Entity
-            // type navigation properties by setting those reference items
-            // to Unchanged.
-            foreach (var vendor in context.ChangeTracker.Entries<Vendor>())
-                vendor.State = EntityState.Unchanged;
-
-
-            //// FAILS TO MARK THE EXISTING VendorInvoicePaymentMethod ?
-            //foreach (var paymentMethod in context.ChangeTracker.Entries<VendorInvoicePaymentMethod>())
-            //    paymentMethod.State = EntityState.Unchanged;
-
-            //foreach (var salesTax in context.ChangeTracker.Entries<SalesTax>())
-            //    salesTax.State = EntityState.Unchanged;
-
-            //foreach (var manufacturer in context.ChangeTracker.Entries<Manufacturer>())
-            //    manufacturer.State = EntityState.Unchanged;
-
-            //foreach (var saleCode in context.ChangeTracker.Entries<SaleCode>())
-            //    saleCode.State = EntityState.Unchanged;
-
-            //foreach (var supplies in context.ChangeTracker.Entries<SaleCodeShopSupplies>())
-            //    supplies.State = EntityState.Unchanged;
-
-            //foreach (var exciseFee in context.ChangeTracker.Entries<ExciseFee>())
-            //    exciseFee.State = EntityState.Unchanged;
-
-            // Inspect tracking states after CORRECTING tracking states.
-            InspectTrackingStates(invoice);
         }
 
         public async Task DeleteInvoiceAsync(long id)
@@ -190,6 +151,5 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 }
             }
         }
-
     }
 }

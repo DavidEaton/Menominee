@@ -4,28 +4,15 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Client.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Linq;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class VendorInvoiceTaxes : ComponentBase
     {
-        //[Inject]
-        //public HttpClient HttpClient { get; set; }
-
-        [Inject]
-        private NavigationManager navigationManager { get; set; }
-
-        //[Inject]
-        //private IVendorInvoiceTaxRepository vendorInvoiceTaxRepository { get; set; }
-
         [Parameter]
         public IList<VendorInvoiceTaxToWrite> Taxes { get; set; }
-        //public List<VendorInvoiceTaxToRead> Taxes { get; set; }
-        //public List<VendorInvoiceTaxToEdit> TaxesUpdate { get; set; }
-
-        //private SfGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
-        //private SfGrid<VendorInvoiceTaxToEdit> Grid { get; set; }
         public TelerikGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
 
         [CascadingParameter]
@@ -33,20 +20,10 @@ namespace Menominee.Client.Components.Payables
 
         private long SelectedId = 0;
 
-        protected override void OnParametersSet()
+        private void OnEdit(GridRowClickEventArgs args)
         {
-            if (Taxes != null)
-            {
-                foreach (var tax in Taxes)
-                {
-                    tax.TaxName = "State Tax";
-                }
-            }
-            base.OnParametersSet();
-        }
+            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
 
-        private void OnEdit()
-        {
             if (SelectedId == 0)
             {
                 var parameters = new ModalParameters();
@@ -54,38 +31,56 @@ namespace Menominee.Client.Components.Payables
                 ModalService.Show<ModalMessage>("Edit Tax", parameters);
                 return;
             }
+
+            // open dialog with FormMode == Edit
+
+            // TEMPORARILY Edit an existing tax TO TEST
+            var tax = Taxes.FirstOrDefault(tax => tax.Id == SelectedId);
+
+            tax.Amount = 3.6;
         }
 
+        protected override void OnInitialized()
+        {
+            foreach (var tax in Taxes)
+            {
+                System.Console.WriteLine(tax.Amount);
+
+            }
+            base.OnInitialized();
+        }
         private void OnNew()
         {
-            //navigationManager.NavigateTo("/payables/returns/create/");
+            // open dialog with FormMode == Add
+
+            // TEMPORARILY Add a new tax to collection TO TEST
+            Taxes.Add(new()
+            {
+                Amount = 88.0,
+                TaxId = 0,
+                SalesTax = new()
+                {
+                    Id = 2,
+                    Description = "Tax Loops",
+                    TaxType = Common.Enums.SalesTaxType.GST,
+                    Order = 2,
+                    IsAppliedByDefault = false,
+                    IsTaxable = true,
+                    TaxIdNumber = "1",
+                    PartTaxRate = .2,
+                    LaborTaxRate = .2
+                }
+            });
         }
 
         private void OnDelete()
         {
-            //navigationManager.NavigateTo("/payables/.../");
+            // display confirmation dialog, mark for deletion
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            //SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
+            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
         }
-
-        //protected override Task OnInitializedAsync()
-        //{
-        //    foreach (var tax in Taxes)
-        //    {
-        //        TaxesUpdate.Add(
-        //            new VendorInvoiceTaxToEdit
-        //            {
-        //                Amount = tax.Amount,
-        //                Id = tax.Id,
-        //                InvoiceId = tax.InvoiceId,
-        //                Order = tax.Order,
-        //                TaxId = tax.TaxId
-        //            });
-        //    }
-        //    return base.OnInitializedAsync();
-        //}
     }
 }

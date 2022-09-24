@@ -103,6 +103,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 new VendorInvoiceTaxToRead()
                 {
                     Id = tax.Id,
+                    Amount = tax.Amount,
+                    TaxId = tax.TaxId,
                     SalesTax = ConvertSalesTaxEntityToReadDto(tax.SalesTax)
                 };
         }

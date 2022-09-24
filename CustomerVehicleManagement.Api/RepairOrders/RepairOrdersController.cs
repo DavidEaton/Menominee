@@ -62,7 +62,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             //UpdatePayments(repairOrder, repairOrderFromRepository);
             //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
-            repository.UpdateRepairOrderAsync(repairOrderFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();

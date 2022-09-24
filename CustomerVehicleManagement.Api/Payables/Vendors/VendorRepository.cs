@@ -1,7 +1,9 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,13 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         public async Task<Vendor> GetVendorEntityAsync(long id)
         {
             return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
+        }
+
+        public async Task<IReadOnlyList<Vendor>> GetVendorEntitiesAsync(List<long> ids)
+        {
+            return await context.Vendors
+                .Where(vendor => ids.Contains(vendor.Id))
+                .ToListAsync();
         }
 
         public async Task AddVendorAsync(Vendor vendor)

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Payables
 {
-    public partial class VendorInvoiceItemEditor : ComponentBase
+    public partial class VendorInvoiceItemEditor
     {
         [Inject]
         public IManufacturerDataService manufacturerDataService { get; set; }

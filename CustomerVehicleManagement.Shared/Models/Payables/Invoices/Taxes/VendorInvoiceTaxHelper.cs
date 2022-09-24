@@ -18,7 +18,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
         public static Func<VendorInvoiceTaxToWrite, VendorInvoiceTax> ConvertWriteDtoToEntity(IReadOnlyList<SalesTax> salesTaxes)
         {
             return tax =>
-                VendorInvoiceTax.Create(salesTaxes.FirstOrDefault(x => x.Id == tax.SalesTax.Id), tax.TaxId)
+                VendorInvoiceTax.Create(salesTaxes.FirstOrDefault(
+                    salesTax =>
+                    salesTax.Id == tax.SalesTax.Id),
+                    tax.Amount, tax.TaxId)
                 .Value;
         }
 
@@ -33,11 +36,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
             return tax =>
                 new VendorInvoiceTaxToWrite()
                 {
+                    Id = tax.Id,
+                    Amount = tax.Amount,
                     SalesTax = tax.SalesTax,
-                    Order = tax.Order,
-                    TaxId = tax.TaxId,
-                    TaxName = tax.TaxName,
-                    Amount = tax.Amount
+                    TaxId = tax.TaxId
                 };
         }
     }

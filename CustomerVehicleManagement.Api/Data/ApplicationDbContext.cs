@@ -53,26 +53,14 @@ namespace CustomerVehicleManagement.Api.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            // TODO: remove pollution of production code with test concerns:
             if (UserContext != null) // Unit tests do not yet inject UserContext
                 Connection = GetTenantConnection();
 
             if (!options.IsConfigured) // Unit tests will configure context with test provider
-            {
-#if DEBUG
-                options.UseLoggerFactory(CreateLoggerFactory());
-                options.EnableSensitiveDataLogging(true);
-#endif
                 options.UseSqlServer(Connection);
-            }
 
             base.OnConfiguring(options);
-        }
-
-        private static ILoggerFactory CreateLoggerFactory()
-        {
-            return LoggerFactory.Create(builder => builder
-                .AddFilter((category, level) => category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
-                .AddConsole());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -15,5 +15,6 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         Task<bool> VendorExistsAsync(long id);
         Task SaveChangesAsync();
         Task<Vendor> GetVendorEntityAsync(long id);
+        Task<IReadOnlyList<Vendor>> GetVendorEntitiesAsync(List<long> ids);
     }
 }

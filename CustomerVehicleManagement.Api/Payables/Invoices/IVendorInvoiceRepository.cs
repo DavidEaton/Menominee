@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
     public interface IVendorInvoiceRepository
     {
-        void AddInvoice(VendorInvoice invoice);
+        void AddInvoice(VendorInvoice entity);
         Task<VendorInvoice> GetInvoiceEntityAsync(long id);
         Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
         Task<Vendor> GetVendorAsync(long id);
