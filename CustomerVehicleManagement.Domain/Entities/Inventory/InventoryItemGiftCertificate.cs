@@ -1,21 +1,16 @@
 ﻿using Menominee.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     // TODO: No detail for this entitiy.  Can we avoid using this class?
     public class InventoryItemGiftCertificate : Entity
     {
-        public long InventoryItemId { get; set; }
+        public InventoryItem InventoryItem { get; private set; } // Replace with navigation entity InventoryItem
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemGiftCertificate() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemGiftCertificate() { }
 
         #endregion  
     }

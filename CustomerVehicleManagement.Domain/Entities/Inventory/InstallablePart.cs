@@ -1,25 +1,20 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public abstract class InstallablePart : Entity
     {
-        public long InventoryItemId { get; set; }
-        public double List { get; set; }
-        public double Cost { get; set; }
-        public double Core { get; set; }
-        public double Retail { get; set; }
-        public ItemLaborType TechPayType { get; set; }
-        public double TechPayAmount { get; set; }
-        public string LineCode { get; set; }
-        public string SubLineCode { get; set; }
-        public bool Fractional { get; set; }
-        public SkillLevel SkillLevel { get; set; }
+        public InventoryItem InventoryItem { get; private set; }
+        public double List { get; private set; }
+        public double Cost { get; private set; }
+        public double Core { get; private set; }
+        public double Retail { get; private set; }
+        public ItemLaborType TechPayType { get; private set; }
+        public double TechPayAmount { get; private set; }
+        public string LineCode { get; private set; }
+        public string SubLineCode { get; private set; }
+        public bool Fractional { get; private set; }
+        public SkillLevel SkillLevel { get; private set; }
     }
 }

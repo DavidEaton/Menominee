@@ -6,22 +6,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItem : Entity
     {
-        public Manufacturer Manufacturer { get; set; }
-        public long ManufacturerId { get; set; }
-        public string ItemNumber { get; set; }
-        public string Description { get; set; }
-        public ProductCode ProductCode { get; set; }
-        public long ProductCodeId { get; set; }
-        public InventoryItemType ItemType { get; set; }
+        public Manufacturer Manufacturer { get; private set; }
+        public string ItemNumber { get; private set; }
+        public string Description { get; private set; }
+        public ProductCode ProductCode { get; private set; }
+        public InventoryItemType ItemType { get; private set; }
 
-        public InventoryItemPart Part { get; set; }
-        public InventoryItemLabor Labor { get; set; }
-        public InventoryItemTire Tire { get; set; }
-        public InventoryItemPackage Package { get; set; }
-        public InventoryItemInspection Inspection { get; set; }
-        public InventoryItemDonation Donation { get; set; }
-        public InventoryItemGiftCertificate GiftCertificate { get; set; }
-        public InventoryItemWarranty Warranty { get; set; }
+        public InventoryItemPart Part { get; private set; }
+        public InventoryItemLabor Labor { get; private set; }
+        public InventoryItemTire Tire { get; private set; }
+        public InventoryItemPackage Package { get; private set; }
+        public InventoryItemInspection Inspection { get; private set; }
+        public InventoryItemDonation Donation { get; private set; }
+        public InventoryItemGiftCertificate GiftCertificate { get; private set; }
+        public InventoryItemWarranty Warranty { get; private set; }
 
         public InventoryItem(InventoryItemPart part)
         {
@@ -89,8 +87,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItem() { }
+        // EF requires a parameterless constructor
+        protected InventoryItem() { }
 
         #endregion
     }

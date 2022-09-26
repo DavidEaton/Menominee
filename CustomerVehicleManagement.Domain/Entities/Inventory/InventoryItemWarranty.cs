@@ -5,14 +5,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemWarranty : Entity
     {
-        public long InventoryItemId { get; set; }
-        public InventoryItemWarrantyPeriodType PeriodType { get; set; }
-        public int Duration { get; set; }
+        public InventoryItem InventoryItem { get; private set; }
+        public InventoryItemWarrantyPeriodType PeriodType { get; private set; }
+        public int Duration { get; private set; }
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemWarranty() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemWarranty() { }
 
         #endregion  
     }

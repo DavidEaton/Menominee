@@ -5,12 +5,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     // TODO: No detail for this entitiy.  Can we avoid using this class?
     public class InventoryItemDonation : Entity
     {
-        public long InventoryItemId { get; set; }
+        public InventoryItem InventoryItem { get; private set; }
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemDonation() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemDonation() { }
 
         #endregion  
     }

@@ -5,13 +5,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPackage : Entity
     {
-        public long InventoryItemId { get; set; }
-        public double BasePartsAmount { get; set; }
-        public double BaseLaborAmount { get; set; }
-        public string Script { get; set; }
-        public bool IsDiscountable { get; set; }
-        public virtual List<InventoryItemPackageItem> Items { get; set; } = new List<InventoryItemPackageItem>();
-        public virtual List<InventoryItemPackagePlaceholder> Placeholders { get; set; } = new List<InventoryItemPackagePlaceholder>();
+        public long InventoryItem { get; private set; }
+        public double BasePartsAmount { get; private set; }
+        public double BaseLaborAmount { get; private set; }
+        public string Script { get; private set; }
+        public bool IsDiscountable { get; private set; }
+        public virtual List<InventoryItemPackageItem> Items { get; private set; } = new List<InventoryItemPackageItem>();
+        public virtual List<InventoryItemPackagePlaceholder> Placeholders { get; private set; } = new List<InventoryItemPackagePlaceholder>();
         
         public void AddItem(InventoryItemPackageItem item)
         {
@@ -55,8 +55,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemPackage() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemPackage() { }
 
         #endregion 
     }

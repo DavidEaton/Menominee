@@ -5,17 +5,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemLabor : Entity
     {
-        public long InventoryItemId { get; set; }
-        public ItemLaborType LaborType { get; set; }
-        public double LaborAmount { get; set; }
-        public ItemLaborType TechPayType { get; set; }
-        public double TechPayAmount { get; set; }
-        public SkillLevel SkillLevel { get; set; }
+        public InventoryItem InventoryItem { get; private set; }
+        public ItemLaborType LaborType { get; private set; }
+        public double LaborAmount { get; private set; }
+        public ItemLaborType TechPayType { get; private set; }
+        public double TechPayAmount { get; private set; }
+        public SkillLevel SkillLevel { get; private set; }
 
         #region ORM
 
-        // EF requires an empty constructor
-        public InventoryItemLabor() { }
+        // EF requires a parameterless constructor
+        protected InventoryItemLabor() { }
 
         #endregion
     }
