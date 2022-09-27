@@ -63,7 +63,7 @@ namespace Menominee.Client.Components.Payables
             //{
             //    vendorId = PaymentMethod.ReconcilingVendor.Id;
             //}
-            vendorId = PaymentMethod?.VendorId;
+            //vendorId = PaymentMethod?.VendorId;
 
             await OnVendorChangeAsync();
         }
@@ -75,11 +75,11 @@ namespace Menominee.Client.Components.Payables
                 PaymentMethod.ReconcilingVendor = null;
             }
             //else if (vendorId > 0 && PaymentMethod.ReconcilingVendor?.Id != vendorId)
-            else if (PaymentMethod?.VendorId != vendorId)
+            else if (PaymentMethod?.ReconcilingVendor.Id != vendorId)
             {
                 PaymentMethod.ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(await vendorDataService.GetVendorAsync(vendorId ?? 0));
             }
-            PaymentMethod.VendorId = vendorId;
+            //PaymentMethod.VendorId = vendorId;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,25 +32,24 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 context.Remove(saleCodeFromContext);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)
         {
-            var saleCodeFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(sc => sc.Code == code);
-
-            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
+            return SaleCodeHelper.ConvertEntityToReadDto(await context.SaleCodes
+                .FirstOrDefaultAsync(saleCode => saleCode.Code == code));
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
-            var saleCodeFromContext = await context.SaleCodes
-                .FirstOrDefaultAsync(saleCode => saleCode.Id == id);
+            return SaleCodeHelper.ConvertEntityToReadDto(
+                await context.SaleCodes.FirstOrDefaultAsync(
+                    saleCode => saleCode.Id == id));
+        }
 
-            return SaleCodeHelper.ConvertEntityToReadDto(saleCodeFromContext);
+        public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids)
+        {
+            return await context.SaleCodes
+                .Where(manufacturer => ids.Contains(manufacturer.Id))
+                .ToListAsync();
         }
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
@@ -96,27 +94,6 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         public async Task<bool> SaveChangesAsync()
         {
             return await context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<SaleCode> UpdateSaleCodeAsync(SaleCode saleCode)
-        {
-            Guard.ForNull(saleCode, "saleCode");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(saleCode).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await SaleCodeExistsAsync(saleCode.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
-
-            return null;
         }
     }
 }

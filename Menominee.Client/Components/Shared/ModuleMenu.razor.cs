@@ -52,7 +52,6 @@ namespace Menominee.Client.Components.Shared
             {
                 parametersSet = true;
                 ModuleTitleWidth = await _jsModule.InvokeAsync<double>("elementWidthById", "moduleName");
-                //Console.WriteLine($"{ModuleTitleWidth}");
             }
         }
 
@@ -60,7 +59,6 @@ namespace Menominee.Client.Components.Shared
         {
             double expandedMin = 190 + ModuleTitleWidth + MenuWidth;
             double shrunkenMin = 80 + ModuleTitleWidth + MenuWidth;
-            //Console.WriteLine(MainLayout.DrawerExpanded ? $"(min-width: {expandedMin}px)" : $"(min-width: {shrunkenMin}px)");
             return MainLayout.DrawerExpanded ? $"(min-width: {expandedMin}px)" : $"(min-width: {shrunkenMin}px)";
         }
 

@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Persons;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -48,8 +47,9 @@ namespace CustomerVehicleManagement.Api.Persons
         {
             Person personFromContext = await GetPersonEntityAsync(id);
 
-            Guard.ForNull(personFromContext, "personFromContext");
-            return PersonHelper.ConvertToReadDto(personFromContext);
+            return personFromContext is not null
+                ? PersonHelper.ConvertToReadDto(personFromContext)
+                : null;
         }
 
         public async Task<IReadOnlyList<PersonToRead>> GetPersonsAsync()
@@ -82,33 +82,13 @@ namespace CustomerVehicleManagement.Api.Persons
 
             return personsFromContext
                 .Select(person =>
-                        PersonToReadInList.ConvertToDto(person))
+                        PersonHelper.ConvertEntityToReadInListDto(person))
                 .ToList();
         }
 
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
-        public void UpdatePersonAsync(Person person)
-        {
-            // No code in this implementation.
-
-            /* We're working on a contract (IPersonRepository), not an implementation.
-
-               Always code a complete set of methods for the required funtionality and call them,
-               even of they don't do anything in the current implementation.
-
-               Controller has changed the entity to a modified state; executing save on the repo from
-               the controller will write the changes to the database; therefore no update code is
-               required in this Update method.
-            */
         }
 
         public async Task<bool> PersonExistsAsync(long id)

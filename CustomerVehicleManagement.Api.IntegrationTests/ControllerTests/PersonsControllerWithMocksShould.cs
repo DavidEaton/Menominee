@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
             var result = await controller.AddPersonAsync(person);
 
             moqRepository.Verify(repository => repository.AddPersonAsync(It.IsAny<Person>()), Times.Once);
-            person.Name.FirstMiddleLast.Should().Be(savedPerson.Name.FirstMiddleLast);
+            person.Name.FirstName.Should().Be(savedPerson.Name.FirstName);
             person.Gender.Should().Be(savedPerson.Gender);
             person.Birthday.Should().Be(savedPerson.Birthday);
         }

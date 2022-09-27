@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
@@ -11,77 +12,56 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoicePayments : ComponentBase
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
-
-        [Inject]
-        public IVendorInvoicePaymentMethodDataService paymentMethodDataService { get; set; }
+        public IVendorInvoicePaymentMethodDataService PaymentMethodDataService { get; set; }
 
         [Parameter]
         public IList<VendorInvoicePaymentToWrite> Payments { get; set; }
 
+        public VendorInvoicePaymentToWrite Payment { get; set; }
         public TelerikGrid<VendorInvoicePaymentToWrite> Grid { get; set; }
 
-        //[CascadingParameter]
-        //IModalService ModalService { get; set; }
-        private IEnumerable<VendorInvoicePaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<VendorInvoicePaymentToWrite>();
-        private VendorInvoicePaymentToWrite SelectedPayment { get; set; }
-        private long SelectedId { get; set; } = 0;      // TODO: SelectedId won't work for new items since their Ids will all be 0
         private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PaymentMethods = new List<VendorInvoicePaymentMethodToReadInList>();
-        private bool parametersSet = false;
-        private long paymentMethodId { get; set; } = 0;
 
+        private long SelectedId = 0;
+        private long paymentMethodId = 0;
         protected override async Task OnInitializedAsync()
         {
-            PaymentMethods = (await paymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
-            //await base.OnInitializedAsync();
+            PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+
         }
 
-        protected override void OnParametersSet()
+        private void OnEdit(GridRowClickEventArgs args)
         {
-            if (parametersSet)
-                return;
-            parametersSet = true;
+            //Payment = 
+            if (args is not null)
+                SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
 
-            if (Payments.Count > 0)
-            {
-                //SelectedPayment = Payments.FirstOrDefault();
-                //SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
-                //SelectedId = SelectedPayment.Id;
-            }
+            // open dialog with FormMode == Edit
+
+            // TEMPORARILY Edit an existing payment TO TEST
+            //var payment = Payments.FirstOrDefault(payment => payment.Id == SelectedId);
+
+            //payment.Amount = 99.9;
+        }
+
+        private void Add()
+        {
+            // open dialog with FormMode == Add
+
+            // TEMPORARILY Add a new tax to collection TO TEST
+            //Payments.Add(new()
+            //{
+            //    Amount = 88.0,
+            //    PaymentMethod = new()
+            //    {
+            //        Id = 1,
+            //        Name = "Credit Card",
+            //        IsActive = true,
+            //        IsOnAccountPaymentType = false
+            //    }
+            //});
 
             Grid.Rebind();
-        }
-
-        //protected override async Task OnAfterRenderAsync(bool firstRender)
-        //{
-        //    if (firstRender)
-        //    {
-        //        PaymentMethods = (await paymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
-        //    }
-        //}
-
-        private async Task OnPaymentMethodChangeAsync()
-        {
-            //if (paymentMethodId > 0)
-            //    SelectedPayment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(await paymentMethodDataService.GetPaymentMethodAsync(paymentMethodId));
-            SelectedPayment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadToWriteDto(await paymentMethodDataService.GetPaymentMethodAsync(SelectedPayment.PaymentMethod.Id));
-            //SelectedPayment.PaymentMethodId = SelectedPayment.PaymentMethod.Id;
-            paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
-        }
-
-        private void OnEdit()
-        {
-        }
-
-        private void OnNew()
-        {
-            paymentMethodId = 0;
-            VendorInvoicePaymentToWrite paymentToAdd = new();
-            paymentToAdd.PaymentMethod = new();
-            Payments.Add(paymentToAdd);
-            Grid.Rebind();
-            SelectedPayment = paymentToAdd;
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
         }
 
         private void OnDelete()
@@ -92,24 +72,22 @@ namespace Menominee.Client.Components.Payables
         {
         }
 
+        private void OnPaymentMethodChange()
+        {
+            if (paymentMethodId > 0 && Payment?.PaymentMethod?.Id != paymentMethodId)
+                Payment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadInListToReadDto(
+                    PaymentMethods.FirstOrDefault(paymentMethod => paymentMethod.Id == paymentMethodId));
+        }
+
         protected void OnPaymentSelect(IEnumerable<VendorInvoicePaymentToWrite> payments)
         {
-            SelectedPayment = payments.FirstOrDefault();
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
-            paymentMethodId = SelectedPayment.PaymentMethod?.Id ?? 0;
+            //SelectedPayment = payments.FirstOrDefault();
+            //SelectedPayments = new List<VendorInvoicePaymentToWrite> { SelectedPayment };
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
         }
-
-        //public class PaymentMethodListItem
-        //{
-        //    public string Text { get; set; }
-        //    public long Id { get; set; }
-        //}
-
-        //private List<PaymentMethodListItem> paymentMethodList { get; set; } = new List<PaymentMethodListItem>();
     }
 }

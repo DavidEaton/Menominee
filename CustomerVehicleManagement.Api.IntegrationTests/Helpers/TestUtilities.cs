@@ -1,12 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
@@ -30,9 +30,9 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Organization>()
             {
-                new Organization(OrganizationName.Create("Koops, Inc.").Value, null, null),
-                new Organization(OrganizationName.Create("Loops, Intl.").Value, null, null),
-                new Organization(OrganizationName.Create("Noops Brothers").Value, null, null),
+                Organization.Create(OrganizationName.Create("Koops, Inc.").Value, null, null).Value,
+                Organization.Create(OrganizationName.Create("Loops, Intl.").Value, null, null).Value,
+                Organization.Create(OrganizationName.Create("Noops Brothers").Value, null, null).Value,
             };
         }
 
@@ -40,10 +40,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Person>()
             {
-                new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null),
-                new Person(PersonName.Create("Jones", "Latisha").Value, Gender.Female, null, null, null),
-                new Person(PersonName.Create("Lee", "Wong").Value, Gender.Male, null, null, null),
-                new Person(PersonName.Create("Kelly", "Junice").Value, Gender.Female, null, null, null),
+                Person.Create(PersonName.Create("Smith", "Jane").Value, Gender.Female).Value,
+                Person.Create(PersonName.Create("Jones", "Latisha").Value, Gender.Female).Value,
+                Person.Create(PersonName.Create("Lee", "Wong").Value, Gender.Male).Value,
+                Person.Create(PersonName.Create("Kelly", "Junice").Value, Gender.Female).Value,
             };
         }
 
@@ -51,8 +51,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
         {
             return new List<Customer>()
             {
-                new Customer(new Person(PersonName.Create("Smith", "Jane").Value, Gender.Female, null, null, null), CustomerType.Retail),
-                new Customer(new Organization(OrganizationName.Create("Moops & Co.").Value, null, null), CustomerType.Retail)
+                new Customer(Person.Create(PersonName.Create("Smith", "Jane").Value, Gender.Female).Value, CustomerType.Retail),
+                new Customer(Organization.Create(OrganizationName.Create("Moops & Co.").Value, null, null).Value, CustomerType.Retail)
             };
         }
 
@@ -63,58 +63,18 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
                 .Options;
         }
 
-
-        public static void CreateAndSaveValidOrganizationCustomer(DbContextOptions<ApplicationDbContext> options, out Customer customer, out long id)
-        {
-            // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options))
-            {
-                customer = Helper.CreateOrganizationCustomer();
-                context.Customers.Add(customer);
-                context.SaveChanges();
-                id = customer.Id;
-            }
-        }
-
         public static long CreateAndSaveValidOrganizationId(DbContextOptions<ApplicationDbContext> options)
         {
             long id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = Helper.CreateOrganization();
+                Organization organization = OrganizationHelper.CreateTestOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;
             }
 
             return id;
-        }
-
-        public static Organization CreateAndSaveValidOrganization(DbContextOptions<ApplicationDbContext> options)
-        {
-            Organization organization;
-            using (var context = new ApplicationDbContext(options))
-            {
-                organization = Helper.CreateOrganization();
-                context.Organizations.Add(organization);
-                context.SaveChanges();
-            }
-
-            return organization;
-        }
-
-
-        public static void CreateAndSavePersonGraph(DbContextOptions<ApplicationDbContext> options, out Person person, out long id)
-        {
-            // Create a new Person with Emails and Phones, and save
-            using (var context = new ApplicationDbContext(options))
-            {
-                person = Helper.CreatePersonWithEmails();
-                person.SetPhones(Helper.CreatePhoneList());
-                context.Persons.Add(person);
-                context.SaveChanges();
-                id = person.Id;
-            }
         }
     }
 }

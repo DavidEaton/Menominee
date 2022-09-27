@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrder)
         {
-            var repairOrderFromRepository = repository.GetRepairOrderEntityAsync(id).Result;
+            var repairOrderFromRepository = await repository.GetRepairOrderEntityAsync(id);
             if (repairOrderFromRepository is null)
                 return NotFound($"Could not find Repair Order #{id} to update.");
 
@@ -62,10 +62,6 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             //UpdatePayments(repairOrder, repairOrderFromRepository);
             //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
-            repairOrderFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
-            repository.UpdateRepairOrderAsync(repairOrderFromRepository);
             await repository.SaveChangesAsync();
 
             return NoContent();
@@ -244,7 +240,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPost]
         public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var repairOrder = RepairOrderHelper.Transform(repairOrderToAdd);
+            var repairOrder = RepairOrderHelper.ConvertWriteDtoToEntity(repairOrderToAdd);
 
             await repository.AddRepairOrderAsync(repairOrder);
             await repository.SaveChangesAsync();

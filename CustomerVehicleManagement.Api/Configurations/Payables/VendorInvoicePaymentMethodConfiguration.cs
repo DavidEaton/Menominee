@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("VendorInvoicePaymentMethod", "dbo");
 
-            builder.Ignore(payment => payment.TrackingState);
-
             builder.Property(payment => payment.Name)
                    .HasMaxLength(255)
                    .IsRequired();

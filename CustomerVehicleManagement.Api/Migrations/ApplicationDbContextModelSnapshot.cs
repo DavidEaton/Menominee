@@ -152,9 +152,6 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<long>("InventoryItemId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("TrackingState")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("InventoryItemId")
@@ -173,9 +170,6 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.Property<long>("InventoryItemId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("TrackingState")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -644,7 +638,8 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InvoiceNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -654,7 +649,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
-                    b.Property<long>("VendorId")
+                    b.Property<long?>("VendorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -664,7 +659,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.ToTable("VendorInvoice", "dbo");
                 });
 
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", b =>
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceLineItem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -678,51 +673,26 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("InvoiceNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ManufacturerId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("PONumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PartNumber")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
-
-                    b.Property<long?>("SaleCodeId")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("TransactionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Type")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<long?>("VendorInvoiceId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ManufacturerId");
-
-                    b.HasIndex("SaleCodeId");
-
                     b.HasIndex("VendorInvoiceId");
 
-                    b.ToTable("VendorInvoiceItem", "dbo");
+                    b.ToTable("VendorInvoiceLineItem", "dbo");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePayment", b =>
@@ -736,17 +706,17 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<long>("VendorInvoiceId")
+                    b.Property<long?>("PaymentMethodId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("VendorInvoicePaymentMethodId")
+                    b.Property<long?>("VendorInvoiceId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VendorInvoiceId");
+                    b.HasIndex("PaymentMethodId");
 
-                    b.HasIndex("VendorInvoicePaymentMethodId");
+                    b.HasIndex("VendorInvoiceId");
 
                     b.ToTable("VendorInvoicePayment", "dbo");
                 });
@@ -765,20 +735,17 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<bool>("IsOnAccountPaymentType")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsReconciledByAnotherVendor")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long?>("VendorId")
+                    b.Property<long?>("ReconcilingVendorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VendorId");
+                    b.HasIndex("ReconcilingVendorId");
 
                     b.ToTable("VendorInvoicePaymentMethod", "dbo");
                 });
@@ -794,22 +761,13 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<long>("InvoiceId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
                     b.Property<long?>("SalesTaxId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("TaxId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TaxName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("VendorInvoiceId")
+                    b.Property<long?>("VendorInvoiceId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -1322,9 +1280,45 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("ShopSuppliesId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ShopSuppliesId");
+
                     b.ToTable("SaleCode", "dbo");
+                });
+
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.SaleCodeShopSupplies", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<bool>("IncludeLabor")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IncludeParts")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("MaximumCharge")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MinimumCharge")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MinimumJobAmount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Percentage")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SaleCodeShopSupplies");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.ExciseFee", b =>
@@ -1342,6 +1336,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(10000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FeeType")
@@ -1349,7 +1344,12 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<long?>("SalesTaxId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SalesTaxId");
 
                     b.ToTable("ExciseFee", "dbo");
                 });
@@ -1401,29 +1401,6 @@ namespace CustomerVehicleManagement.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SalesTax", "dbo");
-                });
-
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.SalesTaxTaxableExciseFee", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<long?>("ExciseFeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SalesTaxId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExciseFeeId");
-
-                    b.HasIndex("SalesTaxId");
-
-                    b.ToTable("SalesTaxTaxableExciseFee", "dbo");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
@@ -1723,47 +1700,76 @@ namespace CustomerVehicleManagement.Api.Migrations
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.Vendor", "Vendor")
                         .WithMany()
-                        .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VendorId");
 
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", b =>
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceLineItem", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
-                        .WithMany()
-                        .HasForeignKey("ManufacturerId");
-
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
-                        .WithMany()
-                        .HasForeignKey("SaleCodeId");
-
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", "Invoice")
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
                         .WithMany("LineItems")
                         .HasForeignKey("VendorInvoiceId");
 
-                    b.Navigation("Invoice");
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", "Item", b1 =>
+                        {
+                            b1.Property<long>("VendorInvoiceLineItemId")
+                                .HasColumnType("bigint");
 
-                    b.Navigation("Manufacturer");
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("ItemDescription");
 
-                    b.Navigation("SaleCode");
+                            b1.Property<long?>("ManufacturerId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("PartNumber")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("ItemPartNumber");
+
+                            b1.Property<long?>("SaleCodeId")
+                                .HasColumnType("bigint");
+
+                            b1.HasKey("VendorInvoiceLineItemId");
+
+                            b1.HasIndex("ManufacturerId");
+
+                            b1.HasIndex("SaleCodeId");
+
+                            b1.ToTable("VendorInvoiceLineItem", "dbo");
+
+                            b1.HasOne("CustomerVehicleManagement.Domain.Entities.Inventory.Manufacturer", "Manufacturer")
+                                .WithMany()
+                                .HasForeignKey("ManufacturerId");
+
+                            b1.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCode", "SaleCode")
+                                .WithMany()
+                                .HasForeignKey("SaleCodeId");
+
+                            b1.WithOwner()
+                                .HasForeignKey("VendorInvoiceLineItemId");
+
+                            b1.Navigation("Manufacturer");
+
+                            b1.Navigation("SaleCode");
+                        });
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePayment", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("VendorInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoicePaymentMethod", "PaymentMethod")
                         .WithMany()
-                        .HasForeignKey("VendorInvoicePaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PaymentMethodId");
+
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("VendorInvoiceId");
 
                     b.Navigation("PaymentMethod");
                 });
@@ -1772,7 +1778,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                 {
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.Vendor", "ReconcilingVendor")
                         .WithMany()
-                        .HasForeignKey("VendorId");
+                        .HasForeignKey("ReconcilingVendorId");
 
                     b.Navigation("ReconcilingVendor");
                 });
@@ -1785,9 +1791,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.HasOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoice", null)
                         .WithMany("Taxes")
-                        .HasForeignKey("VendorInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VendorInvoiceId");
 
                     b.Navigation("SalesTax");
                 });
@@ -2039,71 +2043,18 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.SaleCode", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.SaleCodeShopSupplies", "ShopSupplies", b1 =>
-                        {
-                            b1.Property<long>("SaleCodeId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<bool>("IncludeLabor")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
-                                .HasDefaultValue(false)
-                                .HasColumnName("IncludeLabor");
-
-                            b1.Property<bool>("IncludeParts")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bit")
-                                .HasDefaultValue(false)
-                                .HasColumnName("IncludeParts");
-
-                            b1.Property<double>("MaximumCharge")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("float")
-                                .HasDefaultValue(0.0)
-                                .HasColumnName("MaximumCharge");
-
-                            b1.Property<double>("MinimumCharge")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("float")
-                                .HasDefaultValue(0.0)
-                                .HasColumnName("MinimumCharge");
-
-                            b1.Property<double>("MinimumJobAmount")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("float")
-                                .HasDefaultValue(0.0)
-                                .HasColumnName("MinimumJobAmount");
-
-                            b1.Property<double>("Percentage")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("float")
-                                .HasDefaultValue(0.0)
-                                .HasColumnName("Percentage");
-
-                            b1.HasKey("SaleCodeId");
-
-                            b1.ToTable("SaleCode", "dbo");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SaleCodeId");
-                        });
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.SaleCodeShopSupplies", "ShopSupplies")
+                        .WithMany()
+                        .HasForeignKey("ShopSuppliesId");
 
                     b.Navigation("ShopSupplies");
                 });
 
-            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.SalesTaxTaxableExciseFee", b =>
+            modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.ExciseFee", b =>
                 {
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Taxes.ExciseFee", "ExciseFee")
-                        .WithMany()
-                        .HasForeignKey("ExciseFeeId");
-
-                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Taxes.SalesTax", "SalesTax")
-                        .WithMany("TaxedExciseFees")
+                    b.HasOne("CustomerVehicleManagement.Domain.Entities.Taxes.SalesTax", null)
+                        .WithMany("ExciseFees")
                         .HasForeignKey("SalesTaxId");
-
-                    b.Navigation("ExciseFee");
-
-                    b.Navigation("SalesTax");
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Vehicle", b =>
@@ -2200,7 +2151,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.SalesTax", b =>
                 {
-                    b.Navigation("TaxedExciseFees");
+                    b.Navigation("ExciseFees");
                 });
 #pragma warning restore 612, 618
         }

@@ -41,7 +41,7 @@ namespace Menominee.Client.Components
 
         protected static void ImageClick(MouseEventArgs e)
         {
-            Console.WriteLine("Tenant image clicked! ");
+            // Handle click
         }
     }
 }

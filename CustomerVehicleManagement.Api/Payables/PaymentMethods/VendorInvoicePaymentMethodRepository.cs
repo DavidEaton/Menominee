@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,15 +15,14 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         public VendorInvoicePaymentMethodRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddPaymentMethodAsync(VendorInvoicePaymentMethod payMethod)
         {
-            Guard.ForNull(payMethod, "Payment Method");
-
-            await context.AddAsync(payMethod);
+            if (payMethod is not null)
+                await context.AddAsync(payMethod);
         }
 
         public void DeletePaymentMethod(VendorInvoicePaymentMethod payMethod)
@@ -32,43 +30,68 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             context.Remove(payMethod);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<VendorInvoicePaymentMethodToRead> GetPaymentMethodAsync(long id)
         {
             var payMethodFromContext = await context.VendorInvoicePaymentMethods
-                                                        .Include(method => method.ReconcilingVendor)
-                                                        .AsSplitQuery()
-                                                        .AsNoTracking()
-                                                        .FirstOrDefaultAsync(method => method.Id == id);
-            Guard.ForNull(payMethodFromContext, "payMethodFromContext");
+                .Include(method => method.ReconcilingVendor)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(method => method.Id == id);
 
-            return VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethodFromContext);
+            return payMethodFromContext is not null
+                ? VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethodFromContext)
+                : null;
         }
 
         public async Task<VendorInvoicePaymentMethod> GetPaymentMethodEntityAsync(long id)
         {
             var payMethodFromContext = await context.VendorInvoicePaymentMethods
-                                                        .Include(method => method.ReconcilingVendor)
-                                                        .AsSplitQuery()
-                                                        .FirstOrDefaultAsync(method => method.Id == id);
-            Guard.ForNull(payMethodFromContext, "payMethodFromContext");
+                .Include(method => method.ReconcilingVendor)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(method => method.Id == id);
 
-            return payMethodFromContext;
+            return payMethodFromContext is not null
+                ? payMethodFromContext
+                : null;
         }
 
         public async Task<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>> GetPaymentMethodListAsync()
         {
             IReadOnlyList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
-                                                                                .Include(method => method.ReconcilingVendor)
-                                                                                .AsSplitQuery()
-                                                                                .AsNoTracking()
-                                                                                .ToListAsync();
+                .Include(method => method.ReconcilingVendor)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .ToListAsync();
 
             return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertEntityToReadInListDto(payMethod))
+                             .ToList();
+        }
+
+        public async Task<IList<string>> GetPaymentMethodNamesAsync()
+        {
+            IList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
+                .AsSplitQuery()
+                .AsNoTracking()
+                .ToListAsync();
+
+            var result = new List<string>();
+
+
+            foreach (var method in payMethods)
+                result.Add(method.Name);
+
+            return result;
+        }
+
+        public async Task<IReadOnlyList<VendorInvoicePaymentMethodToRead>> GetPaymentMethodsAsync()
+        {
+            IReadOnlyList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
+                .Include(method => method.ReconcilingVendor)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .ToListAsync();
+
+            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethod))
                              .ToList();
         }
 
@@ -80,11 +103,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
-        }
-
-        public void UpdatePaymentMethod(VendorInvoicePaymentMethod payMethod)
-        {
-            //
         }
     }
 }

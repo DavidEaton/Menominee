@@ -66,14 +66,12 @@ namespace Menominee.Client.Shared
 
         private string GetSMSVisibleBreakpoint()
         {
-            //Console.WriteLine(DrawerExpanded ? "(min-width: 630px)" : "(min-width: 500px)");
             return DrawerExpanded ? "(min-width: 630px)" : "(min-width: 500px)";
         }
 
         public void MediaQueryChange(bool matchesMediaQuery)
         {
             displayIsLarge = matchesMediaQuery;
-            //Console.WriteLine(matchesMediaQuery);
         }
 
         public string GetCurrentPage()

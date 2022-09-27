@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         #region ORM
 
-        // EF requires an empty constructor
+        // EF requires a parameterless constructor
         public RepairOrderTech() { }
 
         #endregion

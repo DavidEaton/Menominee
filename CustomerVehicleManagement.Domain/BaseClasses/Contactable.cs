@@ -1,114 +1,95 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
-using Menominee.Common;
-using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
     public abstract class Contactable : Entity, IContactLists
     {
-        public virtual IList<Phone> Phones { get; private set; } = new List<Phone>();
-        public virtual IList<Email> Emails { get; private set; } = new List<Email>();
+        public static readonly string RequiredMessage = $"Please enter all required items.";
+
+        public IList<Phone> Phones { get; private set; } = new List<Phone>();
+        public IList<Email> Emails { get; private set; } = new List<Email>();
         public Address Address { get; private set; }
 
         public Contactable(Address address, IList<Phone> phones, IList<Email> emails)
         {
-            if (address != null)
-                Address = address;
+            if (address is not null)
+                SetAddress(address);
 
-            if (phones != null)
-                Phones = phones;
+            if (phones is not null)
+                SetPhones(phones);
 
-            if (emails != null)
-                Emails = emails;
-        }
-
-        public void AddPhone(Phone phone)
-        {
-            // VK: phone number being null is usually a bug, so best to put a guard here instead of the null check.
-            /* Null check silently swallows exception, hiding potential bugs. Use a guard to throw exception in
-             * this exceptional case: we don't expect a null to ever reach here, so there must be a bug. -DE */
-            Guard.ForNull(phone, "phone");
-
-            if (ContactableHasPhone(phone))
-                throw new Exception("Contactable already has this phone");
-
-            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
-                throw new Exception("Contactable already has primary phone.");
-
-            Phones.Add(phone);
+            if (emails is not null)
+                SetEmails(emails);
         }
 
         public void RemovePhone(Phone phone)
         {
-            Guard.ForNull(phone, "phone");
+            if (phone is null)
+                throw new ArgumentNullException(RequiredMessage);
+
             Phones.Remove(phone);
         }
 
-        // VK: make SetPhones call AddPhone. This way, you'll avoid validation duplication
         public void SetPhones(IList<Phone> phones)
         {
-            // Client may send an empty or null phones collection, signifying removal/replacement
-            if (phones is null || phones?.Count == 0)
+            // Client may send an empty or null collection, signifying
+            // NO CHANGE TO COLLECTION
+            if (phones is not null && phones?.Count > 0)
                 Phones = phones;
-
-            if (phones?.Count > 0)
-            {
-                Phones.Clear();
-                var sortedPhones = phones.OrderBy(e => e.IsPrimary).ToList();
-
-                foreach (var phone in sortedPhones)
-                    AddPhone(phone);
-            }
         }
 
         public void AddEmail(Email email)
         {
-            Guard.ForNull(email, "email");
-
             if (ContactableHasEmail(email))
-                throw new Exception("Contactable already has this email.");
+                throw new Exception("Duplicate email.");
 
             if (ContactableHasPrimaryEmail() && email.IsPrimary)
-                throw new Exception("Contactable already has primary email.");
+                throw new Exception("Primary email has already been entered.");
 
             Emails.Add(email);
         }
 
         public void RemoveEmail(Email email)
         {
-            Guard.ForNull(email, "email");
             Emails.Remove(email);
         }
 
         public void SetEmails(IList<Email> emails)
         {
-            Guard.ForNull(emails, "emails");
-
-            if (emails.Count > 0)
-            {
-                Emails.Clear();
-                // If a primary email exists before the end of the list, AddEmail()
-                // fails at check ContactableHasPrimaryEmail() since the primary email
-                // in the list was already added. This code will work when list is
-                // sorted and the Primary email is added last:
-                var sortedEmails = emails.OrderBy(e => e.IsPrimary).ToList();
-                foreach (var email in sortedEmails)
-                    AddEmail(email);
-            }
+            // Client may send an empty or null collection, signifying
+            // NO CHANGE TO COLLECTION
+            if (emails is not null && emails?.Count > 0)
+                Emails = emails;
         }
 
         public void SetAddress(Address address)
         {
-            // Guard unnecessarily throws exception; we just need a null check.
             // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
             // BTW, if user removes Address, it will be null here so use it.
             Address = address;
+        }
+
+        public void AddPhone(Phone phone)
+        {
+            /* Use a guard to throw exception in this exceptional case: we don't
+             *  expect a null to ever reach here, so there must be a bug. -DE */
+            if (phone is null)
+                throw new ArgumentNullException(RequiredMessage);
+
+            if (ContactableHasPhone(phone))
+                throw new Exception("Duplicate phone");
+
+            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
+                throw new Exception("Primary phone has already been entered.");
+
+            Phones.Add(phone);
         }
 
         // VK: no need to make these methods public, they are just for the Contactable class
@@ -133,7 +114,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             return Emails.Any(x => x.Address == email.Address);
         }
 
-        // EF requires empty constructor
-        public Contactable() { }
+        // EF requires parameterless constructor
+        protected Contactable() { }
     }
 }

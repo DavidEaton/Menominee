@@ -10,7 +10,6 @@ namespace CustomerVehicleManagement.Api.Configurations
         {
             base.Configure(builder);
             builder.ToTable("Email", "dbo");
-            builder.Ignore(email => email.TrackingState);
 
             // An email address must not exceed 254 characters.
             // The maximum length specified in RFC 5321

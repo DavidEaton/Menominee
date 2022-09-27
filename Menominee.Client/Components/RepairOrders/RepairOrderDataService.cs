@@ -45,7 +45,7 @@ namespace Menominee.Client.Components.RepairOrders
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -59,7 +59,7 @@ namespace Menominee.Client.Components.RepairOrders
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }

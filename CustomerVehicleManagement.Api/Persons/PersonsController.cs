@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
@@ -57,9 +56,9 @@ namespace CustomerVehicleManagement.Api.Persons
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite personToUpdate)
+        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite person)
         {
-            var notFoundMessage = $"Could not find Person to update: {personToUpdate.Name.FirstMiddleLast}";
+            var notFoundMessage = $"Could not find {person.Name.FirstName} {person.Name.LastName} to update";
 
             if (!await repository.PersonExistsAsync(id))
                 return NotFound(notFoundMessage);
@@ -69,58 +68,48 @@ namespace CustomerVehicleManagement.Api.Persons
             if (personFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            var personNameOrError = PersonName.Create(personToUpdate.Name.LastName,
-                                                      personToUpdate.Name.FirstName,
-                                                      personToUpdate.Name.MiddleName);
+            var personNameOrError = PersonName.Create(
+                person.Name.LastName,
+                person.Name.FirstName,
+                person.Name.MiddleName);
 
             if (personNameOrError.IsSuccess)
                 personFromRepository.SetName(personNameOrError.Value);
 
-            if (personToUpdate?.Address is not null)
-                personFromRepository.SetAddress(Address.Create(personToUpdate.Address.AddressLine,
-                                                               personToUpdate.Address.City,
-                                                               personToUpdate.Address.State,
-                                                               personToUpdate.Address.PostalCode).Value);
+            if (person?.Address is not null)
+                personFromRepository.SetAddress(Address.Create(
+                    person.Address.AddressLine,
+                    person.Address.City,
+                    person.Address.State,
+                    person.Address.PostalCode).Value);
 
-            if (personToUpdate?.Address is null)
+            if (person?.Address is null)
                 personFromRepository.SetAddress(null);
 
-            personFromRepository.SetGender(personToUpdate.Gender);
-            personFromRepository.SetBirthday(personToUpdate.Birthday);
+            personFromRepository.SetGender(person.Gender);
+            personFromRepository.SetBirthday(person.Birthday);
 
             List<Phone> phones = new();
 
-            foreach (var phone in personToUpdate?.Phones)
+            foreach (var phone in person?.Phones)
                 phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (personToUpdate?.Phones is null || personToUpdate?.Phones.Count == 0)
-                phones = null;
-
-            personFromRepository.SetPhones(phones);
-
 
             List<Email> emails = new();
 
-            if (personToUpdate?.Emails.Count > 0)
-                foreach (var email in personToUpdate.Emails)
-                {
+            if (person?.Emails.Count > 0)
+                foreach (var email in person.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-                    personFromRepository.SetEmails(emails);
-                }
 
-            if (personToUpdate?.DriversLicense is not null)
+            personFromRepository.SetEmails(emails);
+
+            if (person?.DriversLicense is not null)
             {
-                personFromRepository.SetDriversLicense(DriversLicense.Create(personToUpdate.DriversLicense.Number,
-                    personToUpdate.DriversLicense.State,
+                personFromRepository.SetDriversLicense(DriversLicense.Create(person.DriversLicense.Number,
+                    person.DriversLicense.State,
                     DateTimeRange.Create(
-                    personToUpdate.DriversLicense.Issued,
-                    personToUpdate.DriversLicense.Expiry).Value).Value);
+                    person.DriversLicense.Issued,
+                    person.DriversLicense.Expiry).Value).Value);
             }
-
-            personFromRepository.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
-            repository.UpdatePersonAsync(personFromRepository);
 
             await repository.SaveChangesAsync();
 
@@ -130,7 +119,7 @@ namespace CustomerVehicleManagement.Api.Persons
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            Person person = PersonHelper.CreateEntityFromWriteDto(personToAdd);
+            Person person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
 
             await repository.AddPersonAsync(person);
             await repository.SaveChangesAsync();

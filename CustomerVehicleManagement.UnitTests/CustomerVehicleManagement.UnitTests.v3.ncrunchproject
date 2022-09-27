@@ -1,9 +1,0 @@
-﻿<ProjectConfiguration>
-  <Settings>
-    <IgnoredTests>
-      <FixtureTestSelector>
-        <FixtureName>CustomerVehicleManagement.UnitTests.DatabaseTests.DatabaseShould</FixtureName>
-      </FixtureTestSelector>
-    </IgnoredTests>
-  </Settings>
-</ProjectConfiguration>

@@ -16,6 +16,6 @@ namespace CustomerVehicleManagement.Api.Manufacturers
         Task DeleteManufacturerAsync(string code);
         Task<bool> ManufacturerExistsAsync(string code);
         Task<bool> SaveChangesAsync();
-        void FixTrackingState();
+        Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> manufacturerIds);
     }
 }

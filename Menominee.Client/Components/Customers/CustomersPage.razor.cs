@@ -44,7 +44,7 @@ namespace Menominee.Client.Components.Customers
 
             CustomerToRead customerReadDto = await CustomerDataService.GetCustomer(Id);
 
-            Customer = CustomerHelper.CreateWriteFromReadDto(customerReadDto);
+            Customer = CustomerHelper.ConvertReadToWriteDto(customerReadDto);
 
             if (customerReadDto.EntityType == EntityType.Person)
                 Caption = $"Editing Customer: {customerReadDto.Person.FirstMiddleLast}";

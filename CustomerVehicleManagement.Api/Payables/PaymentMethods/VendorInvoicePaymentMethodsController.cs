@@ -1,10 +1,8 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
@@ -45,23 +43,21 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         // PUT: api/vendorinvoicepaymentmethods/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToWrite, long id)
+        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethod, long id)
         {
             var notFoundMessage = $"Could not find Vendor Invoice Payment Method to update with Id = {id}.";
 
             if (!await repository.PaymentMethodExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            var payMethod = repository.GetPaymentMethodEntityAsync(id).Result;
-            if (payMethod is null)
+            var paymentMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
+            if (paymentMethodFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            VendorInvoicePaymentMethodHelper.CopyWriteDtoToEntity(payMethodToWrite, payMethod);
+            paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
+                paymentMethod,
+                await repository.GetPaymentMethodNamesAsync());
 
-            payMethod.SetTrackingState(TrackingState.Modified);
-            repository.FixTrackingState();
-
-            repository.UpdatePaymentMethod(payMethod);
             await repository.SaveChangesAsync();
 
             return NoContent();
@@ -71,7 +67,9 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         [HttpPost]
         public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
-            var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(payMethodToAdd);
+            var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
+                payMethodToAdd,
+                await repository.GetPaymentMethodNamesAsync());
 
             await repository.AddPaymentMethodAsync(payMethod);
             await repository.SaveChangesAsync();

@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.CreditCards;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,19 +15,19 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
         public CreditCardRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddCreditCardAsync(CreditCard creditCard)
         {
-            Guard.ForNull(creditCard, "Credit Card");
+            if (creditCard is not null)
+            {
+                if (await CreditCardExistsAsync(creditCard.Id))
+                    throw new Exception("Credit Card already exists");
 
-            if (await CreditCardExistsAsync(creditCard.Id))
-                throw new Exception("Credit Card already exists");
-
-            await context.AddAsync(creditCard);
+                await context.AddAsync(creditCard);
+            }
         }
 
         public async Task<bool> CreditCardExistsAsync(long id)
@@ -38,29 +37,25 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
         public async Task DeleteCreditCardAsync(long id)
         {
-            var cc = await context.CreditCards
+            var creditCard = await context.CreditCards
                                   .AsNoTracking()
-                                  .FirstOrDefaultAsync(cc => cc.Id == id);
+                                  .FirstOrDefaultAsync(creditCard =>
+                                    creditCard.Id == id);
 
-            Guard.ForNull(cc, "Credit Card");
-
-            context.Remove(cc);
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
+            if (creditCard is not null)
+                context.Remove(creditCard);
         }
 
         public async Task<CreditCardToRead> GetCreditCardAsync(long id)
         {
-            var ccFromContext = await context.CreditCards
+            var creditCardFromContext = await context.CreditCards
                                              .AsNoTracking()
-                                             .FirstOrDefaultAsync(cc => cc.Id == id);
+                                             .FirstOrDefaultAsync(creditCard =>
+                                                creditCard.Id == id);
 
-            Guard.ForNull(ccFromContext, "Credit Card");
-
-            return CreditCardHelper.CreateCreditCard(ccFromContext);
+            return creditCardFromContext is not null
+                ? CreditCardHelper.CreateCreditCard(creditCardFromContext)
+                : null;
         }
 
         public async Task<CreditCard> GetCreditCardEntityAsync(long id)
@@ -85,20 +80,21 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
         public async Task<CreditCard> UpdateCreditCardAsync(CreditCard creditCard)
         {
-            Guard.ForNull(creditCard, "Credit Card");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(creditCard).State = EntityState.Modified;
-
-            try
+            if (creditCard is not null)
             {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await CreditCardExistsAsync(creditCard.Id))
-                    return null; // something that tells the controller to return NotFound();
-                throw;
+                // Tracking IS needed for commands for disconnected data collections
+                context.Entry(creditCard).State = EntityState.Modified;
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await CreditCardExistsAsync(creditCard.Id))
+                        return null; // something that tells the controller to return NotFound();
+                    throw;
+                }
             }
 
             return null;

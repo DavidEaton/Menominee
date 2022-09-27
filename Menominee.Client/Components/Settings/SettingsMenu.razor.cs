@@ -40,6 +40,7 @@ namespace Menominee.Client.Components.Settings
                 {
                     new MenuItem { Text="Shop Information", Url=$"{ModuleUrl}/shopinfo", Id=((int)SettingsMenuId.ShopInformation).ToString() },
                     new MenuItem { Text="Credit Cards", Url=$"{ModuleUrl}/creditcards", Id=((int)SettingsMenuId.CreditCards).ToString() },
+                    new MenuItem { Text="Sale Codes", Url=$"{ModuleUrl}/salecodes", Id=((int)SettingsMenuId.SaleCodes).ToString() },
                     new MenuItem { Text="Shop Supplies", Url=$"{ModuleUrl}/shopsupplies", Id=((int)SettingsMenuId.ShopSupplies).ToString() },
                     new MenuItem { Separator=true },
                     new MenuItem { Text="Ordering & Catalogs", Url=$"{ModuleUrl}/orderingcatalogs", Id=((int)SettingsMenuId.OrderingAndCatalogs).ToString() },

@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         #region ORM
 
-        // EF requires an empty constructor
+        // EF requires a parameterless constructor
         protected Vehicle() { }
 
         #endregion

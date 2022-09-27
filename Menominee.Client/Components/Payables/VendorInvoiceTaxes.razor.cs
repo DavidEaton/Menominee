@@ -4,28 +4,15 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Client.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Linq;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class VendorInvoiceTaxes : ComponentBase
     {
-        //[Inject]
-        //public HttpClient HttpClient { get; set; }
-
-        [Inject]
-        private NavigationManager navigationManager { get; set; }
-
-        //[Inject]
-        //private IVendorInvoiceTaxRepository vendorInvoiceTaxRepository { get; set; }
-
         [Parameter]
         public IList<VendorInvoiceTaxToWrite> Taxes { get; set; }
-        //public List<VendorInvoiceTaxToRead> Taxes { get; set; }
-        //public List<VendorInvoiceTaxToEdit> TaxesUpdate { get; set; }
-
-        //private SfGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
-        //private SfGrid<VendorInvoiceTaxToEdit> Grid { get; set; }
         public TelerikGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
 
         [CascadingParameter]
@@ -33,20 +20,10 @@ namespace Menominee.Client.Components.Payables
 
         private long SelectedId = 0;
 
-        protected override void OnParametersSet()
+        private void OnEdit(GridRowClickEventArgs args)
         {
-            if (Taxes != null)
-            {
-                foreach (var tax in Taxes)
-                {
-                    tax.TaxName = "State Tax";
-                }
-            }
-            base.OnParametersSet();
-        }
+            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
 
-        private void OnEdit()
-        {
             if (SelectedId == 0)
             {
                 var parameters = new ModalParameters();
@@ -54,38 +31,28 @@ namespace Menominee.Client.Components.Payables
                 ModalService.Show<ModalMessage>("Edit Tax", parameters);
                 return;
             }
+
+            // open dialog with FormMode == Edit
+
+            // TEMPORARILY Edit an existing tax TO TEST
+            var tax = Taxes.FirstOrDefault(tax => tax.Id == SelectedId);
+
+            tax.Amount = 3.6;
         }
 
         private void OnNew()
         {
-            //navigationManager.NavigateTo("/payables/returns/create/");
+            // open dialog with FormMode == Add
         }
 
         private void OnDelete()
         {
-            //navigationManager.NavigateTo("/payables/.../");
+            // display confirmation dialog, mark for deletion
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
         }
-
-        //protected override Task OnInitializedAsync()
-        //{
-        //    foreach (var tax in Taxes)
-        //    {
-        //        TaxesUpdate.Add(
-        //            new VendorInvoiceTaxToEdit
-        //            {
-        //                Amount = tax.Amount,
-        //                Id = tax.Id,
-        //                InvoiceId = tax.InvoiceId,
-        //                Order = tax.Order,
-        //                TaxId = tax.TaxId
-        //            });
-        //    }
-        //    return base.OnInitializedAsync();
-        //}
     }
 }

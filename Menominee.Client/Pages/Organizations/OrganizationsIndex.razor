@@ -15,24 +15,24 @@
         {
             <div class="pb-3">
                 <TelerikButton OnClick="Add"
-                               ThemeColor="primary"
-                               Icon="plus"
-                               title="Add New Organization">
+                       ThemeColor="primary"
+                       Icon="plus"
+                       title="Add New Organization">
                     Add Organization
                 </TelerikButton>
             </div>
 
             <OrganizationsGrid Organizations="Organizations"
-                               OnRowClicked="@EditAsync" />
+                       OnRowClicked="@EditAsync" />
         }
     }
 
     @if ((OrganizationFormMode == FormMode.Add || OrganizationFormMode == FormMode.Edit) && Organization != null)
     {
         <OrganizationContactableEditor Organization="Organization"
-                                       FormMode="OrganizationFormMode"
-                                       Save="EndAddEditAsync"
-                                       Close="SubmitHandlerAsync"/>
+                                   FormMode="OrganizationFormMode"
+                                   Save="SubmitHandlerAsync"
+                                   Close="SubmitHandlerAsync" />
     }
 </div>
 <style>

@@ -32,7 +32,7 @@ namespace Menominee.Client.Services.Payables.Invoices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -46,7 +46,7 @@ namespace Menominee.Client.Services.Payables.Invoices
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }
@@ -63,6 +63,7 @@ namespace Menominee.Client.Services.Payables.Invoices
 
             if (response.IsSuccessStatusCode)
             {
+                toastService.ShowSuccess($"Added vendor invoice.", "Added");
                 return await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(await response.Content.ReadAsStreamAsync(), options);
             }
 
@@ -81,7 +82,7 @@ namespace Menominee.Client.Services.Payables.Invoices
                 return;
             }
 
-            toastService.ShowError($"Invoice failed to update:  Id = {invoice.Id}", "Save Failed");
+            toastService.ShowError($"Invoice failed to update:  Id = {id}", "Save Failed");
         }
     }
 }

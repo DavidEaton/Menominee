@@ -43,29 +43,22 @@ namespace CustomerVehicleManagement.Api.CreditCards
 
         // api/creditcards/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite ccDto)
+        public async Task<IActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite creditCard)
         {
             if (!await repository.CreditCardExistsAsync(id))
-                return NotFound($"Could not find Credit Card to update: {ccDto.Name}");
+                return NotFound($"Could not find Credit Card to update: {creditCard.Name}");
 
             //1) Get domain entity from repository
-            var cc = repository.GetCreditCardEntityAsync(id).Result;
+            var creditCardFromRepository = await repository.GetCreditCardEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            cc.Name = ccDto.Name;
-            cc.FeeType = ccDto.FeeType;
-            cc.Fee = ccDto.Fee;
-            cc.IsAddedToDeposit = ccDto.IsAddedToDeposit;
+            creditCardFromRepository.Name = creditCard.Name;
+            creditCardFromRepository.FeeType = creditCard.FeeType;
+            creditCardFromRepository.Fee = creditCard.Fee;
+            creditCardFromRepository.IsAddedToDeposit = creditCard.IsAddedToDeposit;
             //cc.Processor = ccDto.Processor;
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            cc.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
-            await repository.UpdateCreditCardAsync(cc);
+            await repository.UpdateCreditCardAsync(creditCardFromRepository);
 
             await repository.SaveChangesAsync();
 

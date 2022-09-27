@@ -11,7 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("VendorInvoicePayment", "dbo");
 
-            builder.Ignore(payment => payment.TrackingState);
         }
     }
 }

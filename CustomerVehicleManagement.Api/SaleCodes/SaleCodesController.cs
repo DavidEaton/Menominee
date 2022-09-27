@@ -63,27 +63,22 @@ namespace CustomerVehicleManagement.Api.SaleCodes
 
         // api/salecodes/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite scDto)
+        public async Task<IActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite saleCode)
         {
-            var notFoundMessage = $"Could not find Sale Code to update: {scDto.Name}";
+            var notFoundMessage = $"Could not find Sale Code to update: {saleCode.Name}";
 
             if (!await repository.SaleCodeExistsAsync(id))
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var sc = repository.GetSaleCodeEntityAsync(id).Result;
+            var saleCodeFromRepository = await repository.GetSaleCodeEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            SaleCodeHelper.CopyWriteDtoToEntity(scDto, sc); 
-
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            sc.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
-            await repository.UpdateSaleCodeAsync(sc);
+            saleCodeFromRepository.SetName(saleCode.Name);
+            saleCodeFromRepository.SetCode(saleCode.Code);
+            saleCodeFromRepository.SetLaborRate(saleCode.LaborRate);
+            saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
+            //saleCodeFromRepository.SetShopSupplies(saleCode.ShopSupplies);
 
             await repository.SaveChangesAsync();
 
@@ -91,18 +86,13 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite scCreateDto)
+        public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite saleCodeToAdd)
         {
             // 1. Convert dto to domain entity
-            //var sc = new SaleCode()
-            //{
-            //    Code = scCreateDto.Code,
-            //    Name = scCreateDto.Name
-            //};
-            var sc = SaleCodeHelper.ConvertWriteDtoToEntity(scCreateDto);
+            var saleCode = SaleCodeHelper.ConvertWriteDtoToEntity(saleCodeToAdd);
 
             // 2. Add domain entity to repository
-            await repository.AddSaleCodeAsync(sc);
+            await repository.AddSaleCodeAsync(saleCode);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
@@ -111,9 +101,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
             return CreatedAtRoute("GetSaleCodeAsync",
                 new
                 {
-                    Id = sc.Id
+                    Id = saleCode.Id
                 },
-                SaleCodeHelper.ConvertEntityToReadDto(sc));
+                SaleCodeHelper.ConvertEntityToReadDto(saleCode));
         }
 
         [HttpDelete("{id:long}")]

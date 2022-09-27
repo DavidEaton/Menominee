@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Items;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -27,7 +28,7 @@ namespace Menominee.Client.Components.Payables
         public ISaleCodeDataService saleCodeDataService { get; set; }
 
         [Parameter]
-        public VendorInvoiceItemToWrite Item { get; set; }
+        public VendorInvoiceLineItemToWrite LineItem { get; set; }
 
         [Parameter]
         public bool DialogVisible { get; set; }
@@ -52,109 +53,57 @@ namespace Menominee.Client.Components.Payables
         private bool ItemSelectDialogVisible { get; set; } = false;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
         private FormMode formMode;
-        private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
-        //private IReadOnlyList<ProductCodeToReadInList> ProductCodes = new List<ProductCodeToReadInList>();
-        private IReadOnlyList<SaleCodeToReadInList> SaleCodes = null;
-        //private string SaleCode = string.Empty;
-        private long saleCodeId = 0;
-        private bool parametersSet = false;
-        private long manufacturerId = 0;
-        //private long productCodeId = 0;
+        private IReadOnlyList<ManufacturerToReadInList> Manufacturers;
+        private IList<InvoiceItemType> ItemTypes { get; set; } = new List<InvoiceItemType>();
+        private IReadOnlyList<SaleCodeToReadInList> SaleCodes { get; set; } = new List<SaleCodeToReadInList>();
 
+        private long saleCodeId = 0;
+        private long manufacturerId = 0;
         public string Title { get; set; }
-        
-        private List<InvoiceItemType> itemTypes { get; set; } = new List<InvoiceItemType>();
 
         protected override async Task OnInitializedAsync()
         {
             Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
                                                           .Where(mfr => mfr.Prefix?.Length > 0
+                                                          // TODO: Move where clause to api method
                                                                      && mfr.Code != StaticManufacturerCodes.Package)
                                                           .OrderBy(mfr => mfr.Prefix)
                                                           .ToList();
-            //Manufacturers.Insert(0, new ManufacturerToReadInList
-            //{
-            //    Id = 0,
-            //    Prefix = "*N/A*",
-            //    Name = "Non-Inventory Item"
-            //});
 
-            //manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
-            //ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
-            //ProductCodes.OrderBy(pc => pc.Code);
             SaleCodes = (await saleCodeDataService.GetAllSaleCodesAsync())
                                                           .OrderBy(saleCode => saleCode.Code)
                                                           .ToList();
 
             foreach (VendorInvoiceItemType itemType in Enum.GetValues(typeof(VendorInvoiceItemType)))
             {
-                itemTypes.Add(new InvoiceItemType { Text = EnumExtensions.GetDisplayName(itemType), Value = itemType });
+                ItemTypes.Add(new InvoiceItemType { Text = EnumExtensions.GetDisplayName(itemType), Value = itemType });
             }
 
             await base.OnInitializedAsync();
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
-            if (parametersSet)
-                return;
-            parametersSet = true;
+            if (LineItem?.Item?.Manufacturer is not null)
+                manufacturerId = LineItem.Item.Manufacturer.Id;
 
-            //if (Item?.MfrId .Manufacturer != null)
-            if (Item?.Manufacturer != null)
-            {
-                manufacturerId = Item.Manufacturer.Id;
-            }
-
-            if (Item?.SaleCodeId != 0)
-            {
-                saleCodeId = Item.SaleCodeId ?? 0;
-            }
-
-            //if (Item?.Part == null)
-            //{
-            //    Item.Part = new();
-            //    Item.ItemType = InventoryItemType.Part;
-
-            //    Title = "Add Part";
-            //}
-
-            await OnManufacturerChangeAsync();
+            if (LineItem is not null && LineItem.Item is not null && LineItem.Item.SaleCode is not null)
+                if (LineItem.Item.SaleCode.Id != 0)
+                    saleCodeId = LineItem.Item.SaleCode.Id;
         }
 
-        private async Task OnManufacturerChangeAsync()
+        private void OnManufacturerChange()
         {
-            if (manufacturerId > 0 && Item.Manufacturer?.Id != manufacturerId)
-            {
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
-                Item.ManufacturerId = manufacturerId;
-            }
-
-            //if (Item?.Manufacturer is not null)
-            //{
-            //    long savedProductCodeId = productCodeId;
-            //    ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
-            //    if (savedProductCodeId > 0 && Item.ProductCode?.Id == 0 && ProductCodes.Any(pc => pc.Id == savedProductCodeId) == true)
-            //        Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(savedProductCodeId));
-            //    productCodeId = savedProductCodeId;
-            //}
-            //else
-            //{
-            //    productCodeId = 0;
-            //    ProductCodes = new List<ProductCodeToReadInList>();
-            //    Item.ProductCode = new();
-            //}
-
-            //await OnProductCodeChangeAsync();
+            if (manufacturerId > 0 && LineItem?.Item?.Manufacturer?.Id != manufacturerId)
+                LineItem.Item.Manufacturer = ManufacturerHelper.ConvertReadInListToReadDto(
+                    Manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == manufacturerId));
         }
 
-        private async Task OnSaleCodeChangeAsync()
+        private void OnSaleCodeChange()
         {
-            if (saleCodeId > 0 && Item.SaleCode?.Id != saleCodeId)
-            {
-                Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(await saleCodeDataService.GetSaleCodeAsync(saleCodeId));
-                Item.SaleCodeId = saleCodeId;
-            }
+            if (saleCodeId > 0 && LineItem.Item.SaleCode?.Id != saleCodeId)
+                LineItem.Item.SaleCode = SaleCodeHelper.ConvertTorReadInListToReadDto(
+                    SaleCodes.FirstOrDefault(saleCode => saleCode.Id == saleCodeId));
         }
 
         private void SelectInventoryItem()
@@ -165,20 +114,19 @@ namespace Menominee.Client.Components.Payables
         private async Task AddItemAsync()
         {
             ItemSelectDialogVisible = false;
-            if (SelectedInventoryItem != null)
+
+            if (SelectedInventoryItem is not null)
             {
                 manufacturerId = SelectedInventoryItem.ManufacturerId;
-                var prodCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId);
+                var productCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId);
 
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
-                Item.ManufacturerId = manufacturerId;
-                if (prodCode?.SaleCode?.Code.Length > 0)
-                {
-                    Item.SaleCode = SaleCodeHelper.ConvertReadToWriteDto(prodCode.SaleCode);
-                    Item.SaleCodeId = prodCode.SaleCode.Id;
-                }
-                Item.PartNumber = SelectedInventoryItem.ItemNumber;
-                Item.Description = SelectedInventoryItem.Description;
+                LineItem.Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(manufacturerId);
+
+                if (productCode?.SaleCode?.Code.Length > 0)
+                    LineItem.Item.SaleCode = productCode.SaleCode;
+
+                LineItem.Item.PartNumber = SelectedInventoryItem.ItemNumber;
+                LineItem.Item.Description = SelectedInventoryItem.Description;
             }
         }
 

@@ -51,7 +51,7 @@ namespace Menominee.Client.Services.Manufacturers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -65,7 +65,7 @@ namespace Menominee.Client.Services.Manufacturers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }
@@ -78,7 +78,7 @@ namespace Menominee.Client.Services.Manufacturers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }

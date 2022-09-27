@@ -1,9 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
@@ -11,57 +7,75 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
     {
         public static ManufacturerToWrite ConvertReadToWriteDto(ManufacturerToRead manufacturer)
         {
-            if (manufacturer is null)
-                return new ManufacturerToWrite();
-
-            return new ManufacturerToWrite()
-            {
-                Id = manufacturer.Id,
-                Code = manufacturer.Code,
-                Prefix = manufacturer.Prefix,
-                Name = manufacturer.Name
-            };
+            return
+            manufacturer is null
+                ? null
+                : new ManufacturerToWrite()
+                {
+                    Id = manufacturer.Id,
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
         }
 
         public static Manufacturer ConvertWriteDtoToEntity(ManufacturerToWrite manufacturer)
         {
-            if (manufacturer is null)
-                return new Manufacturer();
-
-            return new()
-            {
-                Code = manufacturer.Code,
-                Prefix = manufacturer.Prefix,
-                Name = manufacturer.Name
-            };
+            return
+            manufacturer is null
+                ? null
+                : Manufacturer.Create(
+                    manufacturer.Name,
+                    manufacturer.Prefix,
+                    manufacturer.Code)
+                .Value;
         }
 
         public static ManufacturerToRead ConvertEntityToReadDto(Manufacturer manufacturer)
         {
-            if (manufacturer is null)
-                return null;
+            return
+            manufacturer is null
+                ? null
+                : new()
+                {
+                    Id = manufacturer.Id,
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
+        }
 
-            return new()
-            {
-                Id = manufacturer.Id,
+        public static ManufacturerToReadInList ConvertEntityToReadInListDto(Manufacturer manufacturer)
+        {
+            return
+            manufacturer is null
+                ? null
+                : new()
+                {
+                    Id = manufacturer.Id,
                 Code = manufacturer.Code,
                 Prefix = manufacturer.Prefix,
                 Name = manufacturer.Name
             };
         }
 
-        public static ManufacturerToReadInList ConvertEntityToReadInListDto(Manufacturer manufacturer)
+        public static ManufacturerToRead ConvertReadInListToReadDto(ManufacturerToReadInList manufacturer)
         {
-            if (manufacturer is null)
-                return null;
+            return
+            manufacturer is null
+                ? null
+                : new()
+                {
+                    Id = manufacturer.Id,
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
+        }
 
-            return new()
-            {
-                Id = manufacturer.Id,
-                Code = manufacturer.Code,
-                Prefix = manufacturer.Prefix,
-                Name = manufacturer.Name
-            };
+        internal static Manufacturer ConvertWriteToReadDto(ManufacturerToRead manufacturer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

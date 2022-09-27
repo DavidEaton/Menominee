@@ -51,7 +51,7 @@ namespace Menominee.Client.Services.ProductCodes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -65,25 +65,11 @@ namespace Menominee.Client.Services.ProductCodes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
         }
-
-        //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId, long saleCodeId)
-        //{
-        //    try
-        //    {
-        //        return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing/{mfrId}/{saleCodeId}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Message: {ex.Message}");
-        //    }
-
-        //    return null;
-        //}
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(long id)
         {
@@ -93,7 +79,7 @@ namespace Menominee.Client.Services.ProductCodes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }

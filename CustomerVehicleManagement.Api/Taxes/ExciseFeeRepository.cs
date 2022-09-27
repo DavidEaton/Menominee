@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,28 +15,29 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         public ExciseFeeRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddExciseFeeAsync(ExciseFee exciseFee)
         {
-            Guard.ForNull(exciseFee, "Excise Fee");
+            // TODO:
+            // The Id of a new ExciseFee will never == an existing
+            // Id because new domain objects don't get their Id
+            // value until context.SaveChanges.
+            //if (await ExciseFeeExistsAsync(exciseFee.Id))
+            //    throw new Exception("Excise Fee already exists");
 
-            if (await ExciseFeeExistsAsync(exciseFee.Id))
-                throw new Exception("Excise Fee already exists");
-
-            await context.AddAsync(exciseFee);
+            // TODO:
+            // Is this a good use of "Use discard '_'"?
+            // Is this a good use of exceptions?
+            _ = exciseFee is not null
+                ? await context.AddAsync(exciseFee)
+                : throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task DeleteExciseFeeAsync(long id)
+        public void DeleteExciseFee(ExciseFee exciseFee)
         {
-            var exciseFee = await context.ExciseFees
-                                         .FirstOrDefaultAsync(fee => fee.Id == id);
-
-            Guard.ForNull(exciseFee, "Excise Fee");
-
             context.Remove(exciseFee);
         }
 
@@ -46,20 +46,15 @@ namespace CustomerVehicleManagement.Api.Taxes
             return await context.ExciseFees.AnyAsync(fee => fee.Id == id);
         }
 
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
-
         public async Task<ExciseFeeToRead> GetExciseFeeAsync(long id)
         {
             var feeFromContext = await context.ExciseFees
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(fee => fee.Id == id);
 
-            Guard.ForNull(feeFromContext, "Excise Fee");
-
-            return ExciseFeeHelper.CreateExciseFee(feeFromContext);
+            return feeFromContext is not null
+                ? ExciseFeeHelper.ConvertEntityToReadDto(feeFromContext)
+                : null;
         }
 
         public async Task<ExciseFee> GetExciseFeeEntityAsync(long id)
@@ -72,34 +67,13 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<ExciseFee> exciseFees = await context.ExciseFees.ToListAsync();
 
             return exciseFees
-                .Select(fee => ExciseFeeHelper.CreateExciseFeeInList(fee))
+                .Select(fee => ExciseFeeHelper.ConvertEntityToReadInListDto(fee))
                 .ToList();
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<ExciseFee> UpdateExciseFeeAsync(ExciseFee exciseFee)
-        {
-            Guard.ForNull(exciseFee, "exciseFee");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(exciseFee).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ExciseFeeExistsAsync(exciseFee.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
-            }
-
-            return null;
+            await context.SaveChangesAsync();
         }
     }
 }

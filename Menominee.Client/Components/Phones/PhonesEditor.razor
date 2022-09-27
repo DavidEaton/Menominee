@@ -12,7 +12,7 @@
            title="Add phone">
         add Phone
     </label>
-    @if (((int)Phones?.Count()) > 0)
+    @if ((int)Phones?.Count() > 0)
     {
         <ContactableTemplate Items="Phones"
                              TItem="CustomerVehicleManagement.Shared.Models.Contactable.PhoneToWrite"
@@ -78,14 +78,14 @@
                                            ThemeColor="primary"
                                            ButtonType="ButtonType.Button"
                                            Class="dialog-button"
-                                           title="Save New Phone">
+                                           title="Save Phone">
                                 Ok
                             </TelerikButton>
-                            <TelerikButton OnClick="Cancel"
+                            <TelerikButton OnClick="Reset"
                                            ButtonType="ButtonType.Button"
                                            Icon="x"
                                            Class="dialog-button"
-                                           title="Cancel New Phone">
+                                           title="Cancel Phone">
                                 Cancel
                             </TelerikButton>
                             <TelerikButton OnClick="RemoveAsync"
@@ -102,15 +102,6 @@
         </EditForm>
 
     }
-    @*<div>
-        <TelerikButton OnClick="Add"
-                       Icon="plus"
-                       ButtonType="ButtonType.Button"
-                       Class="button-border-success"
-                       title="Add New Phone">
-            Add Phone
-        </TelerikButton>
-    </div>*@
 </div>
 <style>
     .k-label {

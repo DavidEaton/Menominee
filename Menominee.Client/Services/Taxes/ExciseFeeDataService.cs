@@ -23,7 +23,7 @@ namespace Menominee.Client.Services.Taxes
             this.toastService = toastService;
         }
 
-        public async Task<ExciseFeeToRead> AddExciseFeeAsync(ExciseFeeToWrite exciseFee)
+        public async Task<ExciseFeeToRead> AddExciseFeeAsync(ExciseFeeToUpdate exciseFee)
         {
             var options = new JsonSerializerOptions
             {
@@ -50,7 +50,7 @@ namespace Menominee.Client.Services.Taxes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
 
             return null;
@@ -64,12 +64,12 @@ namespace Menominee.Client.Services.Taxes
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Message: {ex.Message}");
+                // TODO: log exception
             }
             return null;
         }
 
-        public async Task UpdateExciseFeeAsync(ExciseFeeToWrite exciseFee, long id)
+        public async Task UpdateExciseFeeAsync(ExciseFeeToUpdate exciseFee, long id)
         {
             var content = new StringContent(JsonSerializer.Serialize(exciseFee), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);

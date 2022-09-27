@@ -1,6 +1,5 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public Customer(Person person, CustomerType customerType)
         {
-            Guard.ForNull(person, "person == null");
 
             Person = person;
             CustomerType = customerType;
@@ -27,7 +25,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public Customer(Organization organization, CustomerType customerType)
         {
-            Guard.ForNull(organization, "organization == null");
 
             Organization = organization;
             CustomerType = customerType;
@@ -46,7 +43,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddPhone(Phone phone)
         {
-            Guard.ForNull(phone, "phone");
 
             if (CustomerHasPhone(phone))
                 throw new InvalidOperationException("customer already has this phone.");
@@ -60,7 +56,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         private bool CustomerHasPhone(Phone phone)
         {
-            Guard.ForNull(phone, "phone");
 
             if (EntityType is EntityType.Person)
                 return Person.Phones.Any(x => x == phone);
@@ -73,7 +68,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddEmail(Email email)
         {
-            Guard.ForNull(email, "email");
 
             if (CustomerHasEmail(email))
                 throw new InvalidOperationException("customer already has this email.");
@@ -87,7 +81,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         private bool CustomerHasEmail(Email email)
         {
-            Guard.ForNull(email, "email");
 
             if (EntityType is EntityType.Person)
                 return Person.Emails.Any(x => x == email);
@@ -100,7 +93,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void AddVehicle(Vehicle vehicle)
         {
-            Guard.ForNull(vehicle, "vehicle");
 
             if (CustomerHasVehicle(vehicle))
                 throw new InvalidOperationException("customer already has this vehicle.");
@@ -110,7 +102,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void RemoveVehicle(Vehicle vehicle)
         {
-            Guard.ForNull(vehicle, "vehicle");
             Vehicles.Remove(vehicle);
         }
 
@@ -120,7 +111,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
         #region ORM
 
-        // EF requires an empty constructor
+        // EF requires a parameterless constructor
         protected Customer() { }
 
         #endregion

@@ -1,7 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
@@ -24,9 +21,9 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             }
         }
 
-    //public int QuantityOnHand { get; set; }
-    //public double Cost { get; set; }
-    //public double SuggestedPrice { get; set; }
-    //public double Labor { get; set; }
-}
+        //public int QuantityOnHand { get; set; }
+        //public double Cost { get; set; }
+        //public double SuggestedPrice { get; set; }
+        //public double Labor { get; set; }
+    }
 }

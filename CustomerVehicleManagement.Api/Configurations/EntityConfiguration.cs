@@ -9,7 +9,6 @@ namespace CustomerVehicleManagement.Api.Configurations
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Ignore(entity => entity.TrackingState);
         }
     }
 }

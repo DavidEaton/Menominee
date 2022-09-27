@@ -1,6 +1,6 @@
 ﻿using Menominee.Common;
 using Menominee.Common.Enums;
-using Menominee.Common.Utilities;
+using System;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
@@ -23,7 +23,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemPart part)
         {
-            Guard.ForNull(part, "part == null");
+            if (part is null)
+                throw new ArgumentOutOfRangeException(nameof(part), "part == null");
 
             Part = part;
             ItemType = InventoryItemType.Part;
@@ -31,7 +32,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemLabor labor)
         {
-            Guard.ForNull(labor, "labor == null");
+            if (labor is null)
+                throw new ArgumentOutOfRangeException(nameof(labor), "labor == null");
 
             Labor = labor;
             ItemType = InventoryItemType.Labor;
@@ -39,7 +41,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemTire tire)
         {
-            Guard.ForNull(tire, "tire == null");
+            if (tire is null)
+                throw new ArgumentOutOfRangeException(nameof(tire), "tire == null");
 
             Tire = tire;
             ItemType = InventoryItemType.Tire;
@@ -47,7 +50,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemPackage package)
         {
-            Guard.ForNull(package, "package == null");
+            if (package is null)
+                throw new ArgumentOutOfRangeException(nameof(package), "package == null");
 
             Package = package;
             ItemType = InventoryItemType.Package;
@@ -55,7 +59,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemInspection inspection)
         {
-            Guard.ForNull(inspection, "inspection == null");
+            if (inspection is null)
+                throw new ArgumentOutOfRangeException(nameof(inspection), "inspection == null");
 
             Inspection = inspection;
             ItemType = InventoryItemType.Inspection;
@@ -63,7 +68,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemDonation donation)
         {
-            Guard.ForNull(donation, "donation == null");
+            if (donation is null)
+                throw new ArgumentOutOfRangeException(nameof(donation), "donation == null");
 
             Donation = donation;
             ItemType = InventoryItemType.Donation;
@@ -71,7 +77,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemGiftCertificate giftCertificate)
         {
-            Guard.ForNull(giftCertificate, "giftCertificate == null");
+            if (giftCertificate is null)
+                throw new ArgumentOutOfRangeException(nameof(giftCertificate), "giftCertificate == null");
 
             GiftCertificate = giftCertificate;
             ItemType = InventoryItemType.GiftCertificate;
@@ -79,7 +86,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public InventoryItem(InventoryItemWarranty warranty)
         {
-            Guard.ForNull(warranty, "warranty == null");
+            if (warranty is null)
+                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty == null");
 
             Warranty = warranty;
             ItemType = InventoryItemType.Warranty;

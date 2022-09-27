@@ -26,7 +26,8 @@ namespace Menominee.Client.Components.Payables.Pages
                 Invoice = new();
                 Invoice.Date = DateTime.Today;
             }
-            else
+
+            if (Id != 0)
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
                 Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
@@ -37,42 +38,16 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Valid())
             {
-                //if (Invoice.LineItems != null)
-                //{
-                //    foreach (var item in Invoice.LineItems)
-                //    {
-                //        if (item.Id < 0)
-                //            item.Id = 0;
-                //    }
-                //}
-
-                //if (Invoice.Taxes != null)
-                //{
-                //    foreach (var tax in Invoice.Taxes)
-                //    {
-                //        if (tax.Id < 0)
-                //            tax.Id = 0;
-                //    }
-                //}
-
-                //if (Invoice.Payments != null)
-                //{
-                //    foreach (var payment in Invoice.Payments)
-                //    {
-                //        if (payment.Id < 0)
-                //            payment.Id = 0;
-                //    }
-                //}
-
                 if (Id == 0)
                 {
                     var invoice = await vendorInvoiceDataService.AddInvoice(Invoice);
                     Id = invoice.Id;
+                    EndEdit();
+                    return;
                 }
-                else
-                {
+
+                if (Id != 0)
                     await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
-                }
 
                 EndEdit();
             }
@@ -80,10 +55,12 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private bool Valid()
         {
-            if (Invoice.Vendor?.Id > 0 && Invoice.Date.HasValue)
-                return true;
+            // Child components will validate thier own data:
+            // VendorInvoiceItems
+            // VendorInvoicePayments
+            // VendorInvoiceTaxes
 
-            return false;
+            return Invoice?.Vendor is not null && Invoice.Date.HasValue;
         }
 
         private void Discard()

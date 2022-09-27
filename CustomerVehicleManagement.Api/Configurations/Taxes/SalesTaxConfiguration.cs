@@ -12,8 +12,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
             base.Configure(builder);
             builder.ToTable("SalesTax", "dbo");
 
-            builder.Ignore(st => st.TrackingState);
-
             builder.Property(st => st.Description)
                 .IsRequired();
             builder.Property(st => st.TaxType)
@@ -28,6 +26,17 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
                 .HasDefaultValue(0);
             builder.Property(st => st.LaborTaxRate)
                 .HasDefaultValue(0);
+
+            //builder.HasMany(salesTax => salesTax.ExciseFees)
+            //    .WithOne()
+            //    .IsRequired()
+            //    .HasForeignKey(exciseFee => exciseFee.Id)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            //builder.Metadata
+            //    .FindNavigation("ExciseFees")
+            //    .SetPropertyAccessMode(PropertyAccessMode.Field);
+
         }
     }
 }

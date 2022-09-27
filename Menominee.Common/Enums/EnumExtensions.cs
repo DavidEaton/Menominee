@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Menominee.Common.Enums
 {
@@ -12,17 +9,30 @@ namespace Menominee.Common.Enums
     {
         public static string GetDisplayName(this Enum enumValue)
         {
-            string displayName;
-            displayName = enumValue.GetType()
+            return enumValue?.GetType()
                 .GetMember(enumValue.ToString())
                 .FirstOrDefault()
-                .GetCustomAttribute<DisplayAttribute>()?
-                .GetName();
-            if (String.IsNullOrEmpty(displayName))
+                .GetCustomAttribute<DisplayAttribute>()
+                ?.GetName()
+                ??
+                enumValue.ToString();
+        }
+
+        public static T GetValueFromName<T>(this string name) where T : Enum
+        {
+            var type = typeof(T);
+
+            foreach (var field in type.GetFields())
             {
-                displayName = enumValue.ToString();
+                if (Attribute.GetCustomAttribute(field, typeof(DisplayAttribute)) is DisplayAttribute attribute)
+                    if (attribute.Name == name)
+                        return (T)field.GetValue(null);
+
+                if (field.Name == name)
+                    return (T)field.GetValue(null);
             }
-            return displayName;
+
+            throw new ArgumentOutOfRangeException(nameof(name));
         }
     }
 }

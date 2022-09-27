@@ -1,10 +1,8 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
@@ -17,69 +15,94 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 
             return new()
             {
-                Id = payMethod.Id,
                 Name = payMethod.Name,
                 IsActive = payMethod.IsActive,
                 IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
-                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
-                VendorId = payMethod.VendorId ?? null,
                 ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(payMethod.ReconcilingVendor)
             };
         }
 
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToWrite payMethod)
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToWrite paymentMethod, IList<string> paymentMethods)
         {
-            if (payMethod is null)
-                return null;
+            return paymentMethod is null
+                ? null
+                : VendorInvoicePaymentMethod.Create(
+                    paymentMethods,
+                    paymentMethod.Name,
+                    paymentMethod.IsActive,
+                    paymentMethod.IsOnAccountPaymentType,
+                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                ).Value;
+        }
 
-            return new()
-            {
-                Name = payMethod.Name,
-                IsActive = payMethod.IsActive,
-                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
-                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
-                VendorId = payMethod.VendorId ?? null
-            };
+        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IList<string> paymentMethodNames)
+        {
+            return paymentMethod is null
+                ? null
+                : VendorInvoicePaymentMethod.Create(
+                    paymentMethodNames,
+                    paymentMethod.Name,
+                    paymentMethod.IsActive,
+                    paymentMethod.IsOnAccountPaymentType,
+                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                ).Value;
         }
 
         public static VendorInvoicePaymentMethodToRead ConvertEntityToReadDto(VendorInvoicePaymentMethod payMethod)
         {
-            if (payMethod is null)
-                return null;
-
-            return new()
-            {
-                Id = payMethod.Id,
-                Name= payMethod.Name,
-                IsActive = payMethod.IsActive,
-                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
-                IsReconciledByAnotherVendor = payMethod.IsReconciledByAnotherVendor,
-                VendorId = payMethod.VendorId ?? null,
-                ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
-            };
-        }
-
-        public static void CopyWriteDtoToEntity(VendorInvoicePaymentMethodToWrite payMethodToUpdate, VendorInvoicePaymentMethod payMethod)
-        {
-            payMethod.Name = payMethodToUpdate.Name;
-            payMethod.IsActive = payMethodToUpdate.IsActive;
-            payMethod.IsOnAccountPaymentType = payMethodToUpdate.IsOnAccountPaymentType;
-            payMethod.IsReconciledByAnotherVendor = payMethodToUpdate.IsReconciledByAnotherVendor;
-            payMethod.VendorId = payMethodToUpdate.VendorId ?? null;
+            return payMethod is null
+                ? null
+                : new()
+                {
+                    Id = payMethod.Id,
+                    Name = payMethod.Name,
+                    IsActive = payMethod.IsActive,
+                    IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                    ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
+                };
         }
 
         public static VendorInvoicePaymentMethodToReadInList ConvertEntityToReadInListDto(VendorInvoicePaymentMethod payMethod)
         {
-            if (payMethod is null)
-                return null;
+            return payMethod is null
+                ? null
+                : new()
+                {
+                    Id = payMethod.Id,
+                    Name = payMethod.Name,
+                    IsActive = payMethod.IsActive,
+                    ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
+                };
+        }
 
-            return new()
-            {
-                Id = payMethod.Id,
-                Name = payMethod.Name,
-                IsActive = payMethod.IsActive,
-                ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
-            };
+        internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment, VendorInvoicePaymentMethodToRead method)
+        {
+            if (payment.PaymentMethod.Id == method.Id && payment is not null)
+                return
+                    new VendorInvoicePaymentMethodToRead()
+                    {
+                        Id = payment.PaymentMethod.Id,
+                        Name = method.Name,
+                        IsActive = method.IsActive,
+                        IsOnAccountPaymentType = method.IsOnAccountPaymentType,
+                        ReconcilingVendor = method.ReconcilingVendor
+                    };
+
+            throw new ArgumentException("Unable to ConvertWriteToReadDto");
+        }
+
+        public static VendorInvoicePaymentMethodToRead ConvertReadInListToReadDto(VendorInvoicePaymentMethodToReadInList paymentMethod)
+        {
+            return
+            paymentMethod is null
+                ? null
+                : new()
+                {
+                    Id = paymentMethod.Id,
+                    Name = paymentMethod.Name,
+                    IsActive = paymentMethod.IsActive,
+                    //ReconcilingVendor = paymentMethod.ReconcilingVendorName
+                };
         }
     }
 }

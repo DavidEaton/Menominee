@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItem", "dbo");
 
-            builder.Ignore(item => item.TrackingState);
-
             builder.Property(item => item.ItemNumber)
                 .IsRequired();
             builder.Property(item => item.Description)

@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Organizations;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,8 +13,7 @@ namespace CustomerVehicleManagement.Api.Organizations
     {
         private readonly ApplicationDbContext context;
 
-        public OrganizationRepository(
-            ApplicationDbContext context)
+        public OrganizationRepository(ApplicationDbContext context)
         {
             this.context = context ??
                 throw new ArgumentNullException(nameof(context));
@@ -23,7 +21,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task AddOrganizationAsync(Organization organization)
         {
-            if (organization != null)
+            if (organization is not null)
                 await context.AddAsync(organization);
         }
 
@@ -34,10 +32,19 @@ namespace CustomerVehicleManagement.Api.Organizations
 
         public async Task<OrganizationToRead> GetOrganizationAsync(long id)
         {
-            Organization organizationFromContext = await GetOrganizationEntityAsync(id);
+            var organizationFromContext = await context.Organizations
+                .Include(organization => organization.Phones)
+                .Include(organization => organization.Emails)
 
-            Guard.ForNull(organizationFromContext, "organizationFromContext");
-            return OrganizationHelper.CreateOrganization(organizationFromContext);
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Emails)
+                .Include(organization => organization.Contact)
+                    .ThenInclude(contact => contact.Phones)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(organization => organization.Id == id);
+
+            return OrganizationHelper.ConvertEntityToReadDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync()
@@ -58,7 +65,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext
                 .Select(organization =>
-                        OrganizationHelper.CreateOrganization(organization))
+                        OrganizationHelper.ConvertEntityToReadDto(organization))
                 .ToList();
         }
 
@@ -79,11 +86,11 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .AsSplitQuery()
                 .ToArrayAsync();
 
-            return organizationsFromContext.
-                Select(organization =>
-                       OrganizationHelper.CreateOrganizationInList(organization))
-               .OrderBy(organization => organization.Name)
-               .ToList();
+            return organizationsFromContext
+                .Select(organization =>
+                       OrganizationHelper.ConvertEntityToReadInListDto(organization))
+                .OrderBy(organization => organization.Name)
+                .ToList();
         }
 
         public async Task<Organization> GetOrganizationEntityAsync(long id)
@@ -108,11 +115,6 @@ namespace CustomerVehicleManagement.Api.Organizations
             return await organizationFromContext;
         }
 
-        public void UpdateOrganizationAsync(Organization organization)
-        {
-            // No code in this implementation.
-        }
-
         public async Task<bool> OrganizationExistsAsync(long id)
         {
             return await context.Organizations
@@ -123,11 +125,5 @@ namespace CustomerVehicleManagement.Api.Organizations
         {
             await context.SaveChangesAsync();
         }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
-        }
     }
 }
-

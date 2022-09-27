@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.Persons;
+using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
@@ -9,15 +10,30 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 {
     public class OrganizationHelper
     {
-        public static Organization CreateOrganization(OrganizationToWrite organization)
+        public static Organization CreateTestOrganization()
         {
+            var name = Utilities.LoremIpsum(10);
+            Organization organization = null;
+            var organizationNameOrError = OrganizationName.Create(name);
+
+            if (!organizationNameOrError.IsFailure)
+                organization = Organization.Create(organizationNameOrError.Value, "note").Value;
+
+            return organization;
+        }
+
+        public static Organization ConvertWriteDtoToEntity(OrganizationToWrite organization)
+        {
+            if (organization is null)
+                return null;
+
             Address organizationAddress = null;
             List<Phone> phones = new();
             List<Email> emails = new();
             OrganizationName organizationName;
 
             organizationName = OrganizationName.Create(organization.Name).Value;
-            if (organization?.Address != null)
+            if (organization?.Address is not null)
                 organizationAddress = Address.Create(
                     organization.Address.AddressLine,
                     organization.Address.City,
@@ -32,61 +48,49 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 foreach (var email in organization.Emails)
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
-            return new Organization(organizationName,
+            return Organization.Create(organizationName,
                                     organization.Note,
-                                    PersonHelper.CreateEntityFromWriteDto(organization?.Contact),
+                                    PersonHelper.ConvertWriteDtoToEntity(organization?.Contact),
                                     organizationAddress,
                                     emails,
-                                    phones);
+                                    phones).Value;
         }
 
-        public static OrganizationToWrite CreateOrganization(OrganizationToRead organization)
+        public static OrganizationToWrite CovertReadToWriteDto(OrganizationToRead organization)
         {
-            OrganizationToWrite Organization = new()
-            {
-                Name = organization.Name,
-                Note = organization?.Note,
-            };
-
-            if (organization?.Address is not null)
-                organization.Address = new()
+            return organization is not null
+                ? new OrganizationToWrite()
                 {
-                    AddressLine = organization.Address.AddressLine,
-                    City = organization.Address.City,
-                    State = organization.Address.State,
-                    PostalCode = organization.Address.PostalCode
-                };
-
-            if (organization?.Contact != null)
-                Organization.Contact = PersonHelper.CreateWriteDtoFromReadDto(organization?.Contact);
-
-            return Organization;
+                    Name = organization.Name,
+                    Note = organization?.Note,
+                    Address = AddressHelper.CovertReadToWriteDto(organization.Address),
+                    Phones = PhoneHelper.CovertReadToWriteDtos(organization.Phones),
+                    Emails = EmailHelper.CovertReadToWriteDto(organization.Emails),
+                    Contact = PersonHelper.ConvertReadToWriteDto(organization?.Contact)
+                }
+                : null;
         }
 
-        public static OrganizationToRead CreateOrganization(Organization organization)
+        public static OrganizationToRead ConvertEntityToReadDto(Organization organization)
         {
-            if (organization != null)
-            {
-                return new OrganizationToRead()
+            return organization is not null
+                ? new OrganizationToRead()
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
                     Address = AddressHelper.ConvertToDto(organization.Address),
                     Note = organization.Note,
-                    Phones = PhoneHelper.CreatePhones(organization.Phones),
-                    Emails = EmailHelper.CreateEmails(organization.Emails),
+                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(organization.Phones),
+                    Emails = EmailHelper.ConvertEntitiesToReadDtos(organization.Emails),
                     Contact = PersonHelper.ConvertToReadDto(organization.Contact)
-                };
-            }
-
-            return null;
+                }
+                : null;
         }
 
-        public static OrganizationToReadInList CreateOrganizationInList(Organization organization)
+        public static OrganizationToReadInList ConvertEntityToReadInListDto(Organization organization)
         {
-            if (organization != null)
-            {
-                return new OrganizationToReadInList
+            return organization is not null
+                ? new OrganizationToReadInList
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
@@ -102,10 +106,8 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                     PrimaryPhone = PhoneHelper.GetPrimaryPhone(organization),
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(organization),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(organization)
-                };
-            }
-
-            return null;
+                }
+                : null;
         }
     }
 }

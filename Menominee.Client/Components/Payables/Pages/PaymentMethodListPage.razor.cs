@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
@@ -85,8 +87,7 @@ namespace Menominee.Client.Components.Payables.Pages
                     Name = readDto.Name,
                     IsActive= readDto.IsActive,
                     IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
-                    IsReconciledByAnotherVendor = readDto.IsReconciledByAnotherVendor,
-                    VendorId = readDto.VendorId
+                    ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(readDto.ReconcilingVendor)
                 };
 
                 PayMethodFormMode = FormMode.Edit;

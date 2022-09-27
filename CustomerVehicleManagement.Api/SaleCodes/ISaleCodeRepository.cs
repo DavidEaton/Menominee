@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.SaleCodes
@@ -16,10 +14,9 @@ namespace CustomerVehicleManagement.Api.SaleCodes
         Task<SaleCodeToRead> GetSaleCodeAsync(long id);
         Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync();
         Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync();
-        Task<SaleCode> UpdateSaleCodeAsync(SaleCode saleCode);
         Task DeleteSaleCodeAsync(long id);
         Task<bool> SaleCodeExistsAsync(long id);
         Task<bool> SaveChangesAsync();
-        void FixTrackingState();
+        Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids);
     }
 }

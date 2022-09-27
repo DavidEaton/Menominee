@@ -58,7 +58,7 @@ namespace CustomerVehicleManagement.Api
                     {
                         options.Authority = Configuration[$"IDPSettings:BaseUrl"];// base-address of our identity server
                         options.Audience = Configuration["ApiName"]; // name of the API resource
-                        options.RequireHttpsMetadata = HostEnvironment.IsProduction() ? true : false;
+                        options.RequireHttpsMetadata = HostEnvironment.IsProduction();
                         options.TokenValidationParameters = new
                         TokenValidationParameters()
                         {

@@ -24,7 +24,7 @@ namespace Menominee.Client.Components.Settings.Pages
         public IReadOnlyList<ExciseFeeToReadInList> ExciseFees;
         public IEnumerable<ExciseFeeToReadInList> SelectedExciseFees { get; set; } = Enumerable.Empty<ExciseFeeToReadInList>();
         public ExciseFeeToReadInList SelectedExciseFee { get; set; }
-        public ExciseFeeToWrite ExciseFee { get; set; } = null;
+        public ExciseFeeToUpdate ExciseFee { get; set; } = null;
 
         public TelerikGrid<ExciseFeeToReadInList> Grid { get; set; }
 
@@ -82,7 +82,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 ExciseFeeToRead fee = await ExciseFeeDataService.GetExciseFeeAsync(Id);
                 if (fee != null)
                 {
-                    ExciseFee = ExciseFeeHelper.CreateExciseFee(fee);
+                    ExciseFee = ExciseFeeHelper.CovertReadToWriteDto(fee);
                 }
                 EditFormMode = FormMode.Edit;
                 //ExciseFees = null;

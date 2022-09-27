@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,19 +15,19 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         public SalesTaxRepository(ApplicationDbContext context)
         {
-            Guard.ForNull(context, "context");
-
-            this.context = context;
+            if (context is not null)
+                this.context = context;
         }
 
         public async Task AddSalesTaxAsync(SalesTax salesTax)
         {
-            Guard.ForNull(salesTax, "Sales Tax");
+            if (salesTax is not null)
+            {
+                if (await SalesTaxExistsAsync(salesTax.Id))
+                    throw new Exception("Sales Tax already exists");
 
-            if (await SalesTaxExistsAsync(salesTax.Id))
-                throw new Exception("Sales Tax already exists");
-
-            await context.AddAsync(salesTax);
+                await context.AddAsync(salesTax);
+            }
         }
 
         public async Task DeleteSalesTaxAsync(long id)
@@ -36,14 +35,8 @@ namespace CustomerVehicleManagement.Api.Taxes
             var salesTax = await context.SalesTaxes
                                          .FirstOrDefaultAsync(tax => tax.Id == id);
 
-            Guard.ForNull(salesTax, "Sales Tax");
-
-            context.Remove(salesTax);
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
+            if (salesTax is not null)
+                context.Remove(salesTax);
         }
 
         public async Task<SalesTaxToRead> GetSalesTaxAsync(long id)
@@ -52,9 +45,14 @@ namespace CustomerVehicleManagement.Api.Taxes
                                               .AsNoTracking()
                                               .FirstOrDefaultAsync(tax => tax.Id == id);
 
-            Guard.ForNull(taxFromContext, "Sales Tax");
+            return taxFromContext is not null
+                ? SalesTaxHelper.ConvertEntityToReadDto(taxFromContext)
+                : null;
+        }
 
-            return SalesTaxHelper.CreateSalesTax(taxFromContext);
+        public async Task<IReadOnlyList<SalesTax>> GetSalesTaxEntities()
+        {
+            return await context.SalesTaxes.ToListAsync();
         }
 
         public async Task<SalesTax> GetSalesTaxEntityAsync(long id)
@@ -67,7 +65,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();
 
             return salesTaxes
-                .Select(tax => SalesTaxHelper.CreateSalesTaxInList(tax))
+                .Select(tax => SalesTaxHelper.ConvertEntityToReadInListDto(tax))
                 .ToList();
         }
 
@@ -83,20 +81,21 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         public async Task<SalesTax> UpdateSalesTaxAsync(SalesTax salesTax)
         {
-            Guard.ForNull(salesTax, "Sales Tax");
-
-            // Tracking IS needed for commands for disconnected data collections
-            context.Entry(salesTax).State = EntityState.Modified;
-
-            try
+            if (salesTax is not null)
             {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await SalesTaxExistsAsync(salesTax.Id))
-                    return null;// something that tells the controller to return NotFound();
-                throw;
+                // Tracking IS needed for commands for disconnected data collections
+                context.Entry(salesTax).State = EntityState.Modified;
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await SalesTaxExistsAsync(salesTax.Id))
+                        return null;// something that tells the controller to return NotFound();
+                    throw;
+                }
             }
 
             return null;

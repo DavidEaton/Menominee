@@ -36,15 +36,8 @@
             </div>
 
             <div class="form-row">
-                <div class="form-group col col-12">
-                    <TelerikCheckBox Id="isReconciled" @bind-Value="PaymentMethod.IsReconciledByAnotherVendor" />
-                    <label class="m-label" for="isReconciled">Payments by this method are reconciled by a credit card type vendor</label>
-                </div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col-12">
-                    @if (Vendors != null && PaymentMethod.IsReconciledByAnotherVendor)
+                    @if (Vendors is not null && PaymentMethod.ReconcilingVendor is not null)
                     {
                         <label class="m-label" for="vendor">Reconciling Vendor</label>
                         <div class="m-form-control-group">

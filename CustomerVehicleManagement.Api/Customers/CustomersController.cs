@@ -91,8 +91,6 @@ namespace CustomerVehicleManagement.Api.Customers
             if (customerFromRepository.EntityType == EntityType.Person)
                 await personsController.UpdatePersonAsync(customerFromRepository.Person.Id, customerToWrite.Person);
 
-            customerRepository.FixTrackingState();
-
             await customerRepository.SaveChangesAsync();
 
             return NoContent();
@@ -105,10 +103,10 @@ namespace CustomerVehicleManagement.Api.Customers
             Customer customer = null;
 
             if (customerToAdd.EntityType == EntityType.Person)
-                customer = new(PersonHelper.CreateEntityFromWriteDto(customerToAdd.Person), customerToAdd.CustomerType);
+                customer = new(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType);
 
             if (customerToAdd.EntityType == EntityType.Organization)
-                customer = new(OrganizationHelper.CreateOrganization(customerToAdd.Organization), customerToAdd.CustomerType);
+                customer = new(OrganizationHelper.ConvertWriteDtoToEntity(customerToAdd.Organization), customerToAdd.CustomerType);
 
             await customerRepository.AddCustomerAsync(customer);
 

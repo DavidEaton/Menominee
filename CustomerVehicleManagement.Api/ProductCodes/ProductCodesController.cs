@@ -1,7 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -80,23 +78,16 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            var pc = repository.GetProductCodeEntityAsync(mfrCode, productCode).Result;
+            var productCodeFromRepository = await repository.GetProductCodeEntityAsync(mfrCode, productCode);
 
             // 2) Update domain entity with data in data transfer object(DTO)
             //pc.Manufacturer = pcDto.Manufacturer;
             //pc.Code = pcDto.Code;
             //pc.Name = pcDto.Name;
             //pc.SaleCode = pcDto.SaleCode;
-            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, pc);
+            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, productCodeFromRepository);
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            pc.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
-            await repository.UpdateProductCodeAsync(pc);
+            await repository.UpdateProductCodeAsync(productCodeFromRepository);
 
             await repository.SaveChangesAsync();
 

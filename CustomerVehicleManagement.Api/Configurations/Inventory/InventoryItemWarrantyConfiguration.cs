@@ -13,7 +13,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
                 base.Configure(builder);
                 builder.ToTable("InventoryItemWarranty", "dbo");
 
-                builder.Ignore(item => item.TrackingState);
             }
         }
     }

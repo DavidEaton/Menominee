@@ -11,8 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.CreditCards
             base.Configure(builder);
             builder.ToTable("CreditCard", "dbo");
 
-            builder.Ignore(cc => cc.TrackingState);
-
             builder.Property(cc => cc.Name)
                 .IsRequired();
         }

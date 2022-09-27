@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
@@ -6,43 +7,55 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
     {
         public static Vendor ConvertWriteDtoToEntity(VendorToWrite vendor)
         {
-            if (vendor is null)
-                return null;
+            return vendor is null
+                ? null
+                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+        }
 
-            return new()
-            {
-                Name = vendor.Name,
-                VendorCode = vendor.VendorCode.ToUpper(),
-                IsActive = vendor.IsActive
-            };
+        public static Vendor ConvertWriteDtoToEntity(VendorToRead vendor)
+        {
+            return vendor is null
+                ? null
+                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
         }
 
         public static VendorToWrite ConvertReadToWriteDto(VendorToRead vendor)
         {
-            if (vendor is null)
-                return null;
-
-            return new()
-            {
-                Id = vendor.Id,
-                Name = vendor.Name,
-                VendorCode = vendor.VendorCode,
-                IsActive = vendor.IsActive
-            };
+            return vendor is null
+                ? null
+                : new()
+                {
+                    Id = vendor.Id,
+                    Name = vendor.Name,
+                    VendorCode = vendor.VendorCode,
+                    IsActive = vendor.IsActive
+                };
         }
 
         public static VendorToRead ConvertEntityToReadDto(Vendor vendor)
         {
-            if (vendor is null)
-                return null;
+            return vendor is null
+                ? null
+                : new()
+                {
+                    Id = vendor.Id,
+                    Name = vendor.Name,
+                    VendorCode = vendor.VendorCode,
+                    IsActive = vendor.IsActive
+                };
+        }
 
-            return new()
-            {
-                Id = vendor.Id,
-                Name = vendor.Name,
-                VendorCode = vendor.VendorCode,
-                IsActive = vendor.IsActive
-            };
+        public static VendorToReadInList ConvertReadToReadInListDto(VendorToRead vendor)
+        {
+            return vendor is null
+                ? null
+                : new()
+                {
+                    Id = vendor.Id,
+                    Name = vendor.Name,
+                    VendorCode = vendor.VendorCode,
+                    IsActive = vendor.IsActive
+                };
         }
     }
 }

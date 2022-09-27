@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using System;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Shared
@@ -23,12 +22,10 @@ namespace Menominee.Client.Shared
         {
             if (MainLayout != null)
             {
-                //Console.WriteLine(MainLayout.DrawerExpanded ? "(min-width: 900px)" : "(min-width: 770px)");
                 return MainLayout.DrawerExpanded ? "(min-width: 900px)" : "(min-width: 770px)";
             }
             else
             {
-                //Console.WriteLine("MainLayout null");
                 return "";
             }
         }
@@ -36,7 +33,6 @@ namespace Menominee.Client.Shared
         public void MediaQueryChange(bool matchesMediaQuery)
         {
             displayIsLarge = matchesMediaQuery;
-            //Console.WriteLine(matchesMediaQuery);
         }
 
         private async Task BeginSignOut(MouseEventArgs args)

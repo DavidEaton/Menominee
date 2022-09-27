@@ -53,29 +53,14 @@ namespace CustomerVehicleManagement.Api.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            //if (UserContext != null) // Unit tests do not yet inject UserContext
-            //    Connection = GetTenantConnection();
+            // TODO: remove pollution of production code with test concerns:
+            if (UserContext != null) // Unit tests do not yet inject UserContext
+                Connection = GetTenantConnection();
 
-            //if (!options.IsConfigured) // Unit tests will configure context with test provider
-            //{
-            //    if (Environment?.EnvironmentName != "Production")
-            //    {
-            //        options.UseLoggerFactory(CreateLoggerFactory());
-            //        options.EnableSensitiveDataLogging(true);
-            //    }
-
-            //    options.UseSqlServer(Connection);
-            //}
+            if (!options.IsConfigured) // Unit tests will configure context with test provider
+                options.UseSqlServer(Connection);
 
             base.OnConfiguring(options);
-
-        }
-
-        private static ILoggerFactory CreateLoggerFactory()
-        {
-            return LoggerFactory.Create(builder => builder
-                .AddFilter((category, level) => category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
-                .AddConsole());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -96,10 +81,10 @@ namespace CustomerVehicleManagement.Api.Data
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoiceConfiguration());
-            modelBuilder.ApplyConfiguration(new VendorInvoiceItemConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceLineItemConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentConfiguration());
-            modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
             modelBuilder.ApplyConfiguration(new VendorInvoicePaymentMethodConfiguration());
+            modelBuilder.ApplyConfiguration(new VendorInvoiceTaxConfiguration());
 
             // Repair Orders
             modelBuilder.ApplyConfiguration(new RepairOrderConfiguration());
@@ -141,7 +126,6 @@ namespace CustomerVehicleManagement.Api.Data
             // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
             modelBuilder.ApplyConfiguration(new SalesTaxConfiguration());
-            modelBuilder.ApplyConfiguration(new SalesTaxTaxableExciseFeeConfiguration());
 
             // Credit Cards
             modelBuilder.ApplyConfiguration(new CreditCardConfiguration());
@@ -216,7 +200,7 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<VendorInvoice> VendorInvoices { get; set; }
-        public DbSet<VendorInvoiceItem> VendorInvoiceItems { get; set; }
+        public DbSet<VendorInvoiceLineItem> VendorInvoiceLineItems { get; set; }
         public DbSet<VendorInvoicePayment> VendorInvoicePayments { get; set; }
         public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }
         public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }
@@ -263,8 +247,6 @@ namespace CustomerVehicleManagement.Api.Data
         // Taxes/Fees
         public DbSet<ExciseFee> ExciseFees { get; set; }
         public DbSet<SalesTax> SalesTaxes { get; set; }
-        public DbSet<SalesTaxTaxableExciseFee> SalesTaxTaxableExciseFees { get; set; }
-
         #endregion
     }
 

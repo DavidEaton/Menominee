@@ -6,7 +6,7 @@ namespace CustomerVehicleManagement.Shared.Models.DriversLicenses
     {
         public static DriversLicenseToRead ConvertToReadDto(DriversLicense driversLicense)
         {
-            if (driversLicense != null)
+            if (driversLicense is not null)
             {
                 var driversLicenseReadDto = new DriversLicenseToRead
                 {

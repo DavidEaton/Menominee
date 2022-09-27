@@ -41,27 +41,19 @@ namespace CustomerVehicleManagement.Api.Taxes
 
         // api/excisefees/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite feeDto)
+        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToUpdate exciseFee)
         {
             if (!await repository.ExciseFeeExistsAsync(id))
-                return NotFound($"Could not find Excise Fee to update: {feeDto.Description}");
+                return NotFound($"Could not find Excise Fee to update: {exciseFee.Description}");
 
             //1) Get domain entity from repository
-            var ef = repository.GetExciseFeeEntityAsync(id).Result;
+            var exciseFeeFromRepository = await repository.GetExciseFeeEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            ef.Description = feeDto.Description;
-            ef.FeeType = feeDto.FeeType;
-            ef.Amount = feeDto.Amount;
 
-            // Update the objects ObjectState and sych the EF Change Tracker
-            // 3) Set entity's TrackingState to Modified
-            ef.SetTrackingState(TrackingState.Modified);
-
-            // 4) FixTrackingState: moves entity state tracking into the context
-            repository.FixTrackingState();
-
-            await repository.UpdateExciseFeeAsync(ef);
+            exciseFeeFromRepository.SetDescription(exciseFee.Description);
+            exciseFeeFromRepository.SetFeeType(exciseFee.FeeType);
+            exciseFeeFromRepository.SetAmount(exciseFee.Amount);
 
             await repository.SaveChangesAsync();
 
@@ -69,41 +61,34 @@ namespace CustomerVehicleManagement.Api.Taxes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToWrite efDto)
+        public async Task<ActionResult<ExciseFeeToRead>> AddExciseFeeAsync(ExciseFeeToAdd exciseFeeToAdd)
         {
             // 1. Convert dto to domain entity
-            var ef = new ExciseFee()
-            {
-                Description = efDto.Description,
-                FeeType = efDto.FeeType,
-                Amount = efDto.Amount
-            };
+            var exciseFee = ExciseFeeHelper.ConvertAddDtoToEntity(exciseFeeToAdd);
 
             // 2. Add domain entity to repository
-            await repository.AddExciseFeeAsync(ef);
+            await repository.AddExciseFeeAsync(exciseFee);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             // 4. Return new fee from database to consumer after save
             return CreatedAtRoute("GetExciseFeeAsync",
-                new
-                {
-                    Id = ef.Id
-                },
-                ExciseFeeHelper.CreateExciseFee(ef));
+                new { exciseFee.Id },
+                ExciseFeeHelper.ConvertEntityToReadDto(exciseFee));
         }
 
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteExciseFeeAsync(long id)
         {
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
+            // Yes if cascade deelets ==  true
+            var exciseFeeFromRepository = await repository.GetExciseFeeEntityAsync(id);
 
-            var efFromRepository = await repository.GetExciseFeeAsync(id);
-            if (efFromRepository == null)
+            if (exciseFeeFromRepository is null)
                 return NotFound($"Could not find Excise Fee in the database to delete with Id: {id}.");
 
-            await repository.DeleteExciseFeeAsync(id);
+            repository.DeleteExciseFee(exciseFeeFromRepository);
 
             await repository.SaveChangesAsync();
 
