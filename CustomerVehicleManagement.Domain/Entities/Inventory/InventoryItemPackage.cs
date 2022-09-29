@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPackage : Entity
     {
-        public long InventoryItem { get; private set; }
+        public InventoryItem InventoryItem { get; private set; }
         public double BasePartsAmount { get; private set; }
         public double BaseLaborAmount { get; private set; }
         public string Script { get; private set; }

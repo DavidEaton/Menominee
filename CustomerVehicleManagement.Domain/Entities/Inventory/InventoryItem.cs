@@ -1,11 +1,16 @@
-﻿using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using System;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItem : Entity
     {
+        public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly double InvalidValue = 0;
+        public static readonly string InvalidValueMessage = $"Value cannot be zero.";
+
         public Manufacturer Manufacturer { get; private set; }
         public string ItemNumber { get; private set; }
         public string Description { get; private set; }
@@ -17,9 +22,46 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemTire Tire { get; private set; }
         public InventoryItemPackage Package { get; private set; }
         public InventoryItemInspection Inspection { get; private set; }
-        public InventoryItemDonation Donation { get; private set; }
-        public InventoryItemGiftCertificate GiftCertificate { get; private set; }
         public InventoryItemWarranty Warranty { get; private set; }
+
+        private InventoryItem(Manufacturer manufacturer, string itemNumber, string description, ProductCode productCode, InventoryItemType itemType, InventoryItemPart part, InventoryItemLabor labor, InventoryItemTire tire, InventoryItemPackage package, InventoryItemInspection inspection, InventoryItemWarranty warranty)
+        {
+            if (manufacturer is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+
+            Manufacturer = manufacturer;
+            ItemNumber = itemNumber;
+            Description = description;
+            ProductCode = productCode;
+            ItemType = itemType;
+            Part = part;
+            Labor = labor;
+            Tire = tire;
+            Package = package;
+            Inspection = inspection;
+            Warranty = warranty;
+        }
+
+        public static Result<InventoryItem> Create(
+            Manufacturer manufacturer,
+            string itemNumber,
+            string description,
+            ProductCode productCode,
+            InventoryItemType itemType,
+            InventoryItemPart part,
+            InventoryItemLabor labor,
+            InventoryItemTire tire,
+            InventoryItemPackage package,
+            InventoryItemInspection inspection,
+            InventoryItemWarranty warranty)
+        {
+            if (manufacturer is null)
+                return Result.Failure<InventoryItem>(RequiredMessage);
+
+
+            return Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
+        }
 
         public InventoryItem(InventoryItemPart part)
         {
@@ -64,24 +106,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             Inspection = inspection;
             ItemType = InventoryItemType.Inspection;
-        }
-
-        public InventoryItem(InventoryItemDonation donation)
-        {
-            if (donation is null)
-                throw new ArgumentOutOfRangeException(nameof(donation), "donation == null");
-
-            Donation = donation;
-            ItemType = InventoryItemType.Donation;
-        }
-
-        public InventoryItem(InventoryItemGiftCertificate giftCertificate)
-        {
-            if (giftCertificate is null)
-                throw new ArgumentOutOfRangeException(nameof(giftCertificate), "giftCertificate == null");
-
-            GiftCertificate = giftCertificate;
-            ItemType = InventoryItemType.GiftCertificate;
         }
 
         public InventoryItem(InventoryItemWarranty warranty)
