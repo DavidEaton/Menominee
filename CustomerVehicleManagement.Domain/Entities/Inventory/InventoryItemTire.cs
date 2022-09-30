@@ -9,16 +9,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
     public class InventoryItemTire : InstallablePart
     {
-        public static readonly int MinimumLength = 0;
         public static readonly int MaximumTypeLength = 2;
         public static readonly string InvalidTypeLengthMessage = $"Type must be between {MinimumLength} and {MaximumTypeLength}.";
         public static readonly int MaximumSpeedRatingLength = 1;
         public static readonly int MaximumPrecisionWidth = 2;
         public static readonly string InvalidSpeedRatingLengthMessage = $"Type must be between {MinimumLength} and {MaximumSpeedRatingLength}.";
-        public static readonly int MinimumValue = 0;
-        public static readonly int MaximumValue = 99999;
         public static readonly int MaximumLoadIndex = 999;
-        public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
         public static readonly string InvalidLoadIndexMessage = $"Please limit Load Index to three characters, greater than {MinimumValue}.";
         public string Type { get; private set; }
         public double Width { get; private set; }
