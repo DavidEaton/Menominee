@@ -42,7 +42,7 @@ namespace Menominee.Common.ValueObjects
             if (string.IsNullOrWhiteSpace(addressLine))
                 throw new ArgumentOutOfRangeException(AddressRequiredMessage);
 
-            addressLine = (addressLine ?? "").Trim();
+            addressLine = (addressLine ?? string.Empty).Trim();
 
             if (addressLine.Length < AddressMinimumLength)
                 throw new ArgumentOutOfRangeException(AddressMinimumLengthMessage);
@@ -53,7 +53,7 @@ namespace Menominee.Common.ValueObjects
             if (string.IsNullOrWhiteSpace(city))
                 throw new ArgumentOutOfRangeException(CityRequiredMessage);
 
-            city = (city ?? "").Trim();
+            city = (city ?? string.Empty).Trim();
 
             if (city.Length < CityMinimumLength)
                 throw new ArgumentOutOfRangeException(CityMinimumLengthMessage);
@@ -96,9 +96,9 @@ namespace Menominee.Common.ValueObjects
             if (string.IsNullOrWhiteSpace(postalCode))
                 return Result.Failure<Address>(PostalCodeRequiredMessage);
 
-            addressLine = (addressLine ?? "").Trim();
-            city = (city ?? "").Trim();
-            postalCode = (postalCode ?? "").Trim();
+            addressLine = (addressLine ?? string.Empty).Trim();
+            city = (city ?? string.Empty).Trim();
+            postalCode = (postalCode ?? string.Empty).Trim();
 
             if (addressLine.Length < AddressMinimumLength)
                 return Result.Failure<Address>(AddressMinimumLengthMessage);

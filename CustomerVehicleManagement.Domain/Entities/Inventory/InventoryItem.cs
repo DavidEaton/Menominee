@@ -7,16 +7,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItem : Entity
     {
+        public static readonly int MinimumLength = 1;
+        public static readonly int MaximumLength = 255;
+        public static readonly string InvalidMessage = $"Item Number, Description must be between {MinimumLength} and {MaximumLength} character(s) in length.";
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly double InvalidValue = 0;
-        public static readonly string InvalidValueMessage = $"Value cannot be zero.";
 
         public Manufacturer Manufacturer { get; private set; }
         public string ItemNumber { get; private set; }
         public string Description { get; private set; }
         public ProductCode ProductCode { get; private set; }
         public InventoryItemType ItemType { get; private set; }
-
         public InventoryItemPart Part { get; private set; }
         public InventoryItemLabor Labor { get; private set; }
         public InventoryItemTire Tire { get; private set; }
@@ -26,9 +26,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItem(Manufacturer manufacturer, string itemNumber, string description, ProductCode productCode, InventoryItemType itemType, InventoryItemPart part, InventoryItemLabor labor, InventoryItemTire tire, InventoryItemPackage package, InventoryItemInspection inspection, InventoryItemWarranty warranty)
         {
-            if (manufacturer is null)
+            if (manufacturer is null || productCode is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
+            itemNumber = (itemNumber ?? string.Empty).Trim();
+            description = (description ?? string.Empty).Trim();
+
+            if (itemNumber.Length < MinimumLength || itemNumber.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException($"{InvalidMessage} You entered {itemNumber.Length} character(s).");
+
+            if (description.Length < MinimumLength || description.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException($"{InvalidMessage} You entered {description.Length} character(s).");
+
+            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
 
             Manufacturer = manufacturer;
             ItemNumber = itemNumber;
@@ -56,9 +67,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             InventoryItemInspection inspection,
             InventoryItemWarranty warranty)
         {
-            if (manufacturer is null)
+            if (manufacturer is null || productCode is null)
                 return Result.Failure<InventoryItem>(RequiredMessage);
 
+            itemNumber = (itemNumber ?? string.Empty).Trim();
+            description = (description ?? string.Empty).Trim();
+
+            if (itemNumber.Length < MinimumLength || itemNumber.Length > MaximumLength)
+                return Result.Failure<InventoryItem>($"{InvalidMessage} You entered {itemNumber.Length} character(s).");
+
+            if (description.Length < MinimumLength || description.Length > MaximumLength)
+                return Result.Failure<InventoryItem>($"{InvalidMessage} You entered {description.Length} character(s).");
+
+            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+                return Result.Failure<InventoryItem>(RequiredMessage);
 
             return Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
         }

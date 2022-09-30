@@ -9,6 +9,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Contactable
     {
+        public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int NoteMaximumLength = 10000;
         public static readonly string NoteMaximumLengthMessage = $"Note cannot be over {NoteMaximumLength} characters in length.";
 
@@ -45,7 +46,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             DriversLicense driversLicense = null)
         {
             if (name is null)
-                return Result.Failure<Person>("Invalid Name");
+                return Result.Failure<Person>(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(Gender), gender))
                 return Result.Failure<Person>("Invalid Gender");
@@ -60,7 +61,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void SetName(PersonName name)
         {
             if (name is null)
-                throw new ArgumentOutOfRangeException(nameof(name), "PersonName");
+                throw new ArgumentOutOfRangeException(nameof(name), RequiredMessage);
 
             Name = name;
         }

@@ -1,18 +1,72 @@
-﻿using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Extensions;
+using System;
 using System.Collections.Generic;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPackage : Entity
     {
+        public static readonly int ScriptMaximumLength = 10000;
+        public static readonly string ScriptMaximumLengthMessage = $"Script cannot be over {ScriptMaximumLength} characters in length.";
+        public static readonly string RequiredMessage = "Please include all required items.";
+        public static readonly int MinimumValue = 0;
+        public static readonly int MaximumValue = 99999;
+
         public InventoryItem InventoryItem { get; private set; }
         public double BasePartsAmount { get; private set; }
         public double BaseLaborAmount { get; private set; }
         public string Script { get; private set; }
-        public bool IsDiscountable { get; private set; }
-        public virtual List<InventoryItemPackageItem> Items { get; private set; } = new List<InventoryItemPackageItem>();
-        public virtual List<InventoryItemPackagePlaceholder> Placeholders { get; private set; } = new List<InventoryItemPackagePlaceholder>();
-        
+        public bool IsDiscountable { get; private set; } = false;
+        public List<InventoryItemPackageItem> Items { get; private set; } = new List<InventoryItemPackageItem>();
+        public List<InventoryItemPackagePlaceholder> Placeholders { get; private set; } = new List<InventoryItemPackagePlaceholder>();
+
+        private InventoryItemPackage(InventoryItem inventoryItem, double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        {
+            if (inventoryItem is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (basePartsAmount < MinimumValue ||
+                baseLaborAmount < MinimumValue ||
+                basePartsAmount > MaximumValue ||
+                baseLaborAmount > MaximumValue)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
+
+            if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
+                throw new ArgumentOutOfRangeException(ScriptMaximumLengthMessage);
+
+            InventoryItem = inventoryItem;
+            BasePartsAmount = basePartsAmount;
+            BaseLaborAmount = baseLaborAmount;
+            Script = script;
+            IsDiscountable = isDiscountable;
+            Items = items ?? new List<InventoryItemPackageItem>();
+            Placeholders = placeholders ?? new List<InventoryItemPackagePlaceholder>();
+        }
+
+        public static Result<InventoryItemPackage> Create(InventoryItem inventoryItem, double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        {
+            if (inventoryItem is null)
+                return Result.Failure<InventoryItemPackage>(RequiredMessage);
+
+            if (basePartsAmount < MinimumValue ||
+                baseLaborAmount < MinimumValue ||
+                basePartsAmount > MaximumValue ||
+                baseLaborAmount > MaximumValue)
+                return Result.Failure<InventoryItemPackage>(RequiredMessage);
+
+            script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
+
+            if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
+                return Result.Failure<InventoryItemPackage>(ScriptMaximumLengthMessage);
+
+            return Result.Success(new InventoryItemPackage(inventoryItem, basePartsAmount, baseLaborAmount, script, isDiscountable, items, placeholders));
+        }
+
+
         public void AddItem(InventoryItemPackageItem item)
         {
             Items.Add(item);
