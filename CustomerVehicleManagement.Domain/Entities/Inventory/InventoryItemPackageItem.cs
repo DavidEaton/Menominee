@@ -11,33 +11,33 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string MinimumValueMessage = $"Value must be > {MinimumValue}.";
 
         public InventoryItemPackage InventoryItemPackage { get; private set; }
-        public int Order { get; private set; }
+        public int DisplayOrder { get; private set; }
         public InventoryItem Item { get; private set; }
         public InventoryItemPackageDetails InventoryItemPackageDetails { get; private set; }
 
-        private InventoryItemPackageItem(InventoryItemPackage package, int order, InventoryItem item, InventoryItemPackageDetails details)
+        private InventoryItemPackageItem(InventoryItemPackage package, int displayOrder, InventoryItem item, InventoryItemPackageDetails details)
         {
             if (package is null || item is null || details is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage); 
 
-            if (order < MinimumValue)
+            if (displayOrder < MinimumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
             InventoryItemPackage = package;
-            Order = order;
+            DisplayOrder = displayOrder;
             Item = item;
             InventoryItemPackageDetails = details;
         }
 
-        public static Result<InventoryItemPackageItem> Create(InventoryItemPackage package, int order, InventoryItem item, InventoryItemPackageDetails details)
+        public static Result<InventoryItemPackageItem> Create(InventoryItemPackage package, int displayOrder, InventoryItem item, InventoryItemPackageDetails details)
         {
             if (package is null || item is null || details is null)
                 return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
 
-            if (order < MinimumValue)
+            if (displayOrder < MinimumValue)
                 return Result.Failure<InventoryItemPackageItem>(MinimumValueMessage);
 
-            return Result.Success(new InventoryItemPackageItem(package, order, item, details));
+            return Result.Success(new InventoryItemPackageItem(package, displayOrder, item, details));
         }
 
         #region ORM

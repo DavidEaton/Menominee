@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSharpFunctionalExtensions;
+using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -21,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public double Cost { get; private set; }
         public double Core { get; private set; }
         public double Retail { get; private set; }
-        public TechAmount TechAmount { get; set; }
+        public TechAmount TechAmount { get; private set; }
         public string LineCode { get; private set; }
         public string SubLineCode { get; private set; }
         public bool Fractional { get; private set; }
@@ -61,6 +62,72 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             LineCode = lineCode;
             SubLineCode = subLineCode;
             Fractional = fractional;
+        }
+
+        public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
+        {
+            if (inventoryItem is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            return Result.Success(InventoryItem = inventoryItem);
+        }
+
+        public Result<double> SetList(double list)
+        {
+            if (list < MinimumValue || list > MaximumValue)
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+
+            return Result.Success(List = list);
+        }
+
+        public Result<double> SetCost(double cost)
+        {
+            if (cost < MinimumValue || cost > MaximumValue)
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+
+            return Result.Success(Cost = cost);
+        }
+
+        public Result<double> SetCore(double core)
+        {
+            if (core < MinimumValue || core > MaximumValue)
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+
+            return Result.Success(Core = core);
+        }
+
+        public Result<double> SetRetail(double retail)
+        {
+            if (retail < MinimumValue || retail > MaximumValue)
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+
+            return Result.Success(Retail = retail);
+        }
+
+        public Result<TechAmount> SetTechAmount(TechAmount techAmount)
+        {
+            return Result.Success(TechAmount = techAmount);
+        }
+
+        public Result<string> SetLineCode(string lineCode)
+        {
+            if (lineCode.Length < MinimumLength || lineCode.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
+            return Result.Success(LineCode = lineCode);
+        }
+
+        public Result<string> SetSubLineCode(string subLineCode)
+        {
+            if (subLineCode.Length < MinimumLength || subLineCode.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
+            return Result.Success(SubLineCode = subLineCode);
+        }
+
+        public Result<bool> SetFractional(bool fractional)
+        {
+            return Result.Success(Fractional = fractional);
         }
 
         #region ORM

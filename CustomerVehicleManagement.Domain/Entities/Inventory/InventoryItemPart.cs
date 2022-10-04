@@ -4,7 +4,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPart : InstallablePart
     {
-
         private InventoryItemPart(InventoryItem item, double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
             : base(item, list, cost, core, retail, techAmount, lineCode, subLineCode, fractional)
         { }

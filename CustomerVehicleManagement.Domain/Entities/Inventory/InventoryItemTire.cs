@@ -23,8 +23,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public int LoadIndex { get; private set; }
         public string SpeedRating { get; private set; }
 
-        private InventoryItemTire(string type, double width, double aspectRatio, double diameter, int loadIndex,
-            string speedRating)
+        protected InventoryItemTire(string type, double width, double aspectRatio, double diameter, int loadIndex,
+            string speedRating, InventoryItem inventoryItem, double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
+             :base (inventoryItem, list, cost, core, retail, techAmount, lineCode, subLineCode, fractional)
         {
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();
@@ -51,7 +52,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             SpeedRating = speedRating;
         }
 
-        public static Result<InventoryItemTire> Create(string type, double width, double aspectRatio, double diameter, int loadIndex, string speedRating)
+        public static Result<InventoryItemTire> Create(string type, double width, double aspectRatio, double diameter, int loadIndex, string speedRating, InventoryItem inventoryItem, double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
         {
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();
@@ -68,7 +69,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (loadIndex > MaximumLoadIndex || loadIndex < MinimumValue)
                 return Result.Failure<InventoryItemTire>(InvalidLoadIndexMessage);
 
-            return Result.Success(new InventoryItemTire(type, width, aspectRatio, diameter, loadIndex, speedRating));
+            return Result.Success(new InventoryItemTire(type, width, aspectRatio, diameter, loadIndex, speedRating, inventoryItem, list, cost, core, retail, techAmount, lineCode, subLineCode, fractional));
         }
 
         #region ORM

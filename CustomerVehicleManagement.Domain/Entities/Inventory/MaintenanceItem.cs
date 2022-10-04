@@ -7,10 +7,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     public class MaintenanceItem : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public long DisplayOrder { get; private set; }
+        public int DisplayOrder { get; private set; }
         public InventoryItem Item { get; private set; }
 
-        private MaintenanceItem(long displayOrder, InventoryItem inventoryItem)
+        private MaintenanceItem(int displayOrder, InventoryItem inventoryItem)
         {
             if (inventoryItem is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             Item = inventoryItem;
         }
 
-        public static Result<MaintenanceItem> Create(long displayOrder, InventoryItem inventoryItem)
+        public static Result<MaintenanceItem> Create(int displayOrder, InventoryItem inventoryItem)
         {
             if (inventoryItem is null)
                 return Result.Failure<MaintenanceItem>(RequiredMessage);
@@ -27,7 +27,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new MaintenanceItem(displayOrder, inventoryItem));
         }
 
+        public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
+        {
+            if (inventoryItem is null)
+                return Result.Failure<InventoryItem>(RequiredMessage);
 
+            return Result.Success(Item = inventoryItem);
+        }
+
+        public Result<int> SetDisplayOrder(int displayOrder)
+        {
+            return Result.Success(DisplayOrder = displayOrder);
+        }
 
         #region ORM
 

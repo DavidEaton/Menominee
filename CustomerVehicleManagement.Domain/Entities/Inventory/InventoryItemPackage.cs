@@ -13,8 +13,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly int MinimumValue = 0;
         public static readonly int MaximumValue = 99999;
-
-        public InventoryItem InventoryItem { get; private set; }
         public double BasePartsAmount { get; private set; }
         public double BaseLaborAmount { get; private set; }
         public string Script { get; private set; }
@@ -22,11 +20,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public List<InventoryItemPackageItem> Items { get; private set; } = new List<InventoryItemPackageItem>();
         public List<InventoryItemPackagePlaceholder> Placeholders { get; private set; } = new List<InventoryItemPackagePlaceholder>();
 
-        private InventoryItemPackage(InventoryItem inventoryItem, double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        private InventoryItemPackage(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
         {
-            if (inventoryItem is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             if (basePartsAmount < MinimumValue ||
                 baseLaborAmount < MinimumValue ||
                 basePartsAmount > MaximumValue ||
@@ -38,7 +33,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
                 throw new ArgumentOutOfRangeException(ScriptMaximumLengthMessage);
 
-            InventoryItem = inventoryItem;
             BasePartsAmount = basePartsAmount;
             BaseLaborAmount = baseLaborAmount;
             Script = script;
@@ -47,11 +41,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             Placeholders = placeholders ?? new List<InventoryItemPackagePlaceholder>();
         }
 
-        public static Result<InventoryItemPackage> Create(InventoryItem inventoryItem, double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        public static Result<InventoryItemPackage> Create(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
         {
-            if (inventoryItem is null)
-                return Result.Failure<InventoryItemPackage>(RequiredMessage);
-
             if (basePartsAmount < MinimumValue ||
                 baseLaborAmount < MinimumValue ||
                 basePartsAmount > MaximumValue ||
@@ -63,7 +54,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
                 return Result.Failure<InventoryItemPackage>(ScriptMaximumLengthMessage);
 
-            return Result.Success(new InventoryItemPackage(inventoryItem, basePartsAmount, baseLaborAmount, script, isDiscountable, items, placeholders));
+            return Result.Success(new InventoryItemPackage(basePartsAmount, baseLaborAmount, script, isDiscountable, items, placeholders));
         }
 
 

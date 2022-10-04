@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             new InventoryPackageItemToRead()
                             {
                                 Id = item.Id,
-                                Order = item.Order,
+                                Order = item.DisplayOrder,
                                 Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item),
                                 Quantity = item.Quantity,
                                 PartAmountIsAdditional = item.PartAmountIsAdditional,
@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             new InventoryPackagePlaceholderToRead()
                             {
                                 Id = placeholder.Id,
-                                Order = placeholder.Order,
+                                Order = placeholder.DisplayOrder,
                                 Description = placeholder.Description,
                                 ItemType = placeholder.ItemType,
                                 Quantity = placeholder.Quantity,

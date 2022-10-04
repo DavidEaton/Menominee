@@ -15,10 +15,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemPackage InventoryItemPackage { get; private set; }
         public PackagePlaceholderItemType ItemType { get; private set; }
         public string Description { get; private set; }
-        public int Order { get; private set; }
+        public int DisplayOrder { get; private set; }
         public InventoryItemPackageDetails InventoryItemPackageDetails { get; private set; }
 
-        private InventoryItemPackagePlaceholder(InventoryItemPackage package, PackagePlaceholderItemType type, string description, int order, InventoryItemPackageDetails details)
+        private InventoryItemPackagePlaceholder(InventoryItemPackage package, PackagePlaceholderItemType type, string description, int displayOrder, InventoryItemPackageDetails details)
         {
             if (package is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -29,11 +29,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             InventoryItemPackage = package;
             ItemType = type;
             Description = description;
-            Order = order;
+            DisplayOrder = displayOrder;
             InventoryItemPackageDetails = details;
         }
 
-        public static Result<InventoryItemPackagePlaceholder> Create(InventoryItemPackage package, PackagePlaceholderItemType type, string description, int order, InventoryItemPackageDetails details)
+        public static Result<InventoryItemPackagePlaceholder> Create(InventoryItemPackage package, PackagePlaceholderItemType type, string description, int displayOrder, InventoryItemPackageDetails details)
         {
             if (package is null)
                 return Result.Failure<InventoryItemPackagePlaceholder>(RequiredMessage);
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (description.Length < MinimumLength || description.Length > MaximumLength)
                 return Result.Failure<InventoryItemPackagePlaceholder>($"{InvalidMessage} You entered {description.Length} character(s).");
 
-            return Result.Success(new InventoryItemPackagePlaceholder(package, type, description, order, details));
+            return Result.Success(new InventoryItemPackagePlaceholder(package, type, description, displayOrder, details));
         }
 
         #region ORM

@@ -82,61 +82,89 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
                 return Result.Failure<InventoryItem>(RequiredMessage);
 
+
+
+
+
             return Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
         }
 
-        public InventoryItem(InventoryItemPart part)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
+        {
+            if (manufacturer is null)
+                return Result.Failure<Manufacturer>(RequiredMessage);
+
+            return Result.Success(Manufacturer = manufacturer);
+        }
+
+        public void ClearManufacturer() => Manufacturer = null;
+
+        private void SetItemType(InventoryItemType itemType)
+        {
+            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+                throw new ArgumentOutOfRangeException(nameof(itemType), "itemType is null");
+
+            ItemType = itemType;
+        }
+
+        public Result<InventoryItemPart> SetPart(InventoryItemPart part)
         {
             if (part is null)
-                throw new ArgumentOutOfRangeException(nameof(part), "part == null");
+                return Result.Failure<InventoryItemPart>(RequiredMessage);
 
-            Part = part;
-            ItemType = InventoryItemType.Part;
+            SetItemType(InventoryItemType.Part);
+
+            return Result.Success(Part = part);
         }
 
-        public InventoryItem(InventoryItemLabor labor)
+        public Result<InventoryItemLabor> SetLabor(InventoryItemLabor labor)
         {
             if (labor is null)
-                throw new ArgumentOutOfRangeException(nameof(labor), "labor == null");
+                return Result.Failure<InventoryItemLabor>(RequiredMessage);
 
-            Labor = labor;
-            ItemType = InventoryItemType.Labor;
+            SetItemType(InventoryItemType.Part);
+
+            return Result.Success(Labor = labor);
         }
 
-        public InventoryItem(InventoryItemTire tire)
+        public Result<InventoryItemTire> SetTire(InventoryItemTire tire)
         {
             if (tire is null)
-                throw new ArgumentOutOfRangeException(nameof(tire), "tire == null");
+                return Result.Failure<InventoryItemTire>(RequiredMessage);
 
-            Tire = tire;
-            ItemType = InventoryItemType.Tire;
+            SetItemType(InventoryItemType.Tire);
+
+            return Result.Success(Tire = tire);
         }
 
-        public InventoryItem(InventoryItemPackage package)
+        public Result<InventoryItemPackage> SetPackage(InventoryItemPackage package)
         {
             if (package is null)
-                throw new ArgumentOutOfRangeException(nameof(package), "package == null");
+                return Result.Failure<InventoryItemPackage>(RequiredMessage);
 
-            Package = package;
-            ItemType = InventoryItemType.Package;
+            SetItemType(InventoryItemType.Package);
+
+            return Result.Success(Package = package);
         }
 
-        public InventoryItem(InventoryItemInspection inspection)
+        public Result<InventoryItemInspection> SetInspection(InventoryItemInspection inspection)
         {
             if (inspection is null)
-                throw new ArgumentOutOfRangeException(nameof(inspection), "inspection == null");
+                return Result.Failure<InventoryItemInspection>(RequiredMessage);
 
-            Inspection = inspection;
-            ItemType = InventoryItemType.Inspection;
+            SetItemType(InventoryItemType.Inspection);
+
+            return Result.Success(Inspection = inspection);
         }
 
-        public InventoryItem(InventoryItemWarranty warranty)
+        public Result<InventoryItemWarranty> SetWarranty(InventoryItemWarranty warranty)
         {
             if (warranty is null)
-                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty == null");
+                return Result.Failure<InventoryItemWarranty>(RequiredMessage);
 
-            Warranty = warranty;
-            ItemType = InventoryItemType.Warranty;
+            SetItemType(InventoryItemType.Warranty);
+
+            return Result.Success(Warranty = warranty);
         }
 
         #region ORM
