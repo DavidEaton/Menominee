@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<MaintenanceItemToRead> GetItemAsync(long id)
         {
             var itemFromContext = await context.MaintenanceItems
-                                               .Include(item => item.Item)
+                                               .Include(item => item.InventoryItem)
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<MaintenanceItem> GetItemEntityAsync(long id)
         {
             return await context.MaintenanceItems
-                                .Include(item => item.Item)
+                                .Include(item => item.InventoryItem)
                                 .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<IReadOnlyList<MaintenanceItemToReadInList>> GetItemsInListAsync()
         {
             var itemsFromContext = await context.MaintenanceItems
-                                                .Include(item => item.Item)
+                                                .Include(item => item.InventoryItem)
                                                 .AsSplitQuery()
                                                 .OrderBy(item => item.DisplayOrder)
                                                 .AsNoTracking()

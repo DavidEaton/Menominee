@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public int DisplayOrder { get; private set; }
-        public InventoryItem Item { get; private set; }
+        public InventoryItem InventoryItem { get; private set; }
 
         private MaintenanceItem(int displayOrder, InventoryItem inventoryItem)
         {
@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             DisplayOrder = displayOrder;
-            Item = inventoryItem;
+            InventoryItem = inventoryItem;
         }
 
         public static Result<MaintenanceItem> Create(int displayOrder, InventoryItem inventoryItem)
@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (inventoryItem is null)
                 return Result.Failure<InventoryItem>(RequiredMessage);
 
-            return Result.Success(Item = inventoryItem);
+            return Result.Success(InventoryItem = inventoryItem);
         }
 
         public Result<int> SetDisplayOrder(int displayOrder)

@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             {
                                 Id = item.Id,
                                 Order = item.DisplayOrder,
-                                Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item),
+                                Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem),
                                 Quantity = item.Quantity,
                                 PartAmountIsAdditional = item.PartAmountIsAdditional,
                                 LaborAmountIsAdditional = item.LaborAmountIsAdditional,

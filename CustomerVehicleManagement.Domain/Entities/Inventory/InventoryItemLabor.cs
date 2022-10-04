@@ -30,6 +30,31 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new InventoryItemLabor(inventoryItem, laborAmount, techAmount));
         }
 
+        public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
+        {
+            if (inventoryItem is null)
+                return Result.Failure<InventoryItem>(RequiredMessage);
+
+            return Result.Success(InventoryItem = inventoryItem);
+        }
+
+        public Result<LaborAmount> SetLaborAmount(LaborAmount laborAmount)
+        {
+            if (laborAmount is null)
+                return Result.Failure<LaborAmount>(RequiredMessage);
+
+            return Result.Success(LaborAmount = laborAmount);
+        }
+
+        public Result<TechAmount> SetTechAmount(TechAmount techAmount)
+        {
+            if (techAmount is null)
+                return Result.Failure<TechAmount>(RequiredMessage);
+
+            return Result.Success(TechAmount = techAmount);
+        }
+
+
         #region ORM
 
         // EF requires a parameterless constructor

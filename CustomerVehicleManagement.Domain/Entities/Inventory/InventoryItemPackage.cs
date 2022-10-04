@@ -13,6 +13,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string RequiredMessage = "Please include all required items.";
         public static readonly int MinimumValue = 0;
         public static readonly int MaximumValue = 99999;
+        public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
+
         public double BasePartsAmount { get; private set; }
         public double BaseLaborAmount { get; private set; }
         public string Script { get; private set; }
@@ -26,7 +28,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 baseLaborAmount < MinimumValue ||
                 basePartsAmount > MaximumValue ||
                 baseLaborAmount > MaximumValue)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                throw new ArgumentOutOfRangeException(InvalidValueMessage);
 
             script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
 
@@ -47,7 +49,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 baseLaborAmount < MinimumValue ||
                 basePartsAmount > MaximumValue ||
                 baseLaborAmount > MaximumValue)
-                return Result.Failure<InventoryItemPackage>(RequiredMessage);
+                return Result.Failure<InventoryItemPackage>(InvalidValueMessage);
 
             script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
 
@@ -57,45 +59,111 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new InventoryItemPackage(basePartsAmount, baseLaborAmount, script, isDiscountable, items, placeholders));
         }
 
-
-        public void AddItem(InventoryItemPackageItem item)
+        public Result<double> SetBasePartsAmount(double basePartsAmount)
         {
-            Items.Add(item);
+            if (basePartsAmount < MinimumValue || basePartsAmount > MaximumValue)
+                return Result.Failure<double>(InvalidValueMessage);
+
+            return Result.Success(BasePartsAmount = basePartsAmount);
         }
 
-        public void RemoveItem(InventoryItemPackageItem item)
+        public Result<double> SetBaseLaborAmount(double baseLaborAmount)
         {
-            Items.Remove(item);
+            if (baseLaborAmount < MinimumValue || baseLaborAmount > MaximumValue)
+                return Result.Failure<double>(InvalidValueMessage);
+
+            return Result.Success(BaseLaborAmount = baseLaborAmount);
         }
 
-        public void SetItems(IList<InventoryItemPackageItem> items)
+        public Result<string> SetScript(string script)
         {
-            if (items.Count > 0)
+            script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
+
+            if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
+                throw new ArgumentOutOfRangeException(ScriptMaximumLengthMessage);
+
+            return Result.Success(Script = script);
+
+        }
+
+        public Result<bool> SetIsDiscountable(bool isDiscountable)
+        {
+            return Result.Success(IsDiscountable = isDiscountable);
+        }
+
+        public Result AddItem(InventoryItemPackageItem item)
+        {
+            if (item is null)
+                return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
+
+            try
             {
-                Items.Clear();
-                foreach (var item in items)
-                    AddItem(item);
+                Items.Add(item);
             }
-        }
-
-        public void AddPlaceholder(InventoryItemPackagePlaceholder placeholder)
-        {
-            Placeholders.Add(placeholder);
-        }
-
-        public void RemovePlaceholder(InventoryItemPackagePlaceholder placeholder)
-        {
-            Placeholders.Remove(placeholder);
-        }
-
-        public void SetPlaceholders(IList<InventoryItemPackagePlaceholder> placeholders)
-        {
-            if (placeholders.Count > 0)
+            catch (Exception ex)
             {
-                placeholders.Clear();
-                foreach (var placeholder in placeholders)
-                    AddPlaceholder(placeholder);
+                return Result.Failure<InventoryItemPackageItem>($"Unable to add item: {ex.Message}");
+                // Log exception details
+                throw;
             }
+
+            return Result.Success();
+        }
+
+        public Result RemoveItem(InventoryItemPackageItem item)
+        {
+            if (item is null)
+                return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
+
+            try
+            {
+                Items.Remove(item);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure<InventoryItemPackageItem>($"Unable to remove item: {ex.Message}");
+                // Log exception details
+                throw;
+            }
+
+            return Result.Success();
+        }
+
+        public Result AddPlaceholder(InventoryItemPackagePlaceholder placeholder)
+        {
+            if (placeholder is null)
+                return Result.Failure<InventoryItemPackagePlaceholder>(RequiredMessage);
+
+            try
+            {
+                Placeholders.Add(placeholder);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to add placeholder: {ex.Message}");
+                // Log exception details
+                throw;
+            }
+
+            return Result.Success();
+        }
+
+        public Result RemovePlaceholder(InventoryItemPackagePlaceholder placeholder)
+        {
+            if (placeholder is null)
+                return Result.Failure<InventoryItemPackagePlaceholder>(RequiredMessage);
+            try
+            {
+                Placeholders.Remove(placeholder);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to remove placeholder: {ex.Message}");
+                // Log exception details
+                throw;
+            }
+
+            return Result.Success();
         }
 
         #region ORM

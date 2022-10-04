@@ -56,9 +56,9 @@ namespace CustomerVehicleManagement.Api.Inventory
             MaintenanceItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
 
             item.SetTrackingState(TrackingState.Modified);
-            item.Item.SetTrackingState(TrackingState.Unchanged);
-            item.Item.Manufacturer?.SetTrackingState(TrackingState.Unchanged);
-            item.Item.ProductCode?.SetTrackingState(TrackingState.Unchanged);
+            item.InventoryItem.SetTrackingState(TrackingState.Unchanged);
+            item.InventoryItem.Manufacturer?.SetTrackingState(TrackingState.Unchanged);
+            item.InventoryItem.ProductCode?.SetTrackingState(TrackingState.Unchanged);
             itemRepository.FixTrackingState();
 
             if (await itemRepository.SaveChangesAsync())

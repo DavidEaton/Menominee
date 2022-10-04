@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPackageItem", "dbo");
 
-            builder.HasOne(i => i.Item)
+            builder.HasOne(i => i.InventoryItem)
                    .WithMany()
                    .HasForeignKey(i => i.InventoryItemId)
                    .OnDelete(DeleteBehavior.Restrict)

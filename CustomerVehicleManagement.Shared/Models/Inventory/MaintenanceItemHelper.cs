@@ -14,9 +14,9 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 Id = item.Id,
                 DisplayOrder = item.DisplayOrder,
                 //Item = InventoryItemHelper.ConvertEntityToReadInListDto(item.Item)
-                InventoryItemId = item.Item.Id,
-                ItemNumber = item.Item.ItemNumber,
-                Description = item.Item.Description
+                InventoryItemId = item.InventoryItem.Id,
+                ItemNumber = item.InventoryItem.ItemNumber,
+                Description = item.InventoryItem.Description
             };
         }
 
@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             {
                 Id = item.Id,
                 DisplayOrder = item.DisplayOrder,
-                Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item)
+                Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem)
             };
         }
 
