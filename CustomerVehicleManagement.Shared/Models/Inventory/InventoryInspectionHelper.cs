@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 TechPayType = inspection.TechPayType,
                 TechPayAmount = inspection.TechPayAmount,
                 SkillLevel = inspection.SkillLevel,
-                Type = inspection.Type
+                Type = inspection.InspectionType
             };
         }
 
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 TechPayType = inspection.TechPayType,
                 TechPayAmount = inspection.TechPayAmount,
                 SkillLevel = inspection.SkillLevel,
-                Type = inspection.Type
+                Type = inspection.InspectionType
             };
         }
     }

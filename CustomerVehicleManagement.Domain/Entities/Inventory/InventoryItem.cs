@@ -82,9 +82,29 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
                 return Result.Failure<InventoryItem>(RequiredMessage);
 
+            if (itemType == InventoryItemType.Part)
+                if (part is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
 
+            if (itemType == InventoryItemType.Labor)
+                if (labor is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
 
+            if (itemType == InventoryItemType.Tire)
+                if (tire is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
 
+            if (itemType == InventoryItemType.Inspection)
+                if (inspection is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
+
+            if (itemType == InventoryItemType.Part)
+                if (part is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
+
+            if (itemType == InventoryItemType.Warranty)
+                if (warranty is null)
+                    return Result.Failure<InventoryItem>(RequiredMessage);
 
             return Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
         }
@@ -99,6 +119,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public void ClearManufacturer() => Manufacturer = null;
 
+        // TODO: Clear all other InventoryItem{Type}s when calling SetItemType?
         private void SetItemType(InventoryItemType itemType)
         {
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
