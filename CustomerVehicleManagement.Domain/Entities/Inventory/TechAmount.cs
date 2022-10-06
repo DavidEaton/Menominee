@@ -12,6 +12,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         private TechAmount(ItemLaborType payType, double amount, SkillLevel skillLevel)
             : base(payType, amount)
         {
+            if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
+                throw new ArgumentOutOfRangeException(RequiredMessage); 
+
             SkillLevel = skillLevel;
         }
 

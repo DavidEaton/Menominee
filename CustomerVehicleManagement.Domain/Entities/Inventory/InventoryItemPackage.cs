@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
 
             if (!string.IsNullOrWhiteSpace(script) && script.Length > ScriptMaximumLength)
-                throw new ArgumentOutOfRangeException(ScriptMaximumLengthMessage);
+                return Result.Failure<string>(ScriptMaximumLengthMessage);
 
             return Result.Success(Script = script);
 

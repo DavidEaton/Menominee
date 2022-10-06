@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
         {
             if (inventoryItem is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<InventoryItem>(RequiredMessage);
 
             return Result.Success(InventoryItem = inventoryItem);
         }
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<InventoryItemWarrantyPeriod> SetWarrantyPeriod(InventoryItemWarrantyPeriod warrantyPeriod)
         {
             if (warrantyPeriod is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<InventoryItemWarrantyPeriod>(RequiredMessage);
 
             return Result.Success(WarrantyPeriod = warrantyPeriod);
         }

@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
         {
             if (inventoryItem is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+                return Result.Failure<InventoryItem>(RequiredMessage);
 
             return Result.Success(InventoryItem = inventoryItem);
         }
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<double> SetList(double list)
         {
             if (list < MinimumValue || list > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(List = list);
         }
@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<double> SetCost(double cost)
         {
             if (cost < MinimumValue || cost > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(Cost = cost);
         }
@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<double> SetCore(double core)
         {
             if (core < MinimumValue || core > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(Core = core);
         }
@@ -99,20 +99,23 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<double> SetRetail(double retail)
         {
             if (retail < MinimumValue || retail > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(Retail = retail);
         }
 
         public Result<TechAmount> SetTechAmount(TechAmount techAmount)
         {
+            if (techAmount is null)
+                return Result.Failure<TechAmount>(RequiredMessage);
+
             return Result.Success(TechAmount = techAmount);
         }
 
         public Result<string> SetLineCode(string lineCode)
         {
             if (lineCode.Length < MinimumLength || lineCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
             return Result.Success(LineCode = lineCode);
         }
@@ -120,7 +123,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public Result<string> SetSubLineCode(string subLineCode)
         {
             if (subLineCode.Length < MinimumLength || subLineCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage);
 
             return Result.Success(SubLineCode = subLineCode);
         }
