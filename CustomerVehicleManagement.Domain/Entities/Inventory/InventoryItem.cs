@@ -117,15 +117,41 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Manufacturer = manufacturer);
         }
 
-        public void ClearManufacturer() => Manufacturer = null;
+        public Result<ProductCode> SetProductCode(ProductCode productCode)
+        {
+            if (productCode is null)
+                return Result.Failure<ProductCode>(RequiredMessage);
+
+            return Result.Success(ProductCode = productCode);
+        }
+
+        public Result<string> SetItemNumber(string itemNumber)
+        {
+            itemNumber = (itemNumber ?? string.Empty).Trim();
+
+            if (itemNumber.Length < MinimumLength || itemNumber.Length > MaximumLength)
+                return Result.Failure<string>($"{InvalidMessage} You entered {itemNumber.Length} character(s).");
+
+            return Result.Success(ItemNumber = itemNumber);
+        }
+
+        public Result<string> SetDescription(string description)
+        {
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length < MinimumLength || description.Length > MaximumLength)
+                return Result.Failure<string>($"{InvalidMessage} You entered {description.Length} character(s).");
+
+            return Result.Success(Description = description);
+        }
 
         // TODO: Clear all other InventoryItem{Type}s when calling SetItemType?
-        private void SetItemType(InventoryItemType itemType)
+        public Result<InventoryItemType> SetItemType(InventoryItemType itemType)
         {
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
-                throw new ArgumentOutOfRangeException(nameof(itemType), "itemType is null");
+                return Result.Failure<InventoryItemType>(RequiredMessage);
 
-            ItemType = itemType;
+            return Result.Success(ItemType = itemType);
         }
 
         public Result<InventoryItemPart> SetPart(InventoryItemPart part)
@@ -133,7 +159,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (part is null)
                 return Result.Failure<InventoryItemPart>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Part);
+            var resltOrError = SetItemType(InventoryItemType.Part);
+
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemPart>(resltOrError.Error);
 
             return Result.Success(Part = part);
         }
@@ -143,8 +172,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (labor is null)
                 return Result.Failure<InventoryItemLabor>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Part);
+            var resltOrError = SetItemType(InventoryItemType.Part);
 
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemLabor>(resltOrError.Error);
+            
             return Result.Success(Labor = labor);
         }
 
@@ -153,8 +185,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (tire is null)
                 return Result.Failure<InventoryItemTire>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Tire);
+            var resltOrError = SetItemType(InventoryItemType.Tire);
 
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemTire>(resltOrError.Error);
+            
             return Result.Success(Tire = tire);
         }
 
@@ -163,8 +198,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (package is null)
                 return Result.Failure<InventoryItemPackage>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Package);
+            var resltOrError = SetItemType(InventoryItemType.Package);
 
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemPackage>(resltOrError.Error);
+            
             return Result.Success(Package = package);
         }
 
@@ -173,7 +211,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (inspection is null)
                 return Result.Failure<InventoryItemInspection>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Inspection);
+            var resltOrError = SetItemType(InventoryItemType.Inspection);
+
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemInspection>(resltOrError.Error);
 
             return Result.Success(Inspection = inspection);
         }
@@ -183,7 +224,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (warranty is null)
                 return Result.Failure<InventoryItemWarranty>(RequiredMessage);
 
-            SetItemType(InventoryItemType.Warranty);
+            var resltOrError = SetItemType(InventoryItemType.Warranty);
+
+            if (resltOrError.IsFailure)
+                return Result.Failure<InventoryItemWarranty>(resltOrError.Error);
 
             return Result.Success(Warranty = warranty);
         }

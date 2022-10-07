@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryPackageHelper
+    public class InventoryItemPackageHelper
     {
         #region <---- ConvertEntityToReadDto ---->
 
-        public static InventoryPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
+        public static InventoryItemPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
         {
             if (package is null)
                 return null;
@@ -26,16 +26,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        private static List<InventoryPackageItemToRead> ProjectItems(IList<InventoryItemPackageItem> items)
+        private static List<InventoryItemPackageItemToRead> ProjectItems(IList<InventoryItemPackageItem> items)
         {
             return items?.Select(TransformItemEntityToRead()).ToList()
-                ?? new List<InventoryPackageItemToRead>();
+                ?? new List<InventoryItemPackageItemToRead>();
         }
 
-        private static Func<InventoryItemPackageItem, InventoryPackageItemToRead> TransformItemEntityToRead()
+        private static Func<InventoryItemPackageItem, InventoryItemPackageItemToRead> TransformItemEntityToRead()
         {
             return item =>
-                            new InventoryPackageItemToRead()
+                            new InventoryItemPackageItemToRead()
                             {
                                 Id = item.Id,
                                 Order = item.DisplayOrder,
@@ -47,16 +47,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             };
         }
 
-        private static List<InventoryPackagePlaceholderToRead> ProjectPlaceholders(IList<InventoryItemPackagePlaceholder> placeholders)
+        private static List<InventoryItemPackagePlaceholderToRead> ProjectPlaceholders(IList<InventoryItemPackagePlaceholder> placeholders)
         {
             return placeholders?.Select(TransformPlaceholderToReadToEntity()).ToList()
-                ?? new List<InventoryPackagePlaceholderToRead>();
+                ?? new List<InventoryItemPackagePlaceholderToRead>();
         }
 
-        private static Func<InventoryItemPackagePlaceholder, InventoryPackagePlaceholderToRead> TransformPlaceholderToReadToEntity()
+        private static Func<InventoryItemPackagePlaceholder, InventoryItemPackagePlaceholderToRead> TransformPlaceholderToReadToEntity()
         {
             return placeholder =>
-                            new InventoryPackagePlaceholderToRead()
+                            new InventoryItemPackagePlaceholderToRead()
                             {
                                 Id = placeholder.Id,
                                 Order = placeholder.DisplayOrder,
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         #region <---- ConvertWriteDtoToEntity ---->
 
-        public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryPackageToWrite package)
+        public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryItemPackageToWrite package)
         {
             if (package is null)
                 return null;
@@ -88,13 +88,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        private static List<InventoryItemPackageItem> ProjectItemsToWrite(IList<InventoryPackageItemToWrite> items)
+        private static List<InventoryItemPackageItem> ProjectItemsToWrite(IList<InventoryItemPackageItemToWrite> items)
         {
             return items?.Select(TransformItem()).ToList()
                 ?? new List<InventoryItemPackageItem>();
         }
 
-        private static Func<InventoryPackageItemToWrite, InventoryItemPackageItem> TransformItem()
+        private static Func<InventoryItemPackageItemToWrite, InventoryItemPackageItem> TransformItem()
         {
             return item =>
                             new InventoryItemPackageItem()
@@ -110,13 +110,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             };
         }
 
-        private static List<InventoryItemPackagePlaceholder> ProjectPlaceholdersToWrite(IList<InventoryPackagePlaceholderToWrite> placeholders)
+        private static List<InventoryItemPackagePlaceholder> ProjectPlaceholdersToWrite(IList<InventoryItemPackagePlaceholderToWrite> placeholders)
         {
             return placeholders?.Select(TransformPlaceholder()).ToList()
                 ?? new List<InventoryItemPackagePlaceholder>();
         }
 
-        private static Func<InventoryPackagePlaceholderToWrite, InventoryItemPackagePlaceholder> TransformPlaceholder()
+        private static Func<InventoryItemPackagePlaceholderToWrite, InventoryItemPackagePlaceholder> TransformPlaceholder()
         {
             return placeholder =>
                             new InventoryItemPackagePlaceholder()
@@ -134,7 +134,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         #region <---- ConvertReadToWriteDto ---->
 
-        public static InventoryPackageToWrite ConvertReadToWriteDto(InventoryPackageToRead package)
+        public static InventoryItemPackageToWrite ConvertReadToWriteDto(InventoryItemPackageToRead package)
         {
             if (package is null)
                 return null;
@@ -150,16 +150,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        private static List<InventoryPackageItemToWrite> ProjectItemsToRead(IList<InventoryPackageItemToRead> items)
+        private static List<InventoryItemPackageItemToWrite> ProjectItemsToRead(IList<InventoryItemPackageItemToRead> items)
         {
             return items?.Select(TransformItemToRead()).ToList()
-                ?? new List<InventoryPackageItemToWrite>();
+                ?? new List<InventoryItemPackageItemToWrite>();
         }
 
-        private static Func<InventoryPackageItemToRead, InventoryPackageItemToWrite> TransformItemToRead()
+        private static Func<InventoryItemPackageItemToRead, InventoryItemPackageItemToWrite> TransformItemToRead()
         {
             return item =>
-                            new InventoryPackageItemToWrite()
+                            new InventoryItemPackageItemToWrite()
                             {
                                 Id = item.Id,
                                 Order = item.Order,
@@ -172,16 +172,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             };
         }
 
-        private static List<InventoryPackagePlaceholderToWrite> ProjectPlaceholdersToRead(IList<InventoryPackagePlaceholderToRead> placeholders)
+        private static List<InventoryItemPackagePlaceholderToWrite> ProjectPlaceholdersToRead(IList<InventoryItemPackagePlaceholderToRead> placeholders)
         {
             return placeholders?.Select(TransformPlaceholderToRead()).ToList()
-                ?? new List<InventoryPackagePlaceholderToWrite>();
+                ?? new List<InventoryItemPackagePlaceholderToWrite>();
         }
 
-        private static Func<InventoryPackagePlaceholderToRead, InventoryPackagePlaceholderToWrite> TransformPlaceholderToRead()
+        private static Func<InventoryItemPackagePlaceholderToRead, InventoryItemPackagePlaceholderToWrite> TransformPlaceholderToRead()
         {
             return placeholder =>
-                            new InventoryPackagePlaceholderToWrite()
+                            new InventoryItemPackagePlaceholderToWrite()
                             {
                                 Id = placeholder.Id,
                                 Order = placeholder.Order,
@@ -195,7 +195,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
         #endregion
 
-        public static void CopyWriteDtoToEntity(InventoryPackageToWrite packageToWrite, InventoryItemPackage package)
+        public static void CopyWriteDtoToEntity(InventoryItemPackageToWrite packageToWrite, InventoryItemPackage package)
         {
 
             package.BasePartsAmount = packageToWrite.BasePartsAmount;

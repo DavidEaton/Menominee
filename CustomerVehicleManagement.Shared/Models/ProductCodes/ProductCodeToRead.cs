@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 
 namespace CustomerVehicleManagement.Shared.Models.ProductCodes

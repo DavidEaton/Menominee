@@ -9,6 +9,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
     {
         Task AddProductCodeAsync(ProductCode productCode);
         Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string productCode);
+        Task<ProductCode> GetProductCodeEntityAsync(long id);
         Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string productCode);
         Task<ProductCodeToRead> GetProductCodeAsync(long id);
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync();

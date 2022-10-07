@@ -3,9 +3,9 @@ using CustomerVehicleManagement.Shared.Models.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryLaborHelper
+    public class InventoryItemLaborHelper
     {
-        public static InventoryLaborToWrite ConvertReadToWriteDto(InventoryLaborToRead labor)
+        public static InventoryItemLaborToWrite ConvertReadToWriteDto(InventoryItemLaborToRead labor)
         {
             if (labor is null)
                 return null;
@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemLabor ConvertWriteDtoToEntity(InventoryLaborToWrite labor)
+        public static InventoryItemLabor ConvertWriteDtoToEntity(InventoryItemLaborToWrite labor)
         {
             if (labor is null)
                 return null;
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryLaborToRead ConvertEntityToReadDto(InventoryItemLabor labor)
+        public static InventoryItemLaborToRead ConvertEntityToReadDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryLaborToWrite laborToUpdate, InventoryItemLabor labor)
+        public static void CopyWriteDtoToEntity(InventoryItemLaborToWrite laborToUpdate, InventoryItemLabor labor)
         {
             labor.LaborType = laborToUpdate.LaborType;
             labor.LaborAmount = laborToUpdate.LaborAmount;
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             labor.SkillLevel = laborToUpdate.SkillLevel;
         }
 
-        public static InventoryLaborToReadInList ConvertEntityToReadInListDto(InventoryItemLabor labor)
+        public static InventoryItemLaborToReadInList ConvertEntityToReadInListDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;

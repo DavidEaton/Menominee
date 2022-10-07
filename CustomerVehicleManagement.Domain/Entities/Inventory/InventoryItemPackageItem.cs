@@ -10,34 +10,26 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly int MinimumValue = 0;
         public static readonly string MinimumValueMessage = $"Value must be > {MinimumValue}.";
 
-        public InventoryItemPackage InventoryItemPackage { get; private set; }
         public int DisplayOrder { get; private set; }
         public InventoryItem InventoryItem { get; private set; }
         public InventoryItemPackageDetails Details { get; private set; }
 
-        private InventoryItemPackageItem(InventoryItemPackage package, int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
+        private InventoryItemPackageItem(int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
         {
-            if (package is null || inventoryItem is null || details is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             if (displayOrder < MinimumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
-            InventoryItemPackage = package;
             DisplayOrder = displayOrder;
             InventoryItem = inventoryItem;
             Details = details;
         }
 
-        public static Result<InventoryItemPackageItem> Create(InventoryItemPackage package, int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
+        public static Result<InventoryItemPackageItem> Create(int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
         {
-            if (package is null || inventoryItem is null || details is null)
-                return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
-
             if (displayOrder < MinimumValue)
                 return Result.Failure<InventoryItemPackageItem>(MinimumValueMessage);
 
-            return Result.Success(new InventoryItemPackageItem(package, displayOrder, inventoryItem, details));
+            return Result.Success(new InventoryItemPackageItem(displayOrder, inventoryItem, details));
         }
 
         public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)

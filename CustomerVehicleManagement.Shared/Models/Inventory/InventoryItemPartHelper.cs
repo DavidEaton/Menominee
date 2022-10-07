@@ -1,11 +1,10 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryPartHelper
+    public class InventoryItemPartHelper
     {
-        public static InventoryPartToWrite ConvertReadToWriteDto(InventoryPartToRead part)
+        public static InventoryItemPartToWrite ConvertReadToWriteDto(InventoryItemPartToRead part)
         {
             if (part is null)
                 return null;
@@ -25,7 +24,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemPart ConvertWriteDtoToEntity(InventoryPartToWrite part)
+        public static InventoryItemPart ConvertWriteDtoToEntity(InventoryItemPartToWrite part)
         {
             if (part is null)
                 return null;
@@ -63,7 +62,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         //    };
         //}
 
-        public static InventoryPartToRead ConvertEntityToReadDto(InventoryItemPart part)
+        public static InventoryItemPartToRead ConvertEntityToReadDto(InventoryItemPart part)
         {
             if (part is null)
                 return null;
@@ -84,7 +83,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryPartToWrite partToUpdate, InventoryItemPart part)
+        public static void CopyWriteDtoToEntity(InventoryItemPartToWrite partToUpdate, InventoryItemPart part)
         {
             part.List = partToUpdate.List;
             part.Cost = partToUpdate.Cost;
@@ -98,7 +97,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             part.SkillLevel = partToUpdate.SkillLevel;
         }
 
-        public static InventoryPartToReadInList ConvertEntityToReadInListDto(InventoryItemPart part)
+        public static InventoryItemPartToReadInList ConvertEntityToReadInListDto(InventoryItemPart part)
         {
             if (part is null)
                 return null;

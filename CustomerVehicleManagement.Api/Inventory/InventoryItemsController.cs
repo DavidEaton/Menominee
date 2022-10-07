@@ -1,10 +1,9 @@
 ﻿//using CustomerVehicleManagement.Api.Configurations.Inventory;
-using CustomerVehicleManagement.Api.Data;
+using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Manufacturers;
+using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,10 +16,13 @@ namespace CustomerVehicleManagement.Api.Inventory
     public class InventoryItemsController : ControllerBase //ApplicationController  FIX ME - Route not found when inheriting from ApplicationController
     {
         private readonly IInventoryItemRepository itemRepository;
+        private readonly IManufacturerRepository manufacturerRepository;
+        private readonly IProductCodeRepository productCodeRepository;
 
-        public InventoryItemsController(IInventoryItemRepository itemRepository)
+        public InventoryItemsController(IInventoryItemRepository itemRepository, IManufacturerRepository manufacturerRepository)
         {
             this.itemRepository = itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
+            this.manufacturerRepository = manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
         }
 
         // api/inventoryitems/listing
@@ -75,24 +77,123 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         // api/inventoryitems/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemToWrite)
+        public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemFromCaller)
         {
+            var notFoundMessage = $"Could not find Inventory Item # {id} to update.";
+
             if (!await itemRepository.ItemExistsAsync(id))
-                return NotFound($"Could not find Inventory Item # {id} to update.");
+                return NotFound(notFoundMessage);
 
-            //InventoryItemToRead itemFromRepository = await itemRepository.GetItemAsync(id);
+            //1) Get domain entities from repositories
+            var itemFromRepository = await itemRepository.GetItemEntityAsync(id);
 
-            //1) Get domain entity from repository
-            var item = await itemRepository.GetItemEntityAsync(id);
+            var manufacturerFromRepository =
+                await manufacturerRepository.GetManufacturerEntityAsync(itemFromCaller.Manufacturer.Id);
+            var productCodeFromRepository =
+                await productCodeRepository.GetProductCodeEntityAsync(itemFromCaller.ProductCode.Id);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            InventoryItemHelper.CopyWriteDtoToEntity(itemToWrite, item);
+            // 2) Update domain aggregate entity (InventoryItem) with data in
+            // data transfer object(DTO).
+            // Update each member of InventoryItem, or return a Bad Resuest response
+            // with error message, in case of Failure.
+            if (itemFromRepository.Manufacturer.Id != itemFromCaller.Manufacturer.Id)
+            {
+                var resultOrError = itemFromRepository.SetManufacturer(manufacturerFromRepository);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.ItemNumber != itemFromCaller.ItemNumber)
+            {
+                var resultOrError = itemFromRepository.SetItemNumber(itemFromCaller.ItemNumber);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Description != itemFromCaller.Description)
+            {
+                var resultOrError = itemFromRepository.SetDescription(itemFromCaller.Description);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            };
+
+            if (itemFromRepository.ProductCode.Id != itemFromCaller.ProductCode.Id)
+            {
+                var resultOrError = itemFromRepository.SetProductCode(productCodeFromRepository);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.ItemType != itemFromCaller.ItemType)
+            {
+                var resultOrError = itemFromRepository.SetItemType(itemFromCaller.ItemType);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Part.Id != itemFromCaller.Part.Id)
+            {
+                var resultOrError = itemFromRepository.SetPart(await itemRepository.GetInventoryItemPartEntityAsync(
+                    itemFromCaller.Part.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Tire.Id != itemFromCaller.Tire.Id)
+            {
+                var resultOrError = itemFromRepository.SetTire(await itemRepository.GetInventoryItemTireEntityAsync(
+                    itemFromCaller.Tire.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Inspection.Id != itemFromCaller.Inspection.Id)
+            {
+                var resultOrError = itemFromRepository.SetInspection(
+                    await itemRepository.GetInventoryItemInspectionEntityAsync(
+                    itemFromCaller.Inspection.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Labor.Id != itemFromCaller.Labor.Id)
+            {
+                var resultOrError = itemFromRepository.SetLabor(
+                    await itemRepository.GetInventoryItemLaborEntityAsync(
+                    itemFromCaller.Labor.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Package.Id != itemFromCaller.Package.Id)
+            {
+                var resultOrError = itemFromRepository.SetPackage(
+                    await itemRepository.GetInventoryItemPackageEntityAsync(
+                    itemFromCaller.Package.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (itemFromRepository.Warranty.Id != itemFromCaller.Warranty.Id)
+            {
+                var resultOrError = itemFromRepository.SetWarranty(await itemRepository.GetInventoryItemWarrantyEntityAsync(
+                    itemFromCaller.Warranty.Id));
+                
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
 
             if (await itemRepository.SaveChangesAsync())
                 return NoContent();
 
             return BadRequest($"Failed to update .");
         }
+
 
         [HttpPost]
         public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToWrite)

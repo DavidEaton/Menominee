@@ -307,6 +307,42 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             return null;
         }
+
+        public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id)
+        {
+            return await context.InventoryItemWarranties
+                                .FirstOrDefaultAsync(warranty => warranty.Id == id);
+        }
+
+        public async Task<InventoryItemPart> GetInventoryItemPartEntityAsync(long id)
+        {
+            return await context.InventoryItemParts
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemInspection> GetInventoryItemInspectionEntityAsync(long id)
+        {
+            return await context.InventoryItemInspections
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemLabor> GetInventoryItemLaborEntityAsync(long id)
+        {
+            return await context.InventoryItemLabor
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id)
+        {
+            return await context.InventoryItemTires
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id)
+        {
+            return await context.InventoryItemPackages
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
     }
 }
 

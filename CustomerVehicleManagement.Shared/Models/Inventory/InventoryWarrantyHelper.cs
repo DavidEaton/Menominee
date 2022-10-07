@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryWarrantyHelper
     {
-        public static InventoryWarrantyToWrite ConvertReadToWriteDto(InventoryWarrantyToRead warranty)
+        public static InventoryItemWarrantyToWrite ConvertReadToWriteDto(InventoryItemWarrantyToRead warranty)
         {
             if (warranty is null)
                 return null;
@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemWarranty ConvertWriteDtoToEntity(InventoryWarrantyToWrite warranty)
+        public static InventoryItemWarranty ConvertWriteDtoToEntity(InventoryItemWarrantyToWrite warranty)
         {
             if (warranty is null)
                 return null;
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryWarrantyToRead ConvertEntityToReadDto(InventoryItemWarranty warranty)
+        public static InventoryItemWarrantyToRead ConvertEntityToReadDto(InventoryItemWarranty warranty)
         {
             if (warranty is null)
                 return null;
@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryWarrantyToWrite warrantyToUpdate, InventoryItemWarranty warranty)
+        public static void CopyWriteDtoToEntity(InventoryItemWarrantyToWrite warrantyToUpdate, InventoryItemWarranty warranty)
         {
             warranty.PeriodType = warrantyToUpdate.PeriodType;
             warranty.Duration = warrantyToUpdate.Duration;

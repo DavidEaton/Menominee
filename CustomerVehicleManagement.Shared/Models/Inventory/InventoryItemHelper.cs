@@ -2,6 +2,9 @@
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
@@ -9,24 +12,35 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
     {
         public static InventoryItemToReadInList ConvertEntityToReadInListDto(InventoryItem item)
         {
-            if (item is null)
-                return null;
-
-            return new()
-            {
-                Id = item.Id,
-                //Manufacturer = item.Manufacturer,
-                //ManufacturerName = ManufacturerHelper.ConvertToRead(item.Manufacturer).Name,
-                ManufacturerId = item.ManufacturerId,
-                ManufacturerName = item.Manufacturer?.Name,
-                ItemNumber = item.ItemNumber,
-                Description = item.Description,
-                //ProductCode = item.ProductCode,
-                //ProductCodeName = ProductCodeHelper.ConvertEntityToReadDto(item.ProductCode).Name,
-                ProductCodeId = item.ProductCodeId,
-                ProductCodeName = item.ProductCode?.Name,
-                ItemType = item.ItemType
-            };
+            return item is null
+                ? new InventoryItemToReadInList()
+                : (new()
+                {
+                    Id = item.Id,
+                    Manufacturer = new ManufacturerToRead()
+                    {
+                        Code = item.Manufacturer.Code,
+                        Id = item.Manufacturer.Id,
+                        Name = item.Manufacturer.Name,
+                        Prefix = item.Manufacturer.Prefix
+                    },
+                    ItemNumber = item.ItemNumber,
+                    Description = item.Description,
+                    ProductCode = new ProductCodeToRead()
+                    {
+                        Name = item.ProductCode.Name,
+                        Code = item.ProductCode.Code,
+                        Id = item.ProductCode.Id,
+                        Manufacturer = new ManufacturerToRead()
+                        {
+                            Id = item.ProductCode.Manufacturer.Id,
+                            Code = item.ProductCode.Manufacturer.Code,
+                            Name = item.ProductCode.Manufacturer.Name,
+                            Prefix = item.ProductCode.Manufacturer.Prefix
+                        },
+                    },
+                    ItemType = item.ItemType.ToString(),
+                });
         }
 
         public static InventoryItemToRead ConvertEntityToReadDto(InventoryItem item)
@@ -34,37 +48,63 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             if (item is null)
                 return null;
 
-            var ItemToRead = new InventoryItemToRead
+            var inventoryItemToRead = new InventoryItemToRead
             {
                 Id = item.Id,
-                //ManufacturerId = item.ManufacturerId,
-                Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
+                Manufacturer = new ManufacturerToRead
+                {
+                    Code = item.Manufacturer.Code,
+                    Id = item.Manufacturer.Id,
+                    Name = item.Manufacturer.Name,
+                    Prefix = item.Manufacturer.Prefix
+                },
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                //ProductCodeId = item.ProductCodeId,
-                ProductCode = ProductCodeHelper.ConvertEntityToReadDto(item.ProductCode),
+                ProductCode = new ProductCodeToRead
+                {
+                    Name = item.ProductCode.Name,
+                    Code = item.ProductCode.Code,
+                    Id = item.ProductCode.Id,
+                    Manufacturer = new ManufacturerToRead
+                    {
+                        Id = item.ProductCode.Manufacturer.Id,
+                        Code = item.ProductCode.Manufacturer.Code,
+                        Name = item.ProductCode.Manufacturer.Name,
+                        Prefix = item.ProductCode.Manufacturer.Prefix
+                    },
+                },
                 ItemType = item.ItemType
             };
 
-            if (item.ItemType == InventoryItemType.Part)
-                ItemToRead.Part = InventoryPartHelper.ConvertEntityToReadDto(item.Part);
-            else if (item.ItemType == InventoryItemType.Labor)
-                ItemToRead.Labor = InventoryLaborHelper.ConvertEntityToReadDto(item.Labor);
-            else if (item.ItemType == InventoryItemType.Tire)
-                ItemToRead.Tire = InventoryTireHelper.ConvertEntityToReadDto(item.Tire);
-            else if (item.ItemType == InventoryItemType.Package)
-                ItemToRead.Package = InventoryPackageHelper.ConvertEntityToReadDto(item.Package);
-            else if (item.ItemType == InventoryItemType.Inspection)
-                ItemToRead.Inspection = InventoryInspectionHelper.ConvertEntityToReadDto(item.Inspection);
-            // Coming soon...
-            //else if (item.ItemType == InventoryItemType.Donation)
-            //    ItemToRead.Donation = InventoryDonationHelper.ConvertEntityToReadDto(item.Donation);
-            //else if (item.ItemType == InventoryItemType.GiftCertificate)
-            //    ItemToRead.GiftCertificate = InventoryGiftCertificateHelper.ConvertEntityToReadDto(item.GiftCertificate);
-            else if (item.ItemType == InventoryItemType.Warranty)
-                ItemToRead.Warranty = InventoryWarrantyHelper.ConvertEntityToReadDto(item.Warranty);
+            switch (item.ItemType)
+            {
+                case InventoryItemType.Part:
+                    inventoryItemToRead.Part = InventoryItemPartHelper.ConvertEntityToReadDto(item.Part);
+                    break;
+                case InventoryItemType.Labor:
+                    inventoryItemToRead.Labor = InventoryItemLaborHelper.ConvertEntityToReadDto(item.Labor);
+                    break;
+                case InventoryItemType.Tire:
+                    inventoryItemToRead.Tire = InventoryItemTireHelper.ConvertEntityToReadDto(item.Tire);
+                    break;
+                case InventoryItemType.Package:
+                    inventoryItemToRead.Package = InventoryItemPackageHelper.ConvertEntityToReadDto(item.Package);
+                    break;
+                case InventoryItemType.Inspection:
+                    inventoryItemToRead.Inspection = InventoryItemInspectionHelper.ConvertEntityToReadDto(item.Inspection);
+                    break;
+                case InventoryItemType.GiftCertificate:
+                    inventoryItemToRead.Warranty = InventoryWarrantyHelper.ConvertEntityToReadDto(item.Warranty);
+                    break;
+                case InventoryItemType.Donation:
+                    break;
+                case InventoryItemType.Warranty:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Inventory Item Type.");
+            };
 
-            return ItemToRead;
+            return inventoryItemToRead;
         }
 
         public static InventoryItemToWrite ConvertReadToWriteDto(InventoryItemToRead item)
@@ -72,103 +112,79 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             if (item is null)
                 return null;
 
-            var Item = new InventoryItemToWrite
+            var inventoryItemToWrite = new InventoryItemToWrite
             {
-                //ManufacturerId = item.Manufacturer.Id,
                 Id = item.Id,
-                Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
+                Manufacturer = item.Manufacturer,
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                //ProductCodeId = item.ProductCodeId,
-                ProductCode = ProductCodeHelper.ConvertReadToWriteDto(item.ProductCode),
+                ProductCode = item.ProductCode,
                 ItemType = item.ItemType
             };
 
-            if (item.ItemType == InventoryItemType.Part)
-                Item.Part = InventoryPartHelper.ConvertReadToWriteDto(item.Part);
-            else if (item.ItemType == InventoryItemType.Labor)
-                Item.Labor = InventoryLaborHelper.ConvertReadToWriteDto(item.Labor);
-            else if (item.ItemType == InventoryItemType.Tire)
-                Item.Tire = InventoryTireHelper.ConvertReadToWriteDto(item.Tire);
-            else if (item.ItemType == InventoryItemType.Package)
-                Item.Package = InventoryPackageHelper.ConvertReadToWriteDto(item.Package);
-            else if (item.ItemType == InventoryItemType.Inspection)
-                Item.Inspection = InventoryInspectionHelper.ConvertReadToWriteDto(item.Inspection);
-            // Coming soon...
-            //else if (item.ItemType == InventoryItemType.Donation)
-            //    Item.Donation = InventoryDonationHelper.ConvertReadToWriteDto(item.Donation);
-            //else if (item.ItemType == InventoryItemType.GiftCertificate)
-            //    Item.GiftCertificate = InventoryGiftCertificateHelper.ConvertReadToWriteDto(item.GiftCertificate);
-            else if (item.ItemType == InventoryItemType.Warranty)
-                Item.Warranty = InventoryWarrantyHelper.ConvertReadToWriteDto(item.Warranty);
+            switch (item.ItemType)
+            {
+                case InventoryItemType.Part:
+                    inventoryItemToWrite.Part = InventoryItemPartHelper.ConvertReadToWriteDto(item.Part);
+                    break;
+                case InventoryItemType.Labor:
+                    inventoryItemToWrite.Labor = InventoryItemLaborHelper.ConvertReadToWriteDto(item.Labor);
+                    break;
+                case InventoryItemType.Tire:
+                    inventoryItemToWrite.Tire = InventoryItemTireHelper.ConvertReadToWriteDto(item.Tire);
+                    break;
+                case InventoryItemType.Package:
+                    inventoryItemToWrite.Package = InventoryItemPackageHelper.ConvertReadToWriteDto(item.Package);
+                    break;
+                case InventoryItemType.Inspection:
+                    inventoryItemToWrite.Inspection = InventoryItemInspectionHelper.ConvertReadToWriteDto(item.Inspection);
+                    break;
+                case InventoryItemType.GiftCertificate:
+                    inventoryItemToWrite.Warranty = InventoryWarrantyHelper.ConvertReadToWriteDto(item.Warranty);
+                    break;
+                case InventoryItemType.Donation:
+                    break;
+                case InventoryItemType.Warranty:
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Inventory Item Type.");
+            };
 
-            return Item;
+            return inventoryItemToWrite;
         }
 
-        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item)
+        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<ProductCode> productCodes)
         {
             if (item is null)
                 return null;
 
-            var Item = new InventoryItem
-            {
-                ManufacturerId = item.Manufacturer.Id,
-                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(item.Manufacturer),
-                ItemNumber = item.ItemNumber,
-                Description = item.Description,
-                ProductCodeId = item.ProductCode.Id,
-                //ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(item.ProductCode),
-                ItemType = item.ItemType
-            };
-
-            if (item.ItemType == InventoryItemType.Part)
-                Item.Part = InventoryPartHelper.ConvertWriteDtoToEntity(item.Part);
-            else if (item.ItemType == InventoryItemType.Labor)
-                Item.Labor = InventoryLaborHelper.ConvertWriteDtoToEntity(item.Labor);
-            else if (item.ItemType == InventoryItemType.Tire)
-                Item.Tire = InventoryTireHelper.ConvertWriteDtoToEntity(item.Tire);
-            else if (item.ItemType == InventoryItemType.Package)
-                Item.Package = InventoryPackageHelper.ConvertWriteDtoToEntity(item.Package);
-            else if (item.ItemType == InventoryItemType.Inspection)
-                Item.Inspection = InventoryInspectionHelper.ConvertWriteDtoToEntity(item.Inspection);
-            // Coming soon...
-            //else if (item.ItemType == InventoryItemType.Donation)
-            //    Item.Donation = InventoryDonationHelper.ConvertWriteDtoToEntity(item.Donation);
-            //else if (item.ItemType == InventoryItemType.GiftCertificate)
-            //    Item.GiftCertificate = InventoryGiftCertificateHelper.ConvertWriteDtoToEntity(item.GiftCertificate);
-            else if (item.ItemType == InventoryItemType.Warranty)
-                Item.Warranty = InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty);
+            var Item = InventoryItem.Create(
+                manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
+                item.ItemNumber,
+                item.Description,
+                productCodes.FirstOrDefault(productCode => productCode.Id == item.ProductCode.Id),
+                item.ItemType,
+                item.Part is null
+                    ? null
+                    : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
+                item.Labor is null
+                    ? null
+                    : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
+                item.Tire is null
+                    ? null
+                    : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
+                item.Package is null
+                    ? null
+                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package),
+                item.Inspection is null
+                    ? null
+                    : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
+                item.Warranty is null
+                    ? null
+                    : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                .Value;
 
             return Item;
-        }
-
-        public static void CopyWriteDtoToEntity(InventoryItemToWrite itemToUpdate, InventoryItem item)
-        {
-            item.ManufacturerId = itemToUpdate.Manufacturer.Id;
-            //item.Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(itemToUpdate.Manufacturer);
-            item.ItemNumber = itemToUpdate.ItemNumber;
-            item.Description = itemToUpdate.Description;
-            item.ProductCodeId = itemToUpdate.ProductCode.Id;
-            //item.ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(itemToUpdate.ProductCode);
-            item.ItemType = itemToUpdate.ItemType;
-
-            if (item.ItemType == InventoryItemType.Part)
-                InventoryPartHelper.CopyWriteDtoToEntity(itemToUpdate.Part, item.Part);
-            else if (item.ItemType == InventoryItemType.Labor)
-                InventoryLaborHelper.CopyWriteDtoToEntity(itemToUpdate.Labor, item.Labor);
-            else if (item.ItemType == InventoryItemType.Tire)
-                InventoryTireHelper.CopyWriteDtoToEntity(itemToUpdate.Tire, item.Tire);
-            else if (item.ItemType == InventoryItemType.Package)
-                InventoryPackageHelper.CopyWriteDtoToEntity(itemToUpdate.Package, item.Package);
-            else if (item.ItemType == InventoryItemType.Inspection)
-                InventoryInspectionHelper.CopyWriteDtoToEntity(itemToUpdate.Inspection, item.Inspection);
-            // Coming soon...
-            //else if (item.ItemType == InventoryItemType.Donation)
-            //    InventoryDonationHelper.CopyWriteDtoToEntity(itemToUpdate.Donation, item.Donation);
-            //else if (item.ItemType == InventoryItemType.GiftCertificate)
-            //    InventoryGiftCertificateHelper.CopyWriteDtoToEntity(itemToUpdate.GiftCertificate, item.GiftCertificate);
-            else if (item.ItemType == InventoryItemType.Warranty)
-                InventoryWarrantyHelper.CopyWriteDtoToEntity(itemToUpdate.Warranty, item.Warranty);
         }
     }
 }

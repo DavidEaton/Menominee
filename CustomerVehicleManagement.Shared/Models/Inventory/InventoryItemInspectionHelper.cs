@@ -2,9 +2,9 @@
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryInspectionHelper
+    public class InventoryItemInspectionHelper
     {
-        public static InventoryInspectionToWrite ConvertReadToWriteDto(InventoryInspectionToRead inspection)
+        public static InventoryItemInspectionToWrite ConvertReadToWriteDto(InventoryItemInspectionToRead inspection)
         {
             if (inspection is null)
                 return null;
@@ -20,23 +20,15 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemInspection ConvertWriteDtoToEntity(InventoryInspectionToWrite inspection)
+        public static InventoryItemInspection ConvertWriteDtoToEntity(InventoryItemInspectionToWrite inspection)
         {
             if (inspection is null)
                 return null;
 
-            return new()
-            {
-                LaborType = inspection.LaborType,
-                LaborAmount = inspection.LaborAmount,
-                TechPayType = inspection.TechPayType,
-                TechPayAmount = inspection.TechPayAmount,
-                SkillLevel = inspection.SkillLevel,
-                Type = inspection.Type
-            };
+            return InventoryItemInspection.Create(new LaborAmountToWrite() { Amount = inspection.LaborAmount}, inspection.TechAmount, inspection.Type);
         }
 
-        public static InventoryInspectionToRead ConvertEntityToReadDto(InventoryItemInspection inspection)
+        public static InventoryItemInspectionToRead ConvertEntityToReadDto(InventoryItemInspection inspection)
         {
             if (inspection is null)
                 return null;
@@ -53,7 +45,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryInspectionToWrite inspectionToUpdate, InventoryItemInspection inspection)
+        public static void CopyWriteDtoToEntity(InventoryItemInspectionToWrite inspectionToUpdate, InventoryItemInspection inspection)
         {
             inspection.LaborType = inspectionToUpdate.LaborType;
             inspection.LaborAmount = inspectionToUpdate.LaborAmount;
@@ -63,7 +55,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             inspection.Type = inspectionToUpdate.Type;
         }
 
-        public static InventoryInspectionToReadInList ConvertEntityToReadInListDto(InventoryItemInspection inspection)
+        public static InventoryItemInspectionToReadInList ConvertEntityToReadInListDto(InventoryItemInspection inspection)
         {
             if (inspection is null)
                 return null;

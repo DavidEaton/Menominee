@@ -17,7 +17,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly int MinimumLength = 0;
         public static readonly int MaximumLength = 10;
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
-        public InventoryItem InventoryItem { get; private set; }
         public double List { get; private set; }
         public double Cost { get; private set; }
         public double Core { get; private set; }
@@ -27,11 +26,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public string SubLineCode { get; private set; }
         public bool Fractional { get; private set; }
 
-        protected InstallablePart(InventoryItem inventoryItem, double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
+        protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
         {
-            if (inventoryItem is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             if (list < MinimumValue ||
                 cost < MinimumValue ||
                 core < MinimumValue ||
@@ -53,7 +49,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 subLineCode.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
-            InventoryItem = inventoryItem;
             List = list;
             Cost = cost;
             Core = core;
@@ -62,14 +57,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             LineCode = lineCode;
             SubLineCode = subLineCode;
             Fractional = fractional;
-        }
-
-        public Result<InventoryItem> SetInventoryItem(InventoryItem inventoryItem)
-        {
-            if (inventoryItem is null)
-                return Result.Failure<InventoryItem>(RequiredMessage);
-
-            return Result.Success(InventoryItem = inventoryItem);
         }
 
         public Result<double> SetList(double list)

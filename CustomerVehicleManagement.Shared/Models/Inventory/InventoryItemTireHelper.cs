@@ -1,11 +1,38 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
-    public class InventoryTireHelper
+    public class InventoryItemTireHelper
     {
-        public static InventoryTireToWrite ConvertReadToWriteDto(InventoryTireToRead tire)
+        public static InventoryItemTireToWrite ConvertReadToWriteDto(InventoryItemTireToRead tire)
+        {
+            return tire is null
+                ? new InventoryItemTireToWrite()
+                : (new()
+                {
+                    List = tire.List,
+                    Cost = tire.Cost,
+                    Core = tire.Core,
+                    Retail = tire.Retail,
+                    TechAmount = new TechAmountToWrite()
+                    {
+                        Amount = tire.TechAmount.Amount,
+                        PayType = tire.TechAmount.PayType,
+                        SkillLevel = tire.TechAmount.SkillLevel
+                    },
+                    LineCode = tire.LineCode,
+                    SubLineCode = tire.SubLineCode,
+                    Fractional = tire.Fractional,
+                    Type = tire.Type,
+                    Width = tire.Width,
+                    AspectRatio = tire.AspectRatio,
+                    Diameter = tire.Diameter,
+                    LoadIndex = tire.LoadIndex,
+                    SpeedRating = tire.SpeedRating
+                });
+        }
+
+        public static InventoryItemTire ConvertWriteDtoToEntity(InventoryItemTireToWrite tire)
         {
             if (tire is null)
                 return null;
@@ -31,33 +58,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static InventoryItemTire ConvertWriteDtoToEntity(InventoryTireToWrite tire)
-        {
-            if (tire is null)
-                return null;
-
-            return new()
-            {
-                List = tire.List,
-                Cost = tire.Cost,
-                Core = tire.Core,
-                Retail = tire.Retail,
-                TechPayType = tire.TechPayType,
-                TechPayAmount = tire.TechPayAmount,
-                LineCode = tire.LineCode,
-                SubLineCode = tire.SubLineCode,
-                Fractional = tire.Fractional,
-                SkillLevel = tire.SkillLevel,
-                Type = tire.Type,
-                Width = tire.Width,
-                AspectRatio = tire.AspectRatio,
-                Diameter = tire.Diameter,
-                LoadIndex = tire.LoadIndex,
-                SpeedRating = tire.SpeedRating
-            };
-        }
-
-        public static InventoryTireToRead ConvertEntityToReadDto(InventoryItemTire tire)
+        public static InventoryItemTireToRead ConvertEntityToReadDto(InventoryItemTire tire)
         {
             if (tire is null)
                 return null;
@@ -84,7 +85,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             };
         }
 
-        public static void CopyWriteDtoToEntity(InventoryTireToWrite tireToUpdate, InventoryItemTire tire)
+        public static void CopyWriteDtoToEntity(InventoryItemTireToWrite tireToUpdate, InventoryItemTire tire)
         {
             tire.List = tireToUpdate.List;
             tire.Cost = tireToUpdate.Cost;
@@ -104,7 +105,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             tire.SpeedRating = tireToUpdate.SpeedRating;
         }
 
-        public static InventoryTireToReadInList ConvertEntityToReadInListDto(InventoryItemTire tire)
+        public static InventoryItemTireToReadInList ConvertEntityToReadInListDto(InventoryItemTire tire)
         {
             if (tire is null)
                 return null;

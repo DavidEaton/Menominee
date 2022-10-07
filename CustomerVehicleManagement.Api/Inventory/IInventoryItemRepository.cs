@@ -17,6 +17,12 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task<InventoryItemToRead> GetItemAsync(long id);
         Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber);
         Task<InventoryItem> GetItemEntityAsync(long id);
+        Task<InventoryItemPart> GetInventoryItemPartEntityAsync(long id);
+        Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id);
+        Task<InventoryItemInspection> GetInventoryItemInspectionEntityAsync(long id);
+        Task<InventoryItemLabor> GetInventoryItemLaborEntityAsync(long id);
+        Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id);
+        Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id);
         Task<bool> SaveChangesAsync();
         void DeleteInventoryItem(InventoryItem entity);
     }

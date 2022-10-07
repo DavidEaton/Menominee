@@ -12,20 +12,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string Description { get; set; }
         public ProductCodeToRead ProductCode { get; set; }
         public InventoryItemType ItemType { get; set; }
-        public InventoryPartToRead Part { get; set; }
-        public InventoryLaborToRead Labor { get; set; }
-        public InventoryTireToRead Tire { get; set; }
-        public InventoryPackageToRead Package { get; set; }
-        public InventoryInspectionToRead Inspection { get; set; }
-        // Coming soon...
-        //public InventoryDonationToRead Donation { get; set; }
-        //public InventoryGiftCertificateToRead GiftCertificate { get; set; }
-        public InventoryWarrantyToRead Warranty { get; set; }
-
-
-        //public int QuantityOnHand { get; set; }
-        //public double Cost { get; set; }
-        //public double SuggestedPrice { get; set; }
-        //public double Labor { get; set; }
+        public InventoryItemPartToRead Part { get; set; }
+        public InventoryItemLaborToRead Labor { get; set; }
+        public InventoryItemTireToRead Tire { get; set; }
+        public InventoryItemPackageToRead Package { get; set; }
+        public InventoryItemInspectionToRead Inspection { get; set; }
+        public InventoryItemWarrantyToRead Warranty { get; set; }
     }
 }

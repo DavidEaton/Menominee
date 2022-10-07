@@ -81,6 +81,15 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                     productCode.Code == code);
         }
 
+        public async Task<ProductCode> GetProductCodeEntityAsync(long id)
+        {
+            return await context.ProductCodes
+                                             .Include(productCode => productCode.Manufacturer)
+                                             .Include(productCode => productCode.SaleCode)
+                                             .AsNoTracking()
+                                             .FirstOrDefaultAsync(productCode => productCode.Id == id);
+        }
+
         public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync()
         {
             var pcs = await context.ProductCodes

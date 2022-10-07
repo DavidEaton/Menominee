@@ -9,6 +9,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
     {
         Task AddManufacturerAsync(Manufacturer manufacturer);
         Task<Manufacturer> GetManufacturerEntityAsync(string code);
+        Task<Manufacturer> GetManufacturerEntityAsync(long id);
         Task<ManufacturerToRead> GetManufacturerAsync(string code);
         Task<ManufacturerToRead> GetManufacturerAsync(long id);
         Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync();
