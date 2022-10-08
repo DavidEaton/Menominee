@@ -175,6 +175,16 @@ namespace CustomerVehicleManagement.Api.Inventory
                                 .FirstOrDefaultAsync(item => item.Id == id);
         }
 
+        public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntitiesAsync(List<long> ids)
+        {
+            var list = new List<InventoryItem>();
+
+            foreach (var id in ids)
+                list.Add(await GetItemEntityAsync(id));
+
+            return list;
+        }
+
         public async Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync()
         {
             var items = new List<InventoryItemToRead>();

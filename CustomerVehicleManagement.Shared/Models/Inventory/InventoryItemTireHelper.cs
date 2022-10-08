@@ -34,28 +34,29 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         public static InventoryItemTire ConvertWriteDtoToEntity(InventoryItemTireToWrite tire)
         {
-            if (tire is null)
-                return null;
-
-            return new()
-            {
-                List = tire.List,
-                Cost = tire.Cost,
-                Core = tire.Core,
-                Retail = tire.Retail,
-                TechPayType = tire.TechPayType,
-                TechPayAmount = tire.TechPayAmount,
-                LineCode = tire.LineCode,
-                SubLineCode = tire.SubLineCode,
-                Fractional = tire.Fractional,
-                SkillLevel = tire.SkillLevel,
-                Type = tire.Type,
-                Width = tire.Width,
-                AspectRatio = tire.AspectRatio,
-                Diameter = tire.Diameter,
-                LoadIndex = tire.LoadIndex,
-                SpeedRating = tire.SpeedRating
-            };
+            return tire is null
+                ? null
+                : InventoryItemTire.Create(
+                tire.Type,
+                tire.Width,
+                tire.AspectRatio,
+                tire.ConstructionType,
+                tire.Diameter,
+                tire.LoadIndex,
+                tire.SpeedRating,
+                tire.List,
+                tire.Cost,
+                tire.Core,
+                tire.Retail,
+                TechAmount.Create(
+                    tire.TechAmount.PayType,
+                    tire.TechAmount.Amount,
+                    tire.TechAmount.SkillLevel)
+                .Value,
+                tire.LineCode,
+                tire.SubLineCode,
+                tire.Fractional)
+            .Value;
         }
 
         public static InventoryItemTireToRead ConvertEntityToReadDto(InventoryItemTire tire)

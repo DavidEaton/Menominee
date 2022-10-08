@@ -1,7 +1,4 @@
-﻿
-using CustomerVehicleManagement.Domain.Entities.Inventory;
-
-namespace CustomerVehicleManagement.Shared.Models.Inventory
+﻿namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
     public class InventoryItemPackageItemToRead
     {

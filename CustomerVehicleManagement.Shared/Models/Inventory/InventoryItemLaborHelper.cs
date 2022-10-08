@@ -22,17 +22,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         public static InventoryItemLabor ConvertWriteDtoToEntity(InventoryItemLaborToWrite labor)
         {
-            if (labor is null)
-                return null;
-
-            return new()
-            {
-                LaborType = labor.LaborType,
-                LaborAmount = labor.LaborAmount,
-                TechPayType = labor.TechPayType,
-                TechPayAmount = labor.TechPayAmount,
-                SkillLevel = labor.SkillLevel
-            };
+            return labor is null
+                ? null
+                : InventoryItemLabor.Create(
+                LaborAmount.Create(labor.LaborAmount.PayType, labor.LaborAmount.Amount).Value,
+                TechAmount.Create(labor.TechPayAmount.PayType, labor.TechPayAmount.Amount, labor.TechPayAmount.SkillLevel).Value)
+            .Value;
         }
 
         public static InventoryItemLaborToRead ConvertEntityToReadDto(InventoryItemLabor labor)

@@ -253,9 +253,13 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             repository.AddInvoice(invoiceEntity);
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{invoiceEntity.Id}",
+            return Created(
+                new Uri($"{BasePath}/{invoiceEntity.Id}",
                 UriKind.Relative),
-                new { invoiceEntity.Id });
+                new
+                {
+                    invoiceEntity.Id
+                });
         }
 
         [HttpDelete("{id:long}")]

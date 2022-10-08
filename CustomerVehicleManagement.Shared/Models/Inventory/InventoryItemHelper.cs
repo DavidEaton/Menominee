@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             return inventoryItemToWrite;
         }
 
-        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<ProductCode> productCodes)
+        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<ProductCode> productCodes, IReadOnlyList<InventoryItem> inventoryItems)
         {
             if (item is null)
                 return null;
@@ -175,7 +175,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                     : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
                 item.Package is null
                     ? null
-                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package),
+                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
                 item.Inspection is null
                     ? null
                     : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
@@ -185,6 +185,37 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 .Value;
 
             return Item;
+        }
+
+        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, Manufacturer manufacturer, ProductCode productCode, IReadOnlyList<InventoryItem> inventoryItems)
+        {
+            return item is null
+                ? null
+                : InventoryItem.Create(
+                manufacturer,
+                item.ItemNumber,
+                item.Description,
+                productCode,
+                item.ItemType,
+                item.Part is null
+                    ? null
+                    : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
+                item.Labor is null
+                    ? null
+                    : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
+                item.Tire is null
+                    ? null
+                    : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
+                item.Package is null
+                    ? null
+                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
+                item.Inspection is null
+                    ? null
+                    : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
+                item.Warranty is null
+                    ? null
+                    : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                .Value;
         }
     }
 }

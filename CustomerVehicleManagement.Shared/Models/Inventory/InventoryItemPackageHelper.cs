@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,30 +22,33 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 BaseLaborAmount = package.BaseLaborAmount,
                 Script = package.Script,
                 IsDiscountable = package.IsDiscountable,
-                Items = ProjectItems(package.Items),
+                Items = ConvertEntiiesToReadDtos(package.Items),
                 Placeholders = ProjectPlaceholders(package.Placeholders)
             };
         }
 
-        private static List<InventoryItemPackageItemToRead> ProjectItems(IList<InventoryItemPackageItem> items)
+        private static List<InventoryItemPackageItemToRead> ConvertEntiiesToReadDtos(IList<InventoryItemPackageItem> items)
         {
-            return items?.Select(TransformItemEntityToRead()).ToList()
+            return items?.Select(ConvertEntityToReadDto()).ToList()
                 ?? new List<InventoryItemPackageItemToRead>();
         }
 
-        private static Func<InventoryItemPackageItem, InventoryItemPackageItemToRead> TransformItemEntityToRead()
+        private static Func<InventoryItemPackageItem, InventoryItemPackageItemToRead> ConvertEntityToReadDto()
         {
             return item =>
-                            new InventoryItemPackageItemToRead()
-                            {
-                                Id = item.Id,
-                                Order = item.DisplayOrder,
-                                Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem),
-                                Quantity = item.Quantity,
-                                PartAmountIsAdditional = item.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = item.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = item.ExciseFeeIsAdditional
-                            };
+                new InventoryItemPackageItemToRead()
+                {
+                    Id = item.Id,
+                    DisplayOrder = item.DisplayOrder,
+                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem),
+                    Details = new()
+                    {
+                        Quantity = item.Details.Quantity,
+                        ExciseFeeIsAdditional = item.Details.ExciseFeeIsAdditional,
+                        LaborAmountIsAdditional = item.Details.LaborAmountIsAdditional,
+                        PartAmountIsAdditional = item.Details.PartAmountIsAdditional
+                    }
+                };
         }
 
         private static List<InventoryItemPackagePlaceholderToRead> ProjectPlaceholders(IList<InventoryItemPackagePlaceholder> placeholders)
@@ -72,35 +76,33 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         #region <---- ConvertWriteDtoToEntity ---->
 
-        public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryItemPackageToWrite package)
+        public static InventoryItemPackage ConvertWriteDtoToEntity(InventoryItemPackageToWrite package, IReadOnlyList<InventoryItem> inventoryItems)
         {
-            if (package is null)
-                return null;
-
-            return new()
-            {
-                BasePartsAmount = package.BasePartsAmount,
-                BaseLaborAmount = package.BaseLaborAmount,
-                Script = package.Script,
-                IsDiscountable = package.IsDiscountable,
-                Items = ProjectItemsToWrite(package.Items),
-                Placeholders = ProjectPlaceholdersToWrite(package.Placeholders)
-            };
+            return package is null
+                ? null
+                : InventoryItemPackage.Create(
+                package.BasePartsAmount,
+                package.BaseLaborAmount,
+                package.Script,
+                package.IsDiscountable,
+                ConvertWriteDtosToEntities(package.Items, inventoryItems),
+                ConvertWriteDtosToEntities(package.Placeholders))
+            .Value;
         }
 
-        private static List<InventoryItemPackageItem> ProjectItemsToWrite(IList<InventoryItemPackageItemToWrite> items)
+        private static List<InventoryItemPackageItem> ConvertWriteDtosToEntities(IList<InventoryItemPackageItemToWrite> packageItems, IReadOnlyList<InventoryItem> inventoryItems)
         {
-            return items?.Select(TransformItem()).ToList()
+            return packageItems?.Select(ConvertWriteDtoToEntity(inventoryItems)).ToList()
                 ?? new List<InventoryItemPackageItem>();
         }
 
-        private static Func<InventoryItemPackageItemToWrite, InventoryItemPackageItem> TransformItem()
+        private static Func<InventoryItemPackageItemToWrite, InventoryItemPackageItem> ConvertWriteDtoToEntity(IReadOnlyList<InventoryItem> inventoryItems)
         {
             return item =>
-                            new InventoryItemPackageItem()
+                            InventoryItemPackageItem.Create(item.Order, )
                             {
-                                //Id = item.Id,
-                                Order = item.Order,
+                //Id = item.Id,
+                Order = item.Order,
                                 InventoryItemId = item.Item.Id,
                                 //Item = InventoryItemHelper.ConvertWriteDtoToEntity(item.Item),
                                 Quantity = item.Quantity,
@@ -110,26 +112,30 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                             };
         }
 
-        private static List<InventoryItemPackagePlaceholder> ProjectPlaceholdersToWrite(IList<InventoryItemPackagePlaceholderToWrite> placeholders)
+        private static List<InventoryItemPackagePlaceholder> ConvertWriteDtosToEntities(IList<InventoryItemPackagePlaceholderToWrite> placeholders)
         {
-            return placeholders?.Select(TransformPlaceholder()).ToList()
+            return placeholders?.Select(ConvertWriteDtoToEntity()).ToList()
                 ?? new List<InventoryItemPackagePlaceholder>();
         }
 
-        private static Func<InventoryItemPackagePlaceholderToWrite, InventoryItemPackagePlaceholder> TransformPlaceholder()
+        private static Func<InventoryItemPackagePlaceholderToWrite, InventoryItemPackagePlaceholder> ConvertWriteDtoToEntity()
         {
             return placeholder =>
-                            new InventoryItemPackagePlaceholder()
-                            {
-                                Order = placeholder.Order,
-                                Description = placeholder.Description,
-                                ItemType = placeholder.ItemType,
-                                Quantity = placeholder.Quantity,
-                                PartAmountIsAdditional = placeholder.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = placeholder.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = placeholder.ExciseFeeIsAdditional
-                            };
+                            InventoryItemPackagePlaceholder.Create(
+                                (PackagePlaceholderItemType)Enum.Parse(
+                                    typeof(PackagePlaceholderItemType),
+                                    placeholder.ItemType),
+                                placeholder.Description,
+                                placeholder.DisplayOrder,
+                                InventoryItemPackageDetails.Create(
+                                    placeholder.Details.Quantity,
+                                    placeholder.Details.PartAmountIsAdditional,
+                                    placeholder.Details.LaborAmountIsAdditional,
+                                    placeholder.Details.ExciseFeeIsAdditional
+                                    ).Value
+                                ).Value;
         }
+
         #endregion
 
         #region <---- ConvertReadToWriteDto ---->
@@ -195,15 +201,5 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         }
         #endregion
 
-        public static void CopyWriteDtoToEntity(InventoryItemPackageToWrite packageToWrite, InventoryItemPackage package)
-        {
-
-            package.BasePartsAmount = packageToWrite.BasePartsAmount;
-            package.BaseLaborAmount = packageToWrite.BaseLaborAmount;
-            package.Script = packageToWrite.Script;
-            package.IsDiscountable = packageToWrite.IsDiscountable;
-            package.Items = ProjectItemsToWrite(packageToWrite.Items);
-            package.Placeholders = ProjectPlaceholdersToWrite(packageToWrite.Placeholders);
-        }
     }
 }

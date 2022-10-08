@@ -26,41 +26,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         public static InventoryItemPart ConvertWriteDtoToEntity(InventoryItemPartToWrite part)
         {
-            if (part is null)
-                return null;
-
-            return new()
-            {
-                List = part.List,
-                Cost = part.Cost,
-                Core = part.Core,
-                Retail = part.Retail,
-                TechPayType = part.TechPayType,
-                TechPayAmount = part.TechPayAmount,
-                LineCode = part.LineCode,
-                SubLineCode = part.SubLineCode,
-                Fractional = part.Fractional,
-                SkillLevel = part.SkillLevel
-            };
+            return part is null
+                ? null
+                : InventoryItemPart.Create(
+                part.List,
+                part.Cost,
+                part.Core,
+                part.Retail,
+                TechAmount.Create(part.TechAmount.PayType, part.TechAmount.Amount, part.TechAmount.SkillLevel).Value,
+                part.LineCode,
+                part.SubLineCode,
+                part.Fractional).Value;
         }
-
-
-        //public static InventoryPartToWrite CreateInventoryPart(InventoryPart part)
-        //{
-        //    return new()
-        //    {
-        //        List = part.List,
-        //        Cost = part.Cost,
-        //        Core = part.Core,
-        //        Retail = part.Retail,
-        //        TechPayType = part.TechPayType,
-        //        TechPayAmount = part.TechPayAmount,
-        //        LineCode = part.LineCode,
-        //        SubLineCode = part.SubLineCode,
-        //        Fractional = part.Fractional,
-        //        SkillLevel = part.SkillLevel
-        //    };
-        //}
 
         public static InventoryItemPartToRead ConvertEntityToReadDto(InventoryItemPart part)
         {

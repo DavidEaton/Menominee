@@ -25,7 +25,17 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             if (inspection is null)
                 return null;
 
-            return InventoryItemInspection.Create(new LaborAmountToWrite() { Amount = inspection.LaborAmount}, inspection.TechAmount, inspection.Type);
+            return InventoryItemInspection.Create(
+                LaborAmount.Create(
+                    inspection.LaborAmount.PayType, 
+                    inspection.LaborAmount.Amount).
+                Value,
+                TechAmount.Create(
+                    inspection.TechAmount.PayType,
+                    inspection.TechAmount.Amount,
+                    inspection.TechAmount.SkillLevel)
+                .Value,
+                inspection.Type).Value;
         }
 
         public static InventoryItemInspectionToRead ConvertEntityToReadDto(InventoryItemInspection inspection)
