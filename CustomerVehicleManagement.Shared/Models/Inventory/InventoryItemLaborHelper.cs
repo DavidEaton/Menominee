@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
 {
@@ -12,11 +11,17 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
             return new()
             {
-                LaborType = labor.LaborType,
-                LaborAmount = labor.LaborAmount,
-                TechPayType = labor.TechPayType,
-                TechPayAmount = labor.TechPayAmount,
-                SkillLevel = labor.SkillLevel
+                LaborAmount = new LaborAmountToWrite()
+                {
+                    Amount = labor.LaborAmount.Amount,
+                    PayType = labor.LaborAmount.PayType,
+                },
+                TechAmount = new TechAmountToWrite()
+                {
+                    PayType = labor.TechAmount.PayType,
+                    Amount = labor.TechAmount.Amount,
+                    SkillLevel = labor.TechAmount.SkillLevel
+                }
             };
         }
 
@@ -26,7 +31,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 ? null
                 : InventoryItemLabor.Create(
                 LaborAmount.Create(labor.LaborAmount.PayType, labor.LaborAmount.Amount).Value,
-                TechAmount.Create(labor.TechPayAmount.PayType, labor.TechPayAmount.Amount, labor.TechPayAmount.SkillLevel).Value)
+                TechAmount.Create(labor.TechAmount.PayType, labor.TechAmount.Amount, labor.TechAmount.SkillLevel).Value)
             .Value;
         }
 
@@ -38,21 +43,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             return new()
             {
                 Id = labor.Id,
-                LaborType = labor.LaborType,
-                LaborAmount = labor.LaborAmount,
-                TechPayType = labor.TechPayType,
-                TechPayAmount = labor.TechPayAmount,
-                SkillLevel = labor.SkillLevel
+                LaborAmount = new LaborAmountToRead()
+                {
+                    Amount = labor.LaborAmount.Amount,
+                    PayType = labor.LaborAmount.PayType,
+                },
+                TechAmount = new TechAmountToRead()
+                {
+                    PayType = labor.TechAmount.PayType,
+                    Amount = labor.TechAmount.Amount,
+                    SkillLevel = labor.TechAmount.SkillLevel
+                }
             };
-        }
-
-        public static void CopyWriteDtoToEntity(InventoryItemLaborToWrite laborToUpdate, InventoryItemLabor labor)
-        {
-            labor.LaborType = laborToUpdate.LaborType;
-            labor.LaborAmount = laborToUpdate.LaborAmount;
-            labor.TechPayType = laborToUpdate.TechPayType;
-            labor.TechPayAmount = laborToUpdate.TechPayAmount;
-            labor.SkillLevel = laborToUpdate.SkillLevel;
         }
 
         public static InventoryItemLaborToReadInList ConvertEntityToReadInListDto(InventoryItemLabor labor)
@@ -62,11 +64,17 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
             return new()
             {
-                LaborType = labor.LaborType,
-                LaborAmount = labor.LaborAmount,
-                TechPayType = labor.TechPayType,
-                TechPayAmount = labor.TechPayAmount,
-                SkillLevel = labor.SkillLevel
+                LaborAmount = new LaborAmountToRead()
+                {
+                    Amount = labor.LaborAmount.Amount,
+                    PayType = labor.LaborAmount.PayType,
+                },
+                TechAmount = new TechAmountToRead()
+                {
+                    PayType = labor.TechAmount.PayType,
+                    Amount = labor.TechAmount.Amount,
+                    SkillLevel = labor.TechAmount.SkillLevel
+                }
             };
         }
     }

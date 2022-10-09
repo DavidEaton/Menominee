@@ -24,17 +24,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string InvalidLoadIndexMessage = $"Please limit Load Index to three characters, greater than {MinimumValue}.";
         public string Type { get; private set; }
 
-        // TODO: Shouldn't this be an int?
         // Width is ALWAYS a three-digit number in millimeters
         public int Width { get; private set; }
 
-        // TODO: Shouldn't this be an int? Aspect ratio is ALWAYS two digits
+        // Aspect ratio is ALWAYS two digits
         public int AspectRatio { get; private set; }
 
-        // CONFIRM THIS PROPERTY IS NULLABLE
+        // TODO: CONFIRM THIS PROPERTY IS NULLABLE
         public TireConstructionType ConstructionType { get; private set; }
 
-        // TODO: Shouldn't this be an int?
         // This two-digit number specifies wheel diameter in inches.
         public double Diameter { get; private set; }
         public int LoadIndex { get; private set; }

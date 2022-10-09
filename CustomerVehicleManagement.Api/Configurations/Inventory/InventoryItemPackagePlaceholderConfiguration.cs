@@ -11,6 +11,33 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPackagePlaceholder", "dbo");
 
+            builder.Property(placeholder => placeholder.ItemType)
+                .IsRequired();
+
+            builder.Property(placeholder => placeholder.Description)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Property(placeholder => placeholder.DisplayOrder)
+                .IsRequired();
+
+            // Value Object: InventoryItemPackageDetails
+            builder.OwnsOne(placeholder => placeholder.Details)
+               .Property(details => details.Quantity)
+               .HasColumnName("Quantity")
+               .IsRequired();
+            builder.OwnsOne(placeholder => placeholder.Details)
+               .Property(details => details.ExciseFeeIsAdditional)
+               .HasColumnName("ExciseFeeIsAdditional")
+               .IsRequired();
+            builder.OwnsOne(placeholder => placeholder.Details)
+               .Property(details => details.LaborAmountIsAdditional)
+               .HasColumnName("LaborAmountIsAdditional")
+               .IsRequired();
+            builder.OwnsOne(placeholder => placeholder.Details)
+               .Property(details => details.PartAmountIsAdditional)
+               .HasColumnName("PartAmountIsAdditional")
+               .IsRequired();
         }
     }
 }

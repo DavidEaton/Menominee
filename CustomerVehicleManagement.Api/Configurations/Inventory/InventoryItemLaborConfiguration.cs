@@ -11,6 +11,28 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemLabor", "dbo");
 
+            // Value Object: LaborAmount
+            builder.OwnsOne(labor => labor.LaborAmount)
+               .Property(amount => amount.PayType)
+               .HasColumnName("LaborPayType")
+               .IsRequired();
+            builder.OwnsOne(labor => labor.LaborAmount)
+               .Property(amount => amount.Amount)
+               .HasColumnName("LaborPayAmount")
+               .IsRequired();
+
+            // Value Object: TechAmount
+            builder.OwnsOne(labor => labor.TechAmount)
+               .Property(amount => amount.PayType)
+               .HasColumnName("TechPayType")
+               .IsRequired();
+            builder.OwnsOne(labor => labor.TechAmount)
+               .Property(amount => amount.PayType)
+               .HasColumnName("TechPayType")
+               .IsRequired();
+            builder.OwnsOne(labor => labor.TechAmount)
+               .Property(amount => amount.SkillLevel)
+               .HasColumnName("TechSkillLevel");
         }
     }
 }

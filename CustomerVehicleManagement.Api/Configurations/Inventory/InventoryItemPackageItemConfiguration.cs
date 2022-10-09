@@ -11,11 +11,31 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPackageItem", "dbo");
 
-            builder.HasOne(i => i.InventoryItem)
+            builder.HasOne(packageItem => packageItem.InventoryItem)
                    .WithMany()
-                   .HasForeignKey(i => i.InventoryItemId)
                    .OnDelete(DeleteBehavior.Restrict)
                    .IsRequired();
+
+            builder.Property(packageItem => packageItem.DisplayOrder)
+                .IsRequired();
+            
+            // Value Object: InventoryItemPackageDetails
+            builder.OwnsOne(packageItem => packageItem.Details)
+               .Property(details => details.Quantity)
+               .HasColumnName("Quantity")
+               .IsRequired();
+            builder.OwnsOne(packageItem => packageItem.Details)
+               .Property(details => details.ExciseFeeIsAdditional)
+               .HasColumnName("ExciseFeeIsAdditional")
+               .IsRequired();
+            builder.OwnsOne(packageItem => packageItem.Details)
+               .Property(details => details.LaborAmountIsAdditional)
+               .HasColumnName("LaborAmountIsAdditional")
+               .IsRequired();
+            builder.OwnsOne(packageItem => packageItem.Details)
+               .Property(details => details.PartAmountIsAdditional)
+               .HasColumnName("PartAmountIsAdditional")
+               .IsRequired();
         }
     }
 }

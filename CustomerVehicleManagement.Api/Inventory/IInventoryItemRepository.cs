@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id);
         Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id);
         Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntitiesAsync(List<long> ids);
-        Task<bool> SaveChangesAsync();
+        Task SaveChangesAsync();
         void DeleteInventoryItem(InventoryItem entity);
     }
 }

@@ -12,9 +12,14 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.ToTable("Manufacturer", "dbo");
 
             builder.Property(manufacturer => manufacturer.Code)
-                   .IsRequired();
+                .HasMaxLength(255)
+                .IsRequired();
             builder.Property(manufacturer => manufacturer.Name)
-                   .IsRequired();
+                .HasMaxLength(255)
+                .IsRequired();
+            builder.Property(manufacturer => manufacturer.Code)
+                .HasMaxLength(255)
+                .IsRequired();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         {
             this.itemRepository =
                 itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
-            
+
             this.manufacturerRepository =
                 manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
         }
@@ -196,17 +196,16 @@ namespace CustomerVehicleManagement.Api.Inventory
                     return BadRequest(resultOrError.Error);
             }
 
-            if (await itemRepository.SaveChangesAsync())
-                return NoContent();
+            await itemRepository.SaveChangesAsync();
 
-            return BadRequest($"Failed to update .");
+            return NoContent();
         }
 
 
         [HttpPost]
         public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
         {
-            var notFoundMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
+            var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
             var manufacturer =
                 await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id);
@@ -220,12 +219,12 @@ namespace CustomerVehicleManagement.Api.Inventory
             if (manufacturer is null
                 || productCode is null
                 || inventoryItems is null)
-                return NotFound(notFoundMessage);
+                return NotFound(failureMessage);
 
             InventoryItem inventoryItem = InventoryItemHelper.ConvertWriteDtoToEntity(
-                itemToAdd, 
-                manufacturer, 
-                productCode, 
+                itemToAdd,
+                manufacturer,
+                productCode,
                 inventoryItems);
 
             await itemRepository.AddItemAsync(inventoryItem);

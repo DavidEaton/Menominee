@@ -12,19 +12,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         public static InventoryItemPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
         {
-            if (package is null)
-                return null;
-
-            return new()
-            {
-                Id = package.Id,
-                BasePartsAmount = package.BasePartsAmount,
-                BaseLaborAmount = package.BaseLaborAmount,
-                Script = package.Script,
-                IsDiscountable = package.IsDiscountable,
-                Items = ConvertEntiiesToReadDtos(package.Items),
-                Placeholders = ProjectPlaceholders(package.Placeholders)
-            };
+            return package is null
+                ? null
+                : (new()
+                {
+                    Id = package.Id,
+                    BasePartsAmount = package.BasePartsAmount,
+                    BaseLaborAmount = package.BaseLaborAmount,
+                    Script = package.Script,
+                    IsDiscountable = package.IsDiscountable,
+                    Items = ConvertEntiiesToReadDtos(package.Items),
+                    Placeholders = ConvertEntiiesToReadDtos(package.Placeholders)
+                });
         }
 
         private static List<InventoryItemPackageItemToRead> ConvertEntiiesToReadDtos(IList<InventoryItemPackageItem> items)
@@ -51,26 +50,28 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                 };
         }
 
-        private static List<InventoryItemPackagePlaceholderToRead> ProjectPlaceholders(IList<InventoryItemPackagePlaceholder> placeholders)
+        private static List<InventoryItemPackagePlaceholderToRead> ConvertEntiiesToReadDtos(IList<InventoryItemPackagePlaceholder> placeholders)
         {
-            return placeholders?.Select(TransformPlaceholderToReadToEntity()).ToList()
+            return placeholders?.Select(ConvertEntiyToReadDto()).ToList()
                 ?? new List<InventoryItemPackagePlaceholderToRead>();
         }
 
-        private static Func<InventoryItemPackagePlaceholder, InventoryItemPackagePlaceholderToRead> TransformPlaceholderToReadToEntity()
+        private static Func<InventoryItemPackagePlaceholder, InventoryItemPackagePlaceholderToRead> ConvertEntiyToReadDto()
         {
             return placeholder =>
-                            new InventoryItemPackagePlaceholderToRead()
-                            {
-                                Id = placeholder.Id,
-                                Order = placeholder.DisplayOrder,
-                                Description = placeholder.Description,
-                                ItemType = placeholder.ItemType,
-                                Quantity = placeholder.Quantity,
-                                PartAmountIsAdditional = placeholder.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = placeholder.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = placeholder.ExciseFeeIsAdditional
-                            };
+                new InventoryItemPackagePlaceholderToRead()
+                {
+                    Id = placeholder.Id,
+                    DisplayOrder = placeholder.DisplayOrder,
+                    ItemType = placeholder.ItemType.ToString(),
+                    Details = new InventoryItemPackageDetailsToRead()
+                    {
+                        Quantity = placeholder.Details.Quantity,
+                        LaborAmountIsAdditional = placeholder.Details.LaborAmountIsAdditional,
+                        ExciseFeeIsAdditional = placeholder.Details.ExciseFeeIsAdditional,
+                        PartAmountIsAdditional = placeholder.Details.PartAmountIsAdditional
+                    }
+                };
         }
         #endregion
 
@@ -99,17 +100,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         private static Func<InventoryItemPackageItemToWrite, InventoryItemPackageItem> ConvertWriteDtoToEntity(IReadOnlyList<InventoryItem> inventoryItems)
         {
             return item =>
-                            InventoryItemPackageItem.Create(item.Order, )
-                            {
-                //Id = item.Id,
-                Order = item.Order,
-                                InventoryItemId = item.Item.Id,
-                                //Item = InventoryItemHelper.ConvertWriteDtoToEntity(item.Item),
-                                Quantity = item.Quantity,
-                                PartAmountIsAdditional = item.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = item.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = item.ExciseFeeIsAdditional
-                            };
+                InventoryItemPackageItem.Create(
+                    item.DisplayOrder,
+                    inventoryItems.FirstOrDefault(x => x.Id == item.Item.Id),
+                    InventoryItemPackageDetails.Create(
+                        item.Details.Quantity,
+                        item.Details.PartAmountIsAdditional,
+                        item.Details.LaborAmountIsAdditional,
+                        item.Details.ExciseFeeIsAdditional)
+                    .Value)
+                .Value;
         }
 
         private static List<InventoryItemPackagePlaceholder> ConvertWriteDtosToEntities(IList<InventoryItemPackagePlaceholderToWrite> placeholders)
@@ -121,19 +121,19 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         private static Func<InventoryItemPackagePlaceholderToWrite, InventoryItemPackagePlaceholder> ConvertWriteDtoToEntity()
         {
             return placeholder =>
-                            InventoryItemPackagePlaceholder.Create(
-                                (PackagePlaceholderItemType)Enum.Parse(
-                                    typeof(PackagePlaceholderItemType),
-                                    placeholder.ItemType),
-                                placeholder.Description,
-                                placeholder.DisplayOrder,
-                                InventoryItemPackageDetails.Create(
-                                    placeholder.Details.Quantity,
-                                    placeholder.Details.PartAmountIsAdditional,
-                                    placeholder.Details.LaborAmountIsAdditional,
-                                    placeholder.Details.ExciseFeeIsAdditional
-                                    ).Value
-                                ).Value;
+                InventoryItemPackagePlaceholder.Create(
+                    (PackagePlaceholderItemType)Enum.Parse(
+                        typeof(PackagePlaceholderItemType),
+                        placeholder.ItemType),
+                    placeholder.Description,
+                    placeholder.DisplayOrder,
+                    InventoryItemPackageDetails.Create(
+                        placeholder.Details.Quantity,
+                        placeholder.Details.PartAmountIsAdditional,
+                        placeholder.Details.LaborAmountIsAdditional,
+                        placeholder.Details.ExciseFeeIsAdditional
+                        ).Value
+                    ).Value;
         }
 
         #endregion
@@ -142,64 +142,66 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
 
         public static InventoryItemPackageToWrite ConvertReadToWriteDto(InventoryItemPackageToRead package)
         {
-            if (package is null)
-                return null;
-
-            return new()
-            {
-                BasePartsAmount = package.BasePartsAmount,
-                BaseLaborAmount = package.BaseLaborAmount,
-                Script = package.Script,
-                IsDiscountable = package.IsDiscountable,
-                Items = ProjectItemsToRead(package.Items),
-                Placeholders = ProjectPlaceholdersToRead(package.Placeholders)
-            };
+            return package is null
+                ? null
+                : (new()
+                {
+                    BasePartsAmount = package.BasePartsAmount,
+                    BaseLaborAmount = package.BaseLaborAmount,
+                    Script = package.Script,
+                    IsDiscountable = package.IsDiscountable,
+                    Items = ConvertWriteDtosToRead(package.Items),
+                    Placeholders = ConvertWriteDtosToRead(package.Placeholders)
+                });
         }
 
-        private static List<InventoryItemPackageItemToWrite> ProjectItemsToRead(IList<InventoryItemPackageItemToRead> items)
+        private static List<InventoryItemPackageItemToWrite> ConvertWriteDtosToRead(IList<InventoryItemPackageItemToRead> items)
         {
-            return items?.Select(TransformItemToRead()).ToList()
+            return items?.Select(ConvertWriteDtoToRead()).ToList()
                 ?? new List<InventoryItemPackageItemToWrite>();
         }
 
-        private static Func<InventoryItemPackageItemToRead, InventoryItemPackageItemToWrite> TransformItemToRead()
+        private static Func<InventoryItemPackageItemToRead, InventoryItemPackageItemToWrite> ConvertWriteDtoToRead()
         {
             return item =>
-                            new InventoryItemPackageItemToWrite()
-                            {
-                                Id = item.Id,
-                                Order = item.Order,
-                                Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item),
-                                InventoryItemId = item.InventoryItemId,
-                                Quantity = item.Quantity,
-                                PartAmountIsAdditional = item.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = item.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = item.ExciseFeeIsAdditional
-                            };
+                new InventoryItemPackageItemToWrite()
+                {
+                    Id = item.Id,
+                    DisplayOrder = item.DisplayOrder,
+                    Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item),
+                    Details = new()
+                    {
+                        ExciseFeeIsAdditional = item.Details.ExciseFeeIsAdditional,
+                        LaborAmountIsAdditional = item.Details.LaborAmountIsAdditional,
+                        PartAmountIsAdditional = item.Details.PartAmountIsAdditional,
+                        Quantity = item.Details.Quantity
+                    }
+                };
         }
 
-        private static List<InventoryItemPackagePlaceholderToWrite> ProjectPlaceholdersToRead(IList<InventoryItemPackagePlaceholderToRead> placeholders)
+        private static List<InventoryItemPackagePlaceholderToWrite> ConvertWriteDtosToRead(IList<InventoryItemPackagePlaceholderToRead> placeholders)
         {
-            return placeholders?.Select(TransformPlaceholderToRead()).ToList()
+            return placeholders?.Select(ConverPlaceholdertWriteDtoToRead()).ToList()
                 ?? new List<InventoryItemPackagePlaceholderToWrite>();
         }
 
-        private static Func<InventoryItemPackagePlaceholderToRead, InventoryItemPackagePlaceholderToWrite> TransformPlaceholderToRead()
+        private static Func<InventoryItemPackagePlaceholderToRead, InventoryItemPackagePlaceholderToWrite> ConverPlaceholdertWriteDtoToRead()
         {
             return placeholder =>
-                            new InventoryItemPackagePlaceholderToWrite()
-                            {
-                                Id = placeholder.Id,
-                                Order = placeholder.Order,
-                                Description = placeholder.Description,
-                                ItemType = placeholder.ItemType,
-                                Quantity = placeholder.Quantity,
-                                PartAmountIsAdditional = placeholder.PartAmountIsAdditional,
-                                LaborAmountIsAdditional = placeholder.LaborAmountIsAdditional,
-                                ExciseFeeIsAdditional = placeholder.ExciseFeeIsAdditional
-                            };
+                new InventoryItemPackagePlaceholderToWrite()
+                {
+                    Id = placeholder.Id,
+                    DisplayOrder = placeholder.DisplayOrder,
+                    ItemType = placeholder.ItemType,
+                    Details = new()
+                    {
+                        ExciseFeeIsAdditional = placeholder.Details.ExciseFeeIsAdditional,
+                        LaborAmountIsAdditional = placeholder.Details.LaborAmountIsAdditional,
+                        PartAmountIsAdditional = placeholder.Details.PartAmountIsAdditional,
+                        Quantity = placeholder.Details.Quantity
+                    }
+                };
         }
         #endregion
-
     }
 }

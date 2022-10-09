@@ -291,9 +291,9 @@ namespace CustomerVehicleManagement.Api.Inventory
             return await context.InventoryItems.AnyAsync(item => item.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            await context.SaveChangesAsync();
         }
 
         public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)

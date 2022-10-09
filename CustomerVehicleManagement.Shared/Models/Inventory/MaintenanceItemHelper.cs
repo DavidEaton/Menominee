@@ -6,62 +6,52 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
     {
         public static MaintenanceItemToReadInList ConvertEntityToReadInListDto(MaintenanceItem item)
         {
-            if (item is null)
-                return null;
-
-            return new()
-            {
-                Id = item.Id,
-                DisplayOrder = item.DisplayOrder,
-                //Item = InventoryItemHelper.ConvertEntityToReadInListDto(item.Item)
-                InventoryItemId = item.InventoryItem.Id,
-                ItemNumber = item.InventoryItem.ItemNumber,
-                Description = item.InventoryItem.Description
-            };
+            return item is null
+                ? null
+                : (new()
+                {
+                    Id = item.Id,
+                    DisplayOrder = item.DisplayOrder,
+                    //Item = InventoryItemHelper.ConvertEntityToReadInListDto(item.Item)
+                    InventoryItemId = item.InventoryItem.Id,
+                    ItemNumber = item.InventoryItem.ItemNumber,
+                    Description = item.InventoryItem.Description
+                });
         }
 
         public static MaintenanceItemToRead ConvertEntityToReadDto(MaintenanceItem item)
         {
-            if (item is null)
-                return null;
-
-            return new()
-            {
-                Id = item.Id,
-                DisplayOrder = item.DisplayOrder,
-                Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem)
-            };
+            return item is null
+                ? null
+                : (new()
+                {
+                    Id = item.Id,
+                    DisplayOrder = item.DisplayOrder,
+                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem)
+                });
         }
 
         public static MaintenanceItemToWrite ConvertReadToWriteDto(MaintenanceItemToRead item)
         {
-            if (item is null)
-                return null;
-
-            return new()
-            {
-                Id = item.Id,
-                DisplayOrder = item.DisplayOrder,
-                Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item)
-            };
+            return item is null
+                ? null
+                : (new()
+                {
+                    Id = item.Id,
+                    DisplayOrder = item.DisplayOrder,
+                    Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item)
+                });
         }
 
-        public static MaintenanceItem ConvertWriteDtoToEntity(MaintenanceItemToWrite item)
+        public static MaintenanceItem ConvertWriteDtoToEntity(
+            MaintenanceItemToWrite maintenanceItem,
+            InventoryItem inventoryItem)
         {
-            if (item is null)
-                return null;
-
-            return new()
-            {
-                DisplayOrder = item.DisplayOrder,
-                Item = InventoryItemHelper.ConvertWriteDtoToEntity(item.Item)
-            };
-        }
-
-        public static void CopyWriteDtoToEntity(MaintenanceItemToWrite itemToUpdate, MaintenanceItem item)
-        {
-            item.DisplayOrder = itemToUpdate.DisplayOrder;
-            item.Item = InventoryItemHelper.ConvertWriteDtoToEntity(itemToUpdate.Item);
+            return maintenanceItem is null
+                ? null
+                : MaintenanceItem.Create(
+                maintenanceItem.DisplayOrder,
+                inventoryItem).Value;
         }
     }
 }

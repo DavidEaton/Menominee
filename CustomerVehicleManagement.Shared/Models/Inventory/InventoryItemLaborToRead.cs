@@ -4,6 +4,6 @@
     {
         public long Id { get; set; }
         public LaborAmountToRead LaborAmount { get; set; }
-        public TechAmountToRead TechPayAmount { get; set; }
+        public TechAmountToRead TechAmount { get; set; }
     }
 }

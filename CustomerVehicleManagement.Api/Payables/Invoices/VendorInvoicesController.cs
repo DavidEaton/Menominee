@@ -242,6 +242,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
+            if (vendor is null)
+                return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
+
             var invoiceEntity = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
                 vendor,

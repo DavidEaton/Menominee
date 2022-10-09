@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
-using Menominee.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,36 +21,26 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task AddItemAsync(MaintenanceItem item)
         {
-            Guard.ForNull(item, "item");
-
             if (await ItemExistsAsync(item.Id))
                 throw new Exception("Maintenance Item already exists");
 
-            await context.AddAsync(item);
+            if (item != null)
+                context.Attach(item);
         }
 
         public void DeleteItem(MaintenanceItem item)
         {
-            Guard.ForNull(item, "item");
-
-            context.Remove(item);
-            context.SaveChanges();
+            if (item is not null)
+                context.Remove(item);
         }
 
         public async Task DeleteItemAsync(long id)
         {
             var item = await context.MaintenanceItems
-                                    .FirstOrDefaultAsync(item => item.Id == id);
+                .FirstOrDefaultAsync(item => item.Id == id);
 
-            Guard.ForNull(item, "item");
-
-            context.Remove(item);
-            context.SaveChanges();
-        }
-
-        public void FixTrackingState()
-        {
-            context.FixState();
+            if (item is not null)
+                context.Remove(item);
         }
 
         public async Task<MaintenanceItemToRead> GetItemAsync(long id)
@@ -61,8 +50,6 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .AsNoTracking()
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
-
-            Guard.ForNull(itemFromContext, "itemFromContext");
 
             return MaintenanceItemHelper.ConvertEntityToReadDto(itemFromContext);
         }
@@ -100,8 +87,6 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public async Task<MaintenanceItem> UpdateItemAsync(MaintenanceItem item)
         {
-            Guard.ForNull(item, "item");
-
             // Tracking IS needed for commands for disconnected data collections
             context.Entry(item).State = EntityState.Modified;
 
