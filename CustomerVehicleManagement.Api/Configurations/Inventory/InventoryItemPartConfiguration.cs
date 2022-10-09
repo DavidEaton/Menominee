@@ -11,6 +11,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPart", "dbo");
 
+            // :InstallablePart
             builder.Property(part => part.LineCode)
                 .HasMaxLength(255);
 
@@ -33,7 +34,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
                .Property(techAmount => techAmount.SkillLevel)
                .HasColumnName("TechSkillLevel")
                .IsRequired();
-
         }
     }
 }
