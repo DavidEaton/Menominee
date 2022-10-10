@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public string SubLineCode { get; private set; }
         public bool Fractional { get; private set; }
 
-        protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
+        protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
         {
             if (list < MinimumValue ||
                 cost < MinimumValue ||

@@ -98,8 +98,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 if (inspection is null)
                     return Result.Failure<InventoryItem>(RequiredMessage);
 
-            if (itemType == InventoryItemType.Part)
-                if (part is null)
+            if (itemType == InventoryItemType.Package)
+                if (package is null)
                     return Result.Failure<InventoryItem>(RequiredMessage);
 
             if (itemType == InventoryItemType.Warranty)
@@ -146,7 +146,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         }
 
         // TODO: Clear all other InventoryItem{Type}s when calling SetItemType?
-        public Result<InventoryItemType> SetItemType(InventoryItemType itemType)
+        private Result<InventoryItemType> SetItemType(InventoryItemType itemType)
         {
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
                 return Result.Failure<InventoryItemType>(RequiredMessage);

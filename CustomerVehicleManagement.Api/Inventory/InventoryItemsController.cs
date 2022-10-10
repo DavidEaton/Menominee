@@ -134,14 +134,6 @@ namespace CustomerVehicleManagement.Api.Inventory
                     return BadRequest(resultOrError.Error);
             }
 
-            if (itemFromRepository.ItemType != itemFromCaller.ItemType)
-            {
-                var resultOrError = itemFromRepository.SetItemType(itemFromCaller.ItemType);
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
             if (itemFromRepository.Part.Id != itemFromCaller.Part.Id)
             {
                 var resultOrError = itemFromRepository.SetPart(

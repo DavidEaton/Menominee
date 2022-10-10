@@ -37,13 +37,10 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
             return tire is null
                 ? null
                 : InventoryItemTire.Create(
-                tire.Type,
                 tire.Width,
                 tire.AspectRatio,
                 tire.ConstructionType,
                 tire.Diameter,
-                tire.LoadIndex,
-                tire.SpeedRating,
                 tire.List,
                 tire.Cost,
                 tire.Core,
@@ -53,9 +50,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                     tire.TechAmount.Amount,
                     tire.TechAmount.SkillLevel)
                 .Value,
+                tire.Fractional,
                 tire.LineCode,
                 tire.SubLineCode,
-                tire.Fractional)
+                tire.Type,
+                tire.LoadIndex,
+                tire.SpeedRating)
             .Value;
         }
 

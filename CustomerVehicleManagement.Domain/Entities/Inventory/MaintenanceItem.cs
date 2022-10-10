@@ -7,6 +7,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     public class MaintenanceItem : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly string InvalidMessage = $"Please enter a valid Display Order";
         public int DisplayOrder { get; private set; }
         public InventoryItem InventoryItem { get; private set; }
 
@@ -14,6 +15,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             if (inventoryItem is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (displayOrder < 0)
+                throw new ArgumentOutOfRangeException(InvalidMessage);
 
             DisplayOrder = displayOrder;
             InventoryItem = inventoryItem;
@@ -23,6 +27,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             if (inventoryItem is null)
                 return Result.Failure<MaintenanceItem>(RequiredMessage);
+
+            if (displayOrder < 0)
+                return Result.Failure<MaintenanceItem>(InvalidMessage);
 
             return Result.Success(new MaintenanceItem(displayOrder, inventoryItem));
         }
@@ -37,6 +44,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<int> SetDisplayOrder(int displayOrder)
         {
+            if (displayOrder < 0)
+                return Result.Failure<int>(InvalidMessage);
+
             return Result.Success(DisplayOrder = displayOrder);
         }
 

@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         // Aspect ratio is ALWAYS two digits
         public int AspectRatio { get; private set; }
 
-        // TODO: CONFIRM THIS PROPERTY IS NULLABLE
+        // TODO: CONFIRM THIS PROPERTY IS OPTIONAL
         public TireConstructionType ConstructionType { get; private set; }
 
         // This two-digit number specifies wheel diameter in inches.
@@ -38,14 +38,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public int LoadIndex { get; private set; }
         public string SpeedRating { get; private set; }
 
-        protected InventoryItemTire(string type, int width, int aspectRatio, TireConstructionType constructionType, double diameter, int loadIndex, string speedRating,
-             double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
-             : base(list, cost, core, retail, techAmount, lineCode, subLineCode, fractional)
+        protected InventoryItemTire(int width, int aspectRatio, TireConstructionType constructionType, double diameter,
+             double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, string type = null, int? loadIndex = null, string speedRating = null)
+             : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode)
         {
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();
 
-            if (type.Length > MaximumTypeLength)
+            if (type?.Length > MaximumTypeLength)
                 throw new ArgumentOutOfRangeException(InvalidTypeLengthMessage);
 
             if (width < MinimumValue || width.ToString().Length > MaximumWidthLength)
@@ -60,10 +60,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (diameter < MinimumValue || diameter > MaximumDiameter)
                 throw new ArgumentOutOfRangeException(InvalidDiameterMessage);
 
-            if (loadIndex < MinimumValue || loadIndex.ToString().Length > MaximumLoadIndexLength)
-                throw new ArgumentOutOfRangeException(InvalidLoadIndexMessage);
+            if (loadIndex.HasValue)
+                if (loadIndex < MinimumValue || loadIndex.ToString().Length > MaximumLoadIndexLength)
+                    throw new ArgumentOutOfRangeException(InvalidLoadIndexMessage);
 
-            if (speedRating.Length < MinimumLength || speedRating.Length > MaximumSpeedRatingLength)
+            if (speedRating?.Length < MinimumLength || speedRating?.Length > MaximumSpeedRatingLength)
                 throw new ArgumentOutOfRangeException(InvalidSpeedRatingLengthMessage);
 
             Type = type;
@@ -71,11 +72,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             AspectRatio = aspectRatio;
             ConstructionType = constructionType;
             Diameter = diameter;
-            LoadIndex = loadIndex;
+            LoadIndex = loadIndex.HasValue
+                ? (int)loadIndex
+                : 0;
             SpeedRating = speedRating;
         }
 
-        public static Result<InventoryItemTire> Create(string type, int width, int aspectRatio, TireConstructionType constructionType, double diameter, int loadIndex, string speedRating, double list, double cost, double core, double retail, TechAmount techAmount, string lineCode, string subLineCode, bool fractional)
+        public static Result<InventoryItemTire> Create(int width, int aspectRatio, TireConstructionType constructionType, double diameter, double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, string type = null, int? loadIndex = null, string speedRating = null)
         {
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();
@@ -101,7 +104,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (speedRating.Length < MinimumLength || speedRating.Length > MaximumSpeedRatingLength)
                 return Result.Failure<InventoryItemTire>(InvalidSpeedRatingLengthMessage);
 
-            return Result.Success(new InventoryItemTire(type, width, aspectRatio, constructionType, diameter, loadIndex, speedRating, list, cost, core, retail, techAmount, lineCode, subLineCode, fractional));
+            return Result.Success(new InventoryItemTire(width, aspectRatio, constructionType, diameter, list, cost, core, retail, techAmount, fractional, lineCode, subLineCode, type, loadIndex, speedRating));
         }
 
         public Result<string> SetType(string type)
