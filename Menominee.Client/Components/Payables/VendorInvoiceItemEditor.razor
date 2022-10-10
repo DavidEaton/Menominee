@@ -52,7 +52,7 @@
                     <label class="m-label" for="partNum">Part Number</label>
                     <div class="m-form-control-group">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="partNum" @bind-value="@LineItem.Item.PartNumber">
+                            <input type="text" class="form-control" id="partNum" autocomplete="off" @bind-value="@LineItem.Item.PartNumber">
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" type="button" @onclick="SelectInventoryItem"><i class="fas fa-search"></i></button>
                             </div>
@@ -67,6 +67,7 @@
                     <div class="m-form-control-group">
                         <TelerikTextBox @bind-Value="@LineItem.Item.Description"
                                         Width="100%"
+                                        AutoComplete="off"
                                         Id="description">
                         </TelerikTextBox>
                     </div>
@@ -131,7 +132,7 @@
                 </div>
                 <div class="form-group col-4">
                     <label class="m-label" for="poNumber">PO Number</label>
-                    <input type="text" class="form-control" id="poNumber" @bind-value="@LineItem.PONumber">
+                    <input type="text" class="form-control" id="poNumber" autocomplete="off" @bind-value="@LineItem.PONumber">
                 </div>
                 @*                <div class="form-group col-4">
                 <label class="m-label" for="invNumber">Invoice Number</label>

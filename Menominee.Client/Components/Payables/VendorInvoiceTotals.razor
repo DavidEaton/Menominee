@@ -1,63 +1,49 @@
-﻿@*<div class="ui form">*@
-@*<div class="form">
-    <h5 class="m-bordered-form-header">Totals</h5>
-    <div class="m-bordered-form">*@
-@*<div>
-    <Card Title="Totals">
-        <Content>*@
-            @*<div class="w-100">*@
-            @*<table class="w-100 table table-striped table-bordered table-sm">*@
-            <table class="w-100 table table-striped table-sm m-no-margin-bottom">
-                <tr>
-                    <td class="m-totals-data" colspan="8">Purchases</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Misc Debit</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Stock Return</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Defective</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Warranty</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Core Return</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Misc Credit</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Bal. Forward</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr>
-                    <td class="m-totals-data" colspan="8">Taxes</td>
-                    <td class="m-totals-data text-right" colspan="4">0.00</td>
-                </tr>
-                <tr id="totalsLine">
-                    <td class="m-totals-data m-row-divider" colspan="8">Total</td>
-                    <td class="m-totals-data text-right m-row-divider" colspan="4">0.00</td>
-                </tr>
-            </table>
-        @*</Content>
-    </Card>
-</div>*@
+﻿<table class="w-100 table table-striped table-sm mb-0">
+    <tbody>
+        <tr>
+            <td class="m-totals-data" colspan="8">Purchases</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Purchases.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Misc Debit</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.MiscellaneousDebits.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Stock Return</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Returns.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Defective</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Defectives.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Warranty</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Warranties.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Core Return</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.CoreReturns.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Misc Credit</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.MiscellaneousCredits.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Bal. Forward</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.BalanceForwards.ToString("C")</td>
+        </tr>
+        <tr>
+            <td class="m-totals-data" colspan="8">Taxes</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Taxes.ToString("C")</td>
+        </tr>
+        <tr id="totalsLine">
+            <td class="m-totals-data m-row-divider" colspan="8">Total</td>
+            <td class="m-totals-data text-right m-row-divider" colspan="4">@Totals.Total.ToString("C")</td>
+        </tr>
+    </tbody>
+</table>
 
 <style>
-/*    .m-totals {
-        font-weight: bold;
-    }
-*/
 
     #totalsLine {
         font-weight: 600;

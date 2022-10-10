@@ -26,8 +26,7 @@ namespace Menominee.Client.Components.Payables.Pages
                 Invoice = new();
                 Invoice.Date = DateTime.Today;
             }
-
-            if (Id != 0)
+            else
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
                 Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
@@ -42,12 +41,11 @@ namespace Menominee.Client.Components.Payables.Pages
                 {
                     var invoice = await vendorInvoiceDataService.AddInvoice(Invoice);
                     Id = invoice.Id;
-                    EndEdit();
-                    return;
                 }
-
-                if (Id != 0)
+                else
+                {
                     await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
+                }
 
                 EndEdit();
             }

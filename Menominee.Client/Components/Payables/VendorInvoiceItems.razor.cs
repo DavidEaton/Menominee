@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,27 +18,28 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
+        [Parameter]
+        public Action OnCalculateTotals { get; set; }
+
         public IEnumerable<VendorInvoiceLineItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<VendorInvoiceLineItemToWrite>();
         public VendorInvoiceLineItemToWrite SelectedItem { get; set; }
         public VendorInvoiceLineItemToWrite ItemToModify { get; set; } = null;
 
         public TelerikGrid<VendorInvoiceLineItemToWrite> Grid { get; set; }
 
-        public long SelectedId
+        public int SelectedItemIndex
         {
-            get => selectedId;
+            get => selectedItemIndex;
             set
             {
-                selectedId = value;
-                CanEdit = selectedId != 0;
-                CanDelete = selectedId != 0;
+                selectedItemIndex = value;
+                CanEdit = selectedItemIndex >= 0;
+                CanDelete = selectedItemIndex >= 0;
             }
         }
 
         private long itemIdToSelect { get; set; } = 0;
-        private long selectedId = 0;
-        private long nextId = 0;
-        private int selectedItemIndex = 0;
+        private int selectedItemIndex = -1;
         private bool editDialogVisible = false;
 
         private bool CanEdit { get; set; } = false;
@@ -91,6 +93,7 @@ namespace Menominee.Client.Components.Payables
                 LineItems.Remove(SelectedItem);
                 SelectedItem = LineItems.FirstOrDefault();
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
+                SelectedItemIndex = LineItems.IndexOf(SelectedItem);
                 Grid.Rebind();
             }
         }
@@ -103,19 +106,17 @@ namespace Menominee.Client.Components.Payables
             if (ItemFormMode == FormMode.Add)
             {
                 LineItems.Add(ItemToModify);
-                selectedItemIndex = LineItems.IndexOf(ItemToModify);
-                SelectedItem = LineItems[selectedItemIndex];
+                SelectedItemIndex = LineItems.IndexOf(ItemToModify);
+                SelectedItem = LineItems[SelectedItemIndex];
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
                 Grid.Rebind();
             }
             else if (ItemFormMode == FormMode.Edit)
             {
-                //Items[selectedItemIndex] = ItemToModify;
-                //SelectedItem = ItemToModify;
-                CopyItem(ItemToModify, LineItems[selectedItemIndex]);
+                CopyItem(ItemToModify, LineItems[SelectedItemIndex]);
             }
-            //SelectedId = SelectedItem.Id;
             EditDialogVisible = false;
+            OnCalculateTotals?.Invoke();
             StateHasChanged();
         }
 
@@ -128,8 +129,7 @@ namespace Menominee.Client.Components.Payables
         private void OnRowSelected(GridRowClickEventArgs args)
         {
             SelectedItem = args.Item as VendorInvoiceLineItemToWrite;
-            //SelectedId = SelectedItem.Id;
-            selectedItemIndex = LineItems.IndexOf(SelectedItem);
+            SelectedItemIndex = LineItems.IndexOf(SelectedItem);
             SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
         }
 
@@ -149,21 +149,10 @@ namespace Menominee.Client.Components.Payables
                 //if (itemToSelect != 0)
                 //    SelectedItem = Items.Where(x => x.Id == itemToSelect).FirstOrDefault();
 
-                selectedItemIndex = LineItems.IndexOf(SelectedItem);
-                //SelectedId = SelectedItem.Id;
+                SelectedItemIndex = LineItems.IndexOf(SelectedItem);
                 SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
             }
         }
-
-        //private static List<VendorInvoiceItem> FormatReturnData(List<VendorInvoiceItem> items)
-        //{
-        //    foreach (var item in items)
-        //    {
-        //        item.DateAsString = item.Date?.ToShortDateString();
-        //    }
-
-        //    return items;
-        //}
 
         private static void CopyItem(VendorInvoiceLineItemToWrite src, VendorInvoiceLineItemToWrite dst)
         {

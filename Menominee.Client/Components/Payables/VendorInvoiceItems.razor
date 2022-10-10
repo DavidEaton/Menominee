@@ -16,19 +16,25 @@
              SelectedItems="@SelectedItems"
              @ref="@Grid">
         <GridColumns>
-            <GridColumn Width="25%"
+            <GridColumn Width="10%"
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Type)"
+                    Title="Type"
+                    ShowColumnChooser="false"
+                    Lockable="false">
+            </GridColumn>
+            <GridColumn Width="20%"
                     Field="Item.PartNumber"
                     Title="Part Number"
                     ShowColumnChooser="false"
                     Lockable="false">
             </GridColumn>
-            <GridColumn Width="35%"
+            <GridColumn Width="30%"
                     Field="Item.Description"
                     Title="Description"
                     ShowColumnChooser="false"
                     Lockable="false">
             </GridColumn>
-            <GridColumn Width="20%"
+            <GridColumn Width="10%"
                     Field="@nameof(VendorInvoiceLineItemToWrite.Quantity)"
                     Title="Quantity"
                     ShowColumnChooser="false"
@@ -38,7 +44,7 @@
                     Filterable="false"
                     TextAlign="ColumnTextAlign.Right">
             </GridColumn>
-            <GridColumn Width="20%"
+            <GridColumn Width="10%"
                     Field="@nameof(VendorInvoiceLineItemToWrite.Cost)"
                     Title="Cost"
                     ShowColumnChooser="false"
@@ -48,6 +54,34 @@
                     Filterable="false"
                     DisplayFormat="{0:C}"
                     TextAlign="ColumnTextAlign.Right">
+            </GridColumn>
+            <GridColumn Width="10%"
+                    Field="@nameof(VendorInvoiceLineItemToWrite.Core)"
+                    Title="Core"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
+                    DisplayFormat="{0:C}"
+                    TextAlign="ColumnTextAlign.Right">
+            </GridColumn>
+            <GridColumn Width="10%"
+                    Title="Extended"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
+                    DisplayFormat="{0:C}"
+                    TextAlign="ColumnTextAlign.Right">
+                <Template>
+                    @{
+                        var item = context as VendorInvoiceLineItemToWrite;
+                        var extended = (item.Cost + item.Core) * item.Quantity;
+                        @(extended.ToString("C"))
+                    }
+                </Template>
             </GridColumn>
         </GridColumns>
     </TelerikGrid>

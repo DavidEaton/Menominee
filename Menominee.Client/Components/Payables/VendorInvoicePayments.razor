@@ -7,37 +7,37 @@
 {
     <TelerikGrid Data="Payments"
              OnRowClick="OnRowSelected"
-             OnRowDoubleClick="OnEdit"
              Sortable="false"
              FilterMode="GridFilterMode.None"
              ShowColumnMenu="false"
              SelectionMode="GridSelectionMode.Single"
+             SelectedItems="@SelectedPayments"
              @ref="Grid">
         <GridColumns>
-            <GridColumn Field="PaymentMethod.Name"
+            <GridColumn Field="Payment.PaymentMethod.Name"
                     Title="Payment Method"
                     Width="55%">
-@*                <Template>
+                <Template>
                     @{
-                        <TelerikDropDownList @bind-Value="paymentMethodId"
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id"
                                      OnChange="OnPaymentMethodChange">
                         </TelerikDropDownList>
                     }
-                </Template>*@
-
-                @*<EditorTemplate>
-            @{
-            <TelerikDropDownList @bind-Value="Payment.PaymentMethod.Id"
-            Data="PaymentMethods"
-            TextField="Name"
-            ValueField="Id">
-            </TelerikDropDownList>
-            }
-            </EditorTemplate>*@
-
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
+                                     Data="PaymentMethods"
+                                     TextField="Name"
+                                     ValueField="Id">
+                        </TelerikDropDownList>
+                    }
+                </EditorTemplate>
             </GridColumn>
 
             <GridColumn Width="35%"
@@ -45,25 +45,29 @@
                     Title="Amount"
                     DisplayFormat="{0:C}"
                     ShowColumnChooser="false"
+                    Editable="true"
                     Lockable="false"
                     ShowColumnMenu="false"
                     Sortable="false"
                     Filterable="false"
                     TextAlign="ColumnTextAlign.Right">
-                @*                <Template>
-            @{
-            <TelerikNumericTextBox @bind-Value="Payment.Amount"
-            Format="C"
-            Decimals="2"
-            Arrows="false">
-            </TelerikNumericTextBox>
-            }
-            </Template>*@
-                <EditorTemplate>
+                <Template>
                     @{
-                        <TelerikNumericTextBox @bind-Value="Payment.Amount"
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        <TelerikNumericTextBox @bind-Value="payment.Amount"
                                        Format="C"
                                        Decimals="2"
+                                       Arrows="false">
+                        </TelerikNumericTextBox>
+                    }
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var payment = context as VendorInvoicePaymentToWrite;
+                        <TelerikNumericTextBox @bind-Value="payment.Amount"
+                                       Format="C"
+                                       Decimals="2"
+                                       OnChange="OnPaymentAmountChange"
                                        Arrows="false">
                         </TelerikNumericTextBox>
                     }
@@ -82,5 +86,55 @@
         </GridColumns>
     </TelerikGrid>
 
-    <EditNewDeleteIconButtons OnNew="Add" OnDelete="OnDelete" ShowDivider="false" />
+    <EditNewDeleteIconButtons OnNew="Add"
+                          OnDelete="OnDelete"
+                          ShowDivider="false"
+                          CanDelete="CanDelete" />
 }
+
+@*                <Template>
+                    @{
+                        <TelerikDropDownList @bind-Value="paymentMethodId"
+                                     Data="PaymentMethods"
+                                     TextField="Name"
+                                     ValueField="Id"
+                                     OnChange="OnPaymentMethodChange">
+                        </TelerikDropDownList>
+                    }
+                </Template>
+
+                <EditorTemplate>
+                    @{
+                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod.Id"
+                                     Data="PaymentMethods"
+                                     TextField="Name"
+                                     ValueField="Id">
+                        </TelerikDropDownList>
+                    }
+                </EditorTemplate>*@
+
+@*                <Template>
+            @{
+            var payment = context as VendorInvoicePaymentToWrite;
+            <SfDropDownList TValue="long"
+            TItem="VendorInvoicePaymentMethodToReadInList"
+            PopupHeight="230px"
+            OnChange="OnPaymentMethodChange"
+            DataSource="PaymentMethods"
+            @bind-Value="Payment.PaymentMethod.Id">
+            <DropDownListFieldSettings Text="Name" Value="Id" />
+            </SfDropDownList>
+            }
+            </Template>
+            <EditorTemplate>
+            @{
+            var placeholder = context as VendorInvoicePaymentToWrite;
+            <SfDropDownList TValue="long"
+            TItem="VendorInvoicePaymentMethodToReadInList"
+            PopupHeight="230px"
+            DataSource="PaymentMethods"
+            @bind-Value="Payment.PaymentMethod.Id">
+            <DropDownListFieldSettings Text="Name" Value="Id" />
+            </SfDropDownList>
+            }
+            </EditorTemplate>*@

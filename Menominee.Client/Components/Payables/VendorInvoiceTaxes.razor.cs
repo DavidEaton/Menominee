@@ -3,6 +3,7 @@ using Blazored.Modal.Services;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Client.Components.Shared;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telerik.Blazor.Components;
@@ -17,6 +18,9 @@ namespace Menominee.Client.Components.Payables
 
         [CascadingParameter]
         IModalService ModalService { get; set; }
+
+        [Parameter]
+        public Action OnCalculateTotals { get; set; }
 
         private long SelectedId = 0;
 

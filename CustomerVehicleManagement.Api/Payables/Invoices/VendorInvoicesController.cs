@@ -160,20 +160,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                             manufacturers,
                             salesCodes));
 
-                    if (lineItemFromRepository.Quantity != lineItemFromRepository.Quantity)
+                    if (lineItemFromRepository.Quantity != lineItemFromCaller.Quantity)
                         lineItemFromRepository.SetQuantity(lineItemFromCaller.Quantity);
 
-                    if (lineItemFromRepository.Cost != lineItemFromRepository.Cost)
+                    if (lineItemFromRepository.Cost != lineItemFromCaller.Cost)
                         lineItemFromRepository.SetCost(lineItemFromCaller.Cost);
 
-                    if (lineItemFromRepository.Core != lineItemFromRepository.Core)
+                    if (lineItemFromRepository.Core != lineItemFromCaller.Core)
                         lineItemFromRepository.SetCore(lineItemFromCaller.Core);
 
-                    if (lineItemFromRepository.PONumber != lineItemFromRepository.PONumber)
+                    if (lineItemFromRepository.PONumber != lineItemFromCaller.PONumber)
                         lineItemFromRepository.SetPONumber(lineItemFromCaller.PONumber);
 
                     if (lineItemFromRepository.TransactionDate is not null)
-                        if (lineItemFromRepository.TransactionDate != lineItemFromRepository.TransactionDate)
+                        if (lineItemFromRepository.TransactionDate != lineItemFromCaller.TransactionDate)
                             lineItemFromRepository.SetTransactionDate(lineItemFromCaller.TransactionDate);
                 }
                 // TODO: Deleted

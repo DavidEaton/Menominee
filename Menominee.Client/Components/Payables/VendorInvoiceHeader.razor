@@ -39,12 +39,14 @@
         <div class="form-group">
             <label class="m-label" for="status">Status</label>
             <div class="k-form-field-wrap">
-                <TelerikDropDownList @bind-Value="@Invoice.Status"
+                <TelerikTextBox Id="status" Width="140px" @bind-Value="invoiceStatus" Enabled="false" />
+@*                <TelerikDropDownList @bind-Value="@Invoice.Status"
                                      Data="VendorInvoiceStatusEnumData"
                                      Width="140px"
+                                     Enabled="false"
                                      TextField="DisplayText"
                                      ValueField="Value">
-                </TelerikDropDownList>
+                </TelerikDropDownList>*@
             </div>
         </div>
 

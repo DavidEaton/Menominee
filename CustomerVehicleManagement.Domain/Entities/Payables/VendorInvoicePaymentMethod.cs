@@ -15,8 +15,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string UniqueMessage = $"Payment Method already exists. Payment Method Name must be unique.";
 
         public string Name { get; private set; }
-        public bool IsActive { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
-        public bool IsOnAccountPaymentType { get; private set; }
+        public bool IsActive { get; private set; }
+        public bool IsOnAccountPaymentType { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
         public Vendor ReconcilingVendor { get; private set; }
 
         private VendorInvoicePaymentMethod(

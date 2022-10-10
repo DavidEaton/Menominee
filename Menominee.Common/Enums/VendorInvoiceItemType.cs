@@ -10,7 +10,7 @@ namespace Menominee.Common.Enums
         CoreReturn,
         [Display(Name = "Defective Return")]
         Defective,
-        [Display(Name = "Warrantied Return")]
+        [Display(Name = "Warranty Return")]
         Warranty,
         [Display(Name = "Misc. Debit")]
         MiscDebit,

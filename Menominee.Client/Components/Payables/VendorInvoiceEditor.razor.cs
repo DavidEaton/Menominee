@@ -16,5 +16,22 @@ namespace Menominee.Client.Components.Payables
 
         [Parameter]
         public EventCallback OnDiscard { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            CalculateTotals();
+        }
+
+        private InvoiceTotals InvoiceTotals { get; set; } = new();
+
+        private void CalculateTotals()
+        {
+            if (Invoice != null)
+            {
+                InvoiceTotals.Calculate(Invoice);
+                Invoice.Total = InvoiceTotals.Total;
+                StateHasChanged();
+            }
+        }
     }
 }
