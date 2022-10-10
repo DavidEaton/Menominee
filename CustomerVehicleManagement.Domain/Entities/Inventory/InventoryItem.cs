@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemInspection Inspection { get; private set; }
         public InventoryItemWarranty Warranty { get; private set; }
 
-        private InventoryItem(Manufacturer manufacturer, string itemNumber, string description, ProductCode productCode, InventoryItemType itemType, InventoryItemPart part, InventoryItemLabor labor, InventoryItemTire tire, InventoryItemPackage package, InventoryItemInspection inspection, InventoryItemWarranty warranty)
+        private InventoryItem(Manufacturer manufacturer, string itemNumber, string description, ProductCode productCode, InventoryItemType itemType, InventoryItemPart part = null, InventoryItemLabor labor = null, InventoryItemTire tire = null, InventoryItemPackage package = null, InventoryItemInspection inspection = null, InventoryItemWarranty warranty = null)
         {
             if (manufacturer is null || productCode is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -60,12 +60,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             string description,
             ProductCode productCode,
             InventoryItemType itemType,
-            InventoryItemPart part,
-            InventoryItemLabor labor,
-            InventoryItemTire tire,
-            InventoryItemPackage package,
-            InventoryItemInspection inspection,
-            InventoryItemWarranty warranty)
+            InventoryItemPart part = null,
+            InventoryItemLabor labor = null,
+            InventoryItemTire tire = null,
+            InventoryItemPackage package = null,
+            InventoryItemInspection inspection = null,
+            InventoryItemWarranty warranty = null)
         {
             if (manufacturer is null || productCode is null)
                 return Result.Failure<InventoryItem>(RequiredMessage);

@@ -11,9 +11,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("MaintenanceItem", "dbo");
 
-            builder.Property(maintenanceItem => maintenanceItem.InventoryItem)
-                .IsRequired();
-
             builder.Property(maintenanceItem => maintenanceItem.DisplayOrder)
                 .IsRequired();
         }

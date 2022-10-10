@@ -6,24 +6,20 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
 {
     public class InventoryItemWarrantyConfiguration : EntityConfiguration<InventoryItemWarranty>
     {
-        public class InventoryItemDonationConfiguration : EntityConfiguration<InventoryItemWarranty>
+        public override void Configure(EntityTypeBuilder<InventoryItemWarranty> builder)
         {
-            public override void Configure(EntityTypeBuilder<InventoryItemWarranty> builder)
-            {
-                base.Configure(builder);
-                builder.ToTable("InventoryItemWarranty", "dbo");
+            base.Configure(builder);
+            builder.ToTable("InventoryItemWarranty", "dbo");
 
-                // Value Object: LaborAmount
-                builder.OwnsOne(warranty => warranty.WarrantyPeriod)
-                   .Property(period => period.PeriodType)
-                   .HasColumnName("PeriodType")
-                   .IsRequired();
-                builder.OwnsOne(inspection => inspection.WarrantyPeriod)
-                   .Property(amount => amount.Duration)
-                   .HasColumnName("Duration")
-                   .IsRequired();
-
-            }
+            // Value Object: LaborAmount
+            builder.OwnsOne(warranty => warranty.WarrantyPeriod)
+               .Property(period => period.PeriodType)
+               .HasColumnName("PeriodType")
+               .IsRequired();
+            builder.OwnsOne(inspection => inspection.WarrantyPeriod)
+               .Property(amount => amount.Duration)
+               .HasColumnName("Duration")
+               .IsRequired();
         }
     }
 }

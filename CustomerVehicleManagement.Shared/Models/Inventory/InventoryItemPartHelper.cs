@@ -40,9 +40,10 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
                     part.TechAmount.Amount,
                     part.TechAmount.SkillLevel)
                 .Value,
+                part.Fractional,
                 part.LineCode,
-                part.SubLineCode,
-                part.Fractional).Value;
+                part.SubLineCode)
+            .Value;
         }
 
         public static InventoryItemPartToRead ConvertEntityToReadDto(InventoryItemPart part)
