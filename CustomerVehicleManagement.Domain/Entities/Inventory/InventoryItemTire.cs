@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public int LoadIndex { get; private set; }
         public string SpeedRating { get; private set; }
 
-        protected InventoryItemTire(int width, int aspectRatio, TireConstructionType constructionType, double diameter,
+        private InventoryItemTire(int width, int aspectRatio, TireConstructionType constructionType, double diameter,
              double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, string type = null, int? loadIndex = null, string speedRating = null)
              : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode)
         {
@@ -80,6 +80,27 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<InventoryItemTire> Create(int width, int aspectRatio, TireConstructionType constructionType, double diameter, double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, string type = null, int? loadIndex = null, string speedRating = null)
         {
+            if (list < MinimumValue ||
+                cost < MinimumValue ||
+                core < MinimumValue ||
+                retail < MinimumValue ||
+                list > MaximumValue ||
+                cost > MaximumValue ||
+                core > MaximumValue ||
+                retail > MaximumValue)
+                return Result.Failure<InventoryItemTire>(InvalidValueMessage);
+
+            lineCode = (lineCode ?? string.Empty).Trim();
+            subLineCode = (subLineCode ?? string.Empty).Trim();
+
+            // TechAmount Value Object is validated before we ever get here
+
+            if (lineCode.Length < MinimumLength ||
+                lineCode.Length > MaximumLength ||
+                subLineCode.Length < MinimumLength ||
+                subLineCode.Length > MaximumLength)
+                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();
 
