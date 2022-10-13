@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 case ItemLaborType.Flat:
                 case ItemLaborType.Time:
 
-                    if (amount <= MinimumValue)
+                    if (amount < MinimumValue)
                         throw new ArgumentOutOfRangeException(InvalidValueMessage);
 
                     break;
@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 case ItemLaborType.Flat:
                 case ItemLaborType.Time:
 
-                    if (amount <= MinimumValue)
+                    if (amount < MinimumValue)
                         return Result.Failure<LaborAmount>(InvalidValueMessage);
 
                     break;

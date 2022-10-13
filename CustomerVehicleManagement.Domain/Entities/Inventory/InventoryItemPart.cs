@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
@@ -19,18 +18,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 cost > MaximumValue ||
                 core > MaximumValue ||
                 retail > MaximumValue)
-            return Result.Failure<InventoryItemPart>(InvalidValueMessage);
+                return Result.Failure<InventoryItemPart>(InvalidValueMessage);
 
             lineCode = (lineCode ?? string.Empty).Trim();
             subLineCode = (subLineCode ?? string.Empty).Trim();
 
             // TechAmount Value Object is validated before we ever get here
 
-            if (lineCode.Length < MinimumLength ||
-                lineCode.Length > MaximumLength ||
-                subLineCode.Length < MinimumLength ||
-                subLineCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+            if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
+                return Result.Failure<InventoryItemPart>(InvalidLengthMessage);
 
             return Result.Success(new InventoryItemPart(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode));
         }

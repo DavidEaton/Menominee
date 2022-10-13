@@ -507,8 +507,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
         private static InventoryItemPart CreateInventoryItemPart()
         {
+            double list = InstallablePart.MinimumValue;
+            double cost = InstallablePart.MinimumValue;
+            double core = InstallablePart.MinimumValue;
+            double retail = InstallablePart.MinimumValue;
             return InventoryItemPart.Create(
-                10, 1, 1, 15,
+                list, cost, core, retail,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
                 fractional: false).Value;
         }
@@ -527,11 +531,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
         private static InventoryItemTire CreateInventoryItemTire()
         {
+            var fractional = false;
+            int width = Utilities.RandomNonZeroInteger(InventoryItemTire.MaximumWidthLength);
+            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            TireConstructionType constructionType = TireConstructionType.R;
+            int diameter = InventoryItemTire.MaximumDiameter;
+
             return InventoryItemTire.Create(
-                215, 65, TireConstructionType.R, 15,
-                55.99, 31.54, 9.11, 66.99,
+                width, aspectRatio, constructionType, diameter,
+                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
-                true,
+                fractional,
                 type: "P", loadIndex: 89, speedRating: "H").Value;
         }
 

@@ -13,27 +13,61 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_InventoryItemPart()
         {
             // Arrange
+            var fractional = false;
+
             // Act
             var resultOrError = InventoryItemPart.Create(
-                10, 1, 1, 15,
-                TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
-                fractional: false);
+                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                fractional);
 
             // Assert
             resultOrError.Value.Should().BeOfType<InventoryItemPart>();
             resultOrError.IsFailure.Should().BeFalse();
         }
 
+        [Fact]
+        public void Create_InventoryItemPart_With_Optional_Line_Codes()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InstallablePart.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InstallablePart.MaximumLength);
+
+            var resultOrError = InventoryItemPart.Create(
+                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode);
+
+            resultOrError.Value.Should().BeOfType<InventoryItemPart>();
+            resultOrError.IsFailure.Should().BeFalse();
+        }
+
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_InventoryItem_With_Invalid_Values(double invalidValue)
+        public void Not_Create_InventoryItem_With_Invalid_Money_Values(double invalidValue)
         {
             var resultOrError = InventoryItemPart.Create(
                 invalidValue, invalidValue, invalidValue, invalidValue,
-                TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional: false);
 
-            // Assert
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Fact]
+        public void Not_Create_InventoryItem_With_Invalid_Line_Codes()
+        {
+            var resultOrError = InventoryItemPart.Create(
+                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+
+                lineCode: Utilities.RandomCharacters(InstallablePart.MaximumLength + 1),
+                subLineCode: Utilities.RandomCharacters(InstallablePart.MaximumLength + 1),
+
+                fractional: false);
+
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
         }
@@ -138,7 +172,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetTechAmount()
         {
             var part = CreateInventoryItemPart();
-            var value = TechAmount.Create(ItemLaborType.Flat, 26.88, SkillLevel.A).Value;
+            var value = TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value;
 
             var resultOrError = part.SetTechAmount(value);
 
@@ -161,7 +195,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetLineCode()
         {
             var part = CreateInventoryItemPart();
-            var value = "moops code";
+            var value = Utilities.RandomCharacters(InstallablePart.MaximumLength);
 
             var resultOrError = part.SetLineCode(value);
 
@@ -169,23 +203,22 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             part.LineCode.Should().Be(value);
         }
 
-        [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestDataInteger))]
-        public void Not_Set_Invalid_LineCode(int invalidValue)
+        [Fact]
+        public void Not_Set_Invalid_LineCode()
         {
             var part = CreateInventoryItemPart();
 
-            var resultOrError = part.SetLineCode(Utilities.RandomCharacters(invalidValue));
+            var resultOrError = part.SetLineCode(Utilities.RandomCharacters(InstallablePart.MaximumLength +1));
 
             resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("mustt");
+            resultOrError.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetSubLineCode()
         {
             var part = CreateInventoryItemPart();
-            var value = "moops code";
+            var value = Utilities.RandomCharacters(InstallablePart.MaximumLength);
 
             var resultOrError = part.SetSubLineCode(value);
 
@@ -194,10 +227,21 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void SetFractional()
+        public void Not_Set_Invalid_SubLineCode()
         {
             var part = CreateInventoryItemPart();
-            var value = false;
+
+            var resultOrError = part.SetSubLineCode(Utilities.RandomCharacters(InstallablePart.MaximumLength + 1));
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.DataBoolean), MemberType = typeof(TestData))]
+        public void SetFractional(bool value)
+        {
+            var part = CreateInventoryItemPart();
 
             var resultOrError = part.SetFractional(value);
 
@@ -209,8 +253,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         private static InventoryItemPart CreateInventoryItemPart()
         {
             return InventoryItemPart.Create(
-                10, 1, 1, 15,
-                TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
+                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional: false).Value;
         }
 
@@ -220,23 +264,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 get
                 {
-                    yield return new object[] { InventoryItemPart.MinimumValue - .01 };
-                    yield return new object[] { InventoryItemPart.MaximumValue + .01 };
+                    yield return new object[] { InstallablePart.MinimumValue - .01 };
+                    yield return new object[] { InstallablePart.MaximumValue + .01 };
                 }
             }
-        }
-
-        internal class TestDataInteger
-        {
-            public static IEnumerable<object[]> Data
+            public static IEnumerable<object[]> DataBoolean
             {
                 get
                 {
-                    yield return new object[] { InventoryItemPart.MinimumLength - 1 };
-                    yield return new object[] { InventoryItemPart.MaximumLength + 1 };
+                    yield return new object[] { true };
+                    yield return new object[] { false };
                 }
             }
         }
-
     }
 }

@@ -11,10 +11,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         // abstract base class binds them to the code’s implementation details, 
         // which is an anit-pattern.
         public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly int MinimumWidth = 10;
         public static readonly int MinimumValue = 0;
         public static readonly int MaximumValue = 99999;
         public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
-        public static readonly int MinimumLength = 0;
+        public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 10;
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
         public double List { get; private set; }
@@ -38,15 +39,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 retail > MaximumValue)
                 throw new ArgumentOutOfRangeException(InvalidValueMessage);
 
+            // TechAmount is validated before we ever get here
+
             lineCode = (lineCode ?? string.Empty).Trim();
             subLineCode = (subLineCode ?? string.Empty).Trim();
 
-            // TechAmount is validated before we ever get here
-
-            if (lineCode.Length < MinimumLength ||
-                lineCode.Length > MaximumLength ||
-                subLineCode.Length < MinimumLength ||
-                subLineCode.Length > MaximumLength)
+            if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
             List = list;

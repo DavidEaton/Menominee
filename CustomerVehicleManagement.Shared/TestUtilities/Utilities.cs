@@ -20,6 +20,29 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static int RandomNonZeroInteger(int characterCount)
+        {
+            switch (characterCount)
+            {
+                case 0:
+                    return 0;
+                case 1:
+                    // single digit random integer
+                    return random.Next(1, 10);
+                case 2:
+                    // two-digit random integer
+                    return random.Next(1, 100);
+                case 3:
+                    // three-digit random integer
+                    return random.Next(1, 1000);
+                case 4:
+                    // three-digit random integer
+                    return random.Next(1, 10000);
+                default:
+                    throw new ArgumentException("must be greater than zero", nameof(characterCount));
+            }
+        }
+
         public static Person CreatePerson()
         {
             var firstName = "Jane";
