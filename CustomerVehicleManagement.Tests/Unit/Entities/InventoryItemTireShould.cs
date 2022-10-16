@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             // Arrange
             var fractional = false;
             int width = InventoryItemTire.MaximumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
 
@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCodeOVERRANGE = Utilities.RandomCharacters(InventoryItemTire.MaximumLength + 1);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MaximumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCodeOVERRANGE = Utilities.RandomCharacters(InventoryItemTire.MaximumLength + 1);
             int width = InventoryItemTire.MaximumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -135,7 +135,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -169,7 +169,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -203,7 +203,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -237,7 +237,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -270,7 +270,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
@@ -309,11 +309,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             tire.Type.Should().Be(type);
         }
 
-        [Theory]
-        [MemberData(nameof(TestData.DataIntegerInvalidTypeLength), MemberType = typeof(TestData))]
-        public void Not_Set_Invalid_Type(int invalidLength)
+        [Fact]
+        public void Not_Set_Invalid_Type()
         {
             InventoryItemTire tire = CreateInventoryItemTire();
+            int invalidLength = InventoryItemTire.MaximumTypeLength + 1;
             string type = Utilities.RandomCharacters(invalidLength);
 
             var resultOrError = tire.SetType(type);
@@ -351,22 +351,44 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetAspectRatio()
         {
             InventoryItemTire tire = CreateInventoryItemTire();
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             var resultOrError = tire.SetAspectRatio(aspectRatio);
 
             resultOrError.IsFailure.Should().BeFalse();
             tire.AspectRatio.Should().Be(aspectRatio);
         }
 
+        [Theory]
+        [MemberData(nameof(TestData.DataIntegerInvalidAspectRatio), MemberType = typeof(TestData))]
+        public void Not_Set_Invalid_AspectRatio(int invalidAspectRatio)
+        {
+            InventoryItemTire tire = CreateInventoryItemTire();
+            var resultOrError = tire.SetAspectRatio(invalidAspectRatio);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
         [Fact]
         public void SetConstructionType()
         {
             InventoryItemTire tire = CreateInventoryItemTire();
-            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            var resultOrError = tire.SetType(type);
+            TireConstructionType constructionType = TireConstructionType.F;
+            var resultOrError = tire.SetConstructionType(constructionType);
 
             resultOrError.IsFailure.Should().BeFalse();
-            tire.Type.Should().Be(type);
+            tire.ConstructionType.Should().Be(constructionType);
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_ConstructionType()
+        {
+            InventoryItemTire tire = CreateInventoryItemTire();
+            TireConstructionType constructionType = (TireConstructionType)(-1);
+            var resultOrError = tire.SetConstructionType(constructionType);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("required");
         }
 
         [Fact]
@@ -378,6 +400,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             resultOrError.IsFailure.Should().BeFalse();
             tire.Diameter.Should().Be(diameter);
+        }
+
+        [Theory]
+        [MemberData(nameof(TestData.DataIntegerInvalidDiameter), MemberType = typeof(TestData))]
+        public void Not_Set_Invalid_Diameter(int invalidDiameter)
+        {
+            InventoryItemTire tire = CreateInventoryItemTire();
+            var resultOrError = tire.SetDiameter(invalidDiameter);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
         }
 
         [Fact]
@@ -392,6 +425,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
+        public void Not_Set_Invalid_LoadIndex()
+        {
+            InventoryItemTire tire = CreateInventoryItemTire();
+            int invalidLoadIndex = 1234;
+            var resultOrError = tire.SetLoadIndex(invalidLoadIndex);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Fact]
         public void SetSpeedRating()
         {
             InventoryItemTire tire = CreateInventoryItemTire();
@@ -402,38 +446,63 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             tire.SpeedRating.Should().Be(speedRating);
         }
 
+        [Fact]
+        public void Not_Set_Invalid_SpeedRating()
+        {
+            InventoryItemTire tire = CreateInventoryItemTire();
+            string invalidSpeedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength + 1);
+            var resultOrError = tire.SetSpeedRating(invalidSpeedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
         private static InventoryItemTire CreateInventoryItemTire()
         {
             var fractional = false;
             int width = InventoryItemTire.MinimumWidth;
-            int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
+            int aspectRatio = 65;
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
 
-            return InventoryItemTire.Create(
+            var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
-                fractional).Value;
+                fractional);
+
+            if (resultOrError.IsSuccess)
+                return resultOrError.Value;
+
+            return null;
         }
 
-        internal class TestData
+        internal static class TestData
         {
-            public static IEnumerable<object[]> DataIntegerInvalidTypeLength
-            {
-                get
-                {
-                    yield return new object[] { InventoryItemTire.MaximumTypeLength + 1 };
-                    yield return new object[] { InventoryItemTire.MinimumLength - 1 };
-                }
-            }
-
             public static IEnumerable<object[]> DataIntegerInvalidWidth
             {
                 get
                 {
                     yield return new object[] { InventoryItemTire.MaximumWidth + 1 };
                     yield return new object[] { InventoryItemTire.MinimumWidth - 1 };
+                }
+            }
+
+            public static IEnumerable<object[]> DataIntegerInvalidDiameter
+            {
+                get
+                {
+                    yield return new object[] { InventoryItemTire.MaximumDiameter + 1 };
+                    yield return new object[] { InventoryItemTire.MinimumDiameter - 1 };
+                }
+            }
+
+            public static IEnumerable<object[]> DataIntegerInvalidAspectRatio
+            {
+                get
+                {
+                    yield return new object[] { 1 };
+                    yield return new object[] { 111 };
                 }
             }
 

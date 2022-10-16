@@ -10,37 +10,43 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
     public class InventoryItemTire : InstallablePart
     {
-        public static readonly int MaximumTypeLength = 2;
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 10;
         public static readonly int MinimumWidth = 10;
         public static readonly int MaximumWidth = 999;
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
-        public static readonly string InvalidTypeLengthMessage = $"Type must be no more than {MaximumTypeLength} characters.";
+        public static readonly int MaximumTypeLength = 2;
+        public static readonly string InvalidTypeMessage = $"Type must be no more than {MaximumTypeLength} characters.";
         public static readonly string InvalidWidthMessage = $"Width must be no more than {MaximumWidth}.";
-        public static readonly int AspectRatioLength = 2;
+        public static readonly int AspectRatioRequiredLength = 2;
+        public static readonly string InvalidAspectRatioMessage = $"Aspect Ratio must be {AspectRatioRequiredLength}  characters.";
         public static readonly int MinimumDiameter = 1;
         public static readonly int MaximumDiameter = 48;
         public static readonly int MaximumSpeedRatingLength = 3;
-        public static readonly string InvalidDiameterMessage = $"Diameter must be between {MinimumLength} and {MaximumDiameter}.";
-        public static readonly string InvalidSpeedRatingLengthMessage = $"Speed Rating must be no more than {MaximumSpeedRatingLength} characters.";
-        public static readonly string InvalidAspectRatioLengthMessage = $"Aspect Ratio must be no more than {AspectRatioLength} characters.";
+        public static readonly string InvalidDiameterMessage = $"Diameter must be between {MinimumDiameter} and {MaximumDiameter}.";
+        public static readonly string InvalidSpeedRatingMessage = $"Speed Rating must be no more than {MaximumSpeedRatingLength} characters.";
         public static readonly int MaximumLoadIndexLength = 3;
         public static readonly string InvalidLoadIndexMessage = $"Load Index must be no more than {MaximumLoadIndexLength} characters.";
+
+        // Optional
         public string Type { get; private set; }
 
-        // Width is ALWAYS a three-digit number in millimeters
+        // Width is ALWAYS a three-digit number in millimeters, required
         public int Width { get; private set; }
 
-        // Aspect ratio is ALWAYS two digits
+        // Aspect ratio is ALWAYS two digits, required
         public int AspectRatio { get; private set; }
 
         // TODO: CONFIRM THIS PROPERTY IS OPTIONAL
         public TireConstructionType ConstructionType { get; private set; }
 
-        // This two-digit number specifies wheel diameter in inches.
+        // This two-digit number specifies wheel diameter in inches, required
         public double Diameter { get; private set; }
+
+        // A two-digit or three-digit number, optional
         public int LoadIndex { get; private set; }
+
+        // Optional
         public string SpeedRating { get; private set; }
 
         private InventoryItemTire(int width, int aspectRatio, TireConstructionType constructionType, double diameter,
@@ -51,26 +57,26 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             speedRating = (speedRating ?? string.Empty).Trim();
 
             if (type?.Length > MaximumTypeLength)
-                throw new ArgumentOutOfRangeException(InvalidTypeLengthMessage);
+                throw new ArgumentOutOfRangeException(InvalidTypeMessage);
 
             if (width < MinimumWidth || width  > MaximumWidth)
                 throw new ArgumentOutOfRangeException(InvalidWidthMessage);
 
-            if (aspectRatio < MinimumMoneyAmount || aspectRatio.ToString().Length > AspectRatioLength)
-                throw new ArgumentOutOfRangeException(InvalidAspectRatioLengthMessage);
+            if (aspectRatio.ToString().Length != AspectRatioRequiredLength)
+                throw new ArgumentOutOfRangeException(InvalidAspectRatioMessage);
 
             if (!Enum.IsDefined(typeof(TireConstructionType), constructionType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            if (diameter < MinimumMoneyAmount || diameter > MaximumDiameter)
+            if (diameter < MinimumDiameter || diameter > MaximumDiameter)
                 throw new ArgumentOutOfRangeException(InvalidDiameterMessage);
 
             if (loadIndex.HasValue)
                 if (loadIndex < MinimumMoneyAmount || loadIndex.ToString().Length > MaximumLoadIndexLength)
                     throw new ArgumentOutOfRangeException(InvalidLoadIndexMessage);
 
-            if (speedRating?.Length > MaximumSpeedRatingLength)
-                throw new ArgumentOutOfRangeException(InvalidSpeedRatingLengthMessage);
+            if (speedRating.Length > MaximumSpeedRatingLength)
+                throw new ArgumentOutOfRangeException(InvalidSpeedRatingMessage);
 
             Type = type;
             Width = width;
@@ -107,25 +113,25 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             speedRating = (speedRating ?? string.Empty).Trim();
 
             if (type.Length > MaximumTypeLength)
-                return Result.Failure<InventoryItemTire>(InvalidTypeLengthMessage);
+                return Result.Failure<InventoryItemTire>(InvalidTypeMessage);
 
             if (width < MinimumWidth || width > MaximumWidth)
                 return Result.Failure<InventoryItemTire>(InvalidWidthMessage);
 
-            if (aspectRatio < MinimumMoneyAmount || aspectRatio.ToString().Length > AspectRatioLength)
-                return Result.Failure<InventoryItemTire>(InvalidAspectRatioLengthMessage);
+            if (aspectRatio.ToString().Length != AspectRatioRequiredLength)
+                return Result.Failure<InventoryItemTire>(InvalidAspectRatioMessage);
 
             if (!Enum.IsDefined(typeof(TireConstructionType), constructionType))
                 return Result.Failure<InventoryItemTire>(RequiredMessage);
 
-            if (diameter < MinimumMoneyAmount || diameter > MaximumDiameter)
+            if (diameter < MinimumDiameter || diameter > MaximumDiameter)
                 return Result.Failure<InventoryItemTire>(InvalidDiameterMessage);
 
             if (loadIndex < MinimumMoneyAmount || loadIndex.ToString().Length > MaximumLoadIndexLength)
                 return Result.Failure<InventoryItemTire>(InvalidLoadIndexMessage);
 
             if (speedRating.Length > MaximumSpeedRatingLength)
-                return Result.Failure<InventoryItemTire>(InvalidSpeedRatingLengthMessage);
+                return Result.Failure<InventoryItemTire>(InvalidSpeedRatingMessage);
 
             return Result.Success(new InventoryItemTire(width, aspectRatio, constructionType, diameter, list, cost, core, retail, techAmount, fractional, lineCode, subLineCode, type, loadIndex, speedRating));
         }
@@ -134,8 +140,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             type = (type ?? string.Empty).Trim();
 
-            if (type.Length < MinimumLength || type.Length > MaximumTypeLength)
-                return Result.Failure<string>(InvalidTypeLengthMessage);
+            if (type.Length > MaximumTypeLength)
+                return Result.Failure<string>(InvalidTypeMessage);
 
             return Result.Success(Type = type);
         }
@@ -150,8 +156,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<int> SetAspectRatio(int aspectRatio)
         {
-            if (aspectRatio < MinimumMoneyAmount || aspectRatio.ToString().Length > AspectRatioLength)
-                return Result.Failure<int>(InvalidAspectRatioLengthMessage);
+            if (aspectRatio.ToString().Length != AspectRatioRequiredLength)
+                return Result.Failure<int>(InvalidAspectRatioMessage);
 
             return Result.Success(AspectRatio = aspectRatio);
         }
@@ -166,7 +172,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<double> SetDiameter(double diameter)
         {
-            if (diameter < MinimumMoneyAmount || diameter > MaximumDiameter)
+            if (diameter < MinimumDiameter || diameter > MaximumDiameter)
                 return Result.Failure<double>(InvalidDiameterMessage);
 
             return Result.Success(Diameter = diameter);
@@ -184,8 +190,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             speedRating = (speedRating ?? string.Empty).Trim();
 
-            if (speedRating.Length < MinimumLength || speedRating.Length > MaximumSpeedRatingLength)
-                return Result.Failure<string>(InvalidSpeedRatingLengthMessage);
+            if (speedRating.Length > MaximumSpeedRatingLength)
+                return Result.Failure<string>(InvalidSpeedRatingMessage);
 
             return Result.Success(SpeedRating = speedRating);
         }

@@ -20,22 +20,6 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static int RandomNonZeroInteger(int characterCount)
-        {             
-            return characterCount switch
-            {
-                < 0 => 0,
-                0 => 0,
-                1 => random.Next(1, 10),// single digit random integer
-                2 => random.Next(1, 100),// two-digit random integer
-                3 => random.Next(1, 1000),//...
-                4 => random.Next(1, 10000),
-                5 => random.Next(1, 100000),
-                6 => random.Next(1, 1000000),
-                _ => throw new NotImplementedException()
-            };
-        }
-
         public static Person CreatePerson()
         {
             var firstName = "Jane";
