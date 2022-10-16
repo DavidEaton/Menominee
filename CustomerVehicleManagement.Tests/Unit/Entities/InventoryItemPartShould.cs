@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             // Act
             var resultOrError = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional);
 
             // Assert
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             var resultOrError = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode);
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var resultOrError = InventoryItemPart.Create(
                 invalidValue, invalidValue, invalidValue, invalidValue,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional: false);
 
             resultOrError.IsFailure.Should().BeTrue();
@@ -61,7 +61,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var resultOrError = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
 
                 lineCode: Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1),
                 subLineCode: Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1),
@@ -172,7 +172,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetTechAmount()
         {
             var part = CreateInventoryItemPart();
-            var value = TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value;
+            var value = TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value;
 
             var resultOrError = part.SetTechAmount(value);
 
@@ -254,7 +254,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             return InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional: false).Value;
         }
 

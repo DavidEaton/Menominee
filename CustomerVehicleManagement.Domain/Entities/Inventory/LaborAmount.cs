@@ -9,8 +9,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     public class LaborAmount : AppValueObject
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly long MinimumValue = 0;
-        public static readonly string InvalidValueMessage = $"Value must be > {MinimumValue}.";
+        public static readonly double MinimumAmount = 0;
+        public static readonly string InvalidAmountMessage = $"Invalid Amount.";
 
         public ItemLaborType PayType { get; private set; }
         public double Amount { get; private set; } //> 0 if LaborType isn't None, otherwise is a dollar amount or 1/10th of an hour depending on type
@@ -29,8 +29,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 case ItemLaborType.Flat:
                 case ItemLaborType.Time:
 
-                    if (amount < MinimumValue)
-                        throw new ArgumentOutOfRangeException(InvalidValueMessage);
+                    if (amount < MinimumAmount)
+                        throw new ArgumentOutOfRangeException(InvalidAmountMessage);
 
                     break;
 
@@ -56,8 +56,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 case ItemLaborType.Flat:
                 case ItemLaborType.Time:
 
-                    if (amount < MinimumValue)
-                        return Result.Failure<LaborAmount>(InvalidValueMessage);
+                    if (amount < MinimumAmount)
+                        return Result.Failure<LaborAmount>(InvalidAmountMessage);
 
                     break;
 

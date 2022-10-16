@@ -128,7 +128,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             return InventoryItemPart.Create(
                 10, 1, 1, 15,
-                TechAmount.Create(ItemLaborType.Flat, TechAmount.MinimumValue + 1, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, TechAmount.MinimumAmount + 1, SkillLevel.A).Value,
                 fractional: false).Value;
         }
 

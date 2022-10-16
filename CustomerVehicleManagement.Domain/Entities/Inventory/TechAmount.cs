@@ -20,14 +20,21 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<TechAmount> Create(ItemLaborType payType, double amount, SkillLevel skillLevel)
         {
-            if (!Enum.IsDefined(typeof(ItemLaborType), payType))
-                return Result.Failure<TechAmount>(RequiredMessage);
-
             if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
                 return Result.Failure<TechAmount>(RequiredMessage);
 
+            Result<TechAmount> result = null;
 
-            return Result.Success(new TechAmount(payType, amount, skillLevel));
+            try
+            {
+                result = new TechAmount(payType, amount, skillLevel);
+            }
+            catch (Exception  ex)
+            {
+                return Result.Failure<TechAmount>(ex.Message);
+            }
+
+            return result;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

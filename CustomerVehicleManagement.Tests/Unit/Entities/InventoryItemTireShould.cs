@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional);
 
             // Assert
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost: InstallablePart.MaximumMoneyAmount,
                 core: InstallablePart.MaximumMoneyAmount,
                 retail: InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndex, speedRating);
@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 core,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCodeOVERRANGE, subLineCode,
                 type, loadIndex, speedRating);
@@ -120,7 +120,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 core,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCodeOVERRANGE,
                 type, loadIndex, speedRating);
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 core,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndexOVERRANGE, speedRating);
@@ -187,7 +187,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 core,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndex, speedRating);
@@ -221,7 +221,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 costOVERRANGE,
                 core,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndex, speedRating);
@@ -255,7 +255,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 coreOVERRANGE,
                 retail,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndex, speedRating);
@@ -288,7 +288,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 cost,
                 core,
                 retailOVERRANGE,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
                 type, loadIndex, speedRating);
@@ -468,7 +468,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional);
 
             if (resultOrError.IsSuccess)
