@@ -15,15 +15,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<InventoryItemPart> Create(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
         {
-            if (list < MinimumValue ||
-                cost < MinimumValue ||
-                core < MinimumValue ||
-                retail < MinimumValue ||
-                list > MaximumValue ||
-                cost > MaximumValue ||
-                core > MaximumValue ||
-                retail > MaximumValue)
-                return Result.Failure<InventoryItemPart>(InvalidValueMessage);
+            if (list < MinimumMoneyAmount ||
+                cost < MinimumMoneyAmount ||
+                core < MinimumMoneyAmount ||
+                retail < MinimumMoneyAmount ||
+                list > MaximumMoneyAmount ||
+                cost > MaximumMoneyAmount ||
+                core > MaximumMoneyAmount ||
+                retail > MaximumMoneyAmount)
+                return Result.Failure<InventoryItemPart>(InvalidMoneyAmountMessage);
 
             lineCode = (lineCode ?? string.Empty).Trim();
             subLineCode = (subLineCode ?? string.Empty).Trim();

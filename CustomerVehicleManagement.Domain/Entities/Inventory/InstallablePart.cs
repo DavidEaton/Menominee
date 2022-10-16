@@ -12,10 +12,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         // which is an anit-pattern.
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MaximumLineCodeLength = 10;
-        public static readonly int MinimumValue = 0;
-        public static readonly int MaximumValue = 99999;
-        public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
-        public static readonly string InvalidLineCodeLengthMessage = $"Line Code must be under {MaximumLineCodeLength} characters";
+        public static readonly int MinimumMoneyAmount = 0;
+        public static readonly int MaximumMoneyAmount = 99999;
+        public static readonly string InvalidMoneyAmountMessage = $"Amount must be between {MinimumMoneyAmount} and {MaximumMoneyAmount}.";
+        public static readonly string InvalidLineCodeLengthMessage = $"Line Code must not be more than {MaximumLineCodeLength} characters";
         public double List { get; private set; }
         public double Cost { get; private set; }
         public double Core { get; private set; }
@@ -27,15 +27,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
         {
-            if (list < MinimumValue ||
-                cost < MinimumValue ||
-                core < MinimumValue ||
-                retail < MinimumValue ||
-                list > MaximumValue ||
-                cost > MaximumValue ||
-                core > MaximumValue ||
-                retail > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+            if (list < MinimumMoneyAmount ||
+                cost < MinimumMoneyAmount ||
+                core < MinimumMoneyAmount ||
+                retail < MinimumMoneyAmount ||
+                list > MaximumMoneyAmount ||
+                cost > MaximumMoneyAmount ||
+                core > MaximumMoneyAmount ||
+                retail > MaximumMoneyAmount)
+                throw new ArgumentOutOfRangeException(InvalidMoneyAmountMessage);
 
             // TechAmount is validated before we ever get here
 
@@ -57,32 +57,32 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<double> SetList(double list)
         {
-            if (list < MinimumValue || list > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (list < MinimumMoneyAmount || list > MaximumMoneyAmount)
+                return Result.Failure<double>(InvalidMoneyAmountMessage);
 
             return Result.Success(List = list);
         }
 
         public Result<double> SetCost(double cost)
         {
-            if (cost < MinimumValue || cost > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (cost < MinimumMoneyAmount || cost > MaximumMoneyAmount)
+                return Result.Failure<double>(InvalidMoneyAmountMessage);
 
             return Result.Success(Cost = cost);
         }
 
         public Result<double> SetCore(double core)
         {
-            if (core < MinimumValue || core > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (core < MinimumMoneyAmount || core > MaximumMoneyAmount)
+                return Result.Failure<double>(InvalidMoneyAmountMessage);
 
             return Result.Success(Core = core);
         }
 
         public Result<double> SetRetail(double retail)
         {
-            if (retail < MinimumValue || retail > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (retail < MinimumMoneyAmount || retail > MaximumMoneyAmount)
+                return Result.Failure<double>(InvalidMoneyAmountMessage);
 
             return Result.Success(Retail = retail);
         }

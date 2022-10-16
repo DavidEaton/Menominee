@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             // Act
             var resultOrError = InventoryItemPart.Create(
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional);
 
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string subLineCode = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
             var resultOrError = InventoryItemPart.Create(
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode);
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_InventoryItem_With_Invalid_Line_Codes()
         {
             var resultOrError = InventoryItemPart.Create(
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
 
                 lineCode: Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1),
@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetList()
         {
             var part = CreateInventoryItemPart();
-            var value = InstallablePart.MinimumValue + 1.01;
+            var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
             var resultOrError = part.SetList(value);
 
@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetCost()
         {
             var part = CreateInventoryItemPart();
-            var value = InstallablePart.MinimumValue + 1.01;
+            var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
             var resultOrError = part.SetCost(value);
 
@@ -124,7 +124,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetCore()
         {
             var part = CreateInventoryItemPart();
-            var value = InstallablePart.MinimumValue + 1.01;
+            var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
             var resultOrError = part.SetCore(value);
 
@@ -148,7 +148,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetRetail()
         {
             var part = CreateInventoryItemPart();
-            var value = InstallablePart.MinimumValue + 1.01;
+            var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
             var resultOrError = part.SetRetail(value);
 
@@ -253,7 +253,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         private static InventoryItemPart CreateInventoryItemPart()
         {
             return InventoryItemPart.Create(
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional: false).Value;
         }
@@ -264,8 +264,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 get
                 {
-                    yield return new object[] { InstallablePart.MinimumValue - .01 };
-                    yield return new object[] { InstallablePart.MaximumValue + .01 };
+                    yield return new object[] { InstallablePart.MinimumMoneyAmount - .01 };
+                    yield return new object[] { InstallablePart.MaximumMoneyAmount + .01 };
                 }
             }
             public static IEnumerable<object[]> DataBoolean

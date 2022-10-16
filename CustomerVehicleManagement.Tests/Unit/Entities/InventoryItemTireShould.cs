@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             // Act
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional);
 
@@ -43,15 +43,15 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MinimumValue;
+            int? loadIndex = InstallablePart.MinimumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
-                list: InstallablePart.MaximumValue,
-                cost: InstallablePart.MaximumValue,
-                core: InstallablePart.MaximumValue,
-                retail: InstallablePart.MaximumValue,
+                list: InstallablePart.MaximumMoneyAmount,
+                cost: InstallablePart.MaximumMoneyAmount,
+                core: InstallablePart.MaximumMoneyAmount,
+                retail: InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode,
@@ -72,13 +72,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var cost = InstallablePart.MaximumValue;
-            var core = InstallablePart.MaximumValue;
-            var retail = InstallablePart.MaximumValue;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -106,13 +106,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var cost = InstallablePart.MaximumValue;
-            var core = InstallablePart.MaximumValue;
-            var retail = InstallablePart.MaximumValue;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -139,13 +139,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndexOVERRANGE = InstallablePart.MaximumValue + 1;
+            int? loadIndexOVERRANGE = InstallablePart.MaximumMoneyAmount + 1;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var cost = InstallablePart.MaximumValue;
-            var core = InstallablePart.MaximumValue;
-            var retail = InstallablePart.MaximumValue;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -173,13 +173,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var listOVERRANGE = InstallablePart.MaximumValue + 1;
-            var cost = InstallablePart.MaximumValue;
-            var core = InstallablePart.MaximumValue;
-            var retail = InstallablePart.MaximumValue;
+            var listOVERRANGE = InstallablePart.MaximumMoneyAmount + 1;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -207,13 +207,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var costOVERRANGE = InstallablePart.MaximumValue + 1;
-            var core = InstallablePart.MaximumValue;
-            var retail = InstallablePart.MaximumValue;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var costOVERRANGE = InstallablePart.MaximumMoneyAmount + 1;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -241,13 +241,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var cost = InstallablePart.MaximumValue;
-            var coreOVERRANGE = InstallablePart.MaximumValue + 1;
-            var retail = InstallablePart.MaximumValue;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var coreOVERRANGE = InstallablePart.MaximumMoneyAmount + 1;
+            var retail = InstallablePart.MaximumMoneyAmount;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -274,13 +274,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
             string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
-            int? loadIndex = InstallablePart.MaximumValue;
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
             string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
 
-            var list = InstallablePart.MaximumValue;
-            var cost = InstallablePart.MaximumValue;
-            var core = InstallablePart.MaximumValue;
-            var retailOVERRANGE = InstallablePart.MaximumValue + 1;
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retailOVERRANGE = InstallablePart.MaximumMoneyAmount + 1;
 
             var resultOrError = InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -412,7 +412,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             return InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
                 fractional).Value;
         }
@@ -441,8 +441,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 get
                 {
-                    yield return new object[] { InstallablePart.MinimumValue - .01 };
-                    yield return new object[] { InstallablePart.MaximumValue + .01 };
+                    yield return new object[] { InstallablePart.MinimumMoneyAmount - .01 };
+                    yield return new object[] { InstallablePart.MaximumMoneyAmount + .01 };
                 }
             }
 

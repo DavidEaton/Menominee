@@ -507,10 +507,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
         private static InventoryItemPart CreateInventoryItemPart()
         {
-            double list = InstallablePart.MinimumValue;
-            double cost = InstallablePart.MinimumValue;
-            double core = InstallablePart.MinimumValue;
-            double retail = InstallablePart.MinimumValue;
+            double list = InstallablePart.MinimumMoneyAmount;
+            double cost = InstallablePart.MinimumMoneyAmount;
+            double core = InstallablePart.MinimumMoneyAmount;
+            double retail = InstallablePart.MinimumMoneyAmount;
             return InventoryItemPart.Create(
                 list, cost, core, retail,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
@@ -539,7 +539,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             return InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
-                InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
+                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
                 fractional,
                 type: "P", loadIndex: 89, speedRating: "H").Value;
