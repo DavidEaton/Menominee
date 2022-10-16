@@ -11,18 +11,22 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     public class InventoryItemTire : InstallablePart
     {
         public static readonly int MaximumTypeLength = 2;
-        public static readonly int MaximumWidthLength = 3;
-        public static readonly string InvalidTypeLengthMessage = $"Type must be between {MinimumLength} and {MaximumTypeLength} characters.";
-        public static readonly string InvalidWidthLengthMessage = $"Width must be {MaximumWidthLength} characters.";
+        public static readonly int MinimumLength = 1;
+        public static readonly int MaximumLength = 10;
+        public static readonly int MinimumWidth = 10;
+        public static readonly int MaximumWidth = 999;
+        public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
+        public static readonly string InvalidTypeLengthMessage = $"Type must be no more than {MaximumTypeLength} characters.";
+        public static readonly string InvalidWidthMessage = $"Width must be no more than {MaximumWidth}.";
         public static readonly int AspectRatioLength = 2;
         public static readonly int MinimumDiameter = 1;
         public static readonly int MaximumDiameter = 48;
         public static readonly int MaximumSpeedRatingLength = 3;
         public static readonly string InvalidDiameterMessage = $"Diameter must be between {MinimumLength} and {MaximumDiameter}.";
         public static readonly string InvalidSpeedRatingLengthMessage = $"Speed Rating must be no more than {MaximumSpeedRatingLength} characters.";
-        public static readonly string InvalidAspectRatioLengthMessage = $"Aspect Ratio must be a maximum of {AspectRatioLength} characters.";
+        public static readonly string InvalidAspectRatioLengthMessage = $"Aspect Ratio must be no more than {AspectRatioLength} characters.";
         public static readonly int MaximumLoadIndexLength = 3;
-        public static readonly string InvalidLoadIndexMessage = $"Please limit Load Index to three characters, greater than {MinimumValue}.";
+        public static readonly string InvalidLoadIndexMessage = $"Load Index must be no more than {MaximumLoadIndexLength} characters.";
         public string Type { get; private set; }
 
         // Width is ALWAYS a three-digit number in millimeters
@@ -49,8 +53,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (type?.Length > MaximumTypeLength)
                 throw new ArgumentOutOfRangeException(InvalidTypeLengthMessage);
 
-            if (width < MinimumWidth || width.ToString().Length > MaximumWidthLength)
-                throw new ArgumentOutOfRangeException(InvalidWidthLengthMessage);
+            if (width < MinimumWidth || width  > MaximumWidth)
+                throw new ArgumentOutOfRangeException(InvalidWidthMessage);
 
             if (aspectRatio < MinimumValue || aspectRatio.ToString().Length > AspectRatioLength)
                 throw new ArgumentOutOfRangeException(InvalidAspectRatioLengthMessage);
@@ -105,8 +109,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (type.Length > MaximumTypeLength)
                 return Result.Failure<InventoryItemTire>(InvalidTypeLengthMessage);
 
-            if (width < MinimumWidth || width.ToString().Length > MaximumWidthLength)
-                return Result.Failure<InventoryItemTire>(InvalidWidthLengthMessage);
+            if (width < MinimumWidth || width > MaximumWidth)
+                return Result.Failure<InventoryItemTire>(InvalidWidthMessage);
 
             if (aspectRatio < MinimumValue || aspectRatio.ToString().Length > AspectRatioLength)
                 return Result.Failure<InventoryItemTire>(InvalidAspectRatioLengthMessage);
@@ -138,8 +142,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<int> SetWidth(int width)
         {
-            if (width < MinimumWidth || width.ToString().Length > MaximumWidthLength)
-                return Result.Failure<int>(InvalidWidthLengthMessage);
+            if (width < MinimumWidth || width > MaximumWidth)
+                return Result.Failure<int>(InvalidWidthMessage);
 
             return Result.Success(Width = width);
         }

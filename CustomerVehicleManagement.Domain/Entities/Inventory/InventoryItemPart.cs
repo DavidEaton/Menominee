@@ -4,6 +4,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPart : InstallablePart
     {
+        public static readonly int MinimumLength = 1;
+        public static readonly int MaximumLength = 10;
+        public static readonly int MinimumWidth = 10;
+        public static readonly int MaximumWidth = 999;
+        public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
         private InventoryItemPart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
             : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode)
         { }

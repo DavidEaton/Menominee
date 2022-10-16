@@ -11,13 +11,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         // abstract base class binds them to the code’s implementation details, 
         // which is an anit-pattern.
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly int MinimumWidth = 10;
+        public static readonly int MaximumLineCodeLength = 10;
         public static readonly int MinimumValue = 0;
         public static readonly int MaximumValue = 99999;
         public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
-        public static readonly int MinimumLength = 1;
-        public static readonly int MaximumLength = 10;
-        public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
+        public static readonly string InvalidLineCodeLengthMessage = $"Line Code must be under {MaximumLineCodeLength} characters";
         public double List { get; private set; }
         public double Cost { get; private set; }
         public double Core { get; private set; }
@@ -44,8 +42,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             lineCode = (lineCode ?? string.Empty).Trim();
             subLineCode = (subLineCode ?? string.Empty).Trim();
 
-            if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
+            if (lineCode.Length > MaximumLineCodeLength || subLineCode.Length > MaximumLineCodeLength)
+                throw new ArgumentOutOfRangeException(InvalidLineCodeLengthMessage);
 
             List = list;
             Cost = cost;
@@ -99,16 +97,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<string> SetLineCode(string lineCode)
         {
-            if (lineCode.Length < MinimumLength || lineCode.Length > MaximumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+            if (lineCode.Length > MaximumLineCodeLength)
+                return Result.Failure<string>(InvalidLineCodeLengthMessage);
 
             return Result.Success(LineCode = lineCode);
         }
 
         public Result<string> SetSubLineCode(string subLineCode)
         {
-            if (subLineCode.Length < MinimumLength || subLineCode.Length > MaximumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+            if (subLineCode.Length > MaximumLineCodeLength)
+                return Result.Failure<string>(InvalidLineCodeLengthMessage);
 
             return Result.Success(SubLineCode = subLineCode);
         }

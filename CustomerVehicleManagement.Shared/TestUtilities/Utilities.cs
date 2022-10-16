@@ -21,26 +21,19 @@ namespace CustomerVehicleManagement.Shared.TestUtilities
         }
 
         public static int RandomNonZeroInteger(int characterCount)
-        {
-            switch (characterCount)
+        {             
+            return characterCount switch
             {
-                case 0:
-                    return 0;
-                case 1:
-                    // single digit random integer
-                    return random.Next(1, 10);
-                case 2:
-                    // two-digit random integer
-                    return random.Next(1, 100);
-                case 3:
-                    // three-digit random integer
-                    return random.Next(1, 1000);
-                case 4:
-                    // three-digit random integer
-                    return random.Next(1, 10000);
-                default:
-                    throw new ArgumentException("must be greater than zero", nameof(characterCount));
-            }
+                < 0 => 0,
+                0 => 0,
+                1 => random.Next(1, 10),// single digit random integer
+                2 => random.Next(1, 100),// two-digit random integer
+                3 => random.Next(1, 1000),//...
+                4 => random.Next(1, 10000),
+                5 => random.Next(1, 100000),
+                6 => random.Next(1, 1000000),
+                _ => throw new NotImplementedException()
+            };
         }
 
         public static Person CreatePerson()

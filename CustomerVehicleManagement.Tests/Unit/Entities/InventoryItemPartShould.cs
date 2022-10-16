@@ -30,8 +30,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_InventoryItemPart_With_Optional_Line_Codes()
         {
             var fractional = false;
-            string lineCode = Utilities.RandomCharacters(InstallablePart.MaximumLength);
-            string subLineCode = Utilities.RandomCharacters(InstallablePart.MaximumLength);
+            string lineCode = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
             var resultOrError = InventoryItemPart.Create(
                 InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
@@ -63,8 +63,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue, InstallablePart.MaximumValue,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumValue, SkillLevel.A).Value,
 
-                lineCode: Utilities.RandomCharacters(InstallablePart.MaximumLength + 1),
-                subLineCode: Utilities.RandomCharacters(InstallablePart.MaximumLength + 1),
+                lineCode: Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1),
+                subLineCode: Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1),
 
                 fractional: false);
 
@@ -195,7 +195,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetLineCode()
         {
             var part = CreateInventoryItemPart();
-            var value = Utilities.RandomCharacters(InstallablePart.MaximumLength);
+            var value = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
             var resultOrError = part.SetLineCode(value);
 
@@ -208,7 +208,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var part = CreateInventoryItemPart();
 
-            var resultOrError = part.SetLineCode(Utilities.RandomCharacters(InstallablePart.MaximumLength +1));
+            var resultOrError = part.SetLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
@@ -218,7 +218,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void SetSubLineCode()
         {
             var part = CreateInventoryItemPart();
-            var value = Utilities.RandomCharacters(InstallablePart.MaximumLength);
+            var value = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
             var resultOrError = part.SetSubLineCode(value);
 
@@ -231,7 +231,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var part = CreateInventoryItemPart();
 
-            var resultOrError = part.SetSubLineCode(Utilities.RandomCharacters(InstallablePart.MaximumLength + 1));
+            var resultOrError = part.SetSubLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");

@@ -532,7 +532,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         private static InventoryItemTire CreateInventoryItemTire()
         {
             var fractional = false;
-            int width = Utilities.RandomNonZeroInteger(InventoryItemTire.MaximumWidthLength);
+            int width = InventoryItemTire.MaximumWidth;
             int aspectRatio = Utilities.RandomNonZeroInteger(InventoryItemTire.AspectRatioLength);
             TireConstructionType constructionType = TireConstructionType.R;
             int diameter = InventoryItemTire.MaximumDiameter;
