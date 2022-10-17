@@ -7,10 +7,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemPackagePlaceholder : Entity
     {
-        public static readonly int MinimumLength = 1;
-        public static readonly int MaximumLength = 255;
-        public static readonly string InvalidMessage = $"Description must be between {MinimumLength} and {MaximumLength} character(s) in length.";
+        public static readonly int DescriptionMinimumLength = 1;
+        public static readonly int DescriptionMaximumLength = 255;
+        public static readonly string DescriptionInvalidMessage = $"Description must be between {DescriptionMinimumLength} and {DescriptionMaximumLength} character(s) in length.";
         public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly string DisplayOrderInvalidMessage = $"Display Order must be > 0.";
 
         public PackagePlaceholderItemType ItemType { get; private set; }
         public string Description { get; private set; }
@@ -22,6 +23,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!Enum.IsDefined(typeof(PackagePlaceholderItemType), itemType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
+            description = (description ?? string.Empty).Trim();
+
+            if (description.Length < DescriptionMinimumLength || description.Length > DescriptionMaximumLength)
+                throw new ArgumentOutOfRangeException(DescriptionInvalidMessage);
+
+            if (displayOrder < 1)
+                throw new ArgumentOutOfRangeException(DisplayOrderInvalidMessage);
+
+            if (details is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+            
             ItemType = itemType;
             Description = description;
             DisplayOrder = displayOrder;
@@ -35,8 +47,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             description = (description ?? string.Empty).Trim();
 
-            if (description.Length < MinimumLength || description.Length > MaximumLength)
-                return Result.Failure<InventoryItemPackagePlaceholder>($"{InvalidMessage} You entered {description.Length} character(s).");
+            if (description.Length < DescriptionMinimumLength || description.Length > DescriptionMaximumLength)
+                return Result.Failure<InventoryItemPackagePlaceholder>($"{DescriptionInvalidMessage} You entered {description.Length} character(s).");
+
+            if (displayOrder < 1)
+                return Result.Failure<InventoryItemPackagePlaceholder>(DisplayOrderInvalidMessage);
+
+            if (details is null)
+                return Result.Failure<InventoryItemPackagePlaceholder>(RequiredMessage);
 
             return Result.Success(new InventoryItemPackagePlaceholder(itemType, description, displayOrder, details));
         }
@@ -53,6 +71,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             // TODO: parse/vaidate parameter: 
             // Invariants from Al: Min of 0 or 1, Max will be the number of records.
+            if (displayOrder < 1)
+                return Result.Failure<int>(DisplayOrderInvalidMessage);
+
             return Result.Success(DisplayOrder = displayOrder);
         }
 
@@ -60,8 +81,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             description = (description ?? string.Empty).Trim();
 
-            if (description.Length < MinimumLength || description.Length > MaximumLength)
-                return Result.Failure<string>($"{InvalidMessage} You entered {description.Length} character(s).");
+            if (description.Length < DescriptionMinimumLength || description.Length > DescriptionMaximumLength)
+                return Result.Failure<string>($"{DescriptionInvalidMessage} You entered {description.Length} character(s).");
 
             return Result.Success(Description = description);
         }
@@ -71,6 +92,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             // deatils paremeter has already been validated
             // by the time we get here (type InventoryItemPackageDetails
             // Value Object)
+            if (details is null)
+                return Result.Failure<InventoryItemPackageDetails>(RequiredMessage);
+            
             return Result.Success(Details = details);
         }
 

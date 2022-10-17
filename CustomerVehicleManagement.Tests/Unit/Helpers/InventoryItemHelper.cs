@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
@@ -126,7 +125,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return InventoryItemPackagePlaceholder.Create(
                 PackagePlaceholderItemType.Part,
                 "description",
-                InventoryItemPackagePlaceholder.MinimumLength + 1,
+                InventoryItemPackagePlaceholder.DescriptionMinimumLength + 1,
                 details).Value;
         }
     }

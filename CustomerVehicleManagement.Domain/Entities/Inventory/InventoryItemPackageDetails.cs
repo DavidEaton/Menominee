@@ -41,8 +41,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (quantity <= MinimumValue || quantity > MaximumValue)
                 return Result.Failure<InventoryItemPackageDetails>(MinimumValueMessage);
 
-            return Result.Success(new InventoryItemPackageDetails(
+            var result = Result.Success(new InventoryItemPackageDetails(
                 quantity, PartAmountIsAdditional, LaborAmountIsAdditional, ExciseFeeIsAdditional)).Value;
+
+            return Result.Success(result);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
