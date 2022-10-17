@@ -444,7 +444,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             InventoryItem item = InventoryItemHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
-            InventoryItemWarranty warranty = CreateInventoryItemWarranty();
+            InventoryItemWarranty warranty = InventoryItemHelper.CreateInventoryItemWarranty();
             item.Part.Should().Be(originalPart);
             item.Warranty.Should().BeNull();
 
@@ -467,14 +467,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
-        }
-
-        private InventoryItemWarranty CreateInventoryItemWarranty()
-        {
-            return InventoryItemWarranty.Create(
-                InventoryItemWarrantyPeriod.Create(
-                    InventoryItemWarrantyPeriodType.Years, 3).Value
-                    ).Value;
         }
 
         internal class TestData

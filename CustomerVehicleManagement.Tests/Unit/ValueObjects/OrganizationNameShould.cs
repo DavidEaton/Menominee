@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Not_Equate_Two_OrganizationName_Instances_Having_Differing_Values()
+        public void Equate_Two_Instances_Having_Same_Values()
         {
             var name1 = "jane's";
             var name2 = "june's";
@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Return_New_OrganizationName_On_NewOrganizationName()
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
             var name = "jane's";
             Result<OrganizationName> organizationNameOrError = OrganizationName.Create(name);

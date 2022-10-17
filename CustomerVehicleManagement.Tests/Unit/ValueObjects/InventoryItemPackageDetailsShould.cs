@@ -56,6 +56,24 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             resultOrError.Error.Should().Contain("must");
         }
 
+        [Fact]
+        public void Equate_Two_Instances_Having_Same_Values()
+        {
+            var packageOne = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+            var packageTwo = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+
+            packageOne.Should().Be(packageTwo);
+        }
+
+        [Fact]
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
+        {
+            var packageOne = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+            var packageTwo = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + 1, true, true, true).Value;
+
+            packageOne.Should().NotBe(packageTwo);
+        }
+
         internal class TestData
         {
             public static IEnumerable<object[]> Data

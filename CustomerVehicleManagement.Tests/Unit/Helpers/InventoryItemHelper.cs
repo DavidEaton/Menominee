@@ -118,6 +118,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return details;
         }
 
+        public static InventoryItemWarranty CreateInventoryItemWarranty()
+        {
+            return InventoryItemWarranty.Create(
+                InventoryItemWarrantyPeriod.Create(
+                    InventoryItemWarrantyPeriodType.Years, 3).Value
+                    ).Value;
+        }
+
         internal static InventoryItemPackagePlaceholder CreateInventoryItemPackagePlaceholder()
         {
             var details = CreateInventoryItemPackageDetails();

@@ -220,7 +220,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Equate_Two_Address_Instances_Having_Same_Values()
+        public void Equate_Two_Instances_Having_Same_Values()
         {
             var address1 = Utilities.CreateAddress();
             var address2 = Utilities.CreateAddress();
@@ -229,7 +229,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Not_Equate_Two_Address_Instances_Having_Differing_Values()
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
             var address1 = Utilities.CreateAddress();
             var address2 = Utilities.CreateAddress();

@@ -45,6 +45,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(PeriodType = periodType);
         }
 
+        public Result<int> SetDuration(int duration)
+        {
+            if (duration < 0)
+                return Result.Failure<int>(NonNegativeMessage);
+
+            return Result.Success(Duration = duration);
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return PeriodType;
