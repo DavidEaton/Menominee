@@ -19,6 +19,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (displayOrder < MinimumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
+            if (inventoryItem is null)
+                throw new ArgumentNullException(nameof(inventoryItem));
+
+            if (details is null)
+                throw new ArgumentNullException(nameof(details));
+
             DisplayOrder = displayOrder;
             InventoryItem = inventoryItem;
             Details = details;
@@ -28,6 +34,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         {
             if (displayOrder < MinimumValue)
                 return Result.Failure<InventoryItemPackageItem>(MinimumValueMessage);
+
+            if (inventoryItem is null)
+                return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
+
+            if (details is null)
+                return Result.Failure<InventoryItemPackageItem>(RequiredMessage);
 
             return Result.Success(new InventoryItemPackageItem(displayOrder, inventoryItem, details));
         }
@@ -42,6 +54,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<int> SetDisplayOrder(int displayOrder)
         {
+            if (displayOrder < MinimumValue)
+                return Result.Failure<int>(MinimumValueMessage);
+
             return Result.Success(DisplayOrder = displayOrder);
         }
 
@@ -50,6 +65,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             // deatils paremeter has already been validated
             // by the time we get here (type InventoryItemPackageDetails
             // Value Object)
+            if (details is null)
+                return Result.Failure<InventoryItemPackageDetails>(RequiredMessage);
+
             return Result.Success(Details = details);
         }
 

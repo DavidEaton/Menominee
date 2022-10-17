@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
         public static InventoryItemPackageItem CreateInventoryItemPackageItem()
         {
-            var details = CredateInventoryItemPackageDetails();
+            var details = CreateInventoryItemPackageDetails();
 
             return InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 .Value;
         }
 
-        private static InventoryItemPackageDetails CredateInventoryItemPackageDetails()
+        public static InventoryItemPackageDetails CreateInventoryItemPackageDetails()
         {
             var quantity = InventoryItemPackageDetails.MinimumValue + 1;
             bool partAmountIsAdditional = true;
@@ -121,7 +121,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
         internal static InventoryItemPackagePlaceholder CreateInventoryItemPackagePlaceholder()
         {
-            var details = CredateInventoryItemPackageDetails();
+            var details = CreateInventoryItemPackageDetails();
 
             return InventoryItemPackagePlaceholder.Create(
                 PackagePlaceholderItemType.Part,
