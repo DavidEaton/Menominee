@@ -11,9 +11,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly int ScriptMaximumLength = 10000;
         public static readonly string ScriptMaximumLengthMessage = $"Script cannot be over {ScriptMaximumLength} characters in length.";
         public static readonly string RequiredMessage = "Please include all required items.";
-        public static readonly int MinimumValue = 0;
-        public static readonly int MaximumValue = 99999;
-        public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
+        public static readonly int MinimumAmount = 0;
+        public static readonly int MaximumAmount = 99999;
+        public static readonly string InvalidAmountMessage = $"Amount must be within {MinimumAmount} and {MaximumAmount}.";
 
         public double BasePartsAmount { get; private set; }
         public double BaseLaborAmount { get; private set; }
@@ -24,11 +24,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemPackage(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
         {
-            if (basePartsAmount < MinimumValue ||
-                baseLaborAmount < MinimumValue ||
-                basePartsAmount > MaximumValue ||
-                baseLaborAmount > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
+            if (basePartsAmount < MinimumAmount ||
+                baseLaborAmount < MinimumAmount ||
+                basePartsAmount > MaximumAmount ||
+                baseLaborAmount > MaximumAmount)
+                throw new ArgumentOutOfRangeException(InvalidAmountMessage);
 
             script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
 
@@ -45,11 +45,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<InventoryItemPackage> Create(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
         {
-            if (basePartsAmount < MinimumValue ||
-                baseLaborAmount < MinimumValue ||
-                basePartsAmount > MaximumValue ||
-                baseLaborAmount > MaximumValue)
-                return Result.Failure<InventoryItemPackage>(InvalidValueMessage);
+            if (basePartsAmount < MinimumAmount ||
+                baseLaborAmount < MinimumAmount ||
+                basePartsAmount > MaximumAmount ||
+                baseLaborAmount > MaximumAmount)
+                return Result.Failure<InventoryItemPackage>(InvalidAmountMessage);
 
             script = (script ?? string.Empty).Trim().Truncate(ScriptMaximumLength);
 
@@ -61,16 +61,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<double> SetBasePartsAmount(double basePartsAmount)
         {
-            if (basePartsAmount < MinimumValue || basePartsAmount > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (basePartsAmount < MinimumAmount || basePartsAmount > MaximumAmount)
+                return Result.Failure<double>(InvalidAmountMessage);
 
             return Result.Success(BasePartsAmount = basePartsAmount);
         }
 
         public Result<double> SetBaseLaborAmount(double baseLaborAmount)
         {
-            if (baseLaborAmount < MinimumValue || baseLaborAmount > MaximumValue)
-                return Result.Failure<double>(InvalidValueMessage);
+            if (baseLaborAmount < MinimumAmount || baseLaborAmount > MaximumAmount)
+                return Result.Failure<double>(InvalidAmountMessage);
 
             return Result.Success(BaseLaborAmount = baseLaborAmount);
         }
@@ -102,9 +102,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             }
             catch (Exception ex)
             {
-                return Result.Failure<InventoryItemPackageItem>($"Unable to add item: {ex.Message}");
+                return Result.Failure<InventoryItemPackageItem>($"Unable to add item: {item}");
                 // Log exception details
-                throw;
             }
 
             return Result.Success();
@@ -121,9 +120,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             }
             catch (Exception ex)
             {
-                return Result.Failure<InventoryItemPackageItem>($"Unable to remove item: {ex.Message}");
+                return Result.Failure<InventoryItemPackageItem>($"Unable to remove item: {item}");
                 // Log exception details
-                throw;
             }
 
             return Result.Success();
@@ -140,9 +138,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             }
             catch (Exception ex)
             {
-                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to add placeholder: {ex.Message}");
+                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to add placeholder: {placeholder}");
                 // Log exception details
-                throw;
             }
 
             return Result.Success();
@@ -158,9 +155,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             }
             catch (Exception ex)
             {
-                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to remove placeholder: {ex.Message}");
+                return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to remove placeholder: {placeholder}");
                 // Log exception details
-                throw;
             }
 
             return Result.Success();

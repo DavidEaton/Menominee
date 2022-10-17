@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemPackagePlaceholder(PackagePlaceholderItemType itemType, string description, int displayOrder, InventoryItemPackageDetails details)
         {
-            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+            if (!Enum.IsDefined(typeof(PackagePlaceholderItemType), itemType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             ItemType = itemType;
@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<InventoryItemPackagePlaceholder> Create(PackagePlaceholderItemType itemType, string description, int displayOrder, InventoryItemPackageDetails details)
         {
-            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+            if (!Enum.IsDefined(typeof(PackagePlaceholderItemType), itemType))
                 return Result.Failure<InventoryItemPackagePlaceholder>(RequiredMessage);
 
             description = (description ?? string.Empty).Trim();
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<PackagePlaceholderItemType> SetItemType(PackagePlaceholderItemType itemType)
         {
-            if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
+            if (!Enum.IsDefined(typeof(PackagePlaceholderItemType), itemType))
                 return Result.Failure<PackagePlaceholderItemType>(RequiredMessage);
 
             return Result.Success(ItemType = itemType);
