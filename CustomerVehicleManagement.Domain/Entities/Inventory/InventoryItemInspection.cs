@@ -8,9 +8,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     public class InventoryItemInspection : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public LaborAmount LaborAmount { get; private set; }
-        public TechAmount TechAmount { get; private set; }
-        public InventoryItemInspectionType InspectionType { get; private set; }
+        public LaborAmount LaborAmount { get; private set; } //optional
+        public TechAmount TechAmount { get; private set; } //optional
+        public InventoryItemInspectionType InspectionType { get; private set; } //required
         private InventoryItemInspection(LaborAmount laborAmount, TechAmount techAmount, InventoryItemInspectionType type)
         {
             if (!Enum.IsDefined(typeof(InventoryItemInspectionType), type))
