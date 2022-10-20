@@ -15,7 +15,7 @@ using CustomerVehicleManagement.Api.Taxes;
 using CustomerVehicleManagement.Api.Users;
 using CustomerVehicleManagement.Data;
 using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Validators;
+using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentValidation.AspNetCore;
 using Janco.Idp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

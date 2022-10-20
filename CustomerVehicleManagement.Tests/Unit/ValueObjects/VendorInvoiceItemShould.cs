@@ -3,8 +3,6 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
-using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 using Xunit;
 

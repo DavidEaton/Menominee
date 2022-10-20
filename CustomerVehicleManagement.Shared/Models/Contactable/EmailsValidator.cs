@@ -1,9 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Contactable;
 using FluentValidation;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Shared.Validators
+namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class EmailsValidator : AbstractValidator<IList<EmailToWrite>>
     {

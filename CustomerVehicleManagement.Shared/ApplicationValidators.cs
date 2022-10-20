@@ -5,7 +5,7 @@ using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
 
-namespace CustomerVehicleManagement.Shared.Validators
+namespace CustomerVehicleManagement.Shared
 {
     public static class ApplicationValidators
     {

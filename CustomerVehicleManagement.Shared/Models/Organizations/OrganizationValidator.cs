@@ -1,12 +1,11 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models;
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 
-namespace CustomerVehicleManagement.Shared.Validators
+namespace CustomerVehicleManagement.Shared.Models.Organizations
 {
     public class OrganizationValidator : AbstractValidator<OrganizationToWrite>
     {
