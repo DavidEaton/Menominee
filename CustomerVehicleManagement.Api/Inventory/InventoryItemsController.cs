@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,17 @@ namespace CustomerVehicleManagement.Api.Inventory
         private readonly string BasePath = "/api/inventoryitems";
 
         public InventoryItemsController(IInventoryItemRepository itemRepository,
-            IManufacturerRepository manufacturerRepository)
+            IManufacturerRepository manufacturerRepository,
+            IProductCodeRepository productCodeRepository)
         {
             this.itemRepository =
                 itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
 
             this.manufacturerRepository =
                 manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
+
+            this.productCodeRepository =
+                productCodeRepository ?? throw new ArgumentNullException(nameof(productCodeRepository));
         }
 
         // api/inventoryitems/listing

@@ -1,4 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspection;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory
