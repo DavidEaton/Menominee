@@ -8,9 +8,9 @@ using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
 
-namespace CustomerVehicleManagement.Shared.Models.Inventory
+namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
-    public class InventoryItemToRead
+    public class InventoryItemToWrite
     {
         public long Id { get; set; }
         public ManufacturerToRead Manufacturer { get; set; }
@@ -18,11 +18,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory
         public string Description { get; set; }
         public ProductCodeToRead ProductCode { get; set; }
         public InventoryItemType ItemType { get; set; }
-        public InventoryItemPartToRead Part { get; set; }
-        public InventoryItemLaborToRead Labor { get; set; }
-        public InventoryItemTireToRead Tire { get; set; }
-        public InventoryItemPackageToRead Package { get; set; }
-        public InventoryItemInspectionToRead Inspection { get; set; }
-        public InventoryItemWarrantyToRead Warranty { get; set; }
+
+        public InventoryItemPartToWrite Part { get; set; }
+        public InventoryItemLaborToWrite Labor { get; set; }
+        public InventoryItemTireToWrite Tire { get; set; }
+        public InventoryItemPackageToWrite Package { get; set; }
+        public InventoryItemInspectionToWrite Inspection { get; set; }
+        public InventoryItemWarrantyToWrite Warranty { get; set; }
     }
 }

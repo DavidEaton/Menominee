@@ -12,11 +12,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string InvalidMessage = $"Item Number, Description must be between {MinimumLength} and {MaximumLength} character(s) in length.";
         public static readonly string RequiredMessage = $"Please include all required items.";
 
-        public Manufacturer Manufacturer { get; private set; }
-        public string ItemNumber { get; private set; }
-        public string Description { get; private set; }
-        public ProductCode ProductCode { get; private set; }
-        public InventoryItemType ItemType { get; private set; }
+        public Manufacturer Manufacturer { get; private set; } //required
+        public string ItemNumber { get; private set; } //required
+        public string Description { get; private set; } //required
+        public ProductCode ProductCode { get; private set; } //required
+        public InventoryItemType ItemType { get; private set; } //required
         public InventoryItemPart Part { get; private set; }
         public InventoryItemLabor Labor { get; private set; }
         public InventoryItemTire Tire { get; private set; }

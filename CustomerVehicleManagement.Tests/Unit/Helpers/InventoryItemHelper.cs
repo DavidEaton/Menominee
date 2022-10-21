@@ -109,13 +109,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             bool laborAmountIsAdditional = true;
             bool exciseFeeIsAdditional = true;
 
-            var details = InventoryItemPackageDetails.Create(
+            return InventoryItemPackageDetails.Create(
                 quantity,
                 partAmountIsAdditional,
                 laborAmountIsAdditional,
                 exciseFeeIsAdditional)
                 .Value;
-            return details;
         }
 
         public static InventoryItemWarranty CreateInventoryItemWarranty()

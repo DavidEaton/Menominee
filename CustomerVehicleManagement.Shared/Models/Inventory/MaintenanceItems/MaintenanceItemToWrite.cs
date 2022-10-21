@@ -1,4 +1,6 @@
-﻿namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+
+namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
 {
     public class MaintenanceItemToWrite
     {

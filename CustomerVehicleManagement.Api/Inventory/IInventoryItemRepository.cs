@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
