@@ -2,23 +2,21 @@
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
 using FluentValidation;
 using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
 {
     public class MaintenanceItemValidator : AbstractValidator<MaintenanceItemToWrite>
     {
-        private readonly Manufacturer validManufacturer = Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
-        private readonly ProductCode validProductCode = new ProductCode() { Name = "A Product", Code = "P1" };
-        private readonly InventoryItem validInventoryItem = InventoryItem.Create(
-            Manufacturer.Create("Manufacturer One", "M1", "V1").Value,
-            "001",
-            "a description",
-            new ProductCode() { Name = "A Product", Code = "P1" },
-            InventoryItemType.Part,
-            part: CreatePart()).Value;
+        // Create valid objects to use for parent (MaintenanceItemToWrite) read DTO
+        // members (ManufacturerToRead, ProductCodeToRead, )
+        private readonly Manufacturer validManufacturer = CreateValidManufacturer();
+        private readonly ProductCode validProductCode = CreateValidProductCode();
+        private readonly InventoryItem validInventoryItem = CreateValidInventryItem();
 
-
+        // INSTEAD OF ALL THAT OBJECT CREATION BELOW, VALIDATE MEMBERS FIRST
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public MaintenanceItemValidator()
         {
             RuleFor(maintenanceItem => maintenanceItem)
@@ -95,10 +93,10 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
                             maintenanceItem.Item.Package.IsDiscountable,
                             maintenanceItem.Item.Package.Items == null
                             ? null
-                            : CreatemPackageItem(maintenanceItem.Item.Package.Items),
+                            : CreatemPackageItems(maintenanceItem.Item.Package.Items),
                             maintenanceItem.Item.Package.Placeholders == null
                             ? null
-                            : new List<InventoryItemPackagePlaceholder>())
+                            : CreatePackagePlaceholders(maintenanceItem.Item.Package.Placeholders))
                         .Value,
 
                         maintenanceItem.Item.Inspection == null
@@ -127,19 +125,55 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
                     .Value));
         }
 
-        private static InventoryItemPart CreatePart()
+        private static InventoryItem CreateValidInventryItem()
         {
             double list = InstallablePart.MinimumMoneyAmount;
             double cost = InstallablePart.MinimumMoneyAmount;
             double core = InstallablePart.MinimumMoneyAmount;
             double retail = InstallablePart.MinimumMoneyAmount;
-            return InventoryItemPart.Create(
+            var part = InventoryItemPart.Create(
                 list, cost, core, retail,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
                 fractional: false).Value;
+
+            return InventoryItem.Create(
+            CreateValidManufacturer(),
+            "001",
+            "a description",
+            CreateValidProductCode(),
+            InventoryItemType.Part,
+            part: part).Value;
         }
 
-        private List<InventoryItemPackageItem> CreatemPackageItem(List<InventoryItemPackageItemToWrite> items)
+        private static Manufacturer CreateValidManufacturer()
+        {
+            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
+        }
+
+        private static ProductCode CreateValidProductCode()
+        {
+            return new ProductCode() { Name = "A Product", Code = "P1" };
+        }
+
+        private List<InventoryItemPackagePlaceholder> CreatePackagePlaceholders(List<InventoryItemPackagePlaceholderToWrite> placeholders)
+        {
+            var result = new List<InventoryItemPackagePlaceholder>();
+
+            foreach (var placeholder in placeholders)
+            {
+                result.Add(
+                    InventoryItemPackagePlaceholder.Create(
+                        (PackagePlaceholderItemType)Enum.Parse(typeof(PackagePlaceholderItemType), placeholder.ItemType),
+                        placeholder.Description,
+                        placeholder.DisplayOrder,
+                        CreateInventoryItemPackageDetails())
+                    .Value);
+            }
+
+            return result;
+        }
+
+        private List<InventoryItemPackageItem> CreatemPackageItems(List<InventoryItemPackageItemToWrite> items)
         {
             var result = new List<InventoryItemPackageItem>();
 

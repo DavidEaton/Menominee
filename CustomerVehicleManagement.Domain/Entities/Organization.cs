@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             // ValueObject's contract validator. For example, AddressValidator :
             // AbstractValidator<AddressToWrite>
             // Only the primitive type (vs. ValueObject type) Note property is
-            // transformed and validated (parsed) here in the domaon class that
+            // transformed and validated (parsed) here in the domain class that
             // creates it.
             note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
