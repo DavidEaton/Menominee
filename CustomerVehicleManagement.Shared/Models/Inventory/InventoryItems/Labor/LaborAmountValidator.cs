@@ -8,7 +8,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor
         public LaborAmountValidator()
         {
             RuleFor(laborAmount => laborAmount)
-                .NotEmpty()
                 .MustBeValueObject(
                     laborAmount => LaborAmount.Create(
                         laborAmount.PayType,

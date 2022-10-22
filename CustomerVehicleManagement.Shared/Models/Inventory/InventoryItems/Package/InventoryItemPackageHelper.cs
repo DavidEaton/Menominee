@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                 {
                     Id = item.Id,
                     DisplayOrder = item.DisplayOrder,
-                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem),
+                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item),
                     Details = new()
                     {
                         Quantity = item.Details.Quantity,

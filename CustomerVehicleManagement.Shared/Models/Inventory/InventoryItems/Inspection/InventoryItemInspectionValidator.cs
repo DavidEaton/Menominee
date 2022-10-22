@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using FluentValidation;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspection
@@ -7,19 +7,16 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspe
     {
         public InventoryItemInspectionValidator()
         {
-            RuleFor(inspectionDto => inspectionDto)
-                .MustBeEntity(
-                    inspectionDto => InventoryItemInspection.Create(
-                        LaborAmount.Create(
-                            inspectionDto.LaborAmount.PayType,
-                            inspectionDto.LaborAmount.Amount)
-                        .Value,
-                        TechAmount.Create(
-                            inspectionDto.TechAmount.PayType,
-                            inspectionDto.TechAmount.Amount,
-                            inspectionDto.TechAmount.SkillLevel)
-                        .Value,
-                        inspectionDto.Type));
+            RuleFor(inspectionDto => inspectionDto.Type)
+                .IsInEnum();
+
+            RuleFor(inspectionDto => inspectionDto.LaborAmount)
+                .SetValidator(new LaborAmountValidator())
+                .When(inspectionDto => inspectionDto.LaborAmount is not null);
+
+            RuleFor(inspectionDto => inspectionDto.TechAmount)
+                .SetValidator(new TechAmountValidator())
+                .When(inspectionDto => inspectionDto.TechAmount is not null);
         }
     }
 }

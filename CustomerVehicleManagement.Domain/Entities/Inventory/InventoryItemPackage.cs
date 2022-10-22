@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public List<InventoryItemPackageItem> Items { get; private set; } = new List<InventoryItemPackageItem>();
         public List<InventoryItemPackagePlaceholder> Placeholders { get; private set; } = new List<InventoryItemPackagePlaceholder>();
 
-        private InventoryItemPackage(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        private InventoryItemPackage(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items = null, List<InventoryItemPackagePlaceholder> placeholders = null)
         {
             if (basePartsAmount < MinimumAmount ||
                 baseLaborAmount < MinimumAmount ||
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             Placeholders = placeholders ?? new List<InventoryItemPackagePlaceholder>();
         }
 
-        public static Result<InventoryItemPackage> Create(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items, List<InventoryItemPackagePlaceholder> placeholders)
+        public static Result<InventoryItemPackage> Create(double basePartsAmount, double baseLaborAmount, string script, bool isDiscountable, List<InventoryItemPackageItem> items = null, List<InventoryItemPackagePlaceholder> placeholders = null)
         {
             if (basePartsAmount < MinimumAmount ||
                 baseLaborAmount < MinimumAmount ||

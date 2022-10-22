@@ -73,13 +73,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 InventoryItemPackageItem.MinimumValue + 1,
                 itemOne,
                 details).Value;
-            packageItem.InventoryItem.Should().Be(itemOne);
+            packageItem.Item.Should().Be(itemOne);
 
             var resultOrError = packageItem.SetInventoryItem(itemTwo);
 
             resultOrError.IsFailure.Should().BeFalse();
-            packageItem.InventoryItem.Should().Be(itemTwo);
-            packageItem.InventoryItem.Should().NotBe(itemOne);
+            packageItem.Item.Should().Be(itemTwo);
+            packageItem.Item.Should().NotBe(itemOne);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 displayOrderOne,
                 itemOne,
                 details).Value;
-            packageItem.InventoryItem.Should().Be(itemOne);
+            packageItem.Item.Should().Be(itemOne);
 
             var resultOrError = packageItem.SetDisplayOrder(displayOrderTwo);
 

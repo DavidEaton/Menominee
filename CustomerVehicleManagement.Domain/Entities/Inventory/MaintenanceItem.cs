@@ -8,6 +8,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string InvalidMessage = $"Please enter a valid Display Order";
+        public static readonly int MinimumValue = 0;
         public int DisplayOrder { get; private set; }
         public InventoryItem InventoryItem { get; private set; }
 
@@ -16,7 +17,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (inventoryItem is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            if (displayOrder < 0)
+            if (displayOrder < MinimumValue)
                 throw new ArgumentOutOfRangeException(InvalidMessage);
 
             DisplayOrder = displayOrder;
@@ -44,7 +45,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public Result<int> SetDisplayOrder(int displayOrder)
         {
-            if (displayOrder < 0)
+            if (displayOrder < MinimumValue)
                 return Result.Failure<int>(InvalidMessage);
 
             return Result.Success(DisplayOrder = displayOrder);

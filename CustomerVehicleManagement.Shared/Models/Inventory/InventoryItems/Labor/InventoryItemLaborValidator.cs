@@ -7,18 +7,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor
     {
         public InventoryItemLaborValidator()
         {
-            RuleFor(laborDto => laborDto)
-                .MustBeEntity(
-                    laborDto => InventoryItemLabor.Create(
-                        LaborAmount.Create(
-                            laborDto.LaborAmount.PayType,
-                            laborDto.LaborAmount.Amount)
-                        .Value,
-                        TechAmount.Create(
-                            laborDto.TechAmount.PayType,
-                            laborDto.TechAmount.Amount,
-                            laborDto.TechAmount.SkillLevel)
-                        .Value));
+            RuleFor(laborDto => laborDto.LaborAmount)
+                .MustBeValueObject(laborAmount =>
+                    LaborAmount.Create(
+                        laborAmount.PayType,
+                        laborAmount.Amount));
+
+            RuleFor(laborDto => laborDto.TechAmount)
+                .MustBeValueObject(techAmount =>
+                    TechAmount.Create(
+                        techAmount.PayType,
+                        techAmount.Amount,
+                        techAmount.SkillLevel));
         }
     }
 }

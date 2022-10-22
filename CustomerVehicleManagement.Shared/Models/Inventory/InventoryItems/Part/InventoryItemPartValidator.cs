@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using FluentValidation;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
@@ -8,9 +7,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
     {
         public InventoryItemPartValidator()
         {
-            RuleFor(partDto => partDto.TechAmount)
-                .SetValidator(new TechAmountValidator());
-
             RuleFor(partDto => partDto)
                 .MustBeEntity(
                     partDto => InventoryItemPart.Create(

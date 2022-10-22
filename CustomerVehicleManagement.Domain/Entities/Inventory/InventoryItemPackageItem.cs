@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string MinimumValueMessage = $"Value must be > {MinimumValue}.";
 
         public int DisplayOrder { get; private set; }
-        public InventoryItem InventoryItem { get; private set; }
+        public InventoryItem Item { get; private set; }
         public InventoryItemPackageDetails Details { get; private set; }
 
         private InventoryItemPackageItem(int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 throw new ArgumentNullException(nameof(details));
 
             DisplayOrder = displayOrder;
-            InventoryItem = inventoryItem;
+            Item = inventoryItem;
             Details = details;
         }
 
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (inventoryItem is null)
                 return Result.Failure<InventoryItem>(RequiredMessage);
 
-            return Result.Success(InventoryItem = inventoryItem);
+            return Result.Success(Item = inventoryItem);
         }
 
         public Result<int> SetDisplayOrder(int displayOrder)

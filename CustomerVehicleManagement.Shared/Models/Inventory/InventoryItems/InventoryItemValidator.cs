@@ -1,11 +1,19 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspection;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty;
 using FluentValidation;
-using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
     public class InventoryItemValidator : AbstractValidator<InventoryItemToWrite>
     {
+        // May be better to inject Manufacturer and ProductCode respoitories to get
+        // those entities, which when successful, validates the ManufacturerToRead
+        // and ProductCodeToRead dtos, for aggregate root validation completeness.
         private readonly Manufacturer validManufacturer = Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
         private readonly ProductCode validProductCode = new()
         {
@@ -15,6 +23,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 
         public InventoryItemValidator()
         {
+            // Validate aggregate root entity, omitting optional members
             RuleFor(itemDto => itemDto)
                 .MustBeEntity(
                     itemDto => InventoryItem.Create(
@@ -22,101 +31,33 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                         itemDto.ItemNumber,
                         itemDto.Description,
                         validProductCode,
-                        itemDto.ItemType,
+                        itemDto.ItemType));
 
-                        itemDto.Part == null
-                        ? null
-                        : InventoryItemPart.Create(
-                            itemDto.Part.List,
-                            itemDto.Part.Cost,
-                            itemDto.Part.Core,
-                            itemDto.Part.Retail,
-                            TechAmount.Create(
-                                itemDto.Part.TechAmount.PayType,
-                                itemDto.Part.TechAmount.Amount,
-                                itemDto.Part.TechAmount.SkillLevel)
-                            .Value,
-                            itemDto.Part.Fractional,
-                            itemDto.Part.LineCode,
-                            itemDto.Part.SubLineCode)
-                        .Value,
+            // TODO: enforce invariant: one and only one optional mamber
+            // Validate optional members
+            RuleFor(itemDto => itemDto.Part)
+                .SetValidator(new InventoryItemPartValidator())
+                .When(itemDto => itemDto.Part is not null);
 
-                        itemDto.Labor == null
-                        ? null
-                        : InventoryItemLabor.Create(
-                            LaborAmount.Create(
-                                itemDto.Labor.LaborAmount.PayType,
-                                itemDto.Labor.LaborAmount.Amount)
-                            .Value,
-                            TechAmount.Create(
-                                itemDto.Labor.TechAmount.PayType,
-                                itemDto.Labor.TechAmount.Amount,
-                                itemDto.Labor.TechAmount.SkillLevel)
-                            .Value)
-                        .Value,
+            RuleFor(itemDto => itemDto.Labor)
+                .SetValidator(new InventoryItemLaborValidator())
+                .When(itemDto => itemDto.Labor is not null);
 
-                        itemDto.Tire == null
-                        ? null
-                        : InventoryItemTire.Create(
-                            itemDto.Tire.Width,
-                            itemDto.Tire.AspectRatio,
-                            itemDto.Tire.ConstructionType,
-                            itemDto.Tire.Diameter,
-                            itemDto.Tire.List,
-                            itemDto.Tire.Cost,
-                            itemDto.Tire.Core,
-                            itemDto.Tire.Retail,
-                            TechAmount.Create(
-                                itemDto.Tire.TechAmount.PayType,
-                                itemDto.Tire.TechAmount.Amount,
-                                itemDto.Tire.TechAmount.SkillLevel)
-                            .Value,
-                           itemDto.Tire.Fractional,
-                           itemDto.Tire.LineCode,
-                           itemDto.Tire.SubLineCode,
-                           itemDto.Tire.Type,
-                           itemDto.Tire.LoadIndex,
-                           itemDto.Tire.SpeedRating)
-                        .Value,
+            RuleFor(itemDto => itemDto.Tire)
+                .SetValidator(new InventoryItemTireValidator())
+                .When(itemDto => itemDto.Tire is not null);
 
-                        itemDto.Package == null
-                        ? null
-                        : InventoryItemPackage.Create(
-                            itemDto.Package.BasePartsAmount,
-                            itemDto.Package.BaseLaborAmount,
-                            itemDto.Package.Script,
-                            itemDto.Package.IsDiscountable,
-                            itemDto.Package.Items == null
-                            ? null
-                            : new List<InventoryItemPackageItem>(),
-                            itemDto.Package.Placeholders == null
-                            ? null
-                            : new List<InventoryItemPackagePlaceholder>())
-                        .Value,
+            RuleFor(itemDto => itemDto.Package)
+                .SetValidator(new InventoryItemPackageValidator())
+                .When(itemDto => itemDto.Package is not null);
 
-                        itemDto.Inspection == null
-                        ? null
-                        : InventoryItemInspection.Create(
-                            LaborAmount.Create(
-                                itemDto.Inspection.LaborAmount.PayType,
-                                itemDto.Inspection.LaborAmount.Amount)
-                            .Value,
-                            TechAmount.Create(
-                                itemDto.Inspection.TechAmount.PayType,
-                                itemDto.Inspection.TechAmount.Amount,
-                                itemDto.Inspection.TechAmount.SkillLevel)
-                            .Value,
-                            itemDto.Inspection.Type)
-                        .Value,
+            RuleFor(itemDto => itemDto.Inspection)
+                .SetValidator(new InventoryItemInspectionValidator())
+                .When(itemDto => itemDto.Inspection is not null);
 
-                        itemDto.Warranty == null
-                        ? null
-                        : InventoryItemWarranty.Create(
-                            InventoryItemWarrantyPeriod.Create(
-                                itemDto.Warranty.PeriodType,
-                                itemDto.Warranty.Duration)
-                            .Value)
-                        .Value));
+            RuleFor(itemDto => itemDto.Warranty)
+                .SetValidator(new InventoryItemWarrantyValidator())
+                .When(itemDto => itemDto.Warranty is not null);
         }
     }
 }
