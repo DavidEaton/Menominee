@@ -40,6 +40,18 @@
             <td class="m-totals-data m-row-divider" colspan="8">Total</td>
             <td class="m-totals-data text-right m-row-divider" colspan="4">@Totals.Total.ToString("C")</td>
         </tr>
+        <tr class="no-stripe">
+            <td class="m-totals-data" colspan="8"></td>
+            <td class="m-totals-data text-right" colspan="4"></td>
+        </tr>
+        <tr class="no-stripe">
+            <td class="m-totals-data" colspan="8">Payments</td>
+            <td class="m-totals-data text-right" colspan="4">@Totals.Payments.ToString("C")</td>
+        </tr>
+        <tr class="no-stripe">
+            <td class="m-totals-data" colspan="8">Balance</td>
+            <td class="m-totals-data text-right" colspan="4">@((Totals.Total - Totals.Payments).ToString("C"))</td>
+        </tr>
     </tbody>
 </table>
 
@@ -52,6 +64,10 @@
     .m-totals-data, .m-totals-data:last-child {
         border: 0 !important;
         padding: 0 0 .25rem 0 !important;
+    }
+
+    .no-stripe {
+        background-color: unset !important;
     }
 
     td.m-row-divider, td.m-row-divider:last-child {

@@ -1,62 +1,100 @@
-﻿using Blazored.Modal;
-using Blazored.Modal.Services;
+﻿using Blazored.Modal.Services;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
-using Menominee.Client.Components.Shared;
+using CustomerVehicleManagement.Shared.Models.Taxes;
+using Menominee.Client.Services.Taxes;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class VendorInvoiceTaxes : ComponentBase
     {
+        [Inject]
+        public ISalesTaxDataService SalesTaxDataService { get; set; }
+
         [Parameter]
         public IList<VendorInvoiceTaxToWrite> Taxes { get; set; }
-        public TelerikGrid<VendorInvoiceTaxToWrite> Grid { get; set; }
-
-        [CascadingParameter]
-        IModalService ModalService { get; set; }
 
         [Parameter]
         public Action OnCalculateTotals { get; set; }
 
-        private long SelectedId = 0;
+        //[CascadingParameter]
+        //IModalService ModalService { get; set; }
 
-        private void OnEdit(GridRowClickEventArgs args)
+        [CascadingParameter]
+        public InvoiceTotals InvoiceTotals { get; set; }
+
+        public IEnumerable<SalesTaxListItem> SelectedTaxes { get; set; } = Enumerable.Empty<SalesTaxListItem>();
+        public SalesTaxListItem SelectedTax { get; set; }
+
+        public TelerikGrid<SalesTaxListItem> Grid { get; set; }
+
+        private IReadOnlyList<SalesTaxToReadInList> SalesTaxes = new List<SalesTaxToReadInList>();
+
+        public int SelectedItemIndex
         {
-            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
-
-            if (SelectedId == 0)
+            get => selectedItemIndex;
+            set
             {
-                var parameters = new ModalParameters();
-                parameters.Add(nameof(ModalMessage.Message), "Please select a tax to edit.");
-                ModalService.Show<ModalMessage>("Edit Tax", parameters);
-                return;
+                selectedItemIndex = value;
             }
-
-            // open dialog with FormMode == Edit
-
-            // TEMPORARILY Edit an existing tax TO TEST
-            var tax = Taxes.FirstOrDefault(tax => tax.Id == SelectedId);
-
-            tax.Amount = 3.6;
         }
 
-        private void OnNew()
+        private int selectedItemIndex = -1;
+
+        private List<SalesTaxListItem> salesTaxList { get; set; } = new List<SalesTaxListItem>();
+
+        protected override async Task OnInitializedAsync()
         {
-            // open dialog with FormMode == Add
+            SalesTaxes = (await SalesTaxDataService.GetAllSalesTaxesAsync()).ToList();
+            SalesTaxes.OrderByDescending(tax => tax.Order);
+
+            foreach (SalesTaxToReadInList tax in SalesTaxes)
+            {
+                salesTaxList.Add(new SalesTaxListItem { Id = tax.Id, Description = tax.Description });
+            }
         }
 
-        private void OnDelete()
+        protected override void OnParametersSet()
         {
-            // display confirmation dialog, mark for deletion
+            if (salesTaxList?.Count > 0)
+            {
+                if (Taxes?.Count > 0)
+                {
+                    foreach (VendorInvoiceTaxToWrite invoiceTax in Taxes)
+                    {
+                        var salesTax = salesTaxList.FirstOrDefault(x => x.Id == invoiceTax.SalesTax.Id);
+                        if (salesTax != null)
+                        {
+                            salesTax.Amount = invoiceTax.Amount;
+                        }
+                    }
+                }
+
+                SelectedTax = salesTaxList.FirstOrDefault();
+                SelectedTaxes = new List<SalesTaxListItem> { SelectedTax };
+                SelectedItemIndex = SelectedTaxes.IndexOf(SelectedTax);
+                Grid?.Rebind();
+            }
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as VendorInvoiceTaxToWrite).Id;
+            SelectedTax = args.Item as SalesTaxListItem;
+            SelectedTaxes = new List<SalesTaxListItem> { SelectedTax };
+            SelectedItemIndex = SelectedTaxes.IndexOf(SelectedTax);
+        }
+
+        public class SalesTaxListItem
+        {
+            public long Id { get; set; }
+            public string Description { get; set; }
+            public double Amount { get; set; }
         }
     }
 }

@@ -1,33 +1,33 @@
-﻿@if (Taxes == null)
+﻿@if (salesTaxList == null)
 {
     <p><em>Loading...</em></p>
 }
 
-@if (Taxes != null)
+@if (salesTaxList != null)
 {
-    <TelerikGrid Data="Taxes"
-                 OnRowClick="@OnRowSelected"
-                 OnRowDoubleClick="@OnEdit"
-                 Sortable="false"
-                 FilterMode="GridFilterMode.None"
-                 ShowColumnMenu="false"
-                 SelectionMode="GridSelectionMode.Single"
-                 @ref="@Grid">
+    <TelerikGrid Data="salesTaxList"
+             OnRowClick="@OnRowSelected"
+             Sortable="false"
+             FilterMode="GridFilterMode.None"
+             ShowColumnMenu="false"
+             SelectionMode="GridSelectionMode.Single"
+             @ref="@Grid">
         <GridColumns>
             <GridColumn Width="60%"
-                        Field="SalesTax.TaxType"
-                        Title="Tax">
+                    Field="@nameof(SalesTaxListItem.Description)"
+                    Title="Tax">
             </GridColumn>
             <GridColumn Width="40%"
-                        Field="@nameof(VendorInvoiceTaxToWrite.Amount)"
-                        Title="Amount" DisplayFormat="{0:C}"
-                        TextAlign="ColumnTextAlign.Right">
+                    Field="@nameof(SalesTaxListItem.Amount)"
+                    Title="Amount" 
+                    DisplayFormat="{0:C}"
+                    TextAlign="ColumnTextAlign.Right">
             </GridColumn>
         </GridColumns>
     </TelerikGrid>
 
-    <EditNewDeleteIconButtons
-        OnNew="@OnNew" 
+    @*    <EditNewDeleteIconButtons
+        OnNew="@OnNew"
         OnDelete="@OnDelete"
-        ShowDivider="false" />
+        ShowDivider="false" />*@
 }

@@ -29,8 +29,8 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
-        //[CascadingParameter]
-        //public InvoiceTotals InvoiceTotals { get; set; }
+        [CascadingParameter]
+        public InvoiceTotals InvoiceTotals { get; set; }
 
         public IEnumerable<VendorInvoicePaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<VendorInvoicePaymentToWrite>();
 
@@ -141,9 +141,12 @@ namespace Menominee.Client.Components.Payables
         private void OnInsertBalanceClick(GridCommandEventArgs args)
         {
             Payment = args.Item as VendorInvoicePaymentToWrite;
-            //paymentMethodId = Payment.PaymentMethod.Id;
             SelectedItemIndex = Payments.IndexOf(Payment);
             SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
+
+            var payments = InvoiceTotals.Payments - Payment.Amount;
+            Payment.Amount = InvoiceTotals.Total - payments;
+            OnCalculateTotals?.Invoke();
         }
 
         private void OnPaymentMethodChange()
