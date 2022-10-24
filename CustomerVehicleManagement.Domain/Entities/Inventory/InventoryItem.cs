@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using System;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -41,11 +42,49 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!Enum.IsDefined(typeof(InventoryItemType), itemType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
+            if (itemType == InventoryItemType.Part)
+                if (part is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (itemType == InventoryItemType.Labor)
+                if (labor is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (itemType == InventoryItemType.Tire)
+                if (tire is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (itemType == InventoryItemType.Inspection)
+                if (inspection is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (itemType == InventoryItemType.Package)
+                if (package is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (itemType == InventoryItemType.Warranty)
+                if (warranty is null)
+                    throw new ArgumentOutOfRangeException(RequiredMessage);
+
             Manufacturer = manufacturer;
             ItemNumber = itemNumber;
             Description = description;
             ProductCode = productCode;
             ItemType = itemType;
+
+            bool validOptions = new[]
+            {
+                part is not null,
+                labor is not null,
+                tire is not null,
+                inspection is not null,
+                package is not null,
+                warranty is not null
+            }.Count(x => x == true) == 1;
+
+            if (!validOptions)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
             Part = part;
             Labor = labor;
             Tire = tire;
@@ -106,7 +145,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 if (warranty is null)
                     return Result.Failure<InventoryItem>(RequiredMessage);
 
-            return Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
+            // Enforce invariant: one and only one optional member
+            bool validOptions = new[]
+            {
+                part is not null,
+                labor is not null,
+                tire is not null,
+                inspection is not null,
+                package is not null,
+                warranty is not null
+            }.Count(x => x == true) == 1;
+
+            return !validOptions
+                ? Result.Failure<InventoryItem>(RequiredMessage)
+                : Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
         }
 
         public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
@@ -176,7 +228,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (resltOrError.IsFailure)
                 return Result.Failure<InventoryItemLabor>(resltOrError.Error);
-            
+
             return Result.Success(Labor = labor);
         }
 
@@ -189,7 +241,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (resltOrError.IsFailure)
                 return Result.Failure<InventoryItemTire>(resltOrError.Error);
-            
+
             return Result.Success(Tire = tire);
         }
 
@@ -202,7 +254,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (resltOrError.IsFailure)
                 return Result.Failure<InventoryItemPackage>(resltOrError.Error);
-            
+
             return Result.Success(Package = package);
         }
 
