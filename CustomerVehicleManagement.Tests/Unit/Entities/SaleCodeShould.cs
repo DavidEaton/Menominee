@@ -262,6 +262,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
         }
+
         internal class TestData
         {
             public static IEnumerable<object[]> Data

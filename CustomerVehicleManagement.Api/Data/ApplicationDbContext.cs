@@ -32,7 +32,8 @@ namespace CustomerVehicleManagement.Api.Data
 
         public ApplicationDbContext(string connection)
         {
-            Connection = connection;  // Database integration tests pass in connection
+            // Database & integration tests provide connection string
+            Connection = connection;
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

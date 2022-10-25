@@ -210,7 +210,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id);
 
             var inventoryItems =
-                await itemRepository.GetInventoryItemEntitiesAsync(GetIds(itemToAdd));
+                await itemRepository.GetInventoryItemEntitiesAsync(GetItemIds(itemToAdd));
 
             if (manufacturer is null
                 || productCode is null
@@ -236,12 +236,29 @@ namespace CustomerVehicleManagement.Api.Inventory
                 });
         }
 
-        private static List<long> GetIds(InventoryItemToWrite itemToAdd)
+        private static List<long> GetItemIds(InventoryItemToWrite itemToAdd)
         {
             List<long> ids = new();
 
-            foreach (var item in itemToAdd.Package.Items)
-                ids.Add(item.Id);
+            if (itemToAdd.Part is not null)
+                ids.Add(itemToAdd.Part.Id);
+
+            if (itemToAdd.Labor is not null)
+                ids.Add(itemToAdd.Labor.Id);
+
+            if (itemToAdd.Tire is not null)
+                ids.Add(itemToAdd.Tire.Id);
+
+            if (itemToAdd.Package is not null)
+                foreach (var item in itemToAdd.Package.Items)
+                    ids.Add(item.Id);
+
+            if (itemToAdd.Inspection is not null)
+                ids.Add(itemToAdd.Inspection.Id);
+
+            if (itemToAdd.Warranty is not null)
+                ids.Add(itemToAdd.Warranty.Id);
+
             return ids;
         }
 
