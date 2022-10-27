@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Inventory;
+﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Inventory;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
@@ -6,12 +7,10 @@ using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Persons;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -30,11 +29,35 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 new ManufacturerRepository(context),
                 new ProductCodeRepository(context));
 
-            ManufacturerToRead manufacturer =
-                ManufacturerHelper.ConvertEntityToReadDto(
-                    context.Manufacturers.FirstOrDefault());
-            ProductCodeToRead productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
-            InventoryItemPartToWrite part = new()
+            var manufacturersToRead =
+                context.Manufacturers
+                    .ToList()
+                    .Select(manufacturer =>
+                    ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+
+            var manufacturer = manufacturersToRead.FirstOrDefault();
+
+            InventoryItemToWrite itemToAdd = new()
+            {
+                Manufacturer = manufacturer,
+                ItemNumber = "Item Number One",
+                Description = "a description",
+                ProductCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault()),
+                ItemType = InventoryItemType.Part,
+                Part = CreateInventoryItemPartToWrite()
+            };
+
+            // Act
+            var result = await controller.AddInventoryItemAsync(itemToAdd);
+            var inventoryItemToRead = await controller.GetInventoryItemAsync(result.Value.Id);
+
+            // Assert
+            inventoryItemToRead.Should().BeOfType<ActionResult<InventoryItemToRead>>();
+        }
+
+        private static InventoryItemPartToWrite CreateInventoryItemPartToWrite()
+        {
+            return new()
             {
                 List = InstallablePart.MaximumMoneyAmount,
                 Cost = InstallablePart.MaximumMoneyAmount,
@@ -48,25 +71,17 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                     SkillLevel = SkillLevel.A
                 }
             };
+        }
 
+        private static ManufacturerToRead CreateManufacturerToRead(ApplicationDbContext context)
+        {
+            ManufacturerToRead manufacturer =
+            ManufacturerHelper.ConvertEntityToReadDto(
+                context.Manufacturers.FirstOrDefault());
+            ProductCodeToRead productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
+            InventoryItemPartToWrite part = CreateInventoryItemPartToWrite();
 
-
-            InventoryItemToWrite itemToAdd = new()
-            {
-                Manufacturer = manufacturer,
-                ItemNumber = "Item Number One",
-                Description = "a description",
-                ProductCode = productCode,
-                ItemType = InventoryItemType.Part,
-                Part = part
-            };
-
-            // Act
-            var result = await controller.AddInventoryItemAsync(itemToAdd);
-            var inventoryItemToRead = await controller.GetInventoryItemAsync(result.Value.Id);
-
-            // Assert
-            inventoryItemToRead.Should().BeOfType<ActionResult<InventoryItemToRead>>();
+            return manufacturer;
         }
 
         //[Fact]

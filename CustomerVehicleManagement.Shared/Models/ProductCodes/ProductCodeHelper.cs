@@ -43,13 +43,10 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 
             return new()
             {
-                //Id = productCode.Id,
                 Code = productCode.Code,
-                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCode.Manufacturer),
-                ManufacturerId = productCode.Manufacturer.Id,
+                Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCode.Manufacturer),
                 Name = productCode.Name,
-                //SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCode.SaleCode)
-                SaleCodeId = productCode.SaleCode.Id
+                SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCode.SaleCode)
             };
         }
 
@@ -71,11 +68,9 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
         public static void CopyWriteDtoToEntity(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
         {
             productCode.Code = productCodeToUpdate.Code;
-            //productCode.Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCodeToUpdate.Manufacturer);
-            productCode.ManufacturerId = productCodeToUpdate.Manufacturer.Id;
+            productCode.Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCodeToUpdate.Manufacturer);
             productCode.Name = productCodeToUpdate.Name;
-            //productCode.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCodeToUpdate.SaleCode);
-            productCode.SaleCodeId = productCodeToUpdate.SaleCode.Id;
+            productCode.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCodeToUpdate.SaleCode);
         }
     }
 }

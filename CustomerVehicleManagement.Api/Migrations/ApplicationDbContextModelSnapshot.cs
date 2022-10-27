@@ -1211,7 +1211,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SaleCodeShopSupplies");
+                    b.ToTable("SaleCodeShopSupplies", (string)null);
                 });
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Taxes.ExciseFee", b =>
@@ -1336,7 +1336,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany()
                         .HasForeignKey("PersonId");
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Customer.ContactPreferences#Menominee.Common.ValueObjects.ContactPreferences", "ContactPreferences", b1 =>
                         {
                             b1.Property<long>("CustomerId")
                                 .HasColumnType("bigint");
@@ -1432,7 +1432,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemInspection", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.LaborAmount", "LaborAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemInspection.LaborAmount#CustomerVehicleManagement.Domain.Entities.Inventory.LaborAmount", "LaborAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemInspectionId")
                                 .HasColumnType("bigint");
@@ -1453,7 +1453,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                                 .HasForeignKey("InventoryItemInspectionId");
                         });
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemInspection.TechAmount#CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemInspectionId")
                                 .HasColumnType("bigint");
@@ -1484,7 +1484,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.LaborAmount", "LaborAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor.LaborAmount#CustomerVehicleManagement.Domain.Entities.Inventory.LaborAmount", "LaborAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemLaborId")
                                 .HasColumnType("bigint");
@@ -1505,7 +1505,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                                 .HasForeignKey("InventoryItemLaborId");
                         });
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemLabor.TechAmount#CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemLaborId")
                                 .HasColumnType("bigint");
@@ -1546,7 +1546,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany("Items")
                         .HasForeignKey("InventoryItemPackageId");
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageDetails", "Details", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageItem.Details#CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageDetails", "Details", b1 =>
                         {
                             b1.Property<long>("InventoryItemPackageItemId")
                                 .HasColumnType("bigint");
@@ -1586,7 +1586,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany("Placeholders")
                         .HasForeignKey("InventoryItemPackageId");
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageDetails", "Details", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackagePlaceholder.Details#CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPackageDetails", "Details", b1 =>
                         {
                             b1.Property<long>("InventoryItemPackagePlaceholderId")
                                 .HasColumnType("bigint");
@@ -1620,7 +1620,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemPart.TechAmount#CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemPartId")
                                 .HasColumnType("bigint");
@@ -1650,7 +1650,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemTire", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemTire.TechAmount#CustomerVehicleManagement.Domain.Entities.Inventory.TechAmount", "TechAmount", b1 =>
                         {
                             b1.Property<long>("InventoryItemTireId")
                                 .HasColumnType("bigint");
@@ -1680,7 +1680,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemWarranty", b =>
                 {
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemWarrantyPeriod", "WarrantyPeriod", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemWarranty.WarrantyPeriod#CustomerVehicleManagement.Domain.Entities.Inventory.InventoryItemWarrantyPeriod", "WarrantyPeriod", b1 =>
                         {
                             b1.Property<long>("InventoryItemWarrantyId")
                                 .HasColumnType("bigint");
@@ -1738,7 +1738,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Organization.Address#Menominee.Common.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("OrganizationId")
                                 .HasColumnType("bigint");
@@ -1772,7 +1772,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                                 .HasForeignKey("OrganizationId");
                         });
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.OrganizationName", "Name", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Organization.Name#Menominee.Common.ValueObjects.OrganizationName", "Name", b1 =>
                         {
                             b1.Property<long>("OrganizationId")
                                 .HasColumnType("bigint");
@@ -1812,7 +1812,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                         .WithMany("LineItems")
                         .HasForeignKey("VendorInvoiceId");
 
-                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", "Item", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceLineItem.Item#CustomerVehicleManagement.Domain.Entities.Payables.VendorInvoiceItem", "Item", b1 =>
                         {
                             b1.Property<long>("VendorInvoiceLineItemId")
                                 .HasColumnType("bigint");
@@ -1899,7 +1899,7 @@ namespace CustomerVehicleManagement.Api.Migrations
 
             modelBuilder.Entity("CustomerVehicleManagement.Domain.Entities.Person", b =>
                 {
-                    b.OwnsOne("Menominee.Common.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Person.Address#Menominee.Common.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");
@@ -1933,7 +1933,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                                 .HasForeignKey("PersonId");
                         });
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.DriversLicense", "DriversLicense", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Person.DriversLicense#Menominee.Common.ValueObjects.DriversLicense", "DriversLicense", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");
@@ -1956,7 +1956,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("PersonId");
 
-                            b1.OwnsOne("Menominee.Common.ValueObjects.DateTimeRange", "ValidDateRange", b2 =>
+                            b1.OwnsOne("CustomerVehicleManagement.Domain.Entities.Person.DriversLicense#Menominee.Common.ValueObjects.DriversLicense.ValidDateRange#Menominee.Common.ValueObjects.DateTimeRange", "ValidDateRange", b2 =>
                                 {
                                     b2.Property<long>("DriversLicensePersonId")
                                         .HasColumnType("bigint");
@@ -1980,7 +1980,7 @@ namespace CustomerVehicleManagement.Api.Migrations
                             b1.Navigation("ValidDateRange");
                         });
 
-                    b.OwnsOne("Menominee.Common.ValueObjects.PersonName", "Name", b1 =>
+                    b.OwnsOne("CustomerVehicleManagement.Domain.Entities.Person.Name#Menominee.Common.ValueObjects.PersonName", "Name", b1 =>
                         {
                             b1.Property<long>("PersonId")
                                 .HasColumnType("bigint");

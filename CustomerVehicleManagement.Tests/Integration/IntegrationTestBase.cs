@@ -19,8 +19,8 @@ namespace CustomerVehicleManagement.Tests.Integration
         private void SeedDatabase()
         {
             SaleCode saleCode = CreateSaleCode();
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = CreateProductCode(manufacturer, saleCode);
+            var manufacturers = InventoryItemHelper.CreateManufacturers(10);
+            ProductCode productCode = CreateProductCode(manufacturers[5], saleCode);
             InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
 
             InventoryItem inventoryItem = InventoryItemHelper.CreateInventoryItem();
@@ -28,12 +28,11 @@ namespace CustomerVehicleManagement.Tests.Integration
             ApplicationDbContext context = Helpers.CreateTestContext();
 
             context.Add(saleCode);
-            context.Add(manufacturer);
+            context.AddRange(manufacturers);
             context.Add(productCode);
             //context.Add(inventoryItem);
             context.Add(part);
             context.SaveChanges();
-
         }
 
         private static ProductCode CreateProductCode(Manufacturer manufacturer, SaleCode saleCode)

@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
@@ -14,11 +15,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             InventoryItemPart part = CreateInventoryItemPart();
 
             return InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Part, part: part).Value;
-        }
-
-        public static Manufacturer CreateManufacturer()
-        {
-            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
         }
 
         public static InventoryItemPackage CreateInventoryItemPackage()
@@ -134,6 +130,23 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 "description",
                 InventoryItemPackagePlaceholder.DescriptionMinimumLength + 1,
                 details).Value;
+        }
+
+        public static Manufacturer CreateManufacturer()
+        {
+            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
+        }
+
+        internal static List<Manufacturer> CreateManufacturers(int count)
+        {
+            var list = new List<Manufacturer>();
+
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(Manufacturer.Create($"Manufacturer {i}", "M{i}", "V{i}").Value);
+            }
+
+            return list;
         }
     }
 }

@@ -18,17 +18,17 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.Property(pc => pc.Name)
                 .IsRequired();
 
-            builder.HasOne(pc => pc.Manufacturer)
-                   .WithMany()
-                   .HasForeignKey(pc => pc.ManufacturerId)
-                   .OnDelete(DeleteBehavior.Restrict)
-                   .IsRequired();
+            //builder.HasOne(pc => pc.Manufacturer)
+            //       .WithMany()
+            //       .HasForeignKey(pc => pc.ManufacturerId)
+            //       .OnDelete(DeleteBehavior.Restrict)
+            //       .IsRequired();
 
-            builder.HasOne(pc => pc.SaleCode)
-                   .WithMany()
-                   .HasForeignKey(pc => pc.SaleCodeId)
-                   .OnDelete(DeleteBehavior.Restrict)
-                   .IsRequired();
+            //builder.HasOne(pc => pc.SaleCode)
+            //       .WithMany()
+            //       .HasForeignKey(pc => pc.SaleCodeId)
+            //       .OnDelete(DeleteBehavior.Restrict)
+            //       .IsRequired();
         }
     }
 }

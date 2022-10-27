@@ -224,7 +224,6 @@ namespace CustomerVehicleManagement.Api.Inventory
                 inventoryItems);
 
             await itemRepository.AddItemAsync(inventoryItem);
-
             await itemRepository.SaveChangesAsync();
 
             return Created(

@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 if (await ItemExistsAsync(item.Id))
                     throw new Exception("Inventory Item already exists");
 
-                await context.AddAsync(item);
+                context.InventoryItems.Attach(item);
             }
         }
 
