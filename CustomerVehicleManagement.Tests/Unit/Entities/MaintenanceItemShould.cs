@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
-using Menominee.Common.Enums;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
@@ -12,14 +11,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_MaintenanceItem()
         {
             // Arrange
-            Manufacturer manufacturer = CreateManufacturer();
-            ProductCode productCode = CreateProductCode();
-            InventoryItemPart part = CreateInventoryItemPart();
-            InventoryItem item = CreateInventoryItem(manufacturer, productCode, part);
+            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
 
             // Act
             var resultOrError = MaintenanceItem.Create(1, item);
-
 
             // Assert
             resultOrError.Value.Should().BeOfType<MaintenanceItem>();
@@ -38,7 +33,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_MaintenanceItem_With_Invalid_DisplayOrder()
         {
-            var resultOrError = MaintenanceItem.Create(-1, CreateInventoryItem());
+            var resultOrError = MaintenanceItem.Create(-1, InventoryItemHelper.CreateInventoryItem());
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("valid");
@@ -49,7 +44,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             MaintenanceItem maintenanceItem = CreateMaintenanceItem();
             InventoryItem oldItem = maintenanceItem.InventoryItem;
-            InventoryItem newItem = CreateInventoryItem();
+            InventoryItem newItem = InventoryItemHelper.CreateInventoryItem();
 
             var resultOrError = maintenanceItem.SetInventoryItem(newItem);
 
@@ -95,55 +90,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             resultOrError.Error.Should().Contain("valid");
         }
 
-        private InventoryItem CreateInventoryItem()
+        private static MaintenanceItem CreateMaintenanceItem()
         {
-            Manufacturer manufacturer = CreateManufacturer();
-            ProductCode productCode = CreateProductCode();
-            InventoryItemPart part = CreateInventoryItemPart();
-            return CreateInventoryItem(manufacturer, productCode, part);
-        }
-
-        private MaintenanceItem CreateMaintenanceItem()
-        {
-            Manufacturer manufacturer = CreateManufacturer();
-            ProductCode productCode = CreateProductCode();
-            InventoryItemPart part = CreateInventoryItemPart();
-            InventoryItem item = CreateInventoryItem(manufacturer, productCode, part);
-
-            return MaintenanceItem.Create(1, item).Value;
-        }
-
-        private InventoryItem CreateInventoryItem(Manufacturer manufacturer, ProductCode productCode, InventoryItemPart part)
-        {
-            return InventoryItem.Create(
-                manufacturer,
-                "001",
-                "a description",
-                productCode,
-                InventoryItemType.Part,
-                part: part).Value;
-        }
-
-        private static InventoryItemPart CreateInventoryItemPart()
-        {
-            return InventoryItemPart.Create(
-                10, 1, 1, 15,
-                TechAmount.Create(ItemLaborType.Flat, TechAmount.MinimumAmount + 1, SkillLevel.A).Value,
-                fractional: false).Value;
-        }
-
-        private static ProductCode CreateProductCode()
-        {
-            return new ProductCode()
-            {
-                Name = "A Product",
-                Code = "P1"
-            };
-        }
-
-        private static Manufacturer CreateManufacturer()
-        {
-            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
+            return MaintenanceItem.Create(1, InventoryItemHelper.CreateInventoryItem()).Value;
         }
     }
 }

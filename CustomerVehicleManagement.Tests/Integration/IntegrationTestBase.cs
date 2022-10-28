@@ -10,13 +10,13 @@ namespace CustomerVehicleManagement.Tests.Integration
     {
         public IntegrationTestBase()
         {
-            // Each test that inherits from this IntegrationTestBase automatically
-            // clears the database when created, setting it to a known state.
+            // When created, each test that inherits from this IntegrationTestBase
+            // automatically clears and seeds the database, setting it to a known state.
             ClearDatabase();
             SeedDatabase();
         }
 
-        private void SeedDatabase()
+        private static void SeedDatabase()
         {
             SaleCode saleCode = CreateSaleCode();
             var manufacturers = InventoryItemHelper.CreateManufacturers(10);
@@ -30,23 +30,16 @@ namespace CustomerVehicleManagement.Tests.Integration
             context.Add(saleCode);
             context.AddRange(manufacturers);
             context.Add(productCode);
-            //context.Add(inventoryItem);
             context.Add(part);
             context.SaveChanges();
         }
 
         private static ProductCode CreateProductCode(Manufacturer manufacturer, SaleCode saleCode)
         {
-            return new ProductCode()
-            {
-                Manufacturer = manufacturer,
-                SaleCode = saleCode,
-                Name = "A Product",
-                Code = "P1"
-            };
+            return ProductCode.Create(manufacturer, "A1", "A One", saleCode).Value;
         }
 
-        private void ClearDatabase()
+        private static void ClearDatabase()
         {
             ApplicationDbContext context = Helpers.CreateTestContext();
             context.Database.EnsureDeleted();

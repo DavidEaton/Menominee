@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.Enums;
 using System;
@@ -53,11 +54,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
         public static ProductCode CreateProductCode()
         {
-            return new ProductCode()
-            {
-                Name = "A Product",
-                Code = "P1"
-            };
+            Manufacturer manufacturer = CreateManufacturer();
+            SaleCode saleCode = CreateSaleCode();
+
+            return ProductCode.Create(manufacturer, "A1", "A One", saleCode).Value;
         }
 
         public static InventoryItemInspection CreateInventoryItemInspection()
@@ -137,7 +137,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
         }
 
-        internal static List<Manufacturer> CreateManufacturers(int count)
+        public static List<Manufacturer> CreateManufacturers(int count)
         {
             var list = new List<Manufacturer>();
 
@@ -147,6 +147,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             }
 
             return list;
+        }
+
+        public static SaleCode CreateSaleCode()
+        {
+            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            double laborRate = SaleCode.MinimumValue;
+            double desiredMargin = SaleCode.MinimumValue;
+            SaleCodeShopSupplies shopSupplies = new();
+
+            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
         }
     }
 }
