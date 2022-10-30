@@ -56,8 +56,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
         {
             Manufacturer manufacturer = CreateManufacturer();
             SaleCode saleCode = CreateSaleCode();
+            List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
 
-            return ProductCode.Create(manufacturer, "A1", "A One", saleCode).Value;
+            return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
 
         public static InventoryItemInspection CreateInventoryItemInspection()

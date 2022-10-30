@@ -3,6 +3,8 @@ using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Tests.Integration
 {
@@ -23,8 +25,6 @@ namespace CustomerVehicleManagement.Tests.Integration
             ProductCode productCode = CreateProductCode(manufacturers[5], saleCode);
             InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
 
-            InventoryItem inventoryItem = InventoryItemHelper.CreateInventoryItem();
-
             ApplicationDbContext context = Helpers.CreateTestContext();
 
             context.Add(saleCode);
@@ -36,7 +36,8 @@ namespace CustomerVehicleManagement.Tests.Integration
 
         private static ProductCode CreateProductCode(Manufacturer manufacturer, SaleCode saleCode)
         {
-            return ProductCode.Create(manufacturer, "A1", "A One", saleCode).Value;
+            var manufacturerCodes = GetManufacturerCodes();
+            return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
 
         private static void ClearDatabase()
@@ -55,6 +56,13 @@ namespace CustomerVehicleManagement.Tests.Integration
             SaleCodeShopSupplies shopSupplies = new();
 
             return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
+        }
+
+        private static List<string> GetManufacturerCodes()
+        {
+            ApplicationDbContext context = Helpers.CreateTestContext();
+
+            return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
         }
 
     }

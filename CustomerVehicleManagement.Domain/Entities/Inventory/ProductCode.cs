@@ -1,13 +1,14 @@
 ﻿using CSharpFunctionalExtensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class ProductCode : Entity
     {
-        public static readonly string NonuniqueMessage = $"Manufacturer/Code combination is already in use. Manufacturer/Code combination must be unique. The same code value may be used by more than one Manufacturer.";
+        public static readonly string NonuniqueMessage = $"Manufacturer/Code combination is already in use and must be unique. The same Code may be used by more than one Manufacturer.";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string InvalidNameLengthMessage = $"Name must be between {MinimumLength} and {MaximumNameLength} characters";
         public static readonly string InvalidCodeLengthMessage = $"Code must be between {MinimumLength} and {MaximumCodeLength} characters";
@@ -20,23 +21,27 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public SaleCode SaleCode { get; private set; }
         public string Name { get; private set; }
 
-        private ProductCode(Manufacturer manufacturer, string code, string name, SaleCode saleCode = null)
+        private ProductCode(
+            Manufacturer manufacturer,
+            string code, 
+            string name,
+            IReadOnlyList<string> manufacturerCodes,
+            SaleCode saleCode = null)
         {
             code = (code ?? string.Empty).Trim();
             name = (name ?? string.Empty).Trim();
-
-            if (name.Length > MaximumNameLength || name.Length < MinimumLength ||
-                code.Length > MaximumCodeLength || code.Length < MinimumLength)
+            if (name.Length > MaximumNameLength || name.Length < MinimumLength)
                 throw new ArgumentOutOfRangeException(InvalidNameLengthMessage);
+
+            if (code.Length > MaximumCodeLength || code.Length < MinimumLength)
+                throw new ArgumentOutOfRangeException(InvalidCodeLengthMessage);
 
             if (manufacturer is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            var ManufacturerCode = $"{manufacturer.Id} + {manufacturer.Code}";
-            var manufacturerCodes = new List<string>();
             // TODO:
             // Manufacturer/Code pair must be unique. The same code value may be used by more than one Manufacturer.
-            if (manufacturerCodes.Contains(ManufacturerCode))
+            if (manufacturerCodes.Contains($"{manufacturer.Id} + {manufacturer.Code}"))
                 throw new ArgumentOutOfRangeException(NonuniqueMessage);
 
             Manufacturer = manufacturer;
@@ -45,7 +50,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             Name = name;
         }
 
-        public static Result<ProductCode> Create(Manufacturer manufacturer, string code, string name, SaleCode saleCode = null)
+        public static Result<ProductCode> Create(
+            Manufacturer manufacturer,
+            string code, 
+            string name,
+            IReadOnlyList<string> manufacturerCodes,
+            SaleCode saleCode = null)
         {
             code = (code ?? string.Empty).Trim();
             name = (name ?? string.Empty).Trim();
@@ -59,14 +69,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (manufacturer is null)
                 return Result.Failure<ProductCode>(RequiredMessage);
 
-            var ManufacturerCode = $"{manufacturer.Id} + {manufacturer.Code}";
-            var manufacturerCodes = new List<string>();
             // TODO:
             // Manufacturer/Code pair must be unique. The same code value may be used by more than one Manufacturer.
-            if (manufacturerCodes.Contains(ManufacturerCode))
+            if (manufacturerCodes.Contains($"{manufacturer.Id} + {manufacturer.Code}"))
                 return Result.Failure<ProductCode>(NonuniqueMessage);
 
-            return Result.Success(new ProductCode(manufacturer, code, name, saleCode));
+            return Result.Success(new ProductCode(manufacturer, code, name, manufacturerCodes, saleCode));
         }
 
         public Result<string> SetName(string name)

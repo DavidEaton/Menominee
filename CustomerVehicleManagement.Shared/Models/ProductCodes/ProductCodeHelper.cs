@@ -36,18 +36,6 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             };
         }
 
-        public static ProductCode ConvertWriteDtoToEntity(ProductCodeToWrite productCode)
-        {
-            if (productCode == null)
-                return new ProductCode();
-
-            return ProductCode.Create(
-                ManufacturerHelper.ConvertWriteDtoToEntity(productCode.Manufacturer),
-                productCode.Code,
-                productCode.Name,
-                SaleCodeHelper.ConvertWriteDtoToEntity(productCode.SaleCode)).Value;
-        }
-
         public static ProductCodeToWrite ConvertReadToWriteDto(ProductCodeToRead productCode)
         {
             if (productCode == null)

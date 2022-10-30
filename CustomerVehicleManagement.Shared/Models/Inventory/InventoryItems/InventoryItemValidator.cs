@@ -9,6 +9,7 @@ using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentValidation;
 using Menominee.Common.Enums;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
@@ -19,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             // May be better to inject Manufacturer and ProductCode respoitories to get
             // those entities, which when successful, validates the ManufacturerToRead
             // and ProductCodeToRead dtos, for aggregate root validation completeness.
-            // However that would create a circular dependency from this project to API
+            // HOWEVER, that would create a circular dependency from this project to API
             // and back again. So we miss an edge case if the client somehow sends a
             // Manufacturer or ProductCode read dto that represents a non-existent entity
 
@@ -65,8 +66,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
         {
             Manufacturer manufacturer = CreateManufacturer();
             SaleCode saleCode = CreateSaleCode();
+            List<string> manufacturerCodes = new()
+            {
+                "11"
+            };
 
-            return ProductCode.Create(manufacturer, "A1", "A One", saleCode).Value;
+            return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
 
         private static SaleCode CreateSaleCode()

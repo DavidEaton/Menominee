@@ -19,16 +19,10 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddProductCodeAsync(ProductCode productCode)
+        public void AddProductCode(ProductCode productCode)
         {
             if (productCode is not null)
-            {
-                if (await ProductCodeExistsAsync(productCode.Id))
-                    throw new Exception("Inventory Item already exists");
-
-                if (productCode is not null)
-                    await context.AddAsync(productCode);
-            }
+                context.Attach(productCode);
         }
 
         public async Task DeleteProductCodeAsync(string manufacturerCode, string productCode)
@@ -37,6 +31,11 @@ namespace CustomerVehicleManagement.Api.ProductCodes
 
             if (pcFromContext is not null)
                 context.Remove(pcFromContext);
+        }
+
+        public IReadOnlyList<string> GetManufacturerCodes()
+        {
+            return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
         }
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code)
@@ -90,17 +89,31 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                              .FirstOrDefaultAsync(productCode => productCode.Id == id);
         }
 
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync()
+        public async Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync()
         {
-            var pcs = await context.ProductCodes
+            ProductCode[] productCodes = await context.ProductCodes
                                    .Include(productCode => productCode.Manufacturer)
                                    .Include(productCode => productCode.SaleCode)
                                    .AsSplitQuery()
                                    .AsNoTracking()
                                    .ToArrayAsync();
 
-            return pcs.
-                Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
+            return productCodes
+                .Select(productCode => ProductCodeHelper.ConvertEntityToReadDto(productCode))
+                .ToList();
+        }
+
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync()
+        {
+            ProductCode[] productCodes = await context.ProductCodes
+                                   .Include(productCode => productCode.Manufacturer)
+                                   .Include(productCode => productCode.SaleCode)
+                                   .AsSplitQuery()
+                                   .AsNoTracking()
+                                   .ToArrayAsync();
+
+            return productCodes
+                .Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
                 .ToList();
         }
 
@@ -150,9 +163,9 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return await context.ProductCodes.AnyAsync(productCode => (productCode.Id == id));
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
+            await context.SaveChangesAsync();
         }
 
         public async Task<ProductCode> UpdateProductCodeAsync(ProductCode productCode)

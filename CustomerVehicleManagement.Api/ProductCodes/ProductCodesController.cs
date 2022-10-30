@@ -1,4 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Manufacturers;
+using CustomerVehicleManagement.Api.SaleCodes;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,12 +12,20 @@ namespace CustomerVehicleManagement.Api.ProductCodes
 {
     public class ProductCodesController : ApplicationController
     {
+        private readonly string BasePath = "/api/productcodes";
         private readonly IProductCodeRepository repository;
-        //private readonly string BasePath = "/api/productcodes";
-
-        public ProductCodesController(IProductCodeRepository repository)
+        private readonly IManufacturerRepository manufacturersRepository;
+        private readonly ISaleCodeRepository saleCodesRepository;
+        public ProductCodesController(IProductCodeRepository repository, IManufacturerRepository manufacturersRepository, ISaleCodeRepository saleCodesRepository)
         {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
+
+            this.manufacturersRepository = manufacturersRepository ??
+                throw new ArgumentNullException(nameof(manufacturersRepository));
+
+            this.saleCodesRepository = saleCodesRepository ??
+                throw new ArgumentNullException(nameof(saleCodesRepository));
         }
 
         // api/productcodes/listing
@@ -95,30 +106,41 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
+        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
         {
+            var failureMessage = $"Could not add new Product Code: {productCodeToAdd?.Code}.";
+            var manufacturerCodes = repository.GetManufacturerCodes();
+            var manufacturer = await manufacturersRepository.GetManufacturerEntityAsync(productCodeToAdd.Manufacturer.Id);
+            var saleCode = await saleCodesRepository.GetSaleCodeEntityAsync(productCodeToAdd.SaleCode.Id);
+
+            if (manufacturer is null)
+                return NotFound(failureMessage);
+
             // 1. Convert dto to domain entity
-            //var pc = new ProductCode()
-            //{
-            //    Manufacturer = pcCreateDto.Manufacturer,
-            //    Code = pcCreateDto.Code,
-            //    Name = pcCreateDto.Name,
-            //    SaleCode = pcCreateDto.SaleCode
-            //};
-            var pc = ProductCodeHelper.ConvertWriteDtoToEntity(pcCreateDto);
+            var resultOrError = ProductCode.Create(
+                manufacturer,
+                productCodeToAdd.Code,
+                productCodeToAdd.Name,
+                manufacturerCodes,
+                saleCode);
+
+            if (resultOrError.IsFailure)
+                return BadRequest(resultOrError.Error);
 
             // 2. Add domain entity to repository
-            await repository.AddProductCodeAsync(pc);
+            repository.AddProductCode(resultOrError.Value);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Code from database to consumer after save
-            //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
-            return CreatedAtRoute("GetProductCodeAsync",
-                                  new { id = pc.Id },
-                                  ProductCodeHelper.ConvertEntityToReadDto(pc));
-
+            // 4. Return to caller
+            return Created(
+                new Uri($"{BasePath}/{resultOrError.Value.Id}",
+                UriKind.Relative),
+                new
+                {
+                    resultOrError.Value.Id
+                });
         }
 
         [HttpDelete("{mfrcode}/{code}")]
