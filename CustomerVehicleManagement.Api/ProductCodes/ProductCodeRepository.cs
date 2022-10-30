@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
 
         public IReadOnlyList<string> GetManufacturerCodes()
         {
-            return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
+            return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id}{productCode.Code}").ToList();
         }
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code)

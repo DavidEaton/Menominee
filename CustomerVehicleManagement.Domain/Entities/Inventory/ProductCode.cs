@@ -39,9 +39,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (manufacturer is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            // TODO:
             // Manufacturer/Code pair must be unique. The same code value may be used by more than one Manufacturer.
-            if (manufacturerCodes.Contains($"{manufacturer.Id} + {manufacturer.Code}"))
+            if (manufacturerCodes.Contains($"{manufacturer.Id}{code}"))
                 throw new ArgumentOutOfRangeException(NonuniqueMessage);
 
             Manufacturer = manufacturer;
@@ -69,9 +68,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (manufacturer is null)
                 return Result.Failure<ProductCode>(RequiredMessage);
 
-            // TODO:
-            // Manufacturer/Code pair must be unique. The same code value may be used by more than one Manufacturer.
-            if (manufacturerCodes.Contains($"{manufacturer.Id} + {manufacturer.Code}"))
+            if (manufacturerCodes.Contains($"{manufacturer.Id}{code}"))
                 return Result.Failure<ProductCode>(NonuniqueMessage);
 
             return Result.Success(new ProductCode(manufacturer, code, name, manufacturerCodes, saleCode));
@@ -87,31 +84,25 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Name = name);
         }
 
-        public Result<string> SetCode(string code)
+        public Result<string> SetCode(string code, List<string> manufacturerCodes)
         {
             code = (code ?? string.Empty).Trim();
 
             if (code.Length > MaximumCodeLength || code.Length < MinimumLength)
                 return Result.Failure<string>(InvalidCodeLengthMessage);
 
-            var ManufacturerCode = $"{Manufacturer.Id} + {code}";
-            var manufacturerCodes = new List<string>();
-
-            if (manufacturerCodes.Contains(ManufacturerCode))
+            if (manufacturerCodes.Contains($"{Manufacturer.Id}{code}"))
                 return Result.Failure<string>(NonuniqueMessage);
 
             return Result.Success(Code = code);
         }
 
-        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer, List<string> manufacturerCodes)
         {
             if (manufacturer is null)
                 return Result.Failure<Manufacturer>(RequiredMessage);
 
-            var ManufacturerCode = $"{manufacturer.Id} + {Code}";
-            var manufacturerCodes = new List<string>();
-
-            if (manufacturerCodes.Contains(ManufacturerCode))
+            if (manufacturerCodes.Contains($"{manufacturer.Id}{Code}"))
                 return Result.Failure<Manufacturer>(NonuniqueMessage);
             
             return Result.Success(Manufacturer = manufacturer);

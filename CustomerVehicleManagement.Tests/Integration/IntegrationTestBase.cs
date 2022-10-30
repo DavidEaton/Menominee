@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Tests.Integration
         {
             SaleCode saleCode = CreateSaleCode();
             var manufacturers = InventoryItemHelper.CreateManufacturers(10);
-            ProductCode productCode = CreateProductCode(manufacturers[5], saleCode);
+            ProductCode productCode = CreateProductCode(manufacturers[5], saleCode); // Grab an arbitrary manufacturer: manufacturers[5] and create a ProductCode.
             InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
 
             ApplicationDbContext context = Helpers.CreateTestContext();

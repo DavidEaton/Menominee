@@ -50,13 +50,5 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 SaleCode = SaleCodeHelper.ConvertReadToWriteDto(productCode.SaleCode)
             };
         }
-
-        public static void CopyWriteDtoToEntity(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
-        {
-            productCode.SetCode(productCodeToUpdate.Code);
-            productCode.SetManufacturer(ManufacturerHelper.ConvertWriteDtoToEntity(productCodeToUpdate.Manufacturer));
-            productCode.SetName(productCodeToUpdate.Name);
-            productCode.SetSaleCode(SaleCodeHelper.ConvertWriteDtoToEntity(productCodeToUpdate.SaleCode));
-        }
     }
 }

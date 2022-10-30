@@ -83,24 +83,24 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         [HttpPut("{mfrcode}/{code}")]
         public async Task<IActionResult> UpdateProductCodeAsync(string mfrCode, string productCode, ProductCodeToWrite pcDto)
         {
-            var notFoundMessage = $"Could not find Product Code to update: {pcDto.Name}";
+            //var notFoundMessage = $"Could not find Product Code to update: {pcDto.Name}";
 
-            if (!await repository.ProductCodeExistsAsync(mfrCode, productCode))
-                return NotFound(notFoundMessage);
+            //if (!await repository.ProductCodeExistsAsync(mfrCode, productCode))
+            //    return NotFound(notFoundMessage);
 
-            //1) Get domain entity from repository
-            var productCodeFromRepository = await repository.GetProductCodeEntityAsync(mfrCode, productCode);
+            ////1) Get domain entity from repository
+            //var productCodeFromRepository = await repository.GetProductCodeEntityAsync(mfrCode, productCode);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            //pc.Manufacturer = pcDto.Manufacturer;
-            //pc.Code = pcDto.Code;
-            //pc.Name = pcDto.Name;
-            //pc.SaleCode = pcDto.SaleCode;
-            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, productCodeFromRepository);
+            //// 2) Update domain entity with data in data transfer object(DTO)
+            ////pc.Manufacturer = pcDto.Manufacturer;
+            ////pc.Code = pcDto.Code;
+            ////pc.Name = pcDto.Name;
+            ////pc.SaleCode = pcDto.SaleCode;
+            //ProductCodeHelper.CopyWriteDtoToEntity(pcDto, productCodeFromRepository);
 
-            await repository.UpdateProductCodeAsync(productCodeFromRepository);
+            //await repository.UpdateProductCodeAsync(productCodeFromRepository);
 
-            await repository.SaveChangesAsync();
+            //await repository.SaveChangesAsync();
 
             return NoContent();
         }

@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.TestUtilities;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using System.Collections.Generic;
 using Xunit;
 
@@ -16,17 +17,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var manufacturer = InventoryItemHelper.CreateManufacturer();
-            List<string> manufacturerCodes = new() {"11"};
+            List<string> manufacturerCodes = new() { "11" };
 
             // Act
-            var productCodeOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes);
+            var resultOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes);
 
             // Assert
-            productCodeOrError.Value.Should().BeOfType<ProductCode>();
-            productCodeOrError.IsSuccess.Should().BeTrue();
-            productCodeOrError.Value.Name.Should().Be(name);
-            productCodeOrError.Value.Code.Should().Be(code);
-            productCodeOrError.Value.Manufacturer.Should().Be(manufacturer);
+            resultOrError.Value.Should().BeOfType<ProductCode>();
+            resultOrError.IsSuccess.Should().BeTrue();
+            resultOrError.Value.Name.Should().Be(name);
+            resultOrError.Value.Code.Should().Be(code);
+            resultOrError.Value.Manufacturer.Should().Be(manufacturer);
         }
 
         [Fact]
@@ -41,14 +42,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 "11"
             };
 
-            var productCodeOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode);
+            var resultOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode);
 
-            productCodeOrError.Value.Should().BeOfType<ProductCode>();
-            productCodeOrError.IsSuccess.Should().BeTrue();
-            productCodeOrError.Value.Name.Should().Be(name);
-            productCodeOrError.Value.Code.Should().Be(code);
-            productCodeOrError.Value.Manufacturer.Should().Be(manufacturer);
-            productCodeOrError.Value.SaleCode.Should().Be(saleCode);
+            resultOrError.Value.Should().BeOfType<ProductCode>();
+            resultOrError.IsSuccess.Should().BeTrue();
+            resultOrError.Value.Name.Should().Be(name);
+            resultOrError.Value.Code.Should().Be(code);
+            resultOrError.Value.Manufacturer.Should().Be(manufacturer);
+            resultOrError.Value.SaleCode.Should().Be(saleCode);
         }
 
         [Theory]
@@ -61,10 +62,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var saleCode = InventoryItemHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
-            var productCode = ProductCode.Create(manufacturer, code, invalidName, manufacturerCodes, saleCode);
+            var resultOrError = ProductCode.Create(manufacturer, code, invalidName, manufacturerCodes, saleCode);
 
-            productCode.IsFailure.Should().BeTrue();
-            productCode.Error.Should().NotBeNullOrEmpty();
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
         }
 
         [Theory]
@@ -77,10 +78,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var saleCode = InventoryItemHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
-            var productCode = ProductCode.Create(manufacturer, invalidCode, name, manufacturerCodes, saleCode);
+            var resultOrError = ProductCode.Create(manufacturer, invalidCode, name, manufacturerCodes, saleCode);
 
-            productCode.IsFailure.Should().BeTrue();
-            productCode.Error.Should().NotBeNullOrEmpty();
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
         }
 
         [Fact]
@@ -91,25 +92,25 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var saleCode = InventoryItemHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
-            var productCode = ProductCode.Create(null, code, name, manufacturerCodes, saleCode);
+            var resultOrError = ProductCode.Create(null, code, name, manufacturerCodes, saleCode);
 
-            productCode.IsFailure.Should().BeTrue();
-            productCode.Error.Should().NotBeNullOrEmpty();
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("required");
         }
 
         [Fact]
         public void Not_Create_ProductCode_With_Nonunique_Manufacturer_Code()
         {
+            var manufacturer = InventoryItemHelper.CreateManufacturer();
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var saleCode = InventoryItemHelper.CreateSaleCode();
-            List<string> manufacturerCodes = new() { "11" };
+            List<string> manufacturerCodes = new() { $"{manufacturer.Id}{code}" };
 
-            var productCode = ProductCode.Create(null, code, name, manufacturerCodes, saleCode);
+            var resultOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode);
 
-            productCode.IsFailure.Should().BeTrue();
-            productCode.Error.Should().NotBeNullOrEmpty();
-            true.Should().BeFalse();
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("unique");
         }
 
         [Fact]
@@ -119,8 +120,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             string originalName = Utilities.RandomCharacters(ProductCode.MinimumLength + 1);
             var newName = Utilities.RandomCharacters(originalName.Length);
 
-            productCode.SetName(newName);
+            var resultOrError = productCode.SetName(newName);
 
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().Be(newName);
             productCode.Name.Should().Be(newName);
         }
 
@@ -143,23 +146,30 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var originalCode = productCode.Code;
             productCode.Code.Should().Be(originalCode);
             var newCode = Utilities.RandomCharacters(productCode.Code.Length);
+            List<string> manufacturerCodes = new() { "11" };
 
-            productCode.SetCode(newCode);
+            var resultOrError = productCode.SetCode(newCode, manufacturerCodes);
 
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().Be(newCode);
             productCode.Code.Should().Be(newCode);
         }
 
         [Fact]
         public void Not_Set_Code_With_Nonunique_Manufacturer_Code()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
-            var invalidCode = Utilities.RandomCharacters(ProductCode.MaximumCodeLength + 1);
+            var manufacturer = InventoryItemHelper.CreateManufacturer();
+            var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
+            var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
+            var saleCode = InventoryItemHelper.CreateSaleCode();
+            List<string> manufacturerCodes = new() { "11" };
+            var productCode = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode).Value;
+            manufacturerCodes.Add($"{manufacturer.Id}{code}");
 
-            var resultOrError = productCode.SetCode(invalidCode);
+            var resultOrError = productCode.SetCode(code, manufacturerCodes);
 
             resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
-            true.Should().BeFalse();
+            resultOrError.Error.Should().Contain("unique");
         }
 
         [Fact]
@@ -167,8 +177,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var productCode = InventoryItemHelper.CreateProductCode();
             var invalidCode = Utilities.RandomCharacters(ProductCode.MaximumCodeLength + 1);
+            List<string> manufacturerCodes = new() { "11" };
 
-            var resultOrError = productCode.SetCode(invalidCode);
+            var resultOrError = productCode.SetCode(invalidCode, manufacturerCodes);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
@@ -181,8 +192,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var originalManufacturer = productCode.Manufacturer;
             productCode.Manufacturer.Should().Be(originalManufacturer);
             var newManufacturer = InventoryItemHelper.CreateManufacturer();
+            List<string> manufacturerCodes = new() { "11" };
 
-            productCode.SetManufacturer(newManufacturer);
+            productCode.SetManufacturer(newManufacturer, manufacturerCodes);
 
             productCode.Manufacturer.Should().Be(newManufacturer);
             productCode.Manufacturer.Should().NotBe(originalManufacturer);
@@ -192,7 +204,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Null_Manufacturer()
         {
             var productCode = InventoryItemHelper.CreateProductCode();
-            var resultOrError = productCode.SetManufacturer(null);
+            List<string> manufacturerCodes = new() { "11" };
+            var resultOrError = productCode.SetManufacturer(null, manufacturerCodes);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
@@ -202,13 +215,15 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Manufacturer_With_Nonunique_Manufacturer_Code()
         {
             var productCode = InventoryItemHelper.CreateProductCode();
-            var resultOrError = productCode.SetManufacturer(null);
+            var newManufacturer = InventoryItemHelper.CreateManufacturer();
+
+            List<string> manufacturerCodes = new() { $"{newManufacturer.Id}{productCode.Code}" };
+            var resultOrError = productCode.SetManufacturer(newManufacturer, manufacturerCodes);
 
             resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("required");
-            true.Should().BeFalse();
+            resultOrError.Error.Should().Contain("unique");
         }
-
+        
         [Fact]
         public void SetSaleCode()
         {
@@ -231,7 +246,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
         }
-
 
         internal class TestData
         {
