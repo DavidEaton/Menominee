@@ -15,9 +15,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync();
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync();
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long manufacturerId);
-        Task<ProductCode> UpdateProductCodeAsync(ProductCode productCode);
-        Task DeleteProductCodeAsync(string manufacturerCode, string productCode);
-        Task<bool> ProductCodeExistsAsync(string manufacturerCode, string code);
+        Task DeleteProductCodeAsync(long id);
         Task<bool> ProductCodeExistsAsync(long id);
         Task SaveChangesAsync();
         IReadOnlyList<string> GetManufacturerCodes();

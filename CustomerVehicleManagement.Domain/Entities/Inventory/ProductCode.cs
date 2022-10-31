@@ -84,7 +84,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Name = name);
         }
 
-        public Result<string> SetCode(string code, List<string> manufacturerCodes)
+        public Result<string> SetCode(string code, IReadOnlyList<string> manufacturerCodes)
         {
             code = (code ?? string.Empty).Trim();
 
@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Code = code);
         }
 
-        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer, List<string> manufacturerCodes)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer, IReadOnlyList<string> manufacturerCodes)
         {
             if (manufacturer is null)
                 return Result.Failure<Manufacturer>(RequiredMessage);

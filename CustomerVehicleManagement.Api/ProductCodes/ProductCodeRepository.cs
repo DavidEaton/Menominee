@@ -25,9 +25,9 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 context.Attach(productCode);
         }
 
-        public async Task DeleteProductCodeAsync(string manufacturerCode, string productCode)
+        public async Task DeleteProductCodeAsync(long id)
         {
-            var pcFromContext = await context.ProductCodes.FindAsync(manufacturerCode, productCode); ;
+            var pcFromContext = await context.ProductCodes.FindAsync(id);
 
             if (pcFromContext is not null)
                 context.Remove(pcFromContext);
@@ -85,7 +85,6 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return await context.ProductCodes
                                              .Include(productCode => productCode.Manufacturer)
                                              .Include(productCode => productCode.SaleCode)
-                                             .AsNoTracking()
                                              .FirstOrDefaultAsync(productCode => productCode.Id == id);
         }
 
@@ -119,7 +118,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
 
         public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long manufacturerId)
         {
-            var pcs = await context.ProductCodes
+            var productCodes = await context.ProductCodes
                                    .Include(productCode => productCode.Manufacturer)
                                    .Include(productCode => productCode.SaleCode)
                                    .Where(productCode => productCode.Manufacturer.Id == manufacturerId)
@@ -127,35 +126,9 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .AsNoTracking()
                                    .ToArrayAsync();
 
-            return pcs.
+            return productCodes.
                 Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
                 .ToList();
-        }
-
-        //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long mfrId, long saleCodeId)
-        //{
-        //    var pcs = await context.ProductCodes
-        //                           .Include(productCode => productCode.Manufacturer)
-        //                           .Include(productCode => productCode.SaleCode)
-        //                           .Where(productCode => (productCode.Manufacturer.Id == mfrId && productCode.SaleCode.Id == saleCodeId))
-        //                           .AsNoTracking()
-        //                           .ToArrayAsync();
-
-        //    return pcs.Select(productCode => ProductCodeToReadInList.ConvertToDto(productCode)).ToList();
-        //}
-
-        //public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodeListAsync(string manufacturerCode)
-        //{
-        //    IReadOnlyList<ProductCode> pcs = await context.ProductCodes.Where(productCode => productCode.Manufacturer.Code == manufacturerCode).ToListAsync();
-
-        //    return pcs.
-        //        Select(productCode => ProductCodeToReadInList.ConvertToDto(productCode))
-        //        .ToList();
-        //}
-
-        public async Task<bool> ProductCodeExistsAsync(string manufacturerCode, string code)
-        {
-            return await context.ProductCodes.AnyAsync(productCode => (productCode.Manufacturer.Code == manufacturerCode && productCode.Code == code));
         }
 
         public async Task<bool> ProductCodeExistsAsync(long id)
@@ -166,27 +139,6 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
-        }
-
-        public async Task<ProductCode> UpdateProductCodeAsync(ProductCode productCode)
-        {
-            if (productCode is not null)
-            {
-                // Tracking IS needed for commands for disconnected data collections
-                context.Entry(productCode).State = EntityState.Modified;
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ProductCodeExistsAsync(productCode.Id))
-                        return null;// something that tells the controller to return NotFound();
-                    throw;
-                }
-            }
-
-            return null;
         }
     }
 }

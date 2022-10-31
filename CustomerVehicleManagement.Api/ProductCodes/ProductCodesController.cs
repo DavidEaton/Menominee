@@ -28,7 +28,6 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 throw new ArgumentNullException(nameof(saleCodesRepository));
         }
 
-        // api/productcodes/listing
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync()
@@ -37,29 +36,18 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return Ok(results);
         }
 
-        // api/productcodes/listing/1
         [Route("listing")]
-        [HttpGet("listing/{mfrid:long}")]
-        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId)
+        [HttpGet("listing/{manufacturerId:long}")]
+        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long manufacturerId)
         {
-            var results = await repository.GetProductCodesInListAsync(mfrId);
+            var results = await repository.GetProductCodesInListAsync(manufacturerId);
             return Ok(results);
         }
 
-        // api/productcodes/listing/1/1
-        //[Route("listing")]
-        //[HttpGet("listing/{mfrid:long}/{scId:long}")]
-        //public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId, long saleCodeId)
-        //{
-        //    var results = await repository.GetProductCodesInListAsync(mfrId, saleCodeId);
-        //    return Ok(results);
-        //}
-
-        // api/productcodes/xyz/123
-        [HttpGet("{mfrcode}/{code}")]
-        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string mfrCode, string productCode)
+        [HttpGet("{manufacturercode}/{code}")]
+        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string manufacturerCode, string productCode)
         {
-            var result = await repository.GetProductCodeAsync(mfrCode, productCode);
+            var result = await repository.GetProductCodeAsync(manufacturerCode, productCode);
 
             if (result == null)
                 return NotFound();
@@ -67,7 +55,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return result;
         }
 
-        // api/productcodes/xyz/123
+        // api/productcodes/123
         [HttpGet("{id:long}", Name = "GetProductCodeAsync")]
         public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(long id)
         {
@@ -79,28 +67,61 @@ namespace CustomerVehicleManagement.Api.ProductCodes
             return result;
         }
 
-        // api/productcodes/xyz/123
-        [HttpPut("{mfrcode}/{code}")]
-        public async Task<IActionResult> UpdateProductCodeAsync(string mfrCode, string productCode, ProductCodeToWrite pcDto)
+        // api/productcodes/123
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> UpdateProductCodeAsync(long id, ProductCodeToWrite productCodeFromCaller)
         {
-            //var notFoundMessage = $"Could not find Product Code to update: {pcDto.Name}";
+            //1) Get domain entity from repository
+            var productCodeFromRepository = await repository.GetProductCodeEntityAsync(id);
 
-            //if (!await repository.ProductCodeExistsAsync(mfrCode, productCode))
-            //    return NotFound(notFoundMessage);
+            if (productCodeFromRepository is null)
+                return NotFound($"Could not find Product Code to update: {productCodeFromCaller.Name}");
 
-            ////1) Get domain entity from repository
-            //var productCodeFromRepository = await repository.GetProductCodeEntityAsync(mfrCode, productCode);
+            // 2) Update domain entity ProductCode with data in
+            // data contract/transfer object(DTO).
+            // Update each member of ProductCode, or return a Bad
+            // Resuest response with error message, in case of Failure:
+            if (productCodeFromRepository.Name != productCodeFromCaller.Name)
+            {
+                var resultOrError = productCodeFromRepository.SetName(productCodeFromCaller.Name);
 
-            //// 2) Update domain entity with data in data transfer object(DTO)
-            ////pc.Manufacturer = pcDto.Manufacturer;
-            ////pc.Code = pcDto.Code;
-            ////pc.Name = pcDto.Name;
-            ////pc.SaleCode = pcDto.SaleCode;
-            //ProductCodeHelper.CopyWriteDtoToEntity(pcDto, productCodeFromRepository);
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
 
-            //await repository.UpdateProductCodeAsync(productCodeFromRepository);
+            if (productCodeFromRepository.Manufacturer.Id != productCodeFromCaller.Manufacturer.Id)
+            {
+                var manufacturerCodes = repository.GetManufacturerCodes();
 
-            //await repository.SaveChangesAsync();
+                var resultOrError = productCodeFromRepository.SetManufacturer(
+                    await manufacturersRepository.GetManufacturerEntityAsync(productCodeFromCaller.Manufacturer.Id),
+                    manufacturerCodes);
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (productCodeFromRepository.SaleCode.Id != productCodeFromCaller.SaleCode.Id)
+            {
+                var resultOrError = productCodeFromRepository.SetSaleCode(
+                    await saleCodesRepository.GetSaleCodeEntityAsync(productCodeFromCaller.SaleCode.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (productCodeFromRepository.Code != productCodeFromCaller.Code)
+            {
+                var manufacturerCodes = repository.GetManufacturerCodes();
+
+                var resultOrError = productCodeFromRepository.SetCode(productCodeFromCaller.Code, manufacturerCodes);
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            // 3. Save changes on repository
+            await repository.SaveChangesAsync();
 
             return NoContent();
         }
@@ -143,14 +164,13 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 });
         }
 
-        [HttpDelete("{mfrcode}/{code}")]
-        public async Task<IActionResult> DeleteProductCodeAsync(string mfrCode, string code)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteProductCodeAsync(long id)
         {
-            var pcFromRepository = await repository.GetProductCodeAsync(mfrCode, code);
-            if (pcFromRepository == null)
-                return NotFound($"Could not find Product Code in the database to delete with Id: {code}.");
+            if (await repository.ProductCodeExistsAsync(id) == false)
+                return NotFound($"Could not find Product Code in the database to delete with Id: {id}.");
 
-            await repository.DeleteProductCodeAsync(mfrCode, code);
+            await repository.DeleteProductCodeAsync(id);
 
             await repository.SaveChangesAsync();
 

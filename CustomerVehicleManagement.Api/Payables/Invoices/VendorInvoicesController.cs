@@ -73,15 +73,10 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoiceFromCaller)
         {
-            var notFoundMessage = $"Could not find Vendor Invoice to update with Id = {id}.";
-
-            if (!await repository.InvoiceExistsAsync(id))
-                return NotFound(notFoundMessage);
-
             var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
 
             if (invoiceFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Vendor Invoice to update with Id = {id}.");
 
             // Getting the following limited entity lists keeps all objects tracked
             // by the same db context instance, preventing spurious updates to unmodified
@@ -254,6 +249,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 await paymentMethodRepository.GetPaymentMethodsAsync());
 
             repository.AddInvoice(invoiceEntity);
+
             await repository.SaveChangesAsync();
 
             return Created(

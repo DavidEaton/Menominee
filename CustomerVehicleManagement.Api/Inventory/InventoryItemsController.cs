@@ -217,21 +217,21 @@ namespace CustomerVehicleManagement.Api.Inventory
                 || inventoryItems is null)
                 return NotFound(failureMessage);
 
-            InventoryItem inventoryItem = InventoryItemHelper.ConvertWriteDtoToEntity(
+            InventoryItem inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(
                 itemToAdd,
                 manufacturer,
                 productCode,
                 inventoryItems);
 
-            await itemRepository.AddItemAsync(inventoryItem);
+            await itemRepository.AddItemAsync(inventoryItemEntity);
             await itemRepository.SaveChangesAsync();
 
             return Created(
-                new Uri($"{BasePath}/{inventoryItem.Id}",
+                new Uri($"{BasePath}/{inventoryItemEntity.Id}",
                 UriKind.Relative),
                 new
                 {
-                    inventoryItem.Id
+                    inventoryItemEntity.Id
                 });
         }
 

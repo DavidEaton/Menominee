@@ -10,7 +10,6 @@ namespace CustomerVehicleManagement.Api.Inventory
         Task AddItemAsync(InventoryItem item);
         Task DeleteItemAsync(long id);
         Task<bool> ItemExistsAsync(long id);
-        Task<InventoryItem> UpdateItemAsync(InventoryItem item);
         Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync();
         Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync();
         Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId);

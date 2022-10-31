@@ -296,27 +296,27 @@ namespace CustomerVehicleManagement.Api.Inventory
             await context.SaveChangesAsync();
         }
 
-        public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)
-        {
-            if (item is not null)
-            {
-                // Tracking IS needed for commands for disconnected data collections
-                context.Entry(item).State = EntityState.Modified;
+        //public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)
+        //{
+        //    if (item is not null)
+        //    {
+        //        // Tracking IS needed for commands for disconnected data collections
+        //        context.Entry(item).State = EntityState.Modified;
 
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ItemExistsAsync(item.Id))
-                        return null;// something that tells the controller to return NotFound();
-                    throw;
-                }
-            }
+        //        try
+        //        {
+        //            await context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!await ItemExistsAsync(item.Id))
+        //                return null;// something that tells the controller to return NotFound();
+        //            throw;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id)
         {
