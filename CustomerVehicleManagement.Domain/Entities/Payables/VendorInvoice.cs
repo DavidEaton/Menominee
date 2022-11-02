@@ -21,6 +21,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
+        //TODO: public VendorInvoiceDocumentType DocumentType { get; private set; }   
         public double Total { get; private set; }
         public string InvoiceNumber { get; private set; }
         public DateTime? Date { get; private set; }
@@ -33,6 +34,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         private VendorInvoice(
             Vendor vendor,
             VendorInvoiceStatus status,
+            //TODO: VendorInvoiceDocumentType documentType,
             double total,
             string invoiceNumber = null,
             DateTime? date = null,
@@ -83,6 +85,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static Result<VendorInvoice> Create(
             Vendor vendor,
             VendorInvoiceStatus status,
+            //TODO: VendorInvoiceDocumentType documentType,
             double total,
             string invoiceNumber = null,
             DateTime? date = null,
@@ -167,8 +170,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<DateTime?> SetDatePosted(DateTime? datePosted)
         {
-            if (datePosted is null)
-                return Result.Failure<DateTime?>(DateInvalidMessage);
+            //if (datePosted is null)
+            //    return Result.Failure<DateTime?>(DateInvalidMessage);
 
             if (datePosted.HasValue && datePosted.Value > DateTime.Today)
                 return Result.Failure<DateTime?>(DateInvalidMessage);

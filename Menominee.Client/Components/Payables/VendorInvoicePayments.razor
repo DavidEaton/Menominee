@@ -12,6 +12,7 @@
              ShowColumnMenu="false"
              SelectionMode="GridSelectionMode.Single"
              SelectedItems="@SelectedPayments"
+             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
              @ref="Grid">
         <GridColumns>
             <GridColumn Field="Payment.PaymentMethod.Name"
@@ -24,6 +25,7 @@
                                      Data="PaymentMethods"
                                      TextField="Name"
                                      ValueField="Id"
+                                     Enabled="@CanEdit"
                                      OnChange="OnPaymentMethodChange">
                         </TelerikDropDownList>
                     }
@@ -33,6 +35,7 @@
                         var payment = context as VendorInvoicePaymentToWrite;
                         <TelerikDropDownList @bind-Value="payment.PaymentMethod.Id"
                                      Data="PaymentMethods"
+                                     Enabled="@CanEdit"
                                      TextField="Name"
                                      ValueField="Id">
                         </TelerikDropDownList>
@@ -57,6 +60,8 @@
                         <TelerikNumericTextBox @bind-Value="payment.Amount"
                                        Format="C"
                                        Decimals="2"
+                                       OnChange="OnPaymentAmountChange"
+                                       Enabled="@CanEdit"
                                        Arrows="false">
                         </TelerikNumericTextBox>
                     }
@@ -68,12 +73,15 @@
                                        Format="C"
                                        Decimals="2"
                                        OnChange="OnPaymentAmountChange"
+                                       Enabled="@CanEdit"
                                        Arrows="false">
                         </TelerikNumericTextBox>
                     }
                 </EditorTemplate>
             </GridColumn>
-            <GridCommandColumn Width="117px"
+        @if (CanEdit)
+            {
+                <GridCommandColumn Width="117px"
                            Context="VendorInvoicePaymentToWrite">
                 <GridCommandButton Command="_Balance"
                                IconClass="fas fa-arrow-left"
@@ -83,58 +91,12 @@
                     Balance
                 </GridCommandButton>
             </GridCommandColumn>
+            }
         </GridColumns>
     </TelerikGrid>
 
-    <EditNewDeleteIconButtons OnNew="Add"
-                          OnDelete="OnDelete"
-                          ShowDivider="false"
-                          CanDelete="CanDelete" />
+    @if (CanEdit)
+    {
+        <EditNewDeleteIconButtons OnNew="Add" OnDelete="OnDelete" ShowDivider="false" CanDelete="CanDelete()" />
+    }
 }
-
-@*                <Template>
-                    @{
-                        <TelerikDropDownList @bind-Value="paymentMethodId"
-                                     Data="PaymentMethods"
-                                     TextField="Name"
-                                     ValueField="Id"
-                                     OnChange="OnPaymentMethodChange">
-                        </TelerikDropDownList>
-                    }
-                </Template>
-
-                <EditorTemplate>
-                    @{
-                        <TelerikDropDownList @bind-Value="Payment.PaymentMethod.Id"
-                                     Data="PaymentMethods"
-                                     TextField="Name"
-                                     ValueField="Id">
-                        </TelerikDropDownList>
-                    }
-                </EditorTemplate>*@
-
-@*                <Template>
-            @{
-            var payment = context as VendorInvoicePaymentToWrite;
-            <SfDropDownList TValue="long"
-            TItem="VendorInvoicePaymentMethodToReadInList"
-            PopupHeight="230px"
-            OnChange="OnPaymentMethodChange"
-            DataSource="PaymentMethods"
-            @bind-Value="Payment.PaymentMethod.Id">
-            <DropDownListFieldSettings Text="Name" Value="Id" />
-            </SfDropDownList>
-            }
-            </Template>
-            <EditorTemplate>
-            @{
-            var placeholder = context as VendorInvoicePaymentToWrite;
-            <SfDropDownList TValue="long"
-            TItem="VendorInvoicePaymentMethodToReadInList"
-            PopupHeight="230px"
-            DataSource="PaymentMethods"
-            @bind-Value="Payment.PaymentMethod.Id">
-            <DropDownListFieldSettings Text="Name" Value="Id" />
-            </SfDropDownList>
-            }
-            </EditorTemplate>*@

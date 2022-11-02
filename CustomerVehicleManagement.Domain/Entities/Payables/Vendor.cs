@@ -1,10 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
-    public class Vendor : Entity
+    public class Vendor : Entity //TODO: Vendor : Contactable
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MinimumLength = 2;
@@ -12,6 +13,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
         public string Name { get; private set; }
         public string VendorCode { get; private set; }
+        //TODO: need address, phone, email
+        //TODO: public VendorType VendorType { get; private set; }
+        //TODO: public VendorInvocePaymentMethod? DefaultPaymentMethod { get; private set; }
+        //TODO: public bool AutoCompleteDocuments { get; private set; } // can only be true if DefaultPaymentMethod is set 
         public bool? IsActive { get; private set; }
 
         private Vendor(string name, string vendorCode)

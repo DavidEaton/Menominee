@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Client.Services.Payables.Invoices;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
@@ -18,24 +19,33 @@ namespace Menominee.Client.Components.Payables.Pages
         public long Id { get; set; }
 
         private VendorInvoiceToWrite Invoice { get; set; }
+        private FormMode FormMode { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
             if (Id == 0)
             {
-                Invoice = new();
-                Invoice.Date = DateTime.Today;
+                Invoice = new()
+                {
+                    Date = DateTime.Today,
+                    Status = VendorInvoiceStatus.Open
+                };
+
+                FormMode = FormMode.Add;
             }
             else
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
                 Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
+
+                FormMode = (Invoice.Status == VendorInvoiceStatus.Open) ? FormMode.Edit : FormMode.View;
             }
         }
 
-        private async Task Save()
+        private async Task<bool> Save()
         {
-            if (Valid())
+            bool valid = Valid();
+            if (valid)
             {
                 if (Id == 0)
                 {
@@ -46,9 +56,15 @@ namespace Menominee.Client.Components.Payables.Pages
                 {
                     await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
                 }
-
-                EndEdit();
             }
+
+            return valid;
+        }
+
+        private async Task SaveAndExit()
+        {
+            if (await Save())
+                EndEdit();
         }
 
         private bool Valid()

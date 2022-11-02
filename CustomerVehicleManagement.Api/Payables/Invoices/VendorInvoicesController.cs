@@ -101,7 +101,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                         .IsFailure)
                     return BadRequest();
 
-            if (invoiceFromRepository.Vendor.Id != invoiceFromCaller.Vendor.Id)
+            if (invoiceFromRepository.Status != invoiceFromCaller.Status)
                 if (invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status).IsFailure)
                     return BadRequest();
 
@@ -118,9 +118,15 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     return BadRequest();
 
             if (invoiceFromCaller.DatePosted is not null)
+            {
                 if (invoiceFromRepository.DatePosted != invoiceFromCaller.DatePosted)
                     if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
                         return BadRequest();
+            }
+            else if (invoiceFromRepository.DatePosted is not null)
+            {
+                invoiceFromRepository.ClearDatePosted();
+            }
 
             // Line Items
             foreach (var lineItemFromCaller in invoiceFromCaller?.LineItems)

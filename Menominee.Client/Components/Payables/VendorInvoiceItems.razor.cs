@@ -21,6 +21,11 @@ namespace Menominee.Client.Components.Payables
         [Parameter]
         public Action OnCalculateTotals { get; set; }
 
+        [CascadingParameter]
+        public FormMode FormMode { get; set; }
+
+        private bool CanEdit { get; set; } = false;
+
         public IEnumerable<VendorInvoiceLineItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<VendorInvoiceLineItemToWrite>();
         public VendorInvoiceLineItemToWrite SelectedItem { get; set; }
         public VendorInvoiceLineItemToWrite ItemToModify { get; set; } = null;
@@ -33,8 +38,8 @@ namespace Menominee.Client.Components.Payables
             set
             {
                 selectedItemIndex = value;
-                CanEdit = selectedItemIndex >= 0;
-                CanDelete = selectedItemIndex >= 0;
+                CanEditItem = selectedItemIndex >= 0;
+                CanDeleteItem = CanEdit && selectedItemIndex >= 0;
             }
         }
 
@@ -42,8 +47,8 @@ namespace Menominee.Client.Components.Payables
         private int selectedItemIndex = -1;
         private bool editDialogVisible = false;
 
-        private bool CanEdit { get; set; } = false;
-        private bool CanDelete { get; set; } = false;
+        private bool CanEditItem { get; set; } = false;
+        private bool CanDeleteItem { get; set; } = false;
 
         private FormMode ItemFormMode { get; set; } = FormMode.Unknown;
         private bool EditDialogVisible
@@ -73,10 +78,30 @@ namespace Menominee.Client.Components.Payables
             }
         }
 
+        protected override void OnParametersSet()
+        {
+            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
+
+            if (LineItems?.Count > 0)
+            {
+                if (itemIdToSelect == 0)
+                    SelectedItem = LineItems.FirstOrDefault();
+
+                //if (itemToSelect != 0)
+                //    SelectedItem = Items.Where(x => x.Id == itemToSelect).FirstOrDefault();
+
+                SelectedItemIndex = LineItems.IndexOf(SelectedItem);
+                SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
+            }
+        }
+
         private void OnEdit()
         {
-            ItemFormMode = FormMode.Edit;
-            EditDialogVisible = true;
+            if (CanEditItem)
+            {
+                ItemFormMode = CanEdit ? FormMode.Edit : FormMode.View;
+                EditDialogVisible = true;
+            }
         }
 
         private void OnNew()
@@ -131,27 +156,6 @@ namespace Menominee.Client.Components.Payables
             SelectedItem = args.Item as VendorInvoiceLineItemToWrite;
             SelectedItemIndex = LineItems.IndexOf(SelectedItem);
             SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
-        }
-
-        protected void OnSelect(IEnumerable<VendorInvoiceLineItemToWrite> items)
-        {
-            //SelectedItem = items.FirstOrDefault();
-            //SelectedItems = new List<VendorInvoiceItemToWrite> { SelectedItem };
-        }
-
-        protected override void OnInitialized()
-        {
-            if (LineItems.Count > 0)
-            {
-                if (itemIdToSelect == 0)
-                    SelectedItem = LineItems.FirstOrDefault();
-
-                //if (itemToSelect != 0)
-                //    SelectedItem = Items.Where(x => x.Id == itemToSelect).FirstOrDefault();
-
-                SelectedItemIndex = LineItems.IndexOf(SelectedItem);
-                SelectedItems = new List<VendorInvoiceLineItemToWrite> { SelectedItem };
-            }
         }
 
         private static void CopyItem(VendorInvoiceLineItemToWrite src, VendorInvoiceLineItemToWrite dst)

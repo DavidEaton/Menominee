@@ -1,9 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Common.Enums;
-using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -25,6 +21,7 @@ namespace Menominee.Client.Components.Payables
         public double Taxes { get; set; }
         public double Total { get; set; }
         public double Payments { get; set; }
+        public double TaxableTotal { get; set; }
 
         public void Clear()
         {
@@ -39,6 +36,7 @@ namespace Menominee.Client.Components.Payables
             Taxes = 0;
             Total = 0;
             Payments = 0;
+            TaxableTotal = 0;
         }
 
         public void Calculate(VendorInvoiceToWrite invoice)
@@ -94,6 +92,8 @@ namespace Menominee.Client.Components.Payables
 
             Total = Purchases + Returns + CoreReturns + Defectives + Warranties
                   + MiscellaneousDebits + MiscellaneousCredits + BalanceForwards + Taxes;
+
+            TaxableTotal = Total - BalanceForwards - Taxes;
         }
     }
 }

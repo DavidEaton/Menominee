@@ -19,6 +19,11 @@ namespace Menominee.Client.Components.Payables
         [Parameter]
         public VendorInvoiceToWrite Invoice { get; set; }
 
+        [CascadingParameter]
+        public FormMode FormMode { get; set; }
+
+        private bool CanEdit { get; set; } = false;
+
         public IReadOnlyList<VendorToReadInList> Vendors;
         private IList<VendorInvoiceStatusEnumModel> VendorInvoiceStatusEnumData { get; set; } = new List<VendorInvoiceStatusEnumModel>();
 
@@ -39,6 +44,8 @@ namespace Menominee.Client.Components.Payables
         }
         protected override void OnParametersSet()
         {
+            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
+
             if (Invoice?.Vendor?.Id != null)
             {
                 vendorId = Invoice.Vendor.Id;

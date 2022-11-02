@@ -12,8 +12,8 @@
              FilterMode="GridFilterMode.FilterMenu"
              ShowColumnMenu="true"
              SelectionMode="GridSelectionMode.Single"
-             SelectedItemsChanged="@((IEnumerable<VendorInvoiceLineItemToWrite> itemList) => OnSelect(itemList))"
              SelectedItems="@SelectedItems"
+             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
              @ref="@Grid">
         <GridColumns>
             <GridColumn Width="10%"
@@ -90,16 +90,26 @@
     {
         <VendorInvoiceItemEditor LineItem="ItemToModify"
                          DialogVisible="EditDialogVisible"
-                         Mode="ItemFormMode"
+                         FormMode="ItemFormMode"
                          OnSave="OnSaveEdit"
                          OnCancel="OnCancelEdit" />
     }
 
-    <EditNewDeleteIconButtons OnEdit="OnEdit"
+    @if (CanEdit)
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
                           OnNew="OnNew"
                           OnDelete="OnDelete"
                           ShowDivider="false"
-                          CanEdit="CanEdit"
-                          CanDelete="CanDelete" />
+                          CanAdd="CanEdit"
+                          CanEdit="CanEditItem"
+                          CanDelete="CanDeleteItem" />
+    }
+    else
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          ShowDivider="false"
+                          CanEdit="CanEditItem" />
+    }
 }
 

@@ -1,11 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.Lists;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +28,9 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public InvoiceTotals InvoiceTotals { get; set; }
 
+        [CascadingParameter]
+        public FormMode FormMode { get; set; }
+
         public IEnumerable<VendorInvoicePaymentToWrite> SelectedPayments { get; set; } = Enumerable.Empty<VendorInvoicePaymentToWrite>();
 
         public VendorInvoicePaymentToWrite Payment { get; set; }
@@ -39,21 +38,12 @@ namespace Menominee.Client.Components.Payables
 
         private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PaymentMethods = new List<VendorInvoicePaymentMethodToReadInList>();
 
-        public int SelectedItemIndex
+        private bool CanEdit { get; set; } = false;
+
+        private bool CanDelete() 
         {
-            get => selectedItemIndex;
-            set
-            {
-                selectedItemIndex = value;
-                CanDelete = selectedItemIndex >= 0;
-            }
+            return Payments?.Count > 0;
         }
-
-        private int selectedItemIndex = -1;
-        //private long SelectedId = 0;
-        //private long paymentMethodId = 0;
-
-        private bool CanDelete { get; set; } = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -64,50 +54,27 @@ namespace Menominee.Client.Components.Payables
         {
             if (Payments?.Count > 0)
             {
-                Payment = Payments.FirstOrDefault();
-                SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
-                SelectedItemIndex = Payments.IndexOf(Payment);
-                //paymentMethodId = Payment.PaymentMethod.Id;
+                SelectPayment(Payments.FirstOrDefault());
             }
+            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
         }
 
-        //private void OnEdit(GridRowClickEventArgs args)
-        //{
-        //    //Payment = 
-        //    if (args is not null)
-        //        SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
-
-        //    // open dialog with FormMode == Edit
-
-        //    // TEMPORARILY Edit an existing payment TO TEST
-        //    //var payment = Payments.FirstOrDefault(payment => payment.Id == SelectedId);
-
-        //    //payment.Amount = 99.9;
-        //}
+        private void SelectPayment(VendorInvoicePaymentToWrite payment)
+        {
+            Payment = payment;
+            SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
+        }
 
         private void Add()
         {
-            // open dialog with FormMode == Add
-
-            // TEMPORARILY Add a new tax to collection TO TEST
-            //Payments.Add(new()
-            //{
-            //    Amount = 88.0,
-            //    PaymentMethod = new()
-            //    {
-            //        Id = 1,
-            //        Name = "Credit Card",
-            //        IsActive = true,
-            //        IsOnAccountPaymentType = false
-            //    }
-            //});
-
-            Payment = new();
-            Payment.PaymentMethod = new();
+            // TODO: Validation issue -- Enterprise doesn't allow more than one payment method to be selected that 
+            //       is set up to be reconciled by another vendor
+            Payment = new()
+            {
+                PaymentMethod = new()
+            };
             Payments.Add(Payment);
-            //paymentMethodId = 0;
-            SelectedItemIndex = Payments.Count - 1;
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
+            SelectPayment(Payment);
             Grid.Rebind();
         }
 
@@ -117,32 +84,16 @@ namespace Menominee.Client.Components.Payables
             && await Dialogs.ConfirmAsync("Are you sure you want to remove the selected payment?", "Remove Payment"))
             {
                 Payments.Remove(Payment);
-                if (Payments.Count > 0)
-                {
-                    Payment = Payments.FirstOrDefault();
-                    //paymentMethodId = Payment.PaymentMethod.Id;
-                    SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
-                    SelectedItemIndex = Payments.IndexOf(Payment);
-                }
-                else
-                {
-                    Payment = null;
-                    //paymentMethodId = 0;
-                    SelectedPayments = new List<VendorInvoicePaymentToWrite>();
-                    SelectedItemIndex = -1;
-                }
+                SelectPayment(Payments.Count > 0 ? Payments.FirstOrDefault() : null);
                 Grid.Rebind();
 
                 OnCalculateTotals?.Invoke();
-                //OnCalculateTotals();
             }
         }
 
         private void OnInsertBalanceClick(GridCommandEventArgs args)
         {
-            Payment = args.Item as VendorInvoicePaymentToWrite;
-            SelectedItemIndex = Payments.IndexOf(Payment);
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
+            SelectPayment(args.Item as VendorInvoicePaymentToWrite);
 
             var payments = InvoiceTotals.Payments - Payment.Amount;
             Payment.Amount = InvoiceTotals.Total - payments;
@@ -151,11 +102,6 @@ namespace Menominee.Client.Components.Payables
 
         private void OnPaymentMethodChange()
         {
-            //if (paymentMethodId > 0 && Payment?.PaymentMethod?.Id != paymentMethodId)
-            //{
-            //    Payment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadInListToReadDto(
-            //        PaymentMethods.FirstOrDefault(paymentMethod => paymentMethod.Id == paymentMethodId));
-            //}
             Payment.PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertReadInListToReadDto(
                 PaymentMethods.FirstOrDefault(paymentMethod => paymentMethod.Id == Payment.PaymentMethod.Id));
         }
@@ -167,12 +113,7 @@ namespace Menominee.Client.Components.Payables
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            //SelectedId = (args.Item as VendorInvoicePaymentToWrite).Id;
-
-            Payment = args.Item as VendorInvoicePaymentToWrite;
-            //paymentMethodId = Payment.PaymentMethod.Id;
-            SelectedItemIndex = Payments.IndexOf(Payment);
-            SelectedPayments = new List<VendorInvoicePaymentToWrite> { Payment };
+            SelectPayment(args.Item as VendorInvoicePaymentToWrite);
         }
     }
 }

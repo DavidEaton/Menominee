@@ -18,6 +18,7 @@
                                         TItem="InvoiceItemType"
                                         PopupHeight="460px"
                                         DataSource="@ItemTypes"
+                                        Enabled="@CanEdit"
                                         @bind-Value="@LineItem.Type"
                                         Id="itemType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
@@ -39,6 +40,7 @@
                                              TextField="DisplayText"
                                              ValueField="Id"
                                              Class="form-control"
+                                             Enabled="@CanEdit"
                                              OnChange="OnManufacturerChange"
                                              Id="category">
                             </TelerikDropDownList>
@@ -52,10 +54,13 @@
                     <label class="m-label" for="partNum">Part Number</label>
                     <div class="m-form-control-group">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="partNum" autocomplete="off" @bind-value="@LineItem.Item.PartNumber">
+                            <input type="text" class="form-control" id="partNum" autocomplete="off" readonly="@(CanEdit==false)" @bind-value="@LineItem.Item.PartNumber">
+                            @if (CanEdit)
+                            {
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" type="button" @onclick="SelectInventoryItem"><i class="fas fa-search"></i></button>
                             </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -68,6 +73,7 @@
                         <TelerikTextBox @bind-Value="@LineItem.Item.Description"
                                         Width="100%"
                                         AutoComplete="off"
+                                        Enabled="@CanEdit"
                                         Id="description">
                         </TelerikTextBox>
                     </div>
@@ -86,6 +92,7 @@
                                              TextField="DisplayText"
                                              ValueField="Id"
                                              Class="form-control"
+                                             Enabled="@CanEdit"
                                              OnChange="OnSaleCodeChange">
                             </TelerikDropDownList>
                         </div>
@@ -98,6 +105,7 @@
                     <label class="m-label" for="qty">Quantity</label>
                     <div class="m-form-control-group">
                         <TelerikNumericTextBox @bind-Value="@LineItem.Quantity"
+                                             Enabled="@CanEdit"
                                                Id="qty">
                         </TelerikNumericTextBox>
                     </div>
@@ -110,6 +118,7 @@
                     <TelerikNumericTextBox @bind-Value="LineItem.Cost"
                                            Format="$#0.00#"
                                            Decimals="3"
+                                             Enabled="@CanEdit"
                                            Arrows="false">
                     </TelerikNumericTextBox>
                 </div>
@@ -118,6 +127,7 @@
                     <TelerikNumericTextBox @bind-Value="LineItem.Core"
                                            Format="$#0.00#"
                                            Decimals="3"
+                                             Enabled="@CanEdit"
                                            Arrows="false">
                     </TelerikNumericTextBox>
                 </div>
@@ -127,12 +137,12 @@
                 <div class="form-group col-4">
                     <label class="m-label" for="transDate">Transaction Date</label>
                     <div class="k-form-field-wrap">
-                        <TelerikDatePicker Id="transDate" @bind-Value="@LineItem.TransactionDate" />
+                        <TelerikDatePicker Id="transDate" Enabled="@CanEdit" @bind-Value="@LineItem.TransactionDate" />
                     </div>
                 </div>
                 <div class="form-group col-4">
                     <label class="m-label" for="poNumber">PO Number</label>
-                    <input type="text" class="form-control" id="poNumber" autocomplete="off" @bind-value="@LineItem.PONumber">
+                    <input type="text" class="form-control" id="poNumber" autocomplete="off" readonly="@(CanEdit==false)" @bind-value="@LineItem.PONumber">
                 </div>
                 @*                <div class="form-group col-4">
                 <label class="m-label" for="invNumber">Invoice Number</label>
@@ -142,17 +152,29 @@
 
             <hr id="divider">
             <div>
-                <TelerikButton OnClick="OnSave"
+                @if (CanEdit)
+                {
+                    <TelerikButton OnClick="OnSave"
                                ButtonType="ButtonType.Button"
                                ThemeColor="primary"
                                Class="dialog-button">
-                    <i class="fas fa-check"></i> OK
-                </TelerikButton>
-                <TelerikButton OnClick="OnCancel"
+                        <i class="fas fa-check"></i> Save
+                    </TelerikButton>
+                    <TelerikButton OnClick="OnCancel"
                                ButtonType="ButtonType.Button"
                                Class="dialog-button">
-                    <i class="fas fa-times"></i> Cancel
-                </TelerikButton>
+                        <i class="fas fa-times"></i> Discard
+                    </TelerikButton>
+                }
+                else
+                {
+                    <TelerikButton OnClick="OnCancel"
+                               ButtonType="ButtonType.Button"
+                               ThemeColor="primary"
+                               Class="dialog-button">
+                        <i class="fas fa-check"></i> Done
+                    </TelerikButton>
+                }
             </div>
         </WindowContent>
     </TelerikWindow>

@@ -10,6 +10,7 @@
                                      ValueField="Id"
                                      Width="240px"
                                      DefaultText="Select Vendor"
+                                     Enabled="@CanEdit"
                                      OnChange="OnVendorChange">
                 </TelerikDropDownList>
             </div>
@@ -18,14 +19,14 @@
         <div class="form-group">
             <label class="m-label" for="invNum">Invoice Number</label>
             <div class="k-form-field-wrap">
-                <TelerikTextBox Class="m-uppercase" Id="invNum" Width="140px" @bind-Value="@Invoice.InvoiceNumber" AutoComplete="off" />
+                <TelerikTextBox Class="m-uppercase" Id="invNum" Width="140px" Enabled="@CanEdit" @bind-Value="@Invoice.InvoiceNumber" AutoComplete="off" />
             </div>
         </div>
 
         <div class="form-group">
             <label class="m-label" for="date">Created</label>
             <div class="k-form-field-wrap">
-                <TelerikDatePicker Id="date" Width="140px" @bind-Value="@Invoice.Date" />
+                <TelerikDatePicker Id="date" Width="140px" Enabled="@CanEdit" @bind-Value="@Invoice.Date" />
             </div>
         </div>
 
@@ -40,13 +41,6 @@
             <label class="m-label" for="status">Status</label>
             <div class="k-form-field-wrap">
                 <TelerikTextBox Id="status" Width="140px" @bind-Value="invoiceStatus" Enabled="false" />
-@*                <TelerikDropDownList @bind-Value="@Invoice.Status"
-                                     Data="VendorInvoiceStatusEnumData"
-                                     Width="140px"
-                                     Enabled="false"
-                                     TextField="DisplayText"
-                                     ValueField="Value">
-                </TelerikDropDownList>*@
             </div>
         </div>
 

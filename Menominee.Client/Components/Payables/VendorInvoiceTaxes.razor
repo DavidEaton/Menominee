@@ -1,33 +1,87 @@
-﻿@if (salesTaxList == null)
+﻿@if (Taxes == null)
 {
     <p><em>Loading...</em></p>
 }
 
-@if (salesTaxList != null)
+@if (Taxes != null)
 {
-    <TelerikGrid Data="salesTaxList"
+    <TelerikGrid Data="Taxes"
              OnRowClick="@OnRowSelected"
              Sortable="false"
              FilterMode="GridFilterMode.None"
              ShowColumnMenu="false"
              SelectionMode="GridSelectionMode.Single"
+             SelectedItems="@SelectedTaxes"
+             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
              @ref="@Grid">
         <GridColumns>
-            <GridColumn Width="60%"
-                    Field="@nameof(SalesTaxListItem.Description)"
-                    Title="Tax">
+            <GridColumn Width="55%"
+                    Editable="false"
+                    Title="Tax"
+                    ShowColumnChooser="false"
+                    Lockable="false">
+                <Template>
+                    @{
+                        var tax = context as VendorInvoiceTaxToWrite;
+                        <label class="mb-0">@tax.SalesTax.Description</label>
+                    }
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var tax = context as VendorInvoiceTaxToWrite;
+                        <label class="mb-0">@tax.SalesTax.Description</label>
+                    }
+                </EditorTemplate>
             </GridColumn>
-            <GridColumn Width="40%"
-                    Field="@nameof(SalesTaxListItem.Amount)"
-                    Title="Amount" 
+            <GridColumn Width="35%"
+                    Field="@nameof(VendorInvoiceTaxToWrite.Amount)"
+                    Title="Amount"
                     DisplayFormat="{0:C}"
+                    ShowColumnChooser="false"
+                    Editable="true"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false"
                     TextAlign="ColumnTextAlign.Right">
+                <Template>
+                    @{
+                        var tax = context as VendorInvoiceTaxToWrite;
+                        <TelerikNumericTextBox @bind-Value="tax.Amount"
+                                       Format="C"
+                                       Decimals="2"
+                                       OnChange="OnTaxAmountChange"
+                                       Enabled="@CanEdit"
+                                       Arrows="false">
+                        </TelerikNumericTextBox>
+                    }
+                </Template>
+                <EditorTemplate>
+                    @{
+                        var tax = context as VendorInvoiceTaxToWrite;
+                        <TelerikNumericTextBox @bind-Value="tax.Amount"
+                                       Format="C"
+                                       Decimals="2"
+                                       OnChange="OnTaxAmountChange"
+                                       Enabled="@CanEdit"
+                                       Arrows="false">
+                        </TelerikNumericTextBox>
+                    }
+                </EditorTemplate>
             </GridColumn>
+            @if (CanEdit)
+            {
+                <GridCommandColumn Width="130px"
+                           Context="VendorInvoiceTaxToWrite">
+                    <GridCommandButton Command="_CalcTax"
+                               IconClass="fas fa-calculator"
+                               Size="sm"
+                               Class="m-inline-button"
+                               OnClick="OnCalcTaxClick">
+                        Calculate
+                    </GridCommandButton>
+                </GridCommandColumn>
+            }
         </GridColumns>
     </TelerikGrid>
-
-    @*    <EditNewDeleteIconButtons
-        OnNew="@OnNew"
-        OnDelete="@OnDelete"
-        ShowDivider="false" />*@
 }

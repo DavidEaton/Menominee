@@ -4,45 +4,71 @@
             <div class="container-fluid m-container">
                 <div class="row">
                     <CascadingValue Value="InvoiceTotals">
-                        <div class="col col-12 col-md-9 col-lg-10 left-col">
-                            <div>
-                                <Card Title="Invoice Information">
+                        <CascadingValue Value="FormMode">
+                            <div class="col col-12 col-md-9 col-lg-10 left-col">
+                                <div>
+                                    <Card Title="Invoice Information">
+                                        <Content>
+                                            <VendorInvoiceHeader Invoice="Invoice" />
+                                        </Content>
+                                    </Card>
+                                </div>
+                                <div>
+                                    <Card Title="Items">
+                                        <Content>
+                                            <VendorInvoiceItems LineItems="Invoice.LineItems" OnCalculateTotals="CalculateTotals" />
+                                        </Content>
+                                    </Card>
+                                </div>
+                                <div class="tax-payment-row">
+                                    <Card Title="Taxes">
+                                        <Content>
+                                            <VendorInvoiceTaxes Taxes="Invoice.Taxes" OnCalculateTotals="CalculateTotals" />
+                                        </Content>
+                                    </Card>
+                                    <Card Title="Payments">
+                                        <Content>
+                                            <VendorInvoicePayments Payments="Invoice.Payments" OnCalculateTotals="CalculateTotals" />
+                                        </Content>
+                                    </Card>
+                                </div>
+                            </div>
+                            <div class="col col-12 col-md-3 col-lg-2 totals-col">
+                                <Card Title="Totals">
                                     <Content>
-                                        <VendorInvoiceHeader Invoice="Invoice" />
+                                        <VendorInvoiceTotals />
                                     </Content>
                                 </Card>
                             </div>
-                            <div>
-                                <Card Title="Items">
-                                    <Content>
-                                        <VendorInvoiceItems LineItems="Invoice.LineItems" OnCalculateTotals="CalculateTotals" />
-                                    </Content>
-                                </Card>
-                            </div>
-                            <div class="tax-payment-row">
-                                <Card Title="Taxes">
-                                    <Content>
-                                        <VendorInvoiceTaxes Taxes="Invoice.Taxes" OnCalculateTotals="CalculateTotals" />
-                                    </Content>
-                                </Card>
-                                <Card Title="Payments">
-                                    <Content>
-                                        <VendorInvoicePayments Payments="Invoice.Payments" OnCalculateTotals="CalculateTotals" />
-                                    </Content>
-                                </Card>
-                            </div>
-                        </div>
-                        <div class="col col-12 col-md-3 col-lg-2 totals-col">
-                            <Card Title="Totals">
-                                <Content>
-                                    <VendorInvoiceTotals />
-                                </Content>
-                            </Card>
-                        </div>
+                        </CascadingValue>
                     </CascadingValue>
                 </div>
             </div>
-            <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+
+            <div>
+                <hr class="m-save-discard-divider">
+                <div class="row m-0">
+                    @if (FormMode == FormMode.Edit)
+                    {
+                        <button class="btn btn-primary m-button" type="submit" @onclick="OnSaveAndExit"><i class="fas fa-check"></i> Save</button>
+                        <button class="btn btn-danger m-button" @onclick="OnDiscard"><i class="fas fa-rotate-left"></i> Discard</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary m-button" @onclick="OnDiscard"><i class="fas fa-check"></i> Done</button>
+                    }
+                    <div class="m-vertical-divider"></div>
+                    @if (Invoice?.Status == VendorInvoiceStatus.Open && Invoice.LineItems?.Count > 0)
+                    {
+                        <button class="btn btn-secondary m-button" @onclick="OnCompleteAsync"><i class="fas fa-check"></i> @PostButtonText()</button>
+                    }
+                    @if (Invoice?.Status == VendorInvoiceStatus.Completed)
+                    {
+                        <button class="btn btn-secondary m-button" @onclick="OnRevertAsync">@UnpostButtonText()</button>
+                    }
+                    <button class="btn btn-secondary m-button" @onclick="OnPrint"><i class="fas fa-print"></i> Print</button>
+                </div>
+            </div>
         </Content>
     </Card>
 </div>
@@ -73,6 +99,17 @@
         display: grid;
         padding-left: 0;
         grid-gap: 1rem;
+    }
+
+    .m-save-discard-divider {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        border-color: darkgrey;
+    }
+
+    .m-vertical-divider {
+        border-left: 1px solid darkgrey;
+        margin-right: .5rem;
     }
 
     @@media (max-width:767px) {

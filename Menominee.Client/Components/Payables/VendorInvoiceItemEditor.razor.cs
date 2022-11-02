@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telerik.Blazor;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -34,15 +35,7 @@ namespace Menominee.Client.Components.Payables
         public bool DialogVisible { get; set; }
 
         [Parameter]
-        public FormMode Mode
-        {
-            get => formMode;
-            set
-            {
-                formMode = value;
-                Title = FormTitle.BuildTitle(formMode, "Item");
-            }
-        }
+        public FormMode FormMode { get; set; }
 
         [Parameter]
         public EventCallback OnSave { get; set; }
@@ -52,7 +45,7 @@ namespace Menominee.Client.Components.Payables
 
         private bool ItemSelectDialogVisible { get; set; } = false;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
-        private FormMode formMode;
+        private bool CanEdit { get; set; } = false;
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers;
         private IList<InvoiceItemType> ItemTypes { get; set; } = new List<InvoiceItemType>();
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes { get; set; } = new List<SaleCodeToReadInList>();
@@ -90,6 +83,9 @@ namespace Menominee.Client.Components.Payables
             if (LineItem is not null && LineItem.Item is not null && LineItem.Item.SaleCode is not null)
                 if (LineItem.Item.SaleCode.Id != 0)
                     saleCodeId = LineItem.Item.SaleCode.Id;
+
+            Title = FormTitle.BuildTitle(FormMode, "Item");
+            CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;
         }
 
         private void OnManufacturerChange()
