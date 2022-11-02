@@ -11,7 +11,10 @@ using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,36 +26,164 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         public async Task AddInventoryItemAsync()
         {
             // Arrange
-            var context = Helpers.CreateTestContext();
-            var controller = new InventoryItemsController(
-                new InventoryItemRepository(context),
-                new ManufacturerRepository(context),
-                new ProductCodeRepository(context));
+            IEnumerable<ManufacturerToRead> manufacturersToRead;
+            ProductCodeToRead productCode;
+            InventoryItemToRead inventoryItemToRead;
+            string itemNumber = "Item Number One";
+            string description = "a description";
 
-            var manufacturersToRead =
-                context.Manufacturers
-                    .ToList()
-                    .Select(manufacturer =>
-                    ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                manufacturersToRead =
+                    context.Manufacturers
+                        .ToList()
+                        .Select(manufacturer =>
+                        ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+
+                productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
+            }
 
             var manufacturer = manufacturersToRead.FirstOrDefault();
 
             InventoryItemToWrite itemToAdd = new()
             {
                 Manufacturer = manufacturer,
-                ItemNumber = "Item Number One",
-                Description = "a description",
-                ProductCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault()),
+                ItemNumber = itemNumber,
+                Description = description,
+                ProductCode = productCode,
                 ItemType = InventoryItemType.Part,
                 Part = CreateInventoryItemPartToWrite()
             };
 
             // Act
-            //var result = await controller.AddInventoryItemAsync(itemToAdd);
-            //var inventoryItemToRead = await controller.GetInventoryItemAsync(result.Value.Id);
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                var createdResult = await controller.AddInventoryItemAsync(itemToAdd);
+                var createdResultResponse = JsonSerializer.Deserialize<CreatedResultResponse>(createdResult.ToJson());
+
+                var actionResult = await controller.GetInventoryItemAsync(createdResultResponse.Value.Id);
+                var actionResultResult = (OkObjectResult)actionResult.Result;
+                inventoryItemToRead = (InventoryItemToRead)actionResultResult.Value;
+            }
 
             // Assert
-            //inventoryItemToRead.Should().BeOfType<ActionResult<InventoryItemToRead>>();
+            inventoryItemToRead.Should().BeOfType<InventoryItemToRead>();
+            inventoryItemToRead.Manufacturer.Id.Should().Be(manufacturer.Id);
+            inventoryItemToRead.ItemNumber.Should().Be(itemNumber);
+            inventoryItemToRead.Description.Should().Be(description);
+            inventoryItemToRead.ProductCode.Id.Should().Be(productCode.Id);
+            inventoryItemToRead.ItemType.Should().Be(InventoryItemType.Part);
+            inventoryItemToRead.Part.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetInventoryItemsAsync()
+        {
+            var context = Helpers.CreateTestContext();
+            var controller = new InventoryItemsController(
+                new InventoryItemRepository(context),
+                new ManufacturerRepository(context),
+                new ProductCodeRepository(context));
+            await CreateInventoryItems();
+
+            var actionResult = await controller.GetInventoryItemsListAsync();
+            var actionResultResult = (OkObjectResult)actionResult.Result;
+            var inventoryItemsToRead = (IReadOnlyList<InventoryItemToReadInList>)actionResultResult.Value;
+
+            inventoryItemsToRead.Should().BeOfType<List<InventoryItemToReadInList>>();
+            inventoryItemsToRead.Count.Should().BeGreaterThanOrEqualTo(1);
+        }
+
+        //[Fact]
+        //public async Task UpdateInventoryItemAsync()
+        //{
+
+
+        //}
+
+        //[Fact]
+        //public async Task DeleteInventoryItemAsync()
+        //{
+
+
+        //}
+
+        private static async Task CreateInventoryItems()
+        {
+            IEnumerable<ManufacturerToRead> manufacturersToRead;
+            ProductCodeToRead productCode;
+            string itemNumber = "Item Number One";
+            string description = "a description";
+            InventoryItemToWrite itemToAdd;
+            InventoryItemToWrite anotherItemToAdd;
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                manufacturersToRead =
+                    context.Manufacturers
+                        .ToList()
+                        .Select(manufacturer =>
+                        ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+
+                productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
+
+                var manufacturer = manufacturersToRead.FirstOrDefault();
+
+                itemToAdd = new()
+                {
+                    Manufacturer = manufacturer,
+                    ItemNumber = itemNumber,
+                    Description = description,
+                    ProductCode = productCode,
+                    ItemType = InventoryItemType.Part,
+                    Part = CreateInventoryItemPartToWrite()
+                };
+
+                anotherItemToAdd = new()
+                {
+                    Manufacturer = manufacturer,
+                    ItemNumber = itemNumber,
+                    Description = description,
+                    ProductCode = productCode,
+                    ItemType = InventoryItemType.Part,
+                    Part = CreateInventoryItemPartToWrite()
+                };
+            }
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                await controller.AddInventoryItemAsync(itemToAdd);
+            }
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                await controller.AddInventoryItemAsync(anotherItemToAdd);
+            }
         }
 
         private static InventoryItemPartToWrite CreateInventoryItemPartToWrite()
@@ -72,25 +203,5 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 }
             };
         }
-
-        private static ManufacturerToRead CreateManufacturerToRead(ApplicationDbContext context)
-        {
-            ManufacturerToRead manufacturer =
-            ManufacturerHelper.ConvertEntityToReadDto(
-                context.Manufacturers.FirstOrDefault());
-            ProductCodeToRead productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
-            InventoryItemPartToWrite part = CreateInventoryItemPartToWrite();
-
-            return manufacturer;
-        }
-
-        //[Fact]
-        //public async Task Return_NotFoundResult_On_GetPersonAsyncWithInvalidId()
-        //{
-        //    var result = await controller.GetPersonAsync(0);
-
-        //    result.Result.Should().BeOfType<NotFoundResult>();
-        //    result.Should().BeOfType<ActionResult<PersonToRead>>();
-        //}
     }
 }

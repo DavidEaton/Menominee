@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
@@ -49,24 +50,22 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync()
         {
-            var invoices = await repository.GetInvoiceListAsync();
+            var result = await repository.GetInvoiceListAsync();
 
-            if (invoices == null)
-                return NotFound();
-
-            return Ok(invoices);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // GET: api/vendorinvoices/1
         [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
         public async Task<ActionResult<VendorInvoiceToRead>> GetInvoiceAsync(long id)
         {
-            var invoice = await repository.GetInvoiceAsync(id);
+            var result = await repository.GetInvoiceAsync(id);
 
-            if (invoice == null)
-                return NotFound();
-
-            return Ok(invoice);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // PUT: api/vendorinvoices/1
@@ -233,7 +232,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         // POST: api/vendorinvoices
         [HttpPost]
-        public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
+        public async Task<ActionResult> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 

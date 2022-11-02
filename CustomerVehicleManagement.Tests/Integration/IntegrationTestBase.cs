@@ -18,7 +18,14 @@ namespace CustomerVehicleManagement.Tests.Integration
             SeedDatabase();
         }
 
-        private static void SeedDatabase()
+        private static void ClearDatabase()
+        {
+            ApplicationDbContext context = Helpers.CreateTestContext();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+        }
+ 
+       private static void SeedDatabase()
         {
             SaleCode saleCode = CreateSaleCode();
             var manufacturers = InventoryItemHelper.CreateManufacturers(10);
@@ -40,13 +47,6 @@ namespace CustomerVehicleManagement.Tests.Integration
             return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
 
-        private static void ClearDatabase()
-        {
-            ApplicationDbContext context = Helpers.CreateTestContext();
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-        }
-
         private static SaleCode CreateSaleCode()
         {
             string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
@@ -65,5 +65,19 @@ namespace CustomerVehicleManagement.Tests.Integration
             return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
         }
 
+    }
+
+    public class CreatedResultResponse
+    {
+        public string Location { get; set; }
+        public Value Value { get; set; }
+        public object[] Formatters { get; set; }
+        public object[] ContentTypes { get; set; }
+        public int StatusCode { get; set; }
+    }
+
+    public class Value
+    {
+        public int Id { get; set; }
     }
 }

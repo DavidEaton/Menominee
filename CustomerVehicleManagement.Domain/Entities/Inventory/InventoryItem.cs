@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             ProductCode = productCode;
             ItemType = itemType;
 
-            bool validOptions = new[]
+            bool validOptionalMembersCount = new[]
             {
                 part is not null,
                 labor is not null,
@@ -80,9 +80,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 inspection is not null,
                 package is not null,
                 warranty is not null
-            }.Count(x => x == true) == 1;
+            }.Count(optionalMembersCount => optionalMembersCount is true) == 1;
 
-            if (!validOptions)
+            if (!validOptionalMembersCount)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             Part = part;
@@ -146,7 +146,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                     return Result.Failure<InventoryItem>(RequiredMessage);
 
             // Enforce invariant: one and only one optional member
-            bool validOptions = new[]
+            bool validOptionalMembersCount = new[]
             {
                 part is not null,
                 labor is not null,
@@ -154,9 +154,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                 inspection is not null,
                 package is not null,
                 warranty is not null
-            }.Count(x => x == true) == 1;
+            }.Count(optionalMembersCount => optionalMembersCount is true) == 1;
 
-            return !validOptions
+            return !validOptionalMembersCount
                 ? Result.Failure<InventoryItem>(RequiredMessage)
                 : Result.Success(new InventoryItem(manufacturer, itemNumber, description, productCode, itemType, part, labor, tire, package, inspection, warranty));
         }

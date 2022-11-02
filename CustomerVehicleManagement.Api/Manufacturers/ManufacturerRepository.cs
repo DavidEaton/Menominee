@@ -25,10 +25,11 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 await context.AddAsync(manufacturer);
         }
 
-        public async Task DeleteManufacturerAsync(string code)
+        public async Task DeleteManufacturerAsync(long id)
         {
-            var manufacturerFromContext = await context.Manufacturers.FindAsync(code);
-            if (manufacturerFromContext != null)
+            var manufacturerFromContext = await context.Manufacturers.FindAsync(id);
+
+            if (manufacturerFromContext is not null)
                 context.Remove(manufacturerFromContext);
         }
 
@@ -84,14 +85,9 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             return await context.Manufacturers.AnyAsync(manufacturer => manufacturer.Code == code);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
-        }
-
-        public void UpdateManufacturerAsync(Manufacturer manufacturer)
-        {
-            // No code in this implementation
+            await context.SaveChangesAsync();
         }
     }
 }

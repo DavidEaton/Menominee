@@ -31,57 +31,48 @@ namespace CustomerVehicleManagement.Api.Inventory
                 productCodeRepository ?? throw new ArgumentNullException(nameof(productCodeRepository));
         }
 
-        // api/inventoryitems/listing
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync()
         {
-            var results = await itemRepository.GetItemsInListAsync();
+            var result = await itemRepository.GetItemsInListAsync();
 
-            if (results == null)
-                return NotFound();
-
-            return Ok(results);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/inventoryitems/listing/1
         [Route("listing")]
         [HttpGet("listing/{manufacturerId:long}")]
         public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long manufacturerId)
         {
-            var results = await itemRepository.GetItemsInListAsync(manufacturerId);
+            var result = await itemRepository.GetItemsInListAsync(manufacturerId);
 
-            if (results == null)
-                return NotFound();
-
-            return Ok(results);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/inventoryitems/1/ABC123
         [HttpGet("{manufacturerId:long}/{partNumber}")]
         public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long manufacturerId, string partNumber)
         {
             var result = await itemRepository.GetItemAsync(manufacturerId, partNumber);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/inventoryitems/1
-        [HttpGet("{id:long}", Name = "GetInventoryItemAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long id)
         {
             var result = await itemRepository.GetItemAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/inventoryitems/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemFromCaller)
         {
@@ -197,14 +188,13 @@ namespace CustomerVehicleManagement.Api.Inventory
             return NoContent();
         }
 
-
         [HttpPost]
-        public async Task<ActionResult<InventoryItemToRead>> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
+        public async Task<IActionResult> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
             var manufacturer =
-                await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id);
+               await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id);
 
             var productCode =
                 await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id);
@@ -268,7 +258,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
             InventoryItem itemFromRepository = await itemRepository.GetItemEntityAsync(id);
 
-            if (itemFromRepository == null)
+            if (itemFromRepository is null)
                 return NotFound(notFoundMessage);
 
             itemRepository.DeleteInventoryItem(itemFromRepository);

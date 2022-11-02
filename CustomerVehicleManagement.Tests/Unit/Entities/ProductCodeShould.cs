@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Shared.TestUtilities;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 using System.Collections.Generic;
 using Xunit;
 
@@ -223,7 +222,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("unique");
         }
-        
+
         [Fact]
         public void SetSaleCode()
         {

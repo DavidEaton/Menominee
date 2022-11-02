@@ -32,16 +32,22 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync()
         {
-            var results = await repository.GetProductCodesInListAsync();
-            return Ok(results);
+            var result = await repository.GetProductCodesInListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [Route("listing")]
         [HttpGet("listing/{manufacturerId:long}")]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long manufacturerId)
         {
-            var results = await repository.GetProductCodesInListAsync(manufacturerId);
-            return Ok(results);
+            var result = await repository.GetProductCodesInListAsync(manufacturerId);
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpGet("{manufacturercode}/{code}")]
@@ -49,25 +55,21 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         {
             var result = await repository.GetProductCodeAsync(manufacturerCode, productCode);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/123
-        [HttpGet("{id:long}", Name = "GetProductCodeAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(long id)
         {
             var result = await repository.GetProductCodeAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/123
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateProductCodeAsync(long id, ProductCodeToWrite productCodeFromCaller)
         {
@@ -127,12 +129,14 @@ namespace CustomerVehicleManagement.Api.ProductCodes
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
+        public async Task<IActionResult> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
         {
             var failureMessage = $"Could not add new Product Code: {productCodeToAdd?.Code}.";
             var manufacturerCodes = repository.GetManufacturerCodes();
-            var manufacturer = await manufacturersRepository.GetManufacturerEntityAsync(productCodeToAdd.Manufacturer.Id);
-            var saleCode = await saleCodesRepository.GetSaleCodeEntityAsync(productCodeToAdd.SaleCode.Id);
+            var manufacturer = await manufacturersRepository.GetManufacturerEntityAsync(
+                productCodeToAdd.Manufacturer.Id);
+            var saleCode = await saleCodesRepository.GetSaleCodeEntityAsync(
+                productCodeToAdd.SaleCode.Id);
 
             if (manufacturer is null)
                 return NotFound(failureMessage);
@@ -171,7 +175,6 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                 return NotFound($"Could not find Product Code in the database to delete with Id: {id}.");
 
             await repository.DeleteProductCodeAsync(id);
-
             await repository.SaveChangesAsync();
 
             return NoContent();

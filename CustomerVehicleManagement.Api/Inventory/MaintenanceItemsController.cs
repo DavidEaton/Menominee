@@ -28,12 +28,11 @@ namespace CustomerVehicleManagement.Api.Inventory
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<MaintenanceItemToReadInList>>> GetMaintenanceItemsListAsync()
         {
-            var results = await maintenanceItemRepository.GetItemsInListAsync();
+            var result = await maintenanceItemRepository.GetItemsInListAsync();
 
-            if (results == null)
-                return NotFound();
-
-            return Ok(results);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // api/maintenanceitems/1
@@ -42,10 +41,9 @@ namespace CustomerVehicleManagement.Api.Inventory
         {
             var result = await maintenanceItemRepository.GetItemAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // api/maintenanceitems/1
@@ -53,7 +51,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<IActionResult> UpdateMaintenanceItemAsync(MaintenanceItemToWrite itemFromCaller, long id)
         {
             var notFoundMessage = $"Could not find Maintenance Item # {id} to update.";
-            
+
             if (!await maintenanceItemRepository.ItemExistsAsync(id))
                 return NotFound(notFoundMessage);
 
@@ -89,7 +87,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<ActionResult<MaintenanceItemToRead>> AddMaintenanceItemAsync(
+        public async Task<IActionResult> AddMaintenanceItemAsync(
             MaintenanceItemToWrite itemToAdd)
         {
             InventoryItem inventoryItem = await inventoryItemRepository.GetItemEntityAsync(itemToAdd.Item.Id);
