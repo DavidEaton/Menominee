@@ -180,11 +180,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
             var mockEnvironment = new Mock<IHostEnvironment>();
             mockEnvironment
                    .Setup(e => e.EnvironmentName)
-                   .Returns("Hosting:UnitTestEnvironment");
+                   .Returns(EnvironmentName);
             var context = new ApplicationDbContext(ConnectionString);
             context.Database.EnsureDeleted();
             GC.SuppressFinalize(this);
         }
-
     }
 }

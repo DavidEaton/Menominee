@@ -198,31 +198,31 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return !(quantitySold % 1 == 0);
         }
 
-        public static RepairOrderToWrite CovertReadToWriteDto(RepairOrderToRead repairOrder)
-        {
-            var repairOrderToWrite = new RepairOrderToWrite
-            {
-                RepairOrderNumber = repairOrder.RepairOrderNumber,
-                InvoiceNumber = repairOrder.InvoiceNumber,
-                CustomerName = repairOrder.CustomerName,
-                Vehicle = repairOrder.Vehicle,
-                PartsTotal = repairOrder.PartsTotal,
-                LaborTotal = repairOrder.LaborTotal,
-                DiscountTotal = repairOrder.DiscountTotal,
-                HazMatTotal = repairOrder.HazMatTotal,
-                TaxTotal = repairOrder.TaxTotal,
-                ShopSuppliesTotal = repairOrder.ShopSuppliesTotal,
-                Total = repairOrder.Total,
-                DateCreated = repairOrder.DateCreated,
-                DateInvoiced = repairOrder.DateInvoiced,
-                DateModified = repairOrder.DateModified,
-                Services = ProjectServices(repairOrder.Services),
-                Payments = ProjectPayments(repairOrder.Payments),
-                Taxes = ProjectTaxes(repairOrder.Taxes)
-            };
+        //public static RepairOrderToWrite CovertReadToWriteDto(RepairOrderToRead repairOrder)
+        //{
+        //    var repairOrderToWrite = new RepairOrderToWrite
+        //    {
+        //        RepairOrderNumber = repairOrder.RepairOrderNumber,
+        //        InvoiceNumber = repairOrder.InvoiceNumber,
+        //        CustomerName = repairOrder.CustomerName,
+        //        Vehicle = repairOrder.Vehicle,
+        //        PartsTotal = repairOrder.PartsTotal,
+        //        LaborTotal = repairOrder.LaborTotal,
+        //        DiscountTotal = repairOrder.DiscountTotal,
+        //        HazMatTotal = repairOrder.HazMatTotal,
+        //        TaxTotal = repairOrder.TaxTotal,
+        //        ShopSuppliesTotal = repairOrder.ShopSuppliesTotal,
+        //        Total = repairOrder.Total,
+        //        DateCreated = repairOrder.DateCreated,
+        //        DateInvoiced = repairOrder.DateInvoiced,
+        //        DateModified = repairOrder.DateModified,
+        //        Services = ProjectServices(repairOrder.Services),
+        //        Payments = ProjectPayments(repairOrder.Payments),
+        //        Taxes = ProjectTaxes(repairOrder.Taxes)
+        //    };
 
-            return repairOrderToWrite;
-        }
+        //    return repairOrderToWrite;
+        //}
 
         // TODO: Move "Missing" methods into separate class
         private static IEnumerable<RepairOrderPurchaseToRead> MissingRequiredPurchases(RepairOrderItemToRead item)
@@ -311,74 +311,74 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             return false;
         }
 
-        public static RepairOrder ConvertWriteDtoToEntity(RepairOrderToWrite repairOrder)
-        {
-            if (repairOrder is null)
-                return null;
+        //public static RepairOrder ConvertWriteDtoToEntity(RepairOrderToWrite repairOrder)
+        //{
+        //    if (repairOrder is null)
+        //        return null;
 
-            var result = new RepairOrder()
-            {
-                CustomerName = repairOrder.CustomerName,
-                DiscountTotal = repairOrder.DiscountTotal,
-                HazMatTotal = repairOrder.HazMatTotal,
-                InvoiceNumber = repairOrder.InvoiceNumber,
-                LaborTotal = repairOrder.LaborTotal,
-                PartsTotal = repairOrder.PartsTotal,
-                RepairOrderNumber = repairOrder.RepairOrderNumber,
-                ShopSuppliesTotal = repairOrder.ShopSuppliesTotal,
-                TaxTotal = repairOrder.TaxTotal,
-                Total = repairOrder.Total,
-                Vehicle = repairOrder.Vehicle
-            };
+        //    var result = new RepairOrder()
+        //    {
+        //        CustomerName = repairOrder.CustomerName,
+        //        DiscountTotal = repairOrder.DiscountTotal,
+        //        HazMatTotal = repairOrder.HazMatTotal,
+        //        InvoiceNumber = repairOrder.InvoiceNumber,
+        //        LaborTotal = repairOrder.LaborTotal,
+        //        PartsTotal = repairOrder.PartsTotal,
+        //        RepairOrderNumber = repairOrder.RepairOrderNumber,
+        //        ShopSuppliesTotal = repairOrder.ShopSuppliesTotal,
+        //        TaxTotal = repairOrder.TaxTotal,
+        //        Total = repairOrder.Total,
+        //        Vehicle = repairOrder.Vehicle
+        //    };
 
-            if (repairOrder.DateCreated.HasValue)
-                result.DateCreated = repairOrder.DateCreated.Value;
+        //    if (repairOrder.DateCreated.HasValue)
+        //        result.DateCreated = repairOrder.DateCreated.Value;
 
-            if (repairOrder.DateInvoiced.HasValue)
-                result.DateInvoiced = repairOrder.DateInvoiced.Value;
+        //    if (repairOrder.DateInvoiced.HasValue)
+        //        result.DateInvoiced = repairOrder.DateInvoiced.Value;
 
-            if (repairOrder.DateModified.HasValue)
-                result.DateModified = repairOrder.DateModified.Value;
+        //    if (repairOrder.DateModified.HasValue)
+        //        result.DateModified = repairOrder.DateModified.Value;
 
-            if (repairOrder?.Payments.Count > 0)
-                result.Payments = ProjectPayments(repairOrder.Payments);
+        //    if (repairOrder?.Payments.Count > 0)
+        //        result.Payments = ProjectPayments(repairOrder.Payments);
 
-            if (repairOrder?.Services.Count > 0)
-                result.Services = ProjectServices(repairOrder.Services);
+        //    if (repairOrder?.Services.Count > 0)
+        //        result.Services = ConverServiceWriteDtosToEntities(repairOrder.Services);
 
-            if (repairOrder?.Taxes.Count > 0)
-                result.Taxes = ProjectTaxes(repairOrder.Taxes);
+        //    if (repairOrder?.Taxes.Count > 0)
+        //        result.Taxes = ProjectTaxes(repairOrder.Taxes);
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private static List<RepairOrderService> ProjectServices(List<RepairOrderServiceToWrite> services)
-        {
-            return services?.Select(TransformService()).ToList()
-                ?? new List<RepairOrderService>();
-        }
+        //private static List<RepairOrderService> ConverServiceWriteDtosToEntities(List<RepairOrderServiceToWrite> services)
+        //{
+        //    return services?.Select(ConverServiceWriteDtoToEntity()).ToList()
+        //        ?? new List<RepairOrderService>();
+        //}
 
-        private static Func<RepairOrderServiceToWrite, RepairOrderService> TransformService()
-        {
-            return service =>
-                            new RepairOrderService()
-                            {
-                                DiscountTotal = service.DiscountTotal,
-                                IsCounterSale = service.IsCounterSale,
-                                IsDeclined = service.IsDeclined,
-                                LaborTotal = service.LaborTotal,
-                                PartsTotal = service.PartsTotal,
-                                RepairOrderId = service.RepairOrderId,
-                                SaleCode = service.SaleCode,
-                                ServiceName = service.ServiceName,
-                                ShopSuppliesTotal = service.ShopSuppliesTotal,
-                                TaxTotal = service.TaxTotal,
-                                Total = service.Total,
-                                Items = ProjectServiceItems(service.Items),
-                                Taxes = ProjectServiceTaxes(service.Taxes),
-                                Techs = ProjectServiceTechnicians(service.Techs)
-                            };
-        }
+        //private static Func<RepairOrderServiceToWrite, RepairOrderService> ConverServiceWriteDtoToEntity()
+        //{
+        //    return service =>
+        //                    new RepairOrderService()
+        //                    {
+        //                        DiscountTotal = service.DiscountTotal,
+        //                        IsCounterSale = service.IsCounterSale,
+        //                        IsDeclined = service.IsDeclined,
+        //                        LaborTotal = service.LaborTotal,
+        //                        PartsTotal = service.PartsTotal,
+        //                        RepairOrderId = service.RepairOrderId,
+        //                        SaleCode = service.SaleCode,
+        //                        ServiceName = service.ServiceName,
+        //                        ShopSuppliesTotal = service.ShopSuppliesTotal,
+        //                        TaxTotal = service.TaxTotal,
+        //                        Total = service.Total,
+        //                        Items = ConvertWriteDtosToEntities(service.Items),
+        //                        Taxes = ProjectServiceTaxes(service.Taxes),
+        //                        Techs = ProjectServiceTechnicians(service.Techs)
+        //                    };
+        //}
 
         private static List<RepairOrderTax> ProjectTaxes(List<RepairOrderTaxToWrite> taxes)
         {
@@ -417,39 +417,39 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             };
         }
 
-        private static Func<RepairOrderItemToWrite, RepairOrderItem> TransformServiceItem()
-        {
-            return item =>
-                            new RepairOrderItem()
-                            {
-                                Core = item.Core,
-                                Cost = item.Cost,
-                                Description = item.Description,
-                                DiscountEach = item.DiscountEach,
-                                DiscountType = item.DiscountType,
-                                IsCounterSale = item.IsCounterSale,
-                                IsDeclined = item.IsDeclined,
-                                LaborEach = item.LaborEach,
-                                LaborType = item.LaborType,
-                                //Manufacturer = item.Manufacturer,
-                                ManufacturerId = item.ManufacturerId,
-                                PartNumber = item.PartNumber,
-                                PartType = item.PartType,
-                                ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(item.ProductCode),
-                                ProductCodeId = item.ProductCodeId,
-                                QuantitySold = item.QuantitySold,
-                                RepairOrderServiceId = item.RepairOrderServiceId,
-                                SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode),
-                                SaleCodeId = item.SaleCodeId,
-                                SaleType = item.SaleType,
-                                SellingPrice = item.SellingPrice,
-                                Total = item.Total,
-                                SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                                Taxes = ProjectServiceItemTaxes(item.Taxes),
-                                Warranties = ProjectServiceItemWarranties(item.Warranties),
-                                Purchases = ProjectServiceItemPurchases(item.Purchases)
-                            };
-        }
+        //private static Func<RepairOrderItemToWrite, RepairOrderItem> ConvertWriteDtoToEntity()
+        //{
+        //    return item =>
+        //                    new RepairOrderItem()
+        //                    {
+        //                        Core = item.Core,
+        //                        Cost = item.Cost,
+        //                        Description = item.Description,
+        //                        DiscountEach = item.DiscountEach,
+        //                        DiscountType = item.DiscountType,
+        //                        IsCounterSale = item.IsCounterSale,
+        //                        IsDeclined = item.IsDeclined,
+        //                        LaborEach = item.LaborEach,
+        //                        LaborType = item.LaborType,
+        //                        //Manufacturer = item.Manufacturer,
+        //                        ManufacturerId = item.ManufacturerId,
+        //                        PartNumber = item.PartNumber,
+        //                        PartType = item.PartType,
+        //                        ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(item.ProductCode),
+        //                        ProductCodeId = item.ProductCodeId,
+        //                        QuantitySold = item.QuantitySold,
+        //                        RepairOrderServiceId = item.RepairOrderServiceId,
+        //                        SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode),
+        //                        SaleCodeId = item.SaleCodeId,
+        //                        SaleType = item.SaleType,
+        //                        SellingPrice = item.SellingPrice,
+        //                        Total = item.Total,
+        //                        SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+        //                        Taxes = ProjectServiceItemTaxes(item.Taxes),
+        //                        Warranties = ProjectServiceItemWarranties(item.Warranties),
+        //                        Purchases = ProjectServiceItemPurchases(item.Purchases)
+        //                    };
+        //}
 
         private static List<RepairOrderTech> ProjectServiceTechnicians(IList<RepairOrderTechToWrite> technicians)
         {
@@ -681,82 +681,82 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             };
         }
 
-        private static List<RepairOrderServiceToWrite> ProjectServices(List<RepairOrderServiceToRead> services)
-        {
-            return services?.Select(TransformServiceToWrite()).ToList()
-                ?? new List<RepairOrderServiceToWrite>();
-        }
+        //private static List<RepairOrderServiceToWrite> ProjectServices(List<RepairOrderServiceToRead> services)
+        //{
+        //    return services?.Select(TransformServiceToWrite()).ToList()
+        //        ?? new List<RepairOrderServiceToWrite>();
+        //}
 
-        private static Func<RepairOrderServiceToRead, RepairOrderServiceToWrite> TransformServiceToWrite()
-        {
-            return service =>
-                            new RepairOrderServiceToWrite()
-                            {
-                                Id = service.Id,
-                                RepairOrderId = service.RepairOrderId,
-                                ServiceName = service.ServiceName,
-                                SaleCode = service.SaleCode,
-                                IsCounterSale = service.IsCounterSale,
-                                IsDeclined = service.IsDeclined,
-                                PartsTotal = service.PartsTotal,
-                                LaborTotal = service.LaborTotal,
-                                DiscountTotal = service.DiscountTotal,
-                                TaxTotal = service.TaxTotal,
-                                ShopSuppliesTotal = service.ShopSuppliesTotal,
-                                Total = service.Total,
-                                Items = ProjectServiceItems(service.Items)
-                            };
-        }
+        //private static Func<RepairOrderServiceToRead, RepairOrderServiceToWrite> TransformServiceToWrite()
+        //{
+        //    return service =>
+        //                    new RepairOrderServiceToWrite()
+        //                    {
+        //                        Id = service.Id,
+        //                        RepairOrderId = service.RepairOrderId,
+        //                        ServiceName = service.ServiceName,
+        //                        SaleCode = service.SaleCode,
+        //                        IsCounterSale = service.IsCounterSale,
+        //                        IsDeclined = service.IsDeclined,
+        //                        PartsTotal = service.PartsTotal,
+        //                        LaborTotal = service.LaborTotal,
+        //                        DiscountTotal = service.DiscountTotal,
+        //                        TaxTotal = service.TaxTotal,
+        //                        ShopSuppliesTotal = service.ShopSuppliesTotal,
+        //                        Total = service.Total,
+        //                        Items = ProjectServiceItems(service.Items)
+        //                    };
+        //}
 
-        private static List<RepairOrderItemToWrite> ProjectServiceItems(IList<RepairOrderItemToRead> items)
-        {
-            if (items is null)
-                return new List<RepairOrderItemToWrite>();
+        //private static List<RepairOrderItemToWrite> ProjectServiceItems(IList<RepairOrderItemToRead> items)
+        //{
+        //    if (items is null)
+        //        return new List<RepairOrderItemToWrite>();
 
-            foreach (var item in items)
-            {
-                item.SerialNumbers.AddRange(MissingRequiredSerialNumbers(item));
-                item.Warranties.AddRange(MissingRequiredWarranties(item));
-                item.Purchases.AddRange(MissingRequiredPurchases(item));
-            }
+        //    foreach (var item in items)
+        //    {
+        //        item.SerialNumbers.AddRange(MissingRequiredSerialNumbers(item));
+        //        item.Warranties.AddRange(MissingRequiredWarranties(item));
+        //        item.Purchases.AddRange(MissingRequiredPurchases(item));
+        //    }
 
-            return items.Select(TransformServiceItemToWrite()).ToList();
-        }
+        //    return items.Select(TransformServiceItemToWrite()).ToList();
+        //}
 
-        private static Func<RepairOrderItemToRead, RepairOrderItemToWrite> TransformServiceItemToWrite()
-        {
-            return item =>
-                            new RepairOrderItemToWrite()
-                            {
-                                Id = item.Id,
-                                Core = item.Core,
-                                Cost = item.Cost,
-                                Description = item.Description,
-                                DiscountEach = item.DiscountEach,
-                                DiscountType = item.DiscountType,
-                                IsCounterSale = item.IsCounterSale,
-                                IsDeclined = item.IsDeclined,
-                                LaborEach = item.LaborEach,
-                                LaborType = item.LaborType,
-                                Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
-                                ManufacturerId = item.ManufacturerId,
-                                PartNumber = item.PartNumber,
-                                PartType = item.PartType,
-                                ProductCode = ProductCodeHelper.ConvertReadToWriteDto(item.ProductCode),
-                                ProductCodeId = item.ProductCodeId,
-                                QuantitySold = item.QuantitySold,
-                                RepairOrderServiceId = item.RepairOrderServiceId,
-                                SaleCode = SaleCodeHelper.ConvertReadToWriteDto(item.SaleCode),
-                                SaleCodeId = item.SaleCodeId,
-                                SaleType = item.SaleType,
-                                SellingPrice = item.SellingPrice,
-                                Total = item.Total,
-                                SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
-                                Warranties = ProjectServiceItemWarranties(item.Warranties),
-                                Taxes = ProjectServiceItemTaxes(item.Taxes),
-                                Purchases = ProjectServiceItemPurchases(item.Purchases)
-                            };
-        }
+        //private static Func<RepairOrderItemToRead, RepairOrderItemToWrite> TransformServiceItemToWrite()
+        //{
+        //    return item =>
+        //                    new RepairOrderItemToWrite()
+        //                    {
+        //                        Id = item.Id,
+        //                        Core = item.Core,
+        //                        Cost = item.Cost,
+        //                        Description = item.Description,
+        //                        DiscountEach = item.DiscountEach,
+        //                        DiscountType = item.DiscountType,
+        //                        IsCounterSale = item.IsCounterSale,
+        //                        IsDeclined = item.IsDeclined,
+        //                        LaborEach = item.LaborEach,
+        //                        LaborType = item.LaborType,
+        //                        Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(item.Manufacturer),
+        //                        ManufacturerId = item.ManufacturerId,
+        //                        PartNumber = item.PartNumber,
+        //                        PartType = item.PartType,
+        //                        ProductCode = ProductCodeHelper.ConvertReadToWriteDto(item.ProductCode),
+        //                        ProductCodeId = item.ProductCodeId,
+        //                        QuantitySold = item.QuantitySold,
+        //                        RepairOrderServiceId = item.RepairOrderServiceId,
+        //                        SaleCode = SaleCodeHelper.ConvertReadToWriteDto(item.SaleCode),
+        //                        SaleCodeId = item.SaleCodeId,
+        //                        SaleType = item.SaleType,
+        //                        SellingPrice = item.SellingPrice,
+        //                        Total = item.Total,
+        //                        SerialNumbers = ProjectServiceItemSerialNumbers(item.SerialNumbers),
+        //                        Warranties = ProjectServiceItemWarranties(item.Warranties),
+        //                        Taxes = ProjectServiceItemTaxes(item.Taxes),
+        //                        Purchases = ProjectServiceItemPurchases(item.Purchases)
+        //                    };
+        //}
 
         private static IList<RepairOrderTechToRead> ProjectServiceTechnicians(IList<RepairOrderTech> technicians)
         {
@@ -775,11 +775,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
                             };
         }
 
-        private static List<RepairOrderItem> ProjectServiceItems(List<RepairOrderItemToWrite> items)
-        {
-            return items?.Select(TransformServiceItem()).ToList()
-                ?? new List<RepairOrderItem>();
-        }
+        //private static List<RepairOrderItem> ConvertWriteDtosToEntities(List<RepairOrderItemToWrite> items)
+        //{
+        //    return items?.Select(ConvertWriteDtoToEntity()).ToList()
+        //        ?? new List<RepairOrderItem>();
+        //}
 
         private static List<RepairOrderItemToRead> ProjectServiceItems(IList<RepairOrderItem> items)
         {

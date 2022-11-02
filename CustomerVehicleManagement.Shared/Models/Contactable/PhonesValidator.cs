@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Validators;
 using FluentValidation;
 using System.Collections.Generic;
 

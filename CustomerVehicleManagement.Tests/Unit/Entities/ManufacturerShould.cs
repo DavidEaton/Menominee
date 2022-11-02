@@ -223,6 +223,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             return Manufacturer.Create(name, prefix, code).Value;
         }
+
         internal class TestData
         {
             public static IEnumerable<object[]> Data

@@ -1,4 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Manufacturers;
+using CustomerVehicleManagement.Api.SaleCodes;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,127 +12,169 @@ namespace CustomerVehicleManagement.Api.ProductCodes
 {
     public class ProductCodesController : ApplicationController
     {
+        private readonly string BasePath = "/api/productcodes";
         private readonly IProductCodeRepository repository;
-        //private readonly string BasePath = "/api/productcodes";
-
-        public ProductCodesController(IProductCodeRepository repository)
+        private readonly IManufacturerRepository manufacturersRepository;
+        private readonly ISaleCodeRepository saleCodesRepository;
+        public ProductCodesController(IProductCodeRepository repository, IManufacturerRepository manufacturersRepository, ISaleCodeRepository saleCodesRepository)
         {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
+
+            this.manufacturersRepository = manufacturersRepository ??
+                throw new ArgumentNullException(nameof(manufacturersRepository));
+
+            this.saleCodesRepository = saleCodesRepository ??
+                throw new ArgumentNullException(nameof(saleCodesRepository));
         }
 
-        // api/productcodes/listing
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync()
         {
-            var results = await repository.GetProductCodesInListAsync();
-            return Ok(results);
+            var result = await repository.GetProductCodesInListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/listing/1
         [Route("listing")]
-        [HttpGet("listing/{mfrid:long}")]
-        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId)
+        [HttpGet("listing/{manufacturerId:long}")]
+        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long manufacturerId)
         {
-            var results = await repository.GetProductCodesInListAsync(mfrId);
-            return Ok(results);
+            var result = await repository.GetProductCodesInListAsync(manufacturerId);
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/listing/1/1
-        //[Route("listing")]
-        //[HttpGet("listing/{mfrid:long}/{scId:long}")]
-        //public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long mfrId, long saleCodeId)
-        //{
-        //    var results = await repository.GetProductCodesInListAsync(mfrId, saleCodeId);
-        //    return Ok(results);
-        //}
-
-        // api/productcodes/xyz/123
-        [HttpGet("{mfrcode}/{code}")]
-        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string mfrCode, string productCode)
+        [HttpGet("{manufacturercode}/{code}")]
+        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string manufacturerCode, string productCode)
         {
-            var result = await repository.GetProductCodeAsync(mfrCode, productCode);
+            var result = await repository.GetProductCodeAsync(manufacturerCode, productCode);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/xyz/123
-        [HttpGet("{id:long}", Name = "GetProductCodeAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(long id)
         {
             var result = await repository.GetProductCodeAsync(id);
 
-            if (result == null)
-                return NotFound();
-
-            return result;
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
-        // api/productcodes/xyz/123
-        [HttpPut("{mfrcode}/{code}")]
-        public async Task<IActionResult> UpdateProductCodeAsync(string mfrCode, string productCode, ProductCodeToWrite pcDto)
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> UpdateProductCodeAsync(long id, ProductCodeToWrite productCodeFromCaller)
         {
-            var notFoundMessage = $"Could not find Product Code to update: {pcDto.Name}";
-
-            if (!await repository.ProductCodeExistsAsync(mfrCode, productCode))
-                return NotFound(notFoundMessage);
-
             //1) Get domain entity from repository
-            var productCodeFromRepository = await repository.GetProductCodeEntityAsync(mfrCode, productCode);
+            var productCodeFromRepository = await repository.GetProductCodeEntityAsync(id);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            //pc.Manufacturer = pcDto.Manufacturer;
-            //pc.Code = pcDto.Code;
-            //pc.Name = pcDto.Name;
-            //pc.SaleCode = pcDto.SaleCode;
-            ProductCodeHelper.CopyWriteDtoToEntity(pcDto, productCodeFromRepository);
+            if (productCodeFromRepository is null)
+                return NotFound($"Could not find Product Code to update: {productCodeFromCaller.Name}");
 
-            await repository.UpdateProductCodeAsync(productCodeFromRepository);
+            // 2) Update domain entity ProductCode with data in
+            // data contract/transfer object(DTO).
+            // Update each member of ProductCode, or return a Bad
+            // Resuest response with error message, in case of Failure:
+            if (productCodeFromRepository.Name != productCodeFromCaller.Name)
+            {
+                var resultOrError = productCodeFromRepository.SetName(productCodeFromCaller.Name);
 
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (productCodeFromRepository.Manufacturer.Id != productCodeFromCaller.Manufacturer.Id)
+            {
+                var manufacturerCodes = repository.GetManufacturerCodes();
+
+                var resultOrError = productCodeFromRepository.SetManufacturer(
+                    await manufacturersRepository.GetManufacturerEntityAsync(productCodeFromCaller.Manufacturer.Id),
+                    manufacturerCodes);
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (productCodeFromRepository.SaleCode.Id != productCodeFromCaller.SaleCode.Id)
+            {
+                var resultOrError = productCodeFromRepository.SetSaleCode(
+                    await saleCodesRepository.GetSaleCodeEntityAsync(productCodeFromCaller.SaleCode.Id));
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            if (productCodeFromRepository.Code != productCodeFromCaller.Code)
+            {
+                var manufacturerCodes = repository.GetManufacturerCodes();
+
+                var resultOrError = productCodeFromRepository.SetCode(productCodeFromCaller.Code, manufacturerCodes);
+
+                if (resultOrError.IsFailure)
+                    return BadRequest(resultOrError.Error);
+            }
+
+            // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCodeToRead>> AddProductCodeAsync(ProductCodeToWrite pcCreateDto)
+        public async Task<IActionResult> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
         {
+            var failureMessage = $"Could not add new Product Code: {productCodeToAdd?.Code}.";
+            var manufacturerCodes = repository.GetManufacturerCodes();
+            var manufacturer = await manufacturersRepository.GetManufacturerEntityAsync(
+                productCodeToAdd.Manufacturer.Id);
+            var saleCode = await saleCodesRepository.GetSaleCodeEntityAsync(
+                productCodeToAdd.SaleCode.Id);
+
+            if (manufacturer is null)
+                return NotFound(failureMessage);
+
             // 1. Convert dto to domain entity
-            //var pc = new ProductCode()
-            //{
-            //    Manufacturer = pcCreateDto.Manufacturer,
-            //    Code = pcCreateDto.Code,
-            //    Name = pcCreateDto.Name,
-            //    SaleCode = pcCreateDto.SaleCode
-            //};
-            var pc = ProductCodeHelper.ConvertWriteDtoToEntity(pcCreateDto);
+            var resultOrError = ProductCode.Create(
+                manufacturer,
+                productCodeToAdd.Code,
+                productCodeToAdd.Name,
+                manufacturerCodes,
+                saleCode);
+
+            if (resultOrError.IsFailure)
+                return BadRequest(resultOrError.Error);
 
             // 2. Add domain entity to repository
-            await repository.AddProductCodeAsync(pc);
+            repository.AddProductCode(resultOrError.Value);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4. Return new Code from database to consumer after save
-            //return Created(new Uri($"{BasePath}/{pc.Manufacturer.Code}/{pc.Code}", UriKind.Relative), new { ManufacturerCode = pc.Manufacturer.Code, Code = pc.Code });
-            return CreatedAtRoute("GetProductCodeAsync",
-                                  new { id = pc.Id },
-                                  ProductCodeHelper.ConvertEntityToReadDto(pc));
-
+            // 4. Return to caller
+            return Created(
+                new Uri($"{BasePath}/{resultOrError.Value.Id}",
+                UriKind.Relative),
+                new
+                {
+                    resultOrError.Value.Id
+                });
         }
 
-        [HttpDelete("{mfrcode}/{code}")]
-        public async Task<IActionResult> DeleteProductCodeAsync(string mfrCode, string code)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteProductCodeAsync(long id)
         {
-            var pcFromRepository = await repository.GetProductCodeAsync(mfrCode, code);
-            if (pcFromRepository == null)
-                return NotFound($"Could not find Product Code in the database to delete with Id: {code}.");
+            if (await repository.ProductCodeExistsAsync(id) == false)
+                return NotFound($"Could not find Product Code in the database to delete with Id: {id}.");
 
-            await repository.DeleteProductCodeAsync(mfrCode, code);
-
+            await repository.DeleteProductCodeAsync(id);
             await repository.SaveChangesAsync();
 
             return NoContent();

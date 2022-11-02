@@ -136,6 +136,10 @@ namespace Menominee.Client
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
+            builder.Services.AddHttpClient<IMaintenanceItemDataService, MaintenanceItemDataService>(
+                client => client.BaseAddress = baseAddress)
+                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
             builder.Services.AddHttpClient<ICreditCardDataService, CreditCardDataService>(
                 client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();

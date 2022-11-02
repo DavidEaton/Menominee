@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -16,11 +15,11 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         {
             // Arrange
             // Act
-            var itemOrError = VendorInvoiceItem.Create("a part", "a description");
+            var resultOrError = VendorInvoiceItem.Create("a part", "a description");
 
             // Assert
-            itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
         [Fact]
@@ -28,10 +27,10 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         {
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
 
-            var itemOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer: manufacturer);
+            var resultOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer: manufacturer);
 
-            itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
         [Fact]
@@ -40,40 +39,40 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
             var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
 
-            var itemOrError = VendorInvoiceItem.Create("a part", "a description", saleCode: saleCode);
+            var resultOrError = VendorInvoiceItem.Create("a part", "a description", saleCode: saleCode);
 
-            itemOrError.IsFailure.Should().BeFalse();
-            itemOrError.Value.Should().BeOfType<VendorInvoiceItem>();
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().BeOfType<VendorInvoiceItem>();
         }
 
         [Fact]
         public void Not_Create_VendorInvoiceItem_With_Null_PartNumber()
         {
-            var itemOrError = VendorInvoiceItem.Create(null, "a description");
+            var resultOrError = VendorInvoiceItem.Create(null, "a description");
 
-            itemOrError.IsFailure.Should().BeTrue();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_VendorInvoiceItem_With_Invalid_PartNumber(int length)
+        public void Not_Create_VendorInvoiceItem_With_Invalid_PartNumber_Length(int length)
         {
             var partNumber = Utilities.RandomCharacters(length);
 
-            var itemOrError = VendorInvoiceItem.Create(partNumber, "a description");
+            var resultOrError = VendorInvoiceItem.Create(partNumber, "a description");
 
-            itemOrError.IsFailure.Should().BeTrue();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_VendorInvoiceItem_With_Invalid_Description(int length)
+        public void Not_Create_VendorInvoiceItem_With_Invalid_Description_Length(int length)
         {
             var description = Utilities.RandomCharacters(length);
 
-            var itemOrError = VendorInvoiceItem.Create("a part", description);
+            var resultOrError = VendorInvoiceItem.Create("a part", description);
 
-            itemOrError.IsFailure.Should().BeTrue();
+            resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -156,7 +155,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Invalid_PartNumber(int length)
+        public void Not_Set_Invalid__Length_PartNumber(int length)
         {
             var invalidPartNumber = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
@@ -168,7 +167,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Invalid_Description(int length)
+        public void Not_Set_Invalid_Length_Description(int length)
         {
             var invalidDescription = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
@@ -196,6 +195,24 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             var resultOrError = item.SetSaleCode(null);
 
             resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Equate_Two_Instances_Having_Same_Values()
+        {
+            var itemOne = VendorInvoiceItem.Create("a part", "a description").Value;
+            var itemTwo = VendorInvoiceItem.Create("a part", "a description").Value;
+
+            itemOne.Should().Be(itemTwo);
+        }
+
+        [Fact]
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
+        {
+            var itemOne = VendorInvoiceItem.Create("a part", "a description").Value;
+            var itemTwo = VendorInvoiceItem.Create("a part", "a Differing description").Value;
+
+            itemOne.Should().NotBe(itemTwo);
         }
 
         internal class TestData

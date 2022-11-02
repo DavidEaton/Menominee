@@ -11,6 +11,10 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("InventoryItemPackage", "dbo");
 
+            builder.Property(itemPackage => itemPackage.IsDiscountable)
+                .IsRequired();
+            builder.Property(itemPackage => itemPackage.Script)
+                .HasMaxLength(10000);
         }
     }
 }

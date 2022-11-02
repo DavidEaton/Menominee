@@ -12,8 +12,12 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.ToTable("InventoryItem", "dbo");
 
             builder.Property(item => item.ItemNumber)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(255);
             builder.Property(item => item.Description)
+                .IsRequired()
+                .HasMaxLength(255);
+            builder.Property(item => item.ItemType)
                 .IsRequired();
         }
     }

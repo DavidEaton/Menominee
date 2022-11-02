@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.DriversLicenses;
-using CustomerVehicleManagement.Shared.Validators;
 using FluentValidation;
 using Menominee.Common.ValueObjects;
 

@@ -1,10 +1,10 @@
-﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+﻿using CustomerVehicleManagement.Api.ProductCodes;
+using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,11 +17,16 @@ namespace CustomerVehicleManagement.Api.RepairOrders
     public class RepairOrdersController : ControllerBase
     {
         private readonly IRepairOrderRepository repository;
+        private readonly IProductCodeRepository productCodesRepository;
         private readonly string BasePath = "/api/repairorders";
 
-        public RepairOrdersController(IRepairOrderRepository repository)
+        public RepairOrdersController(IRepairOrderRepository repository, IProductCodeRepository productCodesRepository)
         {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
+
+            this.productCodesRepository = productCodesRepository ??
+                throw new ArgumentNullException(nameof(productCodesRepository));
         }
 
         // api/repairorders/listing
@@ -51,18 +56,21 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         // api/repairorders/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrder)
+        public async Task<IActionResult> UpdateRepairOrderAsync(long id, RepairOrderToWrite repairOrderFromCaller)
         {
-            var repairOrderFromRepository = await repository.GetRepairOrderEntityAsync(id);
-            if (repairOrderFromRepository is null)
-                return NotFound($"Could not find Repair Order #{id} to update.");
+            var notFoundMessage = $"Could not find Repair Order #{id} to update.";
 
-            UpdateRepairOrder(repairOrder, repairOrderFromRepository);
-            UpdateServices(repairOrder, repairOrderFromRepository);
+            var repairOrderFromRepository = await repository.GetRepairOrderEntityAsync(id);
+
+            if (repairOrderFromRepository is null)
+                return NotFound(notFoundMessage);
+
+           // UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository);
+            // await UpdateServicesAsync(repairOrderFromCaller, repairOrderFromRepository, manufacturerCodes);
             //UpdatePayments(repairOrder, repairOrderFromRepository);
             //UpdateTaxes(repairOrder, repairOrderFromRepository);
 
-            await repository.SaveChangesAsync();
+            //await repository.SaveChangesAsync();
 
             return NoContent();
         }
@@ -98,7 +106,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             }
         }
 
-        private static void UpdateServices(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        private static async Task UpdateServicesAsync(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository, IReadOnlyList<ProductCodeToRead> productCodes)
         {
             foreach (var service in repairOrder?.Services)
             {
@@ -119,7 +127,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableService.TaxTotal = service.TaxTotal;
                 editableService.Total = service.Total;
 
-                UpdateServiceItems(service, editableService);
+                await UpdateServiceItemsAsync(service, editableService, productCodes);
                 //UpdateServiceTaxes(service);
                 //UpdateServiceTechnician(service);
 
@@ -129,44 +137,47 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             }
         }
 
-        private static void UpdateServiceItems(RepairOrderServiceToWrite service, RepairOrderService editableService)
+        private static Task UpdateServiceItemsAsync(RepairOrderServiceToWrite service, RepairOrderService editableService, IReadOnlyList<ProductCodeToRead> productCodes)
         {
-            foreach (var item in service?.Items)
-            {
-                var editableItem = editableService.Items.Find(x => x.Id == item.Id);
+            //foreach (var item in service?.Items)
+            //{
+            //    var editableItem = editableService.Items.Find(x => x.Id == item.Id);
 
-                if (editableItem is null)
-                    continue;
+            //    if (editableItem is null)
+            //        continue;
 
-                editableItem.Core = item.Core;
-                editableItem.Cost = item.Cost;
-                editableItem.Description = item.Description;
-                editableItem.DiscountEach = item.DiscountEach;
-                editableItem.DiscountType = item.DiscountType;
-                editableItem.IsCounterSale = item.IsCounterSale;
-                editableItem.IsDeclined = item.IsDeclined;
-                editableItem.LaborEach = item.LaborEach;
-                editableItem.LaborType = item.LaborType;
-                //editableItem.Manufacturer = item.Manufacturer;
-                editableItem.ManufacturerId = item.ManufacturerId;
-                editableItem.PartNumber = item.PartNumber;
-                editableItem.PartType = item.PartType;
-                editableItem.ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(item.ProductCode);
-                editableItem.ProductCodeId = item.ProductCodeId;
-                editableItem.QuantitySold = item.QuantitySold;
-                editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
-                editableItem.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode);
-                editableItem.SaleCodeId = item.SaleCodeId;
-                editableItem.SaleType = item.SaleType;
-                editableItem.SellingPrice = item.SellingPrice;
-                editableItem.Total = item.Total;
+            //    editableItem.Core = item.Core;
+            //    editableItem.Cost = item.Cost;
+            //    editableItem.Description = item.Description;
+            //    editableItem.DiscountEach = item.DiscountEach;
+            //    editableItem.DiscountType = item.DiscountType;
+            //    editableItem.IsCounterSale = item.IsCounterSale;
+            //    editableItem.IsDeclined = item.IsDeclined;
+            //    editableItem.LaborEach = item.LaborEach;
+            //    editableItem.LaborType = item.LaborType;
+            //    //editableItem.Manufacturer = item.Manufacturer;
+            //    editableItem.ManufacturerId = item.ManufacturerId;
+            //    editableItem.PartNumber = item.PartNumber;
+            //    editableItem.PartType = item.PartType;
+            //    editableItem.ProductCode = ProductCodeHelper.ConvertWriteDtoToEntity(item.ProductCode, productCodes);
+            //    editableItem.ProductCodeId = item.ProductCodeId;
+            //    editableItem.QuantitySold = item.QuantitySold;
+            //    editableItem.RepairOrderServiceId = item.RepairOrderServiceId;
+            //    editableItem.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(item.SaleCode);
+            //    editableItem.SaleCodeId = item.SaleCodeId;
+            //    editableItem.SaleType = item.SaleType;
+            //    editableItem.SellingPrice = item.SellingPrice;
+            //    editableItem.Total = item.Total;
 
-                UpdateServiceItemSerialNumbers(item, editableItem);
-                UpdateServiceItemWarranties(item, editableItem);
-                //editableItem.SerialNumbers = CreateSerialNumbers(item.SerialNumbers);
-                //editableItem.Warranties = CreateWarranties(item.Warranties)
-                //editableItem.Taxes = CreateItemTaxes(item.Taxes);
-            }
+            //    UpdateServiceItemSerialNumbers(item, editableItem);
+            //    UpdateServiceItemWarranties(item, editableItem);
+            //    //editableItem.SerialNumbers = CreateSerialNumbers(item.SerialNumbers);
+            //    //editableItem.Warranties = CreateWarranties(item.Warranties)
+            //    //editableItem.Taxes = CreateItemTaxes(item.Taxes);
+            //}
+
+            //return Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
         private static void UpdateServiceItemWarranties(RepairOrderItemToWrite item, RepairOrderItem editableItem)
@@ -209,8 +220,8 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                 editableSerialNumber.SerialNumber = serialNumber.SerialNumber;
 
                 if (editableSerialNumber.Id == 0)
-                // This unfound serial number was added in BuildSerialNumberList, disconnected
-                // from the db context, so we must add it to the tracked collection here
+                    // This unfound serial number was added in BuildSerialNumberList, disconnected
+                    // from the db context, so we must add it to the tracked collection here
                     addedSerialNumbers.Add(editableSerialNumber);
             }
 
@@ -240,14 +251,15 @@ namespace CustomerVehicleManagement.Api.RepairOrders
         [HttpPost]
         public async Task<IActionResult> AddRepairOrderAsync(RepairOrderToWrite repairOrderToAdd)
         {
-            var repairOrder = RepairOrderHelper.ConvertWriteDtoToEntity(repairOrderToAdd);
+            //var repairOrder = RepairOrderHelper.ConvertWriteDtoToEntity(repairOrderToAdd);
 
-            await repository.AddRepairOrderAsync(repairOrder);
-            await repository.SaveChangesAsync();
+            //await repository.AddRepairOrderAsync(repairOrder);
+            //await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{repairOrder.Id}",
-                               UriKind.Relative),
-                               new { id = repairOrder.Id });
+            //return Created(new Uri($"{BasePath}/{repairOrder.Id}",
+            //                   UriKind.Relative),
+            //                   new { id = repairOrder.Id });\
+            throw new NotImplementedException();
         }
 
         [HttpDelete("{id:long}")]

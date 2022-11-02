@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         public void AddInvoice(VendorInvoice invoice)
         {
-            if (invoice != null)
+            if (invoice is not null)
                 context.Attach(invoice);
         }
 

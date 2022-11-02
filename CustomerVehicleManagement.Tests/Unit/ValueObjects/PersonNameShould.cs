@@ -120,7 +120,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Equate_Two_PersonName_Instances_Having_Same_Values()
+        public void Equate_Two_Instances_Having_Same_Values()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -133,7 +133,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Not_Equate_Two_PersonName_Instances_Having_Differing_Values()
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
             var firstName = "Jane";
             var lastName = "Doe";

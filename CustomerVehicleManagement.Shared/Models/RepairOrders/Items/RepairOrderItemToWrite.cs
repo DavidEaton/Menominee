@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
         public string Description { get; set; } = string.Empty;
         public SaleCodeToWrite SaleCode { get; set; }
         public long SaleCodeId { get; set; } = 0;
-        public ProductCodeToWrite ProductCode { get; set; }
+        public ProductCodeToRead ProductCode { get; set; } // Readonly
         public long ProductCodeId { get; set; } = 0;
         public SaleType SaleType { get; set; } = SaleType.Regular;
         public PartType PartType { get; set; } = PartType.Part;

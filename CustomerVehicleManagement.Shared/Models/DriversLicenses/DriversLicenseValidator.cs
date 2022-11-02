@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Validators;
-using FluentValidation;
+﻿using FluentValidation;
 using Menominee.Common.ValueObjects;
 
 namespace CustomerVehicleManagement.Shared.Models.DriversLicenses

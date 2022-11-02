@@ -25,10 +25,11 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 await context.AddAsync(manufacturer);
         }
 
-        public async Task DeleteManufacturerAsync(string code)
+        public async Task DeleteManufacturerAsync(long id)
         {
-            var manufacturerFromContext = await context.Manufacturers.FindAsync(code);
-            if (manufacturerFromContext != null)
+            var manufacturerFromContext = await context.Manufacturers.FindAsync(id);
+
+            if (manufacturerFromContext is not null)
                 context.Remove(manufacturerFromContext);
         }
 
@@ -42,11 +43,10 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
         {
-            var mfrFromContext = await context.Manufacturers
+            return ManufacturerHelper.ConvertEntityToReadDto(
+                await context.Manufacturers
                 .AsNoTracking()
-                .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id);
-
-            return ManufacturerHelper.ConvertEntityToReadDto(mfrFromContext);
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id));
         }
 
         public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids)
@@ -58,10 +58,15 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(string code)
         {
-            var manufacturerFromContext = await context.Manufacturers
+            return await context.Manufacturers
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code);
+        }
 
-            return manufacturerFromContext;
+        public async Task<Manufacturer> GetManufacturerEntityAsync(long id)
+        {
+            return await context.Manufacturers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id);
         }
 
         public async Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync()
@@ -80,14 +85,9 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             return await context.Manufacturers.AnyAsync(manufacturer => manufacturer.Code == code);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await context.SaveChangesAsync() > 0;
-        }
-
-        public void UpdateManufacturerAsync(Manufacturer manufacturer)
-        {
-            // No code in this implementation
+            await context.SaveChangesAsync();
         }
     }
 }

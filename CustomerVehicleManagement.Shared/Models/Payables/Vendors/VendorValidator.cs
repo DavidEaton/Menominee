@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Validators;
 using FluentValidation;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors

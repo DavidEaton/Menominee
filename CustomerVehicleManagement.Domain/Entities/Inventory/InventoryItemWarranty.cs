@@ -1,18 +1,41 @@
-﻿using Menominee.Common;
-using Menominee.Common.Enums;
+﻿using CSharpFunctionalExtensions;
+using System;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
 {
     public class InventoryItemWarranty : Entity
     {
-        public long InventoryItemId { get; set; }
-        public InventoryItemWarrantyPeriodType PeriodType { get; set; }
-        public int Duration { get; set; }
+        public static readonly string RequiredMessage = $"Please include all required items.";
+        public InventoryItemWarrantyPeriod WarrantyPeriod { get; private set; }
 
+        private InventoryItemWarranty(InventoryItemWarrantyPeriod warrantyPeriod)
+        {
+            if (warrantyPeriod is null)
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            WarrantyPeriod = warrantyPeriod;
+        }
+
+        public static Result<InventoryItemWarranty> Create(InventoryItemWarrantyPeriod warrantyPeriod)
+        {
+            if (warrantyPeriod is null)
+                return Result.Failure<InventoryItemWarranty>(RequiredMessage);
+
+            return Result.Success(new InventoryItemWarranty(warrantyPeriod));
+        }
+
+        public Result<InventoryItemWarrantyPeriod> SetWarrantyPeriod(InventoryItemWarrantyPeriod warrantyPeriod)
+        {
+            if (warrantyPeriod is null)
+                return Result.Failure<InventoryItemWarrantyPeriod>(RequiredMessage);
+
+            return Result.Success(WarrantyPeriod = warrantyPeriod);
+        }
         #region ORM
 
         // EF requires a parameterless constructor
-        public InventoryItemWarranty() { }
+        protected InventoryItemWarranty() { }
 
         #endregion  
     }

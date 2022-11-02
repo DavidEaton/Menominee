@@ -22,10 +22,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         // TODO - Should royalty be split out???
         private SaleCode(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(code))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             name = (name ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
 
@@ -47,10 +43,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         }
         public static Result<SaleCode> Create(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(code))
-                return Result.Failure<SaleCode>(RequiredMessage);
-
             name = (name ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
 

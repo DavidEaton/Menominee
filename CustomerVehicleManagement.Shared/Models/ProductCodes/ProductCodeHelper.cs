@@ -36,23 +36,6 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
             };
         }
 
-        public static ProductCode ConvertWriteDtoToEntity(ProductCodeToWrite productCode)
-        {
-            if (productCode == null)
-                return new ProductCode();
-
-            return new()
-            {
-                //Id = productCode.Id,
-                Code = productCode.Code,
-                //Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCode.Manufacturer),
-                ManufacturerId = productCode.Manufacturer.Id,
-                Name = productCode.Name,
-                //SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCode.SaleCode)
-                SaleCodeId = productCode.SaleCode.Id
-            };
-        }
-
         public static ProductCodeToWrite ConvertReadToWriteDto(ProductCodeToRead productCode)
         {
             if (productCode == null)
@@ -66,16 +49,6 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 Name = productCode.Name,
                 SaleCode = SaleCodeHelper.ConvertReadToWriteDto(productCode.SaleCode)
             };
-        }
-
-        public static void CopyWriteDtoToEntity(ProductCodeToWrite productCodeToUpdate, ProductCode productCode)
-        {
-            productCode.Code = productCodeToUpdate.Code;
-            //productCode.Manufacturer = ManufacturerHelper.ConvertWriteDtoToEntity(productCodeToUpdate.Manufacturer);
-            productCode.ManufacturerId = productCodeToUpdate.Manufacturer.Id;
-            productCode.Name = productCodeToUpdate.Name;
-            //productCode.SaleCode = SaleCodeHelper.ConvertWriteDtoToEntity(productCodeToUpdate.SaleCode);
-            productCode.SaleCodeId = productCodeToUpdate.SaleCode.Id;
         }
     }
 }

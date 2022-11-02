@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 if (await ItemExistsAsync(item.Id))
                     throw new Exception("Inventory Item already exists");
 
-                await context.AddAsync(item);
+                context.InventoryItems.Attach(item);
             }
         }
 
@@ -63,11 +63,11 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .Include(item => item.Labor)
                                                .Include(item => item.Tire)
                                                .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item.Manufacturer)
+                                                   .ThenInclude(package => package.Items)
+                                                       .ThenInclude(packageItem => packageItem.Item.Manufacturer)
                                                .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item.ProductCode)
+                                                   .ThenInclude(package => package.Items)
+                                                       .ThenInclude(packageItem => packageItem.Item.ProductCode)
                                                //.Include(item => item.Package)
                                                //    .ThenInclude(pkgItem => pkgItem.Items)
                                                //        .ThenInclude(pItem => pItem.Item)
@@ -173,6 +173,16 @@ namespace CustomerVehicleManagement.Api.Inventory
                                 .Include(item => item.Warranty)
                                 .AsSplitQuery()
                                 .FirstOrDefaultAsync(item => item.Id == id);
+        }
+
+        public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntitiesAsync(List<long> ids)
+        {
+            var list = new List<InventoryItem>();
+
+            foreach (var id in ids)
+                list.Add(await GetItemEntityAsync(id));
+
+            return list;
         }
 
         public async Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync()
@@ -281,31 +291,45 @@ namespace CustomerVehicleManagement.Api.Inventory
             return await context.InventoryItems.AnyAsync(item => item.Id == id);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            await context.SaveChangesAsync();
         }
 
-        public async Task<InventoryItem> UpdateItemAsync(InventoryItem item)
+        public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id)
         {
-            if (item is not null)
-            {
-                // Tracking IS needed for commands for disconnected data collections
-                context.Entry(item).State = EntityState.Modified;
+            return await context.InventoryItemWarranties
+                                .FirstOrDefaultAsync(warranty => warranty.Id == id);
+        }
 
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ItemExistsAsync(item.Id))
-                        return null;// something that tells the controller to return NotFound();
-                    throw;
-                }
-            }
+        public async Task<InventoryItemPart> GetInventoryItemPartEntityAsync(long id)
+        {
+            return await context.InventoryItemParts
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
 
-            return null;
+        public async Task<InventoryItemInspection> GetInventoryItemInspectionEntityAsync(long id)
+        {
+            return await context.InventoryItemInspections
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemLabor> GetInventoryItemLaborEntityAsync(long id)
+        {
+            return await context.InventoryItemLabor
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id)
+        {
+            return await context.InventoryItemTires
+                                .FirstOrDefaultAsync(part => part.Id == id);
+        }
+
+        public async Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id)
+        {
+            return await context.InventoryItemPackages
+                                .FirstOrDefaultAsync(part => part.Id == id);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
@@ -49,39 +50,32 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync()
         {
-            var invoices = await repository.GetInvoiceListAsync();
+            var result = await repository.GetInvoiceListAsync();
 
-            if (invoices == null)
-                return NotFound();
-
-            return Ok(invoices);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // GET: api/vendorinvoices/1
         [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
         public async Task<ActionResult<VendorInvoiceToRead>> GetInvoiceAsync(long id)
         {
-            var invoice = await repository.GetInvoiceAsync(id);
+            var result = await repository.GetInvoiceAsync(id);
 
-            if (invoice == null)
-                return NotFound();
-
-            return Ok(invoice);
+            return result is null
+                ? NotFound()
+                : Ok(result);
         }
 
         // PUT: api/vendorinvoices/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoiceFromCaller)
         {
-            var notFoundMessage = $"Could not find Vendor Invoice to update with Id = {id}.";
-
-            if (!await repository.InvoiceExistsAsync(id))
-                return NotFound(notFoundMessage);
-
             var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
 
             if (invoiceFromRepository is null)
-                return NotFound(notFoundMessage);
+                return NotFound($"Could not find Vendor Invoice to update with Id = {id}.");
 
             // Getting the following limited entity lists keeps all objects tracked
             // by the same db context instance, preventing spurious updates to unmodified
@@ -244,9 +238,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
         // POST: api/vendorinvoices
         [HttpPost]
-        public async Task<ActionResult<VendorInvoiceToRead>> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
+        public async Task<ActionResult> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
+
+            if (vendor is null)
+                return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
 
             var invoiceEntity = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
@@ -257,11 +254,16 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 await paymentMethodRepository.GetPaymentMethodsAsync());
 
             repository.AddInvoice(invoiceEntity);
+
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{invoiceEntity.Id}",
+            return Created(
+                new Uri($"{BasePath}/{invoiceEntity.Id}",
                 UriKind.Relative),
-                new { invoiceEntity.Id });
+                new
+                {
+                    invoiceEntity.Id
+                });
         }
 
         [HttpDelete("{id:long}")]

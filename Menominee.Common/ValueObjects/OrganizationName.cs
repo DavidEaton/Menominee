@@ -17,7 +17,7 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<OrganizationName> Create(string name)
         {
-            name = (name ?? "").Trim();
+            name = (name ?? string.Empty).Trim();
 
             if (name.Length < MinimumLength || name.Length > MaximumLength)
                 return Result.Failure<OrganizationName>($"{InvalidMessage} You entered {name.Length} character(s).");

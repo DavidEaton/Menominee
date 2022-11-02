@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Equate_Two_DateTimeRange_Instances_Having_Same_Values()
+        public void Equate_Two_Instances_Having_Same_Values()
         {
             var start = DateTime.Today;
             var end = DateTime.Today.AddDays(1);
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         }
 
         [Fact]
-        public void Not_Equate_Two_DateTimeRange_Instances_Having_Differing_Values()
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
             var start = DateTime.Today;
             var end = DateTime.Today.AddDays(1);

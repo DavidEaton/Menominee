@@ -17,11 +17,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private Manufacturer(string name, string prefix, string code)
         {
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(prefix) ||
-                string.IsNullOrWhiteSpace(code))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             name = (name ?? string.Empty).Trim();
             prefix = (prefix ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
@@ -38,11 +33,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<Manufacturer> Create(string name, string prefix, string code)
         {
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(prefix) ||
-                string.IsNullOrWhiteSpace(code))
-                return Result.Failure<Manufacturer>(RequiredMessage);
-
             name = (name ?? string.Empty).Trim();
             prefix = (prefix ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim();
