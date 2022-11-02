@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.ItemNumber != itemFromCaller.ItemNumber)
             {
@@ -111,7 +111,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Description != itemFromCaller.Description)
             {
@@ -127,7 +127,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Part.Id != itemFromCaller.Part.Id)
             {
@@ -136,7 +136,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Labor.Id != itemFromCaller.Labor.Id)
             {
@@ -145,7 +145,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Tire.Id != itemFromCaller.Tire.Id)
             {
@@ -154,7 +154,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Package.Id != itemFromCaller.Package.Id)
             {
@@ -163,7 +163,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Inspection.Id != itemFromCaller.Inspection.Id)
             {
@@ -172,7 +172,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             if (itemFromRepository.Warranty.Id != itemFromCaller.Warranty.Id)
             {
@@ -181,7 +181,7 @@ namespace CustomerVehicleManagement.Api.Inventory
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);
-            }
+            };
 
             await itemRepository.SaveChangesAsync();
 

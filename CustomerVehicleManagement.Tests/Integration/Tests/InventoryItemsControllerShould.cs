@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Api.Inventory;
+﻿using CustomerVehicleManagement.Api.Inventory;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
@@ -107,16 +106,180 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         //[Fact]
         //public async Task UpdateInventoryItemAsync()
         //{
+        //    IEnumerable<ManufacturerToRead> manufacturersToRead;
+        //    ProductCodeToRead productCode;
+        //    InventoryItemToRead inventoryItemToRead;
+        //    InventoryItemPartToWrite part = CreateInventoryItemPartToWrite();
+        //    InventoryItemPartToWrite partForUpdate;
+        //    string itemNumber = "Item Number One";
+        //    string description = "a description";
+        //    string itemNumberForUpdate = "Item Number TWO";
+        //    string descriptionForUpdate = "a SECOND description";
 
+        //    using (var context = Helpers.CreateTestContext())
+        //    {
+        //        var controller = new InventoryItemsController(
+        //            new InventoryItemRepository(context),
+        //            new ManufacturerRepository(context),
+        //            new ProductCodeRepository(context));
+
+        //        manufacturersToRead =
+        //            context.Manufacturers
+        //                .ToList()
+        //                .Select(manufacturer =>
+        //                ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+
+        //        productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
+        //    }
+
+        //    var manufacturer = manufacturersToRead.FirstOrDefault();
+
+        //    InventoryItemToWrite itemToAdd = new()
+        //    {
+        //        Manufacturer = manufacturer,
+        //        ItemNumber = itemNumber,
+        //        Description = description,
+        //        ProductCode = productCode,
+        //        ItemType = InventoryItemType.Part,
+        //        Part = part
+        //    };
+
+        //    using (var context = Helpers.CreateTestContext())
+        //    {
+        //        var controller = new InventoryItemsController(
+        //            new InventoryItemRepository(context),
+        //            new ManufacturerRepository(context),
+        //            new ProductCodeRepository(context));
+
+
+        //        var createdResult = await controller.AddInventoryItemAsync(itemToAdd);
+        //        var createdResultResponse = JsonSerializer.Deserialize<CreatedResultResponse>(createdResult.ToJson());
+
+        //        var actionResult = await controller.GetInventoryItemAsync(createdResultResponse.Value.Id);
+        //        var actionResultResult = (OkObjectResult)actionResult.Result;
+        //        inventoryItemToRead = (InventoryItemToRead)actionResultResult.Value;
+        //        partForUpdate = new()
+        //        {
+        //            Core = inventoryItemToRead.Part.Core,
+        //            Cost = inventoryItemToRead.Part.Cost,
+        //            Fractional = inventoryItemToRead.Part.Fractional,
+        //            Id = inventoryItemToRead.Part.Id,
+        //            LineCode = inventoryItemToRead.Part.LineCode,
+        //            SubLineCode = inventoryItemToRead.Part.SubLineCode,
+        //            List = inventoryItemToRead.Part.List,
+        //            Retail = inventoryItemToRead.Part.Retail,
+        //            TechAmount = new TechAmountToWrite()
+        //            {
+        //                PayType = inventoryItemToRead.Part.TechAmount.PayType,
+        //                SkillLevel = inventoryItemToRead.Part.TechAmount.SkillLevel,
+        //                Amount = inventoryItemToRead.Part.TechAmount.Amount
+        //            }
+        //        };
+        //    }
+
+        //    inventoryItemToRead.Should().BeOfType<InventoryItemToRead>();
+        //    inventoryItemToRead.ProductCode.Id.Should().Be(productCode.Id);
+
+        //    InventoryItemToWrite itemToUpdate = new()
+        //    {
+        //        Manufacturer = manufacturer,
+        //        ItemNumber = itemNumberForUpdate,
+        //        Description = descriptionForUpdate,
+        //        ProductCode = productCode,
+        //        ItemType = InventoryItemType.Part,
+        //        Part = partForUpdate
+        //    };
+
+        //    using (var context = Helpers.CreateTestContext())
+        //    {
+        //        var controller = new InventoryItemsController(
+        //            new InventoryItemRepository(context),
+        //            new ManufacturerRepository(context),
+        //            new ProductCodeRepository(context));
+
+        //        var updatedResult = await controller.UpdateInventoryItemAsync(inventoryItemToRead.Id, itemToUpdate);
+        //        var updatedResultResponse = JsonSerializer.Deserialize<CreatedResultResponse>(updatedResult.ToJson());
+
+        //        var actionResult = await controller.GetInventoryItemAsync(updatedResultResponse.Value.Id);
+        //        var actionResultResult = (OkObjectResult)actionResult.Result;
+        //        inventoryItemToRead = (InventoryItemToRead)actionResultResult.Value;
+        //    }
 
         //}
 
-        //[Fact]
-        //public async Task DeleteInventoryItemAsync()
-        //{
+        [Fact]
+        public async Task DeleteInventoryItemAsync()
+        {
+            IEnumerable<ManufacturerToRead> manufacturersToRead;
+            ProductCodeToRead productCode;
+            InventoryItemToRead inventoryItemToRead;
+            string itemNumber = "Item Number One";
+            string description = "a description";
+            long id = 0L;
+            NotFoundResult notFoundResultResult;
 
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
 
-        //}
+                manufacturersToRead =
+                    context.Manufacturers
+                        .ToList()
+                        .Select(manufacturer =>
+                        ManufacturerHelper.ConvertEntityToReadDto(manufacturer));
+
+                productCode = ProductCodeHelper.ConvertEntityToReadDto(context.ProductCodes.FirstOrDefault());
+            }
+
+            var manufacturer = manufacturersToRead.FirstOrDefault();
+
+            InventoryItemToWrite itemToAdd = new()
+            {
+                Manufacturer = manufacturer,
+                ItemNumber = itemNumber,
+                Description = description,
+                ProductCode = productCode,
+                ItemType = InventoryItemType.Part,
+                Part = CreateInventoryItemPartToWrite()
+            };
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                var createdResult = await controller.AddInventoryItemAsync(itemToAdd);
+                var createdResultResponse = JsonSerializer.Deserialize<CreatedResultResponse>(createdResult.ToJson());
+                id = createdResultResponse.Value.Id;
+                var actionResult = await controller.GetInventoryItemAsync(createdResultResponse.Value.Id);
+                var actionResultResult = (OkObjectResult)actionResult.Result;
+                inventoryItemToRead = (InventoryItemToRead)actionResultResult.Value;
+            }
+
+            inventoryItemToRead.Should().BeOfType<InventoryItemToRead>();
+            inventoryItemToRead.Manufacturer.Id.Should().Be(manufacturer.Id);
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = new InventoryItemsController(
+                    new InventoryItemRepository(context),
+                    new ManufacturerRepository(context),
+                    new ProductCodeRepository(context));
+
+                var createdResult = await controller.DeleteInventoryItemAsync(id);
+                var createdResultResponse = JsonSerializer.Deserialize<CreatedResultResponse>(createdResult.ToJson());
+
+                var actionResult = await controller.GetInventoryItemAsync(id);
+                notFoundResultResult = (NotFoundResult)actionResult.Result;
+            }
+
+            notFoundResultResult.Should().BeOfType<NotFoundResult>();
+        }
 
         private static async Task CreateInventoryItems()
         {
