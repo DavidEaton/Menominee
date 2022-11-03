@@ -170,8 +170,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<DateTime?> SetDatePosted(DateTime? datePosted)
         {
-            //if (datePosted is null)
-            //    return Result.Failure<DateTime?>(DateInvalidMessage);
+            if (datePosted is null)
+                return Result.Failure<DateTime?>(DateInvalidMessage);
 
             if (datePosted.HasValue && datePosted.Value > DateTime.Today)
                 return Result.Failure<DateTime?>(DateInvalidMessage);
