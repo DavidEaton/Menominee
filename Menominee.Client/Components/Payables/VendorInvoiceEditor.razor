@@ -48,7 +48,7 @@
             <div>
                 <hr class="m-save-discard-divider">
                 <div class="row m-0">
-                    @if (FormMode == FormMode.Edit)
+                    @if (FormMode == FormMode.Edit || FormMode== FormMode.Add)
                     {
                         <button class="btn btn-primary m-button" type="submit" @onclick="OnSaveAndExit"><i class="fas fa-check"></i> Save</button>
                         <button class="btn btn-danger m-button" @onclick="OnDiscard"><i class="fas fa-rotate-left"></i> Discard</button>
