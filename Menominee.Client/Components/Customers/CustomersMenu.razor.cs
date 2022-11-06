@@ -1,7 +1,5 @@
-﻿using Menominee.Client.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
-using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Customers
@@ -9,17 +7,19 @@ namespace Menominee.Client.Components.Customers
     public partial class CustomersMenu
     {
         [Inject]
-        public NavigationManager navigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
-        private static string ModuleUrl = "/customers";
+        private static readonly string ModuleUrl = "/customers";
         public int menuWidth { get; set; } = 270;
 
         public void OnItemSelected(MenuItem selectedItem)
         {
-            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            //if (int.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
             //{
-            //    navigationManager.NavigateTo(selectedItem.Url);
+            //    NavigationManager.NavigateTo(selectedItem.Url);
             //}
+
+            
         }
 
         private List<MenuItem> menuItems = new List<MenuItem>

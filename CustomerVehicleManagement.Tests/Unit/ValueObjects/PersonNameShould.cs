@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.TestUtilities;
+﻿using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.ValueObjects;

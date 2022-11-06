@@ -56,120 +56,9 @@
                                     <TabHeader Text="Inventory Items"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    @if (Item.Package.Items != null)
+                                    @if (Item.Package.Items is not null)
                                     {
-                                        <div class="m-tab-content-border">
-                                            <div class="m-tab-content">
-                                                <TelerikGrid Data="Item.Package.Items"
-                                                         OnRowClick="@OnItemRowSelected"
-                                                         Sortable="true"
-                                                         Pageable="true"
-                                                         FilterMode="GridFilterMode.None"
-                                                         ShowColumnMenu="false"
-                                                         PageSize="5"
-                                                         SelectionMode="GridSelectionMode.Single"
-                                                         SelectedItemsChanged="@((IEnumerable<InventoryPackageItemToWrite> itemList) => OnItemSelect(itemList))"
-                                                         SelectedItems="@SelectedItems"
-                                                         @ref="@ItemsGrid">
-                                                    <GridColumns>
-                                                        <GridColumn Width="25%"
-                                                                Field="@nameof(InventoryPackageItemToWrite.ItemNumber)"
-                                                                Editable="false"
-                                                                Title="Item Number"
-                                                                ShowColumnChooser="false"
-                                                                Lockable="false">
-                                                        </GridColumn>
-                                                        <GridColumn Width="35%"
-                                                                Field="@nameof(InventoryPackageItemToWrite.Description)"
-                                                                Editable="false"
-                                                                Title="Description"
-                                                                ShowColumnChooser="false"
-                                                                Lockable="false">
-                                                        </GridColumn>
-                                                        <GridColumn Width="15%"
-                                                                Field="@nameof(InventoryPackageItemToWrite.Quantity)"
-                                                                Title="Quantity"
-                                                                ShowColumnChooser="false"
-                                                                Lockable="false"
-                                                                ShowColumnMenu="false"
-                                                                Sortable="false"
-                                                                Filterable="false"
-                                                                TextAlign="ColumnTextAlign.Right">
-                                                            <Template>
-                                                                @{
-                                                                    var item = context as InventoryPackageItemToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
-                                                                                   Arrows="false">
-                                                                </TelerikNumericTextBox>
-                                                            }
-                                                        </Template>
-                                                        <EditorTemplate>
-                                                            @{
-                                                                    var item = context as InventoryPackageItemToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
-                                                                                   Arrows="false">
-                                                                </TelerikNumericTextBox>
-                                                            }
-                                                        </EditorTemplate>
-                                                    </GridColumn>
-                                                    <GridColumn Width="25%" Title="Additional Charge">
-                                                        <Columns>
-                                                            <GridColumn Field="@nameof(InventoryPackageItemToWrite.PartAmountIsAdditional)"
-                                                                        Title="Part">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                            <GridColumn Field="@nameof(InventoryPackageItemToWrite.LaborAmountIsAdditional)"
-                                                                        Title="Labor">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                            <GridColumn Field="@nameof(InventoryPackageItemToWrite.ExciseFeeIsAdditional)"
-                                                                        Title="Excise Fees">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackageItemToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                        </Columns>
-                                                    </GridColumn>
-                                                </GridColumns>
-                                            </TelerikGrid>
-
-                                            <div class="m-icon-button-group">
-                                                <button class="btn m-icon-button m-add-btn" @onclick="OnAddItem"><i class="fas fa-plus"></i></button>
-                                                <button class="btn m-icon-button m-delete-btn" @onclick="OnDeleteItemAsync" disabled="@(SelectedItem == null ? true : false)"><i class="fas fa-trash"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <InventoryItemPackageItemsGrid Items="Item.Package.Items" />
                                     }
                                 </ContentTemplate>
                             </TabItem>
@@ -178,155 +67,9 @@
                                     <TabHeader Text="Placeholder Items"></TabHeader>
                                 </ChildContent>
                                 <ContentTemplate>
-                                    @if (Item.Package.Placeholders != null)
+                                    @if (Item.Package.Placeholders is not null)
                                     {
-                                        <div class="m-tab-content-border">
-                                            <div class="m-tab-content">
-                                                <TelerikGrid Data="Item.Package.Placeholders"
-                                                         OnRowClick="@OnPlaceholderRowSelected"
-                                                         Sortable="true"
-                                                         Pageable="true"
-                                                         FilterMode="GridFilterMode.None"
-                                                         ShowColumnMenu="false"
-                                                         PageSize="5"
-                                                         SelectionMode="GridSelectionMode.Single"
-                                                         SelectedItemsChanged="@((IEnumerable<InventoryPackagePlaceholderToWrite> placeholderList) => OnPlaceholderSelect(placeholderList))"
-                                                         SelectedItems="@SelectedPlaceholders"
-                                                         @ref="@PlaceholdersGrid">
-                                                    <GridColumns>
-                                                        <GridColumn Field="@nameof(InventoryPackagePlaceholderToWrite.ItemType)"
-                                                                Title="Part/Labor"
-                                                                Width="10%">
-                                                            <Template>
-                                                                @{
-                                                                    var placeholder = context as InventoryPackagePlaceholderToWrite;
-                                                                <SfDropDownList TValue="PackagePlaceholderItemType"
-                                                                            TItem="PlaceholderTypeListItem"
-                                                                            PopupHeight="230px"
-                                                                            DataSource="@placeholderTypeList"
-                                                                                @bind-Value="@placeholder.ItemType">
-                                                                    <DropDownListFieldSettings Text="Text" Value="Value" />
-                                                                </SfDropDownList>
-                                                            }
-                                                        </Template>
-                                                        <EditorTemplate>
-                                                            @{
-                                                                    var placeholder = context as InventoryPackagePlaceholderToWrite;
-                                                                <SfDropDownList TValue="PackagePlaceholderItemType"
-                                                                            TItem="PlaceholderTypeListItem"
-                                                                            PopupHeight="230px"
-                                                                            DataSource="@placeholderTypeList"
-                                                                                @bind-Value="@placeholder.ItemType">
-                                                                    <DropDownListFieldSettings Text="Text" Value="Value" />
-                                                                </SfDropDownList>
-                                                            }
-                                                        </EditorTemplate>
-                                                    </GridColumn>
-                                                    <GridColumn Width="50%"
-                                                                Field="@nameof(InventoryPackagePlaceholderToWrite.Description)"
-                                                                Editable="false"
-                                                                Title="Description"
-                                                                ShowColumnChooser="false"
-                                                                Lockable="false">
-                                                        <Template>
-                                                            @{
-                                                                    var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikTextBox @bind-Value="item.Description">
-                                                                </TelerikTextBox>
-                                                            }
-                                                        </Template>
-                                                        <EditorTemplate>
-                                                            @{
-                                                                    var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikTextBox @bind-Value="item.Description">
-                                                                </TelerikTextBox>
-                                                            }
-                                                        </EditorTemplate>
-                                                    </GridColumn>
-                                                    <GridColumn Width="10%"
-                                                                Field="@nameof(InventoryPackagePlaceholderToWrite.Quantity)"
-                                                                Title="Quantity"
-                                                                ShowColumnChooser="false"
-                                                                Lockable="false"
-                                                                ShowColumnMenu="false"
-                                                                Sortable="false"
-                                                                Filterable="false"
-                                                                TextAlign="ColumnTextAlign.Right">
-                                                        <Template>
-                                                            @{
-                                                                    var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
-                                                                                   Arrows="false">
-                                                                </TelerikNumericTextBox>
-                                                            }
-                                                        </Template>
-                                                        <EditorTemplate>
-                                                            @{
-                                                                    var item = context as InventoryPackagePlaceholderToWrite;
-                                                                <TelerikNumericTextBox @bind-Value="item.Quantity"
-                                                                                   Arrows="false">
-                                                                </TelerikNumericTextBox>
-                                                            }
-                                                        </EditorTemplate>
-                                                    </GridColumn>
-                                                    <GridColumn Width="30%" Title="Additional Charge">
-                                                        <Columns>
-                                                            <GridColumn Field="@nameof(InventoryPackagePlaceholderToWrite.PartAmountIsAdditional)"
-                                                                        Title="Part">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                            <GridColumn Field="@nameof(InventoryPackagePlaceholderToWrite.LaborAmountIsAdditional)"
-                                                                        Title="Labor">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                            <GridColumn Field="@nameof(InventoryPackagePlaceholderToWrite.ExciseFeeIsAdditional)"
-                                                                        Title="Excise Fees">
-                                                                <Template>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
-                                                                    }
-                                                                </Template>
-                                                                <EditorTemplate>
-                                                                    @{
-                                                                            var item = context as InventoryPackagePlaceholderToWrite;
-                                                                        <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
-                                                                    }
-                                                                </EditorTemplate>
-                                                            </GridColumn>
-                                                        </Columns>
-                                                    </GridColumn>
-                                                </GridColumns>
-                                            </TelerikGrid>
-
-                                            <div class="m-icon-button-group">
-                                                <button class="btn m-icon-button m-add-btn" @onclick="OnAddPlaceholder"><i class="fas fa-plus"></i></button>
-                                                <button class="btn m-icon-button m-delete-btn" @onclick="OnDeletePlaceholderAsync" disabled="@(SelectedPlaceholder == null ? true : false)"><i class="fas fa-trash"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                         <InventoryItemPackagePlaceholdersGrid Placeholders="Item.Package.Placeholders" />
                                     }
                                 </ContentTemplate>
                             </TabItem>
@@ -361,11 +104,11 @@
 
 @if (ItemFormMode == FormMode.Add)
 {
-    <InventoryItemSelectForm DialogVisible="true"
+@*    <InventoryItemSelectForm DialogVisible="true"
                          @bind-SelectedItem="@SelectedInventoryItem"
                          FilterPackagableItems="true"
                          OnSelect="@SubmitAddItemHandlerAsync"
-                         OnCancel="@EndAddItem" />
+                         OnCancel="@EndAddItem" />*@
 }
 
 <style>

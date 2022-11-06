@@ -7,7 +7,7 @@ using Menominee.Common.Enums;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
-using Helper = CustomerVehicleManagement.Shared.TestUtilities.Utilities;
+using CustomerVehicleManagement.Shared;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Helper.CreatePerson();
+                var person = Utilities.CreatePerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)

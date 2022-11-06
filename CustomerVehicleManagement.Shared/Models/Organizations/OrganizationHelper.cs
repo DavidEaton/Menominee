@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.Persons;
-using CustomerVehicleManagement.Shared.TestUtilities;
 using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 

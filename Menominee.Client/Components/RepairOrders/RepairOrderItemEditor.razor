@@ -11,7 +11,7 @@
                 @if (Manufacturers != null)
                 {
                     <label class="k-label" for="category">Manufacturer</label>
-                    <TelerikDropDownList @bind-Value="@Item.ManufacturerId"
+                    <TelerikDropDownList @bind-Value="@Item.Manufacturer.Id"
                                          Width="100%"
                                          Data="@ManufacturerList"
                                          TextField="DisplayText"
@@ -25,7 +25,7 @@
                 @if (SaleCodes != null)
                 {
                     <label class="k-label" for="saleCode">Sale Code</label>
-                    <TelerikDropDownList @bind-Value="@Item.SaleCodeId"
+                    <TelerikDropDownList @bind-Value="@Item.SaleCode.Id"
                                          Width="100%"
                                          Data="@SaleCodeList"
                                          TextField="DisplayText"

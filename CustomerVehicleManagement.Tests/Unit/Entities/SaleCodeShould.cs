@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
 using System.Collections.Generic;

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using System;
+using CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems;
 
 namespace Menominee.Client.Services.Inventory
 {

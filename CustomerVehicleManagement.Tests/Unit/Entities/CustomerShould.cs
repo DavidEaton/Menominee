@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Organizations;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;

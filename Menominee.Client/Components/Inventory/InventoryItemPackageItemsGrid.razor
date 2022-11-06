@@ -1,0 +1,112 @@
+﻿<div class="m-tab-content-border">
+    <div class="m-tab-content">
+        <TelerikGrid Data="Items"
+                     OnRowClick="@OnItemRowSelected"
+                     Sortable="true"
+                     Pageable="true"
+                     FilterMode="GridFilterMode.None"
+                     ShowColumnMenu="false"
+                     PageSize="5"
+                     SelectionMode="GridSelectionMode.Single"
+                     SelectedItemsChanged="@((IEnumerable<InventoryItemPackageItemToWrite> itemList) => OnItemSelect(itemList))"
+                     SelectedItems="@SelectedItems"
+                     @ref="@ItemsGrid">
+            <GridColumns>
+                <GridColumn Width="25%"
+                            Field="@nameof(InventoryItemPackageItemToWrite.Item.ItemNumber)"
+                            Editable="false"
+                            Title="Item Number"
+                            ShowColumnChooser="false"
+                            Lockable="false">
+                </GridColumn>
+                <GridColumn Width="35%"
+                            Field="@nameof(InventoryItemPackageItemToWrite.Item.Description)"
+                            Editable="false"
+                            Title="Description"
+                            ShowColumnChooser="false"
+                            Lockable="false">
+                </GridColumn>
+                <GridColumn Width="15%"
+                            Field="@nameof(InventoryItemPackageItemToWrite.Quantity)"
+                            Title="Quantity"
+                            ShowColumnChooser="false"
+                            Lockable="false"
+                            ShowColumnMenu="false"
+                            Sortable="false"
+                            Filterable="false"
+                            TextAlign="ColumnTextAlign.Right">
+                    <Template>
+                        @{
+                            var item = context as InventoryItemPackageItemToWrite;
+                            <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                               Arrows="false">
+                            </TelerikNumericTextBox>
+                        }
+                    </Template>
+                    <EditorTemplate>
+                        @{
+                            var item = context as InventoryItemPackageItemToWrite;
+                            <TelerikNumericTextBox @bind-Value="item.Quantity"
+                                               Arrows="false">
+                            </TelerikNumericTextBox>
+                        }
+                    </EditorTemplate>
+                </GridColumn>
+                <GridColumn Width="25%" Title="Additional Charge">
+                    <Columns>
+                        <GridColumn Field="@nameof(InventoryItemPackageItemToWrite.PartAmountIsAdditional)"
+                                    Title="Part">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.PartAmountIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(InventoryItemPackageItemToWrite.LaborAmountIsAdditional)"
+                                    Title="Labor">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.LaborAmountIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(InventoryItemPackageItemToWrite.ExciseFeeIsAdditional)"
+                                    Title="Excise Fees">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackageItemToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.ExciseFeeIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                    </Columns>
+                </GridColumn>
+            </GridColumns>
+        </TelerikGrid>
+
+        <div class="m-icon-button-group">
+            <button class="btn m-icon-button m-add-btn" @onclick="OnAddItem"><i class="fas fa-plus"></i></button>
+            <button class="btn m-icon-button m-delete-btn" @onclick="OnDeleteItemAsync" disabled="@(SelectedItem == null ? true : false)"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+</div>

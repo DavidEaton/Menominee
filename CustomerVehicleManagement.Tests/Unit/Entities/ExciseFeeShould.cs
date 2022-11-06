@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;

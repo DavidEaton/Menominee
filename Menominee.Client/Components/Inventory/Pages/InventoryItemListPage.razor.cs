@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+﻿using CustomerVehicleManagement.Shared;
+using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
@@ -187,7 +189,7 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private void OnEdit()
         {
-            string url = ItemTypeUrlSegment(SelectedItem.ItemType) ?? string.Empty;
+            string url = ItemTypeUrlSegment(Utilities.ParseEnum<InventoryItemType>(SelectedItem.ItemType)) ?? string.Empty;
             if (url.Length > 0)
                 NavigationManager.NavigateTo($"inventory/{url}/{SelectedId}");
         }

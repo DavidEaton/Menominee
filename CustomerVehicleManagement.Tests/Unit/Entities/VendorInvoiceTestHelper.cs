@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 

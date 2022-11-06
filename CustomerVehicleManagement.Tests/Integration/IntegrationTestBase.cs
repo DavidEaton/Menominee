@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using System.Collections.Generic;
 using System.Linq;

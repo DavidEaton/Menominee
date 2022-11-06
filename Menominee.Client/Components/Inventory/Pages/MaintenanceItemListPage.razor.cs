@@ -1,5 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+using CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Inventory;

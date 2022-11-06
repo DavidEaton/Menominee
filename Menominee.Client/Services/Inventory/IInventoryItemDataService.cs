@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;

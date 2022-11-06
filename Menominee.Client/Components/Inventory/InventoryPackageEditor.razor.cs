@@ -1,11 +1,9 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,22 +38,14 @@ namespace Menominee.Client.Components.Inventory
 
         private bool parametersSet = false;
         private FormMode ItemFormMode = FormMode.Unknown;
-
+        private InventoryItemPackagePlaceholderToWrite SelectedPlaceholder;
         private long ItemId { get; set; } = 0;      // TODO: ItemId won't work for new items since their Ids will all be 0
-        private long PlaceholderId { get; set; } = 0;
+        private InventoryItemPackagePlaceholderToWrite Placeholder { get; set; }
 
-        private bool CanDeleteItem { get => ItemId > 0; }
-        private bool CanDeletePlaceholder { get => PlaceholderId > 0; }
-
-        private TelerikGrid<InventoryPackageItemToWrite> ItemsGrid { get; set; }
-        private TelerikGrid<InventoryPackagePlaceholderToWrite> PlaceholdersGrid { get; set; }
-        private IEnumerable<InventoryPackageItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<InventoryPackageItemToWrite>();
-        private InventoryPackageItemToWrite SelectedItem { get; set; }
-        private IEnumerable<InventoryPackagePlaceholderToWrite> SelectedPlaceholders { get; set; } = Enumerable.Empty<InventoryPackagePlaceholderToWrite>();
-        private InventoryPackagePlaceholderToWrite SelectedPlaceholder { get; set; }
-        private InventoryPackagePlaceholderToWrite PlaceholderToAdd { get; set; }
+        private TelerikGrid<InventoryItemPackagePlaceholderToWrite> PlaceholdersGrid { get; set; }
+        private InventoryItemPackagePlaceholderToWrite PlaceholderToAdd { get; set; }
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
-
+        public List<InventoryItemPackagePlaceholderToWrite> SelectedPlaceholders { get; set; }
         public List<IEditorTool> EditTools { get; set; } =
             new List<IEditorTool>()
             {
@@ -65,18 +55,6 @@ namespace Menominee.Client.Components.Inventory
             new EditorButtonGroup(new AlignLeft(), new AlignCenter(), new AlignRight()),
             new UnorderedList()
             };
-
-        protected override void OnInitialized()
-        {
-            foreach (PackagePlaceholderItemType item in Enum.GetValues(typeof(PackagePlaceholderItemType)))
-            {
-                placeholderTypeList.Add(new PlaceholderTypeListItem
-                {
-                    Text = EnumExtensions.GetDisplayName(item),
-                    Value = item
-                });
-            }
-        }
 
         protected override async Task OnParametersSetAsync()
         {
@@ -89,128 +67,71 @@ namespace Menominee.Client.Components.Inventory
             {
                 // TODO: How do we handle improper manufacturer / productcode setups?  What if these don't exist yet?
                 //Item.ManufacturerId = PackageMfrId;
-                var manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Package);
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(manufacturer);
-
-                var productCodeId = (await productCodeDataService.GetAllProductCodesAsync(manufacturer.Id)).ToList().FirstOrDefault().Id;
-                if (productCodeId > 0)
-                    Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(productCodeId));
-                else
-                    Item.ProductCode = new();
-
+                Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Package);
+                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(
+                    (await productCodeDataService.GetAllProductCodesAsync(
+                        Item.Manufacturer.Id))
+                        .ToList()
+                        .FirstOrDefault().Id);
                 Item.Package = new();
-                Item.ItemType = InventoryItemType.Package;
+                Item.ItemType = InventoryItemType.Package.ToString();
 
                 Title = "Add Package";
             }
 
-            if (Item.Package.Items.Count > 0)
-            {
-                SelectedItem = Item.Package.Items.FirstOrDefault();
-                SelectedItems = new List<InventoryPackageItemToWrite> { SelectedItem };
-                ItemId = SelectedItem.Id;
-            }
-
-            if (Item.Package.Placeholders.Count > 0)
-            {
-                SelectedPlaceholder = Item.Package.Placeholders.FirstOrDefault();
-                SelectedPlaceholders = new List<InventoryPackagePlaceholderToWrite> { SelectedPlaceholder };
-                PlaceholderId = SelectedPlaceholder.Id;
-            }
-        }
-
-        private void OnAddItem()
-        {
-            ItemFormMode = FormMode.Add;
         }
 
         private void OnAddPlaceholder()
         {
-            InventoryPackagePlaceholderToWrite itemToAdd = new();
+            InventoryItemPackagePlaceholderToWrite itemToAdd = new();
             itemToAdd.ItemType = PackagePlaceholderItemType.Part;
-            itemToAdd.Quantity = 1;
+            itemToAdd.Details = new InventoryItemPackageDetailsToWrite()
+            {
+                ExciseFeeIsAdditional = false,
+                LaborAmountIsAdditional = false,
+                PartAmountIsAdditional = false,
+                Quantity = 1
+            };
             Item.Package.Placeholders.Add(itemToAdd);
             PlaceholdersGrid.Rebind();
             SelectedPlaceholder = itemToAdd;
-            SelectedPlaceholders = new List<InventoryPackagePlaceholderToWrite> { SelectedPlaceholder };
+            SelectedPlaceholders = new List<InventoryItemPackagePlaceholderToWrite> { SelectedPlaceholder };
         }
 
-        private async Task OnDeleteItemAsync()
-        {
-            if (SelectedItem != null
-            && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedItem.ItemNumber}?", "Remove Item"))
-            {
-                Item.Package.Items.Remove(SelectedItem);
-                SelectedItem = Item.Package.Items.FirstOrDefault();
-                SelectedItems = new List<InventoryPackageItemToWrite> { SelectedItem };
-                ItemsGrid.Rebind();
-            }
-        }
 
-        private async Task OnDeletePlaceholderAsync()
-        {
-            if (SelectedPlaceholder != null
-            && await Dialogs.ConfirmAsync($"Are you sure you want to remove {SelectedPlaceholder.Description}?", "Remove Placeholder"))
-            {
-                Item.Package.Placeholders.Remove(SelectedPlaceholder);
-                SelectedPlaceholder = Item.Package.Placeholders.FirstOrDefault();
-                SelectedPlaceholders = new List<InventoryPackagePlaceholderToWrite> { SelectedPlaceholder };
-                PlaceholdersGrid.Rebind();
-            }
-        }
 
-        protected void OnItemSelect(IEnumerable<InventoryPackageItemToWrite> items)
-        {
-            SelectedItem = items.FirstOrDefault();
-            SelectedItems = new List<InventoryPackageItemToWrite> { SelectedItem };
-        }
 
-        private void OnItemRowSelected(GridRowClickEventArgs args)
-        {
-            ItemId = (args.Item as InventoryPackageItemToWrite).Id;
-        }
 
-        protected void OnPlaceholderSelect(IEnumerable<InventoryPackagePlaceholderToWrite> placeholders)
-        {
-            SelectedPlaceholder = placeholders.FirstOrDefault();
-            SelectedPlaceholders = new List<InventoryPackagePlaceholderToWrite> { SelectedPlaceholder };
-        }
-
-        private void OnPlaceholderRowSelected(GridRowClickEventArgs args)
-        {
-            PlaceholderId = (args.Item as InventoryPackagePlaceholderToWrite).Id;
-        }
 
         protected async Task SubmitAddItemHandlerAsync()
         {
-            InventoryPackageItemToWrite ItemToAdd = new();
-            ItemToAdd.Item = new();
-            ItemToAdd.InventoryItemId = SelectedInventoryItem.Id;
-            ItemToAdd.Item.Id = SelectedInventoryItem.Id;
-            ItemToAdd.Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(SelectedInventoryItem.ManufacturerId));
-            ItemToAdd.Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId));
-            ItemToAdd.Item.ItemNumber = SelectedInventoryItem.ItemNumber;
-            ItemToAdd.Item.Description = SelectedInventoryItem.Description;
-            ItemToAdd.Quantity = 1;
-            ItemToAdd.PartAmountIsAdditional = false;
-            ItemToAdd.LaborAmountIsAdditional = false;
-            ItemToAdd.ExciseFeeIsAdditional = false;
+            InventoryItemPackageItemToWrite ItemToAdd = new()
+            {
+                Id = ItemId,
+                DisplayOrder = 1,
+                Item = new()
+                {
+                    Id = SelectedInventoryItem.Id,
+                    Manufacturer = SelectedInventoryItem.Manufacturer,
+                    ItemNumber = SelectedInventoryItem.ItemNumber,
+                    Description = SelectedInventoryItem.Description,
+                    ProductCode = SelectedInventoryItem.ProductCode,
+                    ItemType = SelectedInventoryItem.ItemType
+                },
+                Quantity = 1,
+                PartAmountIsAdditional = false,
+                LaborAmountIsAdditional = false,
+                ExciseFeeIsAdditional = false,
+            };
+
             Item.Package.Items.Add(ItemToAdd);
             EndAddItem();
-            ItemsGrid.Rebind();
+            //ItemsGrid.Rebind(); // TODO: signal child grid component to rebind (if necessary)
         }
 
         protected void EndAddItem()
         {
             ItemFormMode = FormMode.Unknown;
         }
-
-        public class PlaceholderTypeListItem
-        {
-            public string Text { get; set; }
-            public PackagePlaceholderItemType Value { get; set; }
-        }
-
-        private List<PlaceholderTypeListItem> placeholderTypeList { get; set; } = new List<PlaceholderTypeListItem>();
     }
 }

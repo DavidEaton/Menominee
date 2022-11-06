@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
@@ -70,10 +71,10 @@ namespace Menominee.Client.Components.Inventory
             {
                 productCodeId = 0;
                 //Item.ManufacturerId = manufacturerId;
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous));
+                Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 Item.Warranty = new() { PeriodType = InventoryItemWarrantyPeriodType.Years, Duration = 1};
-                Item.ItemType = InventoryItemType.Warranty;
+                Item.ItemType = InventoryItemType.Warranty.ToString();
 
                 Title = "Add Warranty";
             }
@@ -88,9 +89,7 @@ namespace Menominee.Client.Components.Inventory
         private async Task OnProductCodeChangeAsync()
         {
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
-            {
-                Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(productCodeId));
-            }
+                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
             if (Item != null && Item.ProductCode != null)
                 SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;

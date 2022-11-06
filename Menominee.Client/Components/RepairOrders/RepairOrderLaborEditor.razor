@@ -34,7 +34,7 @@
                 @if (SaleCodes != null)
                 {
                     <label class="k-label" for="saleCode">Sale Code</label>
-                    <TelerikDropDownList @bind-Value="@Item.SaleCodeId"
+                    <TelerikDropDownList @bind-Value="@Item.SaleCode.Id"
                                          Width="100%"
                                          Data="@SaleCodeList"
                                          TextField="DisplayText"
@@ -50,7 +50,7 @@
                 @if (ProductCodes != null)
                 {
                     <label class="k-label" for="productCode">Product Code</label>
-                    <TelerikDropDownList @bind-Value="@Item.ProductCodeId"
+                    <TelerikDropDownList @bind-Value="@Item.ProductCode.Id"
                                          Width="100%"
                                          Data="@ProductCodeList"
                                          TextField="DisplayText"

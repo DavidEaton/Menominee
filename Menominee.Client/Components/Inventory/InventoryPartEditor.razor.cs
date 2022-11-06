@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
@@ -66,7 +67,7 @@ namespace Menominee.Client.Components.Inventory
             if (Item?.Part == null)
             {
                 Item.Part = new();
-                Item.ItemType = InventoryItemType.Part;
+                Item.ItemType = InventoryItemType.Part.ToString();
 
                 Title = "Add Part";
             }
@@ -77,16 +78,14 @@ namespace Menominee.Client.Components.Inventory
         private async Task OnManufacturerChangeAsync()
         {
             if (manufacturerId > 0 && Item.Manufacturer?.Id != manufacturerId)
-            {
-                Item.Manufacturer = ManufacturerHelper.ConvertReadToWriteDto(await manufacturerDataService.GetManufacturerAsync(manufacturerId));
-            }
+                Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(manufacturerId);
 
             if (Item?.Manufacturer is not null)
             {
                 long savedProductCodeId = productCodeId;  
                 ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
                 if (savedProductCodeId > 0 && Item.ProductCode?.Id == 0 && ProductCodes.Any(pc => pc.Id == savedProductCodeId) == true)
-                    Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(savedProductCodeId));
+                    Item.ProductCode = await productCodeDataService.GetProductCodeAsync(savedProductCodeId);
                 productCodeId = savedProductCodeId;
             }
             else
@@ -102,9 +101,7 @@ namespace Menominee.Client.Components.Inventory
         private async Task OnProductCodeChangeAsync()
         {
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
-            {
-                Item.ProductCode = ProductCodeHelper.ConvertReadToWriteDto(await productCodeDataService.GetProductCodeAsync(productCodeId));
-            }
+                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
             if (Item != null && Item.ProductCode != null)
                 SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;

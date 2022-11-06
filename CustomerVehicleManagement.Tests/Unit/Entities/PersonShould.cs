@@ -1,5 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.TestUtilities;
+using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;

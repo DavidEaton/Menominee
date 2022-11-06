@@ -1,15 +1,12 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspection;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty;
-using CustomerVehicleManagement.Shared.TestUtilities;
 using FluentValidation;
 using Menominee.Common.Enums;
-using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
@@ -25,16 +22,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             // Manufacturer or ProductCode read dto that represents a non-existent entity
 
             // Validate aggregate root entity, omitting all but
-            // the first optional member (to facilitate testing)
+            // the first optional member (to facilitate testing) 
             RuleFor(itemDto => itemDto)
                 .MustBeEntity(
                     itemDto => InventoryItem.Create(
-                        CreateManufacturer(),
+                        ValidatorHelper.CreateManufacturer(itemDto.Manufacturer),
                         itemDto.ItemNumber,
                         itemDto.Description,
-                        CreateProductCode(),
-                        itemDto.ItemType,
-                        CreateInventoryItemPart()));
+                        ValidatorHelper.CreateProductCode(itemDto.Manufacturer, itemDto.ProductCode),
+                        Utilities.ParseEnum<InventoryItemType>(itemDto.ItemType),
+
+                        // TODO: FIND A SOLUTION THAT AVOIDS CODE POLLUTION: "...(to facilitate testing)"
+                        part: ValidatorHelper.CreateInventoryItemPart()));
 
             // Validate optional members
             RuleFor(itemDto => itemDto.Part)
@@ -60,42 +59,6 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             RuleFor(itemDto => itemDto.Warranty)
                 .SetValidator(new InventoryItemWarrantyValidator())
                 .When(itemDto => itemDto.Warranty is not null);
-        }
-
-        private static ProductCode CreateProductCode()
-        {
-            Manufacturer manufacturer = CreateManufacturer();
-            SaleCode saleCode = CreateSaleCode();
-            List<string> manufacturerCodes = new()
-            {
-                "11"
-            };
-
-            return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
-        }
-
-        private static SaleCode CreateSaleCode()
-        {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
-
-            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
-        }
-
-        private static Manufacturer CreateManufacturer()
-        {
-            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
-        }
-
-        private static InventoryItemPart CreateInventoryItemPart()
-        {
-            return InventoryItemPart.Create(
-                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
-                fractional: false).Value;
         }
     }
 }

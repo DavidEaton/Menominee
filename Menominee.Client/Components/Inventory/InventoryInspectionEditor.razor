@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            @if (Item.Inspection != null)
+            @if (Item.Inspection is not null)
             {
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
@@ -65,26 +65,26 @@
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
                                     DataSource="@laborTypeList"
-                                    @bind-Value="@Item.Inspection.LaborType">
+                                    @bind-Value="@Item.Inspection.TechAmount.PayType">
                                     <DropDownListFieldSettings Text="Text" Value="Value" />
                                 </SfDropDownList>
                             }
                         </div>
                         <div class="form-group col col-12 col-md-3">
-                            @if (Item.Inspection.LaborType == ItemLaborType.Flat)
+                            @if (Item.Inspection.TechAmount.PayType == ItemLaborType.Flat)
                             {
                                 <label class="m-label" for="laborFlat">Amount</label>
-                                <TelerikNumericTextBox @bind-Value="Item.Inspection.LaborAmount"
+                                <TelerikNumericTextBox @bind-Value="Item.Inspection.LaborAmount.Amount"
                                            Format="C"
                                            Id="laborFlat"
                                            Arrows="false">
                                 </TelerikNumericTextBox>
 
                             }
-                            else if (Item.Inspection.LaborType == ItemLaborType.Time)
+                            else if (Item.Inspection.TechAmount.PayType == ItemLaborType.Time)
                             {
                                 <label class="m-label" for="laborTime">Time</label>
-                                <TelerikNumericTextBox @bind-Value="Item.Inspection.LaborAmount"
+                                <TelerikNumericTextBox @bind-Value="Item.Inspection.LaborAmount.Amount"
                                            Decimals="2"
                                            Id="laborTime"
                                            Arrows="false">
@@ -104,26 +104,26 @@
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
                                     DataSource="@laborTypeList"
-                                    @bind-Value="@Item.Inspection.TechPayType">
+                                    @bind-Value="@Item.Inspection.TechAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
                         }
                     </div>
                     <div class="form-group col col-12 col-md-3">
-                        @if (Item.Inspection.TechPayType == ItemLaborType.Flat)
+                        @if (Item.Inspection.TechAmount.PayType == ItemLaborType.Flat)
                         {
                             <label class="m-label" for="payPayFlat">Amount</label>
-                            <TelerikNumericTextBox @bind-Value="Item.Inspection.TechPayAmount"
+                            <TelerikNumericTextBox @bind-Value="Item.Inspection.TechAmount.Amount"
                                            Format="C"
                                            Id="techPayFlat"
                                            Arrows="false">
                             </TelerikNumericTextBox>
 
                         }
-                        else if (Item.Inspection.TechPayType == ItemLaborType.Time)
+                        else if (Item.Inspection.TechAmount.PayType == ItemLaborType.Time)
                         {
                             <label class="m-label" for="techPayTime">Time</label>
-                            <TelerikNumericTextBox @bind-Value="Item.Inspection.TechPayAmount"
+                            <TelerikNumericTextBox @bind-Value="Item.Inspection.TechAmount.Amount"
                                            Decimals="2"
                                            Id="techPayTime"
                                            Arrows="false">

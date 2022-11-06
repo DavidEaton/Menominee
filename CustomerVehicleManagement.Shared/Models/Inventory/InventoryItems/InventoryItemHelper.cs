@@ -125,7 +125,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
                 ProductCode = item.ProductCode,
-                ItemType = item.ItemType
+                ItemType = item.ItemType.ToString()
             };
 
             switch (item.ItemType)
@@ -164,12 +164,13 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             if (item is null)
                 return null;
 
-            var Item = InventoryItem.Create(
+            var inventoryItem = InventoryItem.Create(
                 manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
                 item.ItemNumber,
                 item.Description,
                 productCodes.FirstOrDefault(productCode => productCode.Id == item.ProductCode.Id),
-                item.ItemType,
+                Utilities.ParseEnum<InventoryItemType>(item.ItemType),
+
                 item.Part is null
                     ? null
                     : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
@@ -190,7 +191,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                     : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
                 .Value;
 
-            return Item;
+            return inventoryItem;
         }
 
         public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, Manufacturer manufacturer, ProductCode productCode, IReadOnlyList<InventoryItem> inventoryItems)
@@ -202,7 +203,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 item.ItemNumber,
                 item.Description,
                 productCode,
-                item.ItemType,
+                Utilities.ParseEnum<InventoryItemType>(item.ItemType),
                 item.Part is null
                     ? null
                     : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),

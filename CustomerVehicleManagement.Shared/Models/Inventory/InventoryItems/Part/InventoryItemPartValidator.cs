@@ -15,9 +15,10 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
                         partDto.Core,
                         partDto.Retail,
                         TechAmount.Create(
-                        partDto.TechAmount.PayType,
-                        partDto.TechAmount.Amount,
-                        partDto.TechAmount.SkillLevel).Value,
+                            partDto.TechAmount.PayType,
+                            partDto.TechAmount.Amount,
+                            partDto.TechAmount.SkillLevel)
+                        .Value,
                         partDto.Fractional,
                         partDto.LineCode,
                         partDto.SubLineCode));

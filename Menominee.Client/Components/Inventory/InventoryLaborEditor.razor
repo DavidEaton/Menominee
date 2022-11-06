@@ -47,13 +47,13 @@
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
                                     DataSource="@laborTypeList"
-                                    @bind-Value="@Item.Labor.LaborType">
+                                    @bind-Value="@Item.Labor.LaborAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
                         }
                     </div>
                     <div class="form-group col col-12 col-md-3">
-                        @if (Item.Labor.LaborType == ItemLaborType.Flat)
+                        @if (Item.Labor.LaborAmount.PayType is ItemLaborType.Flat)
                         {
                             <label class="m-label" for="laborFlat">Amount</label>
                             <TelerikNumericTextBox @bind-Value="Item.Labor.LaborAmount"
@@ -63,7 +63,7 @@
                             </TelerikNumericTextBox>
 
                         }
-                        else if (Item.Labor.LaborType == ItemLaborType.Time)
+                        else if (Item.Labor.LaborAmount.PayType is ItemLaborType.Time)
                         {
                             <label class="m-label" for="laborTime">Time</label>
                             <TelerikNumericTextBox @bind-Value="Item.Labor.LaborAmount"
@@ -85,26 +85,26 @@
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
                                     DataSource="@laborTypeList"
-                                    @bind-Value="@Item.Labor.TechPayType">
+                                    @bind-Value="@Item.Labor.TechAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
                         }
                     </div>
                     <div class="form-group col col-12 col-md-3">
-                        @if (Item.Labor.TechPayType == ItemLaborType.Flat)
+                        @if (Item.Labor.TechAmount.PayType == ItemLaborType.Flat)
                         {
                             <label class="m-label" for="payPayFlat">Amount</label>
-                            <TelerikNumericTextBox @bind-Value="Item.Labor.TechPayAmount"
+                            <TelerikNumericTextBox @bind-Value="Item.Labor.TechAmount.Amount"
                                            Format="C"
                                            Id="techPayFlat"
                                            Arrows="false">
                             </TelerikNumericTextBox>
 
                         }
-                        else if (Item.Labor.TechPayType == ItemLaborType.Time)
+                        else if (Item.Labor.TechAmount.PayType == ItemLaborType.Time)
                         {
                             <label class="m-label" for="techPayTime">Time</label>
-                            <TelerikNumericTextBox @bind-Value="Item.Labor.TechPayAmount"
+                            <TelerikNumericTextBox @bind-Value="Item.Labor.TechAmount.Amount"
                                            Decimals="2"
                                            Id="techPayTime"
                                            Arrows="false">
@@ -123,7 +123,7 @@
                                     PopupHeight="230px"
                                     Placeholder="Select a skill level"
                                     DataSource="@skillLevelList"
-                                    @bind-Value="@Item.Labor.SkillLevel">
+                                    @bind-Value="@Item.Labor.TechAmount.SkillLevel">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
                         }

@@ -14,14 +14,12 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Items
     {
         public long Id { get; set; }
         public long RepairOrderServiceId { get; set; } = 0;
-        public ManufacturerToWrite Manufacturer { get; set; }
+        public ManufacturerToRead Manufacturer { get; set; }
         public long ManufacturerId { get; set; } = 0;
         public string PartNumber { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public SaleCodeToWrite SaleCode { get; set; }
-        public long SaleCodeId { get; set; } = 0;
-        public ProductCodeToRead ProductCode { get; set; } // Readonly
-        public long ProductCodeId { get; set; } = 0;
+        public SaleCodeToRead SaleCode { get; set; }
+        public ProductCodeToRead ProductCode { get; set; }
         public SaleType SaleType { get; set; } = SaleType.Regular;
         public PartType PartType { get; set; } = PartType.Part;
         public bool IsDeclined { get; set; } = false;

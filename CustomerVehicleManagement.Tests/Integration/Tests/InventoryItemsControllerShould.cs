@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 ItemNumber = itemNumber,
                 Description = description,
                 ProductCode = productCode,
-                ItemType = InventoryItemType.Part,
+                ItemType = InventoryItemType.Part.ToString(),
                 Part = CreateInventoryItemPartToWrite()
             };
 
@@ -242,7 +242,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 ItemNumber = itemNumber,
                 Description = description,
                 ProductCode = productCode,
-                ItemType = InventoryItemType.Part,
+                ItemType = InventoryItemType.Part.ToString(),
                 Part = CreateInventoryItemPartToWrite()
             };
 
@@ -313,7 +313,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                     ItemNumber = itemNumber,
                     Description = description,
                     ProductCode = productCode,
-                    ItemType = InventoryItemType.Part,
+                    ItemType = InventoryItemType.Part.ToString(),
                     Part = CreateInventoryItemPartToWrite()
                 };
 
@@ -323,7 +323,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                     ItemNumber = itemNumber,
                     Description = description,
                     ProductCode = productCode,
-                    ItemType = InventoryItemType.Part,
+                    ItemType = InventoryItemType.Part.ToString(),
                     Part = CreateInventoryItemPartToWrite()
                 };
             }

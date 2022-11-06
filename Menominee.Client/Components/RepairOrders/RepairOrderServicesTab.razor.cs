@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
@@ -43,7 +43,6 @@ namespace Menominee.Client.Components.RepairOrders
         private bool EditItemDialogVisible { get; set; } = false;
         private bool EditLaborDialogVisible { get; set; } = false;
         private bool SelectInventoryItemDialogVisible { get; set; } = false;
-        private long SelectedInventoryItemId { get; set; } = 0;
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
         private bool EditTechDialogVisible { get; set; } = false;
         //private bool CanEditItem { get; set; } = false;
@@ -60,9 +59,7 @@ namespace Menominee.Client.Components.RepairOrders
             dst.PartNumber = src.PartNumber;
             dst.Description = src.Description;
             dst.SaleCode = src.SaleCode;
-            dst.SaleCodeId = src.SaleCodeId;
             dst.ProductCode = src.ProductCode;
-            dst.ProductCodeId = src.ProductCodeId;
             dst.SaleType = src.SaleType;
             dst.PartType = src.PartType;
             dst.IsDeclined = src.IsDeclined;
@@ -89,12 +86,9 @@ namespace Menominee.Client.Components.RepairOrders
             if (SelectedInventoryItem != null)
             {
                 ItemToModify = new();
-                ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
-                //ItemToModify.ManufacturerId = SelectedInventoryItem.ManufacturerId;
-                ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
-                //ItemToModify.SaleCodeId = (long)(SelectedInventoryItem.ProductCode?.SaleCode?.Id);
-                ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
-                ItemToModify.ProductCodeId = SelectedInventoryItem.ProductCodeId;
+                ItemToModify.Manufacturer = SelectedInventoryItem.Manufacturer;
+                ItemToModify.SaleCode = SelectedInventoryItem.ProductCode.SaleCode;
+                ItemToModify.ProductCode = SelectedInventoryItem.ProductCode;
                 ItemToModify.PartNumber = SelectedInventoryItem.ItemNumber;
                 ItemToModify.Description = SelectedInventoryItem.Description;
                 //ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
@@ -114,10 +108,10 @@ namespace Menominee.Client.Components.RepairOrders
         private void AddCustomItem()
         {
             ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.Manufacturer = new ManufacturerToRead();
             ItemToModify.ManufacturerId = 1;
-            ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
-            ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.SaleCode = new SaleCodeToRead();
+            ItemToModify.ProductCode = new ProductCodeToRead();
             ItemToModify.PartType = PartType.Part;
             ItemFormMode = FormMode.Add;
             EditItemDialogVisible = true;
@@ -126,10 +120,10 @@ namespace Menominee.Client.Components.RepairOrders
         private void AddCustomLabor()
         {
             ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToWrite();// new CustomerVehicleManagement.Domain.Entities.Manufacturer();
+            ItemToModify.Manufacturer = new ManufacturerToRead();
             ItemToModify.ManufacturerId = 1;
-            ItemToModify.SaleCode = new SaleCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.SaleCode();
-            ItemToModify.ProductCode = new ProductCodeToWrite();// new CustomerVehicleManagement.Domain.Entities.ProductCode();
+            ItemToModify.SaleCode = new SaleCodeToRead();
+            ItemToModify.ProductCode = new ProductCodeToRead();
             ItemToModify.PartNumber = "INSTALLATION";
             ItemToModify.PartType = PartType.Labor;
             ItemFormMode = FormMode.Add;
@@ -140,9 +134,9 @@ namespace Menominee.Client.Components.RepairOrders
         {
             SelectedItem = item;
             ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToWrite();
-            ItemToModify.SaleCode = new SaleCodeToWrite();
-            ItemToModify.ProductCode = new ProductCodeToWrite();
+            ItemToModify.Manufacturer = new ManufacturerToRead();
+            ItemToModify.SaleCode = new SaleCodeToRead();
+            ItemToModify.ProductCode = new ProductCodeToRead();
             CopyItem(SelectedItem, ItemToModify);
             ItemFormMode = FormMode.Edit;
             if (ItemToModify.PartType == PartType.Labor)
@@ -198,13 +192,13 @@ namespace Menominee.Client.Components.RepairOrders
 
             ItemToModify.Recalculate();
 
-            (string saleCode, string saleCodeName) = await GetSaleCode(ItemToModify.SaleCodeId);
+            (string saleCode, string saleCodeName) = await GetSaleCode(ItemToModify.SaleCode.Id);
             RepairOrderServiceToWrite service = FindServiceByCode(saleCode); //FindService(ItemToModify.SaleCode.Code);
 
-            if (service == null)
+            if (service is null)
                 service = AddService(saleCode, saleCodeName);   //AddService(ItemToModify.SaleCode.Code);
 
-            if (ItemFormMode == FormMode.Add)
+            if (ItemFormMode is FormMode.Add)
                 service.Items.Add(ItemToModify);
             else
                 CopyItem(ItemToModify, SelectedItem);

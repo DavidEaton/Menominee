@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -105,10 +104,10 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                     item.DisplayOrder,
                     inventoryItems.FirstOrDefault(x => x.Id == item.Item.Id),
                     InventoryItemPackageDetails.Create(
-                        item.Details.Quantity,
-                        item.Details.PartAmountIsAdditional,
-                        item.Details.LaborAmountIsAdditional,
-                        item.Details.ExciseFeeIsAdditional)
+                        item.Quantity,
+                        item.PartAmountIsAdditional,
+                        item.LaborAmountIsAdditional,
+                        item.ExciseFeeIsAdditional)
                     .Value)
                 .Value;
         }
@@ -123,9 +122,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
         {
             return placeholder =>
                 InventoryItemPackagePlaceholder.Create(
-                    (PackagePlaceholderItemType)Enum.Parse(
-                        typeof(PackagePlaceholderItemType),
-                        placeholder.ItemType),
+                    placeholder.ItemType,
                     placeholder.Description,
                     placeholder.DisplayOrder,
                     InventoryItemPackageDetails.Create(
@@ -165,18 +162,15 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
         private static Func<InventoryItemPackageItemToRead, InventoryItemPackageItemToWrite> ConvertWriteDtoToRead()
         {
             return item =>
-                new InventoryItemPackageItemToWrite()
+                new()
                 {
                     Id = item.Id,
                     DisplayOrder = item.DisplayOrder,
                     Item = InventoryItemHelper.ConvertReadToWriteDto(item.Item),
-                    Details = new()
-                    {
-                        ExciseFeeIsAdditional = item.Details.ExciseFeeIsAdditional,
-                        LaborAmountIsAdditional = item.Details.LaborAmountIsAdditional,
-                        PartAmountIsAdditional = item.Details.PartAmountIsAdditional,
-                        Quantity = item.Details.Quantity
-                    }
+                    ExciseFeeIsAdditional = item.Details.ExciseFeeIsAdditional,
+                    LaborAmountIsAdditional = item.Details.LaborAmountIsAdditional,
+                    PartAmountIsAdditional = item.Details.PartAmountIsAdditional,
+                    Quantity = item.Details.Quantity
                 };
         }
 
@@ -193,7 +187,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                 {
                     Id = placeholder.Id,
                     DisplayOrder = placeholder.DisplayOrder,
-                    ItemType = placeholder.ItemType,
+                    ItemType = Utilities.ParseEnum<PackagePlaceholderItemType>(placeholder.ItemType),
                     Details = new()
                     {
                         ExciseFeeIsAdditional = placeholder.Details.ExciseFeeIsAdditional,

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
@@ -130,15 +131,15 @@ namespace Menominee.Client.Components.Inventory
         // TODO: Need a better way to do customized filtering
         private static bool ItemMatchesPackageFilter(InventoryItemToReadInList item)
         {
-            return item.ItemType != InventoryItemType.Package
-                && item.ItemType != InventoryItemType.GiftCertificate
-                && item.ItemType != InventoryItemType.Donation;
+            return item.ItemType != InventoryItemType.Package.ToString()
+                && item.ItemType != InventoryItemType.GiftCertificate.ToString()
+                && item.ItemType != InventoryItemType.Donation.ToString();
         }
 
         private static bool ItemMatchesInstallableFilter(InventoryItemToReadInList item)
         {
-            return item.ItemType == InventoryItemType.Part
-                || item.ItemType == InventoryItemType.Tire;
+            return item.ItemType == InventoryItemType.Part.ToString()
+                || item.ItemType == InventoryItemType.Tire.ToString();
         }
 
 

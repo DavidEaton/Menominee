@@ -1,0 +1,148 @@
+﻿@using static Menominee.Client.Components.Inventory.InventoryPackageEditor
+<div class="m-tab-content-border">
+    <div class="m-tab-content">
+        <TelerikGrid Data="Placeholders"
+                     OnRowClick="@OnPlaceholderRowSelected"
+                     Sortable="true"
+                     Pageable="true"
+                     FilterMode="GridFilterMode.None"
+                     ShowColumnMenu="false"
+                     PageSize="5"
+                     SelectionMode="GridSelectionMode.Single"
+                     SelectedItemsChanged="@((IEnumerable<InventoryItemPackagePlaceholderToWrite> placeholderList) => OnPlaceholderSelect(placeholderList))"
+                     SelectedItems="@SelectedPlaceholders"
+                     @ref="@PlaceholdersGrid">
+            <GridColumns>
+                <GridColumn Field="@nameof(InventoryItemPackagePlaceholderToWrite.ItemType)"
+                            Title="Part/Labor"
+                            Width="10%">
+                    <Template>
+                        @{
+                            var placeholder = context as InventoryItemPackagePlaceholderToWrite;
+                            <SfDropDownList TValue="PackagePlaceholderItemType"
+                                        TItem="PlaceholderTypeListItem"
+                                        PopupHeight="230px"
+                                        DataSource="@placeholderTypeList"
+                                            @bind-Value="@placeholder.ItemType">
+                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                            </SfDropDownList>
+                        }
+                    </Template>
+                    <EditorTemplate>
+                        @{
+                            var placeholder = context as InventoryItemPackagePlaceholderToWrite;
+                            <SfDropDownList TValue="PackagePlaceholderItemType"
+                                        TItem="PlaceholderTypeListItem"
+                                        PopupHeight="230px"
+                                        DataSource="@placeholderTypeList"
+                                            @bind-Value="@placeholder.ItemType">
+                                <DropDownListFieldSettings Text="Text" Value="Value" />
+                            </SfDropDownList>
+                        }
+                    </EditorTemplate>
+                </GridColumn>
+                <GridColumn Width="50%"
+                            Field="@nameof(InventoryItemPackagePlaceholderToWrite.Description)"
+                            Editable="false"
+                            Title="Description"
+                            ShowColumnChooser="false"
+                            Lockable="false">
+                    <Template>
+                        @{
+                            var placeholder = context as InventoryItemPackagePlaceholderToWrite;
+                            <TelerikTextBox @bind-Value="placeholder.Description">
+                            </TelerikTextBox>
+                        }
+                    </Template>
+                    <EditorTemplate>
+                        @{
+                            var placeholder = context as InventoryItemPackagePlaceholderToWrite;
+                            <TelerikTextBox @bind-Value="placeholder.Description">
+                            </TelerikTextBox>
+                        }
+                    </EditorTemplate>
+                </GridColumn>
+                <GridColumn Width="10%"
+                            Field="@nameof(InventoryItemPackagePlaceholderToWrite.Details.Quantity)"
+                            Title="Quantity"
+                            ShowColumnChooser="false"
+                            Lockable="false"
+                            ShowColumnMenu="false"
+                            Sortable="false"
+                            Filterable="false"
+                            TextAlign="ColumnTextAlign.Right">
+                    <Template>
+                        @{
+                            var item = context as InventoryItemPackagePlaceholderToWrite;
+                            <TelerikNumericTextBox @bind-Value="item.Details.Quantity"
+                                               Arrows="false">
+                            </TelerikNumericTextBox>
+                        }
+                    </Template>
+                    <EditorTemplate>
+                        @{
+                            var item = context as InventoryItemPackagePlaceholderToWrite;
+                            <TelerikNumericTextBox @bind-Value="item.Details.Quantity"
+                                               Arrows="false">
+                            </TelerikNumericTextBox>
+                        }
+                    </EditorTemplate>
+                </GridColumn>
+                <GridColumn Width="30%" Title="Additional Charge">
+                    <Columns>
+                        <GridColumn Field="@nameof(InventoryItemPackagePlaceholderToWrite.Details.PartAmountIsAdditional)"
+                                    Title="Part">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.PartAmountIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.PartAmountIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(InventoryItemPackagePlaceholderToWrite.Details.LaborAmountIsAdditional)"
+                                    Title="Labor">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.LaborAmountIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.LaborAmountIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(InventoryItemPackagePlaceholderToWrite.Details.ExciseFeeIsAdditional)"
+                                    Title="Excise Fees">
+                            <Template>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.ExciseFeeIsAdditional" />
+                                }
+                            </Template>
+                            <EditorTemplate>
+                                @{
+                                    var item = context as InventoryItemPackagePlaceholderToWrite;
+                                    <TelerikCheckBox @bind-Value="@item.Details.ExciseFeeIsAdditional" />
+                                }
+                            </EditorTemplate>
+                        </GridColumn>
+                    </Columns>
+                </GridColumn>
+            </GridColumns>
+        </TelerikGrid>
+
+        <div class="m-icon-button-group">
+            <button class="btn m-icon-button m-add-btn" @onclick="OnAddPlaceholder"><i class="fas fa-plus"></i></button>
+            <button class="btn m-icon-button m-delete-btn" @onclick="OnDeletePlaceholderAsync" disabled="@(SelectedPlaceholder == null ? true : false)"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+</div>

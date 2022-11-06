@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
@@ -113,10 +114,9 @@ namespace Menominee.Client.Components.Payables
 
             if (SelectedInventoryItem is not null)
             {
-                manufacturerId = SelectedInventoryItem.ManufacturerId;
-                var productCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCodeId);
+                var productCode = await productCodeDataService.GetProductCodeAsync(SelectedInventoryItem.ProductCode.Id);
 
-                LineItem.Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(manufacturerId);
+                LineItem.Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(SelectedInventoryItem.Manufacturer.Id);
 
                 if (productCode?.SaleCode?.Code.Length > 0)
                     LineItem.Item.SaleCode = productCode.SaleCode;
