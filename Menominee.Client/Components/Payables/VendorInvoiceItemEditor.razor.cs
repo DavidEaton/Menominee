@@ -68,7 +68,7 @@ namespace Menominee.Client.Components.Payables
                                                           .OrderBy(saleCode => saleCode.Code)
                                                           .ToList();
 
-            foreach (VendorInvoiceItemType itemType in Enum.GetValues(typeof(VendorInvoiceItemType)))
+            foreach (VendorInvoiceLineItemType itemType in Enum.GetValues(typeof(VendorInvoiceLineItemType)))
             {
                 ItemTypes.Add(new InvoiceItemType { Text = EnumExtensions.GetDisplayName(itemType), Value = itemType });
             }
@@ -134,7 +134,7 @@ namespace Menominee.Client.Components.Payables
         public class InvoiceItemType
         {
             public string Text { get; set; }
-            public VendorInvoiceItemType Value { get; set; }
+            public VendorInvoiceLineItemType Value { get; set; }
         }
     }
 }

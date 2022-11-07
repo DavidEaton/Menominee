@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
     public class VendorInvoiceLineItemToWrite
     {
         public long Id { get; set; }
-        public VendorInvoiceItemType Type { get; set; } = VendorInvoiceItemType.Purchase;
+        public VendorInvoiceLineItemType Type { get; set; } = VendorInvoiceLineItemType.Purchase;
         public VendorInvoiceItemToWrite Item { get; set; } = new();
         public double Quantity { get; set; } = 0.0;
         public double Cost { get; set; } = 0.0;

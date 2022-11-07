@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string PONumberMaximumLengthMessage = $"PO Number cannot be over {PONumberMaximumLength} characters in length.";
         public static readonly string TransactionDateInvalidMessage = "Transaction Date cannot be in the future.";
 
-        public VendorInvoiceItemType Type { get; private set; } // required
+        public VendorInvoiceLineItemType Type { get; private set; } // required
         public VendorInvoiceItem Item { get; private set; } // required
         public double Quantity { get; private set; } // required, must be > 0
         public double Cost { get; private set; } // >= 0, aka nonnegative
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public DateTime? TransactionDate { get; set; } // cannot be in the future
 
         private VendorInvoiceLineItem(
-            VendorInvoiceItemType type,
+            VendorInvoiceLineItemType type,
             VendorInvoiceItem item,
             double quantity,
             double cost,
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string poNumber = null,
             DateTime? transactionDate = null)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
+            if (!Enum.IsDefined(typeof(VendorInvoiceLineItemType), type))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             if (item is null)
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         }
 
         public static Result<VendorInvoiceLineItem> Create(
-            VendorInvoiceItemType type,
+            VendorInvoiceLineItemType type,
             VendorInvoiceItem item,
             double quantity,
             double cost,
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string poNumber = null,
             DateTime? transactionDate = null)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
+            if (!Enum.IsDefined(typeof(VendorInvoiceLineItemType), type))
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
             if (item is null)
@@ -99,10 +99,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 type, item, quantity, cost, core, poNumber, transactionDate));
         }
 
-        public Result<VendorInvoiceItemType> SetType(VendorInvoiceItemType type)
+        public Result<VendorInvoiceLineItemType> SetType(VendorInvoiceLineItemType type)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceItemType), type))
-                return Result.Failure<VendorInvoiceItemType>(RequiredMessage);
+            if (!Enum.IsDefined(typeof(VendorInvoiceLineItemType), type))
+                return Result.Failure<VendorInvoiceLineItemType>(RequiredMessage);
 
             return Result.Success(Type = type);
         }

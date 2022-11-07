@@ -2,7 +2,7 @@
 
 namespace Menominee.Common.Enums
 {
-    public enum VendorInvoiceItemType
+    public enum VendorInvoiceLineItemType
     {
         Purchase,
         Return,

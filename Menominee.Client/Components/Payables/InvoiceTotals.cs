@@ -51,28 +51,28 @@ namespace Menominee.Client.Components.Payables
                 double amount = (item.Cost + item.Core) * item.Quantity;
                 switch (item.Type)
                 {
-                    case VendorInvoiceItemType.Purchase:
+                    case VendorInvoiceLineItemType.Purchase:
                         Purchases += amount;
                         break;
-                    case VendorInvoiceItemType.Return:
+                    case VendorInvoiceLineItemType.Return:
                         Returns += amount;
                         break;
-                    case VendorInvoiceItemType.CoreReturn:
+                    case VendorInvoiceLineItemType.CoreReturn:
                         CoreReturns += amount;
                         break;
-                    case VendorInvoiceItemType.Defective:
+                    case VendorInvoiceLineItemType.Defective:
                         Defectives += amount;
                         break;
-                    case VendorInvoiceItemType.Warranty:
+                    case VendorInvoiceLineItemType.Warranty:
                         Warranties += amount;
                         break;
-                    case VendorInvoiceItemType.MiscDebit:
+                    case VendorInvoiceLineItemType.MiscDebit:
                         MiscellaneousDebits += amount;
                         break;
-                    case VendorInvoiceItemType.MiscCredit:
+                    case VendorInvoiceLineItemType.MiscCredit:
                         MiscellaneousCredits += amount;
                         break;
-                    case VendorInvoiceItemType.BalanceForward:
+                    case VendorInvoiceLineItemType.BalanceForward:
                         BalanceForwards += amount;
                         break;
                     default:
