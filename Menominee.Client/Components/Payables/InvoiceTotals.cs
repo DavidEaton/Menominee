@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Common.Enums;
 
 namespace Menominee.Client.Components.Payables
@@ -10,33 +11,50 @@ namespace Menominee.Client.Components.Payables
             Clear();
         }
 
-        public double Purchases { get; set; }
-        public double Returns { get; set; }
-        public double CoreReturns { get; set; }
-        public double Defectives { get; set; }
-        public double Warranties { get; set; }
-        public double MiscellaneousDebits { get; set; }
-        public double MiscellaneousCredits { get; set; }
-        public double BalanceForwards { get; set; }
-        public double Taxes { get; set; }
-        public double Total { get; set; }
-        public double Payments { get; set; }
-        public double TaxableTotal { get; set; }
-
+        public double Purchases { get; private set; }
+        public double Returns { get; private set; }
+        public double CoreReturns { get; private set; }
+        public double Defectives { get; private set; }
+        public double Warranties { get; private set; }
+        public double MiscellaneousDebits { get; private set; }
+        public double MiscellaneousCredits { get; private set; }
+        public double BalanceForwards { get; private set; }
+        public double Taxes { get; private set; }
+        public double Total { get; private set; }
+        public double Payments { get; private set; }
+        public double TaxableTotal { get; private set; }
         public void Clear()
         {
-            Purchases = 0; 
-            Returns = 0; 
+            Purchases = 0;
+            Returns = 0;
             CoreReturns = 0;
-            Defectives = 0; 
+            Defectives = 0;
             Warranties = 0;
-            MiscellaneousDebits = 0; 
-            MiscellaneousCredits = 0; 
+            MiscellaneousDebits = 0;
+            MiscellaneousCredits = 0;
             BalanceForwards = 0;
             Taxes = 0;
             Total = 0;
             Payments = 0;
             TaxableTotal = 0;
+        }
+
+        public Result<InvoiceTotals> CalculateInvoiceTotals(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return this;
+        }
+
+        public Result<double> CalculateInvoiceTaxes(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return this.Taxes;
+        }
+
+        public Result<double> CalculateInvoicePayments(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return this.Payments;
         }
 
         public void Calculate(VendorInvoiceToWrite invoice)
@@ -80,7 +98,7 @@ namespace Menominee.Client.Components.Payables
                 }
             }
 
-            foreach(var tax in invoice.Taxes)
+            foreach (var tax in invoice.Taxes)
             {
                 Taxes += tax.Amount;
             }
