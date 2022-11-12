@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
+    <ProjectReference Include="..\CustomerVehicleManagement.Tests\CustomerVehicleManagement.Tests.csproj" />
   </ItemGroup>
 
 </Project>

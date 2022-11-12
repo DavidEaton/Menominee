@@ -9,18 +9,6 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
 {
     public class OrganizationHelper
     {
-        public static Organization CreateTestOrganization()
-        {
-            var name = Utilities.LoremIpsum(10);
-            Organization organization = null;
-            var organizationNameOrError = OrganizationName.Create(name);
-
-            if (!organizationNameOrError.IsFailure)
-                organization = Organization.Create(organizationNameOrError.Value, "note").Value;
-
-            return organization;
-        }
-
         public static Organization ConvertWriteDtoToEntity(OrganizationToWrite organization)
         {
             if (organization is null)

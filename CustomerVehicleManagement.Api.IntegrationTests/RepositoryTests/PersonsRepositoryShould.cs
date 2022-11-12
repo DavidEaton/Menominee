@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
-using CustomerVehicleManagement.Shared;
+using Utilities = CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {

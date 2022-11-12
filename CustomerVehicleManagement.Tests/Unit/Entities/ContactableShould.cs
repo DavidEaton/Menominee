@@ -1,9 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Xunit;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customerOrError = new Customer(organization, CustomerType.Retail);

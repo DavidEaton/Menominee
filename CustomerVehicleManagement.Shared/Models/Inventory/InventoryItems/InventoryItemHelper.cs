@@ -11,6 +11,7 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static CustomerVehicleManagement.Shared.Utilities;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
@@ -169,7 +170,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 item.ItemNumber,
                 item.Description,
                 productCodes.FirstOrDefault(productCode => productCode.Id == item.ProductCode.Id),
-                Utilities.ParseEnum<InventoryItemType>(item.ItemType),
+                ParseEnum<InventoryItemType>(item.ItemType),
 
                 item.Part is null
                     ? null

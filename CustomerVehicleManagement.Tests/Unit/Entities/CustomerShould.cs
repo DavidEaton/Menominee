@@ -1,10 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Organizations;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Xunit;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -30,7 +29,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void CreateCustomerWithOrganizationEntity()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
 
             var customer = new Customer(organization, CustomerType.Retail);
             customer.EntityType.Should().Be(EntityType.Organization);
@@ -44,7 +43,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customer = new Customer(organization, CustomerType.Retail);
@@ -64,7 +63,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var person = Person.Create(name, Gender.Female).Value;
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             organization.SetContact(person);
 
             var customer = new Customer(organization, CustomerType.Retail);
@@ -77,7 +76,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddOrganizationPhones()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
@@ -94,7 +93,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveOrganizationPhones()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var number0 = "(989) 627-9206";
             var phone0 = Phone.Create(number0, PhoneType.Mobile, true).Value;
@@ -114,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddOrganizationEmails()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
@@ -129,7 +128,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveOrganizationEmails()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var email0 = Email.Create("mary@moops.com", true).Value;
             var email1 = Email.Create("mikey@yikes.com", false).Value;
@@ -223,7 +222,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddVehicles()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;
@@ -247,7 +246,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveVehicle()
         {
-            var organization = OrganizationHelper.CreateTestOrganization();
+            var organization = CreateTestOrganization();
             var customer = new Customer(organization, CustomerType.Retail);
             var vin0 = "45kj64k64kjyvrv";
             var year0 = 2020;

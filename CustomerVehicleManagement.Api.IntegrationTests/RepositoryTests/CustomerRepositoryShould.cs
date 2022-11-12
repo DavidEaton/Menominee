@@ -1,13 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
-using CustomerVehicleManagement.Shared;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
@@ -28,7 +27,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePerson();
+                var person = CreatePerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -52,7 +51,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = OrganizationHelper.CreateTestOrganization();
+                var organization = CreateTestOrganization();
                 await context.AddAsync(organization);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -76,7 +75,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = OrganizationHelper.CreateTestOrganization();
+                var organization = CreateTestOrganization();
                 await context.AddAsync(organization);
 
                 Customer customer = new(organization, CustomerType.Retail);
