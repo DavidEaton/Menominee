@@ -470,56 +470,65 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void CalculateInvoiceTaxableTotal()
         {
             var invoiceTotals = new InvoiceTotals();
-            // Purchase LineItems
+            // Purchase LineItems: 100
             var lineItemCount = 5;
             var lineItemCore = 1.0;
             var lineItemCost = 1.0;
             var lineItemQuantity = 10.0;
             var lineItemType = VendorInvoiceLineItemType.Purchase;
-            // Payments
+            var expectedPurchases = (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount;
+            // Payments: 50.05
             var paymentLineCount = 5;
             var paymentLineAmount = 10.01;
-            var expectedPayments = paymentLineCount * paymentLineAmount;//50.5
-            // Taxes
+            var expectedPayments = paymentLineCount * paymentLineAmount;
+            // Taxes: .5
             var taxLineCount = 5;
             var taxLineAmount = .1;
-            var expectedTaxes = taxLineCount * taxLineAmount;//.5
-            var expectedTotal = (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount;//100
+            var expectedTaxes = taxLineCount * taxLineAmount;
+            // BalanceForwards: 4
             var balanceForwardLineItemCount = 2;
             var balanceForwardLineItemCore = 1.0;
             var balanceForwardLineItemCost = 1.0;
             var balanceForwardLineItemQuantity = 1.0;
             var expectedBalanceForwardAmount = 
-                (balanceForwardLineItemCost + balanceForwardLineItemCore) * balanceForwardLineItemQuantity * balanceForwardLineItemCount;//4
+                (balanceForwardLineItemCost + balanceForwardLineItemCore) * balanceForwardLineItemQuantity * balanceForwardLineItemCount;
+            // Total: 104.5
+            var expectedTotal =
+                // Purchase LineItems: 100
+                (lineItemCost + lineItemCore)
+                * lineItemQuantity
+                * lineItemCount
+                // Taxes: .5
+                + (taxLineCount * taxLineAmount)
+                // BalanceForwards: 4
+                + (balanceForwardLineItemCost + balanceForwardLineItemCore) *balanceForwardLineItemQuantity * balanceForwardLineItemCount;
+
             var balanceForwardLineItems = CreateLineItems(VendorInvoiceLineItemType.BalanceForward, balanceForwardLineItemCount, balanceForwardLineItemCore, balanceForwardLineItemCost, balanceForwardLineItemQuantity);
 
             var invoice = CreateVendorInvoiceToWrite(
-                // Purchase LineItems
                 lineItemType: lineItemType,
                 lineItemCount: lineItemCount,
                 lineItemCore: lineItemCore,
                 lineItemCost: lineItemCost,
                 lineItemQuantity: lineItemQuantity,
-                // Payments
                 paymentLineCount: paymentLineCount,
                 paymentLineAmount: paymentLineAmount,
-                // Taxes
                 taxLineCount: taxLineCount,
                 taxLineAmount: taxLineAmount);
 
-            // add the balanceForwardLineItems
+            // add the balanceForwardLineItems to the invoice
             foreach (var item in balanceForwardLineItems)
                 invoice.LineItems.Add(item);
-
-            var invoiceTaxableTotalOrError = invoiceTotals.CalculateInvoiceTaxableTotal(invoice);//100
+            // Recalculate invoice values
+            var invoiceTaxableTotalOrError = invoiceTotals.CalculateInvoiceTaxableTotal(invoice);
 
             // TaxableTotal = Total - BalanceForwards - Taxes;
-            //  95.5                          100             4                              .5
+            //  100                           104.5           4                              .5
             var expectedInvoiceTaxableTotal = expectedTotal - expectedBalanceForwardAmount - expectedTaxes;
 
-
             invoiceTotals.Taxes.Should().Be(expectedTaxes); //.5
-            invoiceTotals.Payments.Should().Be(expectedPayments);//.05
+            invoiceTotals.Payments.Should().Be(expectedPayments);//50.05
+            invoiceTotals.Purchases.Should().Be(expectedPurchases);//100
             invoiceTotals.BalanceForwards.Should().Be(expectedBalanceForwardAmount); //100
             invoiceTaxableTotalOrError.Value.Should().Be(expectedInvoiceTaxableTotal); //100
             invoiceTaxableTotalOrError.IsFailure.Should().BeFalse();
