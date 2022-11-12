@@ -48,13 +48,67 @@ namespace Menominee.Client.Components.Payables
         public Result<double> CalculateInvoiceTaxes(VendorInvoiceToWrite invoice)
         {
             Calculate(invoice);
-            return this.Taxes;
+            return Taxes;
         }
 
         public Result<double> CalculateInvoicePayments(VendorInvoiceToWrite invoice)
         {
             Calculate(invoice);
-            return this.Payments;
+            return Payments;
+        }
+
+        public Result<double> CalculateInvoicePurchases(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return Purchases;
+        }
+
+        public Result<double> CalculateInvoiceReturns(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return Returns;
+        }
+
+        public Result<double> CalculateInvoiceCoreReturns(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return CoreReturns;
+        }
+
+        public Result<double> CalculateInvoiceDefectives(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return Defectives;
+        }
+
+        public Result<double> CalculateInvoiceWarranties(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return Warranties;
+        }
+
+        public Result<double> CalculateInvoiceMiscellaneousDebits(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return MiscellaneousDebits;
+        }
+
+        public Result<double> CalculateInvoiceMiscellaneousCredits(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return MiscellaneousCredits;
+        }
+
+        public Result<double> CalculateInvoiceBalanceForwards(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return BalanceForwards;
+        }
+
+        public Result<double> CalculateInvoiceTaxableTotal(VendorInvoiceToWrite invoice)
+        {
+            Calculate(invoice);
+            return TaxableTotal;
         }
 
         public void Calculate(VendorInvoiceToWrite invoice)
@@ -99,14 +153,10 @@ namespace Menominee.Client.Components.Payables
             }
 
             foreach (var tax in invoice.Taxes)
-            {
                 Taxes += tax.Amount;
-            }
 
             foreach (var payment in invoice.Payments)
-            {
                 Payments += payment.Amount;
-            }
 
             Total = Purchases + Returns + CoreReturns + Defectives + Warranties
                   + MiscellaneousDebits + MiscellaneousCredits + BalanceForwards + Taxes;
