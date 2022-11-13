@@ -13,10 +13,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
         public string Name { get; private set; }
         public string VendorCode { get; private set; }
+        public VendorType VendorType { get; private set; }
         //TODO: need address, phone, email
         //TODO: public VendorType VendorType { get; private set; }
-        //TODO: public VendorInvocePaymentMethod? DefaultPaymentMethod { get; private set; }
-        //TODO: public bool AutoCompleteDocuments { get; private set; } // can only be true if DefaultPaymentMethod is set 
+        //DONE: public VendorInvocePaymentMethod? DefaultPaymentMethod { get; private set; }
+        //DONE: public bool AutoCompleteDocuments { get; private set; } // can only be true if DefaultPaymentMethod is set 
+        public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
         public bool? IsActive { get; private set; }
 
         private Vendor(string name, string vendorCode)

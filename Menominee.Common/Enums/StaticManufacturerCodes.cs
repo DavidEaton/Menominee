@@ -1,7 +1,7 @@
 ﻿namespace Menominee.Common.Enums
 {
     // TODO: Where should this class exist - it's not an enum
-
+    // Enumeration pattern?
     public static class StaticManufacturerCodes
     {
         public const string Custom = "0";

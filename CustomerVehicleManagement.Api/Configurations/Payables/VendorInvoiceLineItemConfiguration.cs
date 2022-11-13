@@ -20,18 +20,18 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
             // Value Object: VendorInvoiceItem
             // Configure Value Object to contain two Entity references
             builder.OwnsOne(
-                lineItem => lineItem.Item, ownershipBuilder =>
+                lineItem => lineItem.Item, builder =>
                 {
-                    ownershipBuilder.WithOwner();
-                    ownershipBuilder.Navigation(item => item.Manufacturer)
+                    builder.WithOwner();
+                    builder.Navigation(item => item.Manufacturer)
                         .UsePropertyAccessMode(PropertyAccessMode.Property);
                 });
 
             builder.OwnsOne(
-                lineItem => lineItem.Item, ownershipBuilder =>
+                lineItem => lineItem.Item, builder =>
                 {
-                    ownershipBuilder.WithOwner();
-                    ownershipBuilder.Navigation(item => item.SaleCode)
+                    builder.WithOwner();
+                    builder.Navigation(item => item.SaleCode)
                         .UsePropertyAccessMode(PropertyAccessMode.Property);
                 });
 

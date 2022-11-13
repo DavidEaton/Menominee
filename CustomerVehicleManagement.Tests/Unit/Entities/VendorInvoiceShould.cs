@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
@@ -20,6 +19,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendorOrError.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1);
 
             // Assert
@@ -35,6 +35,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOneOrError.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 invoiceNumber)
                 .Value;
@@ -51,6 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 datePosted: datePosted);
 
@@ -68,6 +70,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 date: date);
 
@@ -84,6 +87,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOneOrError.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -96,6 +100,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 null,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1);
 
             vendorInvoiceOrError.IsFailure.Should().BeTrue();
@@ -111,6 +116,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 invalidStatus,
+                VendorInvoiceDocumentType.Unknown,
                 1);
 
             vendorInvoiceOrError.IsFailure.Should().BeTrue();
@@ -126,6 +132,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 invalidTotal);
 
             vendorInvoiceOrError.IsFailure.Should().BeTrue();
@@ -141,6 +148,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 date: invalidDate);
 
@@ -158,6 +166,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 date: date,
                 datePosted: invalidDatePosted);
@@ -175,6 +184,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoiceOrError = VendorInvoice.Create(
                 vendor,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 invoiceNumber: invalidInvoiceNumber);
 
@@ -190,6 +200,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -207,6 +218,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -226,6 +238,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 invoiceNumber).Value;
 
@@ -244,6 +257,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -262,6 +276,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -281,6 +296,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 date: date)
                 .Value;
@@ -299,6 +315,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -318,6 +335,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1,
                 datePosted: datePosted).Value;
 
@@ -335,6 +353,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1)
                 .Value;
 
@@ -352,6 +371,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetVendorInvoiceStatus(invalidStatus);
@@ -368,6 +388,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendor.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetInvoiceNumber(invalidInvoiceNumber);
@@ -384,6 +405,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendor.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetInvoiceNumber(nullInvoiceNumber);
@@ -400,6 +422,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendor.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetTotal(invalidTotal);
@@ -416,6 +439,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetDate(date);
@@ -432,6 +456,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoice = VendorInvoice.Create(
                 vendorOne.Value,
                 VendorInvoiceStatus.Open,
+                VendorInvoiceDocumentType.Unknown,
                 1).Value;
 
             var resultOrError = vendorInvoice.SetDatePosted(datePosted);

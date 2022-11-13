@@ -16,19 +16,22 @@
                                 <div>
                                     <Card Title="Items">
                                         <Content>
-                                            <VendorInvoiceItems LineItems="Invoice.LineItems" OnCalculateTotals="CalculateTotals" />
+                                            <VendorInvoiceItems LineItems="Invoice.LineItems"
+                                                OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
                                 </div>
                                 <div class="tax-payment-row">
                                     <Card Title="Taxes">
                                         <Content>
-                                            <VendorInvoiceTaxes Taxes="Invoice.Taxes" OnCalculateTotals="CalculateTotals" />
+                                            <VendorInvoiceTaxes Taxes="Invoice.Taxes"
+                                                OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
                                     <Card Title="Payments">
                                         <Content>
-                                            <VendorInvoicePayments Payments="Invoice.Payments" OnCalculateTotals="CalculateTotals" />
+                                            <VendorInvoicePayments Payments="Invoice.Payments"
+                                                OnCalculateTotals="CalculateTotals" />
                                         </Content>
                                     </Card>
                                 </div>

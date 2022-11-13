@@ -17,6 +17,22 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
             builder.Property(vendor => vendor.Name)
                 .HasMaxLength(255)
                 .IsRequired();
+
+            // Value Object: VendorInvoiceItem
+            // Configure Value Object to contain Entity reference
+            builder.OwnsOne(
+                vendor => vendor.DefaultPaymentMethod, builder =>
+                {
+                    builder.WithOwner();
+                    builder.Navigation(paymentMethod => paymentMethod.PaymentMethod)
+                        .UsePropertyAccessMode(PropertyAccessMode.Property);
+                });
+            builder.OwnsOne(vendor => vendor.DefaultPaymentMethod)
+                .Property(paymentMethod => paymentMethod.PaymentMethod)
+                .HasColumnName("DefaultPaymentMethod");
+            builder.OwnsOne(vendor => vendor.DefaultPaymentMethod)
+                .Property(paymentMethod => paymentMethod.AutoCompleteDocuments)
+                .HasColumnName("AutoCompleteDocuments");
         }
     }
 }

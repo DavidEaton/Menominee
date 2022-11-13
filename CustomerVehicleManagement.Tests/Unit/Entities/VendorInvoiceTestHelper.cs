@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 
@@ -101,7 +100,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             return fees;
         }
 
-        internal static IList<string> CreatePaymentMethodNames()
+        public static IList<string> CreatePaymentMethodNames()
         {
             IList<string> result = new List<string>();
             var list = CreateVendorInvoicePaymentMethods();

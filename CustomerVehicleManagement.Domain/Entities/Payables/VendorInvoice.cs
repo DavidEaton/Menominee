@@ -21,11 +21,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
-        //TODO: public VendorInvoiceDocumentType DocumentType { get; private set; }   
-        public double Total { get; private set; }
-        public string InvoiceNumber { get; private set; }
-        public DateTime? Date { get; private set; }
+        public VendorInvoiceDocumentType DocumentType { get; private set; }
         public DateTime? DatePosted { get; private set; }
+        public DateTime? Date { get; private set; }
+        public string InvoiceNumber { get; private set; }
+        public double Total { get; private set; }
 
         public IList<VendorInvoiceLineItem> LineItems { get; private set; }
         public IList<VendorInvoicePayment> Payments { get; private set; }
@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         private VendorInvoice(
             Vendor vendor,
             VendorInvoiceStatus status,
-            //TODO: VendorInvoiceDocumentType documentType,
+            VendorInvoiceDocumentType documentType,
             double total,
             string invoiceNumber = null,
             DateTime? date = null,
@@ -47,6 +47,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
+            if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
             if (total < MinimumValue)
@@ -75,6 +78,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Vendor = vendor;
             Status = status;
+            DocumentType = documentType;
             Total = total;
             InvoiceNumber = invoiceNumber;
             LineItems = lineItems ?? new List<VendorInvoiceLineItem>();
@@ -85,7 +89,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static Result<VendorInvoice> Create(
             Vendor vendor,
             VendorInvoiceStatus status,
-            //TODO: VendorInvoiceDocumentType documentType,
+            VendorInvoiceDocumentType documentType,
             double total,
             string invoiceNumber = null,
             DateTime? date = null,
@@ -98,6 +102,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
+                return Result.Failure<VendorInvoice>(RequiredMessage);
+
+            if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
                 return Result.Failure<VendorInvoice>(RequiredMessage);
 
             invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
@@ -115,7 +122,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(DateInvalidMessage);
 
             return Result.Success(new VendorInvoice(
-                vendor, status, total, invoiceNumber, date, datePosted, lineItems, payments, taxes));
+                vendor, status, documentType, total, invoiceNumber, date, datePosted, lineItems, payments, taxes));
         }
 
         public Result<Vendor> SetVendor(Vendor vendor)
@@ -132,6 +139,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoiceStatus>(RequiredMessage);
 
             return Result.Success(Status = status);
+        }
+
+        public Result<VendorInvoiceDocumentType> SetVendorInvoiceDocumentType(VendorInvoiceDocumentType documentType)
+        {
+            if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
+                return Result.Failure<VendorInvoiceDocumentType>(RequiredMessage);
+
+            return Result.Success(DocumentType = documentType);
         }
 
         public Result<string> SetInvoiceNumber(string invoiceNumber)

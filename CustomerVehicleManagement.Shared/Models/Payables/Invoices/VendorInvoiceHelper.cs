@@ -161,11 +161,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 : VendorInvoice.Create(
                 vendor,
                 invoice.Status,
+                invoice.DocumentType,
                 invoice.Total,
-            invoice.InvoiceNumber,
-            invoice.Date,
-            invoice.DatePosted,
-            VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems, manufacturers, saleCodes),
+                invoice.InvoiceNumber,
+                invoice.Date,
+                invoice.DatePosted,
+                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems, manufacturers, saleCodes),
                 VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(paymentMethods, invoice.Payments),
                 VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes, salesTaxes))
                 .Value;
