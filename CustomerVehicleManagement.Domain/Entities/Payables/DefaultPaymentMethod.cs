@@ -29,6 +29,19 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(new DefaultPaymentMethod(paymentMethod, autoCompleteDocuments));
         }
 
+        public Result<VendorInvoicePaymentMethod> SetPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
+        {
+            if (paymentMethod is null)
+                return Result.Failure<VendorInvoicePaymentMethod>(RequiredMessage);
+
+            return Result.Success(PaymentMethod = paymentMethod);
+        }
+
+        public Result<bool> SetAutoCompleteDocuments(bool autoCompleteDocuments)
+        {
+            return Result.Success(AutoCompleteDocuments = autoCompleteDocuments);
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return PaymentMethod;

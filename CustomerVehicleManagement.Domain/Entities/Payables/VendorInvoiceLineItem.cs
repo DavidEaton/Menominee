@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public double Quantity { get; private set; } // required, must be > 0
         public double Cost { get; private set; } // >= 0, aka nonnegative
         public double Core { get; private set; } // >= 0, aka nonnegative
-        public string PONumber { get; private set; } // not required, 40 length
+        public string PONumber { get; private set; } // optional, 40 length
         public DateTime? TransactionDate { get; set; } // cannot be in the future
 
         private VendorInvoiceLineItem(

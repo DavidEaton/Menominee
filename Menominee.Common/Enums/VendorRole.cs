@@ -2,12 +2,12 @@
 
 namespace Menominee.Common.Enums
 {
-    public enum VendorType
+    public enum VendorRole
     {
         [Display(Name = "Parts Supplier")]
         PartsSupplier,
-        [Display(Name = "Payment Reconcile")]
-        PaymentReconcile,
+        [Display(Name = "Payment Reconciler")]
+        PaymentReconciler,
         [Display(Name = "Non-Parts Supplier")]
         NonPartsSupplier
     }

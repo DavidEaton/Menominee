@@ -45,9 +45,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                .Property(item => item.Description)
                .HasColumnName("ItemDescription")
                .HasMaxLength(255)
-            .IsRequired();
-
-
+                .IsRequired();
         }
     }
 }

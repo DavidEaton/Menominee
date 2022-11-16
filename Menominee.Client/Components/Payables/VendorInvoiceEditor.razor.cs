@@ -67,13 +67,10 @@ namespace Menominee.Client.Components.Payables
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
 
             // TODO: Check to see if invoice # has already been used.  Or is there a better way?
-            // DE: We wait until user completes the invoice to check its number uniqueness? If 
-            // invoice # uniqueness is an invariant of VendorInvoice, its uniqueness must
-            // be validated on creation or update. VendorInvoice.InvoiceNumber is currently
-            // optional, with only one invariant: InvoiceNumberMaximumLength (255). 
-            // TODO: Add a DocumentType field to the vendor invoice (Invoice/Return) - DONE
+            // DE: I'll implement invoice number uniqueness in VendorInvoice: unique for the selected vendor.
+            // DONE (DE): Add a DocumentType field to the vendor invoice (Invoice/Return)
             //       Will need to support Statements too - another doctype or another entity?
-            // TODO: Vendors need a DefaultPaymentMethod field
+            // DONE (DE): Vendors need a DefaultPaymentMethod field
 
             //if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
             //{

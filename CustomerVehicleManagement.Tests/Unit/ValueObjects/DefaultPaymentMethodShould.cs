@@ -11,7 +11,8 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         public void Create_DefaultPaymentMethod()
         {
             // Arrange
-            VendorInvoicePaymentMethod paymentMethod = CreateVendorInvoicePaymentMethod();
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+
             // Act
             var resultOrError = DefaultPaymentMethod.Create(paymentMethod, true);
 
@@ -28,12 +29,48 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             var resultOrError = DefaultPaymentMethod.Create(paymentMethod, true);
 
             resultOrError.IsFailure.Should().BeTrue();
-            true.Should().BeFalse();
         }
 
+        [Fact]
+        public void SetPaymentMethod()
+        {
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+            var anotherPaymentMethod = CreateVendorInvoicePaymentMethod();
 
+            defaultPaymentMethod.PaymentMethod.Should().Be(paymentMethod);
+            var resultOrError = defaultPaymentMethod.SetPaymentMethod(anotherPaymentMethod);
 
-        private VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
+            resultOrError.IsFailure.Should().BeFalse();
+            defaultPaymentMethod.PaymentMethod.Should().Be(anotherPaymentMethod);
+        }
+
+        [Fact]
+        public void Not_SetPaymentMethod_With_Null_PaymentMethod()
+        {
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+            VendorInvoicePaymentMethod nullPaymentMethod = null;
+
+            defaultPaymentMethod.PaymentMethod.Should().Be(paymentMethod);
+            var resultOrError = defaultPaymentMethod.SetPaymentMethod(nullPaymentMethod);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void SetAutoCompleteDocuments()
+        {
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(CreateVendorInvoicePaymentMethod(), true).Value;
+
+            defaultPaymentMethod.AutoCompleteDocuments.Should().Be(true);
+            var resultOrError = defaultPaymentMethod.SetAutoCompleteDocuments(false);
+
+            resultOrError.IsFailure.Should().BeFalse();
+            defaultPaymentMethod.AutoCompleteDocuments.Should().Be(false);
+        }
+
+        private static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
         {
             IList<string> paymentMethodNames = CreatePaymentMethodNames();
 
