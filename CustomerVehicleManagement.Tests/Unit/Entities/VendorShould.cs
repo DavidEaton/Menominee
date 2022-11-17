@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Api.Payables.Vendors;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using System.Collections.Generic;
@@ -22,6 +23,38 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
             vendorOrError.Value.Name.Should().Be(name);
+            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+        }
+
+        [Fact]
+        public void Create_Vendor_With_Optional_DefaultPaymentMethod()
+        {
+            var name = "Vendor One";
+            var vendorCode = "V1";
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+
+            var vendorOrError = Vendor.Create(name, vendorCode, defaultPaymentMethod);
+
+            vendorOrError.IsFailure.Should().BeFalse();
+            vendorOrError.Value.Should().BeOfType<Vendor>();
+            vendorOrError.Value.DefaultPaymentMethod.Should().BeOfType<DefaultPaymentMethod>();
+            vendorOrError.Value.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
+            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+        }
+
+        [Fact]
+        public void Create_Vendor_With_Null_DefaultPaymentMethod()
+        {
+            var name = "Vendor One";
+            var vendorCode = "V1";
+            DefaultPaymentMethod defaultPaymentMethod = null;
+
+            var vendorOrError = Vendor.Create(name, vendorCode, defaultPaymentMethod);
+
+            vendorOrError.IsFailure.Should().BeFalse();
+            vendorOrError.Value.Should().BeOfType<Vendor>();
+            vendorOrError.Value.DefaultPaymentMethod.Should().Be(null);
             vendorOrError.Value.VendorCode.Should().Be(vendorCode);
         }
 
@@ -116,6 +149,45 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendor.SetVendorCode(vendorCode);
 
             vendor.VendorCode.Should().Be(vendorCode);
+        }
+
+        [Fact]
+        public void SetDefaultPaymentMethod()
+        {
+            var vendor = CreateVendor();
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+
+            vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
+
+            vendor.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
+        }
+
+        [Fact]
+        public void Not_SetDefaultPaymentMethod_With_Null_DefaultPaymentMethod()
+        {
+            var vendor = CreateVendor();
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            DefaultPaymentMethod defaultPaymentMethod = null;
+
+            var resultOrError = vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ClearDefaultPaymentMethod()
+        {
+            var vendor = CreateVendor();
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+            vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
+            vendor.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
+
+            var resultOrError = vendor.ClearDefaultPaymentMethod();
+
+            resultOrError.IsFailure.Should().BeFalse();
+            vendor.DefaultPaymentMethod.Should().Be(null);
         }
 
         [Theory]

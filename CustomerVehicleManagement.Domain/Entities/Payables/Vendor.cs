@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         //DONE: public VendorInvocePaymentMethod? DefaultPaymentMethod { get; private set; }
         //DONE: public bool AutoCompleteDocuments { get; private set; } // can only be true if DefaultPaymentMethod is set
 
-        private Vendor(string name, string vendorCode)
+        private Vendor(string name, string vendorCode, DefaultPaymentMethod defaultPaymentMethod)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(RequiredMessage);
@@ -39,12 +39,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
+            if (defaultPaymentMethod is not null)
+                DefaultPaymentMethod = defaultPaymentMethod;
+
             Name = name;
             VendorCode = vendorCode;
             IsActive = true;
         }
 
-        public static Result<Vendor> Create(string name, string vendorCode)
+        public static Result<Vendor> Create(string name, string vendorCode, DefaultPaymentMethod defaultPaymentMethod = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return Result.Failure<Vendor>(RequiredMessage);
@@ -61,7 +64,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
 
-            return Result.Success(new Vendor(name, vendorCode));
+            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod));
         }
 
         public Result<string> SetName(string name)
@@ -88,6 +91,19 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<string>(InvalidLengthMessage);
 
             return Result.Success(VendorCode = vendorCode);
+        }
+
+        public Result<DefaultPaymentMethod> SetDefaultPaymentMethod(DefaultPaymentMethod defaultPaymentMethod)
+        {
+            if (defaultPaymentMethod is null)
+                return Result.Failure<DefaultPaymentMethod>(RequiredMessage);
+
+            return Result.Success(DefaultPaymentMethod = defaultPaymentMethod);
+        }
+
+        public Result ClearDefaultPaymentMethod()
+        {
+            return Result.Success(DefaultPaymentMethod = null);
         }
 
         public void Enable() => IsActive = true;

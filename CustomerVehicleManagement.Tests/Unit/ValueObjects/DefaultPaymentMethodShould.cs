@@ -52,7 +52,6 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
             VendorInvoicePaymentMethod nullPaymentMethod = null;
 
-            defaultPaymentMethod.PaymentMethod.Should().Be(paymentMethod);
             var resultOrError = defaultPaymentMethod.SetPaymentMethod(nullPaymentMethod);
 
             resultOrError.IsFailure.Should().BeTrue();
