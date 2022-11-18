@@ -27,7 +27,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = CreatePerson();
+                var person = CreateTestPerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)

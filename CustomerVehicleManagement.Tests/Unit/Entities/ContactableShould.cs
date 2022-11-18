@@ -30,5 +30,21 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             janes.Address.State.Should().Be(state);
             janes.Address.PostalCode.Should().Be(postalCode);
         }
+
+        [Fact]
+        public void AddPhone()
+        {
+            var organization = CreateTestOrganization();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+
+            var result = organization.AddPhone(phone);
+
+            result.IsSuccess.Should().BeTrue();
+            organization.Phones.Should().Contain(phone);
+        }
+
+
     }
 }

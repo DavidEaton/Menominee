@@ -1,13 +1,14 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System;
-using Entity = Menominee.Common.Entity;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
-    public class Vendor : Entity //TODO: Vendor : Contactable
+    public class Vendor : Contactable
     {
-        public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
@@ -17,12 +18,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
         public bool? IsActive { get; private set; }
 
-        //TODO: need address, phone, email
-        //TODO: public VendorType VendorType { get; private set; }
-        //DONE: public VendorInvocePaymentMethod? DefaultPaymentMethod { get; private set; }
-        //DONE: public bool AutoCompleteDocuments { get; private set; } // can only be true if DefaultPaymentMethod is set
-
-        private Vendor(string name, string vendorCode, DefaultPaymentMethod defaultPaymentMethod)
+        private Vendor(
+            string name, 
+            string vendorCode, 
+            DefaultPaymentMethod defaultPaymentMethod,
+            Address address = null,
+            IList<Email> emails = null,
+            IList<Phone> phones = null)
+            : base(address, phones, emails)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(RequiredMessage);
@@ -47,7 +50,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IsActive = true;
         }
 
-        public static Result<Vendor> Create(string name, string vendorCode, DefaultPaymentMethod defaultPaymentMethod = null)
+        public static Result<Vendor> Create(
+            string name, 
+            string vendorCode, 
+            DefaultPaymentMethod defaultPaymentMethod = null,
+            Address address = null,
+            IList<Email> emails = null,
+            IList<Phone> phones = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return Result.Failure<Vendor>(RequiredMessage);
@@ -64,7 +73,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
 
-            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod));
+            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod, address, emails, phones));
         }
 
         public Result<string> SetName(string name)

@@ -1,10 +1,11 @@
-﻿using CustomerVehicleManagement.Api.Payables.Vendors;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Entities.VendorInvoiceTestHelper;
+
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
     public class VendorShould
@@ -57,6 +58,43 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorOrError.Value.DefaultPaymentMethod.Should().Be(null);
             vendorOrError.Value.VendorCode.Should().Be(vendorCode);
         }
+
+        [Fact]
+        public void Create_Vendor_With_Optional_Emails()
+        {
+            var name = "Vendor One";
+            var vendorCode = "V1";
+            var phones = new List<Phone>();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Mobile;
+            var phone0 = Phone.Create(number, phoneType, true).Value;
+            phones.Add(phone0);
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            var phone1 = Phone.Create(number, phoneType, false).Value;
+            phones.Add(phone1);
+
+            var vendorOrError = Vendor.Create(name, vendorCode);
+
+            vendorOrError.IsFailure.Should().BeFalse();
+            vendorOrError.Value.Should().BeOfType<Vendor>();
+            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+        }
+
+        [Fact]
+        public void Create_Vendor_With_Optional_Phones()
+        {
+            var name = "Vendor One";
+            var vendorCode = "V1";
+            var phones = Utilities.CreateTestPhones(10);
+
+            var vendorOrError = Vendor.Create(name, vendorCode, phones: phones);
+
+            vendorOrError.IsFailure.Should().BeFalse();
+            vendorOrError.Value.Should().BeOfType<Vendor>();
+            vendorOrError.Value.Phones.Count.Should().BeGreaterThan(1);
+        }
+
 
         [Fact]
         public void Not_Create_Vendor_With_Null_Name()
@@ -215,9 +253,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Disable()
         {
-            var name = "Vendor One";
-            var vendorCode = "V1";
-            var vendor = Vendor.Create(name, vendorCode).Value;
+            var vendor = CreateVendor();
 
             vendor.Disable();
 
@@ -227,15 +263,60 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Enable()
         {
-            var name = "Vendor One";
-            var vendorCode = "V1";
-            var vendor = Vendor.Create(name, vendorCode).Value;
+            var vendor = CreateVendor();
 
             vendor.Disable();
             vendor.IsActive.Should().BeFalse();
 
             vendor.Enable();
             vendor.IsActive.Should().BeTrue();
+        }
+
+        [Fact]
+        public void AddPhone()
+        {
+            var vendor = CreateVendor();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+
+            vendor.AddPhone(phone);
+
+            vendor.Phones.Should().Contain(phone);
+        }
+
+        [Fact]
+        public void Not_AddPhone_If_Not_Unique()
+        {
+            var vendor = CreateVendor();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phoneOne = Phone.Create(number, phoneType, true).Value;
+            var numberTwo = "555.444.3333";
+            var phoneTypeTwo = PhoneType.Work;
+            var phoneTwo = Phone.Create(numberTwo, phoneTypeTwo, true).Value;
+
+            vendor.AddPhone(phoneOne);
+            var vendorOrError = vendor.AddPhone(phoneTwo);
+
+            vendor.Phones.Should().Contain(phoneOne);
+            vendorOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void ClearAddress()
+        {
+            var vendor = CreateVendor();
+
+            true.Should().BeFalse();
+        }
+
+        [Fact]
+        public void SetAddress()
+        {
+            var vendor = CreateVendor();
+
+            true.Should().BeFalse();
         }
 
         internal class TestData

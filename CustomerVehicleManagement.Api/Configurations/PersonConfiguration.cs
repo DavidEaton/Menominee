@@ -46,8 +46,8 @@ namespace CustomerVehicleManagement.Api.Configurations
                    .HasColumnName("AddressState")
                    .HasMaxLength(2)
                    .HasConversion(
-                        stringType => stringType.ToString(),
-                        stringType => (State)Enum.Parse(typeof(State), stringType));
+                        state => state.ToString(),
+                        state => (State)Enum.Parse(typeof(State), state));
 
             // Value Object: DriversLicense
             builder.OwnsOne(person => person.DriversLicense)
@@ -59,8 +59,8 @@ namespace CustomerVehicleManagement.Api.Configurations
                 .HasColumnName("DriversLicenseState")
                    .HasMaxLength(2)
                    .HasConversion(
-                        stringType => stringType.ToString(),
-                        stringType => (State)Enum.Parse(typeof(State), stringType));
+                        state => state.ToString(),
+                        state => (State)Enum.Parse(typeof(State), state));
             builder.OwnsOne(person => person.DriversLicense)
                 .OwnsOne(driversLicense => driversLicense.ValidDateRange)
                 .Property(dateTimeRange => dateTimeRange.Start)

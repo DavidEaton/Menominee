@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.ValueObjects;
 using System;
@@ -72,49 +73,58 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         {
             // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
-            // BTW, if user removes Address, it will be null here so use it.
             Address = address;
         }
 
-        public void AddPhone(Phone phone)
+        public void ClearAddress()
+        {
+            Address = null;
+        }
+
+        public Result<Phone> AddPhone(Phone phone)
         {
             /* Use a guard to throw exception in this exceptional case: we don't
              *  expect a null to ever reach here, so there must be a bug. -DE */
             if (phone is null)
-                throw new ArgumentNullException(RequiredMessage);
+                return Result.Failure<Phone>(RequiredMessage);
 
             if (ContactableHasPhone(phone))
-                throw new Exception("Duplicate phone");
+                return Result.Failure<Phone>("Duplicate phone");
 
             if (ContactableHasPrimaryPhone() && phone.IsPrimary)
                 throw new Exception("Primary phone has already been entered.");
 
             Phones.Add(phone);
+            return Result.Success(phone);
         }
 
         // VK: no need to make these methods public, they are just for the Contactable class
         // you can also keep them non-static, so that you don't need to pass in the existing collections
         private bool ContactableHasPhone(Phone phone)
         {
-            return Phones.Any(x => x.Number == phone.Number);
+            return Phones.Any(existingPhone => existingPhone.Number == phone.Number);
         }
 
         private bool ContactableHasPrimaryPhone()
         {
-            return Phones.Any(x => x.IsPrimary);
+            return Phones.Any(existingPhone => existingPhone.IsPrimary);
         }
 
         private bool ContactableHasPrimaryEmail()
         {
-            return Emails.Any(x => x.IsPrimary);
+            return Emails.Any(email => email.IsPrimary);
         }
 
         private bool ContactableHasEmail(Email email)
         {
-            return Emails.Any(x => x.Address == email.Address);
+            return Emails.Any(existingEmail => existingEmail.Address == email.Address);
         }
+
+        #region ORM
 
         // EF requires parameterless constructor
         protected Contactable() { }
+
+        #endregion
     }
 }

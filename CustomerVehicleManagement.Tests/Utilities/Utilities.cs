@@ -20,7 +20,16 @@ namespace CustomerVehicleManagement.Tests
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static Person CreatePerson()
+        public static string RandomNumberSequence(int length)
+        {
+            if (length < 0)
+                throw new ArgumentException("length cannot be negative.");
+
+            const string chars = "0123456789";
+            return new(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        public static Person CreateTestPerson()
         {
             var firstName = "Jane";
             var lastName = "Doe";
@@ -29,41 +38,37 @@ namespace CustomerVehicleManagement.Tests
             return Person.Create(nameOrError.Value, Gender.Female).Value;
         }
 
-        public static Person CreatePersonWithPhones()
+        public static Person CreateTestPersonWithPhones()
         {
-            var person = CreatePerson();
-            person.SetPhones(CreatePhoneList());
+            var person = CreateTestPerson();
+            person.SetPhones(CreateTestPhones(3));
             return person;
         }
 
-        public static Person CreatePersonWithEmails()
+        public static Person CreateTestPersonWithEmails()
         {
-            var person = CreatePerson();
-            person.SetEmails(CreateEmailList());
+            var person = CreateTestPerson();
+            person.SetEmails(CreateTestEmails());
             return person;
         }
 
-        public static IList<Phone> CreatePhoneList()
+        public static IList<Phone> CreateTestPhones(int count)
         {
-            IList<Phone> phones = new List<Phone>();
+            var phones = new List<Phone>();
 
-            var number1 = "(555) 987-6543";
-            var phoneType1 = PhoneType.Mobile;
-            var isPrimary1 = true;
-            var phone1 = Phone.Create(number1, phoneType1, isPrimary1).Value;
-
-            var number2 = "(555) 123-4567";
-            var phoneType2 = PhoneType.Mobile;
-            var isPrimary2 = false;
-            var phone2 = Phone.Create(number2, phoneType2, isPrimary2).Value;
-
-            phones.Add(phone1);
-            phones.Add(phone2);
+            for (int i = 0; i < count; i++)
+            {
+                phones.Add(Phone.Create(
+                    Utilities.RandomNumberSequence(10),
+                    PhoneType.Home,
+                    isPrimary: false)
+                    .Value);
+            }
 
             return phones;
         }
 
-        public static IList<Email> CreateEmailList()
+        public static IList<Email> CreateTestEmails()
         {
             var Emails = new List<Email>();
 
@@ -81,27 +86,19 @@ namespace CustomerVehicleManagement.Tests
             return Emails;
         }
 
-        public static Address CreateAddress()
+        public static Address CreateTestAddress()
         {
             string addressLine = "1234 Fifth Ave.";
             string city = "Traverse City";
             State state = State.MI;
             string postalCode = "49686";
 
-            var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            return addressOrError.Value;
+            return Address.Create(addressLine, city, state, postalCode).Value;
         }
 
         public static Organization CreateTestOrganization()
         {
-            var name = LoremIpsum(10);
-            Organization organization = null;
-            var organizationNameOrError = OrganizationName.Create(name);
-
-            if (!organizationNameOrError.IsFailure)
-                organization = Organization.Create(organizationNameOrError.Value, "note").Value;
-
-            return organization;
+            return Organization.Create(OrganizationName.Create(LoremIpsum(10)).Value, "note").Value;
         }
 
         public static string LoremIpsum(int characters)

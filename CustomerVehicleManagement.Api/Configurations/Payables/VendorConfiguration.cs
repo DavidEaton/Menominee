@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace CustomerVehicleManagement.Api.Configurations.Payables
 {
@@ -21,7 +23,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                 .IsRequired();
 
             // Value Object: DefaultPaymentMethod
-            // Configure Value Object to contain Entity reference
             builder.OwnsOne(
                 vendor => vendor.DefaultPaymentMethod, builder =>
                 {
@@ -33,6 +34,27 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                 .Property(defaultPaymentMethod => defaultPaymentMethod.AutoCompleteDocuments)
                 .IsRequired()
                 .HasColumnName("DefaultPaymentMethodAutoCompleteDocuments");
+
+            // Value Object: Address
+            builder.OwnsOne(vendor => vendor.Address)
+                   .Property(address => address.AddressLine)
+                   .HasColumnName("AddressLine")
+                   .HasMaxLength(255);
+            builder.OwnsOne(vendor => vendor.Address)
+                   .Property(address => address.City)
+                   .HasColumnName("AddressCity")
+                   .HasMaxLength(255);
+            builder.OwnsOne(vendor => vendor.Address)
+                   .Property(address => address.PostalCode)
+                   .HasColumnName("AddressPostalCode")
+                   .HasMaxLength(15);
+            builder.OwnsOne(vendor => vendor.Address)
+                   .Property(address => address.State)
+                   .HasColumnName("AddressState")
+                   .HasMaxLength(2)
+                   .HasConversion(
+                        state => state.ToString(),
+                        state => (State)Enum.Parse(typeof(State), state));
         }
     }
 }

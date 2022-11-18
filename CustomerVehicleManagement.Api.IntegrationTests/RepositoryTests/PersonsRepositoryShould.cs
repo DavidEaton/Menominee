@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             // Add a Person to the in-memory database
             using (var context = new ApplicationDbContext(options))
             {
-                context.Persons.Add(Utilities.CreatePerson());
+                context.Persons.Add(Utilities.CreateTestPerson());
                 context.SaveChanges();
             }
 
@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new PersonRepository(context);
 
                 // Act
-                await repository.AddPersonAsync(Utilities.CreatePerson());
+                await repository.AddPersonAsync(Utilities.CreateTestPerson());
                 await repository.SaveChangesAsync();
                 var persons = await repository.GetPersonsAsync();
 
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePerson();
+                var person = Utilities.CreateTestPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -96,7 +96,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePersonWithPhones();
+                var person = Utilities.CreateTestPersonWithPhones();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -121,7 +121,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePersonWithEmails();
+                var person = Utilities.CreateTestPersonWithEmails();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -145,7 +145,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                context.Persons.Add(Utilities.CreatePerson());
+                context.Persons.Add(Utilities.CreateTestPerson());
                 context.SaveChanges();
             }
 
@@ -167,7 +167,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePerson();
+                var person = Utilities.CreateTestPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;
@@ -211,7 +211,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var person = Utilities.CreatePerson();
+                var person = Utilities.CreateTestPerson();
                 context.Persons.Add(person);
                 context.SaveChanges();
                 id = person.Id;

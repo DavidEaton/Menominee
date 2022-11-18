@@ -123,10 +123,10 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepository.SetNote(note);
-                organizationFromRepository.SetAddress(CreateAddress());
-                organizationFromRepository.SetContact(CreatePerson());
+                organizationFromRepository.SetAddress(CreateTestAddress());
+                organizationFromRepository.SetContact(CreateTestPerson());
                 //organizationFromRepository.SetPhones(CreatePhoneList());
-                organizationFromRepository.SetEmails(CreateEmailList());
+                organizationFromRepository.SetEmails(CreateTestEmails());
 
                 await repository.SaveChangesAsync();
             }
@@ -155,7 +155,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(CreatePerson());
+                organizationFromRepository.SetContact(CreateTestPerson());
 
                 await repository.SaveChangesAsync();
             }
@@ -180,8 +180,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(CreatePerson());
-                organizationFromRepository.Contact.SetEmails(CreateEmailList());
+                organizationFromRepository.SetContact(CreateTestPerson());
+                organizationFromRepository.Contact.SetEmails(CreateTestEmails());
                 //organizationFromRepository.Contact.SetPhones(CreatePhoneList());
 
                 await repository.SaveChangesAsync();
@@ -323,7 +323,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Address.Should().BeNull();
 
-                organizationFromRepo.SetAddress(CreateAddress());
+                organizationFromRepo.SetAddress(CreateTestAddress());
 
                 await repository.SaveChangesAsync();
             }
@@ -349,7 +349,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Contact.Should().BeNull();
 
-                organizationFromRepo.SetContact(CreatePerson());
+                organizationFromRepo.SetContact(CreateTestPerson());
 
                 await repository.SaveChangesAsync();
             }
