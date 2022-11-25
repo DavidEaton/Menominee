@@ -12,68 +12,78 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
     public abstract class Contactable : Entity, IContactLists
     {
         public static readonly string RequiredMessage = $"Please enter all required items.";
+        public static readonly string NonuniqueMessage = $"Item has already been entered; each item must be unique.";
+        public static readonly string PrimaryExistsMessage = $"Primary has already been entered.";
 
         public IList<Phone> Phones { get; private set; } = new List<Phone>();
         public IList<Email> Emails { get; private set; } = new List<Email>();
         public Address Address { get; private set; }
 
-        public Contactable(Address address, IList<Phone> phones, IList<Email> emails)
+        internal Contactable(Address address, IList<Phone> phones, IList<Email> emails)
         {
             if (address is not null)
                 SetAddress(address);
 
             if (phones is not null)
-                SetPhones(phones);
+                foreach (var phone in phones)
+                    Phones.Add(phone);
 
             if (emails is not null)
-                SetEmails(emails);
+                foreach (var email in emails)
+                    Emails.Add(email);
         }
 
-        public void RemovePhone(Phone phone)
+        public Result<Email> AddEmail(Email email)
         {
-            if (phone is null)
-                throw new ArgumentNullException(RequiredMessage);
+            if (email is null)
+                return Result.Failure<Email>(RequiredMessage);
 
-            Phones.Remove(phone);
-        }
-
-        public void SetPhones(IList<Phone> phones)
-        {
-            // Client may send an empty or null collection, signifying
-            // NO CHANGE TO COLLECTION
-            if (phones is not null && phones?.Count > 0)
-                Phones = phones;
-        }
-
-        public void AddEmail(Email email)
-        {
             if (ContactableHasEmail(email))
-                throw new Exception("Duplicate email.");
+                return Result.Failure<Email>(NonuniqueMessage);
 
             if (ContactableHasPrimaryEmail() && email.IsPrimary)
-                throw new Exception("Primary email has already been entered.");
+                return Result.Failure<Email>(PrimaryExistsMessage);
 
             Emails.Add(email);
+            return Result.Success(email);
         }
 
-        public void RemoveEmail(Email email)
+        public Result RemoveEmail(Email email)
         {
-            Emails.Remove(email);
+            if (email is null)
+                return Result.Failure<Email>(RequiredMessage);
+
+            return Result.Success(Emails.Remove(email));
         }
 
-        public void SetEmails(IList<Email> emails)
+        public Result<Phone> AddPhone(Phone phone)
         {
-            // Client may send an empty or null collection, signifying
-            // NO CHANGE TO COLLECTION
-            if (emails is not null && emails?.Count > 0)
-                Emails = emails;
+            if (phone is null)
+                return Result.Failure<Phone>(RequiredMessage);
+
+            if (ContactableHasPhone(phone))
+                return Result.Failure<Phone>(NonuniqueMessage);
+
+            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
+                throw new Exception(PrimaryExistsMessage);
+
+            Phones.Add(phone);
+            return Result.Success(phone);
         }
 
-        public void SetAddress(Address address)
+        public Result RemovePhone(Phone phone)
+        {
+            if (phone is null)
+                return Result.Failure<Phone>(RequiredMessage);
+
+            return Result.Success(Phones.Remove(phone));
+        }
+
+        public Result SetAddress(Address address)
         {
             // Address is guaranteed to be valid; it was validated on creation.
             // Address is optional, so excluding it shouldn't throw an exception:
-            Address = address;
+            return Result.Success(Address = address);
         }
 
         public void ClearAddress()
@@ -81,25 +91,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             Address = null;
         }
 
-        public Result<Phone> AddPhone(Phone phone)
-        {
-            /* Use a guard to throw exception in this exceptional case: we don't
-             *  expect a null to ever reach here, so there must be a bug. -DE */
-            if (phone is null)
-                return Result.Failure<Phone>(RequiredMessage);
-
-            if (ContactableHasPhone(phone))
-                return Result.Failure<Phone>("Duplicate phone");
-
-            if (ContactableHasPrimaryPhone() && phone.IsPrimary)
-                throw new Exception("Primary phone has already been entered.");
-
-            Phones.Add(phone);
-            return Result.Success(phone);
-        }
-
-        // VK: no need to make these methods public, they are just for the Contactable class
-        // you can also keep them non-static, so that you don't need to pass in the existing collections
         private bool ContactableHasPhone(Phone phone)
         {
             return Phones.Any(existingPhone => existingPhone.Number == phone.Number);
@@ -110,14 +101,14 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             return Phones.Any(existingPhone => existingPhone.IsPrimary);
         }
 
-        private bool ContactableHasPrimaryEmail()
-        {
-            return Emails.Any(email => email.IsPrimary);
-        }
-
         private bool ContactableHasEmail(Email email)
         {
             return Emails.Any(existingEmail => existingEmail.Address == email.Address);
+        }
+
+        private bool ContactableHasPrimaryEmail()
+        {
+            return Emails.Any(email => email.IsPrimary);
         }
 
         #region ORM

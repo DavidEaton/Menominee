@@ -105,7 +105,7 @@ namespace Menominee.Client.Pages.Organizations
                 {
                     Id = phone.Id,
                     Number = phone.Number,
-                    PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
+                    PhoneType = phone.PhoneType,
                     IsPrimary = phone.IsPrimary
                 });
             }

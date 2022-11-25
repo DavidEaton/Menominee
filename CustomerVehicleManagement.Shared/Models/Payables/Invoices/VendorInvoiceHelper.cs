@@ -150,6 +150,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         #region <---- ConvertWriteDtoToEntity ---->
         public static VendorInvoice ConvertWriteDtoToEntity(
             VendorInvoiceToWrite invoice,
+            IReadOnlyList<string> vendorInvoiceNumbers,
             Vendor vendor,
             IReadOnlyList<Manufacturer> manufacturers,
             IReadOnlyList<SaleCode> saleCodes,
@@ -163,6 +164,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 invoice.Status,
                 invoice.DocumentType,
                 invoice.Total,
+                vendorInvoiceNumbers,
                 invoice.InvoiceNumber,
                 invoice.Date,
                 invoice.DatePosted,

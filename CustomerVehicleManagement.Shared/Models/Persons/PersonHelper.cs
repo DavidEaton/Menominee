@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     Person.Phones.Add(new()
                     {
                         Number = phone.Number,
-                        PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
+                        PhoneType = phone.PhoneType,
                         IsPrimary = phone.IsPrimary
                     });
                 }

@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
             builder.Property(vendor => vendor.Name)
                 .HasMaxLength(255)
                 .IsRequired();
-            builder.Property(vendor => vendor.VendorType)
+            builder.Property(vendor => vendor.VendorRole)
                 .IsRequired();
 
             // Value Object: DefaultPaymentMethod

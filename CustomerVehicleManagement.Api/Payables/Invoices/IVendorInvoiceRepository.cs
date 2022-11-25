@@ -15,5 +15,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         void DeleteInvoice(VendorInvoice entity);
         Task<bool> InvoiceExistsAsync(long id);
         Task SaveChangesAsync();
+        Task<IReadOnlyList<string>> GetVendorInvoiceNumbers(long vendorId);
     }
 }

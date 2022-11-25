@@ -2,9 +2,10 @@
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 using Xunit;
-using static CustomerVehicleManagement.Tests.Unit.Entities.VendorInvoiceTestHelper;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -86,7 +87,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = "Vendor One";
             var vendorCode = "V1";
-            var phones = Utilities.CreateTestPhones(10);
+            var phones = CreateTestPhones(10);
 
             var vendorOrError = Vendor.Create(name, vendorCode, phones: phones);
 
@@ -99,7 +100,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_Vendor_With_Null_Name()
         {
-            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = RandomCharacters(Vendor.MinimumLength);
             string name = null;
 
             var vendorOrError = Vendor.Create(name, vendorCode);
@@ -111,8 +112,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_Vendor_With_Invalid_Name(int length)
         {
-            var name = Utilities.RandomCharacters(length);
-            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var name = RandomCharacters(length);
+            var vendorCode = RandomCharacters(Vendor.MinimumLength);
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
@@ -122,7 +123,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_Vendor_With_Null_Code()
         {
-            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var name = RandomCharacters(Vendor.MinimumLength);
             string code = null;
 
             var vendorOrError = Vendor.Create(name, code);
@@ -134,8 +135,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_Vendor_With_Invalid_Code(int length)
         {
-            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
-            var vendorCode = Utilities.RandomCharacters(length);
+            var name = RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = RandomCharacters(length);
 
             var vendorOrError = Vendor.Create(name, vendorCode);
 
@@ -147,7 +148,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendor = CreateVendor();
 
-            var name = Utilities.RandomCharacters(Vendor.MinimumLength + 11);
+            var name = RandomCharacters(Vendor.MinimumLength + 11);
             vendor.SetName(name);
 
             vendor.Name.Should().Be(name);
@@ -167,11 +168,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Name_With_Invalid_Name(int length)
         {
-            var name = Utilities.RandomCharacters(Vendor.MinimumLength);
-            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength);
+            var name = RandomCharacters(Vendor.MinimumLength);
+            var vendorCode = RandomCharacters(Vendor.MinimumLength);
             var vendorOrError = Vendor.Create(name, vendorCode);
 
-            var invalidName = Utilities.RandomCharacters(length);
+            var invalidName = RandomCharacters(length);
             var resultOrError = vendorOrError.Value.SetName(invalidName);
 
             resultOrError.IsFailure.Should().BeTrue();
@@ -182,7 +183,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendor = CreateVendor();
             vendor.VendorCode.Length.Should().Be(Vendor.MinimumLength);
-            var vendorCode = Utilities.RandomCharacters(Vendor.MinimumLength + 1);
+            var vendorCode = RandomCharacters(Vendor.MinimumLength + 1);
 
             vendor.SetVendorCode(vendorCode);
 
@@ -234,7 +235,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendor = CreateVendor();
 
-            var invalidVendorCode = Utilities.RandomCharacters(length);
+            var invalidVendorCode = RandomCharacters(length);
             var resultOrError = vendor.SetVendorCode(invalidVendorCode);
 
             resultOrError.IsFailure.Should().BeTrue();
@@ -307,16 +308,31 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void ClearAddress()
         {
             var vendor = CreateVendor();
+            var address = Address.Create(
+                "1234 Five Street",
+                "Gaylord",
+                State.MI,
+                "49735").Value;
+            vendor.SetAddress(address);
+            vendor.Address.Should().Be(address);
 
-            true.Should().BeFalse();
+            vendor.ClearAddress();
+
+            vendor.Address.Should().BeNull();
         }
 
         [Fact]
         public void SetAddress()
         {
             var vendor = CreateVendor();
+            var address = Address.Create(
+                "1234 Five Street",
+                "Gaylord",
+                State.MI,
+                "49735").Value;
 
-            true.Should().BeFalse();
+            vendor.SetAddress(address);
+            vendor.Address.Should().Be(address);
         }
 
         internal class TestData

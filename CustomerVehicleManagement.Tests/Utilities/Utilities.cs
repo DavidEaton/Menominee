@@ -1,4 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
@@ -41,15 +44,45 @@ namespace CustomerVehicleManagement.Tests
         public static Person CreateTestPersonWithPhones()
         {
             var person = CreateTestPerson();
-            person.SetPhones(CreateTestPhones(3));
+            var phones = CreateTestPhones(5);
+
+            foreach (var phone in phones)
+                person.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
             return person;
         }
 
         public static Person CreateTestPersonWithEmails()
         {
             var person = CreateTestPerson();
-            person.SetEmails(CreateTestEmails());
+            var emails = CreateTestEmails(5);
+
+            foreach (var email in emails)
+                person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
+
             return person;
+        }
+
+        public static Person CreateTestPersonWithPhonesAndEmails()
+        {
+            var person = CreateTestPerson();
+            var phones = CreateTestPhones(5);
+            var emails = CreateTestEmails(5);
+
+            foreach (var phone in phones)
+                person.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+            foreach (var email in emails)
+                person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
+
+            return person;
+        }
+
+        public static Vendor CreateVendor()
+        {
+            return Vendor.Create(
+                RandomCharacters(Vendor.MinimumLength),
+                RandomCharacters(Vendor.MinimumLength)).Value;
         }
 
         public static IList<Phone> CreateTestPhones(int count)
@@ -59,7 +92,7 @@ namespace CustomerVehicleManagement.Tests
             for (int i = 0; i < count; i++)
             {
                 phones.Add(Phone.Create(
-                    Utilities.RandomNumberSequence(10),
+                    RandomNumberSequence(10),
                     PhoneType.Home,
                     isPrimary: false)
                     .Value);
@@ -68,22 +101,19 @@ namespace CustomerVehicleManagement.Tests
             return phones;
         }
 
-        public static IList<Email> CreateTestEmails()
+        public static IList<Email> CreateTestEmails(int count)
         {
-            var Emails = new List<Email>();
+            var emails = new List<Email>();
 
-            var address1 = "a@b.c";
-            var isPrimary1 = true;
-            var Email1 = Email.Create(address1, isPrimary1).Value;
+            for (int i = 0; i < count; i++)
+            {
+                emails.Add(Email.Create(
+                    $"{RandomNumberSequence(10)}@{RandomNumberSequence(10)}.com",
+                    isPrimary: false)
+                    .Value);
+            }
 
-            var address2 = "d@e.f";
-            var isPrimary2 = false;
-            var Email2 = Email.Create(address2, isPrimary2).Value;
-
-            Emails.Add(Email1);
-            Emails.Add(Email2);
-
-            return Emails;
+            return emails;
         }
 
         public static Address CreateTestAddress()
@@ -99,6 +129,104 @@ namespace CustomerVehicleManagement.Tests
         public static Organization CreateTestOrganization()
         {
             return Organization.Create(OrganizationName.Create(LoremIpsum(10)).Value, "note").Value;
+        }
+
+        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods()
+        {
+            return new List<VendorInvoicePaymentMethodToRead>
+            {
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                },
+
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 10),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                },
+
+                new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 20),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                }
+            };
+        }
+
+        public static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
+        {
+            string name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
+            bool isActive = true;
+            bool isOnAccountPaymentType = true;
+            var reconcilingVendor = CreateVendor();
+            var paymentMethodNames = CreatePaymentMethodNames();
+
+            return VendorInvoicePaymentMethod.Create(
+                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
+        }
+
+        public static VendorInvoicePayment CreateVendorInvoicePayment()
+        {
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            double amount = VendorInvoicePayment.InvalidValue + 1;
+            return VendorInvoicePayment.Create(paymentMethod, amount).Value;
+        }
+
+
+        public static SalesTax CreateSalesTax(int dcescriptionSeed = 0)
+        {
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var taxType = SalesTaxType.Normal;
+            var order = (int)SalesTax.MinimumValue + 10;
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var partTaxRate = SalesTax.MinimumValue + .1;
+            var laborTaxRate = SalesTax.MinimumValue + .25;
+            bool? isAppliedByDefault = true;
+            bool? isTaxable = true;
+
+            return SalesTax.Create(description, taxType, order, taxIdNumber, partTaxRate, laborTaxRate, isAppliedByDefault: isAppliedByDefault, isTaxable: isTaxable).Value;
+        }
+
+        internal static List<ExciseFee> CreateExciseFees()
+        {
+            // TODO: This test method creates and returns an entity list
+            // with all Id == 0. That breaks identity comaprisons like
+            // if (!ExciseFees.Any(x => x.Id == fee.Id))... inside our
+            // domain class SalesTax.SetExciseFees creation/validation
+            // MUST TEST COLLECTIONS WITH INTEGRATION, NOT UNIT TESTS
+            var fees = new List<ExciseFee>();
+            int length = 5;
+
+            for (int i = 0; i < length; i++)
+            {
+                fees.Add(ExciseFee.Create(
+                    RandomCharacters(ExciseFee.DescriptionMaximumLength - length),
+                    ExciseFeeType.Flat,
+                    ExciseFee.MinimumValue + length).Value);
+            }
+
+            return fees;
+        }
+
+        public static IList<string> CreatePaymentMethodNames()
+        {
+            IList<string> result = new List<string>();
+            var list = CreateVendorInvoicePaymentMethods();
+
+            foreach (var method in list)
+            {
+                result.Add(method.Name);
+            }
+
+            return result;
         }
 
         public static string LoremIpsum(int characters)

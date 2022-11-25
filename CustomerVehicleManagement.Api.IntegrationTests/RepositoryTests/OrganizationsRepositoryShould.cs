@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Organizations;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Organizations;
 using FluentAssertions;
 using Menominee.Common.ValueObjects;
@@ -70,10 +71,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             {
                 var repository = new OrganizationRepository(context);
 
-                // Act
                 var organizations = await repository.GetOrganizationsListAsync();
 
-                // Assert
                 organizations.Count.Should().BeGreaterOrEqualTo(1);
             }
         }
@@ -116,6 +115,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var note = "Some notes in the note field";
             var options = CreateDbContextOptions();
             long id = CreateAndSaveValidOrganizationId(options);
+            var phonesCount = 5;
+            var emailsCount = 5;
 
             using (var context = new ApplicationDbContext(options))
             {
@@ -126,7 +127,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 organizationFromRepository.SetAddress(CreateTestAddress());
                 organizationFromRepository.SetContact(CreateTestPerson());
                 //organizationFromRepository.SetPhones(CreatePhoneList());
-                organizationFromRepository.SetEmails(CreateTestEmails());
+                var emails = CreateTestEmails(emailsCount);
+                foreach (var email in emails)
+                    organizationFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
+
+                var phones = CreateTestPhones(phonesCount);
+                foreach (var phone in phones)
+                    organizationFromRepository.AddPhone(Phone.Create(phone.Number,phone.PhoneType, phone.IsPrimary).Value);
 
                 await repository.SaveChangesAsync();
             }
@@ -138,8 +145,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 organizationFromRepository.Note.Should().Be(note);
                 organizationFromRepository.Address.Should().NotBeNull();
-                //organizationFromRepository.Phones.Count().Should().BeGreaterThan(0);
-                organizationFromRepository.Emails.Count().Should().BeGreaterThan(0);
+                organizationFromRepository.Phones.Count().Should().Be(phonesCount);
+                organizationFromRepository.Emails.Count().Should().Be(emailsCount);
                 organizationFromRepository.Contact.Should().NotBeNull();
             };
         }
@@ -172,6 +179,8 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
         [Fact]
         public async Task GetOrganizationAsyncIncludesContactCollections()
         {
+            var phoneCount = 5;
+            var emailCount = 5;
             var options = CreateDbContextOptions();
             long id = CreateAndSaveValidOrganizationId(options);
 
@@ -180,9 +189,15 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(CreateTestPerson());
-                organizationFromRepository.Contact.SetEmails(CreateTestEmails());
-                //organizationFromRepository.Contact.SetPhones(CreatePhoneList());
+                organizationFromRepository.SetContact(CreateTestPersonWithPhonesAndEmails());
+
+                var phones = CreateTestPhones(phoneCount);
+                foreach (var phone in phones)
+                    organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+
+                var emails = CreateTestEmails(emailCount);
+                foreach (var email in emails)
+                    organizationFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
                 await repository.SaveChangesAsync();
             }
@@ -192,9 +207,11 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
+                organizationFromRepository.Phones.Count().Should().BeGreaterOrEqualTo(1);
+                organizationFromRepository.Emails.Count().Should().BeGreaterOrEqualTo(1);
                 organizationFromRepository.Contact.Should().NotBeNull();
-                //organizationFromRepository.Contact.Phones.Count().Should().BeGreaterOrEqualTo(1);
-                organizationFromRepository.Contact.Emails.Count().Should().BeGreaterOrEqualTo(1);
+                organizationFromRepository.Contact.Phones.Count().Should().BeGreaterOrEqualTo(phoneCount);
+                organizationFromRepository.Contact.Emails.Count().Should().BeGreaterOrEqualTo(emailCount);
             };
         }
 

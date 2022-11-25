@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
         public string Name { get; private set; }
         public string VendorCode { get; private set; }
-        public VendorRole VendorType { get; private set; }
+        public VendorRole VendorRole { get; private set; }
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
         public bool? IsActive { get; private set; }
 

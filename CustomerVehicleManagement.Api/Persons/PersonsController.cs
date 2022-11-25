@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Persons;
-using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -89,18 +88,13 @@ namespace CustomerVehicleManagement.Api.Persons
             personFromRepository.SetGender(person.Gender);
             personFromRepository.SetBirthday(person.Birthday);
 
-            List<Phone> phones = new();
-
-            foreach (var phone in person?.Phones)
-                phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            List<Email> emails = new();
+            if (person?.Phones.Count > 0)
+                foreach (var phone in person?.Phones)
+                    personFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
             if (person?.Emails.Count > 0)
                 foreach (var email in person.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-            personFromRepository.SetEmails(emails);
+                    personFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
             if (person?.DriversLicense is not null)
             {

@@ -104,8 +104,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     return BadRequest();
 
             if (invoiceFromRepository.InvoiceNumber != invoiceFromCaller.InvoiceNumber)
-                if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber).IsFailure)
+            {
+                var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbers(invoiceFromCaller.Vendor.Id);
+
+                if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber, vendorInvoiceNumbers).IsFailure)
                     return BadRequest();
+            }
 
             if (invoiceFromCaller.Date is not null)
             {
@@ -252,6 +256,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             var invoiceEntity = VendorInvoiceHelper.ConvertWriteDtoToEntity(
                 invoiceToAdd,
+                await repository.GetVendorInvoiceNumbers(vendor.Id),
                 vendor,
                 await GetManufacturersInInvoice(invoiceToAdd),
                 await GetSaleCodesInInvoice(invoiceToAdd),

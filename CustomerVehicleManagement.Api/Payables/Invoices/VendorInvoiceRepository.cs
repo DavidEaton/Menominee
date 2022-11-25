@@ -151,5 +151,14 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 }
             }
         }
+
+        public async Task<IReadOnlyList<string>> GetVendorInvoiceNumbers(long vendorId)
+        {
+            return await context.VendorInvoices
+                .Where(invoice => invoice.Vendor.Id == vendorId)
+                .Select(invoice => $"{invoice.Vendor.Id}{invoice.InvoiceNumber}")
+                    .Where(invoiceNumber => !string.IsNullOrWhiteSpace(invoiceNumber))
+                .ToListAsync();
+        }
     }
 }

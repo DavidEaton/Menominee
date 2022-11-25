@@ -81,29 +81,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void SetPhones()
-        {
-            var person = Utilities.CreateTestPerson();
-            var phones = new List<Phone>();
-            var number = "555.444.3333";
-            var phoneType = PhoneType.Mobile;
-            var phone0 = Phone.Create(number, phoneType, true).Value;
-            phones.Add(phone0);
-            number = "231.546.2102";
-            phoneType = PhoneType.Home;
-            var phone1 = Phone.Create(number, phoneType, false).Value;
-            phones.Add(phone1);
-            person.SetPhones(phones);
-
-            using (new AssertionScope())
-            {
-                person.Phones.Count.Should().Be(2);
-                person.Phones.Should().Contain(phone0);
-                person.Phones.Should().Contain(phone1);
-            }
-        }
-
-        [Fact]
         public void Throw_Exception_On_Add_Greater_Than_One_PrimaryPhone()
         {
             var person = Utilities.CreateTestPerson();
@@ -165,25 +142,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void SetEmails()
-        {
-            var person = Utilities.CreateTestPerson();
-            var emails = new List<Email>();
-            var address = "jane@doe.com";
-            var email0 = Email.Create(address, true).Value;
-            emails.Add(email0);
-            address = "june@done.com";
-            var email1 = Email.Create(address, false).Value;
-            emails.Add(email1);
-
-            person.SetEmails(emails);
-
-            person.Emails.Count.Should().Be(2);
-            person.Emails.Should().Contain(email1);
-        }
-
-        [Fact]
-        public void Throw_Exception_On_Add_GreaterThan_One_Primary_Email()
+        public void Not_Add_GreaterThan_One_Primary_Email()
         {
             var person = Utilities.CreateTestPerson();
             var address = "jane@doe.com";
@@ -192,13 +151,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             address = "june@done.com";
             email = Email.Create(address, true).Value;
 
-            Action action = () => person.AddEmail(email);
+            var result = person.AddEmail(email);
 
-            action.Should().Throw<Exception>();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Throw_Exception_On_AddEmail_Duplicate()
+        public void Not_Add_Duplicate_Email()
         {
             var person = Utilities.CreateTestPerson();
             var address = "jane@doe.com";
@@ -206,9 +165,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             person.AddEmail(email);
             email = Email.Create(address, true).Value;
 
-            Action action = () => person.AddEmail(email);
+            var result = person.AddEmail(email);
 
-            action.Should().Throw<Exception>();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]

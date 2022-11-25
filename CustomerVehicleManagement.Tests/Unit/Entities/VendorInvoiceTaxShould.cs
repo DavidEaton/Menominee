@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Domain.Entities.Taxes;
 using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -13,7 +14,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoiceTax()
         {
             // Arrange
-            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
+            var salesTax = CreateSalesTax();
 
             // Act
             var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(salesTax, validAmount, 1);
@@ -38,7 +39,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             double invalidAmount = -0.1;
 
-            var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), invalidAmount, 1);
+            var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(CreateSalesTax(), invalidAmount, 1);
 
             vendorInvoiceTaxOrError.IsFailure.Should().BeTrue();
         }
@@ -47,7 +48,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_VendorInvoiceTax_With_Invalid_TaxId(long invalidTaxId)
         {
-            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
+            var salesTax = CreateSalesTax();
 
             var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(salesTax, validAmount, (int)invalidTaxId);
 
@@ -57,9 +58,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetSalesTax()
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
-            var salesTax = VendorInvoiceTestHelper.CreateSalesTax(1);
+            var salesTax = CreateSalesTax(1);
             vendorInvoiceTax.SetSalesTax(salesTax);
 
             vendorInvoiceTax.SalesTax.Should().Be(salesTax);
@@ -68,7 +69,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_SalesTax()
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
             var resultOrError = vendorInvoiceTax.SetSalesTax(null);
 
@@ -78,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetAmount()
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
             vendorInvoiceTax.Amount.Should().Be(validAmount);
             double newAmount = 2.1;
@@ -90,7 +91,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_Amount()
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
             vendorInvoiceTax.Amount.Should().Be(validAmount);
             double invalidAmount = -0.1;
@@ -102,7 +103,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTaxId()
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
             int taxId = 2;
             vendorInvoiceTax.SetTaxId(taxId);
@@ -114,7 +115,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_TaxId(long invalidTaxId)
         {
-            var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount, 1).Value;
+            var vendorInvoiceTax = VendorInvoiceTax.Create(CreateSalesTax(), validAmount, 1).Value;
 
             var resultOrError = vendorInvoiceTax.SetTaxId((int)invalidTaxId);
 

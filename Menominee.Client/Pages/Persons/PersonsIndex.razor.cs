@@ -112,7 +112,7 @@ namespace Menominee.Client.Pages.Persons
                     PersonToWrite.Phones.Add(new PhoneToWrite
                     {
                         Number = phone.Number,
-                        PhoneType = Enum.Parse<PhoneType>(phone.PhoneType),
+                        PhoneType = phone.PhoneType,
                         IsPrimary = phone.IsPrimary
                     });
                 }

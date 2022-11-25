@@ -2,7 +2,7 @@
 using FluentAssertions;
 using System;
 using Xunit;
-using static CustomerVehicleManagement.Tests.Unit.Entities.VendorInvoiceTestHelper;
+using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {

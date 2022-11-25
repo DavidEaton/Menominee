@@ -2,6 +2,7 @@
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -18,6 +19,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
         public static readonly double MinimumValue = 0;
         public static readonly int InvoiceNumberMaximumLength = 255;
+        public static readonly string NonuniqueMessage = $"Invoice Number is already in use for this Vendor. Please enter a unique Vendor Invoice Number.";
 
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
@@ -36,6 +38,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             VendorInvoiceStatus status,
             VendorInvoiceDocumentType documentType,
             double total,
+            IReadOnlyList<string> vendorInvoiceNumbers,
             string invoiceNumber = null,
             DateTime? date = null,
             DateTime? datePosted = null,
@@ -55,10 +58,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (total < MinimumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
-            invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
+            if ((invoiceNumber ?? string.Empty).Trim().Length > InvoiceNumberMaximumLength)
+                throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
-            if (invoiceNumber.Length > InvoiceNumberMaximumLength)
-                throw new ArgumentOutOfRangeException(InvoiceNumberMaximumLengthMessage);
+            if ((invoiceNumber ?? string.Empty).Trim().Length > 0)
+                if (!InvoiceNumberIsUnique(vendor, vendorInvoiceNumbers, invoiceNumber))
+                    throw new ArgumentOutOfRangeException(NonuniqueMessage);
 
             if (date.HasValue)
             {
@@ -91,6 +96,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             VendorInvoiceStatus status,
             VendorInvoiceDocumentType documentType,
             double total,
+            IReadOnlyList<string> vendorInvoiceNumbers,
             string invoiceNumber = null,
             DateTime? date = null,
             DateTime? datePosted = null,
@@ -107,10 +113,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
                 return Result.Failure<VendorInvoice>(RequiredMessage);
 
-            invoiceNumber = (invoiceNumber ?? string.Empty).Trim();
-
-            if (invoiceNumber.Length > InvoiceNumberMaximumLength)
+            if ((invoiceNumber ?? string.Empty).Trim().Length > InvoiceNumberMaximumLength)
                 return Result.Failure<VendorInvoice>(InvoiceNumberMaximumLengthMessage);
+
+            if ((invoiceNumber ?? string.Empty).Trim().Length > 0)
+                if (!InvoiceNumberIsUnique(vendor, vendorInvoiceNumbers, invoiceNumber))
+                    return Result.Failure<VendorInvoice>(NonuniqueMessage);
 
             if (total < MinimumValue)
                 return Result.Failure<VendorInvoice>(MinimumValueMessage);
@@ -122,7 +130,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(DateInvalidMessage);
 
             return Result.Success(new VendorInvoice(
-                vendor, status, documentType, total, invoiceNumber, date, datePosted, lineItems, payments, taxes));
+                vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted, lineItems, payments, taxes));
         }
 
         public Result<Vendor> SetVendor(Vendor vendor)
@@ -149,7 +157,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(DocumentType = documentType);
         }
 
-        public Result<string> SetInvoiceNumber(string invoiceNumber)
+        public Result<string> SetInvoiceNumber(string invoiceNumber, IReadOnlyList<string> vendorInvoiceNumbers)
         {
             if (invoiceNumber is null)
                 return Result.Failure<string>(RequiredMessage);
@@ -158,6 +166,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             if (invoiceNumber.Length > InvoiceNumberMaximumLength)
                 return Result.Failure<string>(InvoiceNumberMaximumLengthMessage);
+
+            if (!InvoiceNumberIsUnique(Vendor, vendorInvoiceNumbers, invoiceNumber))
+                return Result.Failure<string>(NonuniqueMessage);
 
             return Result.Success(InvoiceNumber = invoiceNumber);
         }
@@ -226,34 +237,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Taxes.Remove(tax);
         }
 
-        public void SetLineItems(IList<VendorInvoiceLineItem> lineItems)
+        private static bool InvoiceNumberIsUnique(Vendor vendor, IReadOnlyList<string> vendorInvoiceNumbers, string invoiceNumber)
         {
-            if (lineItems.Count > 0)
-            {
-                LineItems.Clear();
-                foreach (var item in lineItems)
-                    AddLineItem(item);
-            }
-        }
-
-        public void SetPayments(IList<VendorInvoicePayment> payments)
-        {
-            if (payments.Count > 0)
-            {
-                Payments.Clear();
-                foreach (var payment in payments)
-                    AddPayment(payment);
-            }
-        }
-
-        public void SetTaxes(IList<VendorInvoiceTax> taxes)
-        {
-            if (taxes.Count > 0)
-            {
-                Taxes.Clear();
-                foreach (var tax in taxes)
-                    AddTax(tax);
-            }
+            return !string.IsNullOrWhiteSpace(invoiceNumber) && !vendorInvoiceNumbers.Contains(invoiceNumber);
         }
 
         #region ORM
