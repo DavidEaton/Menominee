@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 
             return VendorInvoicePaymentMethod.Create(
                 paymentMethodNames,
-                Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength),
+                RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 5),
                 true,
                 true,
                 reconcilingVendor: null).Value;

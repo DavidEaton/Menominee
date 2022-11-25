@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
     public class VendorInvoiceTaxHelper
     {
 
-        public static IList<VendorInvoiceTax> ConvertWriteDtosToEntities(IList<VendorInvoiceTaxToWrite> taxes, IReadOnlyList<SalesTax> salesTaxes)
+        public static List<VendorInvoiceTax> ConvertWriteDtosToEntities(IList<VendorInvoiceTaxToWrite> taxes, IReadOnlyList<SalesTax> salesTaxes)
         {
             return taxes?.Select(ConvertWriteDtoToEntity(salesTaxes)).ToList()
                 ?? new List<VendorInvoiceTax>();

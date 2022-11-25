@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentHelper
     {
-        public static IList<VendorInvoicePayment> ConvertWriteDtosToEntities(IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
+        public static List<VendorInvoicePayment> ConvertWriteDtosToEntities(IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods, IList<VendorInvoicePaymentToWrite> payments)
         {
             return payments?.Select(ConvertWriteDtoToEntity(paymentMethods)).ToList()
                 ?? new List<VendorInvoicePayment>();

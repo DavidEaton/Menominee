@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        private static List<VendorInvoiceLineItemToRead> ConvertLineItemEntitiesToReadDtos(IList<VendorInvoiceLineItem> items)
+        private static IReadOnlyList<VendorInvoiceLineItemToRead> ConvertLineItemEntitiesToReadDtos(IReadOnlyList<VendorInvoiceLineItem> items)
         {
             return items?.Select(ConvertLineItemToReadDto()).ToList()
                 ?? new List<VendorInvoiceLineItemToRead>();
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        private static List<VendorInvoicePaymentToRead> ConvertPaymentEntitiesToReadDtos(IList<VendorInvoicePayment> payments)
+        private static IReadOnlyList<VendorInvoicePaymentToRead> ConvertPaymentEntitiesToReadDtos(IReadOnlyList<VendorInvoicePayment> payments)
         {
             return payments?.Select(ConvertPaymentEntityToReadDto()).ToList()
                 ?? new List<VendorInvoicePaymentToRead>();
@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        private static List<VendorInvoiceTaxToRead> ConvertTaxEntitiesToReadDtos(IList<VendorInvoiceTax> taxes)
+        private static IReadOnlyList<VendorInvoiceTaxToRead> ConvertTaxEntitiesToReadDtos(IReadOnlyList<VendorInvoiceTax> taxes)
         {
             return taxes?.Select(ConvertTaxEntityToReadDto()).ToList()
                 ?? new List<VendorInvoiceTaxToRead>();
