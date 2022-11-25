@@ -55,11 +55,11 @@ namespace CustomerVehicleManagement.Api.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             // TODO: remove pollution of production code with test concerns:
-            if (UserContext != null) // Unit tests do not yet inject UserContext
-                Connection = GetTenantConnection();
+            //if (UserContext != null) // Unit tests do not yet inject UserContext
+            //    Connection = GetTenantConnection();
 
-            if (!options.IsConfigured) // Unit tests will configure context with test provider
-                options.UseSqlServer(Connection);
+            //if (!options.IsConfigured) // Unit tests will configure context with test provider
+            //    options.UseSqlServer(Connection);
 
             base.OnConfiguring(options);
         }
