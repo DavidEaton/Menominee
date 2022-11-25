@@ -212,34 +212,65 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public void ClearDatePosted() => DatePosted = null;
 
-        public void AddLineItem(VendorInvoiceLineItem lineItem)
+        public Result<VendorInvoiceLineItem> AddLineItem(VendorInvoiceLineItem lineItem)
         {
+            if (lineItem is null)
+                return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
+
+            // VK: Is this the correct use of Result<T> in domain collection mutation method?
             lineItems.Add(lineItem);
+
+            return Result.Success(lineItem);
         }
 
-        public void RemoveLineItem(VendorInvoiceLineItem lineItem)
+        public Result<VendorInvoiceLineItem> RemoveLineItem(VendorInvoiceLineItem lineItem)
         {
+            if (lineItem is null)
+                return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
+
             lineItems.Remove(lineItem);
+
+            return Result.Success(lineItem);
         }
 
-        public void AddPayment(VendorInvoicePayment payment)
+        public Result<VendorInvoicePayment> AddPayment(VendorInvoicePayment payment)
         {
+            if (payment is null)
+                return Result.Failure<VendorInvoicePayment>(RequiredMessage);
+
             payments.Add(payment);
+
+            return Result.Success(payment);
         }
 
-        public void RemovePayment(VendorInvoicePayment payment)
+        public Result<VendorInvoicePayment> RemovePayment(VendorInvoicePayment payment)
         {
+            if (payment is null)
+                return Result.Failure<VendorInvoicePayment>(RequiredMessage);
+
             payments.Remove(payment);
+
+            return Result.Success(payment);
         }
 
-        public void AddTax(VendorInvoiceTax tax)
+        public Result<VendorInvoiceTax> AddTax(VendorInvoiceTax tax)
         {
+            if (tax is null)
+                return Result.Failure<VendorInvoiceTax>(RequiredMessage);
+
             taxes.Add(tax);
+
+            return Result.Success(tax);
         }
 
-        public void RemoveTax(VendorInvoiceTax tax)
+        public Result<VendorInvoiceTax> RemoveTax(VendorInvoiceTax tax)
         {
+            if (tax is null)
+                return Result.Failure<VendorInvoiceTax>(RequiredMessage);
+
             taxes.Remove(tax);
+
+            return Result.Success(tax);
         }
 
         private static bool InvoiceNumberIsUnique(IReadOnlyList<string> vendorInvoiceNumbers, string invoiceNumber) => !string.IsNullOrWhiteSpace(invoiceNumber) && !vendorInvoiceNumbers.Contains(invoiceNumber);
