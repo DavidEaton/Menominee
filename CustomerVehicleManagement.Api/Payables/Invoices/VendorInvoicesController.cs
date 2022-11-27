@@ -254,19 +254,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (vendor is null)
                 return NotFound($"Could not add new Invoice, Number: {invoiceToAdd.InvoiceNumber}.");
 
-            var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbers(vendor.Id);
-
-            ///////////////////////////////////////////////////////////////////////////////
-            /// TODO: Ask VK: Since FluentValidation has already validated VendorInvoiceToWrite invoiceToAdd,
-            /// can't we just eliminate the two IsFailure and IsSuccess checks and instead do:
-            /// var invoice = VendorInvoice.Create(...).Value;
-            /// Integration tests should confirm whether that is in fact the case. 
             var invoiceOrError = VendorInvoice.Create(
                 vendor,
                 invoiceToAdd.Status,
                 invoiceToAdd.DocumentType,
                 invoiceToAdd.Total,
-                vendorInvoiceNumbers,
+                await repository.GetVendorInvoiceNumbers(vendor.Id),
                 invoiceToAdd.InvoiceNumber,
                 invoiceToAdd.Date,
                 invoiceToAdd.DatePosted);
@@ -274,11 +267,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (invoiceOrError.IsFailure)
                 return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
 
-            VendorInvoice invoice = null;
-
-            if (invoiceOrError.IsSuccess)
-                invoice = invoiceOrError.Value;
-            //////////////////////////////////////////////////////////////////////////////////////
+            VendorInvoice invoice = invoiceOrError.Value;
 
             if (invoiceToAdd?.LineItems.Count > 0)
                 foreach (var item in invoiceToAdd.LineItems)

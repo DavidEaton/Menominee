@@ -256,6 +256,23 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoiceOrError.Error.Should().Contain("unique");
         }
 
+        // Add LineItems
+
+        [Fact]
+        public void AddLineItem()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+
+
+
+
+            true.Should().BeFalse();
+        }
+
+        // Add Payments
+        // Add Texes
+
+
         [Fact]
         public void SetVendor()
         {

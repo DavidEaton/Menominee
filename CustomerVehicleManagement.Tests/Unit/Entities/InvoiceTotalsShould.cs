@@ -12,7 +12,7 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using Xunit;
-
+using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
     public class InvoiceTotalsShould
@@ -564,56 +564,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 Name = Utilities.RandomCharacters(Vendor.MinimumLength) + 1,
                 VendorCode = Utilities.RandomCharacters(Vendor.MinimumLength + 1)
             };
-        }
-
-        private static IList<VendorInvoiceTaxToWrite> CreateTaxes(int taxLineCount, double taxAmount)
-        {
-            var taxes = new List<VendorInvoiceTaxToWrite>();
-
-            for (int i = 0; i < taxLineCount; i++)
-            {
-                taxes.Add(new VendorInvoiceTaxToWrite()
-                {
-                    Amount = taxAmount
-                });
-            }
-
-            return taxes;
-        }
-
-        private static IList<VendorInvoicePaymentToWrite> CreatePayments(int paymentCount, double paymentAmount)
-        {
-            var payments = new List<VendorInvoicePaymentToWrite>();
-
-            for (int i = 0; i < paymentCount; i++)
-            {
-                payments.Add(new VendorInvoicePaymentToWrite()
-                {
-                    Amount = paymentAmount
-                });
-            }
-
-            return payments;
-        }
-
-        private static IList<VendorInvoiceLineItemToWrite> CreateLineItems(VendorInvoiceLineItemType type, int lineItemCount, double core, double cost, double lineItemQuantity)
-        {
-            var lineItems = new List<VendorInvoiceLineItemToWrite>();
-
-            for (int i = 0; i < lineItemCount; i++)
-            {
-                lineItems.Add(
-                    new VendorInvoiceLineItemToWrite()
-                    {
-                        Core = core,
-                        Cost = cost,
-                        Quantity = lineItemQuantity,
-                        PONumber = string.Empty,
-                        Type = type
-                    });
-            }
-
-            return lineItems;
         }
 
         internal class TestData

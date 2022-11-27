@@ -67,7 +67,7 @@ namespace Menominee.Client.Components.Payables
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
 
             // TODO: Check to see if invoice # has already been used.  Or is there a better way?
-            // DE: I'll implement invoice number uniqueness in VendorInvoice: unique for the selected vendor.
+            // DONE (DE): implement invoice number uniqueness in VendorInvoice: unique for the selected vendor.
             // DONE (DE): Add a DocumentType field to the vendor invoice (Invoice/Return)
             //       Will need to support Statements too - another doctype or another entity?
             // DONE (DE): Vendors need a DefaultPaymentMethod field
@@ -198,8 +198,8 @@ namespace Menominee.Client.Components.Payables
             //tblVendDocPayCopy->Active = true;
 
             DeleteChargeLineItems();
-            RemoveCoreOnHands(false);
-            PostToInventory(false);
+            RemoveCoreOnHands(removing: false);
+            PostToInventory(posting: false);
 
             // FROM ENTERPRISE...
             //// Create the negative invoice header

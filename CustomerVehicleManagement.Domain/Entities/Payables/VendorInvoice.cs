@@ -46,10 +46,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IReadOnlyList<string> vendorInvoiceNumbers,
             string invoiceNumber = null,
             DateTime? date = null,
-            DateTime? datePosted = null,
-            List<VendorInvoiceLineItem> lineItems = null,
-            List<VendorInvoicePayment> payments = null,
-            List<VendorInvoiceTax> taxes = null)
+            DateTime? datePosted = null)
         {
             if (vendor is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -91,9 +88,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             DocumentType = documentType;
             Total = total;
             InvoiceNumber = invoiceNumber;
-            this.lineItems = lineItems ?? new List<VendorInvoiceLineItem>();
-            this.payments = payments ?? new List<VendorInvoicePayment>();
-            this.taxes = taxes ?? new List<VendorInvoiceTax>();
         }
 
         public static Result<VendorInvoice> Create(
@@ -104,10 +98,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IReadOnlyList<string> vendorInvoiceNumbers,
             string invoiceNumber = null,
             DateTime? date = null,
-            DateTime? datePosted = null,
-            List<VendorInvoiceLineItem> lineItems = null,
-            List<VendorInvoicePayment> payments = null,
-            List<VendorInvoiceTax> taxes = null)
+            DateTime? datePosted = null)
         {
             if (vendor is null)
                 return Result.Failure<VendorInvoice>(RequiredMessage);
@@ -135,7 +126,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoice>(DateInvalidMessage);
 
             return Result.Success(new VendorInvoice(
-                vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted, lineItems, payments, taxes));
+                vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted));
         }
 
         public Result<Vendor> SetVendor(Vendor vendor)
@@ -217,7 +208,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (lineItem is null)
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
-            // VK: Is this the correct use of Result<T> in domain collection mutation method?
+            // TODO: VK: Is this the correct use of Result<T> in domain collection mutation method?
             lineItems.Add(lineItem);
 
             return Result.Success(lineItem);

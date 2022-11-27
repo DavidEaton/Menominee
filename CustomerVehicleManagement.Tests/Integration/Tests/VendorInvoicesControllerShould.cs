@@ -14,6 +14,7 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
 
 namespace CustomerVehicleManagement.Tests.Integration.Tests
 {
@@ -38,6 +39,24 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 }
             };
 
+            // Add LineItems
+            VendorInvoiceLineItemType lineItemType = VendorInvoiceLineItemType.Purchase;
+            int lineItemCount = 5;
+            double lineItemCore = 2.2;
+            double lineItemCost = 4.4;
+            double lineItemQuantity = 2;
+
+            //invoiceToAdd.LineItems = CreateLineItems(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
+
+
+            // Add Payments
+            int paymentLineCount = 2;
+            double paymentLineAmount = 3.3;
+
+            //invoiceToAdd.Payments = CreatePayments(paymentLineCount, paymentLineAmount);
+
+            // Add Texes
+
             // Act
             using (var context = Helpers.CreateTestContext())
             {
@@ -49,6 +68,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                     new ManufacturerRepository(context),
                     new SaleCodeRepository(context)
                     );
+
                 var addInvoiceResult = await controller.AddInvoiceAsync(invoiceToAdd);
                 var addInvoiceResponse = JsonSerializer.Deserialize<CreatedResultResponse>(addInvoiceResult.ToJson());
                 var getInvoiceActionResult = await controller.GetInvoiceAsync(addInvoiceResponse.Value.Id);
@@ -66,7 +86,6 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         [Fact]
         public async Task UpdateInvoiceAsync()
         {
-            // Arrange
             VendorInvoiceToWrite invoiceToAdd = new()
             {
                 Date = DateTime.Today,
@@ -82,7 +101,6 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 }
             };
 
-            // Act
             using (var context = Helpers.CreateTestContext())
             {
                 var controller = new VendorInvoicesController(
@@ -99,7 +117,6 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 var actionResultValue = (OkObjectResult)getInvoiceActionResult.Result;
                 var vendorInvoice = (VendorInvoiceToRead)actionResultValue.Value;
 
-                // Assert
                 vendorInvoice.Should().BeOfType<VendorInvoiceToRead>();
                 vendorInvoice.Status.Should().Be(VendorInvoiceStatus.Open);
                 vendorInvoice.Date.Should().Be(DateTime.Today);

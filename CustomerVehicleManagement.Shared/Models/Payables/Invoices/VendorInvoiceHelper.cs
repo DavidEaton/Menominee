@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
@@ -10,7 +8,6 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +16,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public static class VendorInvoiceHelper
     {
-        #region <---- ConvertEntityToReadDto ---->
         public static VendorInvoiceToRead ConvertEntityToReadDto(VendorInvoice invoice)
         {
             return
@@ -126,7 +122,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             };
         }
 
-
         public static VendorInvoiceToReadInList ConvertEntityToReadInListDto(VendorInvoice invoice)
         {
             return invoice is null
@@ -144,39 +139,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Total = invoice.Total
                 };
         }
-        
-        #endregion
-
-        #region <---- ConvertWriteDtoToEntity ---->
-        public static VendorInvoice ConvertWriteDtoToEntity(
-            VendorInvoiceToWrite invoice,
-            IReadOnlyList<string> vendorInvoiceNumbers,
-            Vendor vendor,
-            IReadOnlyList<Manufacturer> manufacturers,
-            IReadOnlyList<SaleCode> saleCodes,
-            IReadOnlyList<SalesTax> salesTaxes,
-            IReadOnlyList<VendorInvoicePaymentMethodToRead> paymentMethods)
-        {
-            return invoice is null
-                ? null
-                : VendorInvoice.Create(
-                vendor,
-                invoice.Status,
-                invoice.DocumentType,
-                invoice.Total,
-                vendorInvoiceNumbers,
-                invoice.InvoiceNumber,
-                invoice.Date,
-                invoice.DatePosted,
-                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoice.LineItems, manufacturers, saleCodes),
-                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(paymentMethods, invoice.Payments),
-                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoice.Taxes, salesTaxes))
-                .Value;
-        }
-
-        #endregion
-
-        #region <---- ConvertReadToWriteDto ---->
 
         public static VendorInvoiceToWrite ConvertReadToWriteDto(VendorInvoiceToRead invoice)
         {
@@ -196,7 +158,5 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoice.Taxes)
                 };
         }
-
-        #endregion
     }
 }
