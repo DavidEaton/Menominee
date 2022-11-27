@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             return await context.VendorInvoices
                 .Where(invoice => invoice.Vendor.Id == vendorId)
-                .Select(invoice => $"{invoice.Vendor.Id}{invoice.InvoiceNumber}")
+                .Select(invoice => invoice.InvoiceNumber)
                     .Where(invoiceNumber => !string.IsNullOrWhiteSpace(invoiceNumber))
                 .ToListAsync();
         }

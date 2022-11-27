@@ -17,20 +17,6 @@ namespace CustomerVehicleManagement.Tests.Integration
             return new ApplicationDbContext(IntegrationTestsConnectionString);
         }
 
-        internal static Vendor CreateVendor(ApplicationDbContext context)
-        {
-
-            var vendorOrError = Vendor.Create("Test Vendor", "TV-1");
-
-            if (vendorOrError.IsFailure)
-                throw new NotImplementedException();
-
-            context.Vendors.Add(vendorOrError.Value);
-            context.SaveChanges();
-
-            return context.Vendors.Find(vendorOrError.Value.Id);
-        }
-
         internal static void InspectTrackingStates(VendorInvoice invoice, ApplicationDbContext context)
         {
             EntityState stateInvoice = context.Entry(invoice).State;

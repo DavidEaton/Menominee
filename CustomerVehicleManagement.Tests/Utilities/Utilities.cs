@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
@@ -76,6 +77,16 @@ namespace CustomerVehicleManagement.Tests
                 person.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
             return person;
+        }
+
+        public static List<Vendor> CreateVendors(int count)
+        {
+            var list = new List<Vendor>();
+
+            for (int i = 0; i < count; i++)
+                list.Add(CreateVendor());
+
+            return list;
         }
 
         public static Vendor CreateVendor()

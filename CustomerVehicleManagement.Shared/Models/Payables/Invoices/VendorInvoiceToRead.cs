@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using System;
 using System.Collections.Generic;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
@@ -13,7 +14,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         public VendorToRead Vendor { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? DatePosted { get; set; }
-        public string Status { get; set; }
+        public VendorInvoiceStatus Status { get; set; }
         public string InvoiceNumber { get; set; }
         public double Total { get; set; }
         public IReadOnlyList<VendorInvoiceLineItemToRead> LineItems { get; set; } = new List<VendorInvoiceLineItemToRead>();

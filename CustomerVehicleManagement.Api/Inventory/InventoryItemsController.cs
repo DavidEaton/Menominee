@@ -227,28 +227,28 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         private static List<long> GetItemIds(InventoryItemToWrite itemToAdd)
         {
-            List<long> ids = new();
+            List<long> result = new();
 
             if (itemToAdd.Part is not null)
-                ids.Add(itemToAdd.Part.Id);
+                result.Add(itemToAdd.Part.Id);
 
             if (itemToAdd.Labor is not null)
-                ids.Add(itemToAdd.Labor.Id);
+                result.Add(itemToAdd.Labor.Id);
 
             if (itemToAdd.Tire is not null)
-                ids.Add(itemToAdd.Tire.Id);
+                result.Add(itemToAdd.Tire.Id);
 
             if (itemToAdd.Package is not null)
                 foreach (var item in itemToAdd.Package.Items)
-                    ids.Add(item.Id);
+                    result.Add(item.Id);
 
             if (itemToAdd.Inspection is not null)
-                ids.Add(itemToAdd.Inspection.Id);
+                result.Add(itemToAdd.Inspection.Id);
 
             if (itemToAdd.Warranty is not null)
-                ids.Add(itemToAdd.Warranty.Id);
+                result.Add(itemToAdd.Warranty.Id);
 
-            return ids;
+            return result;
         }
 
         [HttpDelete("{id:long}")]

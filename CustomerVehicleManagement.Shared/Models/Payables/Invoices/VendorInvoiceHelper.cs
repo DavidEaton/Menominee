@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Id = invoice.Id,
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
-                    Status = EnumExtensions.GetDisplayName(invoice.Status),
+                    Status = invoice.Status,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
@@ -187,7 +187,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 {
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
-                    Status = invoice.Status.GetValueFromName<VendorInvoiceStatus>(),
+                    Status = invoice.Status,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = VendorHelper.ConvertReadToReadInListDto(invoice.Vendor),

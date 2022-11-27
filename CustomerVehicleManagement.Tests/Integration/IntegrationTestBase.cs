@@ -1,10 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared;
+using static CustomerVehicleManagement.Tests.Utilities;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 
 namespace CustomerVehicleManagement.Tests.Integration
 {
@@ -31,13 +33,14 @@ namespace CustomerVehicleManagement.Tests.Integration
             var manufacturers = InventoryItemHelper.CreateManufacturers(10);
             ProductCode productCode = CreateProductCode(manufacturers[5], saleCode); // Grab an arbitrary manufacturer: manufacturers[5] and create a ProductCode.
             InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
-
+            List<Vendor> vendors = CreateVendors(10);
             ApplicationDbContext context = Helpers.CreateTestContext();
 
             context.Add(saleCode);
             context.AddRange(manufacturers);
             context.Add(productCode);
             context.Add(part);
+            context.AddRange(vendors);
             context.SaveChanges();
         }
 
@@ -49,8 +52,8 @@ namespace CustomerVehicleManagement.Tests.Integration
 
         private static SaleCode CreateSaleCode()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            string name = RandomCharacters(SaleCode.MinimumLength);
+            string code = RandomCharacters(SaleCode.MinimumLength);
             double laborRate = SaleCode.MinimumValue;
             double desiredMargin = SaleCode.MinimumValue;
             SaleCodeShopSupplies shopSupplies = new();

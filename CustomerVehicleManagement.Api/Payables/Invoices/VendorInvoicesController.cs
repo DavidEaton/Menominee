@@ -252,27 +252,84 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
             if (vendor is null)
+                return NotFound($"Could not add new Invoice, Number: {invoiceToAdd.InvoiceNumber}.");
+
+            var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbers(vendor.Id);
+
+            ///////////////////////////////////////////////////////////////////////////////
+            /// TODO: Ask VK: Since FluentValidation has already validated VendorInvoiceToWrite invoiceToAdd,
+            /// can't we just eliminate the two IsFailure and IsSuccess checks and instead do:
+            /// var invoice = VendorInvoice.Create(...).Value;
+            /// Integration tests should confirm whether that is in fact the case. 
+            var invoiceOrError = VendorInvoice.Create(
+                vendor,
+                invoiceToAdd.Status,
+                invoiceToAdd.DocumentType,
+                invoiceToAdd.Total,
+                vendorInvoiceNumbers,
+                invoiceToAdd.InvoiceNumber,
+                invoiceToAdd.Date,
+                invoiceToAdd.DatePosted);
+
+            if (invoiceOrError.IsFailure)
                 return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
 
-            var invoiceEntity = VendorInvoiceHelper.ConvertWriteDtoToEntity(
-                invoiceToAdd,
-                await repository.GetVendorInvoiceNumbers(vendor.Id),
-                vendor,
-                await GetManufacturersInInvoice(invoiceToAdd),
-                await GetSaleCodesInInvoice(invoiceToAdd),
-                await salesTaxRepository.GetSalesTaxEntities(),
-                await paymentMethodRepository.GetPaymentMethodsAsync());
+            VendorInvoice invoice = null;
 
-            repository.AddInvoice(invoiceEntity);
+            if (invoiceOrError.IsSuccess)
+                invoice = invoiceOrError.Value;
+            //////////////////////////////////////////////////////////////////////////////////////
+
+            if (invoiceToAdd?.LineItems.Count > 0)
+                foreach (var item in invoiceToAdd.LineItems)
+                {
+                    invoice.AddLineItem(
+                        VendorInvoiceLineItem.Create(
+                            item.Type,
+                            VendorInvoiceItem.Create(
+                                item.Item.PartNumber,
+                                item.Item.Description,
+                                item.Item.Manufacturer is null
+                                    ? null
+                                    : await manufacturerRepository.GetManufacturerEntityAsync(item.Item.Manufacturer.Id),
+                                item.Item.SaleCode is null
+                                    ? null
+                                    : await saleCodeRepository.GetSaleCodeEntityAsync(item.Item.SaleCode.Id))
+                            .Value,
+                            item.Quantity,
+                            item.Cost,
+                            item.Core,
+                            item.PONumber,
+                            item.TransactionDate)
+                        .Value);
+                };
+
+            if (invoiceToAdd?.Payments.Count > 0)
+                foreach (var payment in invoiceToAdd.Payments)
+                    invoice.AddPayment(
+                        VendorInvoicePayment.Create(
+                            await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethod.Id),
+                            payment.Amount).Value);
+
+            if (invoiceToAdd?.Taxes.Count > 0)
+                foreach (var tax in invoiceToAdd.Taxes)
+                    invoice.AddTax(
+                        VendorInvoiceTax.Create(
+                            await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id),
+                            tax.Amount,
+                            tax.TaxId).Value);
+
+
+            repository.AddInvoice(invoice);
 
             await repository.SaveChangesAsync();
 
             return Created(
-                new Uri($"{BasePath}/{invoiceEntity.Id}",
+                new Uri($"{BasePath}/{invoice.Id}",
                 UriKind.Relative),
                 new
                 {
-                    invoiceEntity.Id
+                    invoice.Id
                 });
         }
 
