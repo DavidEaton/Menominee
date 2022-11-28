@@ -1,8 +1,10 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
+using Telerik.Blazor.Components.MultiSelect;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
 
@@ -274,6 +276,19 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
+        public void Not_Add_Null_LineItem()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            VendorInvoiceLineItem nullLineItem = null;
+
+            var result = vendorInvoice.AddLineItem(nullLineItem);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
+            vendorInvoice.LineItems.Count.Should().Be(0);
+        }
+
+        [Fact]
         public void RemoveLineItem()
         {
             var vendorInvoice = CreateVendorInvoice();
@@ -296,6 +311,29 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
+        public void Not_Remove_Null_LineItem()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            int lineItemCount = 5;
+            var lineItems = CreateLineItems(
+                type: VendorInvoiceLineItemType.Purchase,
+                lineItemCount: lineItemCount,
+                core: 2.2,
+                cost: 4.4,
+                itemQuantity: 2);
+            foreach (var lineItem in lineItems)
+                vendorInvoice.AddLineItem(lineItem);
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
+            VendorInvoiceLineItem nullLineItem = null;
+
+            var result = vendorInvoice.RemoveLineItem(nullLineItem);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
+        }
+
+        [Fact]
         public void AddPayment()
         {
             var vendorInvoice = CreateVendorInvoice();
@@ -306,6 +344,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoice.AddPayment(payment);
 
             vendorInvoice.Payments.Count.Should().Be(paymentCount);
+        }
+
+        [Fact]
+        public void Not_Add_Null_Payment()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            VendorInvoicePayment nullPayment = null;
+
+            var result = vendorInvoice.AddPayment(nullPayment);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
         }
 
         [Fact]
@@ -324,6 +374,24 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
+        public void Not_Remove_Null_Payment()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var paymentCount = 5;
+            var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
+            foreach (var payment in payments)
+                vendorInvoice.AddPayment(payment);
+            vendorInvoice.Payments.Count.Should().Be(paymentCount);
+            VendorInvoicePayment nullPayment = null;
+
+            var result = vendorInvoice.RemovePayment(nullPayment);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
+            vendorInvoice.Payments.Count.Should().Be(paymentCount);
+        }
+
+        [Fact]
         public void AddTax()
         {
             var vendorInvoice = CreateVendorInvoice();
@@ -334,6 +402,25 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoice.AddTax(tax);
 
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+        }
+
+        [Fact]
+        public void Not_Add_Null_Tax()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var taxLineCount = 5;
+            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
+            foreach (var tax in taxes)
+                vendorInvoice.AddTax(tax);
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+            VendorInvoiceTax nullTax = null;
+ 
+            var result = vendorInvoice.AddTax(nullTax);
+            
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+
         }
 
         [Fact]
@@ -349,6 +436,24 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             vendorInvoice.RemoveTax(taxToRemove);
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount - 1);
+        }
+
+        [Fact]
+        public void Not_Remove_Null_Tax()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var taxLineCount = 5;
+            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
+            foreach (var tax in taxes)
+                vendorInvoice.AddTax(tax);
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+            VendorInvoiceTax nullTax = null;
+
+            var result =vendorInvoice.RemoveTax(nullTax);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
         }
 
         [Fact]
