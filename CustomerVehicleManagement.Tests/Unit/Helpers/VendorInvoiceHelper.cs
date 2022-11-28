@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Menominee.Common.Enums;
+using Microsoft.Extensions.Azure;
 using System.Collections.Generic;
 using System.Linq;
 using static CustomerVehicleManagement.Tests.Utilities;
@@ -74,7 +75,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return lineItems;
         }
 
-        public static IList<VendorInvoiceTaxToWrite> CreateTaxes(int taxLineCount, double taxAmount)
+        public static IList<VendorInvoiceTaxToWrite> CreateTaxesToWrite(int taxLineCount, double taxAmount)
         {
             var taxes = new List<VendorInvoiceTaxToWrite>();
 
@@ -84,6 +85,21 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 {
                     Amount = taxAmount
                 });
+            }
+
+            return taxes;
+        }
+
+        public static IList<VendorInvoiceTax> CreateTaxes(int taxLineCount, double taxAmount)
+        {
+            var taxes = new List<VendorInvoiceTax>();
+
+            for (int i = 0; i < taxLineCount; i++)
+            {
+                taxes.Add(VendorInvoiceTax.Create(
+                    CreateSalesTax(),
+                    taxAmount)
+                    .Value);
             }
 
             return taxes;

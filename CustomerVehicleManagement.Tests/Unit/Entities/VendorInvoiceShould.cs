@@ -323,9 +323,33 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoice.Payments.Count.Should().Be(paymentCount - 1);
         }
 
+        [Fact]
+        public void AddTax()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var taxLineCount = 5;
+            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
 
-        // Add Texes
+            foreach (var tax in taxes)
+                vendorInvoice.AddTax(tax);
 
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+        }
+
+        [Fact]
+        public void RemoveTax()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var taxLineCount = 5;
+            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
+            foreach (var tax in taxes)
+                vendorInvoice.AddTax(tax);
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+            var taxToRemove = vendorInvoice.Taxes[1];
+
+            vendorInvoice.RemoveTax(taxToRemove);
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount - 1);
+        }
 
         [Fact]
         public void SetVendor()

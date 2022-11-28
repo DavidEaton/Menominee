@@ -547,7 +547,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 Total = 0,
                 LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity),
                 Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount),
-                Taxes = CreateTaxes(taxLineCount, taxLineAmount)
+                Taxes = CreateTaxesToWrite(taxLineCount, taxLineAmount)
             };
 
         private static VendorToReadInList CreateVendorToReadInList()
