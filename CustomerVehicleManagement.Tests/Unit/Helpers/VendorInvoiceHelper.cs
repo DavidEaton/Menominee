@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             };
         }
 
-        public static IList<VendorInvoiceLineItemToWrite> CreateLineItems(VendorInvoiceLineItemType type, int lineItemCount, double core, double cost, double lineItemQuantity)
+        public static IList<VendorInvoiceLineItemToWrite> CreateLineItemsToWrite(VendorInvoiceLineItemType type, int lineItemCount, double core, double cost, double lineItemQuantity)
         {
             var lineItems = new List<VendorInvoiceLineItemToWrite>();
 
@@ -52,6 +52,23 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                         PONumber = string.Empty,
                         Type = type
                     });
+            }
+
+            return lineItems;
+        }
+
+        public static IList<VendorInvoiceLineItem> CreateLineItems(VendorInvoiceLineItemType type, int lineItemCount, double core, double cost, double itemQuantity)
+        {
+            var lineItems = new List<VendorInvoiceLineItem>();
+            for (int i = 0; i < lineItemCount; i++)
+            {
+                VendorInvoiceItem item = VendorInvoiceItem.Create(
+                    $"Part {RandomCharacters(i)}",
+                    "a desription")
+                    .Value;
+                            lineItems.Add(
+                                VendorInvoiceLineItem.Create(type, item, itemQuantity, cost, core)
+                                .Value);
             }
 
             return lineItems;
@@ -72,7 +89,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return taxes;
         }
 
-        public static IList<VendorInvoicePaymentToWrite> CreatePayments(int paymentCount, double paymentAmount)
+        public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount)
         {
             var payments = new List<VendorInvoicePaymentToWrite>();
 
@@ -82,6 +99,25 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 {
                     Amount = paymentAmount
                 });
+            }
+
+            return payments;
+        }
+
+        public static IList<VendorInvoicePayment> CreatePayments(int paymentCount, double paymentAmount)
+        {
+            var payments = new List<VendorInvoicePayment>();
+
+            for (int i = 0; i < paymentCount; i++)
+            {
+                payments.Add(VendorInvoicePayment.Create(
+                    VendorInvoicePaymentMethod.Create(
+                        CreatePaymentMethodNames(),
+                        RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
+                        isActive: true,
+                        isOnAccountPaymentType: false,
+                        reconcilingVendor: null).Value,
+                    paymentAmount + i).Value);
             }
 
             return payments;

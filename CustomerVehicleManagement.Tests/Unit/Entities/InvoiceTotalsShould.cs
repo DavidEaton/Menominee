@@ -1,10 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using FluentAssertions;
 using Menominee.Client.Components.Payables;
@@ -107,7 +102,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
                 : 0;
             var expectedWarrantiesAmount = type == VendorInvoiceLineItemType.Warranty
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount 
+                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
                 : 0;
             var expectedMiscellaneousDebitsAmount = type == VendorInvoiceLineItemType.MiscDebit
                 ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
@@ -120,7 +115,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 : 0;
             var expectedTotal =
                   expectedPurchasesAmount
-                + expectedReturnsAmount 
+                + expectedReturnsAmount
                 + expectedCoreReturnsAmount
                 + expectedDefectivesAmount
                 + expectedWarrantiesAmount
@@ -128,7 +123,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 + expectedMiscellaneousCreditsAmount
                 + expectedBalanceForwardsAmount
                 + expectedTaxes;
-            
+
             var invoice = CreateVendorInvoiceToWrite(
                 type,
                 lineItemCount: lineItemCount,
@@ -157,7 +152,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void CalculateInvoiceTotal_For_Each_LineItemType(VendorInvoiceLineItemType lineItemType)
+        public void CalculateInvoiceTotals_For_Each_LineItemType(VendorInvoiceLineItemType lineItemType)
         {
             var invoiceTotals = new InvoiceTotals();
             var lineItemCount = 5;
@@ -490,7 +485,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var balanceForwardLineItemCore = 1.0;
             var balanceForwardLineItemCost = 1.0;
             var balanceForwardLineItemQuantity = 1.0;
-            var expectedBalanceForwardAmount = 
+            var expectedBalanceForwardAmount =
                 (balanceForwardLineItemCost + balanceForwardLineItemCore) * balanceForwardLineItemQuantity * balanceForwardLineItemCount;
             // Total: 104.5
             var expectedTotal =
@@ -501,9 +496,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 // Taxes: .5
                 + (taxLineCount * taxLineAmount)
                 // BalanceForwards: 4
-                + (balanceForwardLineItemCost + balanceForwardLineItemCore) *balanceForwardLineItemQuantity * balanceForwardLineItemCount;
+                + (balanceForwardLineItemCost + balanceForwardLineItemCore) * balanceForwardLineItemQuantity * balanceForwardLineItemCount;
 
-            var balanceForwardLineItems = CreateLineItems(VendorInvoiceLineItemType.BalanceForward, balanceForwardLineItemCount, balanceForwardLineItemCore, balanceForwardLineItemCost, balanceForwardLineItemQuantity);
+            var balanceForwardLineItems = CreateLineItemsToWrite(VendorInvoiceLineItemType.BalanceForward, balanceForwardLineItemCount, balanceForwardLineItemCore, balanceForwardLineItemCost, balanceForwardLineItemQuantity);
 
             var invoice = CreateVendorInvoiceToWrite(
                 lineItemType: lineItemType,
@@ -550,8 +545,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 Vendor = CreateVendorToReadInList(),
                 Status = VendorInvoiceStatus.Open,
                 Total = 0,
-                LineItems = CreateLineItems(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity),
-                Payments = CreatePayments(paymentLineCount, paymentLineAmount),
+                LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity),
+                Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount),
                 Taxes = CreateTaxes(taxLineCount, taxLineAmount)
             };
 

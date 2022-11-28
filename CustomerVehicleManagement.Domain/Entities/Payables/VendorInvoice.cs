@@ -24,7 +24,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public Vendor Vendor { get; private set; }
         public VendorInvoiceStatus Status { get; private set; }
         public VendorInvoiceDocumentType DocumentType { get; private set; }
+
+        // For vendor invoices, "posted" means it's all finished and can't be edited again (unless it's unposted). It may also mean it's been sent into an accounting integration. -Al
         public DateTime? DatePosted { get; private set; }
+
+        // Vendor invoice date is whatever the invoice from the vendor says it is. We date-stamp it when it's created by defaulting Date to the current date on creation, but user can select a date in the past too so it matches. -Al
         public DateTime? Date { get; private set; }
         public string InvoiceNumber { get; private set; }
         public double Total { get; private set; }
@@ -66,6 +70,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if ((invoiceNumber ?? string.Empty).Trim().Length > 0)
                 if (!InvoiceNumberIsUnique(vendorInvoiceNumbers, invoiceNumber))
                     throw new ArgumentOutOfRangeException(NonuniqueMessage);
+
+            if (!date.HasValue)
+                Date = DateTime.UtcNow;
 
             if (date.HasValue)
             {

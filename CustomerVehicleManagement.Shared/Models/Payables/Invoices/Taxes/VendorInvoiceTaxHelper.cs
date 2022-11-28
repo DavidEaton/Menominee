@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
                 VendorInvoiceTax.Create(salesTaxes.FirstOrDefault(
                     salesTax =>
                     salesTax.Id == tax.SalesTax.Id),
-                    tax.Amount, tax.TaxId)
+                    tax.Amount)
                 .Value;
         }
 
@@ -38,8 +38,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes
                 {
                     Id = tax.Id,
                     Amount = tax.Amount,
-                    SalesTax = tax.SalesTax,
-                    TaxId = tax.TaxId
+                    SalesTax = tax.SalesTax
                 };
         }
     }

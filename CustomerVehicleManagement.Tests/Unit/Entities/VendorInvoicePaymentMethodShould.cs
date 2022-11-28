@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoicePaymentMethod()
         {
             // Arrange
-            string name = Utilities.RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1); ;
+            string name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1);
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
@@ -64,7 +64,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_VendorInvoicePaymentMethod_With_Invalid_Name(int length)
         {
-            string invalidName = Utilities.RandomCharacters(length);
+            string invalidName = RandomCharacters(length);
             var reconcilingVendor = CreateVendor();
             IList<string> paymentMethodNames = CreatePaymentMethodNames();
 
@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
 
-            var newName = Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
+            var newName = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
             var paymentMethodNames = CreatePaymentMethodNames();
             vendorInvoicePaymentMethod.SetName(newName, paymentMethodNames);
 
@@ -168,7 +168,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
-            string invalidName = Utilities.RandomCharacters(length);
+            string invalidName = RandomCharacters(length);
             var paymentMethodNames = CreatePaymentMethodNames();
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames);

@@ -220,7 +220,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 if (taxFromCaller.Id == 0)
                     invoiceFromRepository.AddTax(
                         VendorInvoiceTax.Create(
-                            await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id), taxFromCaller.Amount, taxFromCaller.TaxId).Value);
+                            await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id), taxFromCaller.Amount).Value);
                 // Updated
                 if (taxFromCaller.Id != 0)
                 {
@@ -230,9 +230,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
                     if (taxFromRepository.SalesTax.Id != taxFromCaller.SalesTax.Id)
                         taxFromRepository.SetSalesTax(await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id));
-
-                    if (taxFromRepository.TaxId != taxFromCaller.TaxId)
-                        taxFromRepository.SetTaxId(taxFromCaller.TaxId);
 
                     if (taxFromRepository.Amount != taxFromCaller.Amount)
                         taxFromRepository.SetAmount(taxFromCaller.Amount);
@@ -305,8 +302,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     invoice.AddTax(
                         VendorInvoiceTax.Create(
                             await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id),
-                            tax.Amount,
-                            tax.TaxId).Value);
+                            tax.Amount).Value);
 
 
             repository.AddInvoice(invoice);

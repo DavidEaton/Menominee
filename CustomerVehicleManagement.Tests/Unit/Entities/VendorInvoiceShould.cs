@@ -3,7 +3,6 @@ using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
 
@@ -256,20 +255,75 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoiceOrError.Error.Should().Contain("unique");
         }
 
-        // Add LineItems
-
         [Fact]
         public void AddLineItem()
         {
             var vendorInvoice = CreateVendorInvoice();
 
+            var lineItemType = VendorInvoiceLineItemType.Purchase;
+            int lineItemCount = 5;
+            double lineItemCore = 2.2;
+            double lineItemCost = 4.4;
+            double lineItemQuantity = 2;
 
+            var lineItems = CreateLineItems(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
+            foreach (var lineItem in lineItems)
+                vendorInvoice.AddLineItem(lineItem);
 
-
-            true.Should().BeFalse();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
         }
 
-        // Add Payments
+        [Fact]
+        public void RemoveLineItem()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+
+            int lineItemCount = 5;
+            var lineItems = CreateLineItems(
+                type: VendorInvoiceLineItemType.Purchase,
+                lineItemCount: lineItemCount,
+                core: 2.2,
+                cost: 4.4,
+                itemQuantity: 2);
+            foreach (var lineItem in lineItems)
+                vendorInvoice.AddLineItem(lineItem);
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
+            var lineItemToRemove = vendorInvoice.LineItems[1];
+
+            vendorInvoice.RemoveLineItem(lineItemToRemove);
+
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount - 1);
+        }
+
+        [Fact]
+        public void AddPayment()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var paymentCount = 5;
+            var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
+
+            foreach (var payment in payments)
+                vendorInvoice.AddPayment(payment);
+
+            vendorInvoice.Payments.Count.Should().Be(paymentCount);
+        }
+
+        [Fact]
+        public void RemovePayment()
+        {
+            var vendorInvoice = CreateVendorInvoice();
+            var paymentCount = 5;
+            var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
+            foreach (var payment in payments)
+                vendorInvoice.AddPayment(payment);
+            vendorInvoice.Payments.Count.Should().Be(paymentCount);
+            var paymentToRemove = vendorInvoice.Payments[1];
+
+            vendorInvoice.RemovePayment(paymentToRemove);
+            vendorInvoice.Payments.Count.Should().Be(paymentCount - 1);
+        }
+
+
         // Add Texes
 
 
@@ -393,7 +447,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoiceNumbers: vendorInvoiceNumbers)
                 .Value;
 
-            vendorInvoice.Date.Should().BeNull();
+            vendorInvoice.Date.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
             DateTime? date = new(2000, 1, 1);
             vendorInvoice.SetDate(date);
 
@@ -462,7 +516,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoice.DatePosted.Should().NotBeNull();
             vendorInvoice.ClearDatePosted();
 
-            vendorInvoice.Date.Should().BeNull();
+            vendorInvoice.DatePosted.Should().BeNull();
         }
 
         [Fact]
