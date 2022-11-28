@@ -14,9 +14,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public SalesTax SalesTax { get; private set; }
         public double Amount { get; private set; }
-        public int TaxId { get; private set; }
 
-        private VendorInvoiceTax(SalesTax salesTax, double amount, int taxId)
+        private VendorInvoiceTax(SalesTax salesTax, double amount)
         {
             if (salesTax is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
@@ -24,15 +23,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if(amount < 0.0)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
-            if (taxId >= int.MaxValue || taxId < 0)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             SalesTax = salesTax;
             Amount = amount;
-            TaxId = taxId;
         }
 
-        public static Result<VendorInvoiceTax> Create(SalesTax salesTax, double amount, int taxId)
+        public static Result<VendorInvoiceTax> Create(SalesTax salesTax, double amount)
         {
             if (salesTax is null)
                 return Result.Failure<VendorInvoiceTax>(RequiredMessage);
@@ -40,10 +35,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (amount < MinimumValue)
                 return Result.Failure<VendorInvoiceTax>(MinimumValueMessage);
 
-            if (taxId >= int.MaxValue || taxId < 0)
-                return Result.Failure<VendorInvoiceTax>(InvalidTaxIdMessage);
-
-            return Result.Success(new VendorInvoiceTax(salesTax, amount, taxId));
+            return Result.Success(new VendorInvoiceTax(salesTax, amount));
         }
 
         public Result<SalesTax> SetSalesTax(SalesTax salesTax)
@@ -60,14 +52,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<double>(MinimumValueMessage);
 
             return Result.Success(Amount = amount);
-        }
-
-        public Result<int> SetTaxId(int taxId)
-        {
-            if (taxId >= int.MaxValue || taxId < 0)
-                return Result.Failure<int>(InvalidTaxIdMessage);
-
-            return Result.Success(TaxId = taxId);
         }
 
         #region ORM
