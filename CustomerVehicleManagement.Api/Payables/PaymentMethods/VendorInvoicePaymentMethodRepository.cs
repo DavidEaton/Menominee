@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                              .ToList();
         }
 
-        public async Task<IList<string>> GetPaymentMethodNamesAsync()
+        public async Task<IReadOnlyList<string>> GetPaymentMethodNamesAsync()
         {
             IList<VendorInvoicePaymentMethod> payMethods = await context.VendorInvoicePaymentMethods
                 .AsSplitQuery()
@@ -75,7 +75,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .ToListAsync();
 
             var result = new List<string>();
-
 
             foreach (var method in payMethods)
                 result.Add(method.Name);
@@ -104,5 +103,6 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         {
             await context.SaveChangesAsync();
         }
+
     }
 }

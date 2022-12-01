@@ -1,10 +1,8 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
-using Telerik.Blazor.Components.MultiSelect;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
 
@@ -414,9 +412,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoice.AddTax(tax);
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
             VendorInvoiceTax nullTax = null;
- 
+
             var result = vendorInvoice.AddTax(nullTax);
-            
+
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Contain("required");
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
@@ -449,7 +447,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
             VendorInvoiceTax nullTax = null;
 
-            var result =vendorInvoice.RemoveTax(nullTax);
+            var result = vendorInvoice.RemoveTax(nullTax);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Contain("required");

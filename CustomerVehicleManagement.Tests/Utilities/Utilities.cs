@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
@@ -92,8 +91,8 @@ namespace CustomerVehicleManagement.Tests
         public static Vendor CreateVendor()
         {
             return Vendor.Create(
-                RandomCharacters(Vendor.MinimumLength),
-                RandomCharacters(Vendor.MinimumLength)).Value;
+                name: RandomCharacters(Vendor.MinimumLength),
+                vendorCode: RandomCharacters(Vendor.MinimumLength)).Value;
         }
 
         public static IList<Phone> CreateTestPhones(int count)
@@ -103,8 +102,8 @@ namespace CustomerVehicleManagement.Tests
             for (int i = 0; i < count; i++)
             {
                 phones.Add(Phone.Create(
-                    RandomNumberSequence(10),
-                    PhoneType.Home,
+                    number: RandomNumberSequence(10),
+                    phoneType: PhoneType.Home,
                     isPrimary: false)
                     .Value);
             }
@@ -142,34 +141,22 @@ namespace CustomerVehicleManagement.Tests
             return Organization.Create(OrganizationName.Create(LoremIpsum(10)).Value, "note").Value;
         }
 
-        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods()
+        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods(int count)
         {
-            return new List<VendorInvoicePaymentMethodToRead>
+            var result = new List<VendorInvoicePaymentMethodToRead>();
+
+            for (int i = 0; i < count; i++)
             {
-                new VendorInvoicePaymentMethodToRead()
+                result.Add(new VendorInvoicePaymentMethodToRead()
                 {
-                    Id = 1,
-                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength),
+                    Id = i,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
                     IsActive = true,
                     IsOnAccountPaymentType = false,
-                },
+                });
+            }
 
-                new VendorInvoicePaymentMethodToRead()
-                {
-                    Id = 1,
-                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 10),
-                    IsActive = true,
-                    IsOnAccountPaymentType = false,
-                },
-
-                new VendorInvoicePaymentMethodToRead()
-                {
-                    Id = 1,
-                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 20),
-                    IsActive = true,
-                    IsOnAccountPaymentType = false,
-                }
-            };
+            return result;
         }
 
         public static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
@@ -178,7 +165,7 @@ namespace CustomerVehicleManagement.Tests
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
@@ -227,10 +214,10 @@ namespace CustomerVehicleManagement.Tests
             return fees;
         }
 
-        public static IList<string> CreatePaymentMethodNames()
+        public static IList<string> CreatePaymentMethodNames(int count)
         {
             IList<string> result = new List<string>();
-            var list = CreateVendorInvoicePaymentMethods();
+            var list = CreateVendorInvoicePaymentMethods(count);
 
             foreach (var method in list)
             {

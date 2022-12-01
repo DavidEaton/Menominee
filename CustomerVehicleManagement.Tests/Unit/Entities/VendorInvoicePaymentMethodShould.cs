@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             // Act
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
             paymentMethodNames.Add(name);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             string nullName = null;
             var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, nullName, true, true, reconcilingVendor);
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             string invalidName = RandomCharacters(length);
             var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, invalidName, true, true, reconcilingVendor);
@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
 
             var newName = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
             vendorInvoicePaymentMethod.SetName(newName, paymentMethodNames);
 
             vendorInvoicePaymentMethod.Name.Should().Be(newName);
@@ -140,7 +140,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor();
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
             var vendorInvoicePaymentMethod = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
             paymentMethodNames.Add(name);
@@ -155,7 +155,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(null, paymentMethodNames);
 
@@ -169,7 +169,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
             string invalidName = RandomCharacters(length);
-            var paymentMethodNames = CreatePaymentMethodNames();
+            var paymentMethodNames = CreatePaymentMethodNames(5);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames);
 

@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.Taxes;
 using FluentAssertions;
 using Menominee.Client.Components.Payables;
 using Menominee.Common.Enums;
@@ -8,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
+using static CustomerVehicleManagement.Tests.Utilities;
+
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
     public class InvoiceTotalsShould
@@ -546,8 +550,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 Status = VendorInvoiceStatus.Open,
                 Total = 0,
                 LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity),
-                Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount),
-                Taxes = CreateTaxesToWrite(taxLineCount, taxLineAmount)
+                Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = 1,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 1),
+                    IsActive = true,
+                    IsOnAccountPaymentType = false,
+                }),
+                Taxes = CreateTaxesToWrite(new SalesTaxToRead(), taxLineCount, taxLineAmount)
             };
 
         private static VendorToReadInList CreateVendorToReadInList()
@@ -556,8 +566,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 Id = 1,
                 IsActive = true,
-                Name = Utilities.RandomCharacters(Vendor.MinimumLength) + 1,
-                VendorCode = Utilities.RandomCharacters(Vendor.MinimumLength + 1)
+                Name = RandomCharacters(Vendor.MinimumLength) + 1,
+                VendorCode = RandomCharacters(Vendor.MinimumLength + 1)
             };
         }
 

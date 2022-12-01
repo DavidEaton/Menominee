@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
             paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
                 paymentMethod,
-                await repository.GetPaymentMethodNamesAsync());
+                (IList<string>)await repository.GetPaymentMethodNamesAsync());
 
             await repository.SaveChangesAsync();
 
@@ -69,7 +69,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         {
             var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
                 payMethodToAdd,
-                await repository.GetPaymentMethodNamesAsync());
+                (IList<string>)await repository.GetPaymentMethodNamesAsync());
 
             await repository.AddPaymentMethodAsync(payMethod);
             await repository.SaveChangesAsync();

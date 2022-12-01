@@ -87,7 +87,7 @@ namespace Menominee.Client.Components.Payables.Pages
                     Name = readDto.Name,
                     IsActive= readDto.IsActive,
                     IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
-                    ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(readDto.ReconcilingVendor)
+                    ReconcilingVendor = readDto.ReconcilingVendor
                 };
 
                 PayMethodFormMode = FormMode.Edit;

@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
@@ -55,7 +56,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             Manufacturer manufacturer = CreateManufacturer();
             SaleCode saleCode = CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
-
+            // context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
             return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
 
@@ -65,6 +66,25 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 LaborAmount.Create(ItemLaborType.Flat, 11.1).Value,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
                 InventoryItemInspectionType.CourtesyCheck).Value;
+        }
+
+        internal static IReadOnlyList<InventoryItemPart> CreateInventoryItemParts(int count)
+        {
+            var list = new List<InventoryItemPart>();
+
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(InventoryItemPart.Create(
+                    list: 0.1 * i,
+                    cost: 0.2 * i,
+                    core: 0.3 * i,
+                    retail: 0.4 * i,
+                    techAmount: TechAmount.Create(ItemLaborType.Flat, 33.33, SkillLevel.A).Value,
+                    fractional: false
+                    ).Value);
+            }
+
+            return list;
         }
 
         public static InventoryItemPart CreateInventoryItemPart()

@@ -1,7 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
+using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using Microsoft.Extensions.Azure;
 using System.Collections.Generic;
@@ -51,13 +53,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                         Cost = cost,
                         Quantity = lineItemQuantity,
                         PONumber = string.Empty,
-                        Type = type
+                        Type = type,
+                        Item = new VendorInvoiceItemToWrite()
+                        {
+                            Description = "a desription",
+                            PartNumber = $"Part {RandomCharacters(i)}"
+                        }
                     });
             }
 
             return lineItems;
         }
-
+        
         public static IList<VendorInvoiceLineItem> CreateLineItems(VendorInvoiceLineItemType type, int lineItemCount, double core, double cost, double itemQuantity)
         {
             var lineItems = new List<VendorInvoiceLineItem>();
@@ -75,7 +82,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return lineItems;
         }
 
-        public static IList<VendorInvoiceTaxToWrite> CreateTaxesToWrite(int taxLineCount, double taxAmount)
+        public static IList<VendorInvoiceTaxToWrite> CreateTaxesToWrite(SalesTaxToRead salesTax, int taxLineCount, double taxAmount)
         {
             var taxes = new List<VendorInvoiceTaxToWrite>();
 
@@ -83,7 +90,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             {
                 taxes.Add(new VendorInvoiceTaxToWrite()
                 {
-                    Amount = taxAmount
+                    Amount = taxAmount,
+                    SalesTax = salesTax
                 });
             }
 
@@ -105,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return taxes;
         }
 
-        public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount)
+        public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount, VendorInvoicePaymentMethodToRead paymentMethod)
         {
             var payments = new List<VendorInvoicePaymentToWrite>();
 
@@ -113,7 +121,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             {
                 payments.Add(new VendorInvoicePaymentToWrite()
                 {
-                    Amount = paymentAmount
+                    Amount = paymentAmount,
+                    PaymentMethod = paymentMethod
                 });
             }
 
@@ -128,7 +137,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             {
                 payments.Add(VendorInvoicePayment.Create(
                     VendorInvoicePaymentMethod.Create(
-                        CreatePaymentMethodNames(),
+                        CreatePaymentMethodNames(5),
                         RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
                         isActive: true,
                         isOnAccountPaymentType: false,

@@ -265,14 +265,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
 
             VendorInvoice invoice = invoiceOrError.Value;
+            VendorInvoiceItem vendorInvoiceItem;
 
             if (invoiceToAdd?.LineItems.Count > 0)
                 foreach (var item in invoiceToAdd.LineItems)
                 {
-                    invoice.AddLineItem(
-                        VendorInvoiceLineItem.Create(
-                            item.Type,
-                            VendorInvoiceItem.Create(
+                    vendorInvoiceItem = VendorInvoiceItem.Create(
                                 item.Item.PartNumber,
                                 item.Item.Description,
                                 item.Item.Manufacturer is null
@@ -281,7 +279,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                                 item.Item.SaleCode is null
                                     ? null
                                     : await saleCodeRepository.GetSaleCodeEntityAsync(item.Item.SaleCode.Id))
-                            .Value,
+                            .Value;
+
+                    invoice.AddLineItem(
+                        VendorInvoiceLineItem.Create(
+                            item.Type,
+                            vendorInvoiceItem,
                             item.Quantity,
                             item.Cost,
                             item.Core,
@@ -304,9 +307,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                             await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id),
                             tax.Amount).Value);
 
-
             repository.AddInvoice(invoice);
-
             await repository.SaveChangesAsync();
 
             return Created(

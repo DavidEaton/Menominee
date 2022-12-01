@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 
         private static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
         {
-            IList<string> paymentMethodNames = CreatePaymentMethodNames();
+            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
                 paymentMethodNames,

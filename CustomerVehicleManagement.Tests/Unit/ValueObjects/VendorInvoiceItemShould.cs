@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;

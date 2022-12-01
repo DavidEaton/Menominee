@@ -77,7 +77,7 @@ namespace Menominee.Client.Components.Payables
             //else if (vendorId > 0 && PaymentMethod.ReconcilingVendor?.Id != vendorId)
             else if (PaymentMethod?.ReconcilingVendor.Id != vendorId)
             {
-                PaymentMethod.ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(await vendorDataService.GetVendorAsync(vendorId ?? 0));
+                PaymentMethod.ReconcilingVendor = await vendorDataService.GetVendorAsync(vendorId ?? 0);
             }
             //PaymentMethod.VendorId = vendorId;
         }

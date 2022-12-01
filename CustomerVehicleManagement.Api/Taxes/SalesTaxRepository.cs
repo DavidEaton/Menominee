@@ -60,6 +60,15 @@ namespace CustomerVehicleManagement.Api.Taxes
             return await context.SalesTaxes.FirstOrDefaultAsync(tax => tax.Id == id);
         }
 
+        public async Task<IReadOnlyList<SalesTaxToRead>> GetSalesTaxesAsync()
+        {
+            IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();
+
+            return salesTaxes
+                .Select(tax => SalesTaxHelper.ConvertEntityToReadDto(tax))
+                .ToList();
+        }
+
         public async Task<IReadOnlyList<SalesTaxToReadInList>> GetSalesTaxListAsync()
         {
             IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();

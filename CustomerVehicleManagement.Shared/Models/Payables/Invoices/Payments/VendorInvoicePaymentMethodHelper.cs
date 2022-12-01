@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 Name = payMethod.Name,
                 IsActive = payMethod.IsActive,
                 IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
-                ReconcilingVendor = VendorHelper.ConvertReadToWriteDto(payMethod.ReconcilingVendor)
+                ReconcilingVendor = payMethod.ReconcilingVendor
             };
         }
 
