@@ -32,16 +32,15 @@ namespace Menominee.Client.Components.Payables
 
         protected override async Task OnInitializedAsync()
         {
+            foreach (VendorInvoiceStatus status in Enum.GetValues(typeof(VendorInvoiceStatus)))
+                VendorInvoiceStatusEnumData.Add(new VendorInvoiceStatusEnumModel { DisplayText = status.ToString(), Value = status });
+
             Vendors = (await VendorDataService.GetAllVendorsAsync())
                                               .Where(vendor => vendor.IsActive == true)
                                               .OrderBy(vendor => vendor.VendorCode)
                                               .ToList();
         }
-        protected override void OnInitialized()
-        {
-            foreach (VendorInvoiceStatus status in Enum.GetValues(typeof(VendorInvoiceStatus)))
-                VendorInvoiceStatusEnumData.Add(new VendorInvoiceStatusEnumModel { DisplayText = status.ToString(), Value = status });
-        }
+
         protected override void OnParametersSet()
         {
             CanEdit = FormMode == FormMode.Add || FormMode == FormMode.Edit;

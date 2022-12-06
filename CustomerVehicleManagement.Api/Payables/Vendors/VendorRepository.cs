@@ -48,6 +48,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 //    .ThenInclude(contact => contact.Phones)
                 //.Include(organization => organization.Contact)
                 //    .ThenInclude(contact => contact.Emails)
+                .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
 
             return vendorFromContext is not null
@@ -56,7 +57,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                     Id = vendorFromContext.Id,
                     VendorCode = vendorFromContext.VendorCode,
                     Name = vendorFromContext.Name,
-                    IsActive = vendorFromContext.IsActive
+                    IsActive = vendorFromContext.IsActive,
+                    DefaultPaymentMethod = vendorFromContext.DefaultPaymentMethod
                 }
                 : null;
         }

@@ -9,14 +9,16 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         {
             return vendor is null
                 ? null
-                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+                //: Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper(), vendor.DefaultPaymentMethod).Value;
         }
 
         public static Vendor ConvertWriteDtoToEntity(VendorToRead vendor)
         {
             return vendor is null
                 ? null
-                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+                //: Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper()).Value;
+                : Vendor.Create(vendor.Name, vendor.VendorCode.ToUpper(), vendor.DefaultPaymentMethod).Value;
         }
 
         public static VendorToWrite ConvertReadToWriteDto(VendorToRead vendor)
@@ -28,7 +30,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     Id = vendor.Id,
                     Name = vendor.Name,
                     VendorCode = vendor.VendorCode,
-                    IsActive = vendor.IsActive
+                    IsActive = vendor.IsActive,
+                    DefaultPaymentMethod = vendor.DefaultPaymentMethod
                 };
         }
 
@@ -41,7 +44,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     Id = vendor.Id,
                     Name = vendor.Name,
                     VendorCode = vendor.VendorCode,
-                    IsActive = vendor.IsActive
+                    IsActive = vendor.IsActive,
+                    DefaultPaymentMethod = vendor.DefaultPaymentMethod
                 };
         }
 

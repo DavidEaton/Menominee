@@ -36,9 +36,16 @@ namespace Menominee.Client.Components.Payables.Pages
             else
             {
                 var readDto = await vendorInvoiceDataService.GetInvoice(Id);
-                Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
-
-                FormMode = (Invoice.Status == VendorInvoiceStatus.Open) ? FormMode.Edit : FormMode.View;
+                if (readDto != null)
+                {
+                    Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
+                    FormMode = (Invoice.Status == VendorInvoiceStatus.Open) ? FormMode.Edit : FormMode.View;
+                }
+                else
+                {
+                    // TODO: What to do?
+                    FormMode = FormMode.View;
+                }
             }
         }
 

@@ -1,8 +1,12 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Telerik.Blazor;
@@ -12,6 +16,9 @@ namespace Menominee.Client.Components.Payables
 {
     public partial class VendorInvoiceEditor
     {
+        [Inject]
+        public IVendorDataService VendorDataService { get; set; }
+
         [Parameter]
         public VendorInvoiceToWrite Invoice { get; set; }
 
@@ -65,6 +72,9 @@ namespace Menominee.Client.Components.Payables
         private async Task OnCompleteAsync()
         {
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
+            VendorToRead vendor = (Invoice?.Vendor is not null) 
+                                ? await VendorDataService.GetVendorAsync(Invoice.Vendor.Id)
+                                : null;
 
             // TODO: Check to see if invoice # has already been used.  Or is there a better way?
             // DONE (DE): implement invoice number uniqueness in VendorInvoice: unique for the selected vendor.
@@ -72,36 +82,37 @@ namespace Menominee.Client.Components.Payables
             //       Will need to support Statements too - another doctype or another entity?
             // DONE (DE): Vendors need a DefaultPaymentMethod field
 
-            //if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
-            //{
-            //    if (!inBalance && Invoice.Vendor.DefaultPaymentMethod != null)
-            //    {
-            //        if (Invoice.Payments?.Count == 1 && Invoice.Payments[0].PaymentMethod.Id == Invoice.Vendor.DefaultPaymentMethod.Id)
-            //        {
-            //            Invoice.Payments[0].Amount = InvoiceTotals.Total;
-            //            inBalance = true;
-            //        }
-            //        else if (Invoice.Payments?.Count == 0)
-            //        {
-            //            VendorInvoicePaymentToWrite Payment = new();
-            //            Payment.PaymentMethod = Invoice.Vendor.DefaultPaymentMethod;
-            //            Payment.Amount = InvoiceTotals.Total;
-            //            Invoice.Payments.Add(Payment);
-            //            inBalance = true;
-            //        }
-            //        if (inBalance)
-            //        {
-            //            InvoiceTotals.Calculate(Invoice);
-            //            StateHasChanged();
-            //        }
-            //    }
+            if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
+            {
+                if (!inBalance && vendor?.DefaultPaymentMethod != null)
+                {
+                    if (Invoice.Payments?.Count == 1 && Invoice.Payments[0].PaymentMethod.Id == vendor.DefaultPaymentMethod.PaymentMethod.Id)
+                    {
+                        Invoice.Payments[0].Amount = InvoiceTotals.Total;
+                        inBalance = true;
+                    }
+                    else if (Invoice.Payments?.Count == 0)
+                    {
+                        Invoice.Payments.Add(new()
+                        {
+                            PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod),
+                            Amount = InvoiceTotals.Total
+                        });
+                        inBalance = true;
+                    }
+                    if (inBalance)
+                    {
+                        InvoiceTotals.Calculate(Invoice);
+                        StateHasChanged();
+                    }
+                }
 
-            //    if (!inBalance)
-            //    {
-            //        await Dialogs.AlertAsync("The Invoice Total and Payment Total must match.", "Not Paid");
-            //        return;
-            //    }
-            //}
+                if (!inBalance)
+                {
+                    await Dialogs.AlertAsync("The Invoice Total and Payment Total must match.", "Not Paid");
+                    return;
+                }
+            }
 
             // TODO: If SimplyAccounting is in use then the Invoice # is required, along with sale codes on every purchase, stock return,
             //       core return, and defective & guaranteed replacement
@@ -133,7 +144,7 @@ namespace Menominee.Client.Components.Payables
             //    return;
             //}
 
-            //if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
+            if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
             {
                 if (await Dialogs.ConfirmAsync("Revert this to an Open Invoice?", "Revert Invoice?"))
                 {
@@ -142,7 +153,7 @@ namespace Menominee.Client.Components.Payables
                 }
 
             }
-            //else if (Invoice.DocumentType == VendorInvoiceDocumentType.Return)
+            else if (Invoice.DocumentType == VendorInvoiceDocumentType.Return)
             {
                 if (Invoice.Status == VendorInvoiceStatus.ReturnSent)
                 {

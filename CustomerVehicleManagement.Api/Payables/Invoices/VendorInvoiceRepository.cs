@@ -37,6 +37,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var invoiceFromContext = await context.VendorInvoices
                                                   .Include(invoice => invoice.Vendor)
+                                                      .ThenInclude(method => method.DefaultPaymentMethod.PaymentMethod)
                                                   .Include(invoice => invoice.LineItems)
                                                       .ThenInclude(item => item.Item.Manufacturer)
                                                   .Include(invoice => invoice.LineItems)
