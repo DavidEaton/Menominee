@@ -86,7 +86,8 @@ namespace Menominee.Client.Components.Payables.Pages
                 {
                     Name = readDto.Name,
                     IsActive= readDto.IsActive,
-                    IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
+                    //IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
+                    PaymentType = readDto.PaymentType,
                     ReconcilingVendor = readDto.ReconcilingVendor
                 };
 

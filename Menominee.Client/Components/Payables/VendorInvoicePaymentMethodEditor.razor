@@ -10,50 +10,56 @@
         <WindowContent>
 
             <div class="form-row">
-@*                <div class="form-group col-12">
-                    <label class="m-label" for="description">Description</label>
-                    <div class="m-form-control-group">
-                        <TelerikTextBox @bind-Value="@PaymentMethod.Name"
-                                        Width="100%"
-                                        AutoComplete="off"
-                                        onclick="this.select();"
-                                        Id="description">
-                        </TelerikTextBox>
-                    </div>
-                </div>*@
-
-				<div class="form-group col col-12">
-					<label class="m-label" for="description">Description</label>
-					<input type="text" class="form-control" id="description" autocomplete="off" onfocus="this.select();" @bind-value="@PaymentMethod.Name">
-				</div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col col-12">
-                    <TelerikCheckBox Id="isOnAccount" @bind-Value="PaymentMethod.IsOnAccountPaymentType" />
-                    <label class="m-label" for="isOnAccount">Is an "On Account / Charge" payment type</label>
+                    <label class="m-label" for="description">Description</label>
+                    <input type="text" class="form-control" id="description" autocomplete="off" onfocus="this.select();" @bind-value="@PaymentMethod.Name">
                 </div>
             </div>
 
+            @*            <div class="form-row">
+            <div class="form-group col col-12">
+            <TelerikCheckBox Id="isOnAccount" @bind-Value="PaymentMethod.IsOnAccountPaymentType" />
+            <label class="checkbox-label" for="isOnAccount">Is an "On Account / Charge" payment type</label>
+            </div>
+            </div>
+            *@
             <div class="form-row">
                 <div class="form-group col-12">
-                    @if (Vendors is not null && PaymentMethod.ReconcilingVendor is not null)
+                    @if (PaymentTypes is not null && PaymentTypes?.Count > 0)
                     {
-                        <label class="m-label" for="vendor">Reconciling Vendor</label>
-                        <div class="m-form-control-group">
-                            <TelerikDropDownList @bind-Value="@vendorId"
-                                             Width="100%"
-                                             Data="@Vendors"
-                                             TextField="Name"
-                                             ValueField="Id"
-                                             Class="form-control"
-                                             OnChange="OnVendorChangeAsync"
-                                             Id="vendor">
-                            </TelerikDropDownList>
-                        </div>
+                        <label class="m-label" for="paymentType">Payment Type</label>
+                        <SfDropDownList TValue="VendorInvoicePaymentMethodType"
+                                    TItem="VendorPaymentType"
+                                    PopupHeight="460px"
+                                    DataSource="@PaymentTypes"
+                                    @bind-Value="@PaymentMethod.PaymentType"
+                                    Id="paymentType">
+                            <DropDownListFieldSettings Text="Text" Value="Value" />
+                        </SfDropDownList>
                     }
                 </div>
             </div>
+
+            @if (PaymentMethod.PaymentType == VendorInvoicePaymentMethodType.ReconciledByOtherVendor)
+            {
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        @if (Vendors is not null)// && PaymentMethod.ReconcilingVendor is not null)
+                        {
+                            <label class="m-label" for="vendor">Reconciling Vendor</label>
+                            <TelerikDropDownList @bind-Value="@vendorId"
+                                         Width="100%"
+                                         Data="@Vendors"
+                                         TextField="Name"
+                                         ValueField="Id"
+                                         Class="form-control"
+                                         OnChange="OnVendorChangeAsync"
+                                         Id="vendor">
+                            </TelerikDropDownList>
+                        }
+                    </div>
+                </div>
+            }
 
             <hr id="divider">
             <div>
@@ -82,6 +88,10 @@
 
     .dialog-button {
         margin-right: 0.7rem;
+    }
+
+    .checkbox-label {
+        margin: .3rem 0 0 .5rem
     }
 
 </style>

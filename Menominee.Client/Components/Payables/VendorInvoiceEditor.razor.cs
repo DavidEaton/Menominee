@@ -72,7 +72,7 @@ namespace Menominee.Client.Components.Payables
         private async Task OnCompleteAsync()
         {
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
-            VendorToRead vendor = (Invoice?.Vendor is not null) 
+            VendorToRead vendor = (Invoice?.Vendor is not null)
                                 ? await VendorDataService.GetVendorAsync(Invoice.Vendor.Id)
                                 : null;
 
@@ -327,7 +327,8 @@ namespace Menominee.Client.Components.Payables
         {
             foreach (var payment in Invoice.Payments)
             {
-                if (payment.PaymentMethod.IsOnAccountPaymentType)
+                //if (payment.PaymentMethod.IsOnAccountPaymentType)
+                if (payment.PaymentMethod.PaymentType == VendorInvoicePaymentMethodType.Charge)
                 {
                     // TODO: Charge payment types result in unassigned balance forward type line items.
                     // FROM ENTERPRISE...

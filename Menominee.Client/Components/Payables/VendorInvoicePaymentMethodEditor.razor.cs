@@ -5,9 +5,12 @@ using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Syncfusion.Blazor.Navigations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Menominee.Client.Components.Payables.VendorInvoiceItemEditor;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -44,13 +47,20 @@ namespace Menominee.Client.Components.Payables
         private IReadOnlyList<VendorToReadInList> Vendors = null;
         private long? vendorId = null;
         private bool parametersSet = false;
+        private IList<VendorPaymentType> PaymentTypes { get; set; } = new List<VendorPaymentType>();
 
         protected override async Task OnInitializedAsync()
         {
             Vendors = (await vendorDataService.GetAllVendorsAsync())
                                                           .Where(vendor => vendor.IsActive == true)
+                                                          //&& vendor.VendorRole == VendorRole.PaymentReconciler)
                                                           .OrderBy(vendor => vendor.VendorCode)
                                                           .ToList();
+
+            foreach (VendorInvoicePaymentMethodType payType in Enum.GetValues(typeof(VendorInvoicePaymentMethodType)))
+            {
+                PaymentTypes.Add(new VendorPaymentType { Text = EnumExtensions.GetDisplayName(payType), Value = payType });
+            }
         }
 
         protected override async Task OnParametersSetAsync()
@@ -94,6 +104,13 @@ namespace Menominee.Client.Components.Payables
         public async Task Focus(string elementId)
         {
             await JsInterop.InvokeVoidAsync("jsfunction.focusElement", elementId);
+        }
+
+
+        public class VendorPaymentType
+        {
+            public string Text { get; set; }
+            public VendorInvoicePaymentMethodType Value { get; set; }
         }
     }
 }

@@ -555,7 +555,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                     Id = 1,
                     Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 1),
                     IsActive = true,
-                    IsOnAccountPaymentType = false,
+                    //IsOnAccountPaymentType = false,
+                    PaymentType = VendorInvoicePaymentMethodType.Normal
                 }),
                 Taxes = CreateTaxesToWrite(new SalesTaxToRead(), taxLineCount, taxLineAmount)
             };

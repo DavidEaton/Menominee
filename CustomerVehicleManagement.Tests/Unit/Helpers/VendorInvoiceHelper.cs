@@ -140,7 +140,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                         CreatePaymentMethodNames(5),
                         RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
                         isActive: true,
-                        isOnAccountPaymentType: false,
+                        paymentType: VendorInvoicePaymentMethodType.Normal,
                         reconcilingVendor: null).Value,
                     paymentAmount + i).Value);
             }
