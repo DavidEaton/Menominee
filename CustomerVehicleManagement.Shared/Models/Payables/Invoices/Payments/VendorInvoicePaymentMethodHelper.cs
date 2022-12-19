@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     paymentMethod.IsActive,
                     //paymentMethod.IsOnAccountPaymentType,
                     paymentMethod.PaymentType,
-                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
                 ).Value;
         }
 
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     paymentMethod.IsActive,
                     //paymentMethod.IsOnAccountPaymentType,
                     paymentMethod.PaymentType,
-                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
                 ).Value;
         }
 

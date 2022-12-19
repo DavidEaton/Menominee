@@ -7,6 +7,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
     {
         public VendorValidator()
         {
+            // TODO: David, do we need to add any more fields here?  Notes, DefaultPaymentMethod, Address, etc.?
             RuleFor(vendor => vendor)
                 .MustBeEntity(
                     vendor => Vendor.Create(

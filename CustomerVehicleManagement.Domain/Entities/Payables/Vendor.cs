@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
+using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class Vendor : Contactable
     {
+        public static readonly int NoteMaximumLength = 10000;
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
@@ -16,12 +18,25 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public string VendorCode { get; private set; }
         public VendorRole VendorRole { get; private set; }
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
+        // TODO: Add this field
+        //public string Notes { get; private set; }
         public bool? IsActive { get; private set; }
+
+        // TODO: Need another table of required fields for purchases which currently include:
+        //      vendor part number
+        //      vendor invoice #
+        //      cost
+        //      date purchased
+        //      PO number
+        // TODO: Then we need to add a collection property containing these requirements
+        // TODO: We may also want to add a collection of contacts (e.g., billing person, sales rep)
+        //       We really only need their name, department, phone (1) & email (1).
 
         private Vendor(
             string name, 
             string vendorCode, 
             DefaultPaymentMethod defaultPaymentMethod,
+            //string notes = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)
@@ -47,6 +62,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Name = name;
             VendorCode = vendorCode;
+            //Notes = notes;
             IsActive = true;
         }
 
@@ -54,6 +70,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string name, 
             string vendorCode, 
             DefaultPaymentMethod defaultPaymentMethod = null,
+            //string notes = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)
@@ -66,6 +83,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
+            //notes = (notes ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
             if (name.Length < MinimumLength ||
                 name.Length > MaximumLength ||
@@ -73,7 +91,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
 
-            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod, address, emails, phones));
+            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod, /*notes,*/ address, emails, phones));
         }
 
         public Result<string> SetName(string name)
@@ -114,6 +132,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         {
             return Result.Success(DefaultPaymentMethod = null);
         }
+
+        //public void SetNotes(string notes)
+        //{
+        //    Notes = notes.Trim().Truncate(10000);
+        //}
 
         public void Enable() => IsActive = true;
 

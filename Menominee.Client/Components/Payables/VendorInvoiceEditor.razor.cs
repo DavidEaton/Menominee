@@ -23,9 +23,6 @@ namespace Menominee.Client.Components.Payables
         public VendorInvoiceToWrite Invoice { get; set; }
 
         [Parameter]
-        public string Title { get; set; }
-
-        [Parameter]
         public EventCallback OnSaveAndExit { get; set; }
 
         [Parameter]
@@ -40,14 +37,15 @@ namespace Menominee.Client.Components.Payables
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
 
+        private InvoiceTotals InvoiceTotals { get; set; } = new();
+        private string Title { get; set; }
+
         protected override void OnParametersSet()
         {
             CalculateTotals();
 
             Title = FormTitle.BuildTitle(FormMode, "Invoice");
         }
-
-        private InvoiceTotals InvoiceTotals { get; set; } = new();
 
         private void CalculateTotals()
         {

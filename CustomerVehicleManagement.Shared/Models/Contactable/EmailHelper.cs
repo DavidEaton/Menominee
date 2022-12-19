@@ -42,15 +42,15 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
             return null;
         }
 
-        public static IList<EmailToWrite> CovertReadToWriteDto(IList<EmailToRead> emails)
+        public static IList<EmailToWrite> ConvertReadToWriteDto(IList<EmailToRead> emails)
         {
             return emails
                 .Select(email =>
-                        CovertReadToWriteDto(email))
+                        ConvertReadToWriteDto(email))
                 .ToList();
         }
 
-        private static EmailToWrite CovertReadToWriteDto(EmailToRead email)
+        private static EmailToWrite ConvertReadToWriteDto(EmailToRead email)
         {
             if (email is not null)
             {

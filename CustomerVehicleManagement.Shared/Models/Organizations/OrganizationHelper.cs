@@ -50,9 +50,9 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 {
                     Name = organization.Name,
                     Note = organization?.Note,
-                    Address = AddressHelper.CovertReadToWriteDto(organization.Address),
-                    Phones = PhoneHelper.CovertReadToWriteDtos(organization.Phones),
-                    Emails = EmailHelper.CovertReadToWriteDto(organization.Emails),
+                    Address = AddressHelper.ConvertReadToWriteDto(organization.Address),
+                    Phones = PhoneHelper.ConvertReadToWriteDtos(organization.Phones),
+                    Emails = EmailHelper.ConvertReadToWriteDto(organization.Emails),
                     Contact = PersonHelper.ConvertReadToWriteDto(organization?.Contact)
                 }
                 : null;
