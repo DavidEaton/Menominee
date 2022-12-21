@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
 {
-    public class InventoryItemHelper
+    public class InventoryItemTestHelper
     {
         public static InventoryItem CreateInventoryItem()
         {

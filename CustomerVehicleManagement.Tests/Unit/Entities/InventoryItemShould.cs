@@ -14,9 +14,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_InventoryItem()
         {
             // Arrange
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
 
             // Act
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Part, part: part);
@@ -29,8 +29,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_Manufacturer()
         {
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
 
             var resultOrError = InventoryItem.Create(null, "001", "a description", productCode, InventoryItemType.Part, part: part);
 
@@ -41,8 +41,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_ProductCode()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", null, InventoryItemType.Part, part: part);
 
@@ -54,9 +54,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_InventoryItem_With_Invalid_ItemNumber(int invalidLength)
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
             string invalidItemNumber = Utilities.RandomCharacters(invalidLength);
 
             var resultOrError = InventoryItem.Create(manufacturer, invalidItemNumber, "a description", productCode, InventoryItemType.Part, part: part);
@@ -69,9 +69,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_InventoryItem_With_Invalid_Description(int invalidLength)
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
             string invalidDescription = Utilities.RandomCharacters(invalidLength);
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", invalidDescription, productCode, InventoryItemType.Part, part: part);
@@ -83,9 +83,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Invalid_InventoryItemType()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
-            InventoryItemPart part = InventoryItemHelper.CreateInventoryItemPart();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
+            InventoryItemPart part = InventoryItemTestHelper.CreateInventoryItemPart();
             InventoryItemType invalid = (InventoryItemType)99;
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, invalid, part: part);
@@ -97,8 +97,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Part()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Part, part: null);
 
@@ -109,8 +109,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Labor()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Labor, labor: null);
 
@@ -121,8 +121,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Inspection()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Inspection, inspection: null);
 
@@ -133,8 +133,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Package()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Package, package: null);
 
@@ -145,8 +145,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Tire()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Tire, tire: null);
 
@@ -157,8 +157,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItem_With_Null_InventoryItemType_Warranty()
         {
-            Manufacturer manufacturer = InventoryItemHelper.CreateManufacturer();
-            ProductCode productCode = InventoryItemHelper.CreateProductCode();
+            Manufacturer manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            ProductCode productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Warranty, warranty: null);
 
@@ -169,9 +169,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetManufacturer()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             Manufacturer originalManufacturer = item.Manufacturer;
-            Manufacturer newManufacturer = InventoryItemHelper.CreateManufacturer();
+            Manufacturer newManufacturer = InventoryItemTestHelper.CreateManufacturer();
             item.Manufacturer.Should().Be(originalManufacturer);
             item.Manufacturer.Should().NotBe(newManufacturer);
 
@@ -185,7 +185,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Manufacturer()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             Manufacturer originalManufacturer = item.Manufacturer;
             Manufacturer newManufacturer = null;
             item.Manufacturer.Should().Be(originalManufacturer);
@@ -200,9 +200,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetProductCode()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             ProductCode originalProductCode = item.ProductCode;
-            ProductCode newProductCode = InventoryItemHelper.CreateProductCode();
+            ProductCode newProductCode = InventoryItemTestHelper.CreateProductCode();
             item.ProductCode.Should().Be(originalProductCode);
             item.ProductCode.Should().NotBe(newProductCode);
 
@@ -216,7 +216,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_ProductCode()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             ProductCode originalProductCode = item.ProductCode;
             ProductCode newProductCode = null;
             item.ProductCode.Should().Be(originalProductCode);
@@ -231,7 +231,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetItemNumber()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             string originalItemNumber = item.ItemNumber;
             string newItemNumber = Utilities.RandomCharacters(InventoryItem.MinimumLength + 1);
             item.ItemNumber.Should().Be(originalItemNumber);
@@ -248,7 +248,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_ItemNumber(int invalidLength)
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             string originalItemNumber = item.ItemNumber;
             string invalidItemNumber = Utilities.RandomCharacters(invalidLength);
             item.ItemNumber.Should().Be(originalItemNumber);
@@ -263,7 +263,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDescription()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             string originalDescription = item.Description;
             string newDescription = Utilities.RandomCharacters(InventoryItem.MinimumLength + 1);
             item.Description.Should().Be(originalDescription);
@@ -280,7 +280,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Description(int invalidLength)
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             string originalDescription = item.Description;
             string invalidDescription = Utilities.RandomCharacters(invalidLength);
             item.Description.Should().Be(originalDescription);
@@ -295,9 +295,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetPart()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
-            InventoryItemPart newPart = InventoryItemHelper.CreateInventoryItemPart();
+            InventoryItemPart newPart = InventoryItemTestHelper.CreateInventoryItemPart();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Part.Should().Be(originalPart);
 
@@ -311,7 +311,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Part()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
             InventoryItemPart newPart = null;
             item.ItemType.Should().Be(InventoryItemType.Part);
@@ -326,10 +326,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetLabor()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Labor.Should().BeNull();
-            var labor = InventoryItemHelper.CreateInventoryItemLabor();
+            var labor = InventoryItemTestHelper.CreateInventoryItemLabor();
 
             var resultOrError = item.SetLabor(labor);
 
@@ -340,7 +340,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Labor()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Labor.Should().BeNull();
             InventoryItemLabor labor = null;
@@ -354,10 +354,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTire()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Tire.Should().BeNull();
-            var tire = InventoryItemHelper.CreateInventoryItemTire();
+            var tire = InventoryItemTestHelper.CreateInventoryItemTire();
 
 
             var resultOrError = item.SetTire(tire);
@@ -369,7 +369,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Tire()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Tire.Should().BeNull();
             InventoryItemTire tire = null;
@@ -384,10 +384,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetPackage()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Package.Should().BeNull();
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
 
             var resultOrError = item.SetPackage(package);
 
@@ -398,7 +398,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Package()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             item.ItemType.Should().Be(InventoryItemType.Part);
             item.Package.Should().BeNull();
             InventoryItemPackage package = null;
@@ -412,9 +412,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetInspection()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
-            InventoryItemInspection inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            InventoryItemInspection inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             item.Part.Should().Be(originalPart);
             item.Inspection.Should().BeNull();
 
@@ -427,7 +427,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Inspection()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
             InventoryItemInspection inspection = null;
             item.Part.Should().Be(originalPart);
@@ -442,9 +442,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetWarranty()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
-            InventoryItemWarranty warranty = InventoryItemHelper.CreateInventoryItemWarranty();
+            InventoryItemWarranty warranty = InventoryItemTestHelper.CreateInventoryItemWarranty();
             item.Part.Should().Be(originalPart);
             item.Warranty.Should().BeNull();
 
@@ -457,7 +457,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Warranty()
         {
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
             InventoryItemPart originalPart = item.Part;
             InventoryItemWarranty warranty = null;
             item.Part.Should().Be(originalPart);

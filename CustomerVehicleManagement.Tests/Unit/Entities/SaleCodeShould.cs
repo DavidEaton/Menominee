@@ -97,7 +97,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetName()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var newName = Utilities.RandomCharacters(SaleCode.MinimumLength + 1);
             saleCode.SetName(newName);
@@ -109,7 +109,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetCode()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var newCode = Utilities.RandomCharacters(SaleCode.MinimumLength + 1);
             saleCode.SetCode(newCode);
@@ -120,7 +120,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetLaborRate()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             saleCode.SetLaborRate(SaleCode.MinimumValue + 1);
 
@@ -130,7 +130,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDesiredMargin()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             saleCode.SetDesiredMargin(SaleCode.MinimumValue + 1);
 
@@ -140,7 +140,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetShopSupplies()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             SaleCodeShopSupplies originalShopSupplies = saleCode.ShopSupplies;
             SaleCodeShopSupplies newShopSupplies = new();
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Name()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             string nullName = null;
             var resultOrError = saleCode.SetName(nullName);
@@ -165,7 +165,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Name(int length)
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var invalidNName = Utilities.RandomCharacters(length);
 
@@ -178,7 +178,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Code()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var resultOrError = saleCode.SetCode(null);
 
@@ -189,7 +189,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Code(int length)
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             var invalidCode = Utilities.RandomCharacters(length);
 
             var resultOrError = saleCode.SetCode(invalidCode);
@@ -200,7 +200,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_LaborRate()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             var invalidLaborRate = SaleCode.MinimumValue - .01;
 
             var resultOrError = saleCode.SetLaborRate(invalidLaborRate);
@@ -211,7 +211,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_DesiredMargin()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             var invalidDesiredMargin = SaleCode.MinimumValue - .01;
 
             var resultOrError = saleCode.SetDesiredMargin(invalidDesiredMargin);
@@ -222,7 +222,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_ShopSupplies()
         {
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var resultOrError = saleCode.SetShopSupplies(null);
 

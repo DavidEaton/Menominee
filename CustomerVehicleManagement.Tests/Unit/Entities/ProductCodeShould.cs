@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             // Arrange
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
             List<string> manufacturerCodes = new() { "11" };
 
             // Act
@@ -34,8 +34,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new()
             {
                 "11"
@@ -57,8 +57,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var invalidName = Utilities.RandomCharacters(length);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
             var resultOrError = ProductCode.Create(manufacturer, code, invalidName, manufacturerCodes, saleCode);
@@ -73,8 +73,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var invalidCode = Utilities.RandomCharacters(length);
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
             var resultOrError = ProductCode.Create(manufacturer, invalidCode, name, manufacturerCodes, saleCode);
@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
 
             var resultOrError = ProductCode.Create(null, code, name, manufacturerCodes, saleCode);
@@ -100,10 +100,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_ProductCode_With_Nonunique_Manufacturer_Code()
         {
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { $"{manufacturer.Id}{code}" };
 
             var resultOrError = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode);
@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetName()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             string originalName = Utilities.RandomCharacters(ProductCode.MinimumLength + 1);
             var newName = Utilities.RandomCharacters(originalName.Length);
 
@@ -129,7 +129,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_Name()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             var invalidName = Utilities.RandomCharacters(ProductCode.MaximumNameLength + 1);
 
             var resultOrError = productCode.SetName(invalidName);
@@ -141,7 +141,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetCode()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             var originalCode = productCode.Code;
             productCode.Code.Should().Be(originalCode);
             var newCode = Utilities.RandomCharacters(productCode.Code.Length);
@@ -157,10 +157,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Code_With_Nonunique_Manufacturer_Code()
         {
-            var manufacturer = InventoryItemHelper.CreateManufacturer();
+            var manufacturer = InventoryItemTestHelper.CreateManufacturer();
             var name = Utilities.RandomCharacters(ProductCode.MinimumLength);
             var code = Utilities.RandomCharacters(ProductCode.MinimumLength);
-            var saleCode = InventoryItemHelper.CreateSaleCode();
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" };
             var productCode = ProductCode.Create(manufacturer, code, name, manufacturerCodes, saleCode).Value;
             manufacturerCodes.Add($"{manufacturer.Id}{code}");
@@ -174,7 +174,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_Code()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             var invalidCode = Utilities.RandomCharacters(ProductCode.MaximumCodeLength + 1);
             List<string> manufacturerCodes = new() { "11" };
 
@@ -187,10 +187,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetManufacturer()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             var originalManufacturer = productCode.Manufacturer;
             productCode.Manufacturer.Should().Be(originalManufacturer);
-            var newManufacturer = InventoryItemHelper.CreateManufacturer();
+            var newManufacturer = InventoryItemTestHelper.CreateManufacturer();
             List<string> manufacturerCodes = new() { "11" };
 
             productCode.SetManufacturer(newManufacturer, manufacturerCodes);
@@ -202,7 +202,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Manufacturer()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             List<string> manufacturerCodes = new() { "11" };
             var resultOrError = productCode.SetManufacturer(null, manufacturerCodes);
 
@@ -213,8 +213,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Manufacturer_With_Nonunique_Manufacturer_Code()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
-            var newManufacturer = InventoryItemHelper.CreateManufacturer();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
+            var newManufacturer = InventoryItemTestHelper.CreateManufacturer();
 
             List<string> manufacturerCodes = new() { $"{newManufacturer.Id}{productCode.Code}" };
             var resultOrError = productCode.SetManufacturer(newManufacturer, manufacturerCodes);
@@ -226,10 +226,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetSaleCode()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
             var originalSaleCode = productCode.SaleCode;
             productCode.SaleCode.Should().Be(originalSaleCode);
-            var newSaleCode = InventoryItemHelper.CreateSaleCode();
+            var newSaleCode = InventoryItemTestHelper.CreateSaleCode();
             productCode.SetSaleCode(newSaleCode);
 
             productCode.SaleCode.Should().Be(newSaleCode);
@@ -238,7 +238,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_SaleCode()
         {
-            var productCode = InventoryItemHelper.CreateProductCode();
+            var productCode = InventoryItemTestHelper.CreateProductCode();
 
             var resultOrError = productCode.SetSaleCode(null);
 

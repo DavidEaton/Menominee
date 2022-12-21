@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         void AddInvoice(VendorInvoice entity);
         Task<VendorInvoice> GetInvoiceEntityAsync(long id);
         Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
+        Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(long? vendorId, VendorInvoiceStatus? status);
         Task<Vendor> GetVendorAsync(long id);
         Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync();
         void DeleteInvoice(VendorInvoice entity);

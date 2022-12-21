@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
@@ -81,18 +82,31 @@ namespace CustomerVehicleManagement.Tests
         public static List<Vendor> CreateVendors(int count)
         {
             var list = new List<Vendor>();
+            DefaultPaymentMethod defaultPaymentMethod = null;
 
             for (int i = 0; i < count; i++)
-                list.Add(CreateVendor());
+            {
+                if (i % 2 == 0)
+                    defaultPaymentMethod = CreateDefaultPaymentMethod();
+
+                list.Add(CreateVendor(defaultPaymentMethod: defaultPaymentMethod));
+            }
 
             return list;
         }
 
-        public static Vendor CreateVendor()
+        private static DefaultPaymentMethod CreateDefaultPaymentMethod()
+        {
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            return DefaultPaymentMethod.Create(paymentMethod, true).Value;
+        }
+
+        public static Vendor CreateVendor(DefaultPaymentMethod defaultPaymentMethod = null)
         {
             return Vendor.Create(
                 name: RandomCharacters(Vendor.MinimumLength),
-                vendorCode: RandomCharacters(Vendor.MinimumLength)).Value;
+                vendorCode: RandomCharacters(Vendor.MinimumLength),
+                defaultPaymentMethod: defaultPaymentMethod).Value;
         }
 
         public static IList<Phone> CreateTestPhones(int count)
@@ -150,7 +164,7 @@ namespace CustomerVehicleManagement.Tests
                 result.Add(new VendorInvoicePaymentMethodToRead()
                 {
                     Id = i,
-                    Name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - i),
                     IsActive = true,
                     IsOnAccountPaymentType = false,
                 });
@@ -164,7 +178,7 @@ namespace CustomerVehicleManagement.Tests
             string name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
             bool isActive = true;
             bool isOnAccountPaymentType = true;
-            var reconcilingVendor = CreateVendor();
+            var reconcilingVendor = CreateVendor(defaultPaymentMethod: null);
             var paymentMethodNames = CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
@@ -179,9 +193,9 @@ namespace CustomerVehicleManagement.Tests
         }
 
 
-        public static SalesTax CreateSalesTax(int dcescriptionSeed = 0)
+        public static SalesTax CreateSalesTax(int descriptionSeed = 0)
         {
-            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters(descriptionSeed + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 10;
             var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
@@ -191,6 +205,24 @@ namespace CustomerVehicleManagement.Tests
             bool? isTaxable = true;
 
             return SalesTax.Create(description, taxType, order, taxIdNumber, partTaxRate, laborTaxRate, isAppliedByDefault: isAppliedByDefault, isTaxable: isTaxable).Value;
+        }
+
+
+        public static SalesTaxToRead CreateSalesTaxToRead()
+        {
+            return new()
+            {
+                Id = 1,
+                Description = LoremIpsum(SalesTax.DescriptionMaximumLength - 10),
+                ExciseFees = new(),
+                IsAppliedByDefault = true,
+                IsTaxable = true,
+                LaborTaxRate = .05,
+                Order = 1,
+                PartTaxRate = .06,
+                TaxIdNumber = "001",
+                TaxType = SalesTaxType.Normal
+            };
         }
 
         internal static List<ExciseFee> CreateExciseFees()

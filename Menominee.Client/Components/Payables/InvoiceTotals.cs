@@ -18,7 +18,7 @@ namespace Menominee.Client.Components.Payables
         public double Warranties { get; private set; }
         public double MiscellaneousDebits { get; private set; }
         public double MiscellaneousCredits { get; private set; }
-        public double BalanceForwards { get; private set; }
+        public double BalancesForward { get; private set; }
         public double Taxes { get; private set; }
         public double Total { get; private set; }
         public double Payments { get; private set; }
@@ -32,7 +32,7 @@ namespace Menominee.Client.Components.Payables
             Warranties = 0;
             MiscellaneousDebits = 0;
             MiscellaneousCredits = 0;
-            BalanceForwards = 0;
+            BalancesForward = 0;
             Taxes = 0;
             Total = 0;
             Payments = 0;
@@ -102,7 +102,7 @@ namespace Menominee.Client.Components.Payables
         public Result<double> CalculateInvoiceBalanceForwards(VendorInvoiceToWrite invoice)
         {
             Calculate(invoice);
-            return BalanceForwards;
+            return BalancesForward;
         }
 
         public Result<double> CalculateInvoiceTaxableTotal(VendorInvoiceToWrite invoice)
@@ -145,7 +145,7 @@ namespace Menominee.Client.Components.Payables
                         MiscellaneousCredits += amount;
                         break;
                     case VendorInvoiceLineItemType.BalanceForward:
-                        BalanceForwards += amount;
+                        BalancesForward += amount;
                         break;
                     default:
                         break;
@@ -159,9 +159,9 @@ namespace Menominee.Client.Components.Payables
                 Payments += payment.Amount;
 
             Total = Purchases + Returns + CoreReturns + Defectives + Warranties
-                  + MiscellaneousDebits + MiscellaneousCredits + BalanceForwards + Taxes;
+                  + MiscellaneousDebits + MiscellaneousCredits + BalancesForward + Taxes;
 
-            TaxableTotal = Total - BalanceForwards - Taxes;
+            TaxableTotal = Total - BalancesForward - Taxes;
         }
     }
 }

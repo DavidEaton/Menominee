@@ -44,18 +44,5 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     IsActive = vendor.IsActive
                 };
         }
-
-        public static VendorToReadInList ConvertReadToReadInListDto(VendorToRead vendor)
-        {
-            return vendor is null
-                ? null
-                : new()
-                {
-                    Id = vendor.Id,
-                    Name = vendor.Name,
-                    VendorCode = vendor.VendorCode,
-                    IsActive = vendor.IsActive
-                };
-        }
     }
 }

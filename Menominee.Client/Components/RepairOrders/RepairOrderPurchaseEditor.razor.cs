@@ -39,7 +39,7 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback OnCancel { get; set; }
 
-        private IReadOnlyList<VendorToReadInList> Vendors = null;
+        private IReadOnlyList<VendorToRead> Vendors = null;
         private FormMode formMode;
         private string Title { get; set; }
         private List<VendorX> VendorList = new List<VendorX>();

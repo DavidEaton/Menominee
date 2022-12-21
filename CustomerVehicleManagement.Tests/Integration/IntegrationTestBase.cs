@@ -4,15 +4,15 @@ using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
+using static CustomerVehicleManagement.Tests.Unit.Helpers.Payables.VendorInvoiceTestHelper;
 using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Integration
@@ -37,12 +37,13 @@ namespace CustomerVehicleManagement.Tests.Integration
         private static void SeedDatabase()
         {
             var maxSeedCount = 10;
+            var halfSeedCount = maxSeedCount / 2;
             ApplicationDbContext context = Helpers.CreateTestContext();
 
             var vendors = CreateVendors(maxSeedCount);
-            IReadOnlyList<SaleCode> saleCodes = CreateSaleCodes(maxSeedCount);
-            List<Manufacturer> manufacturers = InventoryItemHelper.CreateManufacturers(maxSeedCount);
-            IReadOnlyList<InventoryItemPart> parts = InventoryItemHelper.CreateInventoryItemParts(maxSeedCount);
+            var saleCodes = CreateTestSaleCodes(maxSeedCount);
+            var manufacturers = InventoryItemTestHelper.CreateManufacturers(maxSeedCount);
+            var parts = InventoryItemTestHelper.CreateInventoryItemParts(maxSeedCount);
 
             context.AddRange(vendors);
             context.AddRange(saleCodes);
@@ -50,14 +51,19 @@ namespace CustomerVehicleManagement.Tests.Integration
             context.AddRange(parts);
             context.SaveChanges();
 
-            IReadOnlyList<string> manufacturerCodes = context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
-            IReadOnlyList<ProductCode> productCodes = CreateProductCodes(
+            var manufacturerCodes = context.ProductCodes
+                .Select(productCode =>
+                     $"{productCode.Manufacturer.Id} + {productCode.Code}")
+                .ToList();
+
+            var productCodes = CreateProductCodes(
                 maxSeedCount,
-                manufacturers[maxSeedCount / 2],
+                manufacturers[halfSeedCount],
                 manufacturerCodes);
+
             var paymentMethods = CreateVendorInvoicePaymentMethods(maxSeedCount);
-            IReadOnlyList<SalesTax> salesTaxes = CreateSalesTaxes(maxSeedCount);
-            VendorInvoicePaymentMethod paymentMethod = paymentMethods[maxSeedCount / 2];
+            var salesTaxes = CreateTestSalesTaxes(maxSeedCount);
+            var paymentMethod = paymentMethods[^1];
 
             context.AddRange(productCodes);
             context.AddRange(paymentMethods);
@@ -66,21 +72,31 @@ namespace CustomerVehicleManagement.Tests.Integration
             context.SaveChanges();
 
 
-            // VendorInvoiceToWrite
-            VendorInvoiceToWrite invoice = CreateTestVendorInvoice(vendors[vendors.Count - 1]);
-            IList<VendorInvoiceLineItemToWrite> lineItems = CreateTestLineItems(maxSeedCount / 2);
-            IList<VendorInvoicePayment> payments = CreateTestPayments(paymentMethod, maxSeedCount / 2);
-            IList<VendorInvoiceTax> taxes = CreateTestTaxes(maxSeedCount, salesTaxes[salesTaxes.Count - 1]);
-
+            // VendorInvoice
+            VendorInvoiceToWrite invoiceToWrite = CreateVendorInvoiceToWrite(vendors[^1]);
+            invoiceToWrite.LineItems = CreateLineItemsToWrite(new LineItemTestOptions());
+            invoiceToWrite.Payments = CreateTestPaymentsToWrite(paymentMethod, paymentCount: halfSeedCount);
+            invoiceToWrite.Taxes = CreateTaxesToWrite(salesTaxes[^1], taxLineCount: maxSeedCount, taxAmount: 5.5);
         }
 
-        private static IList<VendorInvoiceTax> CreateTestTaxes(int count, SalesTax salesTax)
+        private static IList<VendorInvoicePaymentToWrite> CreateTestPaymentsToWrite(VendorInvoicePaymentMethod paymentMethod, int paymentCount)
         {
-            var list = new List<VendorInvoiceTax>();
+            var list = new List<VendorInvoicePaymentToWrite>();
+            var amount = 11.11;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < paymentCount; i++)
             {
-                list.Add(VendorInvoiceTax.Create(salesTax, 22.22 * (i + 1)).Value);
+                list.Add(new VendorInvoicePaymentToWrite()
+                {
+                    Amount = amount * (++i),
+                    PaymentMethod = new VendorInvoicePaymentMethodToRead()
+                    {
+                        Id = paymentMethod.Id,
+                        IsActive = paymentMethod.IsActive,
+                        IsOnAccountPaymentType = paymentMethod.IsOnAccountPaymentType,
+                        Name = paymentMethod.Name
+                    }
+                    });
             }
 
             return list;
@@ -103,45 +119,26 @@ namespace CustomerVehicleManagement.Tests.Integration
             return list;
         }
 
-        private static IReadOnlyList<SaleCode> CreateSaleCodes(int count)
+        private static IReadOnlyList<SaleCode> CreateTestSaleCodes(int count)
         {
             var list = new List<SaleCode>();
+            var laborRate = count + 11.11;
+            var desiredMargin = count + 11.11;
 
             for (int i = 0; i < count; i++)
             {
                 list.Add(SaleCode.Create(
                     name: $"{i}name",
                     code: $"{i}code",
-                    laborRate: 1.75,
-                    desiredMargin: 33.33,
+                    laborRate: laborRate + i,
+                    desiredMargin: desiredMargin + i,
                     shopSupplies: new SaleCodeShopSupplies()).Value);
             }
 
             return list;
         }
 
-        private static IList<VendorInvoicePayment> CreateTestPayments(VendorInvoicePaymentMethod paymentMethod, int count)
-        {
-            var list = new List<VendorInvoicePayment>();
-
-            for (int i = 0; i < count; i++)
-            {
-                list.Add(VendorInvoicePayment.Create(paymentMethod, 22.22 * (i+1)).Value);
-            }
-
-            return list;
-        }
-
-        private static IList<VendorInvoiceLineItemToWrite> CreateTestLineItems(int lineItemCount)
-        {
-            VendorInvoiceLineItemType lineItemType = VendorInvoiceLineItemType.Purchase;
-            var lineItemCore = 2.2;
-            var lineItemCost = 4.4;
-            var lineItemQuantity = 2;
-
-            return CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
-        }
-        private static IReadOnlyList<SalesTax> CreateSalesTaxes(int count)
+        private static IReadOnlyList<SalesTax> CreateTestSalesTaxes(int count)
         {
             var list = new List<SalesTax>();
 
@@ -157,24 +154,6 @@ namespace CustomerVehicleManagement.Tests.Integration
             }
 
             return list;
-        }
-
-        private static VendorInvoiceToWrite CreateTestVendorInvoice(Vendor vendor)
-        {
-            return new()
-            {
-                Date = DateTime.Today,
-                DocumentType = VendorInvoiceDocumentType.Invoice,
-                Status = VendorInvoiceStatus.Open,
-                Total = 10.0,
-                Vendor = new VendorToReadInList()
-                {
-                    Id = vendor.Id,
-                    IsActive = vendor.IsActive,
-                    Name = vendor.Name,
-                    VendorCode = vendor.VendorCode
-                }
-            };
         }
 
         private static IReadOnlyList<VendorInvoicePaymentMethod> CreateVendorInvoicePaymentMethods(int count)

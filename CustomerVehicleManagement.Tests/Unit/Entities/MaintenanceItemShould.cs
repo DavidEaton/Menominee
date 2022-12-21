@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_MaintenanceItem()
         {
             // Arrange
-            InventoryItem item = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem item = InventoryItemTestHelper.CreateInventoryItem();
 
             // Act
             var resultOrError = MaintenanceItem.Create(1, item);
@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_MaintenanceItem_With_Invalid_DisplayOrder()
         {
-            var resultOrError = MaintenanceItem.Create(-1, InventoryItemHelper.CreateInventoryItem());
+            var resultOrError = MaintenanceItem.Create(-1, InventoryItemTestHelper.CreateInventoryItem());
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("valid");
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             MaintenanceItem maintenanceItem = CreateMaintenanceItem();
             InventoryItem oldItem = maintenanceItem.InventoryItem;
-            InventoryItem newItem = InventoryItemHelper.CreateInventoryItem();
+            InventoryItem newItem = InventoryItemTestHelper.CreateInventoryItem();
 
             var resultOrError = maintenanceItem.SetInventoryItem(newItem);
 
@@ -92,7 +92,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
         private static MaintenanceItem CreateMaintenanceItem()
         {
-            return MaintenanceItem.Create(1, InventoryItemHelper.CreateInventoryItem()).Value;
+            return MaintenanceItem.Create(1, InventoryItemTestHelper.CreateInventoryItem()).Value;
         }
     }
 }

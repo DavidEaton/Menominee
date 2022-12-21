@@ -22,13 +22,13 @@ namespace Menominee.Client.Components.Payables.Pages
         [Parameter]
         public long VendorToSelect { get; set; } = 0;
 
-        public IReadOnlyList<VendorToReadInList> VendorsList;
-        public IEnumerable<VendorToReadInList> SelectedList { get; set; } = Enumerable.Empty<VendorToReadInList>();
-        public VendorToReadInList SelectedItem { get; set; }
+        public IReadOnlyList<VendorToRead> VendorsList;
+        public IEnumerable<VendorToRead> SelectedList { get; set; } = Enumerable.Empty<VendorToRead>();
+        public VendorToRead SelectedItem { get; set; }
 
         private bool showInactive { get; set; } = false;
 
-        public TelerikGrid<VendorToReadInList> Grid { get; set; }
+        public TelerikGrid<VendorToRead> Grid { get; set; }
 
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
@@ -63,7 +63,7 @@ namespace Menominee.Client.Components.Payables.Pages
                     SelectedItem = VendorsList.Where(x => x.Id == VendorToSelect).FirstOrDefault();
                 }
                 SelectedId = SelectedItem.Id;
-                SelectedList = new List<VendorToReadInList> { SelectedItem };
+                SelectedList = new List<VendorToRead> { SelectedItem };
             }
         }
 
@@ -97,20 +97,20 @@ namespace Menominee.Client.Components.Payables.Pages
             NavigationManager.NavigateTo("payables");
         }
 
-        //public void OnRowSelected(RowSelectEventArgs<VendorToReadInList> args)
+        //public void OnRowSelected(RowSelectEventArgs<VendorToRead> args)
         //{
         //    SelectedId = args.Data.Id;
         //}
 
-        protected void OnSelect(IEnumerable<VendorToReadInList> vendors)
+        protected void OnSelect(IEnumerable<VendorToRead> vendors)
         {
             SelectedItem = vendors.FirstOrDefault();
-            SelectedList = new List<VendorToReadInList> { SelectedItem };
+            SelectedList = new List<VendorToRead> { SelectedItem };
         }
 
         private void OnRowSelected(GridRowClickEventArgs args)
         {
-            SelectedId = (args.Item as VendorToReadInList).Id;
+            SelectedId = (args.Item as VendorToRead).Id;
         }
     }
 }

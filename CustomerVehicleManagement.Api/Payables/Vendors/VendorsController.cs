@@ -17,15 +17,6 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/vendors/listing
-        [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorToReadInList>>> GetVendorsListAsync()
-        {
-            var results = await repository.GetVendorsListAsync();
-            return Ok(results);
-        }
-
         // api/vendors
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorToRead>>> GetVendorsAsync()

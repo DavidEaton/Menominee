@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -36,19 +37,19 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<VendorInvoiceToRead> GetInvoiceAsync(long id)
         {
             var invoiceFromContext = await context.VendorInvoices
-                                                  .Include(invoice => invoice.Vendor)
-                                                  .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Item.Manufacturer)
-                                                  .Include(invoice => invoice.LineItems)
-                                                      .ThenInclude(item => item.Item.SaleCode)
-                                                  .Include(invoice => invoice.Payments)
-                                                      .ThenInclude(payment => payment.PaymentMethod)
-                                                          .ThenInclude(method => method.ReconcilingVendor)
-                                                  .Include(invoice => invoice.Taxes)
-                                                      .ThenInclude(tax => tax.SalesTax)
-                                                  .AsSplitQuery()
-                                                  .AsNoTracking()
-                                                  .FirstOrDefaultAsync(invoice => invoice.Id == id);
+                .Include(invoice => invoice.Vendor)
+                .Include(invoice => invoice.LineItems)
+                    .ThenInclude(item => item.Item.Manufacturer)
+                .Include(invoice => invoice.LineItems)
+                    .ThenInclude(item => item.Item.SaleCode)
+                .Include(invoice => invoice.Payments)
+                    .ThenInclude(payment => payment.PaymentMethod)
+                        .ThenInclude(method => method.ReconcilingVendor)
+                .Include(invoice => invoice.Taxes)
+                    .ThenInclude(tax => tax.SalesTax)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return invoiceFromContext is null
             ? null
@@ -116,5 +117,48 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     .Where(invoiceNumber => !string.IsNullOrWhiteSpace(invoiceNumber))
                 .ToListAsync();
         }
+
+        public async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(
+            long? vendorId,
+            VendorInvoiceStatus? status)
+        {
+            if (!vendorId.HasValue && !status.HasValue)
+                return null;
+
+            var statusHasValue = status.HasValue;
+            var vendorIdHasValue = vendorId.HasValue;
+
+            var invoicesFromContext = await context.VendorInvoices
+                    .Include(invoice => invoice.Vendor)
+                    .Include(invoice => invoice.LineItems)
+                        .ThenInclude(item => item.Item.Manufacturer)
+                    .Include(invoice => invoice.LineItems)
+                        .ThenInclude(item => item.Item.SaleCode)
+                    .Include(invoice => invoice.Payments)
+                        .ThenInclude(payment => payment.PaymentMethod)
+                            .ThenInclude(method => method.ReconcilingVendor)
+                    .Include(invoice => invoice.Taxes)
+                        .ThenInclude(tax => tax.SalesTax)
+                    .AsSplitQuery()
+                    .AsNoTracking()
+                    .Where(
+                
+                    invoice =>
+                    ((vendorIdHasValue)
+                    ? invoice.Vendor.Id == vendorId
+                    : invoice.Status == status)
+
+                    &&
+
+                    (statusHasValue)
+                    ? invoice.Status == status
+                    : invoice.Vendor.Id == vendorId)
+                    .ToListAsync();
+
+            return invoicesFromContext is null
+            ? null
+            : VendorInvoiceHelper.ConvertEntitiesToReadDto(invoicesFromContext);
+        }
+
     }
 }

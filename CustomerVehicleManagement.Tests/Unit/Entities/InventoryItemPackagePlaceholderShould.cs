@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_InventoryItemPackagePlaceholder()
         {
             // Arrange
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
 
             // Act
             var resultOrError = InventoryItemPackagePlaceholder.Create(
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItemPackagePlaceholder_With_Invalid_ItemType()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var invalidItemType = (PackagePlaceholderItemType)(-1);
 
             var resultOrError = InventoryItemPackagePlaceholder.Create(
@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_InventoryItemPackagePlaceholder_With_Invalid_Description(int invalidDescriptionLength)
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
 
             var resultOrError = InventoryItemPackagePlaceholder.Create(
                 PackagePlaceholderItemType.Part,
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItemPackagePlaceholder_With_Invalid_DisplayOrder()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var invalidDisplayOrder = 0;
             var resultOrError = InventoryItemPackagePlaceholder.Create(
                 PackagePlaceholderItemType.Part,
@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetItemType()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalItemType = placeholder.ItemType;
             var newItemType = PackagePlaceholderItemType.Labor;
             placeholder.ItemType.Should().Be(originalItemType);
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_ItemType()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalItemType = placeholder.ItemType;
             var invalidItemType = (PackagePlaceholderItemType)(-1);
             placeholder.ItemType.Should().Be(originalItemType);
@@ -122,7 +122,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDisplayOrder()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDisplayOrder = placeholder.DisplayOrder;
             var newDisplayOrder = originalDisplayOrder + 1;
             placeholder.DisplayOrder.Should().Be(originalDisplayOrder);
@@ -137,7 +137,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_DisplayOrder()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDisplayOrder = placeholder.DisplayOrder;
             var invalidDisplayOrder = 0;
             placeholder.DisplayOrder.Should().Be(originalDisplayOrder);
@@ -151,7 +151,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDescription()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDescription = placeholder.Description;
             var newDescription = Utilities.LoremIpsum(InventoryItemPackagePlaceholder.DescriptionMaximumLength - 10);
             placeholder.Description.Should().Be(originalDescription);
@@ -167,7 +167,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Description(int invalidDescriptionLength)
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDescription = placeholder.Description;
             var invalidDescription = Utilities.LoremIpsum(invalidDescriptionLength);
             placeholder.Description.Should().Be(originalDescription);
@@ -181,9 +181,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDetails()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDetails = placeholder.Details;
-            var newDetails = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var newDetails = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             newDetails = newDetails.SetQuantity(newDetails.Quantity + 1.0).Value;
             placeholder.Details.Should().Be(originalDetails);
 
@@ -200,7 +200,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Details()
         {
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDetails = placeholder.Details;
             placeholder.Details.Should().Be(originalDetails);
 

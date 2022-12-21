@@ -151,11 +151,17 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Status = invoice.Status,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
-                    Vendor = VendorHelper.ConvertReadToReadInListDto(invoice.Vendor),
+                    Vendor = invoice.Vendor,
                     LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoice.LineItems),
                     Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoice.Payments),
                     Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoice.Taxes)
                 };
+        }
+
+        public static IReadOnlyList<VendorInvoiceToRead> ConvertEntitiesToReadDto(IReadOnlyList<VendorInvoice> invoices)
+        {
+            return invoices.Select(invoice => ConvertEntityToReadDto(invoice))
+                .ToList();
         }
     }
 }

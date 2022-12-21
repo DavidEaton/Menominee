@@ -43,11 +43,11 @@ namespace Menominee.Client.Services.Payables.Vendors
             return null;
         }
 
-        public async Task<IReadOnlyList<VendorToReadInList>> GetAllVendorsAsync()
+        public async Task<IReadOnlyList<VendorToRead>> GetAllVendorsAsync()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToReadInList>>($"{UriSegment}/listing");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToRead>>($"{UriSegment}/listing");
             }
             catch (Exception ex)
             {
