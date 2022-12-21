@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Utilities;
@@ -78,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
                 paymentMethodNames,
                 RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 5),
                 true,
-                true,
+                VendorInvoicePaymentMethodType.Normal,
                 reconcilingVendor: null).Value;
         }
     }

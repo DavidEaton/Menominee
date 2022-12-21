@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Common.Enums;
+using System;
 
 namespace Menominee.Client.Components.Payables
 {
@@ -120,7 +121,7 @@ namespace Menominee.Client.Components.Payables
 
             foreach (var item in invoice.LineItems)
             {
-                double amount = (item.Cost + item.Core) * item.Quantity;
+                double amount = Math.Round((item.Cost + item.Core) * item.Quantity, 2);
                 switch (item.Type)
                 {
                     case VendorInvoiceLineItemType.Purchase:

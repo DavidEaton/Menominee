@@ -1,11 +1,22 @@
 ﻿<div class="card">
     @if (Title.Length > 0)
     {
-        <div class="m-card-title">@Title</div>
+        <div class="m-card-title">
+            @if (Collapsible)
+            {
+                <span @onclick="ToggleExpanded">
+                    <TelerikIcon Icon=@(Collapsed ? "caret-alt-down" : "caret-alt-up")></TelerikIcon>
+                </span>
+            }
+            @Title
+        </div>
     }
-    <div class="m-card-content @CardColor()">
-        @Content
-    </div>
+    @if (!Collapsed)
+    {
+        <div class="m-card-content @CardColor()">
+            @Content
+        </div>
+    }
 </div>
 
 <style>
@@ -25,6 +36,12 @@
         padding: 1rem;
         height: 100%;
         /*background-color: var(--bg-color-extra-light);*/
+    }
+
+    .m-toggle-button {
+        color: white !important;
+        background-color: var(--bg-color-dark) !important;
+        height: 1rem;
     }
 
     .m-card-bg-white {

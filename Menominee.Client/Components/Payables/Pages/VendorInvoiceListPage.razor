@@ -1,8 +1,6 @@
 ﻿@page "/payables/invoices/listing"
 @page "/payables/invoices/listing/{ItemToSelect:long}"
 
-@*<PayablesMenu />*@
-
 <div class="m-main-content">
     <div class="m-form">
         <div>
@@ -15,28 +13,56 @@
             @if (InvoiceList != null)
             {
                 <TelerikGrid Data="InvoiceList"
-                             OnRowClick="@OnRowSelected"
-                             OnRowDoubleClick="@OnEdit"
-                             Sortable="true"
-                             Pageable="true"
-                             FilterMode="GridFilterMode.FilterMenu"
-                             ShowColumnMenu="true"
-                             SelectionMode="GridSelectionMode.Single"
-                             SelectedItemsChanged="@((IEnumerable<VendorInvoiceToReadInList> invoiceList) => OnSelect(invoiceList))"
-                             SelectedItems="@SelectedInvoices"
-                             Class="m-grid"
-                             @ref="@Grid">
+                         OnRowClick="@OnRowSelected"
+                         OnRowDoubleClick="@OnEdit"
+                         Sortable="true"
+                         Pageable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         ShowColumnMenu="true"
+                         SelectionMode="GridSelectionMode.Single"
+                         SelectedItemsChanged="@((IEnumerable<VendorInvoiceToReadInList> invoiceList) => OnSelect(invoiceList))"
+                         SelectedItems="@SelectedInvoices"
+                         Class="m-grid"
+                         @ref="@Grid">
+
                     <GridToolBar>
-                        <span class="k-toolbar-spacer"></span>
+                        <label class="m-toolbar-label">Vendor</label>
+                        <TelerikDropDownList @bind-Value="@vendorId"
+                                         Data="Vendors"
+                                         TextField="Name"
+                                         ValueField="Id"
+                                         Width="240px"
+                                         DefaultText="All Vendors"
+                                         OnChange="OnFilterInvoicesChangeAsync">
+                        </TelerikDropDownList>
+                        <label class="m-toolbar-label">Status</label>
+                        <TelerikDropDownList @bind-Value="@invoiceStatus"
+                                         Data="VendorInvoiceStatusEnumData"
+                                         TextField="DisplayText"
+                                         ValueField="Value"
+                                         Width="240px"
+                                         DefaultText="All"
+                                         OnChange="OnFilterInvoicesChangeAsync">
+                            <DropDownListSettings>
+                                <DropDownListPopupSettings Height="130px" />
+                            </DropDownListSettings>
+                        </TelerikDropDownList>
+                        @*<span class="k-toolbar-spacer"></span>*@
+                        <label class="m-toolbar-label"></label>
                         <GridSearchBox />
                     </GridToolBar>
+                    <GridSettings>
+                        <GridColumnMenuSettings Lockable="false"
+                                            ShowColumnChooser="false">
+                        </GridColumnMenuSettings>
+                    </GridSettings>
                     <GridColumns>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.VendorCode)" Title="Vendor Code"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="25%" Field="@nameof(VendorInvoiceToReadInList.VendorName)" Title="Vendor Name"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Date)" Title="Date" DisplayFormat="{0:yyyy MM dd}"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Status)" Title="Status"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.InvoiceNumber)" Title="Invoice #"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Total)" Title="Total" DisplayFormat="{0:C}"></Telerik.Blazor.Components.GridColumn>
+                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.VendorCode)" Title="Vendor Code" Filterable="false"></GridColumn>
+                        <GridColumn Width="25%" Field="@nameof(VendorInvoiceToReadInList.VendorName)" Title="Vendor Name" Filterable="false"></GridColumn>
+                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Date)" Title="Date" DisplayFormat="{0:yyyy MM dd}"></GridColumn>
+                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Status)" Title="Status" Filterable="false"></GridColumn>
+                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.InvoiceNumber)" Title="Invoice #"></GridColumn>
+                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Total)" Title="Total" DisplayFormat="{0:C}"></GridColumn>
                     </GridColumns>
                 </TelerikGrid>
 
@@ -50,4 +76,14 @@
     .m-grid {
         min-height: calc(100vh - 248px);
     }
+
+    .m-toolbar-label {
+        margin-top: .25rem;
+        margin-bottom: .25rem;
+    }
+
+        .m-toolbar-label:not(:first-of-type) {
+            margin-left: 1rem;
+        }
+
 </style>

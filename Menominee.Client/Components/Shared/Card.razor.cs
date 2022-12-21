@@ -23,6 +23,17 @@ namespace Menominee.Client.Components.Shared
         [Parameter]
         public CardBackgroundColor BackgroundColor { get; set; } = CardBackgroundColor.extraLight;
 
+        [Parameter]
+        public bool Collapsible { get; set; } = false;
+
+        [Parameter]
+        public bool Collapsed { get; set; } = false;
+
+        private void ToggleExpanded()
+        {
+            Collapsed = !Collapsed;
+        }
+
         private string CardColor()
         {
             switch (BackgroundColor)

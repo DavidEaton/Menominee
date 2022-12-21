@@ -37,19 +37,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<VendorInvoiceToRead> GetInvoiceAsync(long id)
         {
             var invoiceFromContext = await context.VendorInvoices
-                .Include(invoice => invoice.Vendor)
-                .Include(invoice => invoice.LineItems)
-                    .ThenInclude(item => item.Item.Manufacturer)
-                .Include(invoice => invoice.LineItems)
-                    .ThenInclude(item => item.Item.SaleCode)
-                .Include(invoice => invoice.Payments)
-                    .ThenInclude(payment => payment.PaymentMethod)
-                        .ThenInclude(method => method.ReconcilingVendor)
-                .Include(invoice => invoice.Taxes)
-                    .ThenInclude(tax => tax.SalesTax)
-                .AsSplitQuery()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(invoice => invoice.Id == id);
+                                                  .Include(invoice => invoice.Vendor)
+                                                      .ThenInclude(method => method.DefaultPaymentMethod.PaymentMethod)
+                                                  .Include(invoice => invoice.LineItems)
+                                                      .ThenInclude(item => item.Item.Manufacturer)
+                                                  .Include(invoice => invoice.LineItems)
+                                                      .ThenInclude(item => item.Item.SaleCode)
+                                                  .Include(invoice => invoice.Payments)
+                                                      .ThenInclude(payment => payment.PaymentMethod)
+                                                          .ThenInclude(method => method.ReconcilingVendor)
+                                                  .Include(invoice => invoice.Taxes)
+                                                      .ThenInclude(tax => tax.SalesTax)
+                                                  .AsSplitQuery()
+                                                  .AsNoTracking()
+                                                  .FirstOrDefaultAsync(invoice => invoice.Id == id);
 
             return invoiceFromContext is null
             ? null

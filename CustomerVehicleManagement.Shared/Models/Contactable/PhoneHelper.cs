@@ -18,16 +18,16 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 .ToList();
             }
 
-        public static IList<PhoneToWrite> CovertReadToWriteDtos(IList<PhoneToRead> phones)
+        public static IList<PhoneToWrite> ConvertReadToWriteDtos(IList<PhoneToRead> phones)
         {
             return phones
                 .Select(phone =>
-                        CovertReadToWriteDto(phone))
+                        ConvertReadToWriteDto(phone))
                 .ToList();
         }
 
 
-        private static PhoneToWrite CovertReadToWriteDto(PhoneToRead phone)
+        private static PhoneToWrite ConvertReadToWriteDto(PhoneToRead phone)
         {
             return (phone is not null)
                 ? new PhoneToWrite()

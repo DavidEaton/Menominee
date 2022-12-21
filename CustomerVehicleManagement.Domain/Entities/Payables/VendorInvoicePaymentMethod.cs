@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public string Name { get; private set; }
         public bool IsActive { get; private set; }
-        public bool IsOnAccountPaymentType { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
+        //public bool IsOnAccountPaymentType { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
+        public VendorInvoicePaymentMethodType PaymentType { get; private set; }
         public Vendor ReconcilingVendor { get; private set; }
 
         private VendorInvoicePaymentMethod(
             IList<string> paymentMethods,
             string name,
             bool isActive,
-            bool isOnAccountPaymentType,
+            //bool isOnAccountPaymentType,
+            VendorInvoicePaymentMethodType paymentType,
             Vendor reconcilingVendor)
         {
             name = (name ?? string.Empty).Trim();
@@ -36,7 +39,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Name = name;
             IsActive = isActive;
-            IsOnAccountPaymentType = isOnAccountPaymentType;
+            //IsOnAccountPaymentType = isOnAccountPaymentType;
+            PaymentType = paymentType;
             ReconcilingVendor = reconcilingVendor;
         }
 
@@ -44,7 +48,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IList<string> paymentMethods,
             string name,
             bool isActive,
-            bool isOnAccountPaymentType,
+            //bool isOnAccountPaymentType,
+            VendorInvoicePaymentMethodType paymentType,
             Vendor reconcilingVendor)
         {
             name = (name ?? string.Empty).Trim();
@@ -56,7 +61,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<VendorInvoicePaymentMethod>(NonuniqueMessage);
 
             return Result.Success(new VendorInvoicePaymentMethod(
-                paymentMethods, name, isActive, isOnAccountPaymentType, reconcilingVendor));
+                paymentMethods, name, isActive, paymentType, reconcilingVendor));
         }
 
         public Result<string> SetName(string name, IEnumerable<string> paymentMethods)
@@ -82,9 +87,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IsActive = false;
         }
 
-        public void SetIsOnAccountPaymentType(bool isOnAccountPaymentType)
+        //public void SetIsOnAccountPaymentType(bool isOnAccountPaymentType)
+        //{
+        //    IsOnAccountPaymentType = isOnAccountPaymentType;
+        //}
+
+        public Result RemoveReconcilingVendor()
         {
-            IsOnAccountPaymentType = isOnAccountPaymentType;
+            return Result.Success(ReconcilingVendor = null);
         }
 
         public Result<Vendor> SetReconcilingVendor(Vendor reconcilingVendor)

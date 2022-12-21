@@ -166,7 +166,8 @@ namespace CustomerVehicleManagement.Tests.Integration
                     new List<string>(),
                     $"Payment {i}",
                     isActive: true,
-                    isOnAccountPaymentType: false,
+                    //isOnAccountPaymentType: false,
+                    paymentType: VendorInvoicePaymentMethodType.Normal,
                     reconcilingVendor: null).Value);
             }
 

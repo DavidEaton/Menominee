@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +18,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             {
                 Name = payMethod.Name,
                 IsActive = payMethod.IsActive,
-                IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                //IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                PaymentType = payMethod.PaymentType,
                 ReconcilingVendor = payMethod.ReconcilingVendor
             };
         }
@@ -30,8 +32,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     paymentMethods,
                     paymentMethod.Name,
                     paymentMethod.IsActive,
-                    paymentMethod.IsOnAccountPaymentType,
-                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                    //paymentMethod.IsOnAccountPaymentType,
+                    paymentMethod.PaymentType,
+                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
                 ).Value;
         }
 
@@ -43,8 +46,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     paymentMethodNames,
                     paymentMethod.Name,
                     paymentMethod.IsActive,
-                    paymentMethod.IsOnAccountPaymentType,
-                    VendorHelper.ConvertWriteDtoToEntity(paymentMethod.ReconcilingVendor)
+                    //paymentMethod.IsOnAccountPaymentType,
+                    paymentMethod.PaymentType,
+                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
                 ).Value;
         }
 
@@ -57,7 +61,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Id = payMethod.Id,
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
-                    IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                    //IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
+                    PaymentType = payMethod.PaymentType,
                     ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
                 };
         }
@@ -71,6 +76,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Id = payMethod.Id,
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
+                    PaymentType = payMethod.PaymentType,
                     ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
                 };
         }
@@ -84,7 +90,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                         Id = payment.PaymentMethod.Id,
                         Name = method.Name,
                         IsActive = method.IsActive,
-                        IsOnAccountPaymentType = method.IsOnAccountPaymentType,
+                        //IsOnAccountPaymentType = method.IsOnAccountPaymentType,
+                        PaymentType = method.PaymentType,
                         ReconcilingVendor = method.ReconcilingVendor
                     };
 
@@ -101,6 +108,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Id = paymentMethod.Id,
                     Name = paymentMethod.Name,
                     IsActive = paymentMethod.IsActive,
+                    PaymentType = paymentMethod.PaymentType
                     //ReconcilingVendor = paymentMethod.ReconcilingVendorName
                 };
         }

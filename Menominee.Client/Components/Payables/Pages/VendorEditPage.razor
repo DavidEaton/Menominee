@@ -2,11 +2,9 @@
 
 @using Menominee.Client.Components.Payables
 
-@*<PayablesMenu />*@
-
 @if (Vendor != null)
 {
     <div class="m-main-content">
-        <VendorForm Vendor="@Vendor" OnValidSubmit="@Save" OnDiscard="@Discard" />
+        <VendorEditor Vendor="@Vendor" FormMode="@FormMode" OnValidSubmit="@Save" OnDiscard="@Discard" />
     </div>
 }

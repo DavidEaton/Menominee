@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
+using Menominee.Common.Enums;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Utilities;
@@ -14,20 +15,22 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             // Arrange
             string name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1);
             bool isActive = true;
-            bool isOnAccountPaymentType = true;
+            //bool isOnAccountPaymentType = true;
+            VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
             var reconcilingVendor = CreateVendor();
             IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             // Act
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor);
+                paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor);
 
             // Assert
             vendorInvoicePaymentMethodOrError.Value.Should().BeOfType<VendorInvoicePaymentMethod>();
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeFalse();
             vendorInvoicePaymentMethodOrError.Value.Name.Should().Be(name);
             vendorInvoicePaymentMethodOrError.Value.IsActive.Should().Be(isActive);
-            vendorInvoicePaymentMethodOrError.Value.IsOnAccountPaymentType.Should().Be(isOnAccountPaymentType);
+            //vendorInvoicePaymentMethodOrError.Value.IsOnAccountPaymentType.Should().Be(isOnAccountPaymentType);
+            vendorInvoicePaymentMethodOrError.Value.PaymentType.Should().Be(paymentType);
             vendorInvoicePaymentMethodOrError.Value.ReconcilingVendor.Should().Be(reconcilingVendor);
         }
 
@@ -36,13 +39,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             string name = "Duplicate_Name";
             bool isActive = true;
-            bool isOnAccountPaymentType = true;
+            //bool isOnAccountPaymentType = true;
+            VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
             var reconcilingVendor = CreateVendor();
             var paymentMethodNames = CreatePaymentMethodNames(5);
             paymentMethodNames.Add(name);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor);
+                paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor);
 
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
         }
@@ -55,7 +59,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, nullName, true, true, reconcilingVendor);
+                paymentMethodNames, nullName, true, /*true,*/ VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
 
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
         }
@@ -69,7 +73,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, invalidName, true, true, reconcilingVendor);
+                paymentMethodNames, invalidName, true, /*true,*/ VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
 
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
         }
@@ -110,15 +114,21 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoicePaymentMethod.IsActive.Should().BeFalse();
         }
 
+        //[Fact]
+        //public void SetIsOnAccountPaymentType()
+        //{
+        //    var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+        //    vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeTrue();
+
+        //    vendorInvoicePaymentMethod.SetIsOnAccountPaymentType(false);
+
+        //    vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeFalse();
+        //}
+
         [Fact]
-        public void SetIsOnAccountPaymentType()
+        public void SetPaymentType()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
-            vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeTrue();
-
-            vendorInvoicePaymentMethod.SetIsOnAccountPaymentType(false);
-
-            vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeFalse();
+            // TODO:
         }
 
         [Fact]
@@ -138,11 +148,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             string name = "Name";
             bool isActive = true;
-            bool isOnAccountPaymentType = true;
+            //bool isOnAccountPaymentType = true;
+            VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
             var reconcilingVendor = CreateVendor();
             var paymentMethodNames = CreatePaymentMethodNames(5);
             var vendorInvoicePaymentMethod = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
+                paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor).Value;
             paymentMethodNames.Add(name);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(name, paymentMethodNames);

@@ -27,6 +27,9 @@
                                      ValueField="Id"
                                      Enabled="@CanEdit"
                                      OnChange="OnPaymentMethodChange">
+                            <DropDownListSettings>
+                                <DropDownListPopupSettings Height="@popupHeight.ToString()" />
+                            </DropDownListSettings>
                         </TelerikDropDownList>
                     }
                 </Template>

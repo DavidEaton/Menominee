@@ -38,6 +38,7 @@ namespace Menominee.Client.Components.Payables
 
         private IReadOnlyList<VendorInvoicePaymentMethodToReadInList> PaymentMethods = new List<VendorInvoicePaymentMethodToReadInList>();
 
+        private int popupHeight = 260;
         private bool CanEdit { get; set; } = false;
 
         private bool CanDelete() 
@@ -48,6 +49,10 @@ namespace Menominee.Client.Components.Payables
         protected override async Task OnInitializedAsync()
         {
             PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
+            if (PaymentMethods.Count < 9) 
+            {
+                popupHeight = PaymentMethods.Count * 32;
+            }
         }
 
         protected override void OnParametersSet()
@@ -95,8 +100,8 @@ namespace Menominee.Client.Components.Payables
         {
             SelectPayment(args.Item as VendorInvoicePaymentToWrite);
 
-            var payments = InvoiceTotals.Payments - Payment.Amount;
-            Payment.Amount = InvoiceTotals.Total - payments;
+            var payments = Math.Round(InvoiceTotals.Payments - Payment.Amount, 2);
+            Payment.Amount = Math.Round((InvoiceTotals.Total - payments), 2);
             OnCalculateTotals?.Invoke();
         }
 

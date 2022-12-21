@@ -166,7 +166,8 @@ namespace CustomerVehicleManagement.Tests
                     Id = i,
                     Name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - i),
                     IsActive = true,
-                    IsOnAccountPaymentType = false,
+                    //IsOnAccountPaymentType = false,
+                    PaymentType = VendorInvoicePaymentMethodType.Normal
                 });
             }
 
@@ -182,7 +183,7 @@ namespace CustomerVehicleManagement.Tests
             var paymentMethodNames = CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor).Value;
+                paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor).Value;
         }
 
         public static VendorInvoicePayment CreateVendorInvoicePayment()

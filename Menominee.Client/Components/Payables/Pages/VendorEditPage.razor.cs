@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Common.Enums;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
@@ -17,12 +18,14 @@ namespace Menominee.Client.Components.Payables.Pages
         public long Id { get; set; }
 
         private VendorToWrite Vendor { get; set; }
+        private FormMode FormMode { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             if (Id == 0)
             {
                 Vendor = new();
+                FormMode = FormMode.Add;
             }
             else
             {
@@ -34,6 +37,7 @@ namespace Menominee.Client.Components.Payables.Pages
                     Name = readDto.Name,
                     IsActive = readDto.IsActive
                 };
+                FormMode = FormMode.Edit;
             }
         }
 

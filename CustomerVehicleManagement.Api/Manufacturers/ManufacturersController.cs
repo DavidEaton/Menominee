@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        [HttpGet]
+        [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<ManufacturerToReadInList>>> GetManufacturerListAsync()
         {
             var result = await repository.GetManufacturerListAsync();

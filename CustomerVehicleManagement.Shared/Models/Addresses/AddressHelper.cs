@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
             return null;
         }
 
-        public static AddressToWrite CovertReadToWriteDto(AddressToRead address)
+        public static AddressToWrite ConvertReadToWriteDto(AddressToRead address)
         {
             if (address is not null)
             {
