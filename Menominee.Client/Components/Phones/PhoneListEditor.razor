@@ -1,0 +1,79 @@
+﻿@using CustomerVehicleManagement.Shared.Models.Contactable;
+@if (Phones is null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@if (Phones is not null)
+{
+    <TelerikGrid Data="Phones"
+             OnRowClick="@OnRowSelected"
+             OnRowDoubleClick="@OnEdit"
+             Sortable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             ShowColumnMenu="true"
+             SelectionMode="GridSelectionMode.Single"
+             SelectedItems="@SelectedPhones"
+             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
+             @ref="@Grid">
+        <GridColumns>
+            <GridColumn Width="60%"
+                    Title="Number"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false">
+                <Template>
+                    @{
+                        @if ((context as PhoneToWrite).IsPrimary)
+                        {
+                            <TelerikIcon Icon="check-circle" Class="green-check"></TelerikIcon>
+                        }
+                        @((context as PhoneToWrite).ToString())
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn Width="40%"
+                    Field="@nameof(PhoneToWrite.PhoneType)"
+                    Title="Type"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false">
+            </GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+
+    @if (PhoneToModify is not null)
+    {
+        <PhoneEditor Phone="PhoneToModify"
+             FormMode="PhoneFormMode"
+             OnSave="OnSaveEdit"
+             OnCancel="OnCancelEdit" />
+    }
+
+    @if (CanEdit)
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          OnNew="OnNew"
+                          OnDelete="OnDelete"
+                          ShowDivider="false"
+                          CanAdd="CanEdit"
+                          CanEdit="CanEditPhone"
+                          CanDelete="CanDeletePhone" />
+    }
+    else
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          ShowDivider="false"
+                          CanEdit="CanEditPhone" />
+    }
+}
+
+<style>
+    .green-check {
+        color: green
+    }
+</style>

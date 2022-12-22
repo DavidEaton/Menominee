@@ -1,0 +1,70 @@
+﻿@using CustomerVehicleManagement.Shared.Models.Contactable;
+@if (Emails is null)
+{
+    <p><em>Loading...</em></p>
+}
+
+@if (Emails is not null)
+{
+    <TelerikGrid Data="Emails"
+             OnRowClick="@OnRowSelected"
+             OnRowDoubleClick="@OnEdit"
+             Sortable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             ShowColumnMenu="true"
+             SelectionMode="GridSelectionMode.Single"
+             SelectedItems="@SelectedEmails"
+             EditMode="@(CanEdit ? GridEditMode.Inline : GridEditMode.None)"
+             @ref="@Grid">
+        <GridColumns>
+            <GridColumn Width="100%"
+                    Title="Address"
+                    ShowColumnChooser="false"
+                    Lockable="false"
+                    ShowColumnMenu="false"
+                    Sortable="false"
+                    Filterable="false">
+                <Template>
+                    @{
+                        @if ((context as EmailToWrite).IsPrimary)
+                        {
+                            <TelerikIcon Icon="check-circle" Class="green-check"></TelerikIcon>
+                        }
+                        @((context as EmailToWrite).Address)
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </TelerikGrid>
+
+    @if (EmailToModify is not null)
+    {
+        <EmailEditor Email="EmailToModify"
+             FormMode="EmailFormMode"
+             OnSave="OnSaveEdit"
+             OnCancel="OnCancelEdit" />
+    }
+
+    @if (CanEdit)
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          OnNew="OnNew"
+                          OnDelete="OnDelete"
+                          ShowDivider="false"
+                          CanAdd="CanEdit"
+                          CanEdit="CanEditEmail"
+                          CanDelete="CanDeleteEmail" />
+    }
+    else
+    {
+        <EditNewDeleteIconButtons OnEdit="OnEdit"
+                          ShowDivider="false"
+                          CanEdit="CanEditEmail" />
+    }
+}
+
+<style>
+    .green-check {
+        color: green
+    }
+</style>
