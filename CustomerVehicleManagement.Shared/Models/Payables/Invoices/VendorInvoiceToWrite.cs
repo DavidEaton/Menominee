@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public class VendorInvoiceToWrite
     {
-        public VendorToReadInList Vendor { get; set; }
+        public VendorToRead Vendor { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? DatePosted { get; set; }
         public VendorInvoiceStatus Status { get; set; } = VendorInvoiceStatus.Unknown;

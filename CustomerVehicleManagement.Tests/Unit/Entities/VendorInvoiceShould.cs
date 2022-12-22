@@ -4,7 +4,7 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using Xunit;
-using static CustomerVehicleManagement.Tests.Unit.Helpers.VendorInvoiceHelper;
+using static CustomerVehicleManagement.Tests.Unit.Helpers.Payables.VendorInvoiceTestHelper;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {

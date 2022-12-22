@@ -44,7 +44,7 @@ namespace Menominee.Client.Components.Payables
 
         private string Title { get; set; }
         private FormMode formMode;
-        private IReadOnlyList<VendorToReadInList> Vendors = null;
+        private IReadOnlyList<VendorToRead> Vendors = null;
         private long? vendorId = null;
         private bool parametersSet = false;
         private IList<VendorPaymentType> PaymentTypes { get; set; } = new List<VendorPaymentType>();

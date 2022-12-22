@@ -11,12 +11,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_InventoryItemPackageItem()
         {
             // Arrange
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
 
             // Act
             var resultOrError = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 details);
 
             resultOrError.Value.Should().BeOfType<InventoryItemPackageItem>();
@@ -26,11 +26,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItemPackageItem_With_Invalid_DisplayOrder()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
 
             var resultOrError = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue - 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 details);
 
             resultOrError.IsFailure.Should().BeTrue();
@@ -40,7 +40,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_InventoryItemPackageItem_With_Null_InventoryItem()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
 
             var resultOrError = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var resultOrError = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 null);
 
             resultOrError.IsFailure.Should().BeTrue();
@@ -66,9 +66,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetInventoryItem()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
-            var itemOne = InventoryItemHelper.CreateInventoryItem();
-            var itemTwo = InventoryItemHelper.CreateInventoryItem();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
+            var itemOne = InventoryItemTestHelper.CreateInventoryItem();
+            var itemTwo = InventoryItemTestHelper.CreateInventoryItem();
             var packageItem = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
                 itemOne,
@@ -85,10 +85,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_InventoryItem()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var packageItem = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 details).Value;
 
             var resultOrError = packageItem.SetInventoryItem(null);
@@ -100,8 +100,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDisplayOrder()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
-            var itemOne = InventoryItemHelper.CreateInventoryItem();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
+            var itemOne = InventoryItemTestHelper.CreateInventoryItem();
             var displayOrderOne = 1;
             var displayOrderTwo = 2;
 
@@ -121,13 +121,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_DisplayOrder()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var validDisplayOrder = InventoryItemPackageItem.MinimumValue + 1;
             var invalidDisplayOrder = InventoryItemPackageItem.MinimumValue - 1;
 
             var packageItem = InventoryItemPackageItem.Create(
                 validDisplayOrder,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 details).Value;
             packageItem.DisplayOrder.Should().Be(validDisplayOrder);
 
@@ -140,13 +140,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDetails()
         {
-            var detailsOne = InventoryItemHelper.CreateInventoryItemPackageDetails();
-            var detailsIwo = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var detailsOne = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
+            var detailsIwo = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             detailsIwo = detailsIwo.SetQuantity(InventoryItemPackageDetails.MinimumValue + 11).Value;
 
             var packageItem = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 detailsOne).Value;
             packageItem.Details.Should().Be(detailsOne);
 
@@ -160,10 +160,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Details()
         {
-            var details = InventoryItemHelper.CreateInventoryItemPackageDetails();
+            var details = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var packageItem = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,
-                InventoryItemHelper.CreateInventoryItem(),
+                InventoryItemTestHelper.CreateInventoryItem(),
                 details).Value;
             packageItem.Details.Should().Be(details);
 

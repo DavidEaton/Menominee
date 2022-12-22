@@ -105,7 +105,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetBaseLaborAmount()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             var originalAmount = package.BaseLaborAmount;
             double newBaseLaborAmount = InventoryItemPackage.MinimumAmount + .01;
 
@@ -119,7 +119,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_BaseLaborAmount()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             double invalidBaseLaborAmount = InventoryItemPackage.MaximumAmount + .01;
 
             var resultOrError = package.SetBaseLaborAmount(invalidBaseLaborAmount);
@@ -131,7 +131,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetBasePartsAmount()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             var originalAmount = package.BasePartsAmount;
             double newBasePartsAmount = InventoryItemPackage.MinimumAmount + .01;
 
@@ -145,7 +145,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_BasePartsAmount()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             double invalidBasePartsAmount = InventoryItemPackage.MaximumAmount + .01;
 
             var resultOrError = package.SetBaseLaborAmount(invalidBasePartsAmount);
@@ -157,7 +157,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetScript()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             var originalScript = package.Script;
             string newScript = Utilities.LoremIpsum(InventoryItemPackage.ScriptMaximumLength - 10);
 
@@ -171,7 +171,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Truncate_Lengthy_Script_And_SetScript()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             var originalScript = package.Script;
             string lLengthyScript = Utilities.LoremIpsum(InventoryItemPackage.ScriptMaximumLength + 1000);
 
@@ -186,7 +186,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetIsDiscountable()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
             var originalIsDiscountable = package.IsDiscountable;
             var newIsDiscountable = !originalIsDiscountable;
 
@@ -200,8 +200,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddItem()
         {
-            var package = InventoryItemHelper.CreateInventoryItemPackage();
-            var item = InventoryItemHelper.CreateInventoryItemPackageItem();
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            var item = InventoryItemTestHelper.CreateInventoryItemPackageItem();
             package.Items.Count.Should().Be(0);
 
             var resultOrError = package.AddItem(item);
@@ -213,10 +213,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveItem()
         {
-            InventoryItemPackage package = InventoryItemHelper.CreateInventoryItemPackage();
-            InventoryItemPackageItem itemOne = InventoryItemHelper.CreateInventoryItemPackageItem();
-            InventoryItemPackageItem itemTwo = InventoryItemHelper.CreateInventoryItemPackageItem();
-            InventoryItemPackageItem itemThree = InventoryItemHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            InventoryItemPackageItem itemOne = InventoryItemTestHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackageItem itemTwo = InventoryItemTestHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackageItem itemThree = InventoryItemTestHelper.CreateInventoryItemPackageItem();
             package.Items.Count.Should().Be(0);
             package.AddItem(itemOne);
             package.AddItem(itemTwo);
@@ -235,8 +235,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddPlaceholder()
         {
-            var package = InventoryItemHelper.CreateInventoryItemPackage();
-            var placeholder = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             package.Placeholders.Count.Should().Be(0);
 
             var resultOrError = package.AddPlaceholder(placeholder);
@@ -248,13 +248,13 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemovePlaceholder()
         {
-            var package = InventoryItemHelper.CreateInventoryItemPackage();
-            var placeholderOne = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
-            var placeholderTwo = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
-            var placeholderThree = InventoryItemHelper.CreateInventoryItemPackagePlaceholder();
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            var placeholderOne = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholderTwo = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholderThree = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             package.Placeholders.Count.Should().Be(0);
-            InventoryItemPackageItem itemTwo = InventoryItemHelper.CreateInventoryItemPackageItem();
-            InventoryItemPackageItem itemThree = InventoryItemHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackageItem itemTwo = InventoryItemTestHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackageItem itemThree = InventoryItemTestHelper.CreateInventoryItemPackageItem();
             package.AddPlaceholder(placeholderOne);
             package.AddPlaceholder(placeholderTwo);
             package.AddPlaceholder(placeholderThree);

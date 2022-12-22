@@ -11,6 +11,7 @@ using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
+using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,18 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync()
         {
             var result = await repository.GetInvoiceListAsync();
+
+            return result is null
+                ? NotFound()
+                : Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetInvoices(
+            long? vendorId,
+            VendorInvoiceStatus? status)
+        {
+            var result = await repository.GetInvoices(vendorId, status);
 
             return result is null
                 ? NotFound()

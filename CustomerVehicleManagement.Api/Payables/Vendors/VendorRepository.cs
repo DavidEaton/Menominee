@@ -79,13 +79,13 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 }).ToList();
         }
 
-        public async Task<IReadOnlyList<VendorToReadInList>> GetVendorsListAsync()
+        public async Task<IReadOnlyList<VendorToRead>> GetVendorsListAsync()
         {
             IReadOnlyList<Vendor> vendors = await context.Vendors
                 .AsNoTracking()
                 .ToListAsync();
 
-            return vendors.Select(vendor => new VendorToReadInList
+            return vendors.Select(vendor => new VendorToRead
             {
                 Id = vendor.Id,
                 VendorCode = vendor.VendorCode,

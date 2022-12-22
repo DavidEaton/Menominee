@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetLaborAmount()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalLaborAmount = inspection.LaborAmount;
             var newLaborAmount = LaborAmount.Create(
                 ItemLaborType.Time,
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_LaborAmount()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalLaborAmount = inspection.LaborAmount;
             inspection.LaborAmount.Should().Be(originalLaborAmount);
 
@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTechAmount()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalTechAmount = inspection.TechAmount;
             var newTechAmount = TechAmount.Create(
                 ItemLaborType.Time,
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_TechAmount()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalTechAmount = inspection.TechAmount;
             inspection.TechAmount.Should().Be(originalTechAmount);
 
@@ -120,7 +120,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetInspectionType()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalInspectionType = inspection.InspectionType;
             var newInspectionType = InventoryItemInspectionType.Paid;
             inspection.InspectionType.Should().Be(originalInspectionType);
@@ -135,7 +135,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_InspectionType()
         {
-            var inspection = InventoryItemHelper.CreateInventoryItemInspection();
+            var inspection = InventoryItemTestHelper.CreateInventoryItemInspection();
             var originalInspectionType = inspection.InspectionType;
             var invalidInspectionType = (InventoryItemInspectionType)(-1);
             inspection.InspectionType.Should().Be(originalInspectionType);

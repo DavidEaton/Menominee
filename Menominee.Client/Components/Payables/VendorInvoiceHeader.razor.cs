@@ -24,7 +24,7 @@ namespace Menominee.Client.Components.Payables
 
         private bool CanEdit { get; set; } = false;
 
-        public IReadOnlyList<VendorToReadInList> Vendors;
+        public IReadOnlyList<VendorToRead> Vendors;
         private IList<VendorInvoiceStatusEnumModel> VendorInvoiceStatusEnumData { get; set; } = new List<VendorInvoiceStatusEnumModel>();
 
         private long vendorId = 0;
