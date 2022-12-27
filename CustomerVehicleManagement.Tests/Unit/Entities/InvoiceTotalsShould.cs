@@ -1,14 +1,10 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using CustomerVehicleManagement.Shared.Models.Taxes;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Client.Components.Payables;
 using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.Payables.VendorInvoiceTestHelper;
@@ -82,76 +78,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             };
         }
 
-        [Fact]
-        public void CalculateInvoiceTotal()
-        {
-            var invoiceTotals = new InvoiceTotals();
-            var type = VendorInvoiceLineItemType.Purchase;
-            var lineItemCount = 5;
-            var lineItemCore = 1.0;
-            var lineItemCost = 1.0;
-            var lineItemQuantity = 10.0;
-            var paymentLineCount = 5;
-            var paymentLineAmount = 10.01;
-            var expectedPayments = paymentLineCount * paymentLineAmount;
-            var taxLineCount = 5;
-            var taxLineAmount = .1;
-            var expectedTaxes = taxLineCount * taxLineAmount;
-            var expectedPurchasesAmount = type == VendorInvoiceLineItemType.Purchase
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedReturnsAmount = type == VendorInvoiceLineItemType.Return
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedCoreReturnsAmount = type == VendorInvoiceLineItemType.CoreReturn
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedDefectivesAmount = type == VendorInvoiceLineItemType.Defective
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedWarrantiesAmount = type == VendorInvoiceLineItemType.Warranty
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedMiscellaneousDebitsAmount = type == VendorInvoiceLineItemType.MiscDebit
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedMiscellaneousCreditsAmount = type == VendorInvoiceLineItemType.MiscCredit
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedBalanceForwardsAmount = type == VendorInvoiceLineItemType.BalanceForward
-                ? (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount
-                : 0;
-            var expectedTotal =
-                  expectedPurchasesAmount
-                + expectedReturnsAmount
-                + expectedCoreReturnsAmount
-                + expectedDefectivesAmount
-                + expectedWarrantiesAmount
-                + expectedMiscellaneousDebitsAmount
-                + expectedMiscellaneousCreditsAmount
-                + expectedBalanceForwardsAmount
-                + expectedTaxes;
-
-            var invoice = CreateVendorInvoiceToWrite();
-            invoice.LineItems = CreateLineItemsToWrite(type, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
-            invoice.Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, CreatePaymentMethodToRead());
-            invoice.Taxes = CreateTaxesToWrite(CreateSalesTaxToRead(), taxLineCount: taxLineCount, taxAmount: taxLineAmount);
-            var invoiceTotalsOrError = invoiceTotals.CalculateInvoiceTotals(invoice);
-
-            invoiceTotalsOrError.IsFailure.Should().BeFalse();
-            invoiceTotalsOrError.Value.Payments.Should().Be(expectedPayments);
-            invoiceTotalsOrError.Value.Taxes.Should().Be(expectedTaxes);
-            invoiceTotalsOrError.Value.Purchases.Should().Be(expectedPurchasesAmount);
-            invoiceTotalsOrError.Value.Returns.Should().Be(expectedReturnsAmount);
-            invoiceTotalsOrError.Value.CoreReturns.Should().Be(expectedCoreReturnsAmount);
-            invoiceTotalsOrError.Value.Defectives.Should().Be(expectedDefectivesAmount);
-            invoiceTotalsOrError.Value.Warranties.Should().Be(expectedWarrantiesAmount);
-            invoiceTotalsOrError.Value.MiscellaneousDebits.Should().Be(expectedMiscellaneousDebitsAmount);
-            invoiceTotalsOrError.Value.MiscellaneousCredits.Should().Be(expectedMiscellaneousCreditsAmount);
-            invoiceTotalsOrError.Value.BalancesForward.Should().Be(expectedBalanceForwardsAmount);
-            invoiceTotalsOrError.Value.Total.Should().Be(expectedTotal);
-        }
-
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void CalculateInvoiceTotals_For_Each_LineItemType(VendorInvoiceLineItemType lineItemType)
@@ -202,15 +128,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 + expectedBalanceForwardsAmount
                 + expectedTaxes;
 
-            var options = new LineItemTestOptions
-            {
-                Type = lineItemType
-            };
-            var invoiceToWrite = CreateVendorInvoiceToWrite(CreateVendorToRead());
-            invoiceToWrite.LineItems = CreateLineItemsToWrite(options);
-            invoiceToWrite.Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, CreatePaymentMethodToRead());
-            invoiceToWrite.Taxes = CreateTaxesToWrite(CreateSalesTaxToRead(), taxLineCount: taxLineCount, taxAmount: taxLineAmount);
-            var invoiceTotalsOrError = invoiceTotals.CalculateInvoiceTotals(invoiceToWrite);
+            var invoice = CreateVendorInvoiceToWrite();
+            invoice.LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
+            invoice.Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, CreatePaymentMethodToRead());
+            invoice.Taxes = CreateTaxesToWrite(CreateSalesTaxToRead(), taxLineCount, taxLineAmount);
+            var invoiceTotalsOrError = invoiceTotals.CalculateInvoiceTotals(invoice);
 
             invoiceTotalsOrError.IsFailure.Should().BeFalse();
             invoiceTotalsOrError.Value.Payments.Should().Be(expectedPayments);
