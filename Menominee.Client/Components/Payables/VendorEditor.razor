@@ -5,14 +5,17 @@
 
     <div class="form-group">
         <div>
-            <label class="m-label" for="vendorCode">ID</label>
+            <label class="m-label">ID</label>
         </div>
         <TelerikTextBox @bind-Value="Vendor.VendorCode"
                         MaxLength="10"
-                        Width="175px"
-                        Id="vendorCode">
+                        Width="175px">
         </TelerikTextBox>
+
+        <TelerikCheckBox Id="active-vendor" @bind-Value="@Vendor.IsActive"></TelerikCheckBox>
+        <label class="k-label" for="active-vendor">Active Vendor</label>
     </div>
+
     <div class="form-group">
         <label class="m-label">Name</label>
         <TelerikTextBox @bind-Value="Vendor.Name"
@@ -33,14 +36,17 @@
         <div>
             <Card Title="Phones" Collapsible="true" Collapsed="false">
                 <Content>
-                    Placeholder...
+                    <PhoneListEditor Phones="@Vendor.Phones"
+                                     DefaultPhoneType="@PhoneType.Work"
+                                     FormMode="FormMode" />
                 </Content>
             </Card>
         </div>
         <div>
             <Card Title="Emails" Collapsible="true" Collapsed="false">
                 <Content>
-                    Placeholder...
+                    <EmailListEditor Emails="@Vendor.Emails"
+                                     FormMode="FormMode" />
                 </Content>
             </Card>
         </div>
@@ -52,9 +58,13 @@
 <style>
     .contact-info {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-columns: 2fr 1.5fr 1.5fr;
         grid-gap: .8rem;
         margin-right: 5px;
+    }
+
+    #active-vendor { 
+        margin-left: 1rem;
     }
 
     @@media (max-width:992px) {
