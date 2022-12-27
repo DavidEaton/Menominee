@@ -178,12 +178,11 @@ namespace CustomerVehicleManagement.Tests
         {
             string name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
             bool isActive = true;
-            bool isOnAccountPaymentType = true;
             var reconcilingVendor = CreateVendor(defaultPaymentMethod: null);
             var paymentMethodNames = CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor).Value;
+                paymentMethodNames, name, isActive, VendorInvoicePaymentMethodType.Normal, reconcilingVendor).Value;
         }
 
         public static VendorInvoicePayment CreateVendorInvoicePayment()

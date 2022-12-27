@@ -6,6 +6,7 @@ using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using Menominee.Common.Enums;
@@ -89,14 +90,8 @@ namespace CustomerVehicleManagement.Tests.Integration
                 list.Add(new VendorInvoicePaymentToWrite()
                 {
                     Amount = amount * (++i),
-                    PaymentMethod = new VendorInvoicePaymentMethodToRead()
-                    {
-                        Id = paymentMethod.Id,
-                        IsActive = paymentMethod.IsActive,
-                        IsOnAccountPaymentType = paymentMethod.IsOnAccountPaymentType,
-                        Name = paymentMethod.Name
-                    }
-                    });
+                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(paymentMethod)
+                });
             }
 
             return list;

@@ -25,7 +25,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             IList<string> paymentMethods,
             string name,
             bool isActive,
-            //bool isOnAccountPaymentType,
             VendorInvoicePaymentMethodType paymentType,
             Vendor reconcilingVendor)
         {
@@ -39,16 +38,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Name = name;
             IsActive = isActive;
-            //IsOnAccountPaymentType = isOnAccountPaymentType;
             PaymentType = paymentType;
             ReconcilingVendor = reconcilingVendor;
         }
 
         public static Result<VendorInvoicePaymentMethod> Create(
-            IList<string> paymentMethods,
+            IList<string> paymentMethodNames,
             string name,
             bool isActive,
-            //bool isOnAccountPaymentType,
             VendorInvoicePaymentMethodType paymentType,
             Vendor reconcilingVendor)
         {
@@ -57,11 +54,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (name.Length < MinimumLength || name.Length > MaximumLength)
                 return Result.Failure<VendorInvoicePaymentMethod>($"{InvalidLengthMessage} You entered {name.Length} character(s).");
 
-            if (paymentMethods.Contains(name))
+            if (paymentMethodNames.Contains(name))
                 return Result.Failure<VendorInvoicePaymentMethod>(NonuniqueMessage);
 
             return Result.Success(new VendorInvoicePaymentMethod(
-                paymentMethods, name, isActive, paymentType, reconcilingVendor));
+                paymentMethodNames, name, isActive, paymentType, reconcilingVendor));
         }
 
         public Result<string> SetName(string name, IEnumerable<string> paymentMethods)
@@ -86,11 +83,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         {
             IsActive = false;
         }
-
-        //public void SetIsOnAccountPaymentType(bool isOnAccountPaymentType)
-        //{
-        //    IsOnAccountPaymentType = isOnAccountPaymentType;
-        //}
 
         public Result RemoveReconcilingVendor()
         {

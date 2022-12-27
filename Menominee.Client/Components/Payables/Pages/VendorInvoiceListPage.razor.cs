@@ -33,7 +33,7 @@ namespace Menominee.Client.Components.Payables.Pages
         public IEnumerable<VendorInvoiceToReadInList> SelectedInvoices { get; set; } = Enumerable.Empty<VendorInvoiceToReadInList>();
         public VendorInvoiceToReadInList SelectedInvoice { get; set; }
 
-        public IReadOnlyList<VendorToReadInList> Vendors;
+        public IReadOnlyList<VendorToRead> Vendors;
         private IList<VendorInvoiceStatusEnumModel> VendorInvoiceStatusEnumData { get; set; } = new List<VendorInvoiceStatusEnumModel>();
 
         public long SelectedId

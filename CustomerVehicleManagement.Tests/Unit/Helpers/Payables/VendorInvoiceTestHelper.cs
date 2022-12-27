@@ -17,40 +17,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
 {
     public static class VendorInvoiceTestHelper
     {
-        public static VendorInvoiceToWrite CreateVendorInvoiceToWriteWithCollections(
-            VendorInvoiceLineItemType lineItemType,
-            int lineItemCount,
-            double lineItemCore,
-            double lineItemCost,
-            double lineItemQuantity,
-            int paymentLineCount,
-            double paymentLineAmount,
-            int taxLineCount,
-            double taxLineAmount)
-        {
-
-            string name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1);
-            bool isActive = true;
-            bool isOnAccountPaymentType = true;
-            var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
-
-            var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, isOnAccountPaymentType, reconcilingVendor);
-
-            return new()
-            {
-                Date = DateTime.Now,
-                InvoiceNumber = "123",
-                Vendor = CreateVendorToRead(),
-                Status = VendorInvoiceStatus.Open,
-                Total = 0,
-                LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity),
-                Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, vendorInvoicePaymentMethodOrError.Value),
-                Taxes = CreateTaxesToWrite(CreateSalesTaxToRead(), taxLineCount, taxLineAmount)
-            };
-        }
-
         public static VendorInvoiceToWrite CreateVendorInvoiceToWrite() => new()
         {
             Date = DateTime.Now,
@@ -126,19 +92,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 { $"{vendor.Id}{3}" },
             };
         }
-
-        //public static VendorInvoiceLineItemToRead LineItemTestOptions(VendorInvoiceLineItemToWrite options, int lineItemCount)
-        //{
-        //    var random = new Random();
-
-        //    return new()
-        //    {
-        //        Type = options.Type,
-        //        Core = options.Core,
-        //        Cost = options.Cost,
-        //        Quantity = random.Next(1, lineItemCount)
-        //    };
-        //}
 
         public static IList<VendorInvoiceLineItemToWrite> CreateLineItemsToWrite(LineItemTestOptions options)
         {
@@ -286,7 +239,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
             {
                 Id = 1,
                 IsActive = true,
-                IsOnAccountPaymentType = true,
+                PaymentType = VendorInvoicePaymentMethodType.Normal,
                 Name = nameof(VendorInvoicePaymentMethodToRead),
                 ReconcilingVendor = CreateVendorToRead()
             };
@@ -301,13 +254,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 payments.Add(new VendorInvoicePaymentToWrite()
                 {
                     Amount = paymentAmount,
-                    PaymentMethod = new()
-                    {
-                        Id = paymentMethod.Id,
-                        IsActive = paymentMethod.IsActive,
-                        IsOnAccountPaymentType = paymentMethod.IsOnAccountPaymentType,
-                        Name = paymentMethod.Name
-                    }
+                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(paymentMethod)
                 });
             }
 
@@ -325,22 +272,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                         CreatePaymentMethodNames(5),
                         RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
                         isActive: true,
-                        isOnAccountPaymentType: false,
+                        VendorInvoicePaymentMethodType.Normal,
                         reconcilingVendor: null).Value,
                     paymentAmount + i).Value);
             }
 
             return payments;
         }
-
-        //public SalesTax GetSalesTax()
-        //{
-
-        //}
-
-        //public SalesTax GetSalesTax()
-        //{
-
-        //}
     }
 }

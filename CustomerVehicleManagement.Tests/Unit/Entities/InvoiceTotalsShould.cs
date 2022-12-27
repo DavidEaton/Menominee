@@ -77,8 +77,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 Id = int.MaxValue,
                 IsActive = true,
-                IsOnAccountPaymentType = false,
-                Name = Utilities.LoremIpsum(10)
+                PaymentType = VendorInvoicePaymentMethodType.Normal,
+                Name = LoremIpsum(10)
             };
         }
 
@@ -232,7 +232,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 Id = 1,
                 IsActive = true,
-                IsOnAccountPaymentType = true,
+                PaymentType = VendorInvoicePaymentMethodType.Normal,
                 Name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1)
             };
         }
