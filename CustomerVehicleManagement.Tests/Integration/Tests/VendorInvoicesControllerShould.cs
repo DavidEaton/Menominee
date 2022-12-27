@@ -92,33 +92,16 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             }
         }
 
-        private static async Task<VendorToRead> CreateVendorToRead()
-        {
-            IReadOnlyList<VendorToRead> vendors = new List<VendorToRead>();
-            VendorToRead vendorToRead = null;
-
-            using (var context = Helpers.CreateTestContext())
-            {
-                var controller = CreateController(context);
-                var vendorRepository = new VendorRepository(context);
-                vendors = await vendorRepository.GetVendorsAsync();
-                vendorToRead = vendors.FirstOrDefault();
-            }
-
-            return vendorToRead;
-        }
-
         [Fact]
         public async Task UpdateInvoiceAsync()
         {
-            IReadOnlyList<VendorToRead> vendors = new List<VendorToRead>();
             VendorToRead vendorToRead = null;
 
             using (var context = Helpers.CreateTestContext())
             {
                 var controller = CreateController(context);
                 var vendorRepository = new VendorRepository(context);
-                vendors = await vendorRepository.GetVendorsAsync();
+                var vendors = await vendorRepository.GetVendorsAsync();
                 vendorToRead = vendors.FirstOrDefault();
             }
 
@@ -184,6 +167,98 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             }
         }
 
+
+        [Fact]
+        public async Task DeleteInvoiceAsync()
+        {
+            VendorToRead vendorToRead = null;
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                var vendorRepository = new VendorRepository(context);
+                var vendors = await vendorRepository.GetVendorsAsync();
+                vendorToRead = vendors.FirstOrDefault();
+            }
+
+            var invoiceToAdd = CreateVendorInvoiceToWrite(vendorToRead);
+
+            // Arrange: Create/Add LineItems
+            VendorInvoiceLineItemType lineItemType = VendorInvoiceLineItemType.Purchase;
+            var lineItemCount = 5;
+            var lineItemCore = 2.2;
+            var lineItemCost = 4.4;
+            var lineItemQuantity = 2;
+
+            invoiceToAdd.LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
+
+            // Arrange: Create/Add Payments
+            VendorInvoicePaymentMethod paymentMethod = null;
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                paymentMethod = context.VendorInvoicePaymentMethods.FirstOrDefault();
+            }
+
+            var paymentLineCount = 2;
+            var paymentLineAmount = 3.3;
+
+            invoiceToAdd.Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, paymentMethod);
+
+            // Arrange: Create/Add Taxes
+            SalesTax salesTax = null;
+            var amount = 1.55;
+            var taxLineCount = 3;
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                var salesTaxRepository = new SalesTaxRepository(context);
+                salesTax = context.SalesTaxes.FirstOrDefault();
+            }
+
+            invoiceToAdd.Taxes = CreateTaxesToWrite(salesTax, taxLineCount, amount);
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                var addInvoiceResult = await controller.AddInvoiceAsync(invoiceToAdd);
+                var addInvoiceResponse = JsonSerializer.Deserialize<CreatedResultResponse>(addInvoiceResult.ToJson());
+                var getInvoiceActionResult = await controller.GetInvoiceAsync(addInvoiceResponse.Value.Id);
+                var actionResultValue = (OkObjectResult)getInvoiceActionResult.Result;
+                var vendorInvoice = (VendorInvoiceToRead)actionResultValue.Value;
+
+                vendorInvoice.Should().BeOfType<VendorInvoiceToRead>();
+                vendorInvoice.Status.Should().Be(VendorInvoiceStatus.Open);
+                vendorInvoice.Date.Should().Be(DateTime.Today);
+                vendorInvoice.DatePosted.Should().Be(null);
+                vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
+                vendorInvoice.Payments.Count.Should().Be(paymentLineCount);
+                vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+
+                IActionResult deleteInvoiceResult = await controller.DeleteInvoiceAsync(vendorInvoice.Id);
+                deleteInvoiceResult.Should().NotBeNull();
+                deleteInvoiceResult.Should().BeOfType<NoContentResult>();
+
+            }
+        }
+
+        private static async Task<VendorToRead> CreateVendorToRead()
+        {
+            IReadOnlyList<VendorToRead> vendors = new List<VendorToRead>();
+            VendorToRead vendorToRead = null;
+
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                var vendorRepository = new VendorRepository(context);
+                vendors = await vendorRepository.GetVendorsAsync();
+                vendorToRead = vendors.FirstOrDefault();
+            }
+
+            return vendorToRead;
+        }
 
         private static VendorInvoicesController CreateController(ApplicationDbContext context)
         {
