@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xunit;
+using Moq;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 {
