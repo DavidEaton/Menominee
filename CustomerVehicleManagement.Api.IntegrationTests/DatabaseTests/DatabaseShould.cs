@@ -1,17 +1,13 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xunit;
-using Moq;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 {
@@ -156,13 +152,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
         }
         private static ApplicationDbContext CreateTestContext()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(ConnectionString);
-
-            new Mock<IHostEnvironment>()
-                   .Setup(hostEnvironment => hostEnvironment.EnvironmentName)
-                   .Returns(EnvironmentName);
-
             var context = new ApplicationDbContext(ConnectionString);
 
             // Set test database to known state
@@ -173,14 +162,6 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests
 
         public void Dispose()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(ConnectionString);
-            var mockConfiguration = new Mock<IConfiguration>();
-            var mockLogger = new Mock<ILogger<ApplicationDbContext>>();
-            var mockEnvironment = new Mock<IHostEnvironment>();
-            mockEnvironment
-                   .Setup(e => e.EnvironmentName)
-                   .Returns(EnvironmentName);
             var context = new ApplicationDbContext(ConnectionString);
             context.Database.EnsureDeleted();
             GC.SuppressFinalize(this);
