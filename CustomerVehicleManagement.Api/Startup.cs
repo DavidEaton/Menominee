@@ -112,9 +112,6 @@ namespace CustomerVehicleManagement.Api
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            // webHostBuilder.ConfigureServices in Test adds mock services
-            // TryAddScoped won't re-add or overwrite services already added
-            // to the container, but AddScoped will.
             services.TryAddScoped<UserContext, UserContext>();
             services.TryAddScoped<IPersonRepository, PersonRepository>();
             services.TryAddScoped<PersonsController, PersonsController>();
@@ -146,12 +143,12 @@ namespace CustomerVehicleManagement.Api
                     .RequireAuthenticatedUser()
                     .Build();
 
-                AddControllersWithOptions(services, true, requireAuthenticatedUserPolicy);
+                AddControllersWithOptions(services, isProduction: true, requireAuthenticatedUserPolicy);
             }
 
             if (HostEnvironment.IsDevelopment())
             {
-                AddControllersWithOptions(services, false);
+                AddControllersWithOptions(services, isProduction: false);
                 services.AddDbContext<ApplicationDbContext>();
                 // Uncomment next line and comment previous line to route all requests to a single tenant database during development
                 //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));

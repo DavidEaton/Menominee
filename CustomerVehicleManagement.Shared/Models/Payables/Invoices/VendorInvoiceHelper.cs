@@ -163,5 +163,12 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             return invoices.Select(invoice => ConvertEntityToReadDto(invoice))
                 .ToList();
         }
+
+        public static VendorInvoice ConvertWriteToEntity(VendorInvoiceToWrite invoice, Vendor vendor)
+        {
+            return invoice is null
+                ? null
+                : VendorInvoice.Create(vendor, invoice.Status, invoice.DocumentType, invoice.Total, vendorInvoiceNumbers: null).Value;
+        }
     }
 }

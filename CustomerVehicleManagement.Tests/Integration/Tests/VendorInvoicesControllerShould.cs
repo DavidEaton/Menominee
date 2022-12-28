@@ -167,9 +167,24 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             }
         }
 
-
         [Fact]
         public async Task DeleteInvoiceAsync()
+        {
+            using (var context = Helpers.CreateTestContext())
+            {
+                var controller = CreateController(context);
+                var invoicesToRead = await controller.GetInvoices(null, null);
+                var invoiceToDelete = invoicesToRead.Value[^1];
+
+                IActionResult deleteInvoiceResult = await controller.DeleteInvoiceAsync(invoiceToDelete.Id);
+
+                deleteInvoiceResult.Should().NotBeNull();
+                deleteInvoiceResult.Should().BeOfType<NoContentResult>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteInvoiceAsync2()
         {
             VendorToRead vendorToRead = null;
 

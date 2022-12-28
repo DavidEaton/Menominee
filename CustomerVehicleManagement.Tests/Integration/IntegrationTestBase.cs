@@ -5,12 +5,9 @@ using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static CustomerVehicleManagement.Tests.Unit.Helpers.Payables.VendorInvoiceTestHelper;
@@ -78,6 +75,11 @@ namespace CustomerVehicleManagement.Tests.Integration
             invoiceToWrite.LineItems = CreateLineItemsToWrite(new LineItemTestOptions());
             invoiceToWrite.Payments = CreateTestPaymentsToWrite(paymentMethod, paymentCount: halfSeedCount);
             invoiceToWrite.Taxes = CreateTaxesToWrite(salesTaxes[^1], taxLineCount: maxSeedCount, taxAmount: 5.5);
+
+            VendorInvoice invoice = VendorInvoiceHelper.ConvertWriteToEntity(invoiceToWrite, vendors[^1]);
+
+            context.Add(invoice);
+            context.SaveChanges();
         }
 
         private static IList<VendorInvoicePaymentToWrite> CreateTestPaymentsToWrite(VendorInvoicePaymentMethod paymentMethod, int paymentCount)
