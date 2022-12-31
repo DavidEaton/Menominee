@@ -11,7 +11,6 @@ using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -46,12 +45,11 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             this.saleCodeRepository = saleCodeRepository ?? throw new ArgumentNullException(nameof(saleCodeRepository));
         }
 
-        // GET: api/vendorinvoices/list
         [Route("listing")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync()
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetInvoiceListAsync([FromQuery] ResourceParameters resourceParameters)
         {
-            var result = await repository.GetInvoiceListAsync();
+            var result = await repository.GetInvoiceListAsync(resourceParameters);
 
             return result is null
                 ? NotFound()
@@ -59,18 +57,15 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetInvoices(
-            long? vendorId,
-            VendorInvoiceStatus? status)
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetInvoices([FromQuery] ResourceParameters resourceParameters)
         {
-            var result = await repository.GetInvoices(vendorId, status);
+            var result = await repository.GetInvoices(resourceParameters);
 
             return result is null
                 ? NotFound()
                 : Ok(result);
         }
 
-        // GET: api/vendorinvoices/1
         [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
         public async Task<ActionResult<VendorInvoiceToRead>> GetInvoiceAsync(long id)
         {
@@ -81,7 +76,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 : Ok(result);
         }
 
-        // PUT: api/vendorinvoices/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateInvoiceAsync(long id, VendorInvoiceToWrite invoiceFromCaller)
         {

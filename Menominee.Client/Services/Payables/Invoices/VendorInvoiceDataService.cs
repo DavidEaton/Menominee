@@ -24,11 +24,11 @@ namespace Menominee.Client.Services.Payables.Invoices
             this.toastService = toastService;
         }
 
-        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetAllInvoices()
+        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoices(ResourceParameters resourceParameters)
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{resourceParameters}");
             }
             catch (Exception ex)
             {

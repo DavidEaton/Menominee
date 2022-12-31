@@ -6,7 +6,7 @@ namespace Menominee.Client.Services.Payables.Invoices
 {
     public interface IVendorInvoiceDataService
     {
-        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetAllInvoices();
+        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoices(ResourceParameters resourceParameters);
         Task<VendorInvoiceToRead> GetInvoice(long id);
         //Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToAdd invoice);
         Task<VendorInvoiceToRead> AddInvoice(VendorInvoiceToWrite invoice);

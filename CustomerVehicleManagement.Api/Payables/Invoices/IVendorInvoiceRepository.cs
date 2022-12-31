@@ -11,9 +11,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         void AddInvoice(VendorInvoice entity);
         Task<VendorInvoice> GetInvoiceEntityAsync(long id);
         Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
-        Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(long? vendorId, VendorInvoiceStatus? status);
+        Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(ResourceParameters resourceParameters);
         Task<Vendor> GetVendorAsync(long id);
-        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync();
+        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync(ResourceParameters resourceParameters);
         void DeleteInvoice(VendorInvoice entity);
         Task<bool> InvoiceExistsAsync(long id);
         Task SaveChangesAsync();

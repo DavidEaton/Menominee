@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.Invoices;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
@@ -173,13 +174,19 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             using (var context = Helpers.CreateTestContext())
             {
                 var controller = CreateController(context);
-                var invoicesToRead = await controller.GetInvoices(null, null);
-                var invoiceToDelete = invoicesToRead.Value[^1];
+                var result = await controller.GetInvoices(new ResourceParameters());
+                var invoicesToRead = (IReadOnlyList<VendorInvoiceToRead>)(result.Result as OkObjectResult).Value;
+                var invoiceToDelete = invoicesToRead[^1];
+                var invoiceToDeleteId = invoiceToDelete.Id;
 
-                IActionResult deleteInvoiceResult = await controller.DeleteInvoiceAsync(invoiceToDelete.Id);
+                var deleteInvoiceResult = await controller.DeleteInvoiceAsync(invoiceToDeleteId);
 
                 deleteInvoiceResult.Should().NotBeNull();
                 deleteInvoiceResult.Should().BeOfType<NoContentResult>();
+                result = await controller.GetInvoices(new ResourceParameters());
+                invoicesToRead = (IReadOnlyList<VendorInvoiceToRead>)(result.Result as OkObjectResult).Value;
+                var invoicesToReadContainsDeletedInvoice = invoicesToRead.Contains(invoiceToDelete);
+                invoicesToReadContainsDeletedInvoice.Should().BeFalse();
             }
         }
 

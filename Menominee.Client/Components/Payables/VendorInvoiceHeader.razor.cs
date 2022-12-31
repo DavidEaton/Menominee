@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Vendors;
+using Menominee.Client.Shared.Models;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -60,12 +61,6 @@ namespace Menominee.Client.Components.Payables
         {
             if (vendorId > 0 && Invoice.Vendor?.Id != vendorId)
                 Invoice.Vendor = Vendors.FirstOrDefault(x => x.Id == vendorId);
-        }
-
-        internal class VendorInvoiceStatusEnumModel
-        {
-            public VendorInvoiceStatus Value { get; set; }
-            public string DisplayText { get; set; }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Menominee.Client.Shared
+namespace Menominee.Client.Shared.Models
 {
     public class MenuModel
     {
