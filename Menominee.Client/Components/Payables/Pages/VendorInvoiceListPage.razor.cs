@@ -65,7 +65,7 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             await GetVendorsAsync();
             ConfigureVendorInvoiceStatuses();
-            GetInvoiceList();
+            await GetInvoiceList();
             SelectInvoices();
         }
 
@@ -83,22 +83,22 @@ namespace Menominee.Client.Components.Payables.Pages
                                   .OrderBy(vendor => vendor.VendorCode)
                                   .ToList();
         }
-        private void OnVendorFilterChangeHandlerAsync(object vendorId)
+        private async Task OnVendorFilterChangeHandlerAsync(object vendorId)
         {
             ResourceParameters.VendorId = (long?)vendorId;
-            GetInvoiceList();
+            await GetInvoiceList();
             SelectInvoices();
         }
 
-        private void OnStatusFilterChangeHandlerAsync(object status)
+        private async Task OnStatusFilterChangeHandlerAsync(object status)
         {
             ResourceParameters.Status = (VendorInvoiceStatus?)status;
             Console.WriteLine($"status: {(VendorInvoiceStatus?)status}");
-            GetInvoiceList();
+            await GetInvoiceList();
             SelectInvoices();
         }
 
-        private async void GetInvoiceList()
+        private async Task GetInvoiceList()
         {
             InvoiceList =  await VendorInvoiceDataService.GetInvoices(ResourceParameters);
 

@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         private Vendor(
             string name, 
             string vendorCode, 
-            DefaultPaymentMethod defaultPaymentMethod,
+            DefaultPaymentMethod defaultPaymentMethod = null,
             //string notes = null,
             Address address = null,
             IList<Email> emails = null,

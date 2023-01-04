@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
+using System;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
@@ -30,14 +31,25 @@ namespace Menominee.Client.Components.Payables.Pages
             else
             {
                 var readDto = await vendorDataService.GetVendorAsync(Id);
-                Vendor = new VendorToWrite()
+
+                if (readDto != null)
                 {
-                    Id = readDto.Id,
-                    VendorCode = readDto.VendorCode,
-                    Name = readDto.Name,
-                    IsActive = readDto.IsActive
-                };
-                FormMode = FormMode.Edit;
+                    //Vendor = new VendorToWrite()
+                    //{
+                    //    Id = readDto.Id,
+                    //    VendorCode = readDto.VendorCode,
+                    //    Name = readDto.Name,
+                    //    IsActive = readDto.IsActive
+                    //};
+                    Vendor = VendorHelper.ConvertReadToWriteDto(readDto);
+                    FormMode = FormMode.Edit;
+                }
+                else
+                {
+                    // TODO: Need to handle this gracefully
+                    Vendor = null;
+                    FormMode = FormMode.View;
+                }
             }
         }
 

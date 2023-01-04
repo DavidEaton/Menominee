@@ -66,6 +66,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             catch (Exception ex)
             {
                 // TODO: log exception
+                Console.WriteLine($"Error getting vendor #{id}: {ex.Message}");
             }
             return null;
         }

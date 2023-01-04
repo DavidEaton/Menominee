@@ -47,6 +47,7 @@ namespace Menominee.Client.Services.Payables.Invoices
             catch (Exception ex)
             {
                 // TODO: log exception
+                Console.WriteLine($"Error getting invoice #{id}: {ex.Message}");
             }
             return null;
         }
