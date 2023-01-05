@@ -90,11 +90,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (resourceParameters is null)
                 throw new ArgumentException(nameof(resourceParameters));
 
-            // TODO: Fix parameter (isn't formed correctly from client); returning ALL invoices
-            // for ALL vendors and ALL statuses is not sup.ported
-            if (!resourceParameters.VendorId.HasValue && !resourceParameters.Status.HasValue)
-                resourceParameters.Status = VendorInvoiceStatus.Open;
-
             var invoicesFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
                 .AsSplitQuery()
