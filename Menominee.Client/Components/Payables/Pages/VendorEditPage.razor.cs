@@ -34,13 +34,13 @@ namespace Menominee.Client.Components.Payables.Pages
 
                 if (readDto != null)
                 {
-                    //Vendor = new VendorToWrite()
-                    //{
-                    //    Id = readDto.Id,
-                    //    VendorCode = readDto.VendorCode,
-                    //    Name = readDto.Name,
-                    //    IsActive = readDto.IsActive
-                    //};
+                    Vendor = new VendorToWrite()
+                    {
+                        Id = readDto.Id,
+                        VendorCode = readDto.VendorCode,
+                        Name = readDto.Name,
+                        IsActive = readDto.IsActive
+                    };
                     Vendor = VendorHelper.ConvertReadToWriteDto(readDto);
                     FormMode = FormMode.Edit;
                 }

@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -89,18 +90,20 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (resourceParameters is null)
                 throw new ArgumentException(nameof(resourceParameters));
 
+            // TODO: Fix parameter (isn't formed correctly from client); returning ALL invoices
+            // for ALL vendors and ALL statuses is not sup.ported
             if (!resourceParameters.VendorId.HasValue && !resourceParameters.Status.HasValue)
-                return await GetInvoiceList();
+                resourceParameters.Status = VendorInvoiceStatus.Open;
 
             var invoicesFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
                 .AsSplitQuery()
                 .AsNoTracking();
 
-            if (!resourceParameters.VendorId.HasValue)
+            if (resourceParameters.VendorId.HasValue)
                 invoicesFromContext = invoicesFromContext.Where(invoice => invoice.Vendor.Id == resourceParameters.VendorId.Value);
 
-            if (!resourceParameters.Status.HasValue)
+            if (resourceParameters.Status.HasValue)
                 invoicesFromContext = invoicesFromContext.Where(invoice => invoice.Status == resourceParameters.Status.Value);
 
             return await invoicesFromContext?.Select(invoice =>

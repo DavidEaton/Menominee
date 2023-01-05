@@ -1,11 +1,11 @@
-﻿namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+
+namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public class VendorInvoiceToReadInList
     {
         public long Id { get; set; }
-        public long VendorId { get; set; }
-        public string VendorCode { get; set; }
-        public string VendorName { get; set; }
+        public VendorToRead Vendor { get; set; }
         public string Date { get; set; }
         public string DatePosted { get; set; }
         public string Status { get; set; }

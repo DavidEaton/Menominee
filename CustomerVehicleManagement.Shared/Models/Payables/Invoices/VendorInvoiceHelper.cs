@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         public static VendorInvoiceToRead ConvertEntityToReadDto(VendorInvoice invoice)
         {
             return
-                invoice == null
+                invoice is null
                 ? null
                 : new()
                 {
@@ -128,9 +128,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 : new()
                 {
                     Id = invoice.Id,
-                    VendorId = invoice.Vendor?.Id ?? 0,
-                    VendorCode = invoice.Vendor?.VendorCode,
-                    VendorName = invoice.Vendor?.Name,
+                    Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
                     Date = invoice.Date?.ToShortDateString(),
                     DatePosted = invoice.DatePosted?.ToShortDateString(),
                     Status = invoice.Status.ToString(),

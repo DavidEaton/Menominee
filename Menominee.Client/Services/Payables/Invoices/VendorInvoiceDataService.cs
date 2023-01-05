@@ -26,9 +26,13 @@ namespace Menominee.Client.Services.Payables.Invoices
 
         public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoices(ResourceParameters resourceParameters)
         {
+            // TODO: Pass resourceParameters, NOT query string built from resourceParameters
+            var parameters = $"VendorId={resourceParameters?.VendorId}&Status={resourceParameters.Status}";
+
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{resourceParameters}");
+                return await httpClient
+                    .GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{parameters}");
             }
             catch (Exception ex)
             {

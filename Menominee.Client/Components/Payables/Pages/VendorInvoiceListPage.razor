@@ -57,8 +57,11 @@
                         </GridColumnMenuSettings>
                     </GridSettings>
                     <GridColumns>
-                        <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.VendorCode)" Title="Vendor Code" Filterable="false"></GridColumn>
-                        <GridColumn Width="25%" Field="@nameof(VendorInvoiceToReadInList.VendorName)" Title="Vendor Name" Filterable="false"></GridColumn>
+
+                        @*Field="@nameof(VendorInvoiceToReadInList.Vendor.VendorCode)"... displays nothing :(*@
+
+                        <GridColumn Width="15%" Field="Vendor.VendorCode" Title="Vendor Code" Filterable="false"></GridColumn>
+                        <GridColumn Width="25%" Field="Vendor.Name" Title="Vendor Name" Filterable="false"></GridColumn>
                         <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Date)" Title="Date" DisplayFormat="{0:yyyy MM dd}"></GridColumn>
                         <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Status)" Title="Status" Filterable="false"></GridColumn>
                         <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.InvoiceNumber)" Title="Invoice #"></GridColumn>
