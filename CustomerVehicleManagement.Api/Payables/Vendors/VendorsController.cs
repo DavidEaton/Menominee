@@ -62,6 +62,9 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             if (vendorFromRepository.Name != vendorToUpdate.Name)
                 vendorFromRepository.SetName(vendorToUpdate.Name);
 
+            if (vendorFromRepository.Note != vendorToUpdate.Note)
+                vendorFromRepository.SetNote(vendorToUpdate.Note);
+
             if (vendorToUpdate.IsActive.HasValue)
             {
                 if (vendorToUpdate.IsActive.Value.Equals(true))
@@ -125,7 +128,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             var vendorOrError = Vendor.Create(
                 vendorToAdd.Name,
                 vendorToAdd.VendorCode.ToUpper(),
-                vendorToAdd.VendorRole);
+                vendorToAdd.VendorRole,
+                vendorToAdd.Note);
 
             if (vendorOrError.IsFailure)
                 return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'.");

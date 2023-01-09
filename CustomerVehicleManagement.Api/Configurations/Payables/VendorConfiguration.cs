@@ -19,6 +19,8 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
             builder.Property(vendor => vendor.Name)
                 .HasMaxLength(255)
                 .IsRequired();
+            builder.Property(vendor => vendor.Note)
+                .HasMaxLength(10000);
             builder.Property(vendor => vendor.VendorRole)
                 .IsRequired();
 

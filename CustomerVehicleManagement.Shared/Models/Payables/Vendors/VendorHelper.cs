@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     VendorCode = vendor.VendorCode,
                     IsActive = vendor.IsActive,
                     DefaultPaymentMethod = vendor.DefaultPaymentMethod,
-                    Notes = vendor.Notes,
+                    Note = vendor.Notes,
                     Address = AddressHelper.ConvertReadToWriteDto(vendor.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(vendor.Phones),
                     Emails = EmailHelper.ConvertReadToWriteDto(vendor.Emails),

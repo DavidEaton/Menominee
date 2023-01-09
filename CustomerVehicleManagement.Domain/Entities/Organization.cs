@@ -73,7 +73,6 @@ namespace CustomerVehicleManagement.Domain.Entities
             Note = note.Trim().Truncate(NoteMaximumLength);
         }
 
-
         #region ORM
 
         // Code that pollutes our domain class (very minor impact in this case), but

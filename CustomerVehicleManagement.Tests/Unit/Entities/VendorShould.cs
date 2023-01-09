@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var paymentMethod = CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, defaultPaymentMethod);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorCode = "V1";
             DefaultPaymentMethod defaultPaymentMethod = null;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, defaultPaymentMethod);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
