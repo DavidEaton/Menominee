@@ -1,9 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
@@ -22,34 +19,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 PaymentType = payMethod.PaymentType,
                 ReconcilingVendor = payMethod.ReconcilingVendor
             };
-        }
-
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToWrite paymentMethod, IList<string> paymentMethods)
-        {
-            return paymentMethod is null
-                ? null
-                : VendorInvoicePaymentMethod.Create(
-                    paymentMethods,
-                    paymentMethod.Name,
-                    paymentMethod.IsActive,
-                    //paymentMethod.IsOnAccountPaymentType,
-                    paymentMethod.PaymentType,
-                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
-                ).Value;
-        }
-
-        public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod, IList<string> paymentMethodNames)
-        {
-            return paymentMethod is null
-                ? null
-                : VendorInvoicePaymentMethod.Create(
-                    paymentMethodNames,
-                    paymentMethod.Name,
-                    paymentMethod.IsActive,
-                    //paymentMethod.IsOnAccountPaymentType,
-                    paymentMethod.PaymentType,
-                    VendorHelper.ConvertReadDtoToEntity(paymentMethod.ReconcilingVendor)
-                ).Value;
         }
 
         public static VendorInvoicePaymentMethodToRead ConvertEntityToReadDto(VendorInvoicePaymentMethod payMethod)

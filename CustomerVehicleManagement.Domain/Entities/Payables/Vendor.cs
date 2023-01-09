@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
-using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -33,8 +32,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         //       We really only need their name, department, phone (1) & email (1).
 
         private Vendor(
-            string name, 
-            string vendorCode, 
+            string name,
+            string vendorCode,
+            VendorRole vendorRole,
             DefaultPaymentMethod defaultPaymentMethod = null,
             //string notes = null,
             Address address = null,
@@ -50,6 +50,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
+
+            if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
+                throw new ArgumentNullException(RequiredMessage);
 
             if (name.Length < MinimumLength ||
                 name.Length > MaximumLength ||
@@ -67,8 +70,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         }
 
         public static Result<Vendor> Create(
-            string name, 
-            string vendorCode, 
+            string name,
+            string vendorCode,
+            VendorRole vendorRole,
             DefaultPaymentMethod defaultPaymentMethod = null,
             //string notes = null,
             Address address = null,
@@ -85,13 +89,16 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             vendorCode = (vendorCode ?? string.Empty).Trim();
             //notes = (notes ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
+            if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
+                return Result.Failure<Vendor>(RequiredMessage);
+
             if (name.Length < MinimumLength ||
                 name.Length > MaximumLength ||
                 vendorCode.Length < MinimumLength ||
                 vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
 
-            return Result.Success(new Vendor(name, vendorCode, defaultPaymentMethod, /*notes,*/ address, emails, phones));
+            return Result.Success(new Vendor(name, vendorCode, vendorRole, defaultPaymentMethod, /*notes,*/ address, emails, phones));
         }
 
         public Result<string> SetName(string name)
@@ -135,12 +142,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         //public void SetNotes(string notes)
         //{
-        //    Notes = notes.Trim().Truncate(10000);
+        //    Notes = notes.Trim().Truncate(NoteMaximumLength);
         //}
 
         public void Enable() => IsActive = true;
 
         public void Disable() => IsActive = false;
+
+        public Result<VendorRole> SetVendorRole(VendorRole vendorRole)
+        {
+            if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
+                return Result.Failure<VendorRole>(RequiredMessage);
+
+            return Result.Success(VendorRole = vendorRole);
+        }
 
         #region ORM
 

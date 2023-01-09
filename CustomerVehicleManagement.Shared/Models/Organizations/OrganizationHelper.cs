@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
-                    Address = AddressHelper.ConvertToDto(organization.Address),
+                    Address = AddressHelper.ConvertEntityToReadDto(organization.Address),
                     Note = organization.Note,
                     Phones = PhoneHelper.ConvertEntitiesToReadDtos(organization.Phones),
                     Emails = EmailHelper.ConvertEntitiesToReadDtos(organization.Emails),

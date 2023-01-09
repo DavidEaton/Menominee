@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentValidation;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
@@ -12,7 +13,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                 .MustBeEntity(
                     vendor => Vendor.Create(
                         vendor.Name,
-                        vendor.VendorCode));
+                        vendor.VendorCode,
+                        VendorRole.PartsSupplier));
         }
     }
 }

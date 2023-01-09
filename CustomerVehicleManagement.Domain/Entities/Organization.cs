@@ -70,7 +70,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             // ValueObject parameters are already validated by OrganizationValidator.
             // Only the primitive type (vs. ValueObject type) Note property is
             // parsed here in the domain class method that uses it.
-            Note = note.Trim().Truncate(10000);
+            Note = note.Trim().Truncate(NoteMaximumLength);
         }
 
 

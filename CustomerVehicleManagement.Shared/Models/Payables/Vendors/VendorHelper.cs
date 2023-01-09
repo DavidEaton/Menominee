@@ -2,83 +2,12 @@
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
-using CustomerVehicleManagement.Shared.Models.Persons;
-using Menominee.Common.ValueObjects;
-using System;
-using System.Collections.Generic;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 {
     public class VendorHelper
     {
-        public static Vendor ConvertWriteDtoToEntity(VendorToWrite vendor)
-        {
-            if (vendor == null) 
-                return null;
-
-            Address address = null;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-
-            if (vendor?.Address is not null)
-                address = Address.Create(
-                    vendor.Address.AddressLine,
-                    vendor.Address.City,
-                    vendor.Address.State,
-                    vendor.Address.PostalCode).Value;
-
-            if (vendor?.Phones?.Count > 0)
-                foreach (var phone in vendor.Phones)
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (vendor?.Emails?.Count > 0)
-                foreach (var email in vendor.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-            return Vendor.Create(vendor.Name, 
-                                vendor.VendorCode.ToUpper(), 
-                                vendor.DefaultPaymentMethod,
-                                //vendor.Notes,
-                                address,
-                                emails,
-                                phones
-                                ).Value;
-        }
-
-        public static Vendor ConvertReadDtoToEntity(VendorToRead vendor)
-        {
-            if (vendor == null)
-                return null;
-
-            Address address = null;
-            List<Phone> phones = new();
-            List<Email> emails = new();
-
-            if (vendor?.Address is not null)
-                address = Address.Create(
-                    vendor.Address.AddressLine,
-                    vendor.Address.City,
-                    vendor.Address.State,
-                    vendor.Address.PostalCode).Value;
-
-            if (vendor?.Phones?.Count > 0)
-                foreach (var phone in vendor.Phones)
-                    phones.Add(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (vendor?.Emails?.Count > 0)
-                foreach (var email in vendor.Emails)
-                    emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
-
-            return Vendor.Create(vendor.Name,
-                                vendor.VendorCode.ToUpper(),
-                                vendor.DefaultPaymentMethod,
-                                //vendor.Notes,
-                                address,
-                                emails,
-                                phones
-                                ).Value;
-        }
-
         public static VendorToWrite ConvertReadToWriteDto(VendorToRead vendor)
         {
             return vendor is not null
@@ -99,20 +28,42 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
 
         public static VendorToRead ConvertEntityToReadDto(Vendor vendor)
         {
-            return vendor is not null
-                ? new VendorToRead()
+            if (vendor is null)
+                return null;
+
+            var result = new VendorToRead();
+            var vendorToRead = new VendorToRead();
+            DefaultPaymentMethodToRead defaultPaymentMethod = null;
+
+            vendorToRead.Id = vendor.Id;
+            vendorToRead.Name = vendor.Name;
+            vendorToRead.VendorCode = vendor.VendorCode;
+            vendorToRead.IsActive = vendor.IsActive;
+
+            if (vendor.DefaultPaymentMethod is not null)
+            {
+                defaultPaymentMethod = new DefaultPaymentMethodToRead()
                 {
-                    Id = vendor.Id,
-                    Name = vendor.Name,
-                    VendorCode = vendor.VendorCode,
-                    IsActive = vendor.IsActive,
-                    DefaultPaymentMethod = vendor.DefaultPaymentMethod,
-                    //Notes = vendor.Notes,
-                    Address = AddressHelper.ConvertToDto(vendor.Address),
-                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(vendor.Phones),
-                    Emails = EmailHelper.ConvertEntitiesToReadDtos(vendor.Emails),
-                }
-                : null;
+                    PaymentMethod = new VendorInvoicePaymentMethodToRead()
+                    {
+                        Id = vendor.DefaultPaymentMethod.PaymentMethod.Id,
+                        Name = vendor.DefaultPaymentMethod.PaymentMethod.Name,
+                        IsActive = vendor.DefaultPaymentMethod.PaymentMethod.IsActive,
+                        PaymentType = vendor.DefaultPaymentMethod.PaymentMethod.PaymentType,
+                        ReconcilingVendor = ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod.ReconcilingVendor)
+                    }
+                };
+            }
+
+            vendorToRead.DefaultPaymentMethod = defaultPaymentMethod;
+
+            if (vendor.Address is not null)
+                vendorToRead.Address = AddressHelper.ConvertEntityToReadDto(vendor.Address);
+
+            vendorToRead.Phones = PhoneHelper.ConvertEntitiesToReadDtos(vendor.Phones);
+            vendorToRead.Emails = EmailHelper.ConvertEntitiesToReadDtos(vendor.Emails);
+
+            return vendorToRead;
         }
     }
 }

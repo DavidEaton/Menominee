@@ -92,6 +92,11 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             IReadOnlyList<SaleCode> salesCodes = await GetSaleCodesInInvoice(invoiceFromCaller);
             IReadOnlyList<Vendor> vendors = await GetVendorsInInvoice(invoiceFromCaller);
 
+            // TODO: VK: Since FluentValidation runs all doimain validations before request
+            // arrives here at the Controller, are we coding all of these Result.IsFailure()
+            // checks for nothing? Is it redundant code that will never get executed?
+            // Are we returning the correct error codes?
+
             // Update each member of VendorInvoice, returning a Bad Resuest response
             // in case of Failure.
             // Aggregate root entity VendorInvoice:
@@ -100,29 +105,29 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     vendors.FirstOrDefault(
                         vendor => vendor.Id == invoiceFromCaller.Vendor.Id))
                         .IsFailure)
-                    return BadRequest();
+                    return BadRequest(/* TODO: Return Fesult.Error */);
 
             if (invoiceFromRepository.Status != invoiceFromCaller.Status)
                 if (invoiceFromRepository.SetVendorInvoiceStatus(invoiceFromCaller.Status).IsFailure)
-                    return BadRequest();
+                    return BadRequest(/* TODO: Return Fesult.Error */);
 
             if (invoiceFromRepository.Total != invoiceFromCaller.Total)
                 if (invoiceFromRepository.SetTotal(invoiceFromCaller.Total).IsFailure)
-                    return BadRequest();
+                    return BadRequest(/* TODO: Return Fesult.Error */);
 
             if (invoiceFromRepository.InvoiceNumber != invoiceFromCaller.InvoiceNumber)
             {
                 var vendorInvoiceNumbers = await repository.GetVendorInvoiceNumbers(invoiceFromCaller.Vendor.Id);
 
                 if (invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber, vendorInvoiceNumbers).IsFailure)
-                    return BadRequest();
+                    return BadRequest(/* TODO: Return Fesult.Error */);
             }
 
             if (invoiceFromCaller.Date is not null)
             {
                 if (invoiceFromRepository.Date != invoiceFromCaller.Date)
                     if (invoiceFromRepository.SetDate(invoiceFromCaller.Date).IsFailure)
-                        return BadRequest();
+                        return BadRequest(/* TODO: Return Fesult.Error */);
             }
 
             if (invoiceFromCaller.Date is null && invoiceFromRepository.Date is not null)
@@ -132,7 +137,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             {
                 if (invoiceFromRepository.DatePosted != invoiceFromCaller.DatePosted)
                     if (invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted).IsFailure)
-                        return BadRequest();
+                        return BadRequest(/* TODO: Return Fesult.Error */);
             }
 
             if (invoiceFromCaller.DatePosted is null && invoiceFromRepository.DatePosted is not null)
@@ -253,10 +258,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPost]
         public async Task<ActionResult> AddInvoiceAsync(VendorInvoiceToWrite invoiceToAdd)
         {
+            // TODO: How do we return the domain class error message?
+            // TODO: Settle on error handling/messaging/logging
             var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
             if (vendor is null)
-                return NotFound($"Could not add new Invoice, Number: {invoiceToAdd.InvoiceNumber}.");
+                return NotFound($"Could not add new Invoice, Number: {invoiceToAdd.InvoiceNumber}. Vendor '{invoiceToAdd.Vendor.Name}' not found.");
 
             var invoiceOrError = VendorInvoice.Create(
                 vendor,
@@ -269,7 +276,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 invoiceToAdd.DatePosted);
 
             if (invoiceOrError.IsFailure)
-                return NotFound($"Could not add new Invoice Number: {invoiceToAdd.InvoiceNumber}.");
+                return BadRequest($"Could not add new Invoice Number '{invoiceToAdd.InvoiceNumber}': {invoiceOrError.Error}.");
 
             VendorInvoice invoice = invoiceOrError.Value;
             VendorInvoiceItem vendorInvoiceItem;
@@ -386,6 +393,5 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 || lineItemFromRepository.Item.PartNumber != lineItemFromCaller.Item.PartNumber
                 || lineItemFromRepository.Item.SaleCode.Id != lineItemFromCaller.Item.SaleCode.Id;
         }
-
     }
 }

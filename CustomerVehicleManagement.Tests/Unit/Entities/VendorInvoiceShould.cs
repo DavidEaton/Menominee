@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoice()
         {
             // Arrange
-            var vendorOrError = Vendor.Create("Vendor One", "V1");
+            var vendorOrError = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier);
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOrError.Value);
 
             // Act
@@ -34,12 +34,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Create_VendorInvoice_With_Optional_InvoiceNumber()
         {
-            var vendorOneOrError = Vendor.Create("Vendor One", "V1");
-            var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOneOrError.Value);
+            var vendorOrError = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier);
+            var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOrError.Value);
             var invoiceNumber = "123456";
 
             var vendorInvoice = VendorInvoice.Create(
-                vendorOneOrError.Value,
+                vendorOrError.Value,
                 VendorInvoiceStatus.Open,
                 VendorInvoiceDocumentType.Unknown,
                 total: 0,
@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoice_With_Optional_DatePosted()
         {
             var datePosted = DateTime.Today;
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoice_With_Optional_Date()
         {
             var date = DateTime.Today;
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -92,11 +92,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Create_VendorInvoice_With_Open_Status()
         {
-            var vendorOneOrError = Vendor.Create("Vendor One", "V1");
-            var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOneOrError.Value);
+            var vendorOrError = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier);
+            var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOrError.Value);
 
             var vendorInvoice = VendorInvoice.Create(
-                vendorOneOrError.Value,
+                vendorOrError.Value,
                 VendorInvoiceStatus.Open,
                 VendorInvoiceDocumentType.Unknown,
                 0,
@@ -108,7 +108,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_VendorInvoice_With_Null_Vendor()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -126,7 +126,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoice_With_Invalid_Status()
         {
             var invalidStatus = (VendorInvoiceStatus)(-1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -144,7 +144,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoice_With_Invalid_DocumentType()
         {
             var invalidDocumentType = (VendorInvoiceDocumentType)(-1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoice_With_Invalid_Total()
         {
             var invalidTotal = -1;
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -180,7 +180,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoice_With_Invalid_Date()
         {
             var invalidDate = DateTime.Today.AddDays(1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -200,7 +200,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var date = DateTime.Today;
             var invalidDatePosted = DateTime.Today.AddDays(1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -220,7 +220,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoice_With_Invalid_InvoiceNumber()
         {
             var invalidInvoiceNumber = Utilities.RandomCharacters(VendorInvoice.InvoiceNumberMaximumLength + 1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoiceOrError = VendorInvoice.Create(
@@ -238,7 +238,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_VendorInvoice_With_Nonunique_Vendor_InvoiceNumber()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var invoiceNumbers = new List<int>() { 1, 2, 3, 4 };
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbers(vendor, invoiceNumbers);
 
@@ -457,7 +457,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetVendor()
         {
-            var vendorOne = Vendor.Create("Vendor One", "V1").Value;
+            var vendorOne = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendorOne);
 
             var vendorInvoice = VendorInvoice.Create(
@@ -468,7 +468,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoiceNumbers: vendorInvoiceNumbers)
                 .Value;
 
-            var vendorTwo = Vendor.Create("Vendor Two", "V@").Value;
+            var vendorTwo = Vendor.Create("Vendor Two", "V@", VendorRole.PartsSupplier).Value;
             vendorInvoice.SetVendor(vendorTwo);
 
             vendorInvoice.Vendor.Should().Be(vendorTwo);
@@ -477,7 +477,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetVendorInvoiceStatus()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoice = VendorInvoice.Create(
@@ -497,7 +497,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetInvoiceNumber()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var invoiceNumber = "001";
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
@@ -519,7 +519,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetVendorInvoiceDocumentType()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var invoiceNumber = "001";
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
@@ -541,7 +541,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTotal()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var total = 1;
             var newTotal = 2;
@@ -563,7 +563,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDate()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoice = VendorInvoice.Create(
@@ -584,7 +584,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void ClearDate()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             DateTime? date = new(2000, 1, 1);
 
@@ -606,7 +606,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDatePosted()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             DateTime? date = new(2000, 1, 1);
 
@@ -627,7 +627,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void ClearDatePosted()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             DateTime? datePosted = new(2000, 1, 1);
 
@@ -649,7 +649,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Vendor()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -668,7 +668,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_VendorInvoice_Status()
         {
             var invalidStatus = (VendorInvoiceStatus)(-1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -687,7 +687,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_Invoice_Number()
         {
             var invalidInvoiceNumber = Utilities.RandomCharacters(VendorInvoice.InvoiceNumberMaximumLength + 1);
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoice = VendorInvoice.Create(
@@ -708,7 +708,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var invalidDocumentType = (VendorInvoiceDocumentType)(-1);
 
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
 
             var vendorInvoice = VendorInvoice.Create(
@@ -729,7 +729,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Null_Invoice_Number()
         {
             string nullInvoiceNumber = null;
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -748,7 +748,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_Total()
         {
             var invalidTotal = VendorInvoice.MinimumValue - 1;
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -767,7 +767,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Date(DateTime? date)
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -786,7 +786,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_DatePosted(DateTime? datePosted)
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
             var vendorInvoice = VendorInvoice.Create(
                 vendor,
@@ -805,7 +805,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Nonunique_InvoiceNumber()
         {
-            var vendor = Vendor.Create("Vendor One", "V1").Value;
+            var vendor = Vendor.Create("Vendor One", "V1", VendorRole.PartsSupplier).Value;
             var invoiceNumber = "05";
             var invoiceNumbers = new List<int>() { 1, 2, 3, 4 };
             var vendorInvoiceNumbers = CreateVendorInvoiceNumbers(vendor, invoiceNumbers);

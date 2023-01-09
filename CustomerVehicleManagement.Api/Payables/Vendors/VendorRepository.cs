@@ -1,9 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging.Signing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,31 +50,20 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
 
             return vendorFromContext is not null
-                ? new VendorToRead()
-                {
-                    Id = vendorFromContext.Id,
-                    VendorCode = vendorFromContext.VendorCode,
-                    Name = vendorFromContext.Name,
-                    IsActive = vendorFromContext.IsActive,
-                    DefaultPaymentMethod = vendorFromContext.DefaultPaymentMethod
-                }
+                ? VendorHelper.ConvertEntityToReadDto(vendorFromContext)
                 : null;
         }
 
         public async Task<IReadOnlyList<VendorToRead>> GetVendorsAsync()
         {
             IReadOnlyList<Vendor> vendorsFromContext = await context.Vendors
+                .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
                 .AsNoTracking()
                 .ToListAsync();
 
-            return vendorsFromContext
-                .Select(vendor => new VendorToRead()
-                {
-                    Id = vendor.Id,
-                    VendorCode = vendor.VendorCode,
-                    Name = vendor.Name,
-                    IsActive = vendor.IsActive
-                }).ToList();
+            return vendorsFromContext is not null
+                ? vendorsFromContext.Select(vendor => VendorHelper.ConvertEntityToReadDto(vendor)).ToList()
+                : null;
         }
 
         public async Task<IReadOnlyList<VendorToRead>> GetVendorsListAsync()

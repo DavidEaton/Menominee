@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
             builder.Property(itemPackage => itemPackage.IsDiscountable)
                 .IsRequired();
             builder.Property(itemPackage => itemPackage.Script)
-                .HasMaxLength(10000);
+                .HasMaxLength(InventoryItemPackage.ScriptMaximumLength);
         }
     }
 }

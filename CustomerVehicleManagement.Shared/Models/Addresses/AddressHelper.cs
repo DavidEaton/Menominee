@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
 {
     public class AddressHelper
     {
-        public static AddressToRead ConvertToDto(Address address)
+        public static AddressToRead ConvertEntityToReadDto(Address address)
         {
             if (address is not null)
             {

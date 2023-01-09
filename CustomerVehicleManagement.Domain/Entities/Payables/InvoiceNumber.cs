@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
+    // TODO: Replace stringly-typed VendorInvoice.InvoiceNumber
+    // with this strongly-typed AppValueObject
     public class InvoiceNumber : AppValueObject
     {
         public string Value { get; set; }

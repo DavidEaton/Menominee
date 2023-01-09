@@ -64,6 +64,19 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
         }
 
+        [Fact]
+        public void Not_Create_VendorInvoicePaymentMethod_With_Invalid_VendorInvoicePaymentMethodType()
+        {
+            string name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1);
+            var reconcilingVendor = CreateVendor();
+            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+
+            var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
+                paymentMethodNames, name, true, /*true,*/ (VendorInvoicePaymentMethodType)(-1), reconcilingVendor);
+
+            vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
+        }
+
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_VendorInvoicePaymentMethod_With_Invalid_Name(int length)
@@ -96,9 +109,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.IsActive.Should().BeTrue();
 
-            vendorInvoicePaymentMethod.Disable();
+            vendorInvoicePaymentMethod.SetInactive();
             vendorInvoicePaymentMethod.IsActive.Should().BeFalse();
-            vendorInvoicePaymentMethod.Enable();
+            vendorInvoicePaymentMethod.SetActive();
 
             vendorInvoicePaymentMethod.IsActive.Should().BeTrue();
         }
@@ -109,26 +122,21 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.IsActive.Should().BeTrue();
 
-            vendorInvoicePaymentMethod.Disable();
+            vendorInvoicePaymentMethod.SetInactive();
 
             vendorInvoicePaymentMethod.IsActive.Should().BeFalse();
         }
 
-        //[Fact]
-        //public void SetIsOnAccountPaymentType()
-        //{
-        //    var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
-        //    vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeTrue();
-
-        //    vendorInvoicePaymentMethod.SetIsOnAccountPaymentType(false);
-
-        //    vendorInvoicePaymentMethod.IsOnAccountPaymentType.Should().BeFalse();
-        //}
-
         [Fact]
         public void SetPaymentType()
         {
-            // TODO:
+            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            vendorInvoicePaymentMethod.PaymentType.Should().Be(VendorInvoicePaymentMethodType.Normal);
+            var updatedPaymentType = VendorInvoicePaymentMethodType.Charge;
+
+            vendorInvoicePaymentMethod.SetPaymentType(updatedPaymentType);
+
+            vendorInvoicePaymentMethod.PaymentType.Should().Be(updatedPaymentType);
         }
 
         [Fact]
@@ -141,6 +149,20 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorInvoicePaymentMethod.SetReconcilingVendor(reconcilingVendor);
 
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().Be(reconcilingVendor);
+        }
+
+        [Fact]
+        public void RemoveReconcilingVendor()
+        {
+            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var reconcilingVendor = CreateVendor();
+            vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBe(reconcilingVendor);
+            vendorInvoicePaymentMethod.SetReconcilingVendor(reconcilingVendor);
+            vendorInvoicePaymentMethod.ReconcilingVendor.Should().Be(reconcilingVendor);
+
+            vendorInvoicePaymentMethod.RemoveReconcilingVendor();
+
+            vendorInvoicePaymentMethod.ReconcilingVendor.Should().BeNull();
         }
 
         [Fact]
@@ -183,6 +205,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var paymentMethodNames = CreatePaymentMethodNames(5);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_PaymentType()
+        {
+            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            vendorInvoicePaymentMethod.PaymentType.Should().Be(VendorInvoicePaymentMethodType.Normal);
+            var invalidPaymentType = (VendorInvoicePaymentMethodType)(-1);
+
+            var resultOrError = vendorInvoicePaymentMethod.SetPaymentType(invalidPaymentType);
 
             resultOrError.IsFailure.Should().BeTrue();
         }

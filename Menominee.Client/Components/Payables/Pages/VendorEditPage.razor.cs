@@ -30,18 +30,11 @@ namespace Menominee.Client.Components.Payables.Pages
             }
             else
             {
-                var readDto = await vendorDataService.GetVendorAsync(Id);
+                VendorToRead vendorToRead = await vendorDataService.GetVendorAsync(Id);
 
-                if (readDto != null)
+                if (vendorToRead is not null)
                 {
-                    Vendor = new VendorToWrite()
-                    {
-                        Id = readDto.Id,
-                        VendorCode = readDto.VendorCode,
-                        Name = readDto.Name,
-                        IsActive = readDto.IsActive
-                    };
-                    Vendor = VendorHelper.ConvertReadToWriteDto(readDto);
+                    Vendor = VendorHelper.ConvertReadToWriteDto(vendorToRead);
                     FormMode = FormMode.Edit;
                 }
                 else

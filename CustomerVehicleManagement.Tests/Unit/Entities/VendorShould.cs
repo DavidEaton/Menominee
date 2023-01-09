@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorCode = "V1";
 
             // Act
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             // Assert
             vendorOrError.IsFailure.Should().BeFalse();
@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var paymentMethod = CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, defaultPaymentMethod);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, defaultPaymentMethod);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorCode = "V1";
             DefaultPaymentMethod defaultPaymentMethod = null;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, defaultPaymentMethod);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, defaultPaymentMethod);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
@@ -75,7 +75,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var phone1 = Phone.Create(number, phoneType, false).Value;
             phones.Add(phone1);
 
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorCode = "V1";
             var phones = CreateTestPhones(10);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, phones: phones);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, phones: phones);
 
             vendorOrError.IsFailure.Should().BeFalse();
             vendorOrError.Value.Should().BeOfType<Vendor>();
@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
             string name = null;
 
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeTrue();
         }
@@ -115,7 +115,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var name = RandomCharacters(length);
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
 
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeTrue();
         }
@@ -126,7 +126,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var name = RandomCharacters(Vendor.MinimumLength);
             string code = null;
 
-            var vendorOrError = Vendor.Create(name, code);
+            var vendorOrError = Vendor.Create(name, code, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeTrue();
         }
@@ -138,7 +138,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var name = RandomCharacters(Vendor.MinimumLength);
             var vendorCode = RandomCharacters(length);
 
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeTrue();
         }
@@ -170,7 +170,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = RandomCharacters(Vendor.MinimumLength);
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
-            var vendorOrError = Vendor.Create(name, vendorCode);
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             var invalidName = RandomCharacters(length);
             var resultOrError = vendorOrError.Value.SetName(invalidName);
@@ -333,6 +333,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             vendor.SetAddress(address);
             vendor.Address.Should().Be(address);
+        }
+
+        [Fact]
+        public void SetVendorRole()
+        {
+            var vendor = CreateVendor();
+            vendor.VendorRole.Should().Be(VendorRole.PartsSupplier);
+            var newVendorRole = VendorRole.PaymentReconciler;
+
+            vendor.SetVendorRole(newVendorRole);
+
+            vendor.VendorRole.Should().Be(newVendorRole);
         }
 
         internal class TestData

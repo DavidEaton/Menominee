@@ -93,7 +93,7 @@ namespace Menominee.Client.Components.Payables
                     {
                         Invoice.Payments.Add(new()
                         {
-                            PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod),
+                            PaymentMethod = vendor.DefaultPaymentMethod.PaymentMethod,
                             Amount = InvoiceTotals.Total
                         });
                         inBalance = true;

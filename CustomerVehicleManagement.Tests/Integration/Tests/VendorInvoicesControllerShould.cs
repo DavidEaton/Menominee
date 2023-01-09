@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Api.Data;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.Invoices;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
@@ -29,6 +28,9 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         [Fact]
         public async Task AddInvoiceAsync()
         {
+
+
+
             var vendorToRead = await CreateVendorToRead();
 
             var invoiceToAdd = CreateVendorInvoiceToWrite(vendorToRead);
@@ -199,8 +201,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             {
                 var controller = CreateController(context);
                 var vendorRepository = new VendorRepository(context);
-                var vendors = await vendorRepository.GetVendorsAsync();
-                vendorToRead = vendors.FirstOrDefault();
+                vendorToRead = (await vendorRepository.GetVendorsAsync()).FirstOrDefault();
             }
 
             var invoiceToAdd = CreateVendorInvoiceToWrite(vendorToRead);
@@ -268,18 +269,13 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
 
         private static async Task<VendorToRead> CreateVendorToRead()
         {
-            IReadOnlyList<VendorToRead> vendors = new List<VendorToRead>();
-            VendorToRead vendorToRead = null;
-
             using (var context = Helpers.CreateTestContext())
             {
                 var controller = CreateController(context);
                 var vendorRepository = new VendorRepository(context);
-                vendors = await vendorRepository.GetVendorsAsync();
-                vendorToRead = vendors.FirstOrDefault();
+                IReadOnlyList<VendorToRead> vendors = await vendorRepository.GetVendorsAsync();
+                return vendors.FirstOrDefault();
             }
-
-            return vendorToRead;
         }
 
         private static VendorInvoicesController CreateController(ApplicationDbContext context)

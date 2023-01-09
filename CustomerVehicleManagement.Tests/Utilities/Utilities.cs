@@ -79,26 +79,19 @@ namespace CustomerVehicleManagement.Tests
             return person;
         }
 
-        public static List<Vendor> CreateVendors(int count)
+        public static List<Vendor> CreateVendors(int count, DefaultPaymentMethod defaultPaymentMethod = null)
         {
             var list = new List<Vendor>();
-            DefaultPaymentMethod defaultPaymentMethod = null;
 
             for (int i = 0; i < count; i++)
             {
                 if (i % 2 == 0)
-                    defaultPaymentMethod = CreateDefaultPaymentMethod();
+                    list.Add(CreateVendor(defaultPaymentMethod));
 
-                list.Add(CreateVendor(defaultPaymentMethod: defaultPaymentMethod));
+                list.Add(CreateVendor(defaultPaymentMethod: null));
             }
 
             return list;
-        }
-
-        private static DefaultPaymentMethod CreateDefaultPaymentMethod()
-        {
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
-            return DefaultPaymentMethod.Create(paymentMethod, true).Value;
         }
 
         public static Vendor CreateVendor(DefaultPaymentMethod defaultPaymentMethod = null)
@@ -106,7 +99,20 @@ namespace CustomerVehicleManagement.Tests
             return Vendor.Create(
                 name: RandomCharacters(Vendor.MinimumLength),
                 vendorCode: RandomCharacters(Vendor.MinimumLength),
+                vendorRole: VendorRole.PartsSupplier,
                 defaultPaymentMethod: defaultPaymentMethod).Value;
+        }
+
+        public static IList<DefaultPaymentMethod> CreatDefaultPaymentMethods(
+            int count, 
+            IReadOnlyList<VendorInvoicePaymentMethod> paymentMethods)
+        {
+            var payments = new List<DefaultPaymentMethod>();
+
+            for (int i = 0; i < count; i++)
+                payments.Add(DefaultPaymentMethod.Create(paymentMethods[i], true).Value);
+
+            return payments;
         }
 
         public static IList<Phone> CreateTestPhones(int count)
@@ -114,13 +120,11 @@ namespace CustomerVehicleManagement.Tests
             var phones = new List<Phone>();
 
             for (int i = 0; i < count; i++)
-            {
                 phones.Add(Phone.Create(
                     number: RandomNumberSequence(10),
                     phoneType: PhoneType.Home,
                     isPrimary: false)
                     .Value);
-            }
 
             return phones;
         }

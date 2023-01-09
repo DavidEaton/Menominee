@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
 
             builder.Property(fee => fee.Description)
                 .IsRequired()
-                .HasMaxLength(10000);
+                .HasMaxLength(ExciseFee.DescriptionMaximumLength);
             builder.Property(fee => fee.FeeType)
                 .IsRequired()
                 .HasDefaultValue(ExciseFeeType.Flat);

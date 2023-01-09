@@ -37,6 +37,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
+                    .ThenInclude(vendor => vendor.DefaultPaymentMethod)
+                        .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
                 .Include(invoice => invoice.LineItems)
                     .ThenInclude(item => item.Item.Manufacturer)
                 .Include(invoice => invoice.LineItems)
@@ -67,6 +69,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
+                    .ThenInclude(vendor => vendor.DefaultPaymentMethod)
+                        .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
                 .Include(invoice => invoice.LineItems)
                     .ThenInclude(item => item.Item.Manufacturer)
                 .Include(invoice => invoice.LineItems)
@@ -92,6 +96,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             var invoicesFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
+                    .ThenInclude(vendor => vendor.DefaultPaymentMethod)
+                        .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
                 .AsSplitQuery()
                 .AsNoTracking();
 
@@ -101,7 +107,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (resourceParameters.Status.HasValue)
                 invoicesFromContext = invoicesFromContext.Where(invoice => invoice.Status == resourceParameters.Status.Value);
 
-            return await invoicesFromContext?.Select(invoice =>
+            var result = await invoicesFromContext?.Select(invoice =>
                 VendorInvoiceHelper.ConvertEntityToReadInListDto(invoice))
                     // Calling .ToList() at the very end of the method,
                     // EF defers execution until the entire filter is
@@ -109,6 +115,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     // bandwidth use. Much more efficient than fetching
                     // all rows and then filtering them.
                     .ToListAsync();
+
+            return result;
         }
 
         public async Task<bool> InvoiceExistsAsync(long id)
@@ -174,6 +182,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         {
             return context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
+                    .ThenInclude(vendor => vendor.DefaultPaymentMethod)
+                        .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
                 .Include(invoice => invoice.LineItems)
                     .ThenInclude(item => item.Item.Manufacturer)
                 .Include(invoice => invoice.LineItems)

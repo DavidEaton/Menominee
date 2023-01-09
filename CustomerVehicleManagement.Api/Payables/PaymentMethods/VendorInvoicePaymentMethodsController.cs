@@ -1,4 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Payables.Vendors;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,10 +12,14 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
     public class VendorInvoicePaymentMethodsController : ApplicationController
     {
         private readonly IVendorInvoicePaymentMethodRepository repository;
+        private readonly IVendorRepository vendorRepository;
+        private readonly string BasePath = "/api/vendorinvoicepaymentmethods";
 
-        public VendorInvoicePaymentMethodsController(IVendorInvoicePaymentMethodRepository repository)
+        public VendorInvoicePaymentMethodsController(IVendorInvoicePaymentMethodRepository repository,
+            IVendorRepository vendorRepository)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
         }
 
         // GET: api/vendorinvoicepaymentmethods/listing
@@ -43,20 +49,41 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         // PUT: api/vendorinvoicepaymentmethods/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethod, long id)
+        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
         {
-            var notFoundMessage = $"Could not find Vendor Invoice Payment Method to update with Id = {id}.";
-
-            if (!await repository.PaymentMethodExistsAsync(id))
-                return NotFound(notFoundMessage);
+            var notFoundMessage = $"Could not find Vendor Invoice Payment Method {paymentMethodToUpdate.Name} to update with Id = {id}.";
 
             var paymentMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
             if (paymentMethodFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            paymentMethodFromRepository = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
-                paymentMethod,
-                (IList<string>)await repository.GetPaymentMethodNamesAsync());
+            var paymentMethodNames = await repository.GetPaymentMethodNamesAsync();
+
+            if (paymentMethodToUpdate.Name != paymentMethodFromRepository.Name)
+                paymentMethodFromRepository.SetName(paymentMethodToUpdate.Name, paymentMethodNames);
+
+            if (paymentMethodToUpdate.IsActive != paymentMethodFromRepository.IsActive)
+            {
+                if (paymentMethodToUpdate.IsActive)
+                    paymentMethodFromRepository.SetActive();
+
+                if (!paymentMethodToUpdate.IsActive)
+                    paymentMethodFromRepository.SetInactive();
+            }
+
+            if (paymentMethodToUpdate.PaymentType != paymentMethodFromRepository.PaymentType)
+                paymentMethodFromRepository.SetPaymentType(paymentMethodToUpdate.PaymentType);
+
+            if (paymentMethodToUpdate?.ReconcilingVendor.Id != paymentMethodFromRepository?.ReconcilingVendor.Id)
+            {
+                var reconcilingVendorFromCaller = paymentMethodToUpdate.ReconcilingVendor is not null ? paymentMethodToUpdate.ReconcilingVendor : null;
+                Vendor reconcilingVendor = null;
+
+                if (reconcilingVendorFromCaller is not null)
+                    reconcilingVendor = await vendorRepository.GetVendorEntityAsync(reconcilingVendorFromCaller.Id);
+
+                paymentMethodFromRepository.SetReconcilingVendor(reconcilingVendor);
+            }
 
             await repository.SaveChangesAsync();
 
@@ -65,18 +92,37 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
 
         // POST: api/vendorinvoicepaymentmethods
         [HttpPost]
-        public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
+        public async Task<ActionResult> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
-            var payMethod = VendorInvoicePaymentMethodHelper.ConvertWriteDtoToEntity(
-                payMethodToAdd,
-                (IList<string>)await repository.GetPaymentMethodNamesAsync());
+            var paymentMethodNames =
+                (IList<string>)await repository.GetPaymentMethodNamesAsync();
 
-            await repository.AddPaymentMethodAsync(payMethod);
+            var reconcilingVendorFromCaller = payMethodToAdd.ReconcilingVendor is not null ? payMethodToAdd.ReconcilingVendor : null;
+            Vendor reconcilingVendor = null;
+
+            if (reconcilingVendorFromCaller is not null)
+                reconcilingVendor = await vendorRepository.GetVendorEntityAsync(reconcilingVendorFromCaller.Id);
+
+            var paymentMethodOrError = VendorInvoicePaymentMethod.Create(
+                paymentMethodNames,
+                payMethodToAdd.Name,
+                payMethodToAdd.IsActive,
+                payMethodToAdd.PaymentType,
+                reconcilingVendor);
+
+            if (paymentMethodOrError.IsFailure)
+                return BadRequest($"Could not add new Payment Method '{payMethodToAdd.Name}': {paymentMethodOrError.Error}.");
+
+            await repository.AddPaymentMethodAsync(paymentMethodOrError.Value);
             await repository.SaveChangesAsync();
 
-            return CreatedAtRoute("GetPaymentMethodAsync",
-                                  new { id = payMethod.Id },
-                                  VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethod));
+            return Created(
+                new Uri($"{BasePath}/{paymentMethodOrError.Value.Id}",
+                UriKind.Relative),
+                new
+                {
+                    paymentMethodOrError.Value.Id
+                });
         }
 
         [HttpDelete("{id:long}")]

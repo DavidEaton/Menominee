@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     DriversLicense = DriversLicenseHelper.ConvertToReadDto(person.DriversLicense),
                     Address =
                         person?.Address is not null
-                        ? AddressHelper.ConvertToDto(person.Address)
+                        ? AddressHelper.ConvertEntityToReadDto(person.Address)
                         : null,
                     Birthday = person?.Birthday,
                     Phones = PhoneHelper.ConvertEntitiesToReadDtos(person.Phones),

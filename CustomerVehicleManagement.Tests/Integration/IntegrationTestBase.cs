@@ -38,6 +38,15 @@ namespace CustomerVehicleManagement.Tests.Integration
             var halfSeedCount = maxSeedCount / 2;
             ApplicationDbContext context = Helpers.CreateTestContext();
 
+            var paymentMethods = CreateVendorInvoicePaymentMethodsSansReconcilingVendor(maxSeedCount);
+            var salesTaxes = CreateTestSalesTaxes(maxSeedCount);
+
+            context.AddRange(paymentMethods);
+            context.AddRange(salesTaxes);
+            context.SaveChanges();
+
+            var defaultPaymentMethods = CreatDefaultPaymentMethods(maxSeedCount, paymentMethods);
+
             var vendors = CreateVendors(maxSeedCount);
             var saleCodes = CreateTestSaleCodes(maxSeedCount);
             var manufacturers = InventoryItemTestHelper.CreateManufacturers(maxSeedCount);
@@ -59,21 +68,13 @@ namespace CustomerVehicleManagement.Tests.Integration
                 manufacturers[halfSeedCount],
                 manufacturerCodes);
 
-            var paymentMethods = CreateVendorInvoicePaymentMethods(maxSeedCount);
-            var salesTaxes = CreateTestSalesTaxes(maxSeedCount);
-            var paymentMethod = paymentMethods[^1];
-
             context.AddRange(productCodes);
-            context.AddRange(paymentMethods);
-            context.Add(paymentMethod);
-            context.AddRange(salesTaxes);
-            context.SaveChanges();
 
 
             // VendorInvoice
             VendorInvoiceToWrite invoiceToWrite = CreateVendorInvoiceToWrite(vendors[^1]);
             invoiceToWrite.LineItems = CreateLineItemsToWrite(new LineItemTestOptions());
-            invoiceToWrite.Payments = CreateTestPaymentsToWrite(paymentMethod, paymentCount: halfSeedCount);
+            invoiceToWrite.Payments = CreateTestPaymentsToWrite(paymentMethods[^1], paymentCount: halfSeedCount);
             invoiceToWrite.Taxes = CreateTaxesToWrite(salesTaxes[^1], taxLineCount: maxSeedCount, taxAmount: 5.5);
 
             VendorInvoice invoice = VendorInvoiceHelper.ConvertWriteToEntity(invoiceToWrite, vendors[^1]);
@@ -153,7 +154,7 @@ namespace CustomerVehicleManagement.Tests.Integration
             return list;
         }
 
-        private static IReadOnlyList<VendorInvoicePaymentMethod> CreateVendorInvoicePaymentMethods(int count)
+        private static IReadOnlyList<VendorInvoicePaymentMethod> CreateVendorInvoicePaymentMethodsSansReconcilingVendor(int count)
         {
             var list = new List<VendorInvoicePaymentMethod>();
 

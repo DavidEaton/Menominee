@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
                 if (customer.EntityType == EntityType.Organization)
                 {
                     customerReadDto.Organization = OrganizationHelper.ConvertEntityToReadDto(customer.Organization);
-                    customerReadDto.Address = AddressHelper.ConvertToDto(customer.Organization?.Address);
+                    customerReadDto.Address = AddressHelper.ConvertEntityToReadDto(customer.Organization?.Address);
                     customerReadDto.Name = customerReadDto.Organization.Name;
                     customerReadDto.Note = customerReadDto.Organization?.Note;
                     customerReadDto.Phones = customerReadDto.Organization?.Phones;
@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
                 if (customer.EntityType == EntityType.Person)
                 {
                     customerReadDto.Person = PersonHelper.ConvertToReadDto(customer.Person);
-                    customerReadDto.Address = AddressHelper.ConvertToDto(customer.Person?.Address);
+                    customerReadDto.Address = AddressHelper.ConvertEntityToReadDto(customer.Person?.Address);
                     customerReadDto.Name = customerReadDto.Person.LastFirstMiddleInitial;
                     customerReadDto.Phones = customerReadDto.Person?.Phones;
                     customerReadDto.Emails = customerReadDto.Person?.Emails;

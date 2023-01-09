@@ -36,6 +36,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (name.Length > MaximumLength || name.Length < MinimumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
+            if (!Enum.IsDefined(typeof(VendorInvoicePaymentMethodType), paymentType))
+                throw new ArgumentOutOfRangeException(RequiredMessage);
+
             Name = name;
             IsActive = isActive;
             PaymentType = paymentType;
@@ -57,6 +60,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (paymentMethodNames.Contains(name))
                 return Result.Failure<VendorInvoicePaymentMethod>(NonuniqueMessage);
 
+            if (!Enum.IsDefined(typeof(VendorInvoicePaymentMethodType), paymentType))
+                return Result.Failure<VendorInvoicePaymentMethod>(RequiredMessage);
+
             return Result.Success(new VendorInvoicePaymentMethod(
                 paymentMethodNames, name, isActive, paymentType, reconcilingVendor));
         }
@@ -74,12 +80,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(Name = name);
         }
 
-        public void Enable()
+        public void SetActive()
         {
             IsActive = true;
         }
 
-        public void Disable()
+        public void SetInactive()
         {
             IsActive = false;
         }
@@ -95,6 +101,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 return Result.Failure<Vendor>(RequiredMessage);
 
             return Result.Success(ReconcilingVendor = reconcilingVendor);
+        }
+
+        public Result<VendorInvoicePaymentMethodType> SetPaymentType(VendorInvoicePaymentMethodType paymentType)
+        {
+            if (!Enum.IsDefined(typeof(VendorInvoicePaymentMethodType), paymentType))
+                return Result.Failure<VendorInvoicePaymentMethodType>(RequiredMessage);
+
+            return Result.Success(PaymentType = paymentType);
         }
 
         #region ORM
