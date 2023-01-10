@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string name,
             bool isActive,
             VendorInvoicePaymentMethodType paymentType,
-            Vendor reconcilingVendor)
+            Vendor reconcilingVendor = null)
         {
             name = (name ?? string.Empty).Trim();
 
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string name,
             bool isActive,
             VendorInvoicePaymentMethodType paymentType,
-            Vendor reconcilingVendor)
+            Vendor reconcilingVendor = null)
         {
             name = (name ?? string.Empty).Trim();
 

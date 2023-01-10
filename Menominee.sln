@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.ModelDiagram", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menominee.Client\Menominee.Client.csproj", "{A972A61D-17E1-42B3-8DED-FA6CEE36DB45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerVehicleManagement.Data", "CustomerVehicleManagement.Data\CustomerVehicleManagement.Data.csproj", "{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{A972A61D-17E1-42B3-8DED-FA6CEE36DB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A972A61D-17E1-42B3-8DED-FA6CEE36DB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A972A61D-17E1-42B3-8DED-FA6CEE36DB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{1E6810F2-097A-4214-9663-5650306E5EA2} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 		{1C4F199D-AC75-4339-8156-5FFAED3FC230} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 		{4B24AD27-361B-4ECE-AF60-3467E7A473A9} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
+		{F0B9AE7A-3FC0-49E4-894D-C08D1AEB2D6B} = {3D28A673-921E-4D25-BDAC-7619F93B4151}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {645DCBDD-74CB-49E1-8FD9-EDF9F1A97E36}

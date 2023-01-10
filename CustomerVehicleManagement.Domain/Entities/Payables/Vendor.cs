@@ -19,10 +19,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public string VendorCode { get; private set; }
         public VendorRole VendorRole { get; private set; }
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
-        // TODO: Add this field
         public string Note { get; private set; }
         public bool? IsActive { get; private set; }
 
+        // TODO: Vendor settings for requirements
         // TODO: Need another table of required fields for purchases which currently include:
         //      vendor part number
         //      vendor invoice #
@@ -52,6 +52,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
+            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
             if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
                 throw new ArgumentNullException(RequiredMessage);
@@ -62,12 +63,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 throw new ArgumentOutOfRangeException(InvalidLengthMessage);
 
+            if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
+                throw new ArgumentOutOfRangeException(NoteMaximumLengthMessage);
+
             if (defaultPaymentMethod is not null)
                 DefaultPaymentMethod = defaultPaymentMethod;
 
             Name = name;
             VendorCode = vendorCode;
-            //Notes = notes;
             IsActive = true;
         }
 
@@ -77,7 +80,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             VendorRole vendorRole,
             string note = null,
              DefaultPaymentMethod defaultPaymentMethod = null,
-            //string notes = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)
