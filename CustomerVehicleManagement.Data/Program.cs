@@ -1,19 +1,27 @@
 ﻿using Bogus;
 using CustomerVehicleManagement.Data.Fakers;
 
+var random = new Random();
+var CountOfVendorsToCreate = 24;
+var CountOfPaymentMethodsToCreate = CountOfVendorsToCreate;
 
 var faker = new Faker();
-var paymentMethodNames = faker.Make(10, () => faker.Random.Words());
-var vendors = VendorFaker.MakeVendorFakes(paymentMethodNames, 5);
-var paymentMethod = VendorFaker.MakeVendorInvoicePaymentMethodFake(paymentMethodNames);
-var defaultPaymentMethod = VendorFaker.MakeDefaultPaymentMethodFake(paymentMethod);
+var vendors = VendorFaker.MakeVendorFakes(CountOfVendorsToCreate);
+var paymentMethodNames = faker.Make(CountOfVendorsToCreate / 2, () => faker.Random.Words());
+var paymentMethods = VendorFaker.MakePaymentMethodFakes(
+    paymentMethodNames: paymentMethodNames,
+    count: CountOfPaymentMethodsToCreate);
+var defaultPaymentMethods = VendorFaker.MakeDefaultPaymentMethodFakes(
+    paymentMethod: paymentMethods[random.Next(0, CountOfPaymentMethodsToCreate - 1)],
+    count: CountOfPaymentMethodsToCreate/2);
+defaultPaymentMethods.AddRange(VendorFaker.MakeDefaultPaymentMethodFakes(
+    paymentMethod: paymentMethods[random.Next(0, CountOfPaymentMethodsToCreate - 1)],
+    count: CountOfPaymentMethodsToCreate / 2));
 
 // Randomly assign to some Vendors: DefaultPaymentMethod
 foreach (var vendor in vendors)
-{
     if (faker.Random.Bool())
-        vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
-}
+        vendor.SetDefaultPaymentMethod(defaultPaymentMethods[faker.Random.Int(0, defaultPaymentMethods.Count - 1)]);
 
 foreach (var vendor in vendors)
 {
@@ -22,7 +30,7 @@ foreach (var vendor in vendors)
 }
 
 
-// Randomly assign to some VendorInvoicePaymentMethods: Vendor reconcilingVendor
+// TODO: Randomly assign to some VendorInvoicePaymentMethods: Vendor reconcilingVendor
 
 Console.ReadLine();
 

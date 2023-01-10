@@ -6,10 +6,10 @@ namespace CustomerVehicleManagement.Data.Fakers
 {
     public class VendorFaker
     {
-        public static List<Vendor> MakeVendorFakes(IList<string> paymentMethodNames, int vendorsToGenerateCount)
+        public static List<Vendor> MakeVendorFakes(int vendorsToGenerateCount)
         {
             //Set the randomizer seed to generate repeatable data sets.
-            Randomizer.Seed = new Random(549);
+            //Randomizer.Seed = new Random(549);
 
             var faker = new Faker();
 
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Data.Fakers
             return fakeVendor.Generate(vendorsToGenerateCount);
         }
 
-        public static VendorInvoicePaymentMethod MakeVendorInvoicePaymentMethodFake(IList<string> paymentMethodNames)
+        public static List<VendorInvoicePaymentMethod> MakePaymentMethodFakes(IList<string> paymentMethodNames, int count)
         {
             var fakeVendorInvoicePaymentMethod = new Faker<VendorInvoicePaymentMethod>()
 
@@ -39,10 +39,10 @@ namespace CustomerVehicleManagement.Data.Fakers
                    faker.PickRandom<VendorInvoicePaymentMethodType>(),
                    null).Value);
 
-            return fakeVendorInvoicePaymentMethod.Generate();
+            return fakeVendorInvoicePaymentMethod.Generate(count);
         }
 
-        public static DefaultPaymentMethod MakeDefaultPaymentMethodFake(VendorInvoicePaymentMethod paymentMethod)
+        public static List<DefaultPaymentMethod> MakeDefaultPaymentMethodFakes(VendorInvoicePaymentMethod paymentMethod, int count)
         {
             var fakeDefaultPaymentMethod = new Faker<DefaultPaymentMethod>()
                 .CustomInstantiator(faker =>
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Data.Fakers
                         faker.Random.Bool())
                     .Value);
 
-            return fakeDefaultPaymentMethod.Generate();
+            return fakeDefaultPaymentMethod.Generate(count);
 
 
         }
