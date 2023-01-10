@@ -30,7 +30,6 @@ namespace CustomerVehicleManagement.Data.Fakers
 
         public static VendorInvoicePaymentMethod MakeVendorInvoicePaymentMethodFake(IList<string> paymentMethodNames)
         {
-            // TODO: Randomly assign to some Vendors: ReconcilingVendor
             var fakeVendorInvoicePaymentMethod = new Faker<VendorInvoicePaymentMethod>()
 
                .CustomInstantiator(faker => VendorInvoicePaymentMethod.Create(
@@ -43,16 +42,16 @@ namespace CustomerVehicleManagement.Data.Fakers
             return fakeVendorInvoicePaymentMethod.Generate();
         }
 
-        public static DefaultPaymentMethod MakeDefaultPaymentMethodFake()
+        public static DefaultPaymentMethod MakeDefaultPaymentMethodFake(VendorInvoicePaymentMethod paymentMethod)
         {
             var fakeDefaultPaymentMethod = new Faker<DefaultPaymentMethod>()
                 .CustomInstantiator(faker =>
                     DefaultPaymentMethod.Create(
-                        fakeVendorInvoicePaymentMethod.Generate(),
+                        paymentMethod,
                         faker.Random.Bool())
                     .Value);
 
-            var dfpm = fakeDefaultPaymentMethod.Generate();
+            return fakeDefaultPaymentMethod.Generate();
 
 
         }
