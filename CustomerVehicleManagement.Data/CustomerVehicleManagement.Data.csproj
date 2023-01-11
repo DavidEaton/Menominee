@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
   </ItemGroup>
 

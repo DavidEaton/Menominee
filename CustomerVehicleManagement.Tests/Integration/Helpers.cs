@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace CustomerVehicleManagement.Tests.Integration
 {
