@@ -1,9 +1,15 @@
-﻿using CustomerVehicleManagement.Data;
+﻿using CustomerVehicleManagement.Data.Generators;
 
-public class Program
+namespace CustomerVehicleManagement.Data
 {
-    internal static void Main(string[] args)
+    public class Program
     {
-        TestDataGenerator.GenerateData();
+        internal static async Task Main(string[] args)
+        {
+            //VendorGenerator.GenerateData();
+            await VendorInvoiceGenerator.GenerateDataAsync();
+
+            Console.ReadLine();
+        }
     }
 }
