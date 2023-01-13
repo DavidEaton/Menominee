@@ -24,11 +24,11 @@ namespace CustomerVehicleManagement.Data.Fakers
                         .CustomInstantiator(faker =>
                         {
                             return VendorInvoice.Create(
-                                vendors[random.Next(0, vendors.Count - 1)],
-                                faker.PickRandom<VendorInvoiceStatus>(),
-                                faker.PickRandom<VendorInvoiceDocumentType>(),
-                                faker.Random.Double(),
-                                vendorInvoiceNumbers,
+                                vendor: vendors[random.Next(0, vendors.Count - 1)],
+                                status: faker.PickRandom<VendorInvoiceStatus>(),
+                                documentType: faker.PickRandom<VendorInvoiceDocumentType>(),
+                                total: faker.Random.Double(),
+                                vendorInvoiceNumbers: vendorInvoiceNumbers,
                                 invoiceNumber: faker.Commerce.Ean8()
                             ).Value;
 

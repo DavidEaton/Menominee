@@ -8,9 +8,9 @@ namespace CustomerVehicleManagement.Data.Generators
 {
     public static class VendorInvoiceGenerator
     {
-        public static async Task GenerateDataAsync()
+        public static void GenerateData()
         {
-            var vendors = await Helper.GetVendorsAsync();
+            var vendors = Helper.GetVendors();
             GenerateVendorInvoices(vendors);
 
             foreach (var vendorInvoice in VendorInvoiceGeneratorResult.VendorInvoices)

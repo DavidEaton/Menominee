@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Data.Database
 
                 try
                 {
-                    context.Vendors.Add(vendor);
+                    context.Vendors.Attach(vendor);
                     context.SaveChanges();
                     savedVendors++;
                 }
@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Data.Database
                 }
             }
 
-            Console.WriteLine($"Saved {savedVendors} Vendor rows!");
+            Console.WriteLine($"Saved {savedVendors} Vendor rows.");
         }
 
         internal static void SaveToDatabase(VendorInvoice vendorInvoice)
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Data.Database
 
                 try
                 {
-                    context.VendorInvoices.Add(vendorInvoice);
+                    context.VendorInvoices.Attach(vendorInvoice);
                     context.SaveChanges();
                     savedVendorInvoices++;
                 }
@@ -60,10 +60,10 @@ namespace CustomerVehicleManagement.Data.Database
                     Console.WriteLine();
                 }
             }
-            Console.WriteLine($"Saved {savedVendorInvoices} VendorInvoice rows!");
+            Console.WriteLine($"Saved {savedVendorInvoices} VendorInvoice rows.");
         }
 
-        internal static async Task<IReadOnlyList<Vendor>> GetVendorsAsync()
+        internal static IReadOnlyList<Vendor> GetVendors()
         {
             IReadOnlyList<Vendor> vendorsFromContext = new List<Vendor>();
 
@@ -74,10 +74,10 @@ namespace CustomerVehicleManagement.Data.Database
 
                 try
                 {
-                    vendorsFromContext = await context.Vendors
+                    vendorsFromContext = context.Vendors
                         .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
                         .AsNoTracking()
-                        .ToListAsync();
+                        .ToList();
                 }
                 catch (Exception ex)
                 {

@@ -25,16 +25,11 @@ namespace CustomerVehicleManagement.Data.Fakers
 
                         .CustomInstantiator(faker =>
                         {
-                            var companyName = faker.Company.CompanyName();
-                            var vendorRole = faker.PickRandom<VendorRole>();
-                            var vendorCode = faker.Random.AlphaNumeric(10);
-                            var vendorNote = faker.Random.Words(25);
-
                             return Vendor.Create(
-                                companyName,
-                                vendorCode,
-                                vendorRole,
-                                vendorNote,
+                                name: faker.Company.CompanyName(),
+                                vendorCode: faker.Random.AlphaNumeric(10),
+                                vendorRole: faker.PickRandom<VendorRole>(),
+                                note: faker.Random.Words(25),
                                 address: FakeAddress.Generate(),
                                 emails: MakeEmailFakes(),
                                 phones: MakePhoneFakes()

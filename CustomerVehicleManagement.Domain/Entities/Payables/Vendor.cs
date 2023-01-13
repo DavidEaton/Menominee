@@ -71,6 +71,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
             Name = name;
             VendorCode = vendorCode;
+            VendorRole = vendorRole;
+            Note = note;
             IsActive = true;
         }
 

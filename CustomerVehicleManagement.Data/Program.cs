@@ -4,10 +4,10 @@ namespace CustomerVehicleManagement.Data
 {
     public class Program
     {
-        internal static async Task Main(string[] args)
+        internal static void Main(string[] args)
         {
-            //VendorGenerator.GenerateData();
-            await VendorInvoiceGenerator.GenerateDataAsync();
+            VendorGenerator.GenerateData();
+            VendorInvoiceGenerator.GenerateData();
 
             Console.ReadLine();
         }
