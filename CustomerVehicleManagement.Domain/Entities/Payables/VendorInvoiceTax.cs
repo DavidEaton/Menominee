@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (salesTax is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
 
-            if(amount < 0.0)
+            if (amount < 0.0)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
             SalesTax = salesTax;

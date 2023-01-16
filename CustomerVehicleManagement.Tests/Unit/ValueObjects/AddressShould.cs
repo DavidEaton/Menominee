@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;

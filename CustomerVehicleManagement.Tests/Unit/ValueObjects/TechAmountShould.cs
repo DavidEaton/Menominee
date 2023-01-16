@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using FluentAssertions;
 using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Unit.ValueObjects

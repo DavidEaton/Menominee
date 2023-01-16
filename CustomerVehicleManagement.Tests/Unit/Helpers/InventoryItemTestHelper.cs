@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers

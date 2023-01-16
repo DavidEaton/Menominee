@@ -1,8 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 using Xunit;
 

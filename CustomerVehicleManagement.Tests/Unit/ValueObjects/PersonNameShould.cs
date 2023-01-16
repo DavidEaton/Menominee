@@ -1,8 +1,6 @@
-﻿using CustomerVehicleManagement.Shared;
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.ValueObjects;
-using System;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Unit.ValueObjects

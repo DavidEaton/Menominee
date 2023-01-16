@@ -152,6 +152,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<string> SetNote(string note)
         {
+            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
+
             if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
                 return Result.Failure<string>(NoteMaximumLengthMessage);
 

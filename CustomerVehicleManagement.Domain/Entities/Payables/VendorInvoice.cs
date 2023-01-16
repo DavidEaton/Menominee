@@ -37,10 +37,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private readonly List<VendorInvoiceLineItem> lineItems = new List<VendorInvoiceLineItem>();
         public IReadOnlyList<VendorInvoiceLineItem> LineItems => lineItems.ToList();
-        
+
         private readonly List<VendorInvoicePayment> payments = new List<VendorInvoicePayment>();
         public IReadOnlyList<VendorInvoicePayment> Payments => payments.ToList();
-        
+
         private readonly List<VendorInvoiceTax> taxes = new List<VendorInvoiceTax>();
         public IReadOnlyList<VendorInvoiceTax> Taxes => taxes.ToList();
 

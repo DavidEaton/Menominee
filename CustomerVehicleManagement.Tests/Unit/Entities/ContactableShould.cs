@@ -14,6 +14,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         // Not_Add_Null_Phone
         // Not_Add_Duplicate_Phone()
 
+        // Not_Create_
 
         // RemoveEmail
         [Fact]
@@ -54,7 +55,16 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             result.IsFailure.Should().BeTrue();
         }
-        // Not_Add_Duplicate_Phone()
+
+        [Fact]
+        public void Not_Add_Null_Email()
+        {
+            var organization = CreateTestOrganization();
+
+            var result = organization.AddEmail(null);
+
+            result.IsFailure.Should().BeTrue();
+        }
 
 
         // RemovePhone

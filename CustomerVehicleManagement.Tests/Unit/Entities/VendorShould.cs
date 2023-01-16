@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Migrations;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -96,6 +97,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendorOrError.Value.Phones.Count.Should().BeGreaterThan(1);
         }
 
+        [Fact]
+        public void Not_Create_Vendor_With_Inavlid_VendorRole()
+        {
+            var name = "Vendor One";
+            var vendorCode = "V1";
+            var vendorRole = (VendorRole)(-1);
+
+            var vendorOrError = Vendor.Create(name, vendorCode, vendorRole);
+
+            vendorOrError.IsFailure.Should().BeTrue();
+        }
 
         [Fact]
         public void Not_Create_Vendor_With_Null_Name()
@@ -106,6 +118,19 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             vendorOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Create_Vendor_With_Truncated_Note()
+        {
+            var name = RandomCharacters(Vendor.MinimumLength);
+            var vendorNote = RandomCharacters(Vendor.NoteMaximumLength * 2);
+            var vendorCode = RandomCharacters(Vendor.MinimumLength);
+
+            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, vendorNote);
+
+            vendorOrError.IsFailure.Should().BeFalse();
+            vendorOrError.Value.Note.Length.Should().Be(Vendor.NoteMaximumLength);
         }
 
         [Theory]
@@ -188,6 +213,26 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendor.SetVendorCode(vendorCode);
 
             vendor.VendorCode.Should().Be(vendorCode);
+        }
+
+        [Fact]
+        public void SetNote()
+        {
+            var vendor = CreateVendor();
+            var vendorNote = RandomCharacters(Vendor.NoteMaximumLength);
+            vendor.SetNote(vendorNote);
+
+            vendor.Note.Should().Be(vendorNote);
+        }
+
+        [Fact]
+        public void Set_Truncated_Note()
+        {
+            var vendor = CreateVendor();
+            var vendorNote = RandomCharacters(Vendor.NoteMaximumLength * 2);
+            vendor.SetNote(vendorNote);
+
+            vendor.Note.Length.Should().Be(Vendor.NoteMaximumLength);
         }
 
         [Fact]
@@ -347,6 +392,18 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             vendor.VendorRole.Should().Be(newVendorRole);
         }
 
+
+        [Fact]
+        public void Not_Set_Inavlid_VendorRole()
+        {
+            var vendor = CreateVendor();
+            var invalidVendorRole = (VendorRole)(-1);
+
+            var vendorOrError = vendor.SetVendorRole(invalidVendorRole);
+
+            vendorOrError.IsFailure.Should().BeTrue();
+        }
+
         internal class TestData
         {
             public static IEnumerable<object[]> Data
@@ -357,6 +414,16 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                     yield return new object[] { Vendor.MaximumLength + 1 };
                 }
             }
+
+            public static IEnumerable<object[]> NoteData
+            {
+                get
+                {
+                    yield return new object[] { Vendor.MinimumLength - 1 };
+                    yield return new object[] { Vendor.NoteMaximumLength + 1 };
+                }
+            }
+
         }
     }
 }

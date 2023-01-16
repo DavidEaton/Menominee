@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private ProductCode(
             Manufacturer manufacturer,
-            string code, 
+            string code,
             string name,
             IReadOnlyList<string> manufacturerCodes,
             SaleCode saleCode = null)
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         public static Result<ProductCode> Create(
             Manufacturer manufacturer,
-            string code, 
+            string code,
             string name,
             IReadOnlyList<string> manufacturerCodes,
             SaleCode saleCode = null)
@@ -104,7 +104,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (manufacturerCodes.Contains($"{manufacturer.Id}{Code}"))
                 return Result.Failure<Manufacturer>(NonuniqueMessage);
-            
+
             return Result.Success(Manufacturer = manufacturer);
         }
 

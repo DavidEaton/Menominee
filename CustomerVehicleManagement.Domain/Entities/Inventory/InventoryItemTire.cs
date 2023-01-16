@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (type?.Length > MaximumTypeLength)
                 throw new ArgumentOutOfRangeException(InvalidTypeMessage);
 
-            if (width < MinimumWidth || width  > MaximumWidth)
+            if (width < MinimumWidth || width > MaximumWidth)
                 throw new ArgumentOutOfRangeException(InvalidWidthMessage);
 
             if (aspectRatio.ToString().Length != AspectRatioRequiredLength)
@@ -107,7 +107,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             // TechAmount Value Object is validated before we ever get here
 
             if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
-            return Result.Failure<InventoryItemTire>(InvalidLengthMessage);
+                return Result.Failure<InventoryItemTire>(InvalidLengthMessage);
 
             type = (type ?? string.Empty).Trim();
             speedRating = (speedRating ?? string.Empty).Trim();

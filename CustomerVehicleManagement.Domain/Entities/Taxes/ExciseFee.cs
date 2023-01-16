@@ -34,7 +34,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
             if (amount < MinimumValue || amount > MaximumValue)
                 throw new ArgumentOutOfRangeException(InvalidValueMessage);
-            
+
             Description = description;
             FeeType = feeType;
             Amount = amount;

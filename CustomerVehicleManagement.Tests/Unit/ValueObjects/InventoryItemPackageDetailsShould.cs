@@ -80,7 +80,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
             {
                 get
                 {
-                    yield return new object[] { InventoryItemPackageDetails.MinimumValue - .01};
+                    yield return new object[] { InventoryItemPackageDetails.MinimumValue - .01 };
                     yield return new object[] { InventoryItemPackageDetails.MaximumValue + .01 };
                 }
             }

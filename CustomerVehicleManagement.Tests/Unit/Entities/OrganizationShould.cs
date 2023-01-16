@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.Enums;
@@ -207,7 +206,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             result.IsFailure.Should().BeTrue();
         }
-        
+
         [Fact]
         public void Not_Add_Duplicate_Email()
         {

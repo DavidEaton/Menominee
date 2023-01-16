@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using Xunit;

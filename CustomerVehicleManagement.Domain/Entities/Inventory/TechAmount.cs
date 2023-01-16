@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             : base(payType, amount)
         {
             if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
-                throw new ArgumentOutOfRangeException(RequiredMessage); 
+                throw new ArgumentOutOfRangeException(RequiredMessage);
 
             SkillLevel = skillLevel;
         }
@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             {
                 result = new TechAmount(payType, amount, skillLevel);
             }
-            catch (Exception  ex)
+            catch (Exception ex)
             {
                 return Result.Failure<TechAmount>(ex.Message);
             }

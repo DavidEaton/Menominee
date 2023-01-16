@@ -73,7 +73,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public void SetBirthday(DateTime? birthday)
         {
-                Birthday = birthday;
+            Birthday = birthday;
         }
 
         public void SetDriversLicense(DriversLicense driversLicense)

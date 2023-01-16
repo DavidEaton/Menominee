@@ -104,7 +104,7 @@ namespace CustomerVehicleManagement.Tests
         }
 
         public static IList<DefaultPaymentMethod> CreatDefaultPaymentMethods(
-            int count, 
+            int count,
             IReadOnlyList<VendorInvoicePaymentMethod> paymentMethods)
         {
             var payments = new List<DefaultPaymentMethod>();

@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             yield return Duration;
         }
 
-       #region ORM
+        #region ORM
 
         // EF requires a parameterless constructor
         protected InventoryItemWarrantyPeriod() { }

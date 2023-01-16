@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
-using System;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Utilities;
 

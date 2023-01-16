@@ -1,12 +1,10 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities

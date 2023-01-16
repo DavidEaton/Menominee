@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (details is null)
                 throw new ArgumentOutOfRangeException(RequiredMessage);
-            
+
             ItemType = itemType;
             Description = description;
             DisplayOrder = displayOrder;
@@ -94,7 +94,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             // Value Object)
             if (details is null)
                 return Result.Failure<InventoryItemPackageDetails>(RequiredMessage);
-            
+
             return Result.Success(Details = details);
         }
 
