@@ -9,29 +9,90 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
     public class ContactableShould
     {
-        // Emails
-        // AddEmail
-        // Not_Add_Null_Phone
-        // Not_Add_Duplicate_Phone()
+        // one for each {MethodName}, named Not_{MethodName}_With_Invalid/Null{PropertyName}
 
-        // Not_Create_
-
-        // RemoveEmail
         [Fact]
-        public void Not_Remove_Null_Phone()
+        public void AddEmail()
         {
             var organization = CreateTestOrganization();
-            var number = "555.444.3333";
-            var phoneType = PhoneType.Home;
-            var phone = Phone.Create(number, phoneType, true).Value;
-            organization.AddPhone(phone);
+            var address = "m@m.m";
+            var email = Email.Create(address, true).Value;
 
-            var result = organization.RemovePhone(null);
+            var result = organization.AddEmail(email);
+
+            result.IsSuccess.Should().BeTrue();
+            organization.Emails.Should().Contain(email);
+        }
+
+
+        [Fact]
+        public void Not_Add_Null_Email()
+        {
+            var organization = CreateTestOrganization();
+
+            var result = organization.AddEmail(null);
 
             result.IsFailure.Should().BeTrue();
         }
 
-        // Phones
+        [Fact]
+        public void Not_Remove_Null_Email()
+        {
+            var organization = CreateTestOrganization();
+            var address = "jane@doe.com";
+            var email = Email.Create(address, true).Value;
+            organization.AddEmail(email);
+
+            var result = organization.RemoveEmail(null);
+
+            result.IsFailure.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void Not_Add_Duplicate_Email()
+        {
+            var vendor = CreateVendor();
+            var address = "m@m.m";
+            var email = Email.Create(address, true).Value;
+            vendor.AddEmail(email);
+            email = Email.Create(address, true).Value;
+
+            var result = vendor.AddEmail(email);
+
+            result.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Add_More_Tha_One_Primary_Email()
+        {
+            var vendor = CreateVendor();
+            var address = "m@m.m";
+            var email = Email.Create(address, true).Value;
+            vendor.AddEmail(email);
+            email = Email.Create(address, true).Value;
+
+            var result = vendor.AddEmail(email);
+
+            result.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void RemoveEmail()
+        {
+            var organization = CreateTestOrganization();
+            var address = "m@m.m";
+            var email = Email.Create(address, true).Value;
+            var result = organization.AddEmail(email);
+            result.IsSuccess.Should().BeTrue();
+            organization.Emails.Should().Contain(email);
+
+            var removeResult = organization.RemoveEmail(email);
+            removeResult.IsFailure.Should().BeFalse();
+            var emailWasRemoved = !organization.Emails.Contains(email);
+
+            emailWasRemoved.Should().BeTrue();
+        }
+
         [Fact]
         public void AddPhone()
         {
@@ -57,18 +118,65 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void Not_Add_Null_Email()
+        public void Not_Add_Duplicate_Phone()
         {
-            var organization = CreateTestOrganization();
+            var vendor = CreateVendor();
+            var number = "555.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            vendor.AddPhone(phone);
+            phone = Phone.Create(number, phoneType, true).Value;
 
-            var result = organization.AddEmail(null);
+            var result = vendor.AddPhone(phone);
 
             result.IsFailure.Should().BeTrue();
         }
 
+        [Fact]
+        public void Not_Add_More_Tha_One_Primary_Phone()
+        {
+            var vendor = CreateVendor();
+            var number = "555.627.9206";
+            var phone = Phone.Create(number, PhoneType.Home, true).Value;
+            vendor.AddPhone(phone);
+            phone = Phone.Create(number, PhoneType.Mobile, true).Value;
 
-        // RemovePhone
+            var result = vendor.AddPhone(phone);
 
+            result.IsFailure.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void RemovePhone()
+        {
+            var organization = CreateTestOrganization();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            var result = organization.AddPhone(phone);
+            result.IsSuccess.Should().BeTrue();
+            organization.Phones.Should().Contain(phone);
+
+            var removeResult = organization.RemovePhone(phone);
+            removeResult.IsFailure.Should().BeFalse();
+            var phoneWasRemoved = !organization.Phones.Contains(phone);
+
+            phoneWasRemoved.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Remove_Null_Phone()
+        {
+            var organization = CreateTestOrganization();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            organization.AddPhone(phone);
+
+            var result = organization.RemovePhone(null);
+
+            result.IsFailure.Should().BeTrue();
+        }
 
         [Fact]
         public void SetAddress()
@@ -92,36 +200,30 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             janes.Address.PostalCode.Should().Be(postalCode);
         }
 
-        // ClearAddress
-
         [Fact]
-        public void Not_Add_Duplicate_Phone()
+        public void ClearAddress()
         {
-            var vendor = CreateVendor();
-            var number = "555.627.9206";
-            var phoneType = PhoneType.Home;
-            var phone = Phone.Create(number, phoneType, true).Value;
-            vendor.AddPhone(phone);
-            phone = Phone.Create(number, phoneType, true).Value;
-
-            var result = vendor.AddPhone(phone);
-
-            result.IsFailure.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Not_RemoveEmail_With_Null_Email()
-        {
+            var addressLine = "1234 Five Street";
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+            var addressOrError = Address.Create(addressLine, city, state, postalCode);
             var organization = CreateTestOrganization();
-            var address = "jane@doe.com";
-            var email = Email.Create(address, true).Value;
-            organization.AddEmail(email);
+            organization.SetAddress(addressOrError.Value);
+            var customerOrError = new Customer(organization, CustomerType.Retail);
+            var janes = customerOrError.Organization;
+            customerOrError.Should().BeOfType<Customer>();
+            customerOrError.EntityType.Should().Be(EntityType.Organization);
+            janes.Address.AddressLine.Should().Be(addressLine);
+            janes.Address.City.Should().Be(city);
+            janes.Address.State.Should().Be(state);
+            janes.Address.PostalCode.Should().Be(postalCode);
 
-            var result = organization.RemoveEmail(null);
+            organization.ClearAddress();
 
-            result.IsFailure.Should().BeTrue();
+            organization.Address.Should().BeNull();
+            janes.Address.Should().BeNull();
         }
 
-        // one for each {MethodName}, named Not_{MethodName}_With_Invalid/Null{PropertyName}
     }
 }

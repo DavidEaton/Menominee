@@ -79,7 +79,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void Throw_Exception_On_Add_Greater_Than_One_PrimaryPhone()
+        public void Not_Add_More_Than_One_Primary_Phone()
         {
             var person = Utilities.CreateTestPerson();
             var number = "555.627.9206";
@@ -87,11 +87,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var phone = Phone.Create(number, phoneType, true).Value;
             person.AddPhone(phone);
             number = "444.627.9206";
-            phone = Phone.Create(number, phoneType, true).Value;
+            phone = Phone.Create(number, PhoneType.Mobile, true).Value;
 
-            Action action = () => person.AddPhone(phone);
+            var result = person.AddPhone(phone);
 
-            action.Should().Throw<Exception>();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]

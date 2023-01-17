@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Entity = Menominee.Common.Entity;
@@ -17,7 +16,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         public IList<Phone> Phones { get; private set; } = new List<Phone>();
         public IList<Email> Emails { get; private set; } = new List<Email>();
-        public Address Address { get; private set; }
+        public Address Address { get; private set; } //VK: Initialize?
 
         internal Contactable(Address address, IList<Phone> phones, IList<Email> emails)
         {
@@ -65,7 +64,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                 return Result.Failure<Phone>(NonuniqueMessage);
 
             if (ContactableHasPrimaryPhone() && phone.IsPrimary)
-                throw new Exception(PrimaryExistsMessage);
+                return Result.Failure<Phone>(PrimaryExistsMessage);
 
             Phones.Add(phone);
             return Result.Success(phone);

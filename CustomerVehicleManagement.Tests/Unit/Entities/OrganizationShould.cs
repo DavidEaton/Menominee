@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.Enums;
@@ -151,15 +152,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var organization = CreateTestOrganization();
             var number = "555.627.9206";
-            var phoneType = PhoneType.Home;
-            var phone = Phone.Create(number, phoneType, true).Value;
+            var phone = Phone.Create(number, PhoneType.Home, true).Value;
             organization.AddPhone(phone);
             number = "444.627.9206";
-            phone = Phone.Create(number, phoneType, true).Value;
+            phone = Phone.Create(number, PhoneType.Mobile, true).Value;
 
-            Action action = () => organization.AddPhone(phone);
+            var result = organization.AddPhone(phone);
 
-            action.Should().Throw<Exception>();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]
