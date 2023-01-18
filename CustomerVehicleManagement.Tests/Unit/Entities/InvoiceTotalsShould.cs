@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Api.Migrations;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
@@ -412,8 +413,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 Id = 1,
                 IsActive = true,
-                Name = RandomCharacters(Vendor.MinimumLength) + 1,
-                VendorCode = RandomCharacters(Vendor.MinimumLength + 1)
+                VendorRole = VendorRole.PartsSupplier,
+                VendorCode = RandomCharacters(Vendor.MinimumLength + 1),
+                Name = RandomCharacters(Vendor.MinimumLength + 1)
             };
 
         }

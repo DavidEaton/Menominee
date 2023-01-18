@@ -16,6 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     Id = vendor.Id,
                     Name = vendor.Name,
                     VendorCode = vendor.VendorCode,
+                    VendorRole = vendor.VendorRole,
                     IsActive = vendor.IsActive,
                     DefaultPaymentMethod = vendor.DefaultPaymentMethod,
                     Note = vendor.Notes,
@@ -31,14 +32,16 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             if (vendor is null)
                 return null;
 
-            var result = new VendorToRead();
-            var vendorToRead = new VendorToRead();
             DefaultPaymentMethodToRead defaultPaymentMethod = null;
 
-            vendorToRead.Id = vendor.Id;
-            vendorToRead.Name = vendor.Name;
-            vendorToRead.VendorCode = vendor.VendorCode;
-            vendorToRead.IsActive = vendor.IsActive;
+            var vendorToRead = new VendorToRead
+            {
+                Id = vendor.Id,
+                Name = vendor.Name,
+                VendorCode = vendor.VendorCode,
+                VendorRole = vendor.VendorRole,
+                IsActive = vendor.IsActive
+            };
 
             if (vendor.DefaultPaymentMethod is not null)
             {

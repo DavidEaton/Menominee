@@ -39,7 +39,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                     Id = vendor.Id,
                     IsActive = vendor.IsActive,
                     Name = vendor.Name,
-                    VendorCode = vendor.VendorCode
+                    VendorCode = vendor.VendorCode,
+                    VendorRole = vendor.VendorRole
                 }
             };
         }
@@ -63,7 +64,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 Id = 1,
                 IsActive = true,
                 Name = RandomCharacters(Vendor.MinimumLength) + 1,
-                VendorCode = RandomCharacters(Vendor.MinimumLength + 1)
+                VendorCode = RandomCharacters(Vendor.MinimumLength + 1),
+                VendorRole = VendorRole.PartsSupplier
             };
         }
 
