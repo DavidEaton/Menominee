@@ -1,7 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using Menominee.Common.Enums;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Payments
 {

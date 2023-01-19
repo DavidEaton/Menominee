@@ -4,7 +4,6 @@ using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -65,7 +64,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             if (repairOrderFromRepository is null)
                 return NotFound(notFoundMessage);
 
-           // UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository);
+            // UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository);
             // await UpdateServicesAsync(repairOrderFromCaller, repairOrderFromRepository, manufacturerCodes);
             //UpdatePayments(repairOrder, repairOrderFromRepository);
             //UpdateTaxes(repairOrder, repairOrderFromRepository);

@@ -49,7 +49,7 @@ namespace Menominee.Client.Services.CreditCards
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<CreditCardToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -63,7 +63,7 @@ namespace Menominee.Client.Services.CreditCards
             {
                 return await httpClient.GetFromJsonAsync<CreditCardToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

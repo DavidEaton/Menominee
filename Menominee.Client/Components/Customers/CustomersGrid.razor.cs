@@ -61,7 +61,7 @@ namespace Menominee.Client.Components.Customers
                 }
 
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 // the JS Interop for the local storage cannot be used during pre-rendering
                 // so the code above will throw. Once the app initializes, it will work fine - Telerik docs

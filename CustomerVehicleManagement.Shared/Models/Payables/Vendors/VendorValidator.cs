@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                         vendor.Name,
                         vendor.VendorCode,
                         vendor.VendorRole,
-                        vendor.Note,
+                        vendor.Notes,
                         defaultPaymentMethod
                         ));
         }

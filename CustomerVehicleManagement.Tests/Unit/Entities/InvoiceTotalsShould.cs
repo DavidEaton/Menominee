@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Migrations;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;

@@ -1,8 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-
-namespace CustomerVehicleManagement.Shared.Models.CreditCards
+﻿namespace CustomerVehicleManagement.Shared.Models.CreditCards
 {
     public class CreditCardToReadInList
     {

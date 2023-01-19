@@ -46,7 +46,7 @@ namespace Menominee.Client.Components.Inventory
         }
 
         public InventoryItemType SelectedItem { get; set; }
-        private List<ListItem> itemTypeList = new List<ListItem>();
+        private List<ListItem> itemTypeList = new();
         public class ListItem
         {
             public string Text { get; set; }

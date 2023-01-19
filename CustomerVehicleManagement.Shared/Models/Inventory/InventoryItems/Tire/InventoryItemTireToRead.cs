@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
-using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire
 {

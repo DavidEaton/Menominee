@@ -1,6 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using Menominee.Common.Enums;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;

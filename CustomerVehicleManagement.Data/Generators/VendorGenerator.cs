@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Data.Generators
         private static Random MakeRandomAssignments(int CountOfPaymentMethodsToCreate, Faker faker, List<Vendor> vendors, List<VendorInvoicePaymentMethod> paymentMethods, List<DefaultPaymentMethod> defaultPaymentMethods)
         {
             // Randomly assign to some Vendors: DefaultPaymentMethod
-            Random random = new Random();
+            Random random = new();
             foreach (var vendor in vendors)
                 if (faker.Random.Bool())
                 {
@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.Data.Generators
             // Randomly assign to some VendorInvoicePaymentMethods: Vendor reconcilingVendor
             foreach (var paymentMethod in paymentMethods)
             {
-                random = new Random();
+                random = new();
                 paymentMethod.SetReconcilingVendor(vendors[random.Next(0, CountOfPaymentMethodsToCreate - 1)]);
             }
 

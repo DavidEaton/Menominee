@@ -1,7 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -49,7 +48,7 @@ namespace Menominee.Client.Services.SaleCodes
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<SaleCodeToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -63,7 +62,7 @@ namespace Menominee.Client.Services.SaleCodes
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<SaleCodeShopSuppliesToReadInList>>($"{UriSegment}/shopsupplieslist");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -77,7 +76,7 @@ namespace Menominee.Client.Services.SaleCodes
             {
                 return await httpClient.GetFromJsonAsync<SaleCodeToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

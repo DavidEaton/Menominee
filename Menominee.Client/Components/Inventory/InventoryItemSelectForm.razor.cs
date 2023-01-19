@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
@@ -51,8 +50,8 @@ namespace Menominee.Client.Components.Inventory
         public IReadOnlyList<InventoryItemToReadInList> ItemsList;
         public IEnumerable<InventoryItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<InventoryItemToReadInList>();
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
-        private List<ManufacturerX> ManufacturerList = new List<ManufacturerX>();
-        private List<string> SearchFields = new List<string>();
+        private List<ManufacturerX> ManufacturerList = new();
+        private List<string> SearchFields = new();
         private long SelectedMfrId { get; set; } = 0;
         private long ViewingMfrId { get; set; } = 0;
 

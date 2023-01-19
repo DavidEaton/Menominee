@@ -9,9 +9,8 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Contactable
     {
-        public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int NoteMaximumLength = 10000;
-        public static readonly string NoteMaximumLengthMessage = $"Note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
 
         public PersonName Name { get; private set; }
         public Gender Gender { get; private set; }

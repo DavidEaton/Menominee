@@ -9,12 +9,12 @@ namespace CustomerVehicleManagement.Domain.Entities
     public class Organization : Contactable
     {
         public static readonly int NoteMaximumLength = 10000;
-        public static readonly string NoteMaximumLengthMessage = $"Note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
         public static readonly string InvalidMessage = $"Invalid organization.";
 
         public OrganizationName Name { get; private set; }
         public Person Contact { get; private set; }
-        public string Note { get; private set; }
+        public string Notes { get; private set; }
         private Organization(
             OrganizationName name,
             string note,
@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             : base(address, phones, emails)
         {
             Name = name;
-            Note = note;
+            Notes = note;
             Contact = contact;
         }
 
@@ -41,7 +41,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             // which runs within the asp.net request pipeline, invoking each
             // ValueObject's contract validator. For example, AddressValidator :
             // AbstractValidator<AddressToWrite>
-            // Only the primitive type (vs. ValueObject type) Note property is
+            // Only the primitive type (vs. ValueObject type) Notes property is
             // transformed and validated (parsed) here in the domain class that
             // creates it.
             note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
@@ -68,9 +68,9 @@ namespace CustomerVehicleManagement.Domain.Entities
         public void SetNote(string note)
         {
             // ValueObject parameters are already validated by OrganizationValidator.
-            // Only the primitive type (vs. ValueObject type) Note property is
+            // Only the primitive type (vs. ValueObject type) Notes property is
             // parsed here in the domain class method that uses it.
-            Note = note.Trim().Truncate(NoteMaximumLength);
+            Notes = note.Trim().Truncate(NoteMaximumLength);
         }
 
         #region ORM

@@ -1,11 +1,8 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Techs;
 using Microsoft.AspNetCore.Components;
-using Syncfusion.Blazor.DropDowns;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {

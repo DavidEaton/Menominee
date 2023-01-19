@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
     public class Vendor : Contactable
     {
         public static readonly int NoteMaximumLength = 10000;
-        public static readonly string NoteMaximumLengthMessage = $"Note cannot be over {NoteMaximumLength} characters in length.";
+        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public string VendorCode { get; private set; }
         public VendorRole VendorRole { get; private set; }
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
-        public string Note { get; private set; }
+        public string Notes { get; private set; }
         public bool? IsActive { get; private set; }
 
         // TODO: Vendor settings for requirements
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Name = name;
             VendorCode = vendorCode;
             VendorRole = vendorRole;
-            Note = note;
+            Notes = note;
             IsActive = true;
         }
 
@@ -157,7 +157,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
                 return Result.Failure<string>(NoteMaximumLengthMessage);
 
-            return Result.Success(Note = note.Trim().Truncate(NoteMaximumLength));
+            return Result.Success(Notes = note.Trim().Truncate(NoteMaximumLength));
         }
 
         public void Enable() => IsActive = true;

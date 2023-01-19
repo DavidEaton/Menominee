@@ -34,7 +34,7 @@ namespace Menominee.Client.Services.Payables.Invoices
                 return await httpClient
                     .GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{parameters}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

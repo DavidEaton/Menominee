@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
-using Menominee.Client.Shared;
 using Syncfusion.Blazor.Navigations;
 
 namespace Menominee.Client.Components.Scheduler
@@ -17,7 +16,7 @@ namespace Menominee.Client.Components.Scheduler
         {
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
+        private List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem

@@ -122,7 +122,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             {
                 var moops = await context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
                 throw;

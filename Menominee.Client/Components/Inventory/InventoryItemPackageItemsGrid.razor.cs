@@ -16,9 +16,11 @@ namespace Menominee.Client.Components.Inventory
 
         public InventoryItemPackageItemToWrite Item { get; set; }
 
+#pragma warning disable IDE0052 // Remove unread private members... OnAddItem() uses it!!!!!!
         private FormMode ItemFormMode = FormMode.Unknown;
-        //private bool CanDeleteItem { get => Item.Id > 0; }
-        //private bool CanDeletePlaceholder { get => Placeholder.Id > 0; }
+#pragma warning restore IDE0052 // Remove unread private members
+                               //private bool CanDeleteItem { get => Item.Id > 0; }
+                               //private bool CanDeletePlaceholder { get => Placeholder.Id > 0; }
         private InventoryItemPackageItemToWrite SelectedItem { get; set; }
         private IEnumerable<InventoryItemPackageItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<InventoryItemPackageItemToWrite>();
 

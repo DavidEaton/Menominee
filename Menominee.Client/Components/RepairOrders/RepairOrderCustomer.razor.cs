@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders

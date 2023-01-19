@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;

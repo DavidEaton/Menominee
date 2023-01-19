@@ -10,7 +10,7 @@ namespace Menominee.Client.Components.Customers
         public NavigationManager NavigationManager { get; set; }
 
         private static readonly string ModuleUrl = "/customers";
-        public int menuWidth { get; set; } = 270;
+        public int MenuWidth { get; set; } = 270;
 
         public void OnItemSelected(MenuItem selectedItem)
         {
@@ -22,7 +22,7 @@ namespace Menominee.Client.Components.Customers
             
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
+        private List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem

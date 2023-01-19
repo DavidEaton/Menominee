@@ -1,16 +1,11 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using Telerik.Blazor.Components;
 using Telerik.Blazor;
 using CustomerVehicleManagement.Shared.Models.Contactable;
-using Syncfusion.Blazor.Lists;
-using Menominee.Client.Shared;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace Menominee.Client.Components.Phones
 {

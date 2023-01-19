@@ -131,9 +131,9 @@ namespace Menominee.Client.Components.RepairOrders
         private int ManufacturerId { get; set; } = 0;
         private int SaleCodeId { get; set; } = 0;
         private int ProductCodeId { get; set; } = 0;
-        private List<ManufacturerX> ManufacturerList = new List<ManufacturerX>();
-        private List<SaleCodeX> SaleCodeList = new List<SaleCodeX>();
-        private List<ProductCodeX> ProductCodeList = new List<ProductCodeX>();
+        private List<ManufacturerX> ManufacturerList = new();
+        private List<SaleCodeX> SaleCodeList = new();
+        private List<ProductCodeX> ProductCodeList = new();
 
         // placeholder list of manufacturers
         //public List<ManufacturerX> Manufacturers = new List<ManufacturerX>()
@@ -173,7 +173,7 @@ namespace Menominee.Client.Components.RepairOrders
         //    new ProductCodeX { ManufacturerId="5700", SaleCode="E", Code="3332", Description="Exhaust Pipe" }
         //};
 
-        public List<ReasonForReplacement> ReasonsForReplacement = new List<ReasonForReplacement>()
+        public List<ReasonForReplacement> ReasonsForReplacement = new()
         {
             new ReasonForReplacement { Code = "A", Type = ReasonForReplacementType.Required, Description = "Part no longer performs intended function" },
             new ReasonForReplacement { Code = "B", Type = ReasonForReplacementType.Required, Description = "Part does not meet a design specification" },

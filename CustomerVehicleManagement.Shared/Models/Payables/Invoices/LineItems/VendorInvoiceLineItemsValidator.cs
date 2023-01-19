@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
 
         public VendorInvoiceLineItemsValidator()
         {
-            SaleCodeShopSupplies shopSupplies = new SaleCodeShopSupplies();
+            SaleCodeShopSupplies shopSupplies = new();
 
             RuleFor(lineItems => lineItems)
                 .NotNull()

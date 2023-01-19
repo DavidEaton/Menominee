@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 .MustBeEntity(organization => 
                     Organization.Create(
                         OrganizationName.Create(organization.Name).Value,
-                        organization.Note));
+                        organization.Notes));
         }
     }
 }

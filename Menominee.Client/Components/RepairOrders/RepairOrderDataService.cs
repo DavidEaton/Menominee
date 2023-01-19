@@ -43,7 +43,7 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<RepairOrderToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -57,7 +57,7 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 return await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

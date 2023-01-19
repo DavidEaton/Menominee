@@ -2,9 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.DriversLicenses;
-using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Persons

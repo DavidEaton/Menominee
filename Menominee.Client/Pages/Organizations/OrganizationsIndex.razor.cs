@@ -7,7 +7,6 @@ using Menominee.Client.Services;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,7 +32,7 @@ namespace Menominee.Client.Pages.Organizations
         private FormMode AddressFormMode = FormMode.Unknown;
         private OrganizationToWrite Organization { get; set; }
 
-        private AddressEditor addressEditor;
+        private readonly AddressEditor addressEditor;
         protected override async Task OnInitializedAsync()
         {
             Organizations = (await OrganizationDataService.GetAllOrganizations()).ToList();
@@ -76,7 +75,7 @@ namespace Menominee.Client.Pages.Organizations
             Organization = new OrganizationToWrite
             {
                 Name = readDto.Name,
-                Note = readDto.Note
+                Notes = readDto.Notes
             };
 
             if (readDto.Address != null)

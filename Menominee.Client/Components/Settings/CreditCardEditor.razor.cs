@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Shared.Models.CreditCards;
-using Menominee.Client.Services.CreditCards;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

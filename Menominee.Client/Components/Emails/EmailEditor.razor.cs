@@ -3,9 +3,7 @@ using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 
 namespace Menominee.Client.Components.Emails
 {

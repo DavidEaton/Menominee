@@ -48,7 +48,7 @@ namespace Menominee.Client.Services.Taxes
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ExciseFeeToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -62,7 +62,7 @@ namespace Menominee.Client.Services.Taxes
             {
                 return await httpClient.GetFromJsonAsync<ExciseFeeToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

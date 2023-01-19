@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
@@ -19,7 +18,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                     VendorRole = vendor.VendorRole,
                     IsActive = vendor.IsActive,
                     DefaultPaymentMethod = vendor.DefaultPaymentMethod,
-                    Note = vendor.Notes,
+                    Notes = vendor.Notes,
                     Address = AddressHelper.ConvertReadToWriteDto(vendor.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(vendor.Phones),
                     Emails = EmailHelper.ConvertReadToWriteDto(vendor.Emails),
@@ -54,8 +53,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                         IsActive = vendor.DefaultPaymentMethod.PaymentMethod.IsActive,
                         PaymentType = vendor.DefaultPaymentMethod.PaymentMethod.PaymentType,
                         ReconcilingVendor = ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod.ReconcilingVendor)
-                    },
-                    AutoCompleteDocuments = vendor.DefaultPaymentMethod.AutoCompleteDocuments
+                    }
                 };
             }
 

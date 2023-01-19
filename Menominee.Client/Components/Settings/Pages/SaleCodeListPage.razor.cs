@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
-using Telerik.DataSource;
 
 namespace Menominee.Client.Components.Settings.Pages
 {

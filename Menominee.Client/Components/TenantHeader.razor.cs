@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Menominee.Common.Entities;
 using Microsoft.AspNetCore.Components.Web;
-using System;
 using Menominee.Client.Services;
 
 namespace Menominee.Client.Components

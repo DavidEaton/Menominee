@@ -34,7 +34,7 @@ namespace Menominee.Client.Components.Shared
         MainLayout MainLayout { get; set; }
 
         public WindowSize CurrentWindowSize { get; set; }
-        private List<MenuItem> hamburgerMenuItems = new List<MenuItem>();
+        private List<MenuItem> hamburgerMenuItems = new();
         private SfMenu<MenuItem> MenuObj;
         private TelerikMenu<MenuItem> HorizontalMenuObj;
         private bool parametersSet = false;

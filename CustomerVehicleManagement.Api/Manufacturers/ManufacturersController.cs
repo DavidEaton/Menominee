@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Api.Data;
+﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Mvc;

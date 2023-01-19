@@ -1,7 +1,4 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Organizations;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;

@@ -49,7 +49,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToRead>>($"{UriSegment}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

@@ -1,7 +1,5 @@
-﻿using Menominee.Client.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
-using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -105,7 +103,7 @@ namespace Menominee.Client.Components.RepairOrders
 #pragma warning restore BL0005
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>();
+        private List<MenuItem> menuItems = new();
         //{
         //    new MenuItem
         //    {

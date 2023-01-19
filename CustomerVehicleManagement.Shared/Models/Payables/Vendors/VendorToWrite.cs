@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         public bool? IsActive { get; set; }
         public AddressToWrite Address { get; set; }
         public DefaultPaymentMethodToRead DefaultPaymentMethod { get; set; }
-        public string Note { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
         public IList<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
         public IList<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
     }

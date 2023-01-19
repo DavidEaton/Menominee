@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
-using static Menominee.Client.Components.Inventory.InventoryPackageEditor;
 
 namespace Menominee.Client.Components.Inventory
 {

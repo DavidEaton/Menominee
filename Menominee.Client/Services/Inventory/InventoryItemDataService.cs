@@ -1,9 +1,7 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -50,7 +48,7 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -64,7 +62,7 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing/{mfrId}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -78,7 +76,7 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

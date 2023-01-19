@@ -1,12 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
-using CustomerVehicleManagement.Shared.Models;
-using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Application
 {

@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -49,7 +48,7 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -63,7 +62,7 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -76,7 +75,7 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/code/{code}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

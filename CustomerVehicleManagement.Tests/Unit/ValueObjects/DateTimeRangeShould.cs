@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         {
             var start = DateTime.Today;
             var end = DateTime.Today.AddDays(10);
-            TimeSpan duration = new TimeSpan(TimeSpan.TicksPerDay);
+            TimeSpan duration = new(TimeSpan.TicksPerDay);
             var range = DateTimeRange.Create(start, end).Value;
 
             range = range.NewDuration(duration);

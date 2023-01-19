@@ -1,9 +1,6 @@
 ﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
-using FluentAssertions;
 using System;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests
 {

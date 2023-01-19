@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             {
                 Items.Add(item);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Failure<InventoryItemPackageItem>($"Unable to add item: {item}");
                 // Log exception details
@@ -118,7 +118,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             {
                 Items.Remove(item);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Failure<InventoryItemPackageItem>($"Unable to remove item: {item}");
                 // Log exception details
@@ -136,7 +136,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             {
                 Placeholders.Add(placeholder);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to add placeholder: {placeholder}");
                 // Log exception details
@@ -153,7 +153,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             {
                 Placeholders.Remove(placeholder);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result.Failure<InventoryItemPackagePlaceholder>($"Unable to remove placeholder: {placeholder}");
                 // Log exception details

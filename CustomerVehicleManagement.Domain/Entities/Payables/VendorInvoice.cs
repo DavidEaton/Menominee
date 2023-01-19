@@ -35,13 +35,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public string InvoiceNumber { get; private set; }
         public double Total { get; private set; }
 
-        private readonly List<VendorInvoiceLineItem> lineItems = new List<VendorInvoiceLineItem>();
+        private readonly List<VendorInvoiceLineItem> lineItems = new();
         public IReadOnlyList<VendorInvoiceLineItem> LineItems => lineItems.ToList();
 
-        private readonly List<VendorInvoicePayment> payments = new List<VendorInvoicePayment>();
+        private readonly List<VendorInvoicePayment> payments = new();
         public IReadOnlyList<VendorInvoicePayment> Payments => payments.ToList();
 
-        private readonly List<VendorInvoiceTax> taxes = new List<VendorInvoiceTax>();
+        private readonly List<VendorInvoiceTax> taxes = new();
         public IReadOnlyList<VendorInvoiceTax> Taxes => taxes.ToList();
 
         private VendorInvoice(

@@ -1,8 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -14,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telerik.Blazor;
 
 namespace Menominee.Client.Components.Payables
 {

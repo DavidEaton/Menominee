@@ -5,12 +5,12 @@ namespace CustomerVehicleManagement.Api.IntegrationTests
 {
     public static class JsonSerializerHelper
     {
-        public static JsonSerializerOptions DefaultSerializationOptions => new JsonSerializerOptions
+        public static JsonSerializerOptions DefaultSerializationOptions => new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.Always
         };
 
-        public static JsonSerializerOptions DefaultDeserializationOptions => new JsonSerializerOptions
+        public static JsonSerializerOptions DefaultDeserializationOptions => new()
         {
             PropertyNameCaseInsensitive = true
         };

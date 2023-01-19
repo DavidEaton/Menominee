@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Data.Fakers
                         .Value)
                     .Generate(count);
                 }
-                catch (CSharpFunctionalExtensions.ResultFailureException ex)
+                catch (CSharpFunctionalExtensions.ResultFailureException)
                 {
                     retries--;
                 }

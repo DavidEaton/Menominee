@@ -24,7 +24,7 @@ namespace Menominee.Client.Components.Organizations
                 organizationOriginal = new OrganizationToWrite
                 {
                     Name = Organization.Name,
-                    Note = Organization.Note,
+                    Notes = Organization.Notes,
                     Address = Organization.Address,
                     Emails = Organization.Emails,
                     Phones = Organization.Phones,
@@ -36,7 +36,7 @@ namespace Menominee.Client.Components.Organizations
         public void Reset()
         {
             Organization.Name = organizationOriginal.Name;
-            Organization.Note = organizationOriginal.Note;
+            Organization.Notes = organizationOriginal.Notes;
             Organization.Address = organizationOriginal.Address;
             Organization.Emails = organizationOriginal.Emails;
             Organization.Phones = organizationOriginal.Phones;

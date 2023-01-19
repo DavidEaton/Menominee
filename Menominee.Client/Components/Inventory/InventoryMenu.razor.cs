@@ -1,5 +1,4 @@
-﻿using Menominee.Client.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
 using System.Collections.Generic;
 
@@ -17,7 +16,7 @@ namespace Menominee.Client.Components.Inventory
         {
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
+        private List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem

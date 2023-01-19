@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared;
 using CustomerVehicleManagement.Shared.Models.Customers;
 using CustomerVehicleManagement.Shared.Models.Organizations;
 using CustomerVehicleManagement.Shared.Models.Persons;

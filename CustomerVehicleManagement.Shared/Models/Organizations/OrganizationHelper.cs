@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                     emails.Add(Email.Create(email.Address, email.IsPrimary).Value);
 
             return Organization.Create(organizationName,
-                                    organization.Note,
+                                    organization.Notes,
                                     PersonHelper.ConvertWriteDtoToEntity(organization?.Contact),
                                     organizationAddress,
                                     emails,
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 ? new OrganizationToWrite()
                 {
                     Name = organization.Name,
-                    Note = organization?.Note,
+                    Notes = organization?.Notes,
                     Address = AddressHelper.ConvertReadToWriteDto(organization.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(organization.Phones),
                     Emails = EmailHelper.ConvertReadToWriteDto(organization.Emails),
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                     Id = organization.Id,
                     Name = organization.Name.Name,
                     Address = AddressHelper.ConvertEntityToReadDto(organization.Address),
-                    Note = organization.Note,
+                    Notes = organization.Notes,
                     Phones = PhoneHelper.ConvertEntitiesToReadDtos(organization.Phones),
                     Emails = EmailHelper.ConvertEntitiesToReadDtos(organization.Emails),
                     Contact = PersonHelper.ConvertToReadDto(organization.Contact)
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                     State = organization?.Address?.State.ToString(),
                     PostalCode = organization?.Address?.PostalCode,
 
-                    Note = organization.Note,
+                    Notes = organization.Notes,
                     PrimaryPhone = PhoneHelper.GetPrimaryPhone(organization),
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(organization),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(organization)

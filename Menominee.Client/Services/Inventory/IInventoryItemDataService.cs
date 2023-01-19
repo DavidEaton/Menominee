@@ -1,8 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using System;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Inventory

@@ -1,6 +1,4 @@
-﻿using Menominee.Common.Enums;
-
-namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
+﻿namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
     public class VendorInvoicePaymentToWrite
     {

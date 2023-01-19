@@ -13,7 +13,7 @@ namespace CustomerVehicleManagement.Api.Configurations
             base.Configure(builder);
             builder.ToTable("Organization", "dbo");
 
-            builder.Property(organization => organization.Note)
+            builder.Property(organization => organization.Notes)
                 .HasMaxLength(10_000);
 
             // Value Object: OrganizationName

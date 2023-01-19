@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Shared.Models.Contactable;
-using System;
+﻿using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Persons
 {

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
-using System;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
@@ -52,7 +51,6 @@ namespace Menominee.Client.Components.Payables.Pages
             if (Id == 0)
             {
                 var vendor = await vendorDataService.AddVendorAsync(Vendor);
-                // TODO: this could fail leaving vendor null
                 Id = vendor.Id;
             }
             else

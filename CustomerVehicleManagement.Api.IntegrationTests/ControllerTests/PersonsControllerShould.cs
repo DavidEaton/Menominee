@@ -1,13 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.IntegrationTests.Helpers;
 using CustomerVehicleManagement.Api.Persons;
-using CustomerVehicleManagement.Shared.Models;
-using FluentAssertions;
-using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.ControllerTests

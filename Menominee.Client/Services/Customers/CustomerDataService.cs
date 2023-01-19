@@ -1,6 +1,5 @@
 ﻿using Blazored.Toast.Services;
 using CustomerVehicleManagement.Shared.Models.Customers;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -49,7 +48,7 @@ namespace Menominee.Client.Services.Customers
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -63,7 +62,7 @@ namespace Menominee.Client.Services.Customers
             {
                 return await httpClient.GetFromJsonAsync<CustomerToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -94,7 +93,7 @@ namespace Menominee.Client.Services.Customers
             {
                 await httpClient.DeleteAsync($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

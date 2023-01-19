@@ -5,12 +5,10 @@ using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Syncfusion.Blazor.Navigations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Menominee.Client.Components.Payables.VendorInvoiceItemEditor;
 
 namespace Menominee.Client.Components.Payables
 {

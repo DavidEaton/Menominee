@@ -143,7 +143,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepository.Note.Should().Be(note);
+                organizationFromRepository.Notes.Should().Be(note);
                 organizationFromRepository.Address.Should().NotBeNull();
                 organizationFromRepository.Phones.Count().Should().Be(phonesCount);
                 organizationFromRepository.Emails.Count().Should().Be(emailsCount);
@@ -312,7 +312,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             {
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
-                organizationFromRepo.Note.Should().Be(someNotes);
+                organizationFromRepo.Notes.Should().Be(someNotes);
 
                 organizationFromRepo.SetNote(newNotes);
 
@@ -324,7 +324,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepo = await repository.GetOrganizationAsync(id);
 
-                organizationFromRepo.Note.Should().Be(newNotes);
+                organizationFromRepo.Notes.Should().Be(newNotes);
             };
         }
 

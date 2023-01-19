@@ -1,5 +1,4 @@
-﻿using Bogus;
-using CustomerVehicleManagement.Data.Database;
+﻿using CustomerVehicleManagement.Data.Database;
 using CustomerVehicleManagement.Data.Fakers;
 using CustomerVehicleManagement.Data.Results;
 using CustomerVehicleManagement.Domain.Entities.Payables;

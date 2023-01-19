@@ -29,7 +29,7 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToRead>>($"{UriSegment}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -43,7 +43,7 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<UserToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

@@ -27,12 +27,12 @@ namespace Menominee.Client.Pages.Scheduler
         Boolean DialogVisibility = false;
         private long Id;
         SfSchedule<AppointmentData> ScheduleRef;
-        public AppointmentData AppointmentValidation = new AppointmentData();
+        public AppointmentData AppointmentValidation = new();
 
         private async void OnValidSubmit() //triggers on save button click
         {
             DialogVisibility = false;
-            AppointmentData EventData = new AppointmentData();
+            AppointmentData EventData = new();
             EventData.Service = AppointmentValidation.Service;
             EventData.EndTime = (DateTime)AppointmentValidation.EndTime;
             EventData.StartTime = (DateTime)AppointmentValidation.StartTime;
@@ -69,7 +69,7 @@ namespace Menominee.Client.Pages.Scheduler
                 args.Data.Service = "Unknown";
             }
 
-            Dictionary<string, object> attributes = new Dictionary<string, object>();
+            Dictionary<string, object> attributes = new();
             attributes.Add("style", $"background: {bgColor}; color: {fgColor};");
             args.Attributes = attributes;
         }
@@ -86,7 +86,7 @@ namespace Menominee.Client.Pages.Scheduler
                     AppointmentValidation.EndTime = args.Data.EndTime;
                     AppointmentValidation.TeamId = args.Data.TeamId;
                     AppointmentValidation.TechId = args.Data.TechId;
-                    Random random = new Random();
+                    Random random = new();
                     Id = random.Next(2, 1000);
                 }
                 else
@@ -112,7 +112,7 @@ namespace Menominee.Client.Pages.Scheduler
             }
         }
 
-        List<AppointmentData> DataSource = new List<AppointmentData>()
+        List<AppointmentData> DataSource = new()
         {
             new AppointmentData { Id=1, TeamId=1, StartTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 10,0,0), EndTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 11,30,0), TechId=2, Vehicle="2019 Ford Focus", ServiceId=1},
             new AppointmentData { Id=2, TeamId=2, StartTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13,30,0), EndTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 15,30,0), TechId=3, Vehicle="2018 Honda Civic", ServiceId=2},

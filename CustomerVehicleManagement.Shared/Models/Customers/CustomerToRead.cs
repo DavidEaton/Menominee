@@ -15,7 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models.Customers
         public EntityType EntityType { get; set; }
         public string Name { get; set; }
         public AddressToRead Address { get; set; }
-        public string Note { get; set; }
+        public string Notes { get; set; }
         public PersonToRead Contact { get; set; }
         public CustomerType CustomerType { get; set; }
         public IList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();

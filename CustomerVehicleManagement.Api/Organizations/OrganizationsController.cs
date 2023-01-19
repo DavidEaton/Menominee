@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Api.Organizations
             if (organizationFromCaller?.Address is null)
                 organizationFromRepository.SetAddress(null);
 
-            organizationFromRepository.SetNote(organizationFromCaller.Note);
+            organizationFromRepository.SetNote(organizationFromCaller.Notes);
 
             // Client may send an empty or null phones collection of ENTITIES, signifying
             // NO CHANGE TO COLLECTION

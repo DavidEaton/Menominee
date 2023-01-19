@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Migrations;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -130,7 +129,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, vendorNote);
 
             vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Note.Length.Should().Be(Vendor.NoteMaximumLength);
+            vendorOrError.Value.Notes.Length.Should().Be(Vendor.NoteMaximumLength);
         }
 
         [Theory]
@@ -222,7 +221,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorNote = RandomCharacters(Vendor.NoteMaximumLength);
             vendor.SetNote(vendorNote);
 
-            vendor.Note.Should().Be(vendorNote);
+            vendor.Notes.Should().Be(vendorNote);
         }
 
         [Fact]
@@ -232,7 +231,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var vendorNote = RandomCharacters(Vendor.NoteMaximumLength * 2);
             vendor.SetNote(vendorNote);
 
-            vendor.Note.Length.Should().Be(Vendor.NoteMaximumLength);
+            vendor.Notes.Length.Should().Be(Vendor.NoteMaximumLength);
         }
 
         [Fact]

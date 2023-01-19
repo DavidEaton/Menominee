@@ -1,13 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Inventory;
-using Menominee.Client.Services.Manufacturers;
-using Menominee.Client.Services.ProductCodes;
-using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +24,9 @@ namespace Menominee.Client.Components.Inventory.Pages
         public IReadOnlyList<MaintenanceItemToReadInList> ItemsList;
         public IEnumerable<MaintenanceItemToReadInList> SelectedList { get; set; } = Enumerable.Empty<MaintenanceItemToReadInList>();
 
+#pragma warning disable IDE0052 // Remove unread private members... OnAddItem() uses it!!!!!!
         private bool ShowItemSelector = false;
+#pragma warning restore IDE0052 // Remove unread private members
         public InventoryItemToReadInList SelectedInventoryItem { get; set; }
 
         private MaintenanceItemToReadInList selectedItem;

@@ -1,12 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

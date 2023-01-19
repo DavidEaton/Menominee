@@ -4,7 +4,6 @@ using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,7 +41,7 @@ namespace Menominee.Client.Components.RepairOrders
         private IReadOnlyList<VendorToRead> Vendors = null;
         private FormMode formMode;
         private string Title { get; set; }
-        private List<VendorX> VendorList = new List<VendorX>();
+        private List<VendorX> VendorList = new();
 
         protected override async Task OnParametersSetAsync()
         {

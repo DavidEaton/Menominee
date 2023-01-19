@@ -29,7 +29,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }
@@ -43,7 +43,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             {
                 return await httpClient.GetFromJsonAsync<VendorInvoicePaymentMethodToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: log exception
             }

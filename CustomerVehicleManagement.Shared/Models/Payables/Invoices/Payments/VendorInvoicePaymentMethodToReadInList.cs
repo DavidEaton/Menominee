@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {

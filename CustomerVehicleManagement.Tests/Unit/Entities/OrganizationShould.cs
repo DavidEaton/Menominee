@@ -1,10 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
-using System;
 using Xunit;
 using static CustomerVehicleManagement.Tests.Utilities;
 
@@ -277,7 +275,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             organization.SetNote(notes);
 
-            organization.Note.Should().Be(notes);
+            organization.Notes.Should().Be(notes);
         }
 
         [Fact]
@@ -288,7 +286,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             organization.SetNote(notes);
 
-            organization.Note.Length.Should().Be(Organization.NoteMaximumLength);
+            organization.Notes.Length.Should().Be(Organization.NoteMaximumLength);
         }
     }
 }

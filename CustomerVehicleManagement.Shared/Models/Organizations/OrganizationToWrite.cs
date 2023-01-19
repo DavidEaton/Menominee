@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Shared.Models
          */
         public PersonToWrite Contact { get; set; }
         public AddressToWrite Address { get; set; }
-        public string Note { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
         public IList<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
         public IList<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
     }

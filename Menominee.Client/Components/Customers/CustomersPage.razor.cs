@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using CustomerVehicleManagement.Shared.Models.Customers;
+﻿using CustomerVehicleManagement.Shared.Models.Customers;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Client.Services.Customers;
 using Menominee.Common.Enums;

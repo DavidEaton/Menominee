@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -43,8 +41,11 @@ namespace Menominee.Client.Components.Inventory
         protected override async Task OnInitializedAsync()
         {
             manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
-            ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
-            ProductCodes.OrderBy(pc => pc.Code);
+
+            ProductCodes = (await productCodeDataService
+                .GetAllProductCodesAsync(manufacturerId))
+                .OrderBy(pc => pc.Code)
+                .ToList();
 
             foreach (InventoryItemWarrantyPeriodType item in Enum.GetValues(typeof(InventoryItemWarrantyPeriodType)))
             {

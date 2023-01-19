@@ -1,7 +1,5 @@
-﻿using Menominee.Client.Shared;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
-using System;
 using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Dispatch
@@ -9,10 +7,10 @@ namespace Menominee.Client.Components.Dispatch
     public partial class DispatchMenu
     {
         [Inject]
-        public NavigationManager navigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
         private static string ModuleUrl = "/dispatch";
-        public int menuWidth { get; set; } = 139;
+        public int MenuWidth { get; set; } = 139;
 
         public void OnItemSelected(MenuItem selectedItem)
         {
@@ -22,7 +20,7 @@ namespace Menominee.Client.Components.Dispatch
             //}
         }
 
-        private List<MenuItem> menuItems = new List<MenuItem>
+        private List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem

@@ -1,6 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

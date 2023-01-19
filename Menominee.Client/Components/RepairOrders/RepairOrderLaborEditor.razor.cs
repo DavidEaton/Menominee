@@ -91,8 +91,8 @@ namespace Menominee.Client.Components.RepairOrders
 
         private bool CanChangePart { get; set; } = true;    // will eventually stop them from changing part #, salecode, etc. as needed
 
-        private List<SaleCodeX> SaleCodeList = new List<SaleCodeX>();
-        private List<ProductCodeX> ProductCodeList = new List<ProductCodeX>();
+        private List<SaleCodeX> SaleCodeList = new();
+        private List<ProductCodeX> ProductCodeList = new();
 
         public class SaleCodeX
         {
