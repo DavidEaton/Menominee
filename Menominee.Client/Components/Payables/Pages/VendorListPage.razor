@@ -30,7 +30,7 @@
                              @ref="@Grid">
                     <GridToolBar>
                         <TelerikCheckBox Id="myCheckBox" @bind-Value="@showInactive" />
-                        <label for="myCheckBox">Show Inactive</label>
+                        <label for="myCheckBox" class="m-checkbox-label">Show Inactive</label>
                         @*<TelerikButton OnClick="ResetState"
                             Icon="reset"
                             Title="Reset grid to default layout/columns..."></TelerikButton>*@
@@ -100,5 +100,9 @@
 <style>
     .m-grid {
         min-height: calc(100vh - 248px);
+    }
+
+    .m-checkbox-label {
+        margin-bottom: 0;
     }
 </style>
