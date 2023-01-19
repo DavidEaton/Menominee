@@ -19,13 +19,13 @@
 
 			<div class="form-row">
 				<div class="form-group col col-12 col-md-4">
-					@if (taxTypeList != null)
+					@if (TaxTypeList != null)
 					{
 						<label class="m-label" for="taxType">Tax Type</label>
 						<SfDropDownList TValue="SalesTaxType"
 									TItem="TaxTypeListItem"
 									PopupHeight="230px"
-									DataSource="@taxTypeList"
+									DataSource="@TaxTypeList"
 									@bind-Value="@SalesTax.TaxType">
 							<DropDownListFieldSettings Text="Text" Value="Value" />
 						</SfDropDownList>

@@ -47,12 +47,12 @@ namespace Menominee.Client.Components.Inventory
 
             foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
             {
-                laborTypeList.Add(new LaborTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+                LaborTypeList.Add(new LaborTypeListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
             foreach (SkillLevel item in Enum.GetValues(typeof(SkillLevel)))
             {
-                skillLevelList.Add(new SkillLevelListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
+                SkillLevelList.Add(new SkillLevelListItem { Text = EnumExtensions.GetDisplayName(item), Value = item });
             }
 
             base.OnInitialized();
@@ -99,8 +99,8 @@ namespace Menominee.Client.Components.Inventory
                 SaleCode = string.Empty;
         }
 
-        private List<LaborTypeListItem> laborTypeList { get; set; } = new List<LaborTypeListItem>();
-        private List<SkillLevelListItem> skillLevelList { get; set; } = new List<SkillLevelListItem>();
+        private List<LaborTypeListItem> LaborTypeList { get; set; } = new List<LaborTypeListItem>();
+        private List<SkillLevelListItem> SkillLevelList { get; set; } = new List<SkillLevelListItem>();
 
         public class LaborTypeListItem
         {

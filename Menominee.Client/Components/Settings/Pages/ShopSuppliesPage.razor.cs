@@ -35,7 +35,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
             foreach (ShopSuppliesCostType type in Enum.GetValues(typeof(ShopSuppliesCostType)))
             {
-                costTypeList.Add(new CostTypeListItem { Text = EnumExtensions.GetDisplayName(type), Value = type });
+                CostTypeList.Add(new CostTypeListItem { Text = EnumExtensions.GetDisplayName(type), Value = type });
             }
 
             SuppliesSettings.DisplayName = "Shop Supplies";
@@ -106,7 +106,7 @@ namespace Menominee.Client.Components.Settings.Pages
             public double Cost { get; set; }
         }
 
-        private List<CostTypeListItem> costTypeList { get; set; } = new List<CostTypeListItem>();
+        private List<CostTypeListItem> CostTypeList { get; set; } = new List<CostTypeListItem>();
 
         public class CostTypeListItem
         {

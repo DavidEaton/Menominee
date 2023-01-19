@@ -31,7 +31,7 @@ namespace Menominee.Client.Components.Settings
         {
             foreach (SalesTaxType taxType in Enum.GetValues(typeof(SalesTaxType)))
             {
-                taxTypeList.Add(new TaxTypeListItem { Text = EnumExtensions.GetDisplayName(taxType), Value = taxType });
+                TaxTypeList.Add(new TaxTypeListItem { Text = EnumExtensions.GetDisplayName(taxType), Value = taxType });
             }
 
             await base.OnInitializedAsync();
@@ -61,7 +61,7 @@ namespace Menominee.Client.Components.Settings
         //    StateHasChanged();
         //}
 
-        private List<TaxTypeListItem> taxTypeList { get; set; } = new List<TaxTypeListItem>();
+        private List<TaxTypeListItem> TaxTypeList { get; set; } = new List<TaxTypeListItem>();
 
         public class TaxTypeListItem
         {

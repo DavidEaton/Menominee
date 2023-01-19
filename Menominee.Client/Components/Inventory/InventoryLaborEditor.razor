@@ -40,13 +40,13 @@
             {
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
-                        @if (laborTypeList != null && laborTypeList.Count > 0)
+                        @if (LaborTypeList != null && LaborTypeList.Count > 0)
                         {
                             <label class="m-label" for="laborType">Labor Type</label>
                             <SfDropDownList TValue="ItemLaborType"
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
-                                    DataSource="@laborTypeList"
+                                    DataSource="@LaborTypeList"
                                     @bind-Value="@Item.Labor.LaborAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
@@ -78,13 +78,13 @@
 
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
-                        @if (laborTypeList != null && laborTypeList.Count > 0)
+                        @if (LaborTypeList != null && LaborTypeList.Count > 0)
                         {
                             <label class="m-label" for="techPayType">Tech Pay Type</label>
                             <SfDropDownList TValue="ItemLaborType"
                                     TItem="LaborTypeListItem"
                                     PopupHeight="230px"
-                                    DataSource="@laborTypeList"
+                                    DataSource="@LaborTypeList"
                                     @bind-Value="@Item.Labor.TechAmount.PayType">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>
@@ -115,14 +115,14 @@
 
                 <div class="form-row">
                     <div class="form-group col col-12 col-md-3">
-                        @if (skillLevelList != null && skillLevelList.Count > 0)
+                        @if (SkillLevelList != null && SkillLevelList.Count > 0)
                         {
                             <label class="m-label" for="skillLevel">Skill Level</label>
                             <SfDropDownList TValue="SkillLevel"
                                     TItem="SkillLevelListItem"
                                     PopupHeight="230px"
                                     Placeholder="Select a skill level"
-                                    DataSource="@skillLevelList"
+                                    DataSource="@SkillLevelList"
                                     @bind-Value="@Item.Labor.TechAmount.SkillLevel">
                                 <DropDownListFieldSettings Text="Text" Value="Value" />
                             </SfDropDownList>

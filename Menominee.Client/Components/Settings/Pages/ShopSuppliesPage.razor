@@ -48,13 +48,13 @@
 
                         <div class="form-row">
                             <div class="form-group col col-12 col-md-4">
-                                @if (costTypeList != null)
+                                @if (CostTypeList != null)
                                 {
                                     <label class="m-label" for="costType">Cost Per Invoice</label>
                                     <SfDropDownList TValue="ShopSuppliesCostType"
                                             TItem="CostTypeListItem"
                                             PopupHeight="230px"
-                                            DataSource="@costTypeList"
+                                            DataSource="@CostTypeList"
                                             @bind-Value="@SuppliesSettings.CostType">
                                         <DropDownListFieldSettings Text="Text" Value="Value" />
                                     </SfDropDownList>
