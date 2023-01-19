@@ -39,7 +39,7 @@ namespace Menominee.Client.Components.Emails
 
         private bool CanEdit { get; set; } = false;
 
-        private long emailIdToSelect { get; set; } = 0;
+        private long EmailIdToSelect { get; set; } = 0;
         private int selectedEmailIndex = -1;
         private bool editDialogVisible = false;
 
@@ -84,7 +84,7 @@ namespace Menominee.Client.Components.Emails
 
             if (Emails?.Count > 0)
             {
-                if (emailIdToSelect == 0)
+                if (EmailIdToSelect == 0)
                     SelectedEmail = Emails.FirstOrDefault();
 
                 SelectedEmailIndex = Emails.IndexOf(SelectedEmail);

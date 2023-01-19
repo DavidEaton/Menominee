@@ -53,10 +53,10 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
                 : new()
                 {
                     Id = manufacturer.Id,
-                Code = manufacturer.Code,
-                Prefix = manufacturer.Prefix,
-                Name = manufacturer.Name
-            };
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
         }
 
         public static ManufacturerToRead ConvertReadInListToReadDto(ManufacturerToReadInList manufacturer)

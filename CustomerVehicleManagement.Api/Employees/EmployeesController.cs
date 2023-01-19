@@ -11,7 +11,7 @@ using CustomerVehicleManagement.Api.Data;
 namespace CustomerVehicleManagement.Api.Employees
 {
     [Authorize(Policies.CanManageHumanResources)]
-    public class EmployeesController :  ApplicationController
+    public class EmployeesController : ApplicationController
     {
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<EmployeeToRead>>> GetUsersAsync()

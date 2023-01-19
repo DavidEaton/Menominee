@@ -13,7 +13,7 @@ namespace Menominee.Client.Shared
         public NavigationManager NavigationManager { get; set; }
 
         public bool DrawerExpanded { get; set; } = true;
-        DrawerItem SelectedItem { get; set; } 
+        DrawerItem SelectedItem { get; set; }
         TelerikDrawer<DrawerItem> DrawerRef { get; set; }
         public bool RepairOrderEditMenuVisible { get; set; } = false;
 
@@ -102,7 +102,7 @@ namespace Menominee.Client.Shared
                 return string.Empty;
             return SelectedItem.Text.ToLowerInvariant().Equals(item.Text.ToLowerInvariant()) ? "k-selected" : "";
         }
-        
+
         private string MenuItemClass(ModuleId moduleId)
         {
             string _class = "k-icon material-icons ";

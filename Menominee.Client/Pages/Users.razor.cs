@@ -70,8 +70,8 @@ namespace Menominee.Client.Pages
 
         protected async Task HandleEditSubmit()
         {
-                await UserDataService.UpdateUser(registerUser, Id);
-                await EndEditAsync();
+            await UserDataService.UpdateUser(registerUser, Id);
+            await EndEditAsync();
         }
 
         protected async Task EndAddAsync()

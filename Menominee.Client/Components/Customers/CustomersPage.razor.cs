@@ -27,7 +27,7 @@ namespace Menominee.Client.Components.Customers
         protected override async Task OnInitializedAsync()
         {
             Customers = (await CustomerDataService.GetAllCustomers()).ToList();
-    
+
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
 

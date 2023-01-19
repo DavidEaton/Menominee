@@ -100,7 +100,7 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private async Task GetInvoiceList()
         {
-            InvoiceList =  await VendorInvoiceDataService.GetInvoices(ResourceParameters);
+            InvoiceList = await VendorInvoiceDataService.GetInvoices(ResourceParameters);
         }
 
         private void SelectInvoices()

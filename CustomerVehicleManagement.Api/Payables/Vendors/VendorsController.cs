@@ -76,15 +76,11 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
             if (vendorFromRepository.VendorRole != vendorToUpdate.VendorRole)
                 vendorFromRepository.SetVendorRole(vendorToUpdate.VendorRole);
-
-            DefaultPaymentMethod defaultPaymentMethod = null;
-
             if (HasEdits(vendorFromRepository?.DefaultPaymentMethod, vendorToUpdate?.DefaultPaymentMethod))
                 if (vendorToUpdate?.DefaultPaymentMethod is not null)
                 {
-                    defaultPaymentMethod = DefaultPaymentMethod.Create(await paymentMethodRepository.GetPaymentMethodEntityAsync(vendorToUpdate.DefaultPaymentMethod.PaymentMethod.Id),
-                        vendorToUpdate.DefaultPaymentMethod.AutoCompleteDocuments).Value;
-
+                    DefaultPaymentMethod defaultPaymentMethod = DefaultPaymentMethod.Create(await paymentMethodRepository.GetPaymentMethodEntityAsync(vendorToUpdate.DefaultPaymentMethod.PaymentMethod.Id),
+            vendorToUpdate.DefaultPaymentMethod.AutoCompleteDocuments).Value;
                     vendorFromRepository.SetDefaultPaymentMethod(defaultPaymentMethod);
                 }
 
@@ -107,7 +103,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             return NoContent();
         }
 
-        private bool HasEdits(DefaultPaymentMethod defaultPaymentMethodFromRepository, DefaultPaymentMethodToRead defaultPaymentMethodToUpdate)
+        private static bool HasEdits(DefaultPaymentMethod defaultPaymentMethodFromRepository, DefaultPaymentMethodToRead defaultPaymentMethodToUpdate)
         {
             if (defaultPaymentMethodFromRepository is null && defaultPaymentMethodToUpdate is null)
                 return false;

@@ -47,7 +47,7 @@ namespace Menominee.Client.Components.RepairOrders
         private void Save()
         {
             // Remove the techs that are no longer selected
-            for (int i = Service.Techs.Count - 1; i >=0; i--)
+            for (int i = Service.Techs.Count - 1; i >= 0; i--)
             {
                 Technician technician = Technicians.Find(t => (t.TechnicianId == Service.Techs[i].TechnicianId && t.Checked));
                 if (technician == null)

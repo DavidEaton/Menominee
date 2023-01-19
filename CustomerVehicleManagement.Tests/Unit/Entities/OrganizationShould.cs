@@ -282,7 +282,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Truncate_Note_To_Note_Maximum_Length()
         {
             var organization = CreateTestOrganization();
-            var notes = $"Lorem ipsum {Utilities.LoremIpsum(Organization.NoteMaximumLength)}";
+            var notes = $"Lorem ipsum {LoremIpsum(Organization.NoteMaximumLength)}";
 
             organization.SetNote(notes);
 

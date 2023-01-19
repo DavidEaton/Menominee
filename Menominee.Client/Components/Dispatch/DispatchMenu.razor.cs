@@ -14,13 +14,13 @@ namespace Menominee.Client.Components.Dispatch
 
         public void OnItemSelected(MenuItem selectedItem)
         {
-            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
-            //{
-            //    navigationManager.NavigateTo(selectedItem.Url);
-            //}
+            if (int.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
+            {
+                NavigationManager.NavigateTo(selectedItem.Url);
+            }
         }
 
-        private List<MenuItem> menuItems = new()
+        private readonly List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem

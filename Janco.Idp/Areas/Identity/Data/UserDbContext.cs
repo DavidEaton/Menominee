@@ -33,10 +33,10 @@ namespace Janco.Idp.Data.Contexts
 
             modelBuilder.Entity<ApplicationUser>()
                 .ToTable("AspNetUsers", "dbo");
-                //.Property(user => user.ShopRole)
-                //.HasConversion(
-                //    stringType => stringType.ToString(),
-                //    stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
+            //.Property(user => user.ShopRole)
+            //.HasConversion(
+            //    stringType => stringType.ToString(),
+            //    stringType => (ShopRole)Enum.Parse(typeof(ShopRole), stringType));
 
             modelBuilder.Entity<UserClaim>()
                 .ToTable("AspNetUserClaims", "dbo")

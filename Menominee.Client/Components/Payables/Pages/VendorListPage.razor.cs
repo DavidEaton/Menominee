@@ -8,13 +8,13 @@ using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
-    public partial class VendorListPage : ComponentBase 
+    public partial class VendorListPage : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public IVendorDataService VendorDataService{ get; set; }
+        public IVendorDataService VendorDataService { get; set; }
 
         //[Inject]
         //public ILogger<VendorList> Logger { get; set; }

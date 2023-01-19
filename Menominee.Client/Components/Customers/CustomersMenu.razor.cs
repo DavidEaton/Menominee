@@ -19,7 +19,7 @@ namespace Menominee.Client.Components.Customers
             //    NavigationManager.NavigateTo(selectedItem.Url);
             //}
 
-            
+
         }
 
         private List<MenuItem> menuItems = new()

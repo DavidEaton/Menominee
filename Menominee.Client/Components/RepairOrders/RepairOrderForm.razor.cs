@@ -160,7 +160,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             RepairOrderToEdit = Id == 0
                 ? RepairOrderToEdit = new()
-                : RepairOrderToEdit = RepairOrderHelper.CovertReadToWriteDto(RepairOrder);  
+                : RepairOrderToEdit = RepairOrderHelper.CovertReadToWriteDto(RepairOrder);
 
             // replace these once correct fields are in place
             string title = $"RO #{RandomInt()}";

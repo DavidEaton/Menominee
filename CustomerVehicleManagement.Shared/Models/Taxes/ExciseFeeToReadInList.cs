@@ -16,6 +16,6 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                     return Amount.ToString("#0.00#'%'");
                 return Amount.ToString("C");
             }
-        }        
+        }
     }
 }

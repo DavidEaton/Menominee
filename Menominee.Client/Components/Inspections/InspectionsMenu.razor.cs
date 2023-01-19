@@ -7,7 +7,7 @@ namespace Menominee.Client.Components.Inspections
     public partial class InspectionsMenu
     {
         [Inject]
-        public NavigationManager navigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; }
 
         private static string ModuleUrl = "/inspections";
         public int menuWidth { get; set; } = 139;

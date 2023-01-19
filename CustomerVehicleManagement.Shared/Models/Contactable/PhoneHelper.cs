@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 .Select(phone =>
                         ConvertEntityToReadDto(phone))
                 .ToList();
-            }
+        }
 
         public static IList<PhoneToWrite> ConvertReadToWriteDtos(IList<PhoneToRead> phones)
         {
@@ -29,11 +29,11 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return (phone is not null)
                 ? new PhoneToWrite()
-                    {
-                        Number = phone.Number,
-                        PhoneType = phone.PhoneType,
-                        IsPrimary = phone.IsPrimary
-                    }
+                {
+                    Number = phone.Number,
+                    PhoneType = phone.PhoneType,
+                    IsPrimary = phone.IsPrimary
+                }
                 : null;
         }
 
@@ -41,12 +41,12 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return (phone is not null)
                 ? new PhoneToRead()
-            {
-                Id = phone.Id,
-                PhoneType = phone.PhoneType,
-                Number = phone.Number,
-                IsPrimary = phone.IsPrimary
-                    }
+                {
+                    Id = phone.Id,
+                    PhoneType = phone.PhoneType,
+                    Number = phone.Number,
+                    IsPrimary = phone.IsPrimary
+                }
                 : null;
         }
 

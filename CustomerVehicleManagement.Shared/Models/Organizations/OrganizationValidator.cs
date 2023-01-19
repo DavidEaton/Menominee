@@ -33,7 +33,7 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 .When(organization => organization.Phones is not null);
 
             RuleFor(organization => organization)
-                .MustBeEntity(organization => 
+                .MustBeEntity(organization =>
                     Organization.Create(
                         OrganizationName.Create(organization.Name).Value,
                         organization.Notes));

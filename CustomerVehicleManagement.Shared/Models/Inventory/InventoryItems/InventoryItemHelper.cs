@@ -204,7 +204,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 item.ItemNumber,
                 item.Description,
                 productCode,
-                Utilities.ParseEnum<InventoryItemType>(item.ItemType),
+                ParseEnum<InventoryItemType>(item.ItemType),
                 item.Part is null
                     ? null
                     : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),

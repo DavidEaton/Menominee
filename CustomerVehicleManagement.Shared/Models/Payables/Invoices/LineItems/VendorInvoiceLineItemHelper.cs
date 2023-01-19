@@ -12,18 +12,18 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
     {
         public static List<VendorInvoiceLineItem> ConvertWriteDtosToEntities(
             IList<VendorInvoiceLineItemToWrite> lineItems,
-            IReadOnlyList<Manufacturer> manufacturer, 
+            IReadOnlyList<Manufacturer> manufacturer,
             IReadOnlyList<SaleCode> saleCode)
         {
             return lineItems?.Select(ConvertWriteDtoToEntity(
-                manufacturer, 
+                manufacturer,
                 saleCode)).ToList()
                 ??
                 new List<VendorInvoiceLineItem>();
         }
 
         public static Func<VendorInvoiceLineItemToWrite, VendorInvoiceLineItem> ConvertWriteDtoToEntity(
-            IReadOnlyList<Manufacturer> manufacturers, 
+            IReadOnlyList<Manufacturer> manufacturers,
             IReadOnlyList<SaleCode> saleCodes)
         {
             return lineItem =>

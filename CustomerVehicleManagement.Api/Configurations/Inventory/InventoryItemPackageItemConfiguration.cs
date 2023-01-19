@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Api.Configurations.Inventory
 
             builder.Property(packageItem => packageItem.DisplayOrder)
                 .IsRequired();
-            
+
             // Value Object: InventoryItemPackageDetails
             builder.OwnsOne(packageItem => packageItem.Details)
                .Property(details => details.Quantity)

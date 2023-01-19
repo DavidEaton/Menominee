@@ -78,7 +78,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
             if (resultOrError.IsFailure)
                 return BadRequest(resultOrError.Error);
-            
+
             // 2. Add domain entity to repository
             await repository.AddManufacturerAsync(resultOrError.Value);
 

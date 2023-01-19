@@ -10,7 +10,7 @@ namespace Menominee.Client.Components.Employees
         public NavigationManager navigationManager { get; set; }
 
         private static string ModuleUrl = "/employees";
-        public int menuWidth { get; set; } = 139;
+        public int MenuWidth { get; set; } = 139;
 
         public void OnItemSelected(MenuItem selectedItem)
         {

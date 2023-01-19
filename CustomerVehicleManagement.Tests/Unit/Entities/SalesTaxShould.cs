@@ -13,10 +13,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_SalesTax()
         {
             // Arrange
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 10;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
             bool? isAppliedByDefault = true;
@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 10;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
 
@@ -63,11 +63,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Invalid_Description()
         {
-            var invalidDescription = Utilities.RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
+            var invalidDescription = RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
 
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 10;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
 
@@ -79,12 +79,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Invalid_TaxType()
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
 
             var invalidSalesTaxType = (SalesTaxType)(-1);
 
             var order = (int)SalesTax.MinimumValue + 10;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
 
@@ -96,12 +96,12 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Invalid_Order()
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
 
             var invalidOrder = (int)SalesTax.MinimumValue - 1;
 
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
 
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Null_TaxIdNumber()
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 1;
 
@@ -131,11 +131,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_SalesTax_With_Invalid_TaxIdNumber(int length)
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 1;
 
-            var invalidTaxIdNumber = Utilities.RandomCharacters(length);
+            var invalidTaxIdNumber = RandomCharacters(length);
 
             var partTaxRate = SalesTax.MinimumValue + .1;
             var laborTaxRate = SalesTax.MinimumValue + .25;
@@ -148,10 +148,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Invalid_PartTaxRate()
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 1;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
 
             var invalidPartTaxRate = SalesTax.MinimumValue - .1;
 
@@ -165,10 +165,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_SalesTax_With_Invalid_LaborTaxRate()
         {
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 100);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
             var taxType = SalesTaxType.Normal;
             var order = (int)SalesTax.MinimumValue + 1;
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
             var partTaxRate = SalesTax.MinimumValue + .1;
 
             var invalidLaborTaxRate = SalesTax.MinimumValue - .25;
@@ -183,7 +183,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var salesTax = CreateSalesTax();
 
-            var description = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 150);
+            var description = RandomCharacters((int)SalesTax.MinimumValue + 150);
             salesTax.SetDescription(description);
 
             salesTax.Description.Should().Be(description);
@@ -203,7 +203,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_Description()
         {
             var salesTax = CreateSalesTax();
-            string invalidDescription = Utilities.RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
+            string invalidDescription = RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
 
             var resultOrError = salesTax.SetDescription(invalidDescription);
 
@@ -259,8 +259,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var salesTax = CreateSalesTax();
 
-            salesTax.TaxIdNumber.Length.Should().Be(Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
-            var taxIdNumber = Utilities.RandomCharacters((int)SalesTax.MinimumValue + 1);
+            salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 1);
             salesTax.SetTaxIdNumber(taxIdNumber);
 
             salesTax.TaxIdNumber.Should().Be(taxIdNumber);
@@ -271,8 +271,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_TaxIdNumber(int length)
         {
             var salesTax = CreateSalesTax();
-            salesTax.TaxIdNumber.Length.Should().Be(Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
-            var invalidTaxIdNumber = Utilities.RandomCharacters(length);
+            salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
+            var invalidTaxIdNumber = RandomCharacters(length);
 
             var resultOrError = salesTax.SetTaxIdNumber(invalidTaxIdNumber);
 
@@ -283,7 +283,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Null_TaxIdNumber()
         {
             var salesTax = CreateSalesTax();
-            salesTax.TaxIdNumber.Length.Should().Be(Utilities.RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
+            salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
 
             var resultOrError = salesTax.SetTaxIdNumber(null);
 
@@ -363,7 +363,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var salesTax = CreateSalesTax();
             var fee = ExciseFee.Create(
-                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
                 ExciseFee.MinimumValue + 1.0).Value;
 
@@ -377,7 +377,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var salesTax = CreateSalesTax();
             var fee = ExciseFee.Create(
-                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
                 ExciseFee.MinimumValue + 1.0).Value;
             salesTax.AddExciseFee(fee);
@@ -393,7 +393,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var salesTax = CreateSalesTax();
             var fee = ExciseFee.Create(
-                Utilities.RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
+                RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
                 ExciseFee.MinimumValue + 1.0).Value;
             salesTax.AddExciseFee(fee);

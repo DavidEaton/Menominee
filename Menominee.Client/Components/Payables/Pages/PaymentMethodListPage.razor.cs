@@ -83,7 +83,7 @@ namespace Menominee.Client.Components.Payables.Pages
                 PayMethod = new VendorInvoicePaymentMethodToWrite
                 {
                     Name = readDto.Name,
-                    IsActive= readDto.IsActive,
+                    IsActive = readDto.IsActive,
                     //IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
                     PaymentType = readDto.PaymentType,
                     ReconcilingVendor = readDto.ReconcilingVendor

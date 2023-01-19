@@ -100,11 +100,11 @@ namespace Menominee.Client.Components.Phones
                         &&
                         Phone?.Id != 0)
 
-                    // User added phone but now is removing it; has id equal to zero.
-                    if (Phone is not null
-                        &&
-                        Phone?.Id == 0)
-                        Phones.Remove(Phone);
+                        // User added phone but now is removing it; has id equal to zero.
+                        if (Phone is not null
+                            &&
+                            Phone?.Id == 0)
+                            Phones.Remove(Phone);
 
                     // Hide phone marked for deletion from user
                     DeletedPhones.Add(Phone);

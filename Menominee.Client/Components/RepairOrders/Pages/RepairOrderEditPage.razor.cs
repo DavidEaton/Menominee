@@ -17,7 +17,7 @@ namespace Menominee.Client.Components.RepairOrders.Pages
         [Parameter]
         public long Id { get; set; }
 
-        [CascadingParameter (Name = "MainLayout")]
+        [CascadingParameter(Name = "MainLayout")]
         MainLayout MainLayout { get; set; }
 
         public RepairOrderToRead RepairOrder { get; set; }

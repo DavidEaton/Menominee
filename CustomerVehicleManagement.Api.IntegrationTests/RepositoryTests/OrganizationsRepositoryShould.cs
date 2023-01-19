@@ -133,7 +133,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
                 var phones = CreateTestPhones(phonesCount);
                 foreach (var phone in phones)
-                    organizationFromRepository.AddPhone(Phone.Create(phone.Number,phone.PhoneType, phone.IsPrimary).Value);
+                    organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
                 await repository.SaveChangesAsync();
             }

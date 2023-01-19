@@ -41,7 +41,7 @@ namespace Menominee.Client.Components.Inventory
         protected override async Task OnInitializedAsync()
         {
             Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
-                                                          .Where(mfr => mfr.Prefix?.Length > 0 
+                                                          .Where(mfr => mfr.Prefix?.Length > 0
                                                                      && mfr.Code != StaticManufacturerCodes.Custom
                                                                      && mfr.Code != StaticManufacturerCodes.Package)
                                                           .OrderBy(mfr => mfr.Prefix)
@@ -81,7 +81,7 @@ namespace Menominee.Client.Components.Inventory
 
             if (Item?.Manufacturer is not null)
             {
-                long savedProductCodeId = productCodeId;  
+                long savedProductCodeId = productCodeId;
                 ProductCodes = (await productCodeDataService.GetAllProductCodesAsync(manufacturerId)).ToList();
                 if (savedProductCodeId > 0 && Item.ProductCode?.Id == 0 && ProductCodes.Any(pc => pc.Id == savedProductCodeId) == true)
                     Item.ProductCode = await productCodeDataService.GetProductCodeAsync(savedProductCodeId);

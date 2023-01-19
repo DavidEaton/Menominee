@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             result.IsFailure.Should().BeTrue();
         }
-        
+
         [Fact]
         public void Not_Add_Duplicate_Email()
         {
@@ -145,7 +145,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             result.IsFailure.Should().BeTrue();
         }
-        
+
         [Fact]
         public void RemovePhone()
         {

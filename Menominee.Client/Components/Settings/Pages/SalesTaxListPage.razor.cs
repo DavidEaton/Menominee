@@ -25,7 +25,7 @@ namespace Menominee.Client.Components.Settings.Pages
 
         [Parameter]
         public long Id { get; set; } = 0;
-        
+
         private bool CanEdit { get => Id > 0; }
         private bool CanDelete { get => Id > 0; }
 

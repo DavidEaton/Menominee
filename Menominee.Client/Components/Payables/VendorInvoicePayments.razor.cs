@@ -41,7 +41,7 @@ namespace Menominee.Client.Components.Payables
         private int popupHeight = 260;
         private bool CanEdit { get; set; } = false;
 
-        private bool CanDelete() 
+        private bool CanDelete()
         {
             return Payments?.Count > 0;
         }
@@ -49,7 +49,7 @@ namespace Menominee.Client.Components.Payables
         protected override async Task OnInitializedAsync()
         {
             PaymentMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
-            if (PaymentMethods.Count < 9) 
+            if (PaymentMethods.Count < 9)
             {
                 popupHeight = PaymentMethods.Count * 32;
             }

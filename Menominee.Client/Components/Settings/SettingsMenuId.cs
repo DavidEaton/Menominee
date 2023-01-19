@@ -5,7 +5,7 @@
         General,
         CompanyInformation,
         CustomSettings,
-        
+
         //--------------------
         Shop,
         ShopInformation,
@@ -13,7 +13,7 @@
         SaleCodes,
         ShopSupplies,
         OrderingAndCatalogs,
-        
+
         //--------------------
         Taxes,
         SalesTaxes,

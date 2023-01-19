@@ -136,7 +136,7 @@ namespace Menominee.Common.ValueObjects
 
             if (newAddressLine.Length > AddressMaximumLength)
                 return Result.Failure<Address>(AddressMaximumLengthMessage);
-            
+
             return Result.Success(new Address(newAddressLine, City, State, PostalCode));
         }
 
@@ -168,7 +168,7 @@ namespace Menominee.Common.ValueObjects
         {
             if (string.IsNullOrWhiteSpace(newPostalCode))
                 return Result.Failure<Address>(PostalCodeRequiredMessage);
-            
+
             newPostalCode = (newPostalCode ?? string.Empty).Trim();
 
             if (newPostalCode.Length < PostalCodeMinimumLength)

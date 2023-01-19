@@ -80,7 +80,7 @@ namespace Menominee.Client.Components.Inventory
             //        Item.ProductCodeId = savedPCId;
             //}
 
-            
+
             await OnManufacturerChangeAsync();
         }
 
@@ -125,7 +125,7 @@ namespace Menominee.Client.Components.Inventory
         private async Task OnProductCodeChangeAsync()
         {
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
-            Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
+                Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
             if (Item != null && Item.ProductCode != null)
                 SaleCode = Item.ProductCode?.SaleCode.Code + " - " + Item.ProductCode?.Name;

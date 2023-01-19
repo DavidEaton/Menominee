@@ -91,7 +91,7 @@ namespace Menominee.Common.ValueObjects
             if (newLastName.Length < LastNameMinimumLength ||
                 newLastName.Length > LastNameMaximumLength)
                 return Result.Failure<PersonName>(LastNameInvalidLengthMessage);
-            
+
             return Result.Success(new PersonName(newLastName, FirstName, MiddleName));
         }
 
@@ -116,7 +116,7 @@ namespace Menominee.Common.ValueObjects
             if (newMiddleName?.Length < MiddleNameMinimumLength ||
                 newMiddleName?.Length > MiddleNameMaximumLength)
                 return Result.Failure<PersonName>(MiddleNameInvalidLengthMessage);
-            
+
             return Result.Success(new PersonName(LastName, FirstName, newMiddleName));
         }
 

@@ -73,7 +73,7 @@ namespace Menominee.Client.Services.Customers
         {
             var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
             var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
-            var name = 
+            var name =
                 customer.EntityType == Person
                 ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
                 : customer.Organization.Name;
