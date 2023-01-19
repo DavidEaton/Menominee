@@ -91,6 +91,7 @@ namespace Menominee.Client.Components.Payables.Pages
 
         protected void EndEdit()
         {
+            // TODO: Need to preserve the listing's filter settings upon return
             navigationManager.NavigateTo($"payables/invoices/listing/{Id}");
         }
     }

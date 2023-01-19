@@ -9,53 +9,150 @@
         </div>
         <TelerikTextBox @bind-Value="Vendor.VendorCode"
                         MaxLength="10"
+                        AutoComplete="off"
                         Width="175px">
         </TelerikTextBox>
 
-        <TelerikCheckBox Id="active-vendor" @bind-Value="@Vendor.IsActive"></TelerikCheckBox>
-        <label class="k-label" for="active-vendor">Active Vendor</label>
+        <span class="float-right">
+            <TelerikCheckBox Id="active-vendor" @bind-Value="@Vendor.IsActive"></TelerikCheckBox>
+            <label class="k-label" for="active-vendor">Active Vendor</label>
+        </span>
     </div>
 
     <div class="form-group">
         <label class="m-label">Name</label>
         <TelerikTextBox @bind-Value="Vendor.Name"
+                        AutoComplete="off"
                         Width="100%">
         </TelerikTextBox>
     </div>
 
-    <div class="contact-info">
-        <div>
-            <Card Title="Address" Collapsible="true" Collapsed="false">
-                <Content>
-                    <AddressEditor Address="@Vendor?.Address"
-                                   Enabled="true"
-                                   FormMode="FormMode" />
-                </Content>
-            </Card>
+    <div class="form-row m-flex-form">
+
+        <div class="form-group">
+            <label class="m-label" for="vendorType">Vendor Type</label>
+            <div class="k-form-field-wrap">
+                <TelerikDropDownList @bind-Value="@Vendor.VendorRole"
+                                     Data="VendorTypeEnumData"
+                                     TextField="DisplayText"
+                                     ValueField="Value"
+                                     Width="200px">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="98px" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+
         </div>
-        <div>
-            <Card Title="Phones" Collapsible="true" Collapsed="false">
-                <Content>
-                    <PhoneListEditor Phones="@Vendor.Phones"
-                                     DefaultPhoneType="@PhoneType.Work"
-                                     FormMode="FormMode" />
-                </Content>
-            </Card>
+
+        <div class="form-group">
+            <label class="m-label">Default Payment Method</label>
+            <div class="k-form-field-wrap">
+                <TelerikDropDownList @bind-Value="paymentMethodId"
+                                     Data="PaymentMethodList"
+                                     TextField="DisplayText"
+                                     ValueField="Id"
+                                     OnChange="OnPaymentMethodChange"
+                                     Width="200px">
+                </TelerikDropDownList>
+            </div>
         </div>
-        <div>
-            <Card Title="Emails" Collapsible="true" Collapsed="false">
-                <Content>
-                    <EmailListEditor Emails="@Vendor.Emails"
-                                     FormMode="FormMode" />
-                </Content>
-            </Card>
-        </div>
+
+        @if (paymentMethodId > 0)
+        {
+            <div class="form-group" id="autocomplete-checkbox">
+                <TelerikCheckBox Id="autocomplete" @bind-Value="autoComplete"></TelerikCheckBox>
+                <label class="k-label" for="autocomplete">Auto-Complete Invoices</label>
+            </div>
+        }
+    </div>
+    <div>
+        <SfTab ShowCloseButton="false" OverflowMode="OverflowMode.Scrollable" HeaderPlacement="HeaderPosition.Top" CssClass="e-background m-tabs">
+            <TabAnimationSettings>
+                <TabAnimationPrevious Effect="AnimationEffect.None"></TabAnimationPrevious>
+                <TabAnimationNext Effect="AnimationEffect.None"></TabAnimationNext>
+            </TabAnimationSettings>
+            <TabItems>
+                <TabItem CssClass="m-tab-item">
+                    <ChildContent>
+                        <TabHeader Text="Contact"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="m-tab-content-border">
+                            <div class="m-tab-content" id="contactTab">
+                                @*<div class="form-group">*@
+                                <div class="contact-info">
+                                    <div>
+                                        <Card Title="Address">
+                                            <Content>
+                                                <AddressEditor Address="@Vendor?.Address"
+                                                               Enabled="true"
+                                                               FormMode="FormMode" />
+                                            </Content>
+                                        </Card>
+                                    </div>
+                                    <div>
+                                        <Card Title="Phones">
+                                            <Content>
+                                                <PhoneListEditor Phones="@Vendor.Phones"
+                                                                 DefaultPhoneType="@PhoneType.Work"
+                                                                 FormMode="FormMode" />
+                                            </Content>
+                                        </Card>
+                                    </div>
+                                    <div>
+                                        <Card Title="Emails">
+                                            <Content>
+                                                <EmailListEditor Emails="@Vendor.Emails"
+                                                                 FormMode="FormMode" />
+                                            </Content>
+                                        </Card>
+                                    </div>
+                                </div>
+                                @*</div>*@
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem CssClass="m-tab-item">
+                    <ChildContent>
+                        <TabHeader Text="Notes"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="m-tab-content-border" id="notesTab">
+                            <div class="m-tab-content">
+                                <div>
+                                    <TelerikTextArea Id="notes" AutoSize="false" @bind-Value="@Vendor.Note"></TelerikTextArea>
+                                </div>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem CssClass="m-tab-item">
+                    <ChildContent>
+                        <TabHeader Text="Buyouts"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div class="m-tab-content-border" id="buyoutTab">
+                            <div class="m-tab-content">
+                                <div class="form-group">
+                                    <div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </TabItem>
+            </TabItems>
+        </SfTab>
     </div>
 
-    <SaveDiscardButtons OnSave="@OnValidSubmit" OnDiscard="@OnDiscard" />
+
+    <SaveDiscardButtons OnSave="@OnSaveAsync" OnDiscard="@OnDiscard" />
 </div>
 
 <style>
+    /*TODO: Fix highlight area around ID & Name fields*/
     .contact-info {
         display: grid;
         grid-template-columns: 2fr 1.5fr 1.5fr;
@@ -63,8 +160,53 @@
         margin-right: 5px;
     }
 
-    #active-vendor { 
-        margin-left: 1rem;
+    .e-tab.e-background .e-tab-header .e-toolbar-item .e-tab-text {
+        color: black;
+        font-size: 1rem !important;
+    }
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item.e-active .e-tab-wrap {
+        background: var(--bg-color-medium) !important;
+        color: white !important;
+        border-radius: 0.25rem 0.25rem 0 0;
+        margin-right: 2px;
+    }
+
+    .e-tab.e-background .e-tab-header .e-toolbar-item:not(.e-active) .e-tab-wrap {
+        background: var(--bg-color-extra-light) !important;
+        border-radius: 0.25rem 0.25rem 0 0;
+    }
+
+        .e-tab.e-background .e-tab-header .e-toolbar-item:not(.e-active) .e-tab-wrap .e-tab-text {
+            color: black !important;
+        }
+
+    .e-tab .e-tab-header.e-vertical {
+        max-width: unset;
+    }
+
+    .e-control {
+        font-size: unset;
+    }
+
+    #contactTab, #notesTab, #buyoutTab {
+        min-height: 330px !important;
+    }
+
+    #notes.k-input-inner {
+        min-height: 302px;
+    }
+
+    .m-tab-content {
+        padding-bottom: 14px;
+    }
+
+    .form-row.m-flex-form {
+        margin: 0;
+    }
+
+    #autocomplete-checkbox {
+        margin-top: 30px;
     }
 
     @@media (max-width:992px) {

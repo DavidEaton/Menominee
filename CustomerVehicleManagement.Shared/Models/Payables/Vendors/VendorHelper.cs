@@ -54,7 +54,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                         IsActive = vendor.DefaultPaymentMethod.PaymentMethod.IsActive,
                         PaymentType = vendor.DefaultPaymentMethod.PaymentMethod.PaymentType,
                         ReconcilingVendor = ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod.ReconcilingVendor)
-                    }
+                    },
+                    AutoCompleteDocuments = vendor.DefaultPaymentMethod.AutoCompleteDocuments
                 };
             }
 

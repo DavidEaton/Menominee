@@ -21,7 +21,9 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
         public async Task<Vendor> GetVendorEntityAsync(long id)
         {
-            return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
+            return await context.Vendors
+                .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
+                .FirstOrDefaultAsync(vendor => vendor.Id == id);
         }
 
         public async Task<IReadOnlyList<Vendor>> GetVendorEntitiesAsync(List<long> ids)
