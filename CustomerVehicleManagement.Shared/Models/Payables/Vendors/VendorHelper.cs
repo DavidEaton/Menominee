@@ -39,13 +39,15 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                 Name = vendor.Name,
                 VendorCode = vendor.VendorCode,
                 VendorRole = vendor.VendorRole,
-                IsActive = vendor.IsActive
+                IsActive = vendor.IsActive,
+                Notes = vendor.Notes
             };
 
-            if (vendor.DefaultPaymentMethod is not null)
+            if (vendor.DefaultPaymentMethod?.PaymentMethod is not null)
             {
                 defaultPaymentMethod = new DefaultPaymentMethodToRead()
                 {
+                    AutoCompleteDocuments = vendor.DefaultPaymentMethod.AutoCompleteDocuments,
                     PaymentMethod = new VendorInvoicePaymentMethodToRead()
                     {
                         Id = vendor.DefaultPaymentMethod.PaymentMethod.Id,

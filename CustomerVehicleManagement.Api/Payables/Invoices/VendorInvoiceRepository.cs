@@ -94,9 +94,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 throw new ArgumentException(nameof(resourceParameters));
 
             var invoicesFromContext = context.VendorInvoices
-                .Include(invoice => invoice.Vendor)
-                    .ThenInclude(vendor => vendor.DefaultPaymentMethod)
-                        .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
+                .Include(invoice => invoice.Vendor.DefaultPaymentMethod.PaymentMethod)
                 .AsSplitQuery()
                 .AsNoTracking();
 

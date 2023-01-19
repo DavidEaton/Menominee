@@ -59,7 +59,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         public async Task<IReadOnlyList<VendorToRead>> GetVendorsAsync()
         {
             IReadOnlyList<Vendor> vendorsFromContext = await context.Vendors
-                .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
+                .Include(vendor => vendor.DefaultPaymentMethod)
+                    .ThenInclude(defaultPaymentMethod => defaultPaymentMethod.PaymentMethod)
                 .AsNoTracking()
                 .ToListAsync();
 
