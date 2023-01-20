@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.ValueObjects;
@@ -98,18 +97,24 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             Address
             Phones
             Email   */
-            if (vendorFromCaller?.Address is not null)
+            Result<Address> addressOrError = null;
+
+            if (vendorFromCaller.Address is not null)
+                addressOrError = Address.Create(
+                    vendorFromCaller.Address.AddressLine, 
+                    vendorFromCaller.Address.City, 
+                    vendorFromCaller.Address.State, 
+                    vendorFromCaller.Address.PostalCode);
+
+            if (addressOrError.IsSuccess)
             {
                 // Since VendorValidator runs AddressValidator before request even gets
                 // here in tyhe controller, no need to check Result.IsFailure, just
                 // return the Value from the Create factory method:
-                vendorFromRepository.SetAddress(
-                    Address.Create(
-                        vendorFromCaller.Address.AddressLine,
-                        vendorFromCaller.Address.City,
-                        vendorFromCaller.Address.State,
-                        vendorFromCaller.Address.PostalCode)
-                    .Value);
+                var setAddressResult = vendorFromRepository.SetAddress(addressOrError.Value);
+
+                if (vendorFromRepository.SetAddress(addressOrError.Value).IsFailure)
+                    return NotFound($"Could not add new Vendor '{vendorFromCaller.Name}': {setAddressResult.Error}");
             }
 
             if (vendorFromCaller?.Address is null)
@@ -202,36 +207,38 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             VendorInvoicePaymentMethod paymentMethod = null;
             Result<Address> addressOrError = null;
 
-            if (vendorToAdd.DefaultPaymentMethod is not null)
+            if (vendorToAdd?.DefaultPaymentMethod?.PaymentMethod is not null)
+            {
                 paymentMethod = await paymentMethodRepository.GetPaymentMethodEntityAsync(
                     vendorToAdd.DefaultPaymentMethod.PaymentMethod.Id);
 
-            if (paymentMethod is null)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'. Vendor default payment method {vendorToAdd.DefaultPaymentMethod.PaymentMethod.Name} was not found.");
+                if (paymentMethod is null)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'. Vendor default payment method {vendorToAdd.DefaultPaymentMethod.PaymentMethod.Name} was not found.");
 
-            var defaultPaymentMethodOrError = DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments);
+                var defaultPaymentMethodOrError = DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments);
 
-            if (defaultPaymentMethodOrError.IsFailure)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {defaultPaymentMethodOrError.Error}");
+                if (defaultPaymentMethodOrError.IsFailure)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {defaultPaymentMethodOrError.Error}");
 
-            var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(defaultPaymentMethodOrError.Value);
+                var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(defaultPaymentMethodOrError.Value);
 
-            if (setDefaultPaymentMethodResult.IsFailure)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
+                if (setDefaultPaymentMethodResult.IsFailure)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
+            }
 
-            // TODO: Can we centralize this code that gets repeated for Persons and
-            // Organizations (all classes deriiving from Contactable)?
+            // TODO: Centralize this code that gets repeated for Persons and
+            // Organizations (all classes deriiving from Contactable)
             // ∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
             if (vendorToAdd.Address is not null)
                 addressOrError = Address.Create(vendorToAdd.Address.AddressLine, vendorToAdd.Address.City, vendorToAdd.Address.State, vendorToAdd.Address.PostalCode);
 
-            if (addressOrError.IsFailure)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {addressOrError.Error}");
+            if (addressOrError.IsSuccess)
+            {
+                var setAddressResult = vendor.SetAddress(addressOrError.Value);
 
-            var setAddressResult = vendor.SetAddress(addressOrError.Value);
-
-            if (setAddressResult.IsFailure)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setAddressResult.Error}");
+                if (vendor.SetAddress(addressOrError.Value).IsFailure)
+                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setAddressResult.Error}");
+            }
 
             if (vendorToAdd?.Phones.Count > 0)
                 foreach (var phone in vendorToAdd.Phones)

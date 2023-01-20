@@ -47,16 +47,11 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private async Task Save()
         {
-            //if (!string.IsNullOrWhiteSpace(VendorToAdd.VendorId) && !string.IsNullOrWhiteSpace(VendorToAdd.Name))
             if (Id == 0)
-            {
-                var vendor = await vendorDataService.AddVendorAsync(Vendor);
-                Id = vendor.Id;
-            }
-            else
-            {
+                await vendorDataService.AddVendorAsync(Vendor);
+
+            if (Id != 0)
                 await vendorDataService.UpdateVendorAsync(Vendor, Id);
-            }
 
             EndEdit();
         }
