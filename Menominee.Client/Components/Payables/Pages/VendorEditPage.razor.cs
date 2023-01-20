@@ -48,9 +48,11 @@ namespace Menominee.Client.Components.Payables.Pages
         private async Task Save()
         {
             if (Id == 0)
+            {
                 await vendorDataService.AddVendorAsync(Vendor);
-
-            if (Id != 0)
+                Id = Vendor.Id;
+            }
+            else
                 await vendorDataService.UpdateVendorAsync(Vendor, Id);
 
             EndEdit();
