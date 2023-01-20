@@ -34,6 +34,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
             {
                 return new EmailToRead()
                 {
+                    Id = email.Id,
                     Address = email.Address,
                     IsPrimary = email.IsPrimary
                 };
@@ -56,6 +57,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
             {
                 return new EmailToWrite()
                 {
+                    Id = email.Id,
                     Address = email.Address,
                     IsPrimary = email.IsPrimary
                 };

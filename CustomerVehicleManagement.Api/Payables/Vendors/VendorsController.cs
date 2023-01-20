@@ -3,12 +3,14 @@ using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Vendors
@@ -47,67 +49,129 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
 
         // api/vendors/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateVendorAsync(long id, VendorToWrite vendorToUpdate)
+        public async Task<IActionResult> UpdateVendorAsync(long id, VendorToWrite vendorFromCaller)
         {
-            var notFoundMessage = $"Could not find Vendor to update: {vendorToUpdate.Name}";
+            var notFoundMessage = $"Could not find Vendor to update: {vendorFromCaller.Name}";
 
             if (!await repository.VendorExistsAsync(id))
                 return NotFound(notFoundMessage);
 
             var vendorFromRepository = await repository.GetVendorEntityAsync(id);
 
-            if (vendorFromRepository.VendorCode != vendorToUpdate.VendorCode)
-                vendorFromRepository.SetVendorCode(vendorToUpdate.VendorCode);
+            if (vendorFromRepository.VendorCode != vendorFromCaller.VendorCode)
+                vendorFromRepository.SetVendorCode(vendorFromCaller.VendorCode);
 
-            if (vendorFromRepository.Name != vendorToUpdate.Name)
-                vendorFromRepository.SetName(vendorToUpdate.Name);
+            if (vendorFromRepository.Name != vendorFromCaller.Name)
+                vendorFromRepository.SetName(vendorFromCaller.Name);
 
-            if (vendorFromRepository.Notes != vendorToUpdate.Notes)
-                vendorFromRepository.SetNote(vendorToUpdate.Notes);
+            if (vendorFromRepository.Notes != vendorFromCaller.Notes)
+                vendorFromRepository.SetNote(vendorFromCaller.Notes);
 
-            if (vendorToUpdate.IsActive.HasValue)
+            if (vendorFromCaller.IsActive.HasValue)
             {
-                if (vendorToUpdate.IsActive.Value.Equals(true))
+                if (vendorFromCaller.IsActive.Value.Equals(true))
                     vendorFromRepository.Enable();
 
-                if (vendorToUpdate.IsActive.Value.Equals(false))
+                if (vendorFromCaller.IsActive.Value.Equals(false))
                     vendorFromRepository.Disable();
             }
 
-            if (vendorFromRepository.VendorRole != vendorToUpdate.VendorRole)
-                vendorFromRepository.SetVendorRole(vendorToUpdate.VendorRole);
+            if (vendorFromRepository.VendorRole != vendorFromCaller.VendorRole)
+                vendorFromRepository.SetVendorRole(vendorFromCaller.VendorRole);
 
-            if (HasEdits(vendorFromRepository?.DefaultPaymentMethod, vendorToUpdate?.DefaultPaymentMethod))
-                if (vendorToUpdate?.DefaultPaymentMethod is not null)
+            if (DefaultPaymentMethodHasEdits(vendorFromRepository?.DefaultPaymentMethod, vendorFromCaller?.DefaultPaymentMethod))
+                if (vendorFromCaller?.DefaultPaymentMethod is not null)
                 {
                     DefaultPaymentMethod defaultPaymentMethod = DefaultPaymentMethod.Create(
                         await paymentMethodRepository.GetPaymentMethodEntityAsync(
-                            vendorToUpdate.DefaultPaymentMethod.PaymentMethod.Id),
-                            vendorToUpdate.DefaultPaymentMethod.AutoCompleteDocuments).Value;
+                            vendorFromCaller.DefaultPaymentMethod.PaymentMethod.Id),
+                            vendorFromCaller.DefaultPaymentMethod.AutoCompleteDocuments).Value;
 
                     vendorFromRepository.SetDefaultPaymentMethod(defaultPaymentMethod);
                 }
 
-            if (vendorToUpdate?.DefaultPaymentMethod is null)
+            if (vendorFromCaller?.DefaultPaymentMethod is null)
                 vendorFromRepository.ClearDefaultPaymentMethod();
 
+            /* TODO: Centralize Update code that gets repeated for Persons, Customers,
+            Vendor, Employees and Organizations (all classes deriiving from Contactable):
+            Address
+            Phones
+            Email   */
+            if (vendorFromCaller?.Address is not null)
+            {
+                // Since VendorValidator runs AddressValidator before request even gets
+                // here in tyhe controller, no need to check Result.IsFailure, just
+                // return the Value from the Create factory method:
+                vendorFromRepository.SetAddress(
+                    Address.Create(
+                        vendorFromCaller.Address.AddressLine,
+                        vendorFromCaller.Address.City,
+                        vendorFromCaller.Address.State,
+                        vendorFromCaller.Address.PostalCode)
+                    .Value);
+            }
 
-            /* TODO: Can we centralize Update code that gets repeated for Persons and
-             Vendors and Organizations (all classes deriiving from Contactable)?
-            */
+            if (vendorFromCaller?.Address is null)
+                vendorFromRepository.ClearAddress();
 
-            //Address
-            //Notes
-            //Phones
-            //Email
+            // Phones
+            foreach (var phoneFromCaller in vendorFromCaller?.Phones)
+            {
+                // Added
+                if (phoneFromCaller.Id == 0)
+                    vendorFromRepository.AddPhone(
+                        Phone.Create(phoneFromCaller.Number, phoneFromCaller.PhoneType, phoneFromCaller.IsPrimary)
+                        .Value);
+                // Updated
+                if (phoneFromCaller.Id != 0)
+                {
+                    var phoneFromRepository = vendorFromRepository?.Phones.FirstOrDefault(
+                        contextPhone =>
+                        contextPhone.Id == phoneFromCaller.Id);
 
+                    if (phoneFromRepository.Number != phoneFromCaller.Number)
+                        phoneFromRepository.SetNumber(phoneFromCaller.Number);
+
+                    if (phoneFromRepository.PhoneType != phoneFromCaller.PhoneType)
+                        phoneFromRepository.SetPhoneType(phoneFromCaller.PhoneType);
+
+                    if (phoneFromRepository.IsPrimary != phoneFromCaller.IsPrimary)
+                        phoneFromRepository.SetIsPrimary(phoneFromCaller.IsPrimary);
+                }
+                // TODO: Deleted
+            }
+
+            // Emails
+            foreach (var emailFromCaller in vendorFromCaller?.Emails)
+            {
+                // Added
+                if (emailFromCaller.Id == 0)
+                    vendorFromRepository.AddEmail(
+                        Email.Create(emailFromCaller.Address, emailFromCaller.IsPrimary)
+                        .Value);
+                // Updated
+                if (emailFromCaller.Id != 0)
+                {
+                    var emailFromRepository = vendorFromRepository?.Emails.FirstOrDefault(
+                        contextEmail =>
+                        contextEmail.Id == emailFromCaller.Id);
+
+                    if (emailFromRepository.Address != emailFromCaller.Address)
+                        emailFromRepository.SetAddress(emailFromCaller.Address);
+
+                    if (emailFromRepository.IsPrimary != emailFromCaller.IsPrimary)
+                        emailFromRepository.SetIsPrimary(emailFromCaller.IsPrimary);
+                }
+                // TODO: Deleted
+            }
 
             await repository.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private static bool HasEdits(DefaultPaymentMethod defaultPaymentMethodFromRepository, DefaultPaymentMethodToRead defaultPaymentMethodToUpdate)
+        private static bool DefaultPaymentMethodHasEdits(DefaultPaymentMethod defaultPaymentMethodFromRepository, DefaultPaymentMethodToRead defaultPaymentMethodToUpdate)
         {
             if (defaultPaymentMethodFromRepository is null && defaultPaymentMethodToUpdate is null)
                 return false;

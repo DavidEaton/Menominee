@@ -22,6 +22,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         public async Task<Vendor> GetVendorEntityAsync(long id)
         {
             return await context.Vendors
+                .Include(vendor => vendor.Phones)
+                .Include(vendor => vendor.Emails)
                 .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
         }
@@ -42,11 +44,11 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         public async Task<VendorToRead> GetVendorAsync(long id)
         {
             var vendorFromContext = await context.Vendors
-                //.Include(organization => organization.Phones)
-                //.Include(organization => organization.Emails)
-                //.Include(organization => organization.Contact)
+                .Include(vendor => vendor.Phones)
+                .Include(vendor => vendor.Emails)
+                //.Include(vendor => vendor.Contact)
                 //    .ThenInclude(contact => contact.Phones)
-                //.Include(organization => organization.Contact)
+                //.Include(vendor => vendor.Contact)
                 //    .ThenInclude(contact => contact.Emails)
                 .Include(vendor => vendor.DefaultPaymentMethod.PaymentMethod)
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);

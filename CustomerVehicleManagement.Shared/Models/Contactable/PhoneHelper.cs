@@ -30,6 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
             return (phone is not null)
                 ? new PhoneToWrite()
                 {
+                    Id = phone.Id,
                     Number = phone.Number,
                     PhoneType = phone.PhoneType,
                     IsPrimary = phone.IsPrimary
