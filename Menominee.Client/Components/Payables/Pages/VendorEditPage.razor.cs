@@ -53,6 +53,7 @@ namespace Menominee.Client.Components.Payables.Pages
             if (Id == 0)
             {
                 var vendor = await VendorDataService.AddVendorAsync(Vendor);
+                Id = vendor.Id;
             }
             else
                 await VendorDataService.UpdateVendorAsync(Vendor, Id);
@@ -67,7 +68,7 @@ namespace Menominee.Client.Components.Payables.Pages
 
         protected void EndEdit()
         {
-            NavigationManager.NavigateTo($"payables/vendors/listing/{Vendor.Id}");
+            NavigationManager.NavigateTo($"payables/vendors/listing/{Id}");
         }
     }
 }
