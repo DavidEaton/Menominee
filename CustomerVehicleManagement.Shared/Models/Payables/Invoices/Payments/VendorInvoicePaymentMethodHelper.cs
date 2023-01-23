@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Common.Enums;
 using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
@@ -15,7 +16,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             {
                 Name = payMethod.Name,
                 IsActive = payMethod.IsActive,
-                //IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
                 PaymentType = payMethod.PaymentType,
                 ReconcilingVendor = payMethod.ReconcilingVendor
             };
@@ -30,7 +30,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Id = payMethod.Id,
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
-                    //IsOnAccountPaymentType = payMethod.IsOnAccountPaymentType,
                     PaymentType = payMethod.PaymentType,
                     ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
                 };
@@ -45,9 +44,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Id = payMethod.Id,
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
-                    PaymentType = payMethod.PaymentType,
-                    ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A"
+                    // may or may not need these...
+                    //PaymentType = payMethod.PaymentType,
+                    //ReconcilingVendorName = payMethod.ReconcilingVendor?.Name ?? "N/A",
+                    PaymentTypeDescription = PaymentMethodDescription(payMethod)
                 };
+        }
+
+        public static string PaymentMethodDescription(VendorInvoicePaymentMethod payMethod)
+        {
+            if (payMethod.PaymentType != VendorInvoicePaymentMethodType.ReconciledByOtherVendor)
+                return EnumExtensions.GetDisplayName(payMethod.PaymentType);
+
+            return "Reconciled By " + (payMethod.ReconcilingVendor?.Name ?? "N/A");
         }
 
         internal static VendorInvoicePaymentMethodToRead ConvertWriteToReadDto(VendorInvoicePaymentToWrite payment, VendorInvoicePaymentMethodToRead method)
@@ -59,7 +68,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                         Id = payment.PaymentMethod.Id,
                         Name = method.Name,
                         IsActive = method.IsActive,
-                        //IsOnAccountPaymentType = method.IsOnAccountPaymentType,
                         PaymentType = method.PaymentType,
                         ReconcilingVendor = method.ReconcilingVendor
                     };
@@ -76,8 +84,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 {
                     Id = paymentMethod.Id,
                     Name = paymentMethod.Name,
-                    IsActive = paymentMethod.IsActive,
-                    PaymentType = paymentMethod.PaymentType
+                    IsActive = paymentMethod.IsActive//,
+                    // may or may not need this...
+                    //PaymentType = paymentMethod.PaymentType
                     //ReconcilingVendor = paymentMethod.ReconcilingVendorName
                 };
         }

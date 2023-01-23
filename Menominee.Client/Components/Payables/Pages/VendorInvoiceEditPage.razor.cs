@@ -10,10 +10,10 @@ namespace Menominee.Client.Components.Payables.Pages
     public partial class VendorInvoiceEditPage : ComponentBase
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        private NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        private IVendorInvoiceDataService vendorInvoiceDataService { get; set; }
+        private IVendorInvoiceDataService VendorInvoiceDataService { get; set; }
 
         [Parameter]
         public long Id { get; set; }
@@ -35,7 +35,7 @@ namespace Menominee.Client.Components.Payables.Pages
             }
             else
             {
-                var readDto = await vendorInvoiceDataService.GetInvoice(Id);
+                var readDto = await VendorInvoiceDataService.GetInvoice(Id);
                 if (readDto != null)
                 {
                     Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
@@ -56,12 +56,12 @@ namespace Menominee.Client.Components.Payables.Pages
             {
                 if (Id == 0)
                 {
-                    var invoice = await vendorInvoiceDataService.AddInvoice(Invoice);
+                    var invoice = await VendorInvoiceDataService.AddInvoice(Invoice);
                     Id = invoice.Id;
                 }
                 else
                 {
-                    await vendorInvoiceDataService.UpdateInvoice(Invoice, Id);
+                    await VendorInvoiceDataService.UpdateInvoice(Invoice, Id);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace Menominee.Client.Components.Payables.Pages
         protected void EndEdit()
         {
             // TODO: Need to preserve the listing's filter settings upon return
-            navigationManager.NavigateTo($"payables/invoices/listing/{Id}");
+            NavigationManager.NavigateTo($"payables/invoices/listing/{Id}");
         }
     }
 }

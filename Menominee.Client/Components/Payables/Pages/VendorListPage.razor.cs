@@ -26,7 +26,7 @@ namespace Menominee.Client.Components.Payables.Pages
         public IEnumerable<VendorToRead> SelectedList { get; set; } = Enumerable.Empty<VendorToRead>();
         public VendorToRead SelectedItem { get; set; }
 
-        private bool showInactive { get; set; } = false;
+        private bool ShowInactive { get; set; } = false;
 
         public TelerikGrid<VendorToRead> Grid { get; set; }
 

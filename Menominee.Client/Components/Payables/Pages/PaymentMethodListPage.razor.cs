@@ -28,7 +28,7 @@ namespace Menominee.Client.Components.Payables.Pages
         public IEnumerable<VendorInvoicePaymentMethodToReadInList> SelectedList { get; set; } = Enumerable.Empty<VendorInvoicePaymentMethodToReadInList>();
         public VendorInvoicePaymentMethodToReadInList SelectedItem { get; set; }
 
-        private bool showInactive { get; set; } = false;
+        private bool ShowInactive { get; set; } = false;
 
         public TelerikGrid<VendorInvoicePaymentMethodToReadInList> Grid { get; set; }
 
@@ -50,6 +50,11 @@ namespace Menominee.Client.Components.Payables.Pages
         }
 
         protected override async Task OnInitializedAsync()
+        {
+            await LoadPaymentMethodsAsync();
+        }
+
+        private async Task LoadPaymentMethodsAsync()
         {
             PayMethods = (await PaymentMethodDataService.GetAllPaymentMethodsAsync()).ToList();
 
@@ -84,7 +89,6 @@ namespace Menominee.Client.Components.Payables.Pages
                 {
                     Name = readDto.Name,
                     IsActive = readDto.IsActive,
-                    //IsOnAccountPaymentType = readDto.IsOnAccountPaymentType,
                     PaymentType = readDto.PaymentType,
                     ReconcilingVendor = readDto.ReconcilingVendor
                 };
@@ -102,17 +106,7 @@ namespace Menominee.Client.Components.Payables.Pages
                 await PaymentMethodDataService.DeletePaymentMethodAsync(SelectedId);
             }
 
-            SelectedItem = PayMethods.FirstOrDefault();
-            if (SelectedItem != null)
-            {
-                SelectedId = SelectedItem.Id;
-                SelectedList = new List<VendorInvoicePaymentMethodToReadInList> { SelectedItem };
-            }
-            else
-            {
-                SelectedId = 0;
-                SelectedList = Enumerable.Empty<VendorInvoicePaymentMethodToReadInList>();
-            }
+            await LoadPaymentMethodsAsync();
             Grid.Rebind();
         }
 

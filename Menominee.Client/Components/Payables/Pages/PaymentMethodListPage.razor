@@ -26,21 +26,23 @@
                              Class="m-grid"
                              @ref="@Grid">
                     <GridToolBar>
-                        <TelerikCheckBox Id="myCheckBox" @bind-Value="@showInactive" />
-                        <label for="myCheckBox">Show Inactive</label>
-@*                        <span class="k-toolbar-spacer"></span>
-                        <span class="k-toolbar-spacer"></span>*@
-                        @*<GridSearchBox />*@
+                        <TelerikCheckBox Id="myCheckBox" @bind-Value="@ShowInactive" />
+                        <label for="myCheckBox" class="mb-0">Show Inactive</label>
+
                     </GridToolBar>
+                    <GridSettings>
+                        <GridColumnMenuSettings Lockable="false"
+                                            ShowColumnChooser="false">
+                        </GridColumnMenuSettings>
+                    </GridSettings>
                     <GridColumns>
-                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.Name)" Title="Payment Name"></Telerik.Blazor.Components.GridColumn>
-                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.ReconcilingVendorName)" Title="Reconciled By Vendor"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.Name)" Title="Name"></Telerik.Blazor.Components.GridColumn>
+                        <Telerik.Blazor.Components.GridColumn Field="@nameof(VendorInvoicePaymentMethodToReadInList.PaymentTypeDescription)" Title="Type"></Telerik.Blazor.Components.GridColumn>
                     </GridColumns>
                 </TelerikGrid>
 
                 <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEditAsync" OnNew="@OnAdd" OnDelete="@OnDeleteAsync" 
                                       CanEdit="@CanEdit"  CanDelete="@CanDelete" />
-
             }
         </div>
     </div>

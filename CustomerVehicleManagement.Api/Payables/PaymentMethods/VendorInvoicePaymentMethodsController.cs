@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             if (paymentMethodToUpdate.PaymentType != paymentMethodFromRepository.PaymentType)
                 paymentMethodFromRepository.SetPaymentType(paymentMethodToUpdate.PaymentType);
 
-            if (paymentMethodToUpdate?.ReconcilingVendor.Id != paymentMethodFromRepository?.ReconcilingVendor.Id)
+            if (paymentMethodToUpdate?.ReconcilingVendor?.Id != paymentMethodFromRepository?.ReconcilingVendor?.Id)
             {
                 var reconcilingVendorFromCaller = paymentMethodToUpdate.ReconcilingVendor is not null ? paymentMethodToUpdate.ReconcilingVendor : null;
                 Vendor reconcilingVendor = null;

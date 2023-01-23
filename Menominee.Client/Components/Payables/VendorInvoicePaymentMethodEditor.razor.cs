@@ -15,7 +15,7 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoicePaymentMethodEditor
     {
         [Inject]
-        public IVendorDataService vendorDataService { get; set; }
+        public IVendorDataService VendorDataService { get; set; }
 
         [Inject]
         IJSRuntime JsInterop { get; set; }
@@ -49,9 +49,9 @@ namespace Menominee.Client.Components.Payables
 
         protected override async Task OnInitializedAsync()
         {
-            Vendors = (await vendorDataService.GetAllVendorsAsync())
-                                                          .Where(vendor => vendor.IsActive == true)
-                                                          //&& vendor.VendorRole == VendorRole.PaymentReconciler)
+            Vendors = (await VendorDataService.GetAllVendorsAsync())
+                                                          .Where(vendor => vendor.IsActive == true 
+                                                                        && vendor.VendorRole == VendorRole.PaymentReconciler)
                                                           .OrderBy(vendor => vendor.VendorCode)
                                                           .ToList();
 
@@ -67,11 +67,10 @@ namespace Menominee.Client.Components.Payables
                 return;
             parametersSet = true;
 
-            //if (PaymentMethod?.ReconcilingVendor != null)
-            //{
-            //    vendorId = PaymentMethod.ReconcilingVendor.Id;
-            //}
-            //vendorId = PaymentMethod?.VendorId;
+            if (PaymentMethod?.ReconcilingVendor != null)
+            {
+                vendorId = PaymentMethod.ReconcilingVendor.Id;
+            }
 
             await OnVendorChangeAsync();
         }
@@ -82,12 +81,10 @@ namespace Menominee.Client.Components.Payables
             {
                 PaymentMethod.ReconcilingVendor = null;
             }
-            //else if (vendorId > 0 && PaymentMethod.ReconcilingVendor?.Id != vendorId)
-            else if (PaymentMethod?.ReconcilingVendor.Id != vendorId)
+            else if (PaymentMethod?.ReconcilingVendor?.Id != vendorId)
             {
-                PaymentMethod.ReconcilingVendor = await vendorDataService.GetVendorAsync(vendorId ?? 0);
+                PaymentMethod.ReconcilingVendor = await VendorDataService.GetVendorAsync(vendorId ?? 0);
             }
-            //PaymentMethod.VendorId = vendorId;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

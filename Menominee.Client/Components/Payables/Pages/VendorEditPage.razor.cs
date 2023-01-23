@@ -9,10 +9,10 @@ namespace Menominee.Client.Components.Payables.Pages
     public partial class VendorEditPage : ComponentBase
     {
         [Inject]
-        private NavigationManager navigationManager { get; set; }
+        private NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public IVendorDataService vendorDataService { get; set; }
+        public IVendorDataService VendorDataService { get; set; }
 
         [Parameter]
         public long Id { get; set; }
@@ -24,12 +24,15 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                Vendor = new();
+                Vendor = new()
+                {
+                    IsActive = true
+                };
                 FormMode = FormMode.Add;
             }
             else
             {
-                VendorToRead vendorToRead = await vendorDataService.GetVendorAsync(Id);
+                VendorToRead vendorToRead = await VendorDataService.GetVendorAsync(Id);
 
                 if (vendorToRead is not null)
                 {
@@ -49,11 +52,10 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                await vendorDataService.AddVendorAsync(Vendor);
-                Id = Vendor.Id;
+                var vendor = await VendorDataService.AddVendorAsync(Vendor);
             }
             else
-                await vendorDataService.UpdateVendorAsync(Vendor, Id);
+                await VendorDataService.UpdateVendorAsync(Vendor, Id);
 
             EndEdit();
         }
@@ -65,7 +67,7 @@ namespace Menominee.Client.Components.Payables.Pages
 
         protected void EndEdit()
         {
-            navigationManager.NavigateTo($"payables/vendors/listing/{Id}");
+            NavigationManager.NavigateTo($"payables/vendors/listing/{Vendor.Id}");
         }
     }
 }

@@ -7,7 +7,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
         public long Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
-        public VendorInvoicePaymentMethodType PaymentType { get; set; }
-        public string ReconcilingVendorName { get; set; }
+        // may or may not need these...
+        //public VendorInvoicePaymentMethodType PaymentType { get; set; }
+        //public string ReconcilingVendorName { get; set; }
+        public string PaymentTypeDescription { get; set; }
     }
 }
