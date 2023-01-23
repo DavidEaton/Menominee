@@ -107,10 +107,11 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (InvoiceList?.Count > 0)
             {
-                if (ItemToSelect == 0)
-                    SelectedInvoice = InvoiceList.FirstOrDefault();
-                if (ItemToSelect != 0)
+                if (ItemToSelect > 0)
                     SelectedInvoice = InvoiceList.Where(x => x.Id == ItemToSelect).FirstOrDefault();
+
+                if (ItemToSelect == 0 || SelectedInvoice == null)
+                    SelectedInvoice = InvoiceList.FirstOrDefault();
 
                 SelectedId = SelectedInvoice.Id;
                 SelectedInvoices = new List<VendorInvoiceToReadInList> { SelectedInvoice };

@@ -54,14 +54,12 @@ namespace Menominee.Client.Components.Payables.Pages
 
             if (VendorsList.Count > 0)
             {
-                if (VendorToSelect == 0)
-                {
-                    SelectedItem = VendorsList.FirstOrDefault();
-                }
-                else
-                {
+                if (VendorToSelect > 0)
                     SelectedItem = VendorsList.Where(x => x.Id == VendorToSelect).FirstOrDefault();
-                }
+
+                if (VendorToSelect == 0 || SelectedItem == null)
+                    SelectedItem = VendorsList.FirstOrDefault();
+
                 SelectedId = SelectedItem.Id;
                 SelectedList = new List<VendorToRead> { SelectedItem };
             }

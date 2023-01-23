@@ -60,14 +60,12 @@ namespace Menominee.Client.Components.Payables.Pages
 
             if (PayMethods?.Count > 0)
             {
-                if (PayMethodToSelect == 0)
-                {
-                    SelectedItem = PayMethods.FirstOrDefault();
-                }
-                else
-                {
+                if (PayMethodToSelect > 0)
                     SelectedItem = PayMethods.Where(x => x.Id == PayMethodToSelect).FirstOrDefault();
-                }
+
+                if (PayMethodToSelect == 0 || SelectedItem == null)
+                    SelectedItem = PayMethods.FirstOrDefault();
+
                 SelectedId = SelectedItem.Id;
                 SelectedList = new List<VendorInvoicePaymentMethodToReadInList> { SelectedItem };
             }
