@@ -48,7 +48,7 @@
         <div class="form-group">
             <label class="m-label">Default Payment Method</label>
             <div class="k-form-field-wrap">
-                <TelerikDropDownList @bind-Value="paymentMethodId"
+                <TelerikDropDownList @bind-Value="PaymentMethodId"
                                      Data="PaymentMethodList"
                                      TextField="DisplayText"
                                      ValueField="Id"
@@ -58,10 +58,10 @@
             </div>
         </div>
 
-        @if (paymentMethodId > 0)
+        @if (PaymentMethodId > 0)
         {
             <div class="form-group" id="autocomplete-checkbox">
-                <TelerikCheckBox Id="autocomplete" @bind-Value="autoComplete"></TelerikCheckBox>
+                <TelerikCheckBox Id="autocomplete" @bind-Value="AutoComplete"></TelerikCheckBox>
                 <label class="k-label" for="autocomplete">Auto-Complete Invoices</label>
             </div>
         }
@@ -85,7 +85,9 @@
                                     <div>
                                         <Card Title="Address">
                                             <Content>
-                                                <VendorAddressEditor Vendor="@Vendor" />
+                                                <AddressEditor Address="@Vendor?.Address"
+                                                               Enabled="true"
+                                                               FormMode="FormMode"/>
                                             </Content>
                                         </Card>
                                     </div>

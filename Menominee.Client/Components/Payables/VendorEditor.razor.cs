@@ -34,8 +34,8 @@ namespace Menominee.Client.Components.Payables
         private string Title { get; set; }
         private IList<VendorTypeEnumModel> VendorTypeEnumData { get; set; } = new List<VendorTypeEnumModel>();
         private ObservableCollection<PaymentTypeModel> PaymentMethodList { get; set; } = new ObservableCollection<PaymentTypeModel>();
-        protected long paymentMethodId { get; set; } = 0;
-        protected bool autoComplete { get; set; } = false;
+        protected long PaymentMethodId { get; set; } = 0;
+        protected bool AutoComplete { get; set; } = false;
         private bool parametersSet = false;
 
         protected override async Task OnInitializedAsync()
@@ -59,16 +59,16 @@ namespace Menominee.Client.Components.Payables
 
             Title = FormTitle.BuildTitle(FormMode, "Vendor");
 
-            //if (Vendor?.Address is null)
-            //    Vendor.Address = new();
-            paymentMethodId = Vendor?.DefaultPaymentMethod?.PaymentMethod.Id ?? 0;
-            autoComplete = Vendor?.DefaultPaymentMethod?.AutoCompleteDocuments ?? false;
+            if (Vendor?.Address is null)
+                Vendor.Address = new();
+            PaymentMethodId = Vendor?.DefaultPaymentMethod?.PaymentMethod.Id ?? 0;
+            AutoComplete = Vendor?.DefaultPaymentMethod?.AutoCompleteDocuments ?? false;
         }
 
         private void OnPaymentMethodChange()
         {
-            if (paymentMethodId == 0)
-                autoComplete = false;
+            if (PaymentMethodId == 0)
+                AutoComplete = false;
         }
 
         protected async Task OnSaveAsync()
@@ -76,14 +76,14 @@ namespace Menominee.Client.Components.Payables
             if (!AddressIsValid(Vendor.Address))
                 Vendor.Address = null;
 
-            if (paymentMethodId == 0)
+            if (PaymentMethodId == 0)
                 Vendor.DefaultPaymentMethod = null;
             else
             {
-                var readDto = await PaymentMethodDataService.GetPaymentMethodAsync(paymentMethodId);
+                var readDto = await PaymentMethodDataService.GetPaymentMethodAsync(PaymentMethodId);
                 Vendor.DefaultPaymentMethod = new();
                 Vendor.DefaultPaymentMethod.PaymentMethod = readDto;
-                Vendor.DefaultPaymentMethod.AutoCompleteDocuments = autoComplete;
+                Vendor.DefaultPaymentMethod.AutoCompleteDocuments = AutoComplete;
             }
 
             await OnValidSubmit.InvokeAsync(this);

@@ -52,7 +52,8 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                await VendorDataService.AddVendorAsync(Vendor);
+                var vendor = await VendorDataService.AddVendorAsync(Vendor);
+                Id = vendor.Id;
             }
             else
                 await VendorDataService.UpdateVendorAsync(Vendor, Id);
