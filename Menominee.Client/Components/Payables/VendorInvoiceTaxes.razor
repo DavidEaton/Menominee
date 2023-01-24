@@ -1,4 +1,5 @@
-﻿@if (Taxes == null)
+﻿@using Telerik.FontIcons
+@if (Taxes == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -74,7 +75,7 @@
                 <GridCommandColumn Width="130px"
                            Context="VendorInvoiceTaxToWrite">
                     <GridCommandButton Command="_CalcTax"
-                               IconClass="fas fa-calculator"
+                               Icon="@FontIcon.Calculator"
                                Size="sm"
                                Class="m-inline-button"
                                OnClick="OnCalcTaxClick">
