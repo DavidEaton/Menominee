@@ -1,9 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using Menominee.Common.Enums;
 using System;
 
-namespace Menominee.Client.Components.Payables
+namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public class InvoiceTotals
     {
@@ -165,4 +164,5 @@ namespace Menominee.Client.Components.Payables
             TaxableTotal = Total - BalancesForward - Taxes;
         }
     }
+
 }

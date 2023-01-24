@@ -1,5 +1,8 @@
 ﻿<ProjectConfiguration>
   <Settings>
+    <HiddenComponentWarnings>
+      <Value>AspNetTestHostCompatibility</Value>
+    </HiddenComponentWarnings>
     <IgnoredTests>
       <FixtureTestSelector>
         <FixtureName>CustomerVehicleManagement.Api.IntegrationTests.DatabaseTests.DatabaseShould</FixtureName>

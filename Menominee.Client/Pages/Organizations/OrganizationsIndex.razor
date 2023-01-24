@@ -1,4 +1,5 @@
 ﻿@page "/organizations"
+@using Telerik.FontIcons
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
 
@@ -16,7 +17,7 @@
             <div class="pb-3">
                 <TelerikButton OnClick="Add"
                        ThemeColor="primary"
-                       Icon="plus"
+                       Icon="@FontIcon.Plus"
                        title="Add New Organization">
                     Add Organization
                 </TelerikButton>

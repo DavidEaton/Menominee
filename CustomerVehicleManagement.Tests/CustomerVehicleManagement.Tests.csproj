@@ -38,7 +38,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
-    <ProjectReference Include="..\Menominee.Client\Menominee.Client.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="https://json.schemastore.org/appsettings.json" /></VisualStudio></ProjectExtensions>

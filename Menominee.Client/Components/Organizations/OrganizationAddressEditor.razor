@@ -1,8 +1,8 @@
-﻿<div hidden="@(Organization?.Address is not null)">
+﻿@using Telerik.FontIcons
+<div hidden="@(Organization?.Address is not null)">
     <TelerikButton ButtonType="ButtonType.Button"
-                   Icon="plus"
+                   Icon="@FontIcon.Plus"
                    Size="@ThemeConstants.Button.Size.Small"
-                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
                    Rounded="@ThemeConstants.Button.Rounded.Full"
                    Class="add-item"
                    OnClick="AddAddress"
@@ -19,24 +19,23 @@
     <div class="form-group">
         <div>
             <TelerikButton ButtonType="ButtonType.Button"
-                           Icon="minus"
-                           Size="@ThemeConstants.Button.Size.Small"
-                           Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
-                           Rounded="@ThemeConstants.Button.Rounded.Full"
-                           Class="remove-item"
-                           OnClick="RemoveAddress"
-                           Id="removeAddress"
-                           title="Remove address" />
+                       Icon="@FontIcon.Plus"
+                       Size="@ThemeConstants.Button.Size.Small"
+                       Rounded="@ThemeConstants.Button.Rounded.Full"
+                       Class="remove-item"
+                       OnClick="RemoveAddress"
+                       Id="removeAddress"
+                       title="Remove address" />
             <span>
                 <label for="removeAddress"
-                       class="k-label"
-                       title="Remove address">
+                   class="k-label"
+                   title="Remove address">
                     Address
                 </label>
                 <span @onclick="EditAddress">
                     <AddressEditor Address="@Organization?.Address"
-                                   Enabled="FormMode == FormMode.Edit || FormMode == FormMode.Add"
-                                   FormMode="FormMode" />
+                               Enabled="FormMode == FormMode.Edit || FormMode == FormMode.Add"
+                               FormMode="FormMode" />
                 </span>
             </span>
         </div>

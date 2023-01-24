@@ -69,7 +69,7 @@ namespace Menominee.Client.Components.Persons
 
         async void ResetState()
         {
-            await Grid.SetState(null);
+            await Grid.SetStateAsync(null);
             await LocalStorage.RemoveItem(UniqueStorageKey);
         }
     }

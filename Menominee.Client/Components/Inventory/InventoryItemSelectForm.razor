@@ -25,7 +25,7 @@
                      SelectedItemsChanged="@((IEnumerable<InventoryItemToReadInList> itemList) => OnSelectItemAsync(itemList))"
                      SelectedItems="@SelectedList"
                      Class="m-grid">
-                <GridToolBar>
+                <GridToolBarTemplate>
                     @if (Manufacturers != null)
                     {
                     <label class="m-no-margin-bottom" for="category">Manufacturer:</label>
@@ -40,7 +40,7 @@
                     }
                 @*<span class="k-toolbar-spacer"></span>*@
                 <GridSearchBox Fields="@SearchFields" />
-            </GridToolBar>
+            </GridToolBarTemplate>
             <GridColumns>
                 <Telerik.Blazor.Components.GridColumn Width="20%" Field="@nameof(InventoryItemToReadInList.ItemNumber)" Title="Part Number"></Telerik.Blazor.Components.GridColumn>
                 <Telerik.Blazor.Components.GridColumn Width="50%" Field="@nameof(InventoryItemToReadInList.Description)" Title="Description"></Telerik.Blazor.Components.GridColumn>

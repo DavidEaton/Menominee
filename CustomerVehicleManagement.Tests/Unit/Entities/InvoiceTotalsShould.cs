@@ -1,9 +1,9 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
-using Menominee.Client.Components.Payables;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 using Xunit;

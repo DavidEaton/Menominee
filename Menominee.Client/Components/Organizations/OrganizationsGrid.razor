@@ -1,48 +1,49 @@
-﻿@if (Organizations == null)
+﻿@using Telerik.FontIcons
+@if (Organizations == null)
 {
     <img src="/assets/loader-blue-purple.gif" />
 }
 
 @if (Organizations.Count == 0)
 {
-<p>There are no Organization records.</p>
+    <p>There are no Organization records.</p>
 }
 
 @if (Organizations != null)
 {
     <TelerikGrid Data="Organizations"
-                 OnRowClick="GridRowClicked"
-                 Sortable="true"
-                 Pageable="true"
-                 FilterMode="GridFilterMode.FilterMenu"
-                 Resizable="true"
-                 Reorderable="true"
-                 ShowColumnMenu="true"
-                 OnStateInit="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateInitHandler(args))"
-                 OnStateChanged="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateChangedHandler(args))"
-                 @ref="@Grid">
-        <GridToolBar>
+             OnRowClick="GridRowClicked"
+             Sortable="true"
+             Pageable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true"
+             Reorderable="true"
+             ShowColumnMenu="true"
+             OnStateInit="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateInitHandler(args))"
+             OnStateChanged="@((GridStateEventArgs<CustomerVehicleManagement.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateChangedHandler(args))"
+             @ref="@Grid">
+        <GridToolBarTemplate>
             <TelerikButton OnClick="@ResetState"
-                           Icon="reset"
-                           Title="Reset grid to default layout/columns..."></TelerikButton>
+                       Icon="@FontIcon.Undo"
+                       Title="Reset grid to default layout/columns..."></TelerikButton>
             <span class="k-toolbar-spacer"></span>
             <GridCommandButton Command="ExcelExport"
-                               Icon="file-excel"
-                               Title="Export to Excel"
-                               OnClick="@ShowLoadingSymbol">
+                           Icon="@FontIcon.FileExcel"
+                           Title="Export to Excel"
+                           OnClick="@ShowLoadingSymbol">
             </GridCommandButton>
             <GridCommandButton Command="CsvExport"
-                               OnClick="@ShowLoadingSymbol"
-                               Title="Export to CSV"
-                               Icon="file-csv">
+                           OnClick="@ShowLoadingSymbol"
+                           Title="Export to CSV"
+                           Icon="@FontIcon.FileCsv">
             </GridCommandButton>
             <label class="k-checkbox-label"
-                   title="Export all: unchecking will export only rows currently visible in grid">
+               title="Export all: unchecking will export only rows currently visible in grid">
                 <TelerikCheckBox @bind-Value="@ExportAllPages" /><span class="small">Export All</span>
             </label>
             <span class="k-toolbar-spacer"></span>
             <GridSearchBox />
-        </GridToolBar>
+        </GridToolBarTemplate>
         <GridExport>
             <GridExcelExport FileName="Organizations" AllPages="true" />
         </GridExport>

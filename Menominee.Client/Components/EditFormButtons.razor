@@ -1,14 +1,15 @@
-﻿<TelerikButton OnClick="@(() => Save.InvokeAsync())"
+﻿@using Telerik.FontIcons
+<TelerikButton OnClick="@(() => Save.InvokeAsync())"
                ThemeColor="primary"
                ButtonType="ButtonType.Button"
-               Icon="check"
+               Icon="@FontIcon.Check"
                Enabled="EnableSave"
                Class="dialog-button"
                title="Save">
     Save
 </TelerikButton>
 
-<TelerikButton Icon="x"
+<TelerikButton Icon="@FontIcon.Plus"
                OnClick="@(() => Close.InvokeAsync())"
                Class="dialog-button"
                title="Cancel/Close">

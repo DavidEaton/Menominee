@@ -26,7 +26,7 @@
                              SelectedItems="@SelectedList"
                              Class="m-grid"
                              @ref="@Grid">
-                    <GridToolBar>
+                    <GridToolBarTemplate>
                         @if (Manufacturers != null)
                         {
                             <label class="m-no-margin-bottom" for="category">Manufacturer:</label>
@@ -40,7 +40,7 @@
                             </TelerikDropDownList>
                         }
                         <GridSearchBox Fields="@SearchFields" />
-                    </GridToolBar>
+                    </GridToolBarTemplate>
                     <GridColumns>
                         <Telerik.Blazor.Components.GridColumn Width="15%"
                                                               Field="@nameof(InventoryItemToReadInList.ItemNumber)"

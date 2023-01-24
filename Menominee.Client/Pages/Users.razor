@@ -1,4 +1,5 @@
 ﻿@page "/users"
+@using Telerik.FontIcons
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (CustomerVehicleManagement.Shared.Policies.CanManageUsers)]
 
@@ -17,21 +18,21 @@
 
         <div class="pb-3">
             <TelerikButton OnClick="Add"
-                           ThemeColor="primary"
-                           Icon="plus"
-                           title="Add new application User">
+                       ThemeColor="primary"
+                       Icon="@FontIcon.Plus"
+                       title="Add new application User">
                 Add User
             </TelerikButton>
         </div>
 
         <TelerikGrid Data="UsersList"
-                     OnRowClick="@EditAsync"
-                     Sortable="true"
-                     Pageable="true"
-                     FilterMode="GridFilterMode.FilterMenu"
-                     Resizable="true"
-                     Reorderable="true"
-                     @ref="@Grid">
+                 OnRowClick="@EditAsync"
+                 Sortable="true"
+                 Pageable="true"
+                 FilterMode="GridFilterMode.FilterMenu"
+                 Resizable="true"
+                 Reorderable="true"
+                 @ref="@Grid">
             <GridColumns>
                 <GridColumn Field="Username" Title="Username"></GridColumn>
                 <GridColumn Field="ShopRole" Title="Shop Role"></GridColumn>
@@ -42,8 +43,8 @@
     <TelerikWindow Visible="(Editing || Adding) && registerUser != null"
                    Modal="true">
         @*<WindowTitle>
-                Address
-            </WindowTitle>*@
+        Address
+        </WindowTitle>*@
         <WindowContent>
 
             <div class="card">

@@ -1,8 +1,8 @@
-﻿<div class="container">
+﻿@using Telerik.FontIcons
+<div class="container">
     <TelerikButton ButtonType="ButtonType.Button"
-                   Icon="plus"
+                   Icon="@FontIcon.Plus"
                    Size="@ThemeConstants.Button.Size.Small"
-                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
                    Rounded="@ThemeConstants.Button.Rounded.Full"
                    Class="add-item"
                    OnClick="Add"
@@ -16,10 +16,10 @@
     @if (((int)Emails?.Count()) > 0)
     {
         <ContactableTemplate Items="Emails"
-                             TItem="CustomerVehicleManagement.Shared.Models.Contactable.EmailToWrite"
-                             Context="email"
-                             @key="Email"
-                             OnRowClick="Edit">
+                         TItem="CustomerVehicleManagement.Shared.Models.Contactable.EmailToWrite"
+                         Context="email"
+                         @key="Email"
+                         OnRowClick="Edit">
             <TableHeader>
                 <th>Address</th>
                 <th>Primary</th>
@@ -39,8 +39,8 @@
     @if (FormMode == FormMode.Add || FormMode == FormMode.Edit)
     {
         <EditForm Model="Email">
-            <TelerikWindow Visible="true"
-                           Modal="true">
+            <TelerikWindow Visible="@true"
+                       Modal="@true">
                 <WindowTitle>
                     Email
                 </WindowTitle>
@@ -49,7 +49,7 @@
                         <div class="form-group row">
                             <label class="k-label">Address</label>
                             <TelerikTextBox @bind-Value="@Email.Address"
-                                            Width="100%">
+                                        Width="100%">
                             </TelerikTextBox>
                         </div>
                         <div class="form-group row">
@@ -60,26 +60,26 @@
                         </div>
                         <div>
                             <TelerikButton OnClick="Save"
-                                           Icon="check"
-                                           ThemeColor="primary"
-                                           ButtonType="ButtonType.Button"
-                                           Class="dialog-button"
-                                           title="Save New Email">
+                                       Icon="@FontIcon.Check"
+                                       ThemeColor="primary"
+                                       ButtonType="ButtonType.Button"
+                                       Class="dialog-button"
+                                       title="Save New Email">
                                 Ok
                             </TelerikButton>
                             <TelerikButton OnClick="Cancel"
-                                           ButtonType="ButtonType.Button"
-                                           Class="dialog-button"
-                                           Icon="x"
-                                           title="Cancel New Email">
+                                       ButtonType="ButtonType.Button"
+                                       Class="dialog-button"
+                                       Icon="@FontIcon.X"
+                                       title="Cancel New Email">
                                 Cancel
                             </TelerikButton>
                             <TelerikButton OnClick="RemoveAsync"
-                                           ButtonType="ButtonType.Button"
-                                           Icon="trash"
-                                           Class="dialog-button bg-danger text-white"
-                                           Enabled="FormMode == FormMode.Edit"
-                                           title="Remove Email">
+                                       ButtonType="ButtonType.Button"
+                                       Icon="@FontIcon.Trash"
+                                       Class="dialog-button bg-danger text-white"
+                                       Enabled="FormMode == FormMode.Edit"
+                                       title="Remove Email">
                             </TelerikButton>
                         </div>
                     </div>
@@ -93,9 +93,11 @@
     .k-label {
         margin-bottom: .2rem !important;
     }
+
     .dialog-button {
         margin-right: 0.7rem;
     }
+
     .add-item {
         color: white;
         background-color: forestgreen;

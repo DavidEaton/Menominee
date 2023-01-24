@@ -1,39 +1,40 @@
-﻿@if (CustomersList == null)
+﻿@using Telerik.FontIcons
+@if (CustomersList == null)
 {
     <img src="/assets/loader-blue-purple.gif" />
 }
 
 @if (CustomersList.Count == 0)
 {
-<p>There are no Customer records.</p>
+    <p>There are no Customer records.</p>
 }
 
 @if (CustomersList != null)
 {
     <TelerikGrid Data="CustomersList"
-                 OnRowClick="@RowClicked"
-                 Sortable="true"
-                 Pageable="true"
-                 FilterMode="GridFilterMode.FilterMenu"
-                 Resizable="true"
-                 Reorderable="true"
-                 ShowColumnMenu="true"
-                 OnStateInit="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateInitHandler(args))"
-                 OnStateChanged="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateChangedHandler(args))"
-                 @ref="@Grid">
-        <GridToolBar>
+             OnRowClick="@RowClicked"
+             Sortable="true"
+             Pageable="true"
+             FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true"
+             Reorderable="true"
+             ShowColumnMenu="true"
+             OnStateInit="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateInitHandler(args))"
+             OnStateChanged="@((GridStateEventArgs<CustomerToReadInList> args) => OnStateChangedHandler(args))"
+             @ref="@Grid">
+        <GridToolBarTemplate>
             <GridCommandButton Command=""
-                               Icon="add"
-                               Title="Add New Customer"
-                               OnClick="@AddAsync">
+                           Icon="@FontIcon.Plus"
+                           Title="Add New Customer"
+                           OnClick="@AddAsync">
                 Add Customer
             </GridCommandButton>
             <span class="k-toolbar-spacer"></span>
             <TelerikButton OnClick="@ResetState"
-                           Icon="reset"
-                           Title="Reset grid to default layout/columns..."></TelerikButton>
+                       Icon="@FontIcon.Undo"
+                       Title="Reset grid to default layout/columns..."></TelerikButton>
             <GridSearchBox />
-        </GridToolBar>
+        </GridToolBarTemplate>
         <GridExport>
             <GridExcelExport FileName="Customers" AllPages="true" />
         </GridExport>

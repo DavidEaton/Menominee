@@ -25,11 +25,11 @@
                              SelectedItems="@SelectedList"
                              Class="m-grid"
                              @ref="@Grid">
-                    <GridToolBar>
+                    <GridToolBarTemplate>
                         <TelerikCheckBox Id="myCheckBox" @bind-Value="@ShowInactive" />
                         <label for="myCheckBox" class="mb-0">Show Inactive</label>
 
-                    </GridToolBar>
+                    </GridToolBarTemplate>
                     <GridSettings>
                         <GridColumnMenuSettings Lockable="false"
                                             ShowColumnChooser="false">

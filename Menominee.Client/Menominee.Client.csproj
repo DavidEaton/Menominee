@@ -28,7 +28,7 @@
     <PackageReference Include="Syncfusion.Blazor.Schedule" Version="19.4.0.48" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="3.4.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />

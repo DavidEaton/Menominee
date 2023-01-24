@@ -1,8 +1,8 @@
-﻿<div hidden="@(Person.Birthday.HasValue)">
+﻿@using Telerik.FontIcons
+<div hidden="@(Person.Birthday.HasValue)">
     <TelerikButton ButtonType="ButtonType.Button"
-                   Icon="plus"
+                   Icon="@FontIcon.Plus"
                    Size="@ThemeConstants.Button.Size.Small"
-                   Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
                    Rounded="@ThemeConstants.Button.Rounded.Full"
                    Class="add-item"
                    OnClick="ToggleBirthday"
@@ -17,9 +17,8 @@
      hidden="@(!Person.Birthday.HasValue)">
     <div>
         <TelerikButton ButtonType="ButtonType.Button"
-                       Icon="minus"
+                       Icon="@FontIcon.Minus"
                        Size="@ThemeConstants.Button.Size.Small"
-                       Shape="@Telerik.Blazor.ThemeConstants.Button.Shape.Square"
                        Rounded="@ThemeConstants.Button.Rounded.Full"
                        Class="remove-item"
                        OnClick="ToggleBirthday"

@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Client.Services.Taxes;
 using Menominee.Common.Enums;

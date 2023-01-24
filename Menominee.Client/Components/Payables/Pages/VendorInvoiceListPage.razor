@@ -25,7 +25,7 @@
                          Class="m-grid"
                          @ref="Grid">
 
-                    <GridToolBar>
+                    <GridToolBarTemplate>
                         <label class="m-toolbar-label">Vendor</label>
                         <TelerikDropDownList @bind-Value="ResourceParameters.VendorId"
                                          Data="Vendors"
@@ -49,7 +49,7 @@
                         </TelerikDropDownList>
                         <label class="m-toolbar-label"></label>
                         <GridSearchBox />
-                    </GridToolBar>
+                    </GridToolBarTemplate>
                     <GridSettings>
                         <GridColumnMenuSettings Lockable="false"
                                             ShowColumnChooser="false">
