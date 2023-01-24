@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.Addresses;
+using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Client.Shared;
@@ -58,8 +59,8 @@ namespace Menominee.Client.Components.Payables
 
             Title = FormTitle.BuildTitle(FormMode, "Vendor");
 
-            if (Vendor?.Address is null)
-                Vendor.Address = new();
+            //if (Vendor?.Address is null)
+            //    Vendor.Address = new();
             paymentMethodId = Vendor?.DefaultPaymentMethod?.PaymentMethod.Id ?? 0;
             autoComplete = Vendor?.DefaultPaymentMethod?.AutoCompleteDocuments ?? false;
         }
@@ -72,6 +73,9 @@ namespace Menominee.Client.Components.Payables
 
         protected async Task OnSaveAsync()
         {
+            if (!AddressIsValid(Vendor.Address))
+                Vendor.Address = null;
+
             if (paymentMethodId == 0)
                 Vendor.DefaultPaymentMethod = null;
             else
@@ -83,6 +87,16 @@ namespace Menominee.Client.Components.Payables
             }
 
             await OnValidSubmit.InvokeAsync(this);
+        }
+
+        private bool AddressIsValid(AddressToWrite address)
+        {
+            if (address is null)
+                return false;
+
+            var validator = new AddressValidator();
+
+            return validator.Validate(address).IsValid;
         }
 
         protected class PaymentTypeModel
