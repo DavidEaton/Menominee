@@ -1,4 +1,5 @@
-﻿@if (Payments == null)
+﻿@using Telerik.FontIcons
+@if (Payments == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -87,7 +88,7 @@
                 <GridCommandColumn Width="117px"
                            Context="VendorInvoicePaymentToWrite">
                 <GridCommandButton Command="_Balance"
-                               IconClass="fas fa-arrow-left"
+                               Icon="@FontIcon.ArrowLeft"
                                Size="sm"
                                Class="m-inline-button"
                                OnClick="OnInsertBalanceClick">
