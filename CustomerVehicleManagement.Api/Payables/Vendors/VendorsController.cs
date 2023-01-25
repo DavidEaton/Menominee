@@ -18,7 +18,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
     {
         private readonly IVendorRepository repository;
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
-        private readonly string BasePath = "/api/payables/vendors";
+        private readonly string BasePath = "/api/vendors";
 
         public VendorsController(IVendorRepository repository, IVendorInvoicePaymentMethodRepository paymentMethodRepository)
         {

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Menominee.Client.Services.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
+using static Menominee.Client.Services.Payables.Vendors.VendorDataService;
+using CustomerVehicleManagement.Shared.Models;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
@@ -52,9 +54,10 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                var vendor = await VendorDataService.AddVendorAsync(Vendor);
-                Id = vendor.Id;
+                PostResult result = await VendorDataService.AddVendorAsync(Vendor);
+                Id = result.Id;
             }
+
             else
                 await VendorDataService.UpdateVendorAsync(Vendor, Id);
 

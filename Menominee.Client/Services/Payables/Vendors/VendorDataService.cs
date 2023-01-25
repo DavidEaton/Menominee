@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+using CustomerVehicleManagement.Shared.Models;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using System;
 using System.Collections.Generic;
@@ -24,24 +24,28 @@ namespace Menominee.Client.Services.Payables.Vendors
             this.toastService = toastService;
         }
 
-        public async Task<VendorToRead> AddVendorAsync(VendorToWrite vendor)
+        public async Task<PostResult> AddVendorAsync(VendorToWrite vendor)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
             var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
 
             if (response.IsSuccessStatusCode)
             {
                 toastService.ShowSuccess($"{vendor.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<VendorToRead>(await response.Content.ReadAsStreamAsync(), options);
+
+                try
+                {
+                    return await response.Content.ReadFromJsonAsync<PostResult>();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    throw;
+                }
             }
 
             toastService.ShowError($"{vendor.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
-            return null;
+            return new() { Id = 0 };
         }
 
         public async Task<IReadOnlyList<VendorToRead>> GetAllVendorsAsync()
