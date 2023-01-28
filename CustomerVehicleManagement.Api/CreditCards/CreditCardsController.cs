@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
     public class CreditCardsController : ApplicationController
     {
         private readonly ICreditCardRepository repository;
-        //private readonly string BasePath = "/api/creditcards";
+        private readonly string BasePath = "/api/creditcards";
 
         public CreditCardsController(ICreditCardRepository repository)
         {
@@ -50,10 +50,18 @@ namespace CustomerVehicleManagement.Api.CreditCards
             var creditCardFromRepository = await repository.GetCreditCardEntityAsync(id);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            creditCardFromRepository.Name = creditCard.Name;
-            creditCardFromRepository.FeeType = creditCard.FeeType;
-            creditCardFromRepository.Fee = creditCard.Fee;
-            creditCardFromRepository.IsAddedToDeposit = creditCard.IsAddedToDeposit;
+            if (creditCardFromRepository.Name != creditCard.Name)
+                creditCardFromRepository.SetName(creditCard.Name);
+
+            if (creditCardFromRepository.FeeType != creditCard.FeeType)
+                creditCardFromRepository.SetFeeType(creditCard.FeeType);
+
+            if (creditCardFromRepository.Fee != creditCard.Fee)
+                creditCardFromRepository.SetFee(creditCard.Fee);
+
+            if (creditCardFromRepository.Name != creditCard.Name)
+                creditCardFromRepository.SetIsAddedToDeposit(creditCard.IsAddedToDeposit);
+
             //cc.Processor = ccDto.Processor;
 
             await repository.UpdateCreditCardAsync(creditCardFromRepository);
@@ -64,28 +72,26 @@ namespace CustomerVehicleManagement.Api.CreditCards
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite ccDto)
+        public async Task<ActionResult<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite creditCardToAdd)
         {
             // 1. Convert dto to domain entity
-            var cc = new CreditCard()
-            {
-                Name = ccDto.Name,
-                FeeType = ccDto.FeeType,
-                Fee = ccDto.Fee,
-                IsAddedToDeposit = ccDto.IsAddedToDeposit
-                //Processor = ccDto.Processor
-            };
+            var creditCardOrError = CreditCard.Create(creditCardToAdd.Name, creditCardToAdd.FeeType, creditCardToAdd.Fee, creditCardToAdd.IsAddedToDeposit);
+
+            if (creditCardOrError.IsFailure)
+                return NotFound($"Could not add new Credit Card '{creditCardToAdd.Name}'.");
+
+            CreditCard creditCard = creditCardOrError.Value;
 
             // 2. Add domain entity to repository
-            await repository.AddCreditCardAsync(cc);
+            await repository.AddCreditCardAsync(creditCard);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             // 4.Return new Id from database to consumer after save
-            return CreatedAtRoute("GetCreditCardAsync",
-                                  new { id = cc.Id },
-                                  CreditCardHelper.CreateCreditCard(cc));
+            return Created(new Uri($"{BasePath}/{creditCard.Id}",
+                   UriKind.Relative),
+                   new { creditCard.Id });
         }
 
         [HttpDelete("{id:long}")]

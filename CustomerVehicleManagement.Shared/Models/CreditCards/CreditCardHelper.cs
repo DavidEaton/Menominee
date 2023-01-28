@@ -6,17 +6,10 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
     {
         public static CreditCard CreateCreditCard(CreditCardToWrite creditCard)
         {
-            if (creditCard == null)
+            if (creditCard is not null)
                 return null;
 
-            return new CreditCard()
-            {
-                Name = creditCard.Name,
-                FeeType = creditCard.FeeType,
-                Fee = creditCard.Fee,
-                IsAddedToDeposit = creditCard.IsAddedToDeposit
-                //Processor = creditCard.Processor
-            };
+            return CreditCard.Create(creditCard.Name,creditCard.FeeType,creditCard.Fee,creditCard.IsAddedToDeposit).Value;
         }
 
         public static CreditCardToWrite CreateCreditCard(CreditCardToRead creditCard)
@@ -50,15 +43,15 @@ namespace CustomerVehicleManagement.Shared.Models.CreditCards
             };
         }
 
-        public static CreditCardToReadInList CreateCreditCardInList(CreditCard cc)
+        public static CreditCardToReadInList CreateCreditCardInList(CreditCard creditCard)
         {
-            if (cc is null)
+            if (creditCard is null)
                 return null;
 
             return new CreditCardToReadInList
             {
-                Id = cc.Id,
-                Name = cc.Name,
+                Id = creditCard.Id,
+                Name = creditCard.Name,
                 ProcessorName = "None"//cc.Processor?.Name
             };
         }
