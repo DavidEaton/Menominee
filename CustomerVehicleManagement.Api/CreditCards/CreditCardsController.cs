@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Api.CreditCards
             if (creditCardFromRepository.Fee != creditCard.Fee)
                 creditCardFromRepository.SetFee(creditCard.Fee);
 
-            if (creditCardFromRepository.Name != creditCard.Name)
+            if (creditCardFromRepository.IsAddedToDeposit != creditCard.IsAddedToDeposit)
                 creditCardFromRepository.SetIsAddedToDeposit(creditCard.IsAddedToDeposit);
 
             //cc.Processor = ccDto.Processor;
