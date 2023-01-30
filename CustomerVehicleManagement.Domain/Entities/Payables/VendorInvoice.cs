@@ -30,8 +30,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         // Vendor invoice date is whatever the invoice from the vendor says it is. We date-stamp it when it's created by defaulting Date to the current date on creation, but user can select a date in the past too so it matches. -Al
         public DateTime? Date { get; private set; }
-        // TODO: Replace this stringly-typed VendorInvoice.InvoiceNumber
-        // with strongly-typed AppValueObject InvoiceNumber.cs
         public string InvoiceNumber { get; private set; }
         public double Total { get; private set; }
 
