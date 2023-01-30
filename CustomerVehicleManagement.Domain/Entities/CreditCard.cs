@@ -7,10 +7,10 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class CreditCard : Entity
     {
-        private const int MinimumLength = 2;
-        private const int MaximumLength = 50;
-        private const string RequiredMessage = "A valid value is required.";
-        private const string InvalidLengthMessage = "Value must be between 2 and 50 characters.";
+        public const int MinimumLength = 2;
+        public const int MaximumLength = 50;
+        public const string RequiredMessage = "A valid value is required.";
+        public const string InvalidLengthMessage = "Value must be between 2 and 50 characters.";
 
         public string Name { get; private set; }
         public CreditCardFeeType FeeType { get; private set; }
