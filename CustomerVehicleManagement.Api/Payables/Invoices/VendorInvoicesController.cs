@@ -228,6 +228,21 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             // Taxes
             foreach (var taxFromCaller in invoiceFromCaller?.Taxes)
             {
+                // Don't save new, zero amount taxes sent by client
+                if (taxFromCaller.Amount == 0 && taxFromCaller.Id == 0)
+                    continue;
+
+                // Delete existing tax with edited amount == 0 sent by client
+                if (taxFromCaller.Amount == 0 && taxFromCaller.Id != 0)
+                {
+                    var taxToRemove = invoiceFromRepository?.Taxes.FirstOrDefault(
+                        taxFromRepository =>
+                        taxFromRepository.Id == taxFromCaller.Id);
+
+                    invoiceFromRepository.RemoveTax(taxToRemove);
+                    continue;
+                }
+
                 // Added
                 if (taxFromCaller.Id == 0)
                     invoiceFromRepository.AddTax(
@@ -316,10 +331,16 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             if (invoiceToAdd?.Taxes.Count > 0)
                 foreach (var tax in invoiceToAdd.Taxes)
+                {
+                    // Don't save new, zero amount taxes sent by client
+                    if (tax.Amount == 0)
+                        continue;
+
                     invoice.AddTax(
                         VendorInvoiceTax.Create(
                             await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id),
                             tax.Amount).Value);
+                }
 
             repository.AddInvoice(invoice);
             await repository.SaveChangesAsync();

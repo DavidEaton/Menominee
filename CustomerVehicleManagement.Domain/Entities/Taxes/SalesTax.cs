@@ -12,9 +12,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public static readonly int DescriptionMaximumLength = 10000;
         public static readonly string DescriptionMaximumLengthMessage = $"Description cannot be over {DescriptionMaximumLength} characters in length.";
         public static readonly string InvalidMessage = $"Invalid value(s). Please be sure all entries are valid";
-        public static readonly int TaxIdNumberMinumumLength = 1;
         public static readonly int TaxIdNumberMaximumLength = 255;
-        public static readonly string TaxIdNumberInvalidLengthMessage = $"Tax Id Number must be between {TaxIdNumberMinumumLength} and {TaxIdNumberMaximumLength} characters in length.";
+        public static readonly string TaxIdNumberInvalidLengthMessage = $"Tax Id Number must be no more than {TaxIdNumberMaximumLength} characters in length.";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly double MinimumValue = 0;
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
@@ -35,9 +34,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             string description,
             SalesTaxType taxType,
             int order,
-            string taxIdNumber,
             double partTaxRate,
             double laborTaxRate,
+            string taxIdNumber = null,
             List<ExciseFee> exciseFees = null,
             bool? isAppliedByDefault = null,
             bool? isTaxable = null)
@@ -60,15 +59,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             TaxType = taxType;
             Order = order;
 
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
-
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
-                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
-
             if (partTaxRate < MinimumValue || laborTaxRate < MinimumValue)
                 throw new ArgumentOutOfRangeException(MinimumValueMessage);
 
-            TaxIdNumber = taxIdNumber;
             PartTaxRate = partTaxRate;
             LaborTaxRate = laborTaxRate;
 
@@ -77,6 +70,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
             if (isTaxable.HasValue)
                 IsTaxable = isTaxable.Value;
+
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
+                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
+
+            TaxIdNumber = taxIdNumber;
 
             this.exciseFees ??= exciseFees;
         }
@@ -106,21 +106,21 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             if (order < MinimumValue)
                 return Result.Failure<SalesTax>(MinimumValueMessage);
 
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
-
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
-                return Result.Failure<SalesTax>(TaxIdNumberInvalidLengthMessage);
-
             if (partTaxRate < MinimumValue || laborTaxRate < MinimumValue)
                 return Result.Failure<SalesTax>(MinimumValueMessage);
+
+            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
+
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
+                return Result.Failure<SalesTax>(TaxIdNumberInvalidLengthMessage);
 
             return Result.Success(new SalesTax(
                 description,
                 taxType,
                 order,
-                taxIdNumber,
                 partTaxRate,
                 laborTaxRate,
+                taxIdNumber,
                 exciseFees is null ? null : exciseFees,
                 isAppliedByDefault,
                 isTaxable
@@ -185,7 +185,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         {
             taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
 
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength || taxIdNumber.Length < TaxIdNumberMinumumLength)
+            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
                 return Result.Failure<string>(TaxIdNumberInvalidLengthMessage);
 
             return Result.Success(TaxIdNumber = taxIdNumber);

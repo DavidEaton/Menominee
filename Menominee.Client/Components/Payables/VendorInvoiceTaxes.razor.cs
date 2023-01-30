@@ -51,8 +51,8 @@ namespace Menominee.Client.Components.Payables
 
             foreach (var salesTax in SalesTaxes)
             {
-                var invoiceTax = Taxes.FirstOrDefault(x => x.SalesTax?.Id == salesTax.Id);
-                if (invoiceTax == null)
+                var invoiceTax = Taxes.FirstOrDefault(tax => tax.SalesTax?.Id == salesTax.Id);
+                if (invoiceTax is null)
                 {
                     var tax = (await SalesTaxDataService.GetSalesTaxAsync(salesTax.Id));
                     Taxes.Add(new VendorInvoiceTaxToWrite()
@@ -61,6 +61,7 @@ namespace Menominee.Client.Components.Payables
                     });
                 }
             }
+
             Taxes.OrderByDescending(tax => tax.SalesTax.Order);
             SelectTax(Taxes.FirstOrDefault());
             Grid?.Rebind();

@@ -35,10 +35,10 @@ namespace Menominee.Client.Components.Payables.Pages
             }
             else
             {
-                var readDto = await VendorInvoiceDataService.GetInvoice(Id);
-                if (readDto != null)
+                var invoice = await VendorInvoiceDataService.GetInvoice(Id);
+                if (invoice is not null)
                 {
-                    Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(readDto);
+                    Invoice = VendorInvoiceHelper.ConvertReadToWriteDto(invoice);
                     FormMode = (Invoice.Status == VendorInvoiceStatus.Open) ? FormMode.Edit : FormMode.View;
                 }
                 else
@@ -51,8 +51,7 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private async Task<bool> Save()
         {
-            bool valid = Valid();
-            if (valid)
+            if (Valid())
             {
                 if (Id == 0)
                 {
@@ -65,7 +64,7 @@ namespace Menominee.Client.Components.Payables.Pages
                 }
             }
 
-            return valid;
+            return Valid();
         }
 
         private async Task SaveAndExit()
@@ -76,12 +75,9 @@ namespace Menominee.Client.Components.Payables.Pages
 
         private bool Valid()
         {
-            // Child components will validate thier own data:
-            // VendorInvoiceItems
-            // VendorInvoicePayments
-            // VendorInvoiceTaxes
-
-            return Invoice?.Vendor is not null && Invoice.Date.HasValue;
+            return new VendorInvoiceValidator()
+                .Validate(Invoice)
+                .IsValid;
         }
 
         private void Discard()

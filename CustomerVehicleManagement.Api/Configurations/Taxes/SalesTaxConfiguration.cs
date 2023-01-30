@@ -12,19 +12,19 @@ namespace CustomerVehicleManagement.Api.Configurations.Taxes
             base.Configure(builder);
             builder.ToTable("SalesTax", "dbo");
 
-            builder.Property(st => st.Description)
+            builder.Property(salesTax => salesTax.Description)
                 .IsRequired();
-            builder.Property(st => st.TaxType)
+            builder.Property(salesTax => salesTax.TaxType)
                 .HasDefaultValue(SalesTaxType.Normal);
-            builder.Property(st => st.IsAppliedByDefault)
+            builder.Property(salesTax => salesTax.IsAppliedByDefault)
                 .HasDefaultValue(true);
-            builder.Property(st => st.IsTaxable)
+            builder.Property(salesTax => salesTax.IsTaxable)
                 .HasDefaultValue(false);
-            builder.Property(st => st.TaxIdNumber)
+            builder.Property(salesTax => salesTax.TaxIdNumber)
                 .HasMaxLength(255);
-            builder.Property(st => st.PartTaxRate)
+            builder.Property(salesTax => salesTax.PartTaxRate)
                 .HasDefaultValue(0);
-            builder.Property(st => st.LaborTaxRate)
+            builder.Property(salesTax => salesTax.LaborTaxRate)
                 .HasDefaultValue(0);
 
             //builder.HasMany(salesTax => salesTax.ExciseFees)
