@@ -7,37 +7,29 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 {
     public class LaborAmountShould
     {
-        [Fact]
-        public void Create_LaborAmount()
+        [Theory]
+        [InlineData(ItemLaborType.None, 0.0)]
+        [InlineData(ItemLaborType.Flat, 100.0)]
+        [InlineData(ItemLaborType.Time, 0.5)]
+        public void Create_LaborAmount_With_ValidInput(ItemLaborType payType, double amount)
         {
-            // Arrange
-            // Act
-            var resultOrError = LaborAmount.Create(ItemLaborType.Flat,
-                LaborAmount.MinimumAmount);
+            var result = LaborAmount.Create(payType, amount);
 
-            // Assert
-            resultOrError.Value.Should().BeOfType<LaborAmount>();
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsSuccess.Should().BeTrue();
+            result.Value.PayType.Should().Be(payType);
+            result.Value.Amount.Should().Be(amount);
         }
 
-        [Fact]
-        public void Not_Create_LaborAmount_With_Invalid_Amount()
+        [Theory]
+        [InlineData((ItemLaborType)(-1), 0.1)]
+        [InlineData(ItemLaborType.Flat, -100.0)]
+        [InlineData(ItemLaborType.Time, -0.5)]
+        [InlineData((ItemLaborType)999, 100.0)]
+        public void Not_Create_LaborAmount_With_Invalid_Input(ItemLaborType payType, double amount)
         {
-            var resultOrError = LaborAmount.Create(ItemLaborType.Flat,
-                LaborAmount.MinimumAmount - 1);
+            var result = LaborAmount.Create(payType, amount);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("Invalid");
-        }
-
-        [Fact]
-        public void Not_Create_LaborAmount_With_Invalid_ItemLaborType()
-        {
-            var resultOrError = LaborAmount.Create((ItemLaborType)(-1),
-                LaborAmount.MinimumAmount);
-
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("required");
+            result.IsSuccess.Should().BeFalse();
         }
 
         [Fact]
