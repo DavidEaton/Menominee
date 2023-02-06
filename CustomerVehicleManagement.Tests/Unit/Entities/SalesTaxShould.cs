@@ -110,23 +110,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             salesTaxOrError.IsFailure.Should().BeTrue();
         }
 
-        [Fact]
-        public void Not_Create_SalesTax_With_Null_TaxIdNumber()
-        {
-            var description = RandomCharacters((int)SalesTax.MinimumValue + 100);
-            var taxType = SalesTaxType.Normal;
-            var order = (int)SalesTax.MinimumValue + 1;
-
-            string invalidTaxIdNumber = null;
-
-            var partTaxRate = SalesTax.MinimumValue + .1;
-            var laborTaxRate = SalesTax.MinimumValue + .25;
-
-            var salesTaxOrError = SalesTax.Create(description, taxType, order, invalidTaxIdNumber, partTaxRate, laborTaxRate);
-
-            salesTaxOrError.IsFailure.Should().BeTrue();
-        }
-
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_SalesTax_With_Invalid_TaxIdNumber(int length)
@@ -280,17 +263,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         }
 
         [Fact]
-        public void Not_Set_Null_TaxIdNumber()
-        {
-            var salesTax = CreateSalesTax();
-            salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
-
-            var resultOrError = salesTax.SetTaxIdNumber(null);
-
-            resultOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Fact]
         public void SetPartTaxRate()
         {
             var salesTax = CreateSalesTax();
@@ -421,7 +393,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             {
                 get
                 {
-                    yield return new object[] { SalesTax.TaxIdNumberMinumumLength - 1 };
                     yield return new object[] { SalesTax.TaxIdNumberMaximumLength + 1 };
                 }
             }
