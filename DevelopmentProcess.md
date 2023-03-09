@@ -69,15 +69,15 @@ For example, a method converting to Int64 should be named `ToInt64`, not `ToLong
 
 ✔️ DO use a common name, such as `value` or `item`, rather than repeating the type name, in the rare cases when an identifier has no semantic meaning and the type of the parameter is not important.
 
-## This application design was guided by <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles.
+## This application design is guided by <a href="https://martinfowler.com/tags/domain%20driven%20design.html">Domain Driven Design (DDD)</a> principles.
 
 The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus most of our efforts, keeping it fully encapsulated, covered well by tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated. We adhere to the Always-Valid Domain Model philosophy. 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
-In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Person domain aggregate class enforces the business rule, "Person can have only one Primary Phone", via ValidationAttribute named PersonCanHaveOnlyOnePrimaryPhoneAttribute.
+In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Organization domain aggregate class enforces the business rule, "Organization must have a Name", via the Organization.Create factory method. Each domain class enforces its invariants in its Create factory method.
 ### Implement validations in the domain model layer
-Validations are usually implemented in domain entity constructors or in methods that can update the entity. There are multiple ways to implement validations, such as verifying data and raising exceptions if the validation fails. There are also more advanced patterns such as using the Specification pattern for validations, and the Notification pattern to return a collection of errors instead of returning an exception for each validation as it occurs.
+Validations are implemented in domain entity constructors or in methods that can update the entity. 
 
-Domain model methods are kept honest by returning a result object instead of throwing exceptions. As a reesult, it's easier to deal with validation errors, and track down bugs when they do creep in.
+Domain model methods are kept honest by returning a result object rather than throwing exceptions. As a result, it's easier to deal with validation errors, and track down bugs when they do creep in.
 
 We use field-level validation on our command and query Data Transfer Objects (DTOs), and domain-level validation inside our entities and value objects. We do this by adding the FluentValidation library to the ASP.NET processing pipeline in our api, and FluentValidation integrates with our value objects and entities. Controllers can therefore become much lighter, focused, readable and maintainable, removing all validation responsibility out of controllers and into the domain model where they belong.
 
@@ -126,19 +126,10 @@ So, adhere to CQRS Pattern, don't use ORM or domain model in reads. Instead of O
             return await context.Organizations
                 // Tracking is not needed (and expensive) for this disconnected data collection
                 // Lazy-loading is not supported for detached entities or entities that are loaded with 'AsNoTracking'.
-                //.AsNoTracking()
-                //.Include(o => o.Address)
-                //.Include(o => o.Contact)
+                .AsNoTracking()
+                .Include(o => o.Address)
+                .Include(o => o.Contact)
                 .ToArrayAsync();
-
-Refactor to Lazy Loading:
-<ul>
-<li>Add Microsoft.EntityFrameworkCore.Proxies to api project</li>
-<li>Add to AppDbContext.Onconfiguring: optionsBuilder.UseLazyLoadingProxies(true);</li>
-<li>Declare all domain class navigation properties as virtual</li>
-<li>Confirm domain classes are not sealed</li>
-<li>Confirm domain classes have protected parameterless constructor</li>
-</ul>
 
 ### Testing
 Framework of choice is <a href="https://xunit.net/">xunit</a>. With it we use <a href="https://fluentassertions.com/">Fluent Assertions</a>, which:
