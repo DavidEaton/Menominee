@@ -14,29 +14,106 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   consoleNugetConfigPath: 'src/Console/nuget.config'
-  consoleProjectPath: src/Console/Menominee.Client/Menominee.Client.csproj'
 
-steps:
-- task: NuGetToolInstaller@1
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '$(consoleProjectPath)`'
-    feedsToUse: 'config'
-    nugetConfigPath: 'src/Web/nuget.config'
-    externalFeedCredentials: 'TelerikFeed'
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+stages:
+  - stage: Build
+    displayName: Build & Test Solution
+    jobs:
+      - job: Build
+        displayName: Build Solution Job
+        steps:
+        - task: NuGetToolInstaller@1
+        - task: NuGetCommand@2
+          inputs:
+            command: 'restore'
+            restoreSolution: '**/*.sln'
+            feedsToUse: 'config'
+            nugetConfigPath: 'nuget.config'
+            externalFeedCredentials: 'Telerik Nuget'
+        - task: VSBuild@1
+          inputs:
+            solution: '$(solution)'
+            msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)\\"'
+            platform: '$(buildPlatform)'
+            configuration: '$(buildConfiguration)'
+        - task: PublishBuildArtifacts@1
+#       - task: VSTest@2
+#         inputs:
+#           platform: '$(buildPlatform)'
+#           configuration: '$(buildConfiguration)'
+  - stage: 'DeployAPI'
+    displayName: 'Deploy API Application'
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy StockTrac API
+        displayName: Deploy StockTrac API
+        environment: Staging
+        variables:
+        - group: StageDeploy
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - download: current
+                artifact: drop
+              - task: AzureRmWebAppDeployment@4
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: 'MenomineeDev'
+                  appType: 'webApp'
+                  WebAppName: '$(WebAppNameApi)'
+                  deployToSlotOrASE: true
+                  slotName: '$(Slot)'
+                  ResourceGroupName: '$(ResourceGroup)' 
+                  packageForLinux: '$(Pipeline.Workspace)/drop/CustomerVehicleManagement.Api.zip'
+  - stage: 'DeployIDP'
+    displayName: 'Deploy IDP Application'
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy Janco IDP
+        displayName: Deploy Janco IDP
+        environment: Staging
+        variables:
+        - group: StageDeploy
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - download: current
+                artifact: drop
+              - task: AzureRmWebAppDeployment@4
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: 'MenomineeDev'
+                  appType: 'webApp'
+                  WebAppName: '$(WebAppNameIdp)'
+                  deployToSlotOrASE: true
+                  slotName: '$(Slot)'
+                  ResourceGroupName: '$(ResourceGroup)' 
+                  packageForLinux: '$(Pipeline.Workspace)/drop/Janco.Idp.zip'
+  - stage: 'DeployClient'
+    displayName: 'Deploy Client Application'
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy StockTrac Client
+        displayName: Deploy StockTrac Client
+        environment: Staging
+        variables:
+        - group: StageDeploy
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - download: current
+                artifact: drop
+              - task: AzureRmWebAppDeployment@4
+                inputs:
+                  ConnectionType: 'AzureRM'
+                  azureSubscription: 'MenomineeDev'
+                  appType: 'webApp'
+                  WebAppName: '$(WebAppNameClient)'
+                  deployToSlotOrASE: true
+                  slotName: '$(Slot)'
+                  ResourceGroupName: '$(ResourceGroup)' 
+                  packageForLinux: '$(Pipeline.Workspace)/drop/Menominee.Client.zip'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'

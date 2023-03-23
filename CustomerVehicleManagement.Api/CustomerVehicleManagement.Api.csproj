@@ -6,6 +6,9 @@
 	</PropertyGroup>
 
 	<!--Publish generates error for duplicate files in publish output; Duplicate files in the publish output sometimes caused build breaks or unpredictable behavior: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/duplicate-files-in-output-->
+	<PropertyGroup>
+		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+	</PropertyGroup>
 	<!--Uncomment two ItemGroups below to publish:-->
 	<!--<ItemGroup>
 		<Content Remove="appsettings.Development.json" />

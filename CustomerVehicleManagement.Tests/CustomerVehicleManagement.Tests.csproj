@@ -5,7 +5,9 @@
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="TestData\repair-order-graph.json" />
     <None Remove="TestData\repair-order.json" />
