@@ -71,7 +71,7 @@ namespace Janco.Idp
                     builder.WithOrigins(
                            "https://menominee.azurewebsites.net",
                            "https://menominee-test.azurewebsites.net",
-                           "https://menominee-staging.azurewebsites.net")
+                           "https://menominee-stage.azurewebsites.net")
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();

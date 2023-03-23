@@ -45,7 +45,7 @@ stages:
     displayName: 'Deploy API Application'
     dependsOn: Build
     jobs:
-      - deployment: Deploy StockTrac API
+      - deployment: DeployStockTracAPI
         displayName: Deploy StockTrac API
         environment: Staging
         variables:
@@ -70,7 +70,7 @@ stages:
     displayName: 'Deploy IDP Application'
     dependsOn: Build
     jobs:
-      - deployment: Deploy Janco IDP
+      - deployment: DeployJancoIDP
         displayName: Deploy Janco IDP
         environment: Staging
         variables:
@@ -95,7 +95,7 @@ stages:
     displayName: 'Deploy Client Application'
     dependsOn: Build
     jobs:
-      - deployment: Deploy StockTrac Client
+      - deployment: DeployStockTracClient
         displayName: Deploy StockTrac Client
         environment: Staging
         variables:

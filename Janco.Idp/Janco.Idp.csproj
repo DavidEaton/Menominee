@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<UserSecretsId>c25d8d10-5ce0-492f-8189-177e10824261</UserSecretsId>
 	</PropertyGroup>
 
 	<!--Publish generates error for duplicate files in publish output; Duplicate files in the publish output sometimes caused build breaks or unpredictable behavior: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/duplicate-files-in-output-->
