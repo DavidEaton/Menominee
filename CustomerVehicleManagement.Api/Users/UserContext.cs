@@ -6,18 +6,18 @@ namespace CustomerVehicleManagement.Api.Users
 {
     public class UserContext
     {
-        private readonly IHttpContextAccessor accessor;
+        private readonly IHttpContextAccessor _accessor;
 
         public UserContext(IHttpContextAccessor accessor)
         {
-            this.accessor = accessor;
+            this._accessor = accessor;
         }
 
         public object Identity
         {
             get
             {
-                return accessor.HttpContext.User.Identity;
+                return _accessor.HttpContext?.User.Identity;
             }
         }
 
@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Api.Users
         {
             get
             {
-                return accessor.HttpContext.User.Claims;
+                return _accessor.HttpContext?.User.Claims;
             }
         }
     }

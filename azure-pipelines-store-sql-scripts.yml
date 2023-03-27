@@ -1,0 +1,34 @@
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+  - checkout: none
+  - task: DownloadBuildArtifacts@1
+    displayName: 'Get SQL Scripts from Archive'
+    inputs:
+      buildType: 'specific'
+      project: 'c2ba3342-ff6f-4452-9f1d-8acb61544cd7'
+      pipeline: '1'
+      specificBuildWithTriggering: true
+      buildVersionToDownload: $(BuildToDownload)
+      downloadType: 'specific'
+      itemPattern: '**/*.sql'
+      downloadPath: '$(System.ArtifactsDirectory)'
+  - task: AzureFileCopy@5
+    displayName: 'Store IDP SQL in Azure Storage'
+    inputs:
+      SourcePath: 'D:\a\1\a\drop\idp-migrations.sql'
+      azureSubscription: MenomineeDev
+      Destination: 'AzureBlob'
+      storage: 'menominee'
+      ContainerName: 'data'
+  - task: AzureFileCopy@5
+    displayName: 'Store API SQL in Azure Storage'
+    inputs:
+      SourcePath: 'D:\a\1\a\drop\api-migrations.sql'
+      azureSubscription: MenomineeDev
+      Destination: 'AzureBlob'
+      storage: 'menominee'
+      ContainerName: 'data'

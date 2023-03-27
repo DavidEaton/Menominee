@@ -173,12 +173,12 @@ namespace CustomerVehicleManagement.Api.Data
             return builder.ConnectionString;
         }
 
-        private string GetTenantName(UserContext UserContext)
+        private string GetTenantName(UserContext userContext)
         {
-            if (UserContext == null)
+            if (userContext == null)
                 return Configuration["DatabaseSettings:Tenant:Name"];
 
-            var claims = UserContext.Claims;
+            var claims = userContext.Claims;
             var tenantName = Configuration["DatabaseSettings:Tenant:Name"];
 
             try
@@ -188,7 +188,7 @@ namespace CustomerVehicleManagement.Api.Data
             catch (Exception ex)
             {
                 Logger.LogError($"Exception message from GetTenantName(): {ex.Message}");
-                return tenantName;
+                tenantName = "menominee-stage";
             }
 
             return tenantName;
