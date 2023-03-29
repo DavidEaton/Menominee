@@ -74,5 +74,25 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                         ConvertEntityToReadDto(email))
                 .ToList();
         }
+
+        public static IList<EmailToWrite> ConvertEntitiesToWriteDtos(IEnumerable<Email> emails)
+        {
+            return emails
+                .Select(email =>
+                        ConvertEntityToWriteDto(email))
+                .ToList();
+        }
+
+        private static EmailToWrite ConvertEntityToWriteDto(Email email)
+        {
+            return (email is not null)
+                ? new EmailToWrite()
+                {
+                    Id = email.Id,
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                }
+                : null;
+        }
     }
 }

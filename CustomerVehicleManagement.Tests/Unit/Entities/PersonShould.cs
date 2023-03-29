@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
@@ -40,7 +41,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Have_Empty_Phones_On_Create()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
 
             person.Phones.Count.Should().Be(0);
         }
@@ -48,7 +49,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddPhone()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -61,7 +62,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemovePhone()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Mobile;
             var phoneOne = Phone.Create(number, phoneType, true).Value;
@@ -81,7 +82,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_More_Than_One_Primary_Phone()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -97,7 +98,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Duplicate_Phone()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -112,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddEmail()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
@@ -124,7 +125,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveEmail()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
             person.AddEmail(email0);
@@ -142,7 +143,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_GreaterThan_One_Primary_Email()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
             person.AddEmail(email);
@@ -157,7 +158,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Duplicate_Email()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
             person.AddEmail(email);
@@ -201,7 +202,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetGender()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
 
             person.Gender.Should().Be(Gender.Female);
             person.SetGender(Gender.Male);
@@ -212,7 +213,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetBirthday()
         {
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
 
             person.SetBirthday(DateTime.Today.AddDays(10));
 
@@ -227,7 +228,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var expiry = DateTime.Today.AddYears(4);
             var driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
             var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
 
             person.SetDriversLicense(driversLicenseOrError.Value);
 
@@ -241,7 +242,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var person = Utilities.CreateTestPerson();
+            var person = ContactableTestHelper.CreatePerson();
             var address = Address.Create(addressLine, city, state, postalCode);
 
             person.SetAddress(address.Value);

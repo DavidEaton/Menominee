@@ -1,5 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
@@ -33,7 +35,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = "Vendor One";
             var vendorCode = "V1";
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
 
             var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
@@ -87,7 +89,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         {
             var name = "Vendor One";
             var vendorCode = "V1";
-            var phones = CreateTestPhones(10);
+            var phones = ContactableTestHelper.CreatePhones(10);
 
             var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, phones: phones);
 
@@ -170,7 +172,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetName()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
 
             var name = RandomCharacters(Vendor.MinimumLength + 11);
             vendor.SetName(name);
@@ -181,7 +183,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Name_With_Null_Name()
         {
-            var vendorOrError = CreateVendor();
+            var vendorOrError = VendorTestHelper.CreateVendor();
 
             var resultOrError = vendorOrError.SetName(null);
 
@@ -205,7 +207,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetVendorCode()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             vendor.VendorCode.Length.Should().Be(Vendor.MinimumLength);
             var vendorCode = RandomCharacters(Vendor.MinimumLength + 1);
 
@@ -217,7 +219,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetNote()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var vendorNote = RandomCharacters(Vendor.NoteMaximumLength);
             vendor.SetNote(vendorNote);
 
@@ -227,7 +229,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Set_Truncated_Note()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var vendorNote = RandomCharacters(Vendor.NoteMaximumLength * 2);
             vendor.SetNote(vendorNote);
 
@@ -237,8 +239,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDefaultPaymentMethod()
         {
-            var vendor = CreateVendor();
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendor = VendorTestHelper.CreateVendor();
+            var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
 
             vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
@@ -249,8 +251,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_SetDefaultPaymentMethod_With_Null_DefaultPaymentMethod()
         {
-            var vendor = CreateVendor();
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendor = VendorTestHelper.CreateVendor();
+            var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             DefaultPaymentMethod defaultPaymentMethod = null;
 
             var resultOrError = vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
@@ -261,8 +263,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void ClearDefaultPaymentMethod()
         {
-            var vendor = CreateVendor();
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendor = VendorTestHelper.CreateVendor();
+            var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
             vendor.SetDefaultPaymentMethod(defaultPaymentMethod);
             vendor.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
@@ -277,7 +279,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Vendor_Code(int length)
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
 
             var invalidVendorCode = RandomCharacters(length);
             var resultOrError = vendor.SetVendorCode(invalidVendorCode);
@@ -288,7 +290,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Vendor_Code()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
 
             var resultOrError = vendor.SetVendorCode(null);
 
@@ -298,7 +300,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Disable()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
 
             vendor.Disable();
 
@@ -308,7 +310,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Enable()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
 
             vendor.Disable();
             vendor.IsActive.Should().BeFalse();
@@ -320,7 +322,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddPhone()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -333,7 +335,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_AddPhone_If_Not_Unique()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phoneOne = Phone.Create(number, phoneType, true).Value;
@@ -351,7 +353,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void ClearAddress()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var address = Address.Create(
                 "1234 Five Street",
                 "Gaylord",
@@ -368,7 +370,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetAddress()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var address = Address.Create(
                 "1234 Five Street",
                 "Gaylord",
@@ -382,7 +384,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetVendorRole()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             vendor.VendorRole.Should().Be(VendorRole.PartsSupplier);
             var newVendorRole = VendorRole.PaymentReconciler;
 
@@ -395,7 +397,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Inavlid_VendorRole()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var invalidVendorRole = (VendorRole)(-1);
 
             var vendorOrError = vendor.SetVendorRole(invalidVendorRole);

@@ -86,7 +86,7 @@ namespace Menominee.Client.Components.Inventory
                 Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 Item.Inspection = new();
-                Item.ItemType = InventoryItemType.Inspection.ToString();
+                Item.ItemType = InventoryItemType.Inspection;
 
                 Title = "Add Inspection";
             }

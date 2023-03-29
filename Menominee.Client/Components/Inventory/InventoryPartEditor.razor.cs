@@ -66,7 +66,7 @@ namespace Menominee.Client.Components.Inventory
             if (Item?.Part == null)
             {
                 Item.Part = new();
-                Item.ItemType = InventoryItemType.Part.ToString();
+                Item.ItemType = InventoryItemType.Part;
 
                 Title = "Add Part";
             }

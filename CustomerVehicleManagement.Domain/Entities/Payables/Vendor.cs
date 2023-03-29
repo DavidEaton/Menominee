@@ -1,10 +1,10 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System;
+using System.Collections.Generic;
+using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
-using System;
-using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
@@ -81,7 +81,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string vendorCode,
             VendorRole vendorRole,
             string note = null,
-             DefaultPaymentMethod defaultPaymentMethod = null,
+            DefaultPaymentMethod defaultPaymentMethod = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)
@@ -175,7 +175,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         #region ORM
 
         // EF requires a parameterless constructor
-        protected Vendor() { }
+        protected Vendor()
+        {
+        }
 
         #endregion
     }

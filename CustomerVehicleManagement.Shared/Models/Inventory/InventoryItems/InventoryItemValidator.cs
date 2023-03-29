@@ -30,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                         itemDto.ItemNumber,
                         itemDto.Description,
                         ValidatorHelper.CreateProductCode(itemDto.Manufacturer, itemDto.ProductCode),
-                        Utilities.ParseEnum<InventoryItemType>(itemDto.ItemType),
+                        itemDto.ItemType,
 
                         // TODO: FIND A SOLUTION THAT AVOIDS CODE POLLUTION: "...(to facilitate testing)"
                         part: ValidatorHelper.CreateInventoryItemPart()));

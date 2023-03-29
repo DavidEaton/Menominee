@@ -1,9 +1,10 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Xunit;
-using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -14,7 +15,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddEmail()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var address = "m@m.m";
             var email = Email.Create(address, true).Value;
 
@@ -28,7 +29,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Null_Email()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
 
             var result = organization.AddEmail(null);
 
@@ -38,7 +39,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_Null_Email()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
             organization.AddEmail(email);
@@ -51,7 +52,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Duplicate_Email()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var address = "m@m.m";
             var email = Email.Create(address, true).Value;
             vendor.AddEmail(email);
@@ -65,7 +66,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_More_Tha_One_Primary_Email()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var address = "m@m.m";
             var email = Email.Create(address, true).Value;
             vendor.AddEmail(email);
@@ -79,7 +80,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveEmail()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var address = "m@m.m";
             var email = Email.Create(address, true).Value;
             var result = organization.AddEmail(email);
@@ -96,7 +97,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddPhone()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -110,7 +111,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Null_Phone()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
 
             var result = organization.AddPhone(null);
 
@@ -120,7 +121,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Duplicate_Phone()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var number = "555.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -135,7 +136,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_More_Tha_One_Primary_Phone()
         {
-            var vendor = CreateVendor();
+            var vendor = VendorTestHelper.CreateVendor();
             var number = "555.627.9206";
             var phone = Phone.Create(number, PhoneType.Home, true).Value;
             vendor.AddPhone(phone);
@@ -149,7 +150,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemovePhone()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -167,7 +168,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_Null_Phone()
         {
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
@@ -186,7 +187,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
             var customerOrError = new Customer(organization, CustomerType.Retail);
@@ -208,7 +209,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var state = State.MI;
             var postalCode = "49735";
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
             organization.SetAddress(addressOrError.Value);
             var customerOrError = new Customer(organization, CustomerType.Retail);
             var janes = customerOrError.Organization;
@@ -225,5 +226,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             janes.Address.Should().BeNull();
         }
 
+        [Fact]
+        public void SyncContactDetails()
+        {
+
+            true.Should().BeFalse();
+        }
     }
 }

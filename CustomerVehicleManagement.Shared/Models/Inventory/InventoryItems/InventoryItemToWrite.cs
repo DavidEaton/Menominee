@@ -6,17 +6,20 @@ using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
     public class InventoryItemToWrite
     {
         public long Id { get; set; }
+        public long ManufacturerId { get; set; }
         public ManufacturerToRead Manufacturer { get; set; }
         public string ItemNumber { get; set; }
         public string Description { get; set; }
+        public long ProductCodeId { get; set; }
         public ProductCodeToRead ProductCode { get; set; }
-        public string ItemType { get; set; }
+        public InventoryItemType ItemType { get; set; }
 
         public InventoryItemPartToWrite Part { get; set; }
         public InventoryItemLaborToWrite Labor { get; set; }

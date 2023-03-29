@@ -1,12 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
 {
@@ -68,7 +68,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Helpers
             long id;
             using (var context = new ApplicationDbContext(options))
             {
-                Organization organization = CreateTestOrganization();
+                Organization organization = ContactableTestHelper.CreateOrganization();
                 context.Organizations.Add(organization);
                 context.SaveChanges();
                 id = organization.Id;

@@ -100,16 +100,11 @@ namespace CustomerVehicleManagement.Api.Organizations
             var organizationFromContext = context.Organizations
                 .Include(organization => organization.Phones)
                 .Include(organization => organization.Emails)
-
                 .Include(organization => organization.Contact)
                     .ThenInclude(contact => contact.Emails)
                 .Include(organization => organization.Contact)
                     .ThenInclude(contact => contact.Phones)
-
                 .AsSplitQuery()
-                //.AsNoTracking() // Disabling ChangeTracker on entity breaks updating
-                // entity via repo.changetracker, loading of navigation properties
-
                 .FirstOrDefaultAsync(organization => organization.Id == id);
 
             return await organizationFromContext;

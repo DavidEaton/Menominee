@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                             package.Item.ItemNumber,
                             package.Item.Description,
                             ValidatorHelper.CreateProductCode(package.Item.Manufacturer, package.Item.ProductCode),
-                            Utilities.ParseEnum<InventoryItemType>(package.Item.ItemType))
+                            package.Item.ItemType)
                         .Value,
                         InventoryItemPackageDetails.Create(
                         package.Quantity,

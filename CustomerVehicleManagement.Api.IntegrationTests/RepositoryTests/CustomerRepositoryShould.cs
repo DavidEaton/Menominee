@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Api.Customers;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var person = CreateTestPerson();
+                var person = ContactableTestHelper.CreatePerson();
                 await context.AddAsync(person);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -51,7 +52,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = CreateTestOrganization();
+                var organization = ContactableTestHelper.CreateOrganization();
                 await context.AddAsync(organization);
 
                 if ((await context.SaveChangesAsync()) > 0)
@@ -75,7 +76,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = CreateTestOrganization();
+                var organization = ContactableTestHelper.CreateOrganization();
                 await context.AddAsync(organization);
 
                 Customer customer = new(organization, CustomerType.Retail);

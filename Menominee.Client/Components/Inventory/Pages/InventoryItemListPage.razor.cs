@@ -153,28 +153,20 @@ namespace Menominee.Client.Components.Inventory.Pages
             ItemTypeSelectDialogVisible = true;
         }
 
-        private string ItemTypeUrlSegment(InventoryItemType itemType)
+        private static string ItemTypeUrlSegment(InventoryItemType itemType)
         {
-            string url = string.Empty;
-
-            if (itemType == InventoryItemType.Part)
-                url = "parts";
-            else if (itemType == InventoryItemType.Labor)
-                url = "labor";
-            else if (itemType == InventoryItemType.Tire)
-                url = "tires";
-            else if (itemType == InventoryItemType.Package)
-                url = "packages";
-            else if (itemType == InventoryItemType.Inspection)
-                url = "inspections";
-            else if (itemType == InventoryItemType.Donation)
-                url = "donations";
-            else if (itemType == InventoryItemType.GiftCertificate)
-                url = "giftcertificates";
-            else if (itemType == InventoryItemType.Warranty)
-                url = "warranties";
-
-            return url;
+            return itemType switch
+            {
+                InventoryItemType.Part => "parts",
+                InventoryItemType.Labor => "labor",
+                InventoryItemType.Tire => "tires",
+                InventoryItemType.Package => "packages",
+                InventoryItemType.Inspection => "inspections",
+                InventoryItemType.Donation => "donations",
+                InventoryItemType.GiftCertificate => "giftcertificates",
+                InventoryItemType.Warranty => "warranties",
+                _ => string.Empty,
+            };
         }
 
         private void OnSelectItemType()
@@ -188,7 +180,7 @@ namespace Menominee.Client.Components.Inventory.Pages
 
         private void OnEdit()
         {
-            string url = ItemTypeUrlSegment(Utilities.ParseEnum<InventoryItemType>(SelectedItem.ItemType)) ?? string.Empty;
+            string url = ItemTypeUrlSegment(SelectedItem.ItemType);
             if (url.Length > 0)
                 NavigationManager.NavigateTo($"inventory/{url}/{SelectedId}");
         }

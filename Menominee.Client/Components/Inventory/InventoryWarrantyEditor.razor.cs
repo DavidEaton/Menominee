@@ -75,7 +75,7 @@ namespace Menominee.Client.Components.Inventory
                 Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 Item.Warranty = new() { PeriodType = InventoryItemWarrantyPeriodType.Years, Duration = 1 };
-                Item.ItemType = InventoryItemType.Warranty.ToString();
+                Item.ItemType = InventoryItemType.Warranty;
 
                 Title = "Add Warranty";
             }

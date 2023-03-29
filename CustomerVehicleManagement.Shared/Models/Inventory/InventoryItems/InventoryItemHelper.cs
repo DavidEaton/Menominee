@@ -11,7 +11,6 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static CustomerVehicleManagement.Shared.Utilities;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
@@ -46,7 +45,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                             Prefix = item.ProductCode.Manufacturer.Prefix
                         },
                     },
-                    ItemType = item.ItemType.ToString(),
+                    ItemType = item.ItemType,
                 });
         }
 
@@ -126,7 +125,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
                 ProductCode = item.ProductCode,
-                ItemType = item.ItemType.ToString()
+                ItemType = item.ItemType
             };
 
             switch (item.ItemType)
@@ -170,7 +169,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 item.ItemNumber,
                 item.Description,
                 productCodes.FirstOrDefault(productCode => productCode.Id == item.ProductCode.Id),
-                ParseEnum<InventoryItemType>(item.ItemType),
+                item.ItemType,
 
                 item.Part is null
                     ? null
@@ -200,29 +199,29 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             return item is null
                 ? null
                 : InventoryItem.Create(
-                manufacturer,
-                item.ItemNumber,
-                item.Description,
-                productCode,
-                ParseEnum<InventoryItemType>(item.ItemType),
-                item.Part is null
-                    ? null
-                    : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
-                item.Labor is null
-                    ? null
-                    : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
-                item.Tire is null
-                    ? null
-                    : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
-                item.Package is null
-                    ? null
-                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
-                item.Inspection is null
-                    ? null
-                    : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
-                item.Warranty is null
-                    ? null
-                    : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                    manufacturer,
+                    item.ItemNumber,
+                    item.Description,
+                    productCode,
+                    item.ItemType,
+                    item.Part is null
+                        ? null
+                        : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
+                    item.Labor is null
+                        ? null
+                        : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
+                    item.Tire is null
+                        ? null
+                        : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
+                    item.Package is null
+                        ? null
+                        : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
+                    item.Inspection is null
+                        ? null
+                        : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
+                    item.Warranty is null
+                        ? null
+                        : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
                 .Value;
         }
     }

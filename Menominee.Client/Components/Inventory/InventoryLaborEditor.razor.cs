@@ -77,7 +77,7 @@ namespace Menominee.Client.Components.Inventory
                 Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 Item.Labor = new();
-                Item.ItemType = InventoryItemType.Labor.ToString();
+                Item.ItemType = InventoryItemType.Labor;
 
                 Title = "Add Labor";
             }

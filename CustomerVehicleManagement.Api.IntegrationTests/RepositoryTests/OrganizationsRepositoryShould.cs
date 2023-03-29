@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Organizations;
+using CustomerVehicleManagement.Tests.Unit.Helpers;
 using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using System;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using static CustomerVehicleManagement.Api.IntegrationTests.Helpers.TestUtilities;
-using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 {
@@ -26,7 +26,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             // Arrange
             var repository = new OrganizationRepository(context);
-            var organization = CreateTestOrganization();
+            var organization = ContactableTestHelper.CreateOrganization();
 
             // Act
             await repository.AddOrganizationAsync(organization);
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(CreateTestOrganization());
+                context.Organizations.Add(ContactableTestHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
             var options = CreateDbContextOptions();
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(CreateTestOrganization());
+                context.Organizations.Add(ContactableTestHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -124,14 +124,14 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
                 organizationFromRepository.SetNote(note);
-                organizationFromRepository.SetAddress(CreateTestAddress());
-                organizationFromRepository.SetContact(CreateTestPerson());
+                organizationFromRepository.SetAddress(ContactableTestHelper.CreateAddress());
+                organizationFromRepository.SetContact(ContactableTestHelper.CreatePerson());
                 //organizationFromRepository.SetPhones(CreatePhoneList());
-                var emails = CreateTestEmails(emailsCount);
+                var emails = ContactableTestHelper.CreateEmails(emailsCount);
                 foreach (var email in emails)
                     organizationFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
-                var phones = CreateTestPhones(phonesCount);
+                var phones = ContactableTestHelper.CreatePhones(phonesCount);
                 foreach (var phone in phones)
                     organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(CreateTestPerson());
+                organizationFromRepository.SetContact(ContactableTestHelper.CreatePerson());
 
                 await repository.SaveChangesAsync();
             }
@@ -189,13 +189,13 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var repository = new OrganizationRepository(context);
                 var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
 
-                organizationFromRepository.SetContact(CreateTestPersonWithPhonesAndEmails());
+                organizationFromRepository.SetContact(ContactableTestHelper.CreatePersonWithPhonesAndEmails());
 
-                var phones = CreateTestPhones(phoneCount);
+                var phones = ContactableTestHelper.CreatePhones(phoneCount);
                 foreach (var phone in phones)
                     organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
-                var emails = CreateTestEmails(emailCount);
+                var emails = ContactableTestHelper.CreateEmails(emailCount);
                 foreach (var email in emails)
                     organizationFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
 
@@ -222,7 +222,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                context.Organizations.Add(CreateTestOrganization());
+                context.Organizations.Add(ContactableTestHelper.CreateOrganization());
                 context.SaveChanges();
             }
 
@@ -301,7 +301,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
 
             using (var context = new ApplicationDbContext(options))
             {
-                var organization = CreateTestOrganization();
+                var organization = ContactableTestHelper.CreateOrganization();
                 organization.SetNote(someNotes);
                 context.Organizations.Add(organization);
                 context.SaveChanges();
@@ -340,7 +340,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Address.Should().BeNull();
 
-                organizationFromRepo.SetAddress(CreateTestAddress());
+                organizationFromRepo.SetAddress(ContactableTestHelper.CreateAddress());
 
                 await repository.SaveChangesAsync();
             }
@@ -366,7 +366,7 @@ namespace CustomerVehicleManagement.Api.IntegrationTests.Repositories
                 var organizationFromRepo = await repository.GetOrganizationEntityAsync(id);
                 organizationFromRepo.Contact.Should().BeNull();
 
-                organizationFromRepo.SetContact(CreateTestPerson());
+                organizationFromRepo.SetContact(ContactableTestHelper.CreatePerson());
 
                 await repository.SaveChangesAsync();
             }

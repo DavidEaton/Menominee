@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
@@ -6,6 +7,7 @@ using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
@@ -31,32 +33,22 @@ namespace CustomerVehicleManagement.Api.Inventory
                 productCodeRepository ?? throw new ArgumentNullException(nameof(productCodeRepository));
         }
 
-        [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync()
+        [HttpGet("listing")]
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetItemsInList([FromQuery] long? manufacturerId)
         {
-            var result = await itemRepository.GetItemsInListAsync();
+            var result = manufacturerId.HasValue
+                ? await itemRepository.GetItemsInList(manufacturerId.Value)
+                : await itemRepository.GetItemsInList();
 
-            return result is null
-                ? NotFound()
-                : Ok(result);
+            return result.Count > 0
+                ? Ok(result)
+                : NotFound();
         }
 
-        [Route("listing")]
-        [HttpGet("listing/{manufacturerId:long}")]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetInventoryItemsListAsync(long manufacturerId)
+        [HttpGet("{manufacturerId:long}/partnumber/{partNumber}")]
+        public async Task<ActionResult<InventoryItemToRead>> Get(long manufacturerId, string itemNumber)
         {
-            var result = await itemRepository.GetItemsInListAsync(manufacturerId);
-
-            return result is null
-                ? NotFound()
-                : Ok(result);
-        }
-
-        [HttpGet("{manufacturerId:long}/{partNumber}")]
-        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long manufacturerId, string partNumber)
-        {
-            var result = await itemRepository.GetItemAsync(manufacturerId, partNumber);
+            var result = await itemRepository.GetItem(manufacturerId, itemNumber);
 
             return result is null
                 ? NotFound()
@@ -64,9 +56,9 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<InventoryItemToRead>> GetInventoryItemAsync(long id)
+        public async Task<ActionResult<InventoryItemToRead>> Get(long id)
         {
-            var result = await itemRepository.GetItemAsync(id);
+            var result = await itemRepository.GetItem(id);
 
             return result is null
                 ? NotFound()
@@ -74,197 +66,139 @@ namespace CustomerVehicleManagement.Api.Inventory
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateInventoryItemAsync(long id, InventoryItemToWrite itemFromCaller)
+        public async Task<IActionResult> Update(long id, InventoryItemToWrite itemFromCaller)
         {
             var notFoundMessage = $"Could not find Inventory Item # {id} to update.";
 
-            //1) Get domain entities from repositories:
-            var itemFromRepository =
-                await itemRepository.GetItemEntityAsync(id);
+            var (itemFromRepository, manufacturerFromRepository, productCodeFromRepository) =
+                await GetEntitiesForUpdate(id, itemFromCaller);
 
-            var manufacturerFromRepository =
-                await manufacturerRepository.GetManufacturerEntityAsync(itemFromCaller.Manufacturer.Id);
-
-            var productCodeFromRepository =
-                await productCodeRepository.GetProductCodeEntityAsync(itemFromCaller.ProductCode.Id);
-
-            if (itemFromRepository is null
-                || manufacturerFromRepository is null
-                || productCodeFromRepository is null)
+            if (itemFromRepository == null || manufacturerFromRepository == null || productCodeFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            // 2) Update domain "aggregate root" entity (InventoryItem) with data in
-            // data contract/transfer object(DTO).
-            // Update each member of aggregate root InventoryItem, or return a Bad
-            // Resuest response with error message, in case of Failure:
-            if (itemFromRepository.Manufacturer.Id != itemFromCaller.Manufacturer.Id)
-            {
-                var resultOrError = itemFromRepository.SetManufacturer(manufacturerFromRepository);
+            var result = await UpdateInventoryItemPropertiesAsync(itemFromRepository, itemFromCaller,
+                manufacturerFromRepository, productCodeFromRepository);
 
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
+            if (result.IsFailure)
+                return BadRequest(result.Error);
 
-            if (itemFromRepository.ItemNumber != itemFromCaller.ItemNumber)
-            {
-                var resultOrError = itemFromRepository.SetItemNumber(itemFromCaller.ItemNumber);
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Description != itemFromCaller.Description)
-            {
-                var resultOrError = itemFromRepository.SetDescription(itemFromCaller.Description);
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.ProductCode.Id != itemFromCaller.ProductCode.Id)
-            {
-                var resultOrError = itemFromRepository.SetProductCode(productCodeFromRepository);
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Part.Id != itemFromCaller.Part.Id)
-            {
-                var resultOrError = itemFromRepository.SetPart(
-                    await itemRepository.GetInventoryItemPartEntityAsync(itemFromCaller.Part.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Labor.Id != itemFromCaller.Labor.Id)
-            {
-                var resultOrError = itemFromRepository.SetLabor(
-                    await itemRepository.GetInventoryItemLaborEntityAsync(itemFromCaller.Labor.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Tire.Id != itemFromCaller.Tire.Id)
-            {
-                var resultOrError = itemFromRepository.SetTire(
-                    await itemRepository.GetInventoryItemTireEntityAsync(itemFromCaller.Tire.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Package.Id != itemFromCaller.Package.Id)
-            {
-                var resultOrError = itemFromRepository.SetPackage(
-                    await itemRepository.GetInventoryItemPackageEntityAsync(itemFromCaller.Package.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Inspection.Id != itemFromCaller.Inspection.Id)
-            {
-                var resultOrError = itemFromRepository.SetInspection(
-                    await itemRepository.GetInventoryItemInspectionEntityAsync(itemFromCaller.Inspection.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            if (itemFromRepository.Warranty.Id != itemFromCaller.Warranty.Id)
-            {
-                var resultOrError = itemFromRepository.SetWarranty(
-                    await itemRepository.GetInventoryItemWarrantyEntityAsync(itemFromCaller.Warranty.Id));
-
-                if (resultOrError.IsFailure)
-                    return BadRequest(resultOrError.Error);
-            }
-
-            await itemRepository.SaveChangesAsync();
+            await itemRepository.SaveChanges();
 
             return NoContent();
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> AddInventoryItemAsync(InventoryItemToWrite itemToAdd)
+        public async Task<IActionResult> Add(InventoryItemToWrite itemToAdd)
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
-            var manufacturer =
-               await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id);
-
-            var productCode =
-                await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id);
-
-            var inventoryItems =
-                await itemRepository.GetInventoryItemEntitiesAsync(GetItemIds(itemToAdd));
-
-            if (manufacturer is null
-                || productCode is null
-                || inventoryItems is null)
+            // Get domain entities from repositories
+            var (manufacturerFromRepository, productCodeFromRepository, inventoryItems) =
+                await GetEntitiesForAdd(itemToAdd);
+            if (manufacturerFromRepository == null || productCodeFromRepository == null || inventoryItems == null)
                 return NotFound(failureMessage);
 
-            InventoryItem inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(
-                itemToAdd,
-                manufacturer,
-                productCode,
-                inventoryItems);
+            // Convert and add the new inventory item
+            var inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
+                manufacturerFromRepository, productCodeFromRepository, inventoryItems);
 
-            await itemRepository.AddItemAsync(inventoryItemEntity);
-            await itemRepository.SaveChangesAsync();
+            await itemRepository.Add(inventoryItemEntity);
+            await itemRepository.SaveChanges();
 
             return Created(
-                new Uri($"{BasePath}/{inventoryItemEntity.Id}",
-                UriKind.Relative),
-                new
-                {
-                    inventoryItemEntity.Id
-                });
-        }
-
-        private static List<long> GetItemIds(InventoryItemToWrite itemToAdd)
-        {
-            List<long> result = new();
-
-            if (itemToAdd.Part is not null)
-                result.Add(itemToAdd.Part.Id);
-
-            if (itemToAdd.Labor is not null)
-                result.Add(itemToAdd.Labor.Id);
-
-            if (itemToAdd.Tire is not null)
-                result.Add(itemToAdd.Tire.Id);
-
-            if (itemToAdd.Package is not null)
-                foreach (var item in itemToAdd.Package.Items)
-                    result.Add(item.Id);
-
-            if (itemToAdd.Inspection is not null)
-                result.Add(itemToAdd.Inspection.Id);
-
-            if (itemToAdd.Warranty is not null)
-                result.Add(itemToAdd.Warranty.Id);
-
-            return result;
+                new Uri($"{BasePath}/{inventoryItemEntity.Id}", UriKind.Relative),
+                new { inventoryItemEntity.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteInventoryItemAsync(long id)
+        public async Task<IActionResult> Delete(long id)
         {
             var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
 
-            InventoryItem itemFromRepository = await itemRepository.GetItemEntityAsync(id);
+            var itemFromRepository = await itemRepository.GetItemEntity(id);
 
             if (itemFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            itemRepository.DeleteInventoryItem(itemFromRepository);
-            await itemRepository.SaveChangesAsync();
+            itemRepository.Delete(itemFromRepository);
+
+            await itemRepository.SaveChanges();
 
             return NoContent();
+        }
+
+        private async Task<(InventoryItem itemFromRepository, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)> GetEntitiesForUpdate(long id, InventoryItemToWrite itemFromCaller)
+        {
+            var itemFromRepository = await itemRepository.GetItemEntity(id);
+
+            var manufacturerFromRepository = itemFromCaller.Manufacturer is not null
+                ? await manufacturerRepository.GetManufacturerEntityAsync(itemFromCaller.Manufacturer.Id)
+                : null;
+
+            var productCodeFromRepository = itemFromCaller.ProductCode is not null
+                ? await productCodeRepository.GetProductCodeEntityAsync(itemFromCaller.ProductCode.Id)
+                : null;
+
+            return (itemFromRepository, manufacturerFromRepository, productCodeFromRepository);
+        }
+
+        private async Task<(Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository, IReadOnlyList<InventoryItem> inventoryItems)> GetEntitiesForAdd(InventoryItemToWrite itemToAdd)
+        {
+            var manufacturerFromRepository = itemToAdd.Manufacturer is not null ?
+                await manufacturerRepository.GetManufacturerEntityAsync(itemToAdd.Manufacturer.Id)
+                : null;
+
+            var productCodeFromRepository = itemToAdd.ProductCode is not null
+                ? await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id)
+                : null;
+
+            var inventoryItems = await itemRepository.GetInventoryItemEntities(GetItemIds(itemToAdd));
+
+            return (manufacturerFromRepository, productCodeFromRepository, inventoryItems);
+        }
+
+        private async Task<Result> UpdateInventoryItemPropertiesAsync(InventoryItem itemFromRepository, InventoryItemToWrite itemFromCaller, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)
+        {
+            return itemFromRepository.UpdateProperties(
+                itemFromCaller.ItemNumber,
+                itemFromCaller.Description,
+                manufacturerFromRepository,
+                productCodeFromRepository,
+                itemFromCaller.Part is not null
+                    ? await itemRepository.GetInventoryItemPartEntity(itemFromCaller.Part.Id)
+                    : null,
+                itemFromCaller.Labor is not null
+                    ? await itemRepository.GetInventoryItemLaborEntity(itemFromCaller.Labor.Id)
+                    : null,
+                itemFromCaller.Tire is not null
+                    ? await itemRepository.GetInventoryItemTireEntity(itemFromCaller.Tire.Id)
+                    : null,
+                itemFromCaller.Package is not null
+                    ? await itemRepository.GetInventoryItemPackageEntity(itemFromCaller.Package.Id)
+                    : null,
+                itemFromCaller.Inspection is not null
+                    ? await itemRepository.GetInventoryItemInspectionEntity(itemFromCaller.Inspection.Id)
+                    : null,
+                itemFromCaller.Warranty is not null
+                    ? await itemRepository.GetInventoryItemWarrantyEntity(itemFromCaller.Warranty.Id)
+                    : null);
+        }
+
+        private static List<long> GetItemIds(InventoryItemToWrite itemToAdd)
+        {
+            return new List<long?>
+        {
+            itemToAdd.Part?.Id,
+            itemToAdd.Labor?.Id,
+            itemToAdd.Tire?.Id,
+            itemToAdd.Inspection?.Id,
+            itemToAdd.Warranty?.Id
+        }
+            .Concat(itemToAdd.Package?.Items?.Select(item => (long?)item.Id) ?? Enumerable.Empty<long?>())
+            .Where(id => id.HasValue)
+            .Select(id => id.Value)
+            .ToList();
         }
     }
 }

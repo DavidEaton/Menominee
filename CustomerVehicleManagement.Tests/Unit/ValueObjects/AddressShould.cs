@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CustomerVehicleManagement.Tests.Unit.Helpers;
+using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System;
@@ -221,8 +222,8 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Equate_Two_Instances_Having_Same_Values()
         {
-            var address1 = Utilities.CreateTestAddress();
-            var address2 = Utilities.CreateTestAddress();
+            var address1 = ContactableTestHelper.CreateAddress();
+            var address2 = ContactableTestHelper.CreateAddress();
 
             address1.Should().BeEquivalentTo(address2);
         }
@@ -230,8 +231,8 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
-            var address1 = Utilities.CreateTestAddress();
-            var address2 = Utilities.CreateTestAddress();
+            var address1 = ContactableTestHelper.CreateAddress();
+            var address2 = ContactableTestHelper.CreateAddress();
             var newAddressLine = "54321";
 
             address2 = address2.NewAddressLine(newAddressLine).Value;
@@ -243,7 +244,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Return_New_Address_On_NewAddressLine()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
             var newAddressLine = "5432 One Street";
 
             address = address.NewAddressLine("5432 One Street").Value;
@@ -254,7 +255,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Throw_Exception_On_NewAddressLine_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
 
             Action action = () => address = address.NewAddressLine(null).Value;
 
@@ -264,7 +265,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Return_New_Address_On_NewCity()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
             var newCity = "Oomapopalis";
 
             address = address.NewCity(newCity).Value;
@@ -275,7 +276,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Throw_Exception_On_NewCity_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
 
             Action action = () => address = address.NewCity(null).Value;
 
@@ -285,7 +286,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Return_New_Address_On_NewState()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
             var newState = State.HI;
             address = address.NewState(newState).Value;
 
@@ -295,7 +296,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Return_New_Address_On_NewPostalCode()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
             var newPostalCode = "55555";
 
             address = address.NewPostalCode(newPostalCode).Value;
@@ -306,7 +307,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
         [Fact]
         public void Throw_Exception_On_NewPostalCode_Passing_Null_Parameter()
         {
-            var address = Utilities.CreateTestAddress();
+            var address = ContactableTestHelper.CreateAddress();
 
             Action action = () => address = address = address.NewPostalCode(null).Value;
 

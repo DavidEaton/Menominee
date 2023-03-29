@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
 
         public static VendorInvoice CreateVendorInvoice()
         {
-            Vendor vendor = CreateVendor();
+            Vendor vendor = VendorTestHelper.CreateVendor();
             VendorInvoiceStatus status = VendorInvoiceStatus.Open;
             VendorInvoiceDocumentType documentType = VendorInvoiceDocumentType.Invoice;
             double Total = 0.0;
@@ -235,16 +235,16 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
             return payments;
         }
 
-        public static VendorInvoicePaymentMethodToRead CreateVendorInvoicePaymentMethodToRead()
+        public static IList<DefaultPaymentMethod> CreatDefaultPaymentMethods(
+            int count,
+            IReadOnlyList<VendorInvoicePaymentMethod> paymentMethods)
         {
-            return new VendorInvoicePaymentMethodToRead()
-            {
-                Id = 1,
-                IsActive = true,
-                PaymentType = VendorInvoicePaymentMethodType.Normal,
-                Name = nameof(VendorInvoicePaymentMethodToRead),
-                ReconcilingVendor = CreateVendorToRead()
-            };
+            var payments = new List<DefaultPaymentMethod>();
+
+            for (int i = 0; i < count; i++)
+                payments.Add(DefaultPaymentMethod.Create(paymentMethods[i], true).Value);
+
+            return payments;
         }
 
         public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount, VendorInvoicePaymentMethod paymentMethod)
@@ -281,5 +281,87 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
 
             return payments;
         }
+
+        public static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
+        {
+            string name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
+            bool isActive = true;
+            var reconcilingVendor = VendorTestHelper.CreateVendor(defaultPaymentMethod: null);
+            var paymentMethodNames = CreatePaymentMethodNames(5);
+
+            return VendorInvoicePaymentMethod.Create(
+                paymentMethodNames, name, isActive, VendorInvoicePaymentMethodType.Normal, reconcilingVendor).Value;
+        }
+
+        public static VendorInvoicePayment CreateVendorInvoicePayment()
+        {
+            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            double amount = VendorInvoicePayment.InvalidValue + 1;
+            return VendorInvoicePayment.Create(paymentMethod, amount).Value;
+        }
+
+        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods(int count)
+        {
+            var result = new List<VendorInvoicePaymentMethodToRead>();
+
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(new VendorInvoicePaymentMethodToRead()
+                {
+                    Id = i,
+                    Name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - i),
+                    IsActive = true,
+                    //IsOnAccountPaymentType = false,
+                    PaymentType = VendorInvoicePaymentMethodType.Normal
+                });
+            }
+
+            return result;
+        }
+
+        public static IList<string> CreatePaymentMethodNames(int count)
+        {
+            IList<string> result = new List<string>();
+            var list = CreateVendorInvoicePaymentMethods(count);
+
+            foreach (var method in list)
+            {
+                result.Add(method.Name);
+            }
+
+            return result;
+        }
+
+        public static SalesTax CreateSalesTax(int descriptionSeed = 0)
+        {
+            var description = RandomCharacters(descriptionSeed + 100);
+            var taxType = SalesTaxType.Normal;
+            var order = (int)SalesTax.MinimumValue + 10;
+            var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 11);
+            var partTaxRate = SalesTax.MinimumValue + .1;
+            var laborTaxRate = SalesTax.MinimumValue + .25;
+            bool? isAppliedByDefault = true;
+            bool? isTaxable = true;
+
+            return SalesTax.Create(description, taxType, order, taxIdNumber, partTaxRate, laborTaxRate, isAppliedByDefault: isAppliedByDefault, isTaxable: isTaxable).Value;
+        }
+
+        public static SalesTaxToRead CreateSalesTaxToRead()
+        {
+            return new()
+            {
+                Id = 1,
+                Description = LoremIpsum(SalesTax.DescriptionMaximumLength - 10),
+                ExciseFees = new(),
+                IsAppliedByDefault = true,
+                IsTaxable = true,
+                LaborTaxRate = .05,
+                Order = 1,
+                PartTaxRate = .06,
+                TaxIdNumber = "001",
+                TaxType = SalesTaxType.Normal
+            };
+        }
+
     }
 }

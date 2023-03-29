@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
 using Menominee.Common.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Entity = Menominee.Common.Entity;
@@ -78,6 +79,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             return Result.Success(Phones.Remove(phone));
         }
 
+        // VK Im.2: you don't need to return REsult here, just void is fine
         public Result SetAddress(Address address)
         {
             // Address is guaranteed to be valid; it was validated on creation.
@@ -108,6 +110,93 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         private bool ContactableHasPrimaryEmail()
         {
             return Emails.Any(email => email.IsPrimary);
+        }
+
+        // VK: I haven't tested how it would work with EF Core, but the logic of syncing should be as follows
+        public void SyncContactDetails(ContactDetails contactDetails)
+        {
+            SyncPhones(contactDetails.Phones);
+            SyncEmails(contactDetails.Emails);
+            Address = contactDetails.Address.GetValueOrDefault();
+        }
+
+        private void SyncPhones(IReadOnlyList<Phone> phones)
+        {
+            Phone[] toAdd = phones
+                .Where(phone => phone.Id == 0)
+                .ToArray();
+
+            Phone[] toDelete = Phones
+                .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id) == false)
+                .ToArray();
+
+            Phone[] toModify = Phones
+                .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id))
+                .ToArray();
+
+            foreach (Phone phone in toDelete)
+            {
+                RemovePhone(phone);
+            }
+
+            foreach (Phone phone in toModify)
+            {
+                Phone phoneFromCaller = phones.Single(phone => phone.Id == phone.Id);
+
+                if (phone.Number != phoneFromCaller.Number)
+                    phone.SetNumber(phoneFromCaller.Number);
+
+                if (phone.PhoneType != phoneFromCaller.PhoneType)
+                    phone.SetPhoneType(phoneFromCaller.PhoneType);
+
+                if (phone.IsPrimary != phoneFromCaller.IsPrimary)
+                    phone.SetIsPrimary(phoneFromCaller.IsPrimary);
+            }
+
+            foreach (Phone phone in toAdd)
+            {
+                Result result = AddPhone(phone);
+                if (result.IsFailure)
+                    throw new Exception(result.Error);
+            }
+        }
+
+        private void SyncEmails(IReadOnlyList<Email> emails)
+        {
+            Email[] toAdd = emails
+                .Where(email => email.Id == 0)
+                .ToArray();
+
+            Email[] toDelete = Emails
+                .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id) == false)
+                .ToArray();
+
+            Email[] toModify = Emails
+                .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id))
+                .ToArray();
+
+            foreach (Email email in toDelete)
+            {
+                RemoveEmail(email);
+            }
+
+            foreach (Email email in toModify)
+            {
+                Email emailFromCaller = emails.Single(callerEmail => callerEmail.Id == email.Id);
+
+                if (email.Address != emailFromCaller.Address)
+                    email.SetAddress(emailFromCaller.Address);
+
+                if (email.IsPrimary != emailFromCaller.IsPrimary)
+                    email.SetIsPrimary(emailFromCaller.IsPrimary);
+            }
+
+            foreach (Email email in toAdd)
+            {
+                Result result = AddEmail(email);
+                if (result.IsFailure)
+                    throw new Exception(result.Error);
+            }
         }
 
         #region ORM

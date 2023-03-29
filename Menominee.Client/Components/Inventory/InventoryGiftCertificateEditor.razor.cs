@@ -68,7 +68,7 @@ namespace Menominee.Client.Components.Inventory
                 Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 //Item.GiftCertificate = new();
-                Item.ItemType = InventoryItemType.GiftCertificate.ToString();
+                Item.ItemType = InventoryItemType.GiftCertificate;
 
                 Title = "Add Gift Certificate";
             }

@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
+using System.Data.Common;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
 {
@@ -11,6 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
                 ? null
                 : (new()
                 {
+                    Id = part.Id,
                     List = part.List,
                     Cost = part.Cost,
                     Core = part.Core,
@@ -76,6 +78,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
                 ? null
                 : (new()
                 {
+                    Id = part.Id,
                     List = part.List,
                     Cost = part.Cost,
                     Core = part.Core,

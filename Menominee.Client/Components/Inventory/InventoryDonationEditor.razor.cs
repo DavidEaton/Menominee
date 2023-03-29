@@ -69,7 +69,7 @@ namespace Menominee.Client.Components.Inventory
                 Item.Manufacturer = await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous);
                 Item.ProductCode = new();
                 //Item.Donation = new();
-                Item.ItemType = InventoryItemType.Donation.ToString();
+                Item.ItemType = InventoryItemType.Donation;
 
                 Title = "Add Donation";
             }

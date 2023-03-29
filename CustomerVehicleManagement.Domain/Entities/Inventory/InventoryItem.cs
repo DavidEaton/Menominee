@@ -284,6 +284,44 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Warranty = warranty);
         }
 
+        public Result UpdateProperties(string itemNumber, string description,
+            Manufacturer manufacturer, ProductCode productCode, InventoryItemPart part,
+            InventoryItemLabor labor, InventoryItemTire tire, InventoryItemPackage package,
+            InventoryItemInspection inspection, InventoryItemWarranty warranty)
+        {
+            return Result.Combine(
+                (manufacturer is not null) && (manufacturer.Id != Manufacturer.Id)
+                    ? SetManufacturer(manufacturer)
+                    : Result.Success(),
+                (itemNumber is not null) && (itemNumber != ItemNumber)
+                    ? SetItemNumber(itemNumber) 
+                    : Result.Success(),
+                (description is not null) && (description != Description)
+                    ? SetDescription(description) 
+                    : Result.Success(),
+                (productCode is not null) && (productCode != ProductCode)
+                    ? SetProductCode(productCode) 
+                    : Result.Success(),
+                (part is not null) && (part != Part)
+                    ? SetPart(part)
+                    : Result.Success(),
+                (labor is not null) && (labor != Labor)
+                    ? SetLabor(labor) 
+                    : Result.Success(),
+                (tire is not null) && (tire != Tire)
+                    ? SetTire(tire)
+                    : Result.Success(),
+                (package is not null) && (package != Package)
+                    ? SetPackage(package) 
+                    : Result.Success(),
+                (inspection is not null) && (inspection != Inspection)
+                    ? SetInspection(inspection) 
+                    : Result.Success(),
+                (warranty is not null) && (warranty != Warranty)
+                    ? SetWarranty(warranty) 
+                    : Result.Success());
+        }
+
         #region ORM
 
         // EF requires a parameterless constructor

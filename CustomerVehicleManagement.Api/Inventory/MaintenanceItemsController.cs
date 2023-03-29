@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             if (itemFromRepository.InventoryItem.Id != itemFromCaller.Item.Id)
             {
                 var resultOrError = itemFromRepository.SetInventoryItem(
-                    await inventoryItemRepository.GetItemEntityAsync(
+                    await inventoryItemRepository.GetItemEntity(
                         itemFromCaller.Item.Id));
 
                 if (resultOrError.IsFailure)
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         public async Task<IActionResult> AddMaintenanceItemAsync(
             MaintenanceItemToWrite itemToAdd)
         {
-            InventoryItem inventoryItem = await inventoryItemRepository.GetItemEntityAsync(itemToAdd.Item.Id);
+            InventoryItem inventoryItem = await inventoryItemRepository.GetItemEntity(itemToAdd.Item.Id);
 
             if (inventoryItem is null)
                 return NotFound($"Could not add new Inventory Item Number: {itemToAdd?.Item.ItemNumber}.");

@@ -7,7 +7,7 @@ namespace CustomerVehicleManagement.Tests.Integration
     internal static class Helpers
     {
         // TODO: Move IntegrationTestsConnectionString to settings/configuration
-        internal const string IntegrationTestsConnectionString = @"Server=localhost;Database=MenomineeIntegrationTests;Trusted_Connection=True;";
+        internal const string IntegrationTestsConnectionString = @"Server=localhost;Database=MenomineeIntegrationTests;Trusted_Connection=True;MultipleActiveResultSets=true;";
 
         internal static ApplicationDbContext CreateTestContext()
         {

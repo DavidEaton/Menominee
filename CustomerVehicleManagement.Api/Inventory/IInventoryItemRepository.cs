@@ -7,23 +7,22 @@ namespace CustomerVehicleManagement.Api.Inventory
 {
     public interface IInventoryItemRepository
     {
-        Task AddItemAsync(InventoryItem item);
-        Task DeleteItemAsync(long id);
-        Task<bool> ItemExistsAsync(long id);
-        Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync();
-        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId);
-        Task<InventoryItemToRead> GetItemAsync(long id);
-        Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber);
-        Task<InventoryItem> GetItemEntityAsync(long id);
-        Task<InventoryItemPart> GetInventoryItemPartEntityAsync(long id);
-        Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id);
-        Task<InventoryItemInspection> GetInventoryItemInspectionEntityAsync(long id);
-        Task<InventoryItemLabor> GetInventoryItemLaborEntityAsync(long id);
-        Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id);
-        Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id);
-        Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntitiesAsync(List<long> ids);
-        Task SaveChangesAsync();
-        void DeleteInventoryItem(InventoryItem entity);
+        Task Add(InventoryItem entity);
+        Task<bool> Exists(long id);
+        Task<InventoryItemToRead> GetItem(long id);
+        Task<InventoryItemToRead> GetItem(long manufacturerId, string itemNumber);
+        Task<IReadOnlyList<InventoryItemToRead>> GetItems();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList();
+        Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList(long manufacturerId);
+        Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntities(List<long> ids);
+        Task<InventoryItem> GetItemEntity(long id);
+        Task<InventoryItemPart> GetInventoryItemPartEntity(long id);
+        Task<InventoryItemWarranty> GetInventoryItemWarrantyEntity(long id);
+        Task<InventoryItemInspection> GetInventoryItemInspectionEntity(long id);
+        Task<InventoryItemLabor> GetInventoryItemLaborEntity(long id);
+        Task<InventoryItemTire> GetInventoryItemTireEntity(long id);
+        Task<InventoryItemPackage> GetInventoryItemPackageEntity(long id);
+        Task SaveChanges();
+        void Delete(InventoryItem entity);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
@@ -164,7 +165,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetDescription()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             var description = RandomCharacters((int)SalesTax.MinimumValue + 150);
             salesTax.SetDescription(description);
@@ -175,7 +176,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Description()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             var resultOrError = salesTax.SetDescription(null);
 
@@ -185,7 +186,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_Description()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             string invalidDescription = RandomCharacters(SalesTax.DescriptionMaximumLength + 1);
 
             var resultOrError = salesTax.SetDescription(invalidDescription);
@@ -196,7 +197,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTaxType()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.TaxType.Should().Be(SalesTaxType.Normal);
             salesTax.SetTaxType(SalesTaxType.GST);
@@ -207,7 +208,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_TaxType()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             var invalidSalesTaxType = (SalesTaxType)(-1);
 
             var resultOrError = salesTax.SetTaxType(invalidSalesTaxType);
@@ -218,7 +219,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetOrder()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.Order.Should().Be((int)SalesTax.MinimumValue + 10);
             salesTax.SetOrder((int)SalesTax.MinimumValue + 1);
@@ -229,7 +230,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_Order()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             salesTax.Order.Should().Be((int)SalesTax.MinimumValue + 10);
 
             var resultOrError = salesTax.SetOrder((int)SalesTax.MinimumValue - 1);
@@ -240,7 +241,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetTaxIdNumber()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
             var taxIdNumber = RandomCharacters((int)SalesTax.MinimumValue + 1);
@@ -253,7 +254,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_TaxIdNumber(int length)
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             salesTax.TaxIdNumber.Length.Should().Be(RandomCharacters((int)SalesTax.MinimumValue + 11).Length);
             var invalidTaxIdNumber = RandomCharacters(length);
 
@@ -265,7 +266,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetPartTaxRate()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.PartTaxRate.Should().Be(SalesTax.MinimumValue + .1);
             salesTax.SetPartTaxRate(SalesTax.MinimumValue + .2);
@@ -276,7 +277,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_PartTaxRate()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             salesTax.PartTaxRate.Should().Be(SalesTax.MinimumValue + .1);
             var invalidPartTaxRate = SalesTax.MinimumValue - .1;
 
@@ -288,7 +289,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetLaborTaxRate()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.LaborTaxRate.Should().Be(SalesTax.MinimumValue + .25);
             salesTax.SetLaborTaxRate(SalesTax.MinimumValue + .5);
@@ -299,7 +300,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_LaborTaxRate()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             salesTax.LaborTaxRate.Should().Be(SalesTax.MinimumValue + .25);
             var invalidLaborTaxRate = SalesTax.MinimumValue - .1;
 
@@ -311,7 +312,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetIsAppliedByDefault()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.IsAppliedByDefault.Should().BeTrue();
             salesTax.SetIsAppliedByDefault(false);
@@ -322,7 +323,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetIsTaxable()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             salesTax.IsTaxable.Should().BeTrue();
             salesTax.SetIsTaxable(false);
@@ -333,7 +334,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddExciseFee()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             var fee = ExciseFee.Create(
                 RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
@@ -347,7 +348,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveExciseFee()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             var fee = ExciseFee.Create(
                 RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
@@ -363,7 +364,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_NulL_ExciseFee()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
             var fee = ExciseFee.Create(
                 RandomCharacters(ExciseFee.DescriptionMaximumLength - 1),
                 ExciseFeeType.Flat,
@@ -380,7 +381,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Null_ExciseFee()
         {
-            var salesTax = CreateSalesTax();
+            var salesTax = VendorInvoiceTestHelper.CreateSalesTax();
 
             var result = salesTax.AddExciseFee(null);
 

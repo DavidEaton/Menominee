@@ -51,6 +51,27 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 : null;
         }
 
+        public static IList<PhoneToWrite> ConvertEntitiesToWriteDtos(IList<Phone> phones)
+        {
+            return phones
+                .Select(phone =>
+                        ConvertEntityToWriteDto(phone))
+                .ToList();
+        }
+
+        private static PhoneToWrite ConvertEntityToWriteDto(Phone phone)
+        {
+            return (phone is not null)
+                ? new PhoneToWrite()
+                {
+                    Id = phone.Id,
+                    PhoneType = phone.PhoneType,
+                    Number = phone.Number,
+                    IsPrimary = phone.IsPrimary
+                }
+                : null;
+        }
+
         public static string GetPrimaryPhone(Base.Contactable entity)
         {
             if (entity == null || entity?.Phones == null || entity?.Phones?.Count < 1)
@@ -102,6 +123,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 _ => number,
             };
         }
+
         private static string RemoveNonNumericCharacters(string input)
         {
             return new string(input.Where(character => char.IsDigit(character)).ToArray());

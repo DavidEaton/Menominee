@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             //bool isOnAccountPaymentType = true;
             VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
-            var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             // Act
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
@@ -41,8 +42,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             //bool isOnAccountPaymentType = true;
             VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
-            var reconcilingVendor = CreateVendor();
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
             paymentMethodNames.Add(name);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
@@ -55,8 +56,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoicePaymentMethod_With_Null_Name()
         {
             string nullName = null;
-            var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, nullName, true, /*true,*/ VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
@@ -68,8 +69,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoicePaymentMethod_With_Invalid_VendorInvoicePaymentMethodType()
         {
             string name = RandomCharacters(VendorInvoicePaymentMethod.MaximumLength - 1);
-            var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, true, /*true,*/ (VendorInvoicePaymentMethodType)(-1), reconcilingVendor);
@@ -82,8 +83,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Create_VendorInvoicePaymentMethod_With_Invalid_Name(int length)
         {
             string invalidName = RandomCharacters(length);
-            var reconcilingVendor = CreateVendor();
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, invalidName, true, /*true,*/ VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
@@ -94,10 +95,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetName()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
 
             var newName = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
             vendorInvoicePaymentMethod.SetName(newName, paymentMethodNames);
 
             vendorInvoicePaymentMethod.Name.Should().Be(newName);
@@ -106,7 +107,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Enable()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.IsActive.Should().BeTrue();
 
             vendorInvoicePaymentMethod.SetInactive();
@@ -119,7 +120,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Disable()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.IsActive.Should().BeTrue();
 
             vendorInvoicePaymentMethod.SetInactive();
@@ -130,7 +131,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetPaymentType()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.PaymentType.Should().Be(VendorInvoicePaymentMethodType.Normal);
             var updatedPaymentType = VendorInvoicePaymentMethodType.Charge;
 
@@ -142,9 +143,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetReconcilingVendor()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
 
-            var reconcilingVendor = CreateVendor();
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBe(reconcilingVendor);
             vendorInvoicePaymentMethod.SetReconcilingVendor(reconcilingVendor);
 
@@ -154,8 +155,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveReconcilingVendor()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
-            var reconcilingVendor = CreateVendor();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBe(reconcilingVendor);
             vendorInvoicePaymentMethod.SetReconcilingVendor(reconcilingVendor);
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().Be(reconcilingVendor);
@@ -172,8 +173,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             bool isActive = true;
             //bool isOnAccountPaymentType = true;
             VendorInvoicePaymentMethodType paymentType = VendorInvoicePaymentMethodType.Normal;
-            var reconcilingVendor = CreateVendor();
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
             var vendorInvoicePaymentMethod = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames, name, isActive, /*isOnAccountPaymentType,*/ paymentType, reconcilingVendor).Value;
             paymentMethodNames.Add(name);
@@ -186,9 +187,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_Name()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(null, paymentMethodNames);
 
@@ -199,10 +200,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Name(int length)
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.Name.Should().NotBeNull();
             string invalidName = RandomCharacters(length);
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var resultOrError = vendorInvoicePaymentMethod.SetName(invalidName, paymentMethodNames);
 
@@ -212,7 +213,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Invalid_PaymentType()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.PaymentType.Should().Be(VendorInvoicePaymentMethodType.Normal);
             var invalidPaymentType = (VendorInvoicePaymentMethodType)(-1);
 
@@ -224,7 +225,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Set_Null_ReconcilingVendor()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBeNull();
 
             var resultOrError = vendorInvoicePaymentMethod.SetReconcilingVendor(null);

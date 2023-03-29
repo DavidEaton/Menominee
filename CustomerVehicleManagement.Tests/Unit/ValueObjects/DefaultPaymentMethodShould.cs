@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
@@ -73,7 +74,7 @@ namespace CustomerVehicleManagement.Tests.Unit.ValueObjects
 
         private static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
         {
-            IList<string> paymentMethodNames = CreatePaymentMethodNames(5);
+            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
                 paymentMethodNames,

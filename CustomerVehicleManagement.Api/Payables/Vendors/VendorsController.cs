@@ -1,15 +1,13 @@
-﻿using CSharpFunctionalExtensions;
+﻿using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
-using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Vendors
@@ -92,84 +90,10 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             if (vendorFromCaller?.DefaultPaymentMethod is null)
                 vendorFromRepository.ClearDefaultPaymentMethod();
 
-            /* TODO: Centralize Update code that gets repeated for Persons, Customers,
-            Vendor, Employees and Organizations (all classes deriiving from Contactable):
-            Address
-            Phones
-            Email   */
-            Result<Address> addressOrError = null;
+            var contactDetails = ContactDetailsFactory.Create(
+                vendorFromCaller.Phones, vendorFromCaller.Emails, vendorFromCaller.Address);
 
-            if (vendorFromCaller.Address is not null)
-                addressOrError = Address.Create(
-                    vendorFromCaller.Address.AddressLine, 
-                    vendorFromCaller.Address.City, 
-                    vendorFromCaller.Address.State, 
-                    vendorFromCaller.Address.PostalCode);
-
-            if (addressOrError.IsSuccess)
-            {
-                // Since VendorValidator runs AddressValidator before request even gets
-                // here in tyhe controller, no need to check Result.IsFailure, just
-                // return the Value from the Create factory method:
-                var setAddressResult = vendorFromRepository.SetAddress(addressOrError.Value);
-
-                if (vendorFromRepository.SetAddress(addressOrError.Value).IsFailure)
-                    return NotFound($"Could not add new Vendor '{vendorFromCaller.Name}': {setAddressResult.Error}");
-            }
-
-            if (vendorFromCaller?.Address is null)
-                vendorFromRepository.ClearAddress();
-
-            // Phones
-            foreach (var phoneFromCaller in vendorFromCaller?.Phones)
-            {
-                // Added
-                if (phoneFromCaller.Id == 0)
-                    vendorFromRepository.AddPhone(
-                        Phone.Create(phoneFromCaller.Number, phoneFromCaller.PhoneType, phoneFromCaller.IsPrimary)
-                        .Value);
-                // Updated
-                if (phoneFromCaller.Id != 0)
-                {
-                    var phoneFromRepository = vendorFromRepository?.Phones.FirstOrDefault(
-                        contextPhone =>
-                        contextPhone.Id == phoneFromCaller.Id);
-
-                    if (phoneFromRepository.Number != phoneFromCaller.Number)
-                        phoneFromRepository.SetNumber(phoneFromCaller.Number);
-
-                    if (phoneFromRepository.PhoneType != phoneFromCaller.PhoneType)
-                        phoneFromRepository.SetPhoneType(phoneFromCaller.PhoneType);
-
-                    if (phoneFromRepository.IsPrimary != phoneFromCaller.IsPrimary)
-                        phoneFromRepository.SetIsPrimary(phoneFromCaller.IsPrimary);
-                }
-                // TODO: Deleted
-            }
-
-            // Emails
-            foreach (var emailFromCaller in vendorFromCaller?.Emails)
-            {
-                // Added
-                if (emailFromCaller.Id == 0)
-                    vendorFromRepository.AddEmail(
-                        Email.Create(emailFromCaller.Address, emailFromCaller.IsPrimary)
-                        .Value);
-                // Updated
-                if (emailFromCaller.Id != 0)
-                {
-                    var emailFromRepository = vendorFromRepository?.Emails.FirstOrDefault(
-                        contextEmail =>
-                        contextEmail.Id == emailFromCaller.Id);
-
-                    if (emailFromRepository.Address != emailFromCaller.Address)
-                        emailFromRepository.SetAddress(emailFromCaller.Address);
-
-                    if (emailFromRepository.IsPrimary != emailFromCaller.IsPrimary)
-                        emailFromRepository.SetIsPrimary(emailFromCaller.IsPrimary);
-                }
-                // TODO: Deleted
-            }
+            vendorFromRepository.SyncContactDetails(contactDetails);
 
             await repository.SaveChangesAsync();
 
@@ -194,66 +118,33 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
         [HttpPost]
         public async Task<IActionResult> AddVendorAsync(VendorToWrite vendorToAdd)
         {
-            var vendorOrError = Vendor.Create(
+            // VK Im.2: no need to validate it here again, just call .Value right away
+            var vendor = Vendor.Create(
                 vendorToAdd.Name,
                 vendorToAdd.VendorCode.ToUpper(),
                 vendorToAdd.VendorRole,
-                vendorToAdd.Notes);
-
-            if (vendorOrError.IsFailure)
-                return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'.");
-
-            Vendor vendor = vendorOrError.Value;
-            VendorInvoicePaymentMethod paymentMethod = null;
-            Result<Address> addressOrError = null;
+                vendorToAdd.Notes).Value;
 
             if (vendorToAdd?.DefaultPaymentMethod?.PaymentMethod is not null)
             {
-                paymentMethod = await paymentMethodRepository.GetPaymentMethodEntityAsync(
+                var paymentMethod = await paymentMethodRepository.GetPaymentMethodEntityAsync(
                     vendorToAdd.DefaultPaymentMethod.PaymentMethod.Id);
 
                 if (paymentMethod is null)
                     return NotFound($"Could not add new Vendor '{vendorToAdd.Name}'. Vendor default payment method {vendorToAdd.DefaultPaymentMethod.PaymentMethod.Name} was not found.");
 
-                var defaultPaymentMethodOrError = DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments);
-
-                if (defaultPaymentMethodOrError.IsFailure)
-                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {defaultPaymentMethodOrError.Error}");
-
-                var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(defaultPaymentMethodOrError.Value);
+                var setDefaultPaymentMethodResult = vendor.SetDefaultPaymentMethod(DefaultPaymentMethod.Create(paymentMethod, vendorToAdd.DefaultPaymentMethod.AutoCompleteDocuments).Value);
 
                 if (setDefaultPaymentMethodResult.IsFailure)
                     return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
             }
 
-            // TODO: Centralize this code that gets repeated for Persons and
-            // Organizations (all classes deriiving from Contactable)
-            // ∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
-            if (vendorToAdd.Address is not null)
-                addressOrError = Address.Create(vendorToAdd.Address.AddressLine, vendorToAdd.Address.City, vendorToAdd.Address.State, vendorToAdd.Address.PostalCode);
+            var contactDetails = ContactDetailsFactory.Create(
+                vendorToAdd.Phones, vendorToAdd.Emails, vendorToAdd.Address);
 
-            if (addressOrError.IsSuccess)
-            {
-                var setAddressResult = vendor.SetAddress(addressOrError.Value);
-
-                if (vendor.SetAddress(addressOrError.Value).IsFailure)
-                    return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setAddressResult.Error}");
-            }
-
-            if (vendorToAdd?.Phones.Count > 0)
-                foreach (var phone in vendorToAdd.Phones)
-                    vendor.AddPhone(
-                        Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (vendorToAdd?.Emails.Count > 0)
-                foreach (var email in vendorToAdd.Emails)
-                    vendor.AddEmail(
-                        Email.Create(email.Address, email.IsPrimary).Value);
-
-            // ∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
+            vendor.SyncContactDetails(contactDetails);
 
             await repository.AddVendorAsync(vendor);
-
             await repository.SaveChangesAsync();
 
             return Created(new Uri($"{BasePath}/{vendor.Id}",

@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var lineItemQuantity = 10.0;
             var paymentLineCount = 5;
             var paymentLineAmount = 10.01;
-            var invoice = CreateVendorInvoiceToWrite(CreateVendor());
+            var invoice = CreateVendorInvoiceToWrite(VendorTestHelper.CreateVendor());
             invoice.LineItems = CreateLineItemsToWrite(lineItemType, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
             invoice.Payments = CreatePaymentsToWrite(paymentLineCount, paymentLineAmount, CreateVendorInvoicePaymentMethodToRead());
             var invoiceTotalsOrError = invoiceTotals.CalculateInvoiceTotals(invoice);
@@ -190,7 +190,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var taxLineCount = 5;
             var taxLineAmount = 10.01;
             var expectedTaxes = taxLineCount * taxLineAmount;
-            var invoice = CreateVendorInvoiceToWrite(CreateVendor());
+            var invoice = CreateVendorInvoiceToWrite(VendorTestHelper.CreateVendor());
             invoice.Taxes = CreateTaxesToWrite(CreateSalesTax(), taxLineCount, taxLineAmount);
 
             var invoiceTaxesOrError = invoiceTotals.CalculateInvoiceTaxes(invoice);
@@ -207,7 +207,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var lineItemCore = 1.0;
             var lineItemCost = 1.0;
             var lineItemQuantity = 10.0;
-            var invoice = CreateVendorInvoiceToWrite(CreateVendor());
+            var invoice = CreateVendorInvoiceToWrite(VendorTestHelper.CreateVendor());
             invoice.LineItems = CreateLineItemsToWrite(VendorInvoiceLineItemType.Purchase, lineItemCount, lineItemCore, lineItemCost, lineItemQuantity);
             var expectedPurchaseAmount = (lineItemCost + lineItemCore) * lineItemQuantity * lineItemCount;
 

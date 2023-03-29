@@ -6,37 +6,40 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
     {
         public static AddressToRead ConvertEntityToReadDto(Address address)
         {
-            if (address is not null)
-            {
-                var addressReadDto = new AddressToRead
+            return (address is not null)
+                ? new AddressToRead
+                {
+                    AddressLine = address.AddressLine,
+                    City = address.City,
+                    State = address.State,
+                }
+                : null;
+        }
+
+        public static AddressToWrite ConvertEntityToWriteDto(Address address)
+        {
+            return (address is not null)
+                ? new AddressToWrite()
                 {
                     AddressLine = address.AddressLine,
                     City = address.City,
                     State = address.State,
                     PostalCode = address.PostalCode
-                };
-
-                return addressReadDto;
-            }
-            return null;
+                }
+                : null;
         }
 
         public static AddressToWrite ConvertReadToWriteDto(AddressToRead address)
         {
-            if (address is not null)
-            {
-                var addressReadDto = new AddressToWrite
+            return (address is not null)
+                ? new AddressToWrite()
                 {
                     AddressLine = address.AddressLine,
                     City = address.City,
                     State = address.State,
                     PostalCode = address.PostalCode
-                };
-
-                return addressReadDto;
-            }
-            return null;
+                }
+                : null;
         }
-
     }
 }

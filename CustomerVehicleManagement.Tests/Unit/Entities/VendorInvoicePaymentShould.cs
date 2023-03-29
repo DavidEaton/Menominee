@@ -1,7 +1,7 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Xunit;
-using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Unit.Entities
 {
@@ -11,7 +11,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Create_VendorInvoicePayment()
         {
             // Arrange
-            var paymentMethod = CreateVendorInvoicePaymentMethod();
+            var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             double amount = VendorInvoicePayment.InvalidValue + 1.0;
 
             // Act
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Create_VendorInvoicePayment_With_Invalid_Amount()
         {
-            VendorInvoicePaymentMethod paymentMethod = CreateVendorInvoicePaymentMethod();
+            VendorInvoicePaymentMethod paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             double invalidAmount = VendorInvoicePayment.InvalidValue;
 
             var paymentOrError = VendorInvoicePayment.Create(paymentMethod, invalidAmount);
@@ -49,8 +49,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetPaymentMethod()
         {
-            var vendorInvoicePaymentMethod = CreateVendorInvoicePaymentMethod();
-            var vendorInvoicePayment = CreateVendorInvoicePayment();
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
+            var vendorInvoicePayment = VendorInvoiceTestHelper.CreateVendorInvoicePayment();
 
             vendorInvoicePayment.SetPaymentMethod(vendorInvoicePaymentMethod);
 
@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void SetAmount()
         {
-            var vendorInvoicePayment = CreateVendorInvoicePayment();
+            var vendorInvoicePayment = VendorInvoiceTestHelper.CreateVendorInvoicePayment();
             var amount = VendorInvoicePayment.InvalidValue + 1.0;
 
             vendorInvoicePayment.SetAmount(amount);
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Null_PaymentMethod()
         {
             VendorInvoicePaymentMethod vendorInvoicePaymentMethod = null;
-            var vendorInvoicePayment = CreateVendorInvoicePayment();
+            var vendorInvoicePayment = VendorInvoiceTestHelper.CreateVendorInvoicePayment();
 
             var resultOrError = vendorInvoicePayment.SetPaymentMethod(vendorInvoicePaymentMethod);
 
@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         public void Not_Set_Invalid_Amount()
         {
             var invalidAmount = VendorInvoicePayment.InvalidValue;
-            var vendorInvoicePayment = CreateVendorInvoicePayment();
+            var vendorInvoicePayment = VendorInvoiceTestHelper.CreateVendorInvoicePayment();
 
             var resultOrError = vendorInvoicePayment.SetAmount(invalidAmount);
 

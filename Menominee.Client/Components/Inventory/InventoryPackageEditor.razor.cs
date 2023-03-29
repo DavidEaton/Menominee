@@ -74,7 +74,7 @@ namespace Menominee.Client.Components.Inventory
                         .ToList()
                         .FirstOrDefault().Id);
                 Item.Package = new();
-                Item.ItemType = InventoryItemType.Package.ToString();
+                Item.ItemType = InventoryItemType.Package;
 
                 Title = "Add Package";
             }

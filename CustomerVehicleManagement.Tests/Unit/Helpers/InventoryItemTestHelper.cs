@@ -16,6 +16,24 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Part, part: part).Value;
         }
 
+        internal static List<InventoryItem> CreateInventoryItems(int count)
+        {
+            var manufacturers = CreateManufacturers(count);
+            var productCodes = CreateProductCodes(count);
+            var parts = CreateInventoryItemParts(count);
+            var inventoryItems = new List<InventoryItem>();
+
+            for (int i = 0; i < count; i++)
+            {
+                inventoryItems.Add(
+                    InventoryItem.Create(
+                        manufacturers[i], $"001{i}", $"description number: {i}", productCodes[i], InventoryItemType.Part, part: parts[i])
+                    .Value);
+            }
+
+            return inventoryItems;
+        }
+
         public static InventoryItemPackage CreateInventoryItemPackage()
         {
             double basePartsAmount = InventoryItemPackage.MinimumAmount;
@@ -52,12 +70,29 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
         public static ProductCode CreateProductCode()
         {
-            Manufacturer manufacturer = CreateManufacturer();
-            SaleCode saleCode = CreateSaleCode();
+            var manufacturer = CreateManufacturer();
+            var saleCode = CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
-            // context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id} + {productCode.Code}").ToList();
+
             return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
         }
+
+        public static IReadOnlyList<ProductCode> CreateProductCodes(int count)
+        {
+            var manufacturers = CreateManufacturers(count);
+            var saleCodes = CreateSaleCodes(count);
+            List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
+            var productCodes = new List<ProductCode>();
+
+            for (int i = 0; i < count; i++)
+                productCodes.Add(
+                    ProductCode.Create(
+                        manufacturers[i], $"A{i}", $"A {i}{i}", manufacturerCodes, saleCodes[i])
+                    .Value);
+
+            return productCodes;
+        }
+
 
         public static InventoryItemInspection CreateInventoryItemInspection()
         {
@@ -176,6 +211,23 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             SaleCodeShopSupplies shopSupplies = new();
 
             return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
+        }
+
+        private static List<SaleCode> CreateSaleCodes(int count)
+        {
+            var list = new List<SaleCode>();
+
+            for (int i = 0; i < count; i++)
+            {
+                string name = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
+                string code = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
+                double laborRate = SaleCode.MinimumValue + count;
+                double desiredMargin = SaleCode.MinimumValue + count;
+                SaleCodeShopSupplies shopSupplies = new();
+                list.Add(SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value);
+            }
+
+            return list;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace Menominee.Client.Components.Inventory
             if (Item.Tire == null)
             {
                 Item.Tire = new();
-                Item.ItemType = InventoryItemType.Tire.ToString();
+                Item.ItemType = InventoryItemType.Tire;
 
                 Title = "Add Tire";
             }

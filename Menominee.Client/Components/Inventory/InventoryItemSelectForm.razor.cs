@@ -130,15 +130,15 @@ namespace Menominee.Client.Components.Inventory
         // TODO: Need a better way to do customized filtering
         private static bool ItemMatchesPackageFilter(InventoryItemToReadInList item)
         {
-            return item.ItemType != InventoryItemType.Package.ToString()
-                && item.ItemType != InventoryItemType.GiftCertificate.ToString()
-                && item.ItemType != InventoryItemType.Donation.ToString();
+            return item.ItemType != InventoryItemType.Package
+                && item.ItemType != InventoryItemType.GiftCertificate
+                && item.ItemType != InventoryItemType.Donation;
         }
 
         private static bool ItemMatchesInstallableFilter(InventoryItemToReadInList item)
         {
-            return item.ItemType == InventoryItemType.Part.ToString()
-                || item.ItemType == InventoryItemType.Tire.ToString();
+            return item.ItemType == InventoryItemType.Part
+                || item.ItemType == InventoryItemType.Tire;
         }
 
 

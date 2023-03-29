@@ -1,10 +1,12 @@
 ﻿using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Inventory
@@ -15,22 +17,21 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public InventoryItemRepository(ApplicationDbContext context)
         {
-            this.context = context ??
-                throw new ArgumentNullException(nameof(context));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddItemAsync(InventoryItem item)
+        public async Task Add(InventoryItem item)
         {
             if (item is not null)
             {
-                if (await ItemExistsAsync(item.Id))
+                if (await Exists(item.Id))
                     throw new Exception("Inventory Item already exists");
 
                 context.InventoryItems.Attach(item);
             }
         }
 
-        public void DeleteInventoryItem(InventoryItem item)
+        public void Delete(InventoryItem item)
         {
             if (item is not null)
             {
@@ -39,298 +40,157 @@ namespace CustomerVehicleManagement.Api.Inventory
             }
         }
 
-        public async Task DeleteItemAsync(long id)
-        {
-            var item = await context.InventoryItems
-                                    .FirstOrDefaultAsync(item => item.Id == id);
+        public async Task<InventoryItemToRead> GetItem(long id) =>
+            await GetInventoryItemToRead(item => item.Id == id);
 
-            if (item is not null)
-            {
-                context.Remove(item);
-                context.SaveChanges();
-            }
+        public async Task<InventoryItemToRead> GetItem(long manufacturerId, string itemNumber) =>
+            await GetInventoryItemToRead(item => item.Manufacturer.Id == manufacturerId && item.ItemNumber == itemNumber);
+
+        public async Task<InventoryItem> GetItemEntity(long id) =>
+            await GetInventoryItemEntity(item => item.Id == id);
+
+        public async Task<IReadOnlyList<InventoryItemToRead>> GetItems() =>
+            await GetInventoryItemsToRead();
+
+        public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntities(List<long> ids) =>
+            await Task.WhenAll(ids.Select(id => GetItemEntity(id)));
+
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList() =>
+            await GetInventoryItemsToReadInList();
+
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList(long manufacturerId) =>
+            await GetInventoryItemsToReadInList(manufacturerId: manufacturerId);
+
+        private IQueryable<InventoryItem> GetInventoryItemsQuery(bool asNoTracking = true)
+        {
+            var query = context.InventoryItems
+                .Include(item => item.Manufacturer)
+                .Include(item => item.ProductCode)
+                    .ThenInclude(productCode => productCode.SaleCode)
+                .Include(item => item.ProductCode)
+                    .ThenInclude(productCode => productCode.Manufacturer)
+                .Include(item => item.Part)
+                .Include(item => item.Labor)
+                .Include(item => item.Tire)
+                .Include(item => item.Package)
+                    .ThenInclude(package => package.Items)
+                        .ThenInclude(packageItem => packageItem.Item.Manufacturer)
+                .Include(item => item.Package)
+                    .ThenInclude(package => package.Items)
+                        .ThenInclude(packageItem => packageItem.Item.ProductCode)
+                            .ThenInclude(productCode => productCode.SaleCode)
+                .Include(item => item.Package)
+                    .ThenInclude(packageItem => packageItem.Items)
+                        .ThenInclude(pItem => pItem.Item)
+                            .ThenInclude(item => item.Part)
+                .Include(item => item.Package)
+                    .ThenInclude(package => package.Items)
+                        .ThenInclude(packageItem => packageItem.Item)
+                            .ThenInclude(item => item.Labor)
+                .Include(item => item.Package)
+                    .ThenInclude(package => package.Items)
+                        .ThenInclude(packageItem => packageItem.Item)
+                            .ThenInclude(item => item.Tire)
+                .Include(item => item.Package)
+                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
+                .Include(item => item.Inspection)
+                .Include(item => item.Warranty)
+                .AsSplitQuery();
+
+            if (asNoTracking)
+                query = query.AsNoTracking();
+
+            return query;
         }
 
-        public async Task<InventoryItemToRead> GetItemAsync(long id)
-        {
-            var itemFromContext = await context.InventoryItems
-                                               .Include(item => item.Manufacturer)
-                                               .Include(item => item.ProductCode)
-                                                   .ThenInclude(productCode => productCode.SaleCode)
-                                               .Include(item => item.ProductCode)
-                                                   .ThenInclude(productCode => productCode.Manufacturer)
-                                               .Include(item => item.Part)
-                                               .Include(item => item.Labor)
-                                               .Include(item => item.Tire)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(package => package.Items)
-                                                       .ThenInclude(packageItem => packageItem.Item.Manufacturer)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(package => package.Items)
-                                                       .ThenInclude(packageItem => packageItem.Item.ProductCode)
-                                               //.Include(item => item.Package)
-                                               //    .ThenInclude(pkgItem => pkgItem.Items)
-                                               //        .ThenInclude(pItem => pItem.Item)
-                                               //            .ThenInclude(item => item.Manufacturer)
-                                               //.Include(item => item.Package)
-                                               //    .ThenInclude(pkgItem => pkgItem.Items)
-                                               //        .ThenInclude(pItem => pItem.Item)
-                                               //            .ThenInclude(item => item.ProductCode)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item)
-                                                           .ThenInclude(item => item.Part)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item)
-                                                           .ThenInclude(item => item.Labor)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item)
-                                                           .ThenInclude(item => item.Tire)
-                                               //.Include(item => item.Package)
-                                               //    .ThenInclude(pkgItem => pkgItem.Items)
-                                               //        .ThenInclude(invItem => invItem.Item)
-                                               //            .ThenInclude(item => item.Manufacturer)
-                                               //.Include(item => item.Package)
-                                               //    .ThenInclude(pkgItem => pkgItem.Items)
-                                               //        .ThenInclude(invItem => invItem.Item)
-                                               //            .ThenInclude(item => item.ProductCode)
-                                               //                .ThenInclude(productCode => productCode.SaleCode)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.Inspection)
-                                               // Coming soon...
-                                               //.Include(item => item.Donation)
-                                               //.Include(item => item.GiftCertificate)
-                                               .Include(item => item.Warranty)
-                                               .AsNoTracking()
-                                               .AsSplitQuery()
-                                               .FirstOrDefaultAsync(item => item.Id == id);
-
-            return itemFromContext is not null
+        private async Task<InventoryItemToRead> GetInventoryItemToRead(Expression<Func<InventoryItem, bool>> predicate) =>
+            await GetInventoryItemsQuery()
+                .FirstOrDefaultAsync(predicate) is InventoryItem itemFromContext
                 ? InventoryItemHelper.ConvertEntityToReadDto(itemFromContext)
                 : null;
+
+        private async Task<InventoryItem> GetInventoryItemEntity(Expression<Func<InventoryItem, bool>> predicate) =>
+            await GetInventoryItemsQuery(asNoTracking: false)
+                .FirstOrDefaultAsync(predicate);
+
+        private async Task<IReadOnlyList<InventoryItemToRead>> GetInventoryItemsToRead(string partNumber = null, long? manufacturerId = null, long? productCodeId = null, InventoryItemType? itemType = null)
+        {
+            IQueryable<InventoryItem> query = GetInventoryItemsQuery();
+
+            if (manufacturerId is not null)
+                query = query.Where(item => item.Manufacturer.Id == manufacturerId);
+
+            if (partNumber is not null)
+                query = query.Where(item => item.ItemNumber == partNumber);
+
+            if (productCodeId is not null)
+                query = query.Where(item => item.ProductCode.Id == productCodeId);
+
+            if (itemType is not null)
+                query = query.Where(item => item.ItemType == itemType);
+
+            var itemsFromContext = await query.ToListAsync();
+
+            return itemsFromContext.Select(
+                item => InventoryItemHelper.ConvertEntityToReadDto(item))
+                .ToList();
         }
 
-        public async Task<InventoryItemToRead> GetItemAsync(long manufacturerId, string itemNumber)
+        private async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemsToReadInList(InventoryItemType? itemType = null, string itemNumber = null, long? manufacturerId = null, long? productCodeId = null)
         {
-            var itemFromContext = await context.InventoryItems
-                                               .Include(item => item.Manufacturer)
-                                               .Include(item => item.ProductCode)
-                                                   .ThenInclude(productCode => productCode.SaleCode)
-                                               .Include(item => item.ProductCode)
-                                                   .ThenInclude(productCode => productCode.Manufacturer)
-                                               .Include(item => item.Part)
-                                               .Include(item => item.Labor)
-                                               .Include(item => item.Tire)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item.Manufacturer)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(pkgItem => pkgItem.Items)
-                                                       .ThenInclude(pItem => pItem.Item.ProductCode)
-                                               .Include(item => item.Package)
-                                                   .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.Inspection)
-                                               // Coming soon...
-                                               //.Include(item => item.Donation)
-                                               //.Include(item => item.GiftCertificate)
-                                               .Include(item => item.Warranty)
-                                               .AsNoTracking()
-                                               .AsSplitQuery()
-                                               .FirstOrDefaultAsync(item => item.Manufacturer.Id == manufacturerId
-                                                                         && item.ItemNumber == itemNumber);
+            IQueryable<InventoryItem> query = GetInventoryItemsQuery();
 
-            return itemFromContext is not null
-                ? InventoryItemHelper.ConvertEntityToReadDto(itemFromContext)
-                : null;
+            if (manufacturerId is not null)
+                query = query.Where(
+                    item => item.Manufacturer.Id == manufacturerId);
+
+            if (itemNumber is not null)
+                query = query.Where(
+                    item => item.ItemNumber == itemNumber);
+
+            if (productCodeId is not null)
+                query = query.Where(
+                    item => item.ProductCode.Id == productCodeId);
+
+            if (itemType is not null)
+                query = query.Where(
+                    item => item.ItemType == itemType);
+
+            var itemsFromContext = await query.ToListAsync();
+
+            return itemsFromContext.Select(
+                item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
+                .ToList();
         }
 
-        public async Task<InventoryItem> GetItemEntityAsync(long id)
-        {
-            return await context.InventoryItems
-                                .Include(item => item.Manufacturer)
-                                .Include(item => item.ProductCode)
-                                    .ThenInclude(productCode => productCode.SaleCode)
-                                .Include(item => item.ProductCode)
-                                    .ThenInclude(productCode => productCode.Manufacturer)
-                                .Include(item => item.Part)
-                                .Include(item => item.Labor)
-                                .Include(item => item.Tire)
-                                .Include(item => item.Package)
-                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                .ThenInclude(pItem => pItem.Item.Manufacturer)
-                                    .Include(item => item.Package)
-                                .ThenInclude(pkgItem => pkgItem.Items)
-                                    .ThenInclude(pItem => pItem.Item.ProductCode)
-                                .Include(item => item.Package)
-                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                .Include(item => item.Inspection)
-                                // Coming soon...
-                                //.Include(item => item.Donation)
-                                //.Include(item => item.GiftCertificate)
-                                .Include(item => item.Warranty)
-                                .AsSplitQuery()
-                                .FirstOrDefaultAsync(item => item.Id == id);
-        }
+        public async Task<bool> Exists(long id) =>
+            await context.InventoryItems.AnyAsync(item => item.Id == id);
 
-        public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntitiesAsync(List<long> ids)
-        {
-            var list = new List<InventoryItem>();
-
-            foreach (var id in ids)
-                list.Add(await GetItemEntityAsync(id));
-
-            return list;
-        }
-
-        public async Task<IReadOnlyList<InventoryItemToRead>> GetItemsAsync()
-        {
-            var items = new List<InventoryItemToRead>();
-
-            var itemsFromContext = await context.InventoryItems
-                                                .Include(item => item.Manufacturer)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.SaleCode)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.Manufacturer)
-                                                .Include(item => item.Part)
-                                                .Include(item => item.Labor)
-                                                .Include(item => item.Tire)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.Inspection)
-                                                // Coming soon...
-                                                //.Include(item => item.Donation)
-                                                //.Include(item => item.GiftCertificate)
-                                                .Include(item => item.Warranty)
-                                                .AsSplitQuery()
-                                                .AsNoTracking()
-                                                .ToArrayAsync();
-
-            foreach (var item in itemsFromContext)
-                items.Add(InventoryItemHelper.ConvertEntityToReadDto(item));
-
-            return items;
-        }
-
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync()
-        {
-            var itemsFromContext = await context.InventoryItems
-                                                .Include(item => item.Manufacturer)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.SaleCode)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.Manufacturer)
-                                                .Include(item => item.Part)
-                                                .Include(item => item.Labor)
-                                                .Include(item => item.Tire)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.Inspection)
-                                                // Coming soon...
-                                                //.Include(item => item.Donation)
-                                                //.Include(item => item.GiftCertificate)
-                                                .Include(item => item.Warranty)
-                                                .AsSplitQuery()
-                                                .AsNoTracking()
-                                                .ToArrayAsync();
-
-            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
-                                   .ToList();
-        }
-
-        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInListAsync(long manufacturerId)
-        {
-            var itemsFromContext = await context.InventoryItems
-                                                .Include(item => item.Manufacturer)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.SaleCode)
-                                                .Include(item => item.ProductCode)
-                                                    .ThenInclude(productCode => productCode.Manufacturer)
-                                                .Include(item => item.Part)
-                                                .Include(item => item.Labor)
-                                                .Include(item => item.Tire)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.Manufacturer)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(pkgItem => pkgItem.Items)
-                                                        .ThenInclude(pItem => pItem.Item.ProductCode)
-                                                .Include(item => item.Package)
-                                                    .ThenInclude(placeholderItem => placeholderItem.Placeholders)
-                                               .Include(item => item.Inspection)
-                                                // Coming soon...
-                                                //.Include(item => item.Donation)
-                                                //.Include(item => item.GiftCertificate)
-                                                .Include(item => item.Warranty)
-                                                .Where(item => item.Manufacturer.Id == manufacturerId)
-                                                .AsSplitQuery()
-                                                .AsNoTracking()
-                                                .ToArrayAsync();
-
-            return itemsFromContext.Select(item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
-                                   .ToList();
-        }
-
-        public async Task<bool> ItemExistsAsync(long id)
-        {
-            return await context.InventoryItems.AnyAsync(item => item.Id == id);
-        }
-
-        public async Task SaveChangesAsync()
-        {
+        public async Task SaveChanges() =>
             await context.SaveChangesAsync();
-        }
 
-        public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntityAsync(long id)
-        {
-            return await context.InventoryItemWarranties
-                                .FirstOrDefaultAsync(warranty => warranty.Id == id);
-        }
+        public async Task<InventoryItemWarranty> GetInventoryItemWarrantyEntity(long id) =>
+            await context.InventoryItemWarranties
+                .FirstOrDefaultAsync(warranty => warranty.Id == id);
 
-        public async Task<InventoryItemPart> GetInventoryItemPartEntityAsync(long id)
-        {
-            return await context.InventoryItemParts
-                                .FirstOrDefaultAsync(part => part.Id == id);
-        }
+        public async Task<InventoryItemPart> GetInventoryItemPartEntity(long id) =>
+            await context.InventoryItemParts
+                .FirstOrDefaultAsync(part => part.Id == id);
 
-        public async Task<InventoryItemInspection> GetInventoryItemInspectionEntityAsync(long id)
-        {
-            return await context.InventoryItemInspections
-                                .FirstOrDefaultAsync(part => part.Id == id);
-        }
+        public async Task<InventoryItemInspection> GetInventoryItemInspectionEntity(long id) =>
+            await context.InventoryItemInspections
+                .FirstOrDefaultAsync(inspection => inspection.Id == id);
 
-        public async Task<InventoryItemLabor> GetInventoryItemLaborEntityAsync(long id)
-        {
-            return await context.InventoryItemLabor
-                                .FirstOrDefaultAsync(part => part.Id == id);
-        }
+        public async Task<InventoryItemLabor> GetInventoryItemLaborEntity(long id) =>
+            await context.InventoryItemLabor
+                .FirstOrDefaultAsync(labor => labor.Id == id);
 
-        public async Task<InventoryItemTire> GetInventoryItemTireEntityAsync(long id)
-        {
-            return await context.InventoryItemTires
-                                .FirstOrDefaultAsync(part => part.Id == id);
-        }
+        public async Task<InventoryItemTire> GetInventoryItemTireEntity(long id) =>
+            await context.InventoryItemTires
+                .FirstOrDefaultAsync(tire => tire.Id == id);
 
-        public async Task<InventoryItemPackage> GetInventoryItemPackageEntityAsync(long id)
-        {
-            return await context.InventoryItemPackages
-                                .FirstOrDefaultAsync(part => part.Id == id);
-        }
+        public async Task<InventoryItemPackage> GetInventoryItemPackageEntity(long id) =>
+            await context.InventoryItemPackages
+                .FirstOrDefaultAsync(package => package.Id == id);
     }
 }
-

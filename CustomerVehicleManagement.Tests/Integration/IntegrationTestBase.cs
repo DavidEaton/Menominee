@@ -1,103 +1,133 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Tests.Unit.Helpers;
-using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using Menominee.Common.Enums;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using static CustomerVehicleManagement.Tests.Unit.Helpers.Payables.VendorInvoiceTestHelper;
-using static CustomerVehicleManagement.Tests.Utilities;
 
 namespace CustomerVehicleManagement.Tests.Integration
 {
+    /*
+     * VK Im.2:
+     *
+     * 1) Deleting and re-creating the database on each test is slow. Use migrations to bring the tests db to the
+     * desired state (manually, once), and then before each test only remove non-reference data from the database.
+     * Each test then should create its fixtures/test data in its Arrange section.
+     * (Reference data is data that's not changed by the app and is required for the app to run properly, e.g PhoneType etc)
+     *
+     * 2) Seeding data shouldn't be part of the "common" step for all integration tests. If its reference data, then
+     * modify it in migration scripts. If it's master/non-reference data, then each test should create its own set of such data in Arrange section
+     */
     public class IntegrationTestBase
     {
         public IntegrationTestBase()
         {
             // When created, each test that inherits from this IntegrationTestBase
-            // automatically clears and seeds the database, setting it to a known state.
+            // automatically clears the database, setting it to a known state.
             ClearDatabase();
-            SeedDatabase();
         }
 
         private static void ClearDatabase()
         {
-            ApplicationDbContext context = Helpers.CreateTestContext();
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            var sqlCommands = new List<string>();
+            var typeNames = DatabaseTableNamesForDeletion();
+
+            foreach (var name in typeNames)
+                sqlCommands.Add($"DELETE FROM [dbo].[{name}]");
+
+            foreach (var command in sqlCommands)
+            {
+                try
+                {
+                    ExecuteCommand(command);
+                }
+                catch (Exception ex)
+                {
+                    // Continue executing list after exception
+                    // TODO: log exception
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
-        private static void SeedDatabase()
+        private static IList<string> DatabaseTableNamesForDeletion()
+        {
+            // Order matters. Use this manual list in ClearDatabase();
+            // add new table names as integration tests are added
+            return new List<string>
+                {
+                    "CreditCard",
+                    "VendorInvoiceLineItem",
+                    "VendorInvoicePayment",
+                    "VendorInvoiceTax",
+                    "ExciseFee",
+                    "SalesTax",
+                    "VendorInvoice",
+                    "VendorInvoicePaymentMethod",
+                    "Phone",
+                    "Email",
+                    "Vendor",
+
+                    //"Person",
+                    //"Organization",
+                    //"Customer",
+                };
+        }
+
+        private static void ExecuteCommand(string query)
+        {
+            using var connection = new SqlConnection(Helpers.IntegrationTestsConnectionString);
+            var command = new SqlCommand(query, connection)
+            {
+                CommandType = CommandType.Text
+            };
+
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
+        protected static void AddInventoryItems(int count)
+        {
+            using (var context = Helpers.CreateTestContext())
+            {
+                context.Database.EnsureCreated();
+                List<InventoryItem> inventoryItems = InventoryItemTestHelper.CreateInventoryItems(count);
+                context.AddRange(inventoryItems);
+                context.SaveChanges();
+            };
+
+        }
+
+        protected static void AddProductCodes()
         {
             var maxSeedCount = 10;
             var halfSeedCount = maxSeedCount / 2;
-            ApplicationDbContext context = Helpers.CreateTestContext();
 
-            var paymentMethods = CreateVendorInvoicePaymentMethodsSansReconcilingVendor(maxSeedCount);
-            var salesTaxes = CreateTestSalesTaxes(maxSeedCount);
-
-            context.AddRange(paymentMethods);
-            context.AddRange(salesTaxes);
-            context.SaveChanges();
-
-            var defaultPaymentMethods = CreatDefaultPaymentMethods(maxSeedCount, paymentMethods);
-
-            var vendors = CreateVendors(maxSeedCount);
-            var saleCodes = CreateTestSaleCodes(maxSeedCount);
-            var manufacturers = InventoryItemTestHelper.CreateManufacturers(maxSeedCount);
-            var parts = InventoryItemTestHelper.CreateInventoryItemParts(maxSeedCount);
-
-            context.AddRange(vendors);
-            context.AddRange(saleCodes);
-            context.AddRange(manufacturers);
-            context.AddRange(parts);
-            context.SaveChanges();
-
-            var manufacturerCodes = context.ProductCodes
-                .Select(productCode =>
-                     $"{productCode.Manufacturer.Id} + {productCode.Code}")
-                .ToList();
-
-            var productCodes = CreateProductCodes(
-                maxSeedCount,
-                manufacturers[halfSeedCount],
-                manufacturerCodes);
-
-            context.AddRange(productCodes);
-
-
-            // VendorInvoice
-            VendorInvoiceToWrite invoiceToWrite = CreateVendorInvoiceToWrite(vendors[^1]);
-            invoiceToWrite.LineItems = CreateLineItemsToWrite(new LineItemTestOptions());
-            invoiceToWrite.Payments = CreateTestPaymentsToWrite(paymentMethods[^1], paymentCount: halfSeedCount);
-            invoiceToWrite.Taxes = CreateTaxesToWrite(salesTaxes[^1], taxLineCount: maxSeedCount, taxAmount: 5.5);
-
-            VendorInvoice invoice = VendorInvoiceHelper.ConvertWriteToEntity(invoiceToWrite, vendors[^1]);
-
-            context.Add(invoice);
-            context.SaveChanges();
-        }
-
-        private static IList<VendorInvoicePaymentToWrite> CreateTestPaymentsToWrite(VendorInvoicePaymentMethod paymentMethod, int paymentCount)
-        {
-            var list = new List<VendorInvoicePaymentToWrite>();
-            var amount = 11.11;
-
-            for (int i = 0; i < paymentCount; i++)
+            using (var context = Helpers.CreateTestContext())
             {
-                list.Add(new VendorInvoicePaymentToWrite()
-                {
-                    Amount = amount * (++i),
-                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(paymentMethod)
-                });
-            }
+                context.Database.EnsureCreated();
 
-            return list;
+                var manufacturerCodes = context.ProductCodes
+                    .Select(productCode =>
+                         $"{productCode.Manufacturer.Id} + {productCode.Code}")
+                    .ToList();
+
+                var manufacturers = InventoryItemTestHelper.CreateManufacturers(maxSeedCount);
+
+                var productCodes = CreateProductCodes(
+                    maxSeedCount,
+                    manufacturers[halfSeedCount],
+                    manufacturerCodes);
+
+                context.AddRange(manufacturers);
+                context.AddRange(productCodes);
+                context.SaveChanges();
+            };
         }
 
         private static IReadOnlyList<ProductCode> CreateProductCodes(int count, Manufacturer manufacturer, IReadOnlyList<string> manufacturerCodes)
@@ -117,7 +147,7 @@ namespace CustomerVehicleManagement.Tests.Integration
             return list;
         }
 
-        private static IReadOnlyList<SaleCode> CreateTestSaleCodes(int count)
+        private static IReadOnlyList<SaleCode> CreateSaleCodes(int count)
         {
             var list = new List<SaleCode>();
             var laborRate = count + 11.11;
@@ -136,7 +166,7 @@ namespace CustomerVehicleManagement.Tests.Integration
             return list;
         }
 
-        private static IReadOnlyList<SalesTax> CreateTestSalesTaxes(int count)
+        private static IReadOnlyList<SalesTax> CreateSalesTaxes(int count)
         {
             var list = new List<SalesTax>();
 
@@ -164,7 +194,6 @@ namespace CustomerVehicleManagement.Tests.Integration
                     new List<string>(),
                     $"Payment {i}",
                     isActive: true,
-                    //isOnAccountPaymentType: false,
                     paymentType: VendorInvoicePaymentMethodType.Normal,
                     reconcilingVendor: null).Value);
             }
@@ -172,19 +201,18 @@ namespace CustomerVehicleManagement.Tests.Integration
             return list;
         }
 
-    }
+        protected class CreatedResultResponse
+        {
+            public string Location { get; set; }
+            public Value Value { get; set; }
+            public object[] Formatters { get; set; }
+            public object[] ContentTypes { get; set; }
+            public int StatusCode { get; set; }
+        }
 
-    public class CreatedResultResponse
-    {
-        public string Location { get; set; }
-        public Value Value { get; set; }
-        public object[] Formatters { get; set; }
-        public object[] ContentTypes { get; set; }
-        public int StatusCode { get; set; }
-    }
-
-    public class Value
-    {
-        public int Id { get; set; }
+        protected class Value
+        {
+            public long Id { get; set; }
+        }
     }
 }
