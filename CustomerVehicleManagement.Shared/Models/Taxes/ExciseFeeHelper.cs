@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -101,6 +102,17 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                     excisefee.FeeType,
                     excisefee.Amount)
                 .Value;
+        }
+
+        internal static List<ExciseFee> CovertReadDtoToEntity(List<ExciseFeeToRead> exciseFees)
+        {
+            return exciseFees.Select(fee =>
+                    ExciseFee.Create(
+                        fee.Description,
+                        fee.FeeType,
+                        fee.Amount)
+                    .Value)
+                .ToList();
         }
     }
 }

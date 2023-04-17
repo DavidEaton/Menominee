@@ -1,7 +1,16 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Api.Inventory;
+using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
+using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.ProductCodes;
+using CustomerVehicleManagement.Tests.Integration;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
 {
@@ -92,7 +101,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
             return productCodes;
         }
-
 
         public static InventoryItemInspection CreateInventoryItemInspection()
         {
@@ -213,7 +221,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
             return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
         }
 
-        private static List<SaleCode> CreateSaleCodes(int count)
+        public static List<SaleCode> CreateSaleCodes(int count)
         {
             var list = new List<SaleCode>();
 
@@ -225,6 +233,66 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
                 double desiredMargin = SaleCode.MinimumValue + count;
                 SaleCodeShopSupplies shopSupplies = new();
                 list.Add(SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value);
+            }
+
+            return list;
+        }
+
+        public static async Task<InventoryItemToRead> GetItem(long id)
+        {
+            using (var context = IntegrationTestBase.CreateTestContext())
+            {
+                var repo = new InventoryItemRepository(context);
+                return await repo.GetItem(id);
+            }
+        }
+
+        public static InventoryItemPartToWrite CreateInventoryItemPartToWrite()
+        {
+            return new()
+            {
+                List = InstallablePart.MaximumMoneyAmount,
+                Cost = InstallablePart.MaximumMoneyAmount,
+                Core = InstallablePart.MinimumMoneyAmount,
+                Retail = InstallablePart.MinimumMoneyAmount,
+                Fractional = false,
+                TechAmount = new TechAmountToWrite
+                {
+                    PayType = ItemLaborType.Flat,
+                    Amount = LaborAmount.MinimumAmount,
+                    SkillLevel = SkillLevel.A
+                }
+            };
+        }
+
+        public static ProductCodeToRead GetProductCodeToRead()
+        {
+            using var context = IntegrationTestBase.CreateTestContext();
+
+            return ProductCodeHelper.ConvertEntityToReadDto(
+                context.ProductCodes.First());
+        }
+
+        public static ManufacturerToRead GetManufacturerToRead()
+        {
+            using var context = IntegrationTestBase.CreateTestContext();
+
+            return ManufacturerHelper.ConvertEntityToReadDto(
+                context.Manufacturers.First());
+        }
+
+        internal static List<ManufacturerToWrite> CreateManufacturersToWrite(int count)
+        {
+            var list = new List<ManufacturerToWrite>();
+
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(new ManufacturerToWrite()
+                {
+                    Name = $"Manufacturer {i}",
+                    Code = $"M{i}",
+                    Prefix = $"V{i}"
+                });
             }
 
             return list;

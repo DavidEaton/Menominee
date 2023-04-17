@@ -225,12 +225,5 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             organization.Address.Should().BeNull();
             janes.Address.Should().BeNull();
         }
-
-        [Fact]
-        public void SyncContactDetails()
-        {
-
-            true.Should().BeFalse();
-        }
     }
 }

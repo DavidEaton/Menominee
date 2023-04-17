@@ -1,6 +1,8 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Manufacturers;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,23 +13,52 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
         public static VendorInvoiceItem ConvertWriteDtoToEntity(
             VendorInvoiceItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
         {
-            return VendorInvoiceItem.Create(
-                item.PartNumber,
-                item.Description,
-                manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
-                saleCodes.FirstOrDefault(saleCode => saleCode.Id == item.SaleCode.Id))
+            return
+                item is null
+                ? null
+                : VendorInvoiceItem.Create(
+                    item.PartNumber,
+                    item.Description,
+                    item.Manufacturer is null
+                        ? null
+                        : manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
+                    item.SaleCode is null
+                        ? null
+                        : saleCodes.FirstOrDefault(saleCode => saleCode.Id == item.SaleCode.Id))
                 .Value;
         }
 
         public static VendorInvoiceItemToWrite ConvertReadDtoToWriteDto(VendorInvoiceItemToRead item)
         {
-            return new VendorInvoiceItemToWrite()
-            {
-                Description = item.Description,
-                Manufacturer = item.Manufacturer,
-                PartNumber = item.PartNumber,
-                SaleCode = item.SaleCode
-            };
+            return
+                item is null
+                ? null
+                : new()
+                {
+                    Description = item.Description,
+                    Manufacturer = item.Manufacturer,
+                    PartNumber = item.PartNumber,
+                    SaleCode = item.SaleCode
+                };
+        }
+
+        internal static VendorInvoiceItemToWrite ConvertEntityToWriteDto(VendorInvoiceItem item)
+        {
+            return
+                item is null
+                ? null
+                : new()
+                {
+                    Description = item.Description,
+                    Manufacturer =
+                        item.Manufacturer is null
+                        ? null
+                        : ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
+                    PartNumber = item.PartNumber,
+                    SaleCode =
+                        item.SaleCode is null
+                        ? null : SaleCodeHelper.ConvertEntityToReadDto(item.SaleCode)
+                };
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
     public static class VendorInvoiceHelper
     {
-        public static VendorInvoiceToRead ConvertEntityToReadDto(VendorInvoice invoice)
+        public static VendorInvoiceToRead ConvertToReadDto(VendorInvoice invoice)
         {
             return
                 invoice is null
@@ -29,17 +29,47 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Status = invoice.Status,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
-                    Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
-                    LineItems = ConvertLineItemEntitiesToReadDtos(invoice.LineItems),
-                    Payments = ConvertPaymentEntitiesToReadDtos(invoice.Payments),
-                    Taxes = ConvertTaxEntitiesToReadDtos(invoice.Taxes)
+                    Vendor = VendorHelper.ConvertToReadDto(invoice.Vendor),
+                    LineItems = ConvertLineItemsToReadDtos(invoice.LineItems),
+                    Payments = ConvertPaymentsToReadDtos(invoice.Payments),
+                    Taxes = ConvertTaxsToReadDtos(invoice.Taxes)
                 };
         }
 
-        private static IReadOnlyList<VendorInvoiceLineItemToRead> ConvertLineItemEntitiesToReadDtos(IReadOnlyList<VendorInvoiceLineItem> items)
+        private static IReadOnlyList<VendorInvoiceLineItemToRead> ConvertLineItemsToReadDtos(IReadOnlyList<VendorInvoiceLineItem> items)
         {
             return items?.Select(ConvertLineItemToReadDto()).ToList()
                 ?? new List<VendorInvoiceLineItemToRead>();
+        }
+
+        public static IReadOnlyList<VendorInvoiceLineItemToWrite> ConvertLineItemsToWriteDtos(IReadOnlyList<VendorInvoiceLineItem> items)
+        {
+            return items?.Select(ConvertLineItemToWriteDto()).ToList()
+                ?? new List<VendorInvoiceLineItemToWrite>();
+        }
+
+        private static Func<VendorInvoiceLineItem, VendorInvoiceLineItemToWrite> ConvertLineItemToWriteDto()
+        {
+            return lineItem =>
+                            new VendorInvoiceLineItemToWrite()
+                            {
+                                Id = lineItem.Id,
+                                Type = lineItem.Type,
+                                Item =
+                                lineItem.Item is null
+                                    ? null
+                                    : ConvertItemToWriteDto(lineItem.Item),
+                                Quantity = lineItem.Quantity,
+                                Cost = lineItem.Cost,
+                                Core = lineItem.Core,
+                                PONumber = lineItem.PONumber,
+                                TransactionDate = lineItem.TransactionDate
+                            };
+        }
+
+        private static VendorInvoiceItemToWrite ConvertItemToWriteDto(VendorInvoiceItem item)
+        {
+            return VendorInvoiceItemHelper.ConvertEntityToWriteDto(item);
         }
 
         private static Func<VendorInvoiceLineItem, VendorInvoiceLineItemToRead> ConvertLineItemToReadDto()
@@ -49,7 +79,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             {
                                 Id = lineItem.Id,
                                 Type = lineItem.Type,
-                                Item = ConvertItemEntityToReadDto(lineItem.Item),
+                                Item = ConvertItemToReadDto(lineItem.Item),
                                 Quantity = lineItem.Quantity,
                                 Cost = lineItem.Cost,
                                 Core = lineItem.Core,
@@ -58,10 +88,11 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                             };
         }
 
-        private static VendorInvoiceItemToRead ConvertItemEntityToReadDto(VendorInvoiceItem item)
+        private static VendorInvoiceItemToRead ConvertItemToReadDto(VendorInvoiceItem item)
         {
-            return
-                new VendorInvoiceItemToRead()
+            return item is null
+                ? null
+                : new()
                 {
                     Description = item.Description,
                     Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
@@ -70,13 +101,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        private static IReadOnlyList<VendorInvoicePaymentToRead> ConvertPaymentEntitiesToReadDtos(IReadOnlyList<VendorInvoicePayment> payments)
+        private static IReadOnlyList<VendorInvoicePaymentToRead> ConvertPaymentsToReadDtos(IReadOnlyList<VendorInvoicePayment> payments)
         {
-            return payments?.Select(ConvertPaymentEntityToReadDto()).ToList()
+            return payments?.Select(ConvertPaymentToReadDto()).ToList()
                 ?? new List<VendorInvoicePaymentToRead>();
         }
 
-        private static Func<VendorInvoicePayment, VendorInvoicePaymentToRead> ConvertPaymentEntityToReadDto()
+        public static IReadOnlyList<VendorInvoicePaymentToWrite> ConvertPaymentsToWriteDtos(IReadOnlyList<VendorInvoicePayment> payments)
+        {
+            return payments?.Select(ConvertPaymentToWriteDto()).ToList()
+                ?? new List<VendorInvoicePaymentToWrite>();
+        }
+
+        private static Func<VendorInvoicePayment, VendorInvoicePaymentToRead> ConvertPaymentToReadDto()
         {
             return payment =>
                 new VendorInvoicePaymentToRead()
@@ -87,48 +124,61 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        private static IReadOnlyList<VendorInvoiceTaxToRead> ConvertTaxEntitiesToReadDtos(IReadOnlyList<VendorInvoiceTax> taxes)
+        private static Func<VendorInvoicePayment, VendorInvoicePaymentToWrite> ConvertPaymentToWriteDto()
         {
-            return taxes?.Select(ConvertTaxEntityToReadDto()).ToList()
+            return payment =>
+                new VendorInvoicePaymentToWrite()
+                {
+                    Id = payment.Id,
+                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToWriteDto(payment.PaymentMethod),
+                    Amount = payment.Amount
+                };
+        }
+
+        private static IReadOnlyList<VendorInvoiceTaxToRead> ConvertTaxsToReadDtos(IReadOnlyList<VendorInvoiceTax> taxes)
+        {
+            return taxes?.Select(ConvertTaxToReadDto()).ToList()
                 ?? new List<VendorInvoiceTaxToRead>();
         }
 
-        private static Func<VendorInvoiceTax, VendorInvoiceTaxToRead> ConvertTaxEntityToReadDto()
+        private static Func<VendorInvoiceTax, VendorInvoiceTaxToRead> ConvertTaxToReadDto()
         {
             return tax =>
                 new VendorInvoiceTaxToRead()
                 {
                     Id = tax.Id,
                     Amount = tax.Amount,
-                    SalesTax = ConvertSalesTaxEntityToReadDto(tax.SalesTax)
+                    SalesTax = ConvertSalesTaxToReadDto(tax.SalesTax)
                 };
         }
 
-        private static SalesTaxToRead ConvertSalesTaxEntityToReadDto(SalesTax salesTax)
+        private static SalesTaxToRead ConvertSalesTaxToReadDto(SalesTax salesTax)
         {
-            return new SalesTaxToRead()
-            {
-                Description = salesTax.Description,
-                Id = salesTax.Id,
-                IsAppliedByDefault = salesTax.IsAppliedByDefault,
-                IsTaxable = salesTax.IsTaxable,
-                LaborTaxRate = salesTax.LaborTaxRate,
-                Order = salesTax.Order,
-                PartTaxRate = salesTax.PartTaxRate,
-                ExciseFees = ExciseFeeHelper.ConvertEntitiesToReadDtos(salesTax.ExciseFees),
-                TaxIdNumber = salesTax.TaxIdNumber,
-                TaxType = salesTax.TaxType
-            };
+            return salesTax is null
+                ? null
+                : new()
+                {
+                    Description = salesTax.Description,
+                    Id = salesTax.Id,
+                    IsAppliedByDefault = salesTax.IsAppliedByDefault,
+                    IsTaxable = salesTax.IsTaxable,
+                    LaborTaxRate = salesTax.LaborTaxRate,
+                    Order = salesTax.Order,
+                    PartTaxRate = salesTax.PartTaxRate,
+                    ExciseFees = ExciseFeeHelper.ConvertEntitiesToReadDtos(salesTax.ExciseFees),
+                    TaxIdNumber = salesTax.TaxIdNumber,
+                    TaxType = salesTax.TaxType
+                };
         }
 
-        public static VendorInvoiceToReadInList ConvertEntityToReadInListDto(VendorInvoice invoice)
+        public static VendorInvoiceToReadInList ConvertToReadInListDto(VendorInvoice invoice)
         {
             return invoice is null
                 ? null
                 : new()
                 {
                     Id = invoice.Id,
-                    Vendor = VendorHelper.ConvertEntityToReadDto(invoice.Vendor),
+                    Vendor = VendorHelper.ConvertToReadDto(invoice.Vendor),
                     Date = invoice.Date?.ToShortDateString(),
                     DatePosted = invoice.DatePosted?.ToShortDateString(),
                     Status = invoice.Status.ToString(),
@@ -141,8 +191,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         {
             return invoice is null
                 ? null
-                :
-                new()
+                : new()
                 {
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
@@ -156,9 +205,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 };
         }
 
-        public static IReadOnlyList<VendorInvoiceToRead> ConvertEntitiesToReadDto(IReadOnlyList<VendorInvoice> invoices)
+        public static IReadOnlyList<VendorInvoiceToRead> ConvertToReadDtos(IReadOnlyList<VendorInvoice> invoices)
         {
-            return invoices.Select(invoice => ConvertEntityToReadDto(invoice))
+            return invoices.Select(invoice => ConvertToReadDto(invoice))
                 .ToList();
         }
 
@@ -167,6 +216,42 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             return invoice is null
                 ? null
                 : VendorInvoice.Create(vendor, invoice.Status, invoice.DocumentType, invoice.Total, vendorInvoiceNumbers: null).Value;
+        }
+
+        public static VendorInvoiceToWrite ConvertToWriteDto(VendorInvoice invoice)
+        {
+            return invoice is null
+                ? null
+                : new()
+                {
+                    Id = invoice.Id,
+                    Date = invoice.Date,
+                    DatePosted = invoice.DatePosted,
+                    Status = invoice.Status,
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    Total = invoice.Total,
+                    Vendor = VendorHelper.ConvertToReadDto(invoice.Vendor),
+                    LineItems = (IList<VendorInvoiceLineItemToWrite>)ConvertLineItemsToWriteDtos(invoice.LineItems),
+                    Payments = (IList<VendorInvoicePaymentToWrite>)ConvertPaymentsToWriteDtos(invoice.Payments),
+                    Taxes = (IList<VendorInvoiceTaxToWrite>)ConvertTaxesToWriteDtos(invoice.Taxes)
+                };
+        }
+
+        public static IReadOnlyList<VendorInvoiceTaxToWrite> ConvertTaxesToWriteDtos(IReadOnlyList<VendorInvoiceTax> taxes)
+        {
+            return taxes?.Select(ConvertTaxToWriteDto()).ToList()
+                ?? new List<VendorInvoiceTaxToWrite>();
+        }
+
+        private static Func<VendorInvoiceTax, VendorInvoiceTaxToWrite> ConvertTaxToWriteDto()
+        {
+            return tax =>
+                new VendorInvoiceTaxToWrite()
+                {
+                    Id = tax.Id,
+                    Amount = tax.Amount,
+                    SalesTax = ConvertSalesTaxToReadDto(tax.SalesTax)
+                };
         }
     }
 }

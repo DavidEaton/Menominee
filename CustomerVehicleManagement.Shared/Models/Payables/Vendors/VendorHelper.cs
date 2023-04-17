@@ -26,9 +26,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                 : null;
         }
 
-        public static VendorToRead ConvertEntityToReadDto(Vendor vendor)
+        public static VendorToRead ConvertToReadDto(Vendor vendor, int recursionDepth = 0)
         {
-            if (vendor is null)
+            if (vendor is null || recursionDepth > 4)
                 return null;
 
             DefaultPaymentMethodToRead defaultPaymentMethod = null;
@@ -54,7 +54,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
                         Name = vendor.DefaultPaymentMethod.PaymentMethod.Name,
                         IsActive = vendor.DefaultPaymentMethod.PaymentMethod.IsActive,
                         PaymentType = vendor.DefaultPaymentMethod.PaymentMethod.PaymentType,
-                        ReconcilingVendor = ConvertEntityToReadDto(vendor.DefaultPaymentMethod.PaymentMethod.ReconcilingVendor)
+                        ReconcilingVendor = ConvertToReadDto(
+                            vendor.DefaultPaymentMethod.PaymentMethod.ReconcilingVendor, ++recursionDepth)
                     }
                 };
             }
@@ -68,6 +69,17 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             vendorToRead.Emails = EmailHelper.ConvertEntitiesToReadDtos(vendor.Emails);
 
             return vendorToRead;
+        }
+
+        internal static Vendor ConvertReadToEntity(VendorToRead reconcilingVendor)
+        {
+            return Vendor.Create(
+                name: reconcilingVendor.Name,
+                vendorCode: reconcilingVendor.VendorCode,
+                vendorRole: reconcilingVendor.VendorRole,
+                defaultPaymentMethod: VendorInvoicePaymentMethodHelper
+                    .ConvertReadDtoToEntity(reconcilingVendor.DefaultPaymentMethod))
+                .Value;
         }
     }
 }

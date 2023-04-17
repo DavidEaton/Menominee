@@ -17,8 +17,8 @@ namespace CustomerVehicleManagement.Domain.Entities
         public string Notes { get; private set; }
         private Organization(
             OrganizationName name,
-            string note,
-            Person contact,
+            string note = null,
+            Person contact = null,
             Address address = null,
             IList<Email> emails = null,
             IList<Phone> phones = null)
@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public static Result<Organization> Create(
             OrganizationName name,
-            string note,
+            string note = null,
             Person contact = null,
             Address address = null,
             IList<Email> emails = null,

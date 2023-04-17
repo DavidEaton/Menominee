@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             if (itemFromRepository == null || manufacturerFromRepository == null || productCodeFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            var result = await UpdateInventoryItemPropertiesAsync(itemFromRepository, itemFromCaller,
+            Result result = await UpdateInventoryItemPropertiesAsync(itemFromRepository, itemFromCaller,
                 manufacturerFromRepository, productCodeFromRepository);
 
             if (result.IsFailure)

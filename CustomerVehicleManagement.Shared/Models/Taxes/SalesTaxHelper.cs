@@ -75,5 +75,18 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                     LaborTaxRate = tax.LaborTaxRate
                 };
         }
+
+        public static SalesTax ConvertReadDtoToEntity(SalesTaxToRead salesTax)
+        {
+            return SalesTax.Create(
+                salesTax.Description,
+                salesTax.TaxType,
+                salesTax.Order,
+                salesTax.TaxIdNumber,
+                salesTax.PartTaxRate,
+                salesTax.LaborTaxRate,
+                ExciseFeeHelper.CovertReadDtoToEntity(salesTax.ExciseFees))
+                .Value;
+        }
     }
 }

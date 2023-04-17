@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
@@ -7,6 +9,8 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Taxes;
+using CustomerVehicleManagement.Tests.Helpers.Fakers;
+using CustomerVehicleManagement.Tests.Integration;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -19,7 +23,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
     {
         public static VendorInvoiceToWrite CreateVendorInvoiceToWrite() => new()
         {
-            Date = DateTime.Now,
+            Date = DateTime.Today,
             InvoiceNumber = "123",
             Vendor = CreateVendorToRead(),
             Status = VendorInvoiceStatus.Open,
@@ -57,7 +61,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
             };
         }
 
-        private static VendorToRead CreateVendorToRead()
+        public static VendorToRead CreateVendorToRead()
         {
             return new VendorToRead()
             {
@@ -67,17 +71,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 VendorCode = RandomCharacters(Vendor.MinimumLength + 1),
                 VendorRole = VendorRole.PartsSupplier
             };
-        }
-
-        public static VendorInvoice CreateVendorInvoice()
-        {
-            Vendor vendor = VendorTestHelper.CreateVendor();
-            VendorInvoiceStatus status = VendorInvoiceStatus.Open;
-            VendorInvoiceDocumentType documentType = VendorInvoiceDocumentType.Invoice;
-            double Total = 0.0;
-            var vendorInvoiceNumbers = CreateVendorInvoiceNumbersList(vendor);
-
-            return VendorInvoice.Create(vendor, status, documentType, Total, vendorInvoiceNumbers).Value;
         }
 
         public static IReadOnlyList<string> CreateVendorInvoiceNumbers(Vendor vendor, List<int> invoiceNumbers)
@@ -153,7 +146,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                     .Value;
                 lineItems.Add(
                     VendorInvoiceLineItem.Create(type, item, itemQuantity, cost, core)
-                    .Value);
+                .Value);
             }
 
             return lineItems;
@@ -286,11 +279,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
         {
             string name = RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 30);
             bool isActive = true;
-            var reconcilingVendor = VendorTestHelper.CreateVendor(defaultPaymentMethod: null);
-            var paymentMethodNames = CreatePaymentMethodNames(5);
+            List<string> paymentMethodNames = new();
 
             return VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, name, isActive, VendorInvoicePaymentMethodType.Normal, reconcilingVendor).Value;
+                paymentMethodNames, name, isActive, VendorInvoicePaymentMethodType.Normal).Value;
         }
 
         public static VendorInvoicePayment CreateVendorInvoicePayment()
@@ -300,7 +292,17 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
             return VendorInvoicePayment.Create(paymentMethod, amount).Value;
         }
 
-        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethods(int count)
+        public static List<VendorInvoicePaymentMethod> CreateVendorInvoicePaymentMethods(int count)
+        {
+            var result = new List<VendorInvoicePaymentMethod>();
+
+            for (int i = 0; i < count; i++)
+                result.Add(CreateVendorInvoicePaymentMethod());
+
+            return result;
+        }
+
+        public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethodsToRead(int count)
         {
             var result = new List<VendorInvoicePaymentMethodToRead>();
 
@@ -322,7 +324,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
         public static IList<string> CreatePaymentMethodNames(int count)
         {
             IList<string> result = new List<string>();
-            var list = CreateVendorInvoicePaymentMethods(count);
+            var list = CreateVendorInvoicePaymentMethodsToRead(count);
 
             foreach (var method in list)
             {
@@ -361,6 +363,115 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 TaxIdNumber = "001",
                 TaxType = SalesTaxType.Normal
             };
+        }
+
+        public static VendorInvoicePaymentMethod GetFirstOrDefaultVendorInvoicePaymentMethod()
+        {
+            using (var context = IntegrationTestBase.CreateTestContext())
+            {
+                return context.VendorInvoicePaymentMethods.FirstOrDefault();
+            }
+        }
+
+        public static SalesTax GetFirstOrDefaultSalesTax()
+        {
+            using (var context = IntegrationTestBase.CreateTestContext())
+            {
+                return context.SalesTaxes.FirstOrDefault();
+            }
+        }
+
+        public static Vendor GetFirstOrDefaultVendor()
+        {
+            using (var context = IntegrationTestBase.CreateTestContext())
+            {
+                return context.Vendors.FirstOrDefault();
+            }
+        }
+
+        public static List<VendorInvoice> CreateVendorInvoices(List<Vendor> vendors, int childRowCount)
+        {
+            var vendorInvoices = new List<VendorInvoice>();
+
+            foreach (var vendor in vendors)
+            {
+                var invoice = CreateVendorInvoice(vendor, childRowCount);
+                vendorInvoices.Add(invoice);
+            }
+
+            return vendorInvoices;
+        }
+
+        public static VendorInvoice CreateVendorInvoice(Vendor vendor, int childRowCount)
+        {
+            var invoice = VendorInvoice.Create(
+                vendor: vendor,
+                status: VendorInvoiceStatus.Open,
+                documentType: VendorInvoiceDocumentType.Invoice,
+                total: VendorInvoice.MinimumValue + (new Random().NextDouble() * (999999 - VendorInvoice.MinimumValue)),
+                vendorInvoiceNumbers: CreateVendorInvoiceNumbersList(vendor),
+                invoiceNumber: $"{RandomCharacters(7)}")
+                .Value;
+
+            var lineItems = CreateLineItems(VendorInvoiceLineItemType.Purchase, childRowCount, 1.1, 2.2, 3);
+            var payments = CreatePayments(childRowCount, 1.2);
+            var taxes = CreateTaxes(childRowCount, .75);
+
+            foreach (var item in lineItems)
+                invoice.AddLineItem(item);
+
+            foreach (var payment in payments)
+                invoice.AddPayment(payment);
+
+            foreach (var tax in taxes)
+                invoice.AddTax(tax);
+
+            return invoice;
+        }
+
+        internal static List<VendorInvoice> CreateVendorInvoices(List<Vendor> vendors, List<SaleCode> saleCodes, int childRowCount)
+        {
+            var vendorInvoices = new List<VendorInvoice>();
+
+            foreach (var vendor in vendors)
+            {
+                var invoice = CreateVendorInvoice(vendor, saleCodes, childRowCount);
+                vendorInvoices.Add(invoice);
+            }
+
+            return vendorInvoices;
+        }
+
+        private static VendorInvoice CreateVendorInvoice(Vendor vendor, List<SaleCode> saleCodes, int childRowCount)
+        {
+            var invoice = VendorInvoice.Create(
+                vendor: vendor,
+                status: VendorInvoiceStatus.Open,
+                documentType: VendorInvoiceDocumentType.Invoice,
+                total: VendorInvoice.MinimumValue + (new Random().NextDouble() * (999999 - VendorInvoice.MinimumValue)),
+                vendorInvoiceNumbers: new List<string>(),
+                invoiceNumber: $"{RandomCharacters(7)}")
+                .Value;
+
+            var lineItems = CreateLineItems(VendorInvoiceLineItemType.Purchase, childRowCount, 1.1, 2.2, 3);
+            var payments = CreatePayments(childRowCount, 1.2);
+            var taxes = CreateTaxes(childRowCount, .75);
+
+            foreach (var item in lineItems)
+                invoice.AddLineItem(item);
+
+            foreach (var payment in payments)
+                invoice.AddPayment(payment);
+
+            foreach (var tax in taxes)
+                invoice.AddTax(tax);
+
+            return invoice;
+        }
+
+        public static List<VendorInvoice> GenerateVendorInvoices(int? count = null)
+        {
+            return new VendorInvoiceFaker(generateId: true, createCollections: true).Generate(count.Value);
         }
 
     }

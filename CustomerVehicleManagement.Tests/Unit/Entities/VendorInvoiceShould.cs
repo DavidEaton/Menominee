@@ -1,4 +1,7 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Tests.Helpers.Fakers;
+using CustomerVehicleManagement.Tests.Unit.Helpers.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
@@ -258,10 +261,10 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddLineItem()
         {
-            var vendorInvoice = CreateVendorInvoice();
-
-            var lineItemType = VendorInvoiceLineItemType.Purchase;
             int lineItemCount = 5;
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, lineItemCount);
+            var lineItemType = VendorInvoiceLineItemType.Purchase;
             double lineItemCore = 2.2;
             double lineItemCost = 4.4;
             double lineItemQuantity = 2;
@@ -270,13 +273,14 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             foreach (var lineItem in lineItems)
                 vendorInvoice.AddLineItem(lineItem);
 
-            vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
+            vendorInvoice.LineItems.Count.Should().Be(lineItemCount + lineItems.Count);
         }
 
         [Fact]
         public void Not_Add_Null_LineItem()
         {
-            var vendorInvoice = CreateVendorInvoice();
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, 0);
             VendorInvoiceLineItem nullLineItem = null;
 
             var result = vendorInvoice.AddLineItem(nullLineItem);
@@ -289,17 +293,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveLineItem()
         {
-            var vendorInvoice = CreateVendorInvoice();
-
             int lineItemCount = 5;
-            var lineItems = CreateLineItems(
-                type: VendorInvoiceLineItemType.Purchase,
-                lineItemCount: lineItemCount,
-                core: 2.2,
-                cost: 4.4,
-                itemQuantity: 2);
-            foreach (var lineItem in lineItems)
-                vendorInvoice.AddLineItem(lineItem);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, lineItemCount);
             vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
             var lineItemToRemove = vendorInvoice.LineItems[1];
 
@@ -311,16 +307,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_Null_LineItem()
         {
-            var vendorInvoice = CreateVendorInvoice();
             int lineItemCount = 5;
-            var lineItems = CreateLineItems(
-                type: VendorInvoiceLineItemType.Purchase,
-                lineItemCount: lineItemCount,
-                core: 2.2,
-                cost: 4.4,
-                itemQuantity: 2);
-            foreach (var lineItem in lineItems)
-                vendorInvoice.AddLineItem(lineItem);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, lineItemCount);
             vendorInvoice.LineItems.Count.Should().Be(lineItemCount);
             VendorInvoiceLineItem nullLineItem = null;
 
@@ -334,8 +323,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddPayment()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var paymentCount = 5;
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, 0);
             var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
 
             foreach (var payment in payments)
@@ -347,7 +337,8 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Add_Null_Payment()
         {
-            var vendorInvoice = CreateVendorInvoice();
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, 0);
             VendorInvoicePayment nullPayment = null;
 
             var result = vendorInvoice.AddPayment(nullPayment);
@@ -359,11 +350,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemovePayment()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var paymentCount = 5;
-            var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
-            foreach (var payment in payments)
-                vendorInvoice.AddPayment(payment);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, paymentCount);
             vendorInvoice.Payments.Count.Should().Be(paymentCount);
             var paymentToRemove = vendorInvoice.Payments[1];
 
@@ -374,11 +363,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_Null_Payment()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var paymentCount = 5;
-            var payments = CreatePayments(paymentCount: paymentCount, paymentAmount: 1);
-            foreach (var payment in payments)
-                vendorInvoice.AddPayment(payment);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, paymentCount);
             vendorInvoice.Payments.Count.Should().Be(paymentCount);
             VendorInvoicePayment nullPayment = null;
 
@@ -392,24 +379,23 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void AddTax()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var taxLineCount = 5;
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, taxLineCount);
             var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
 
             foreach (var tax in taxes)
                 vendorInvoice.AddTax(tax);
 
-            vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
+            vendorInvoice.Taxes.Count.Should().Be(taxLineCount + taxes.Count);
         }
 
         [Fact]
         public void Not_Add_Null_Tax()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var taxLineCount = 5;
-            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
-            foreach (var tax in taxes)
-                vendorInvoice.AddTax(tax);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, taxLineCount);
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
             VendorInvoiceTax nullTax = null;
 
@@ -424,11 +410,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void RemoveTax()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var taxLineCount = 5;
-            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
-            foreach (var tax in taxes)
-                vendorInvoice.AddTax(tax);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, taxLineCount);
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
             var taxToRemove = vendorInvoice.Taxes[1];
 
@@ -439,11 +423,9 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
         [Fact]
         public void Not_Remove_Null_Tax()
         {
-            var vendorInvoice = CreateVendorInvoice();
             var taxLineCount = 5;
-            var taxes = CreateTaxes(taxLineCount: taxLineCount, taxAmount: 1);
-            foreach (var tax in taxes)
-                vendorInvoice.AddTax(tax);
+            var vendor = VendorTestHelper.CreateVendor();
+            var vendorInvoice = CreateVendorInvoice(vendor, taxLineCount);
             vendorInvoice.Taxes.Count.Should().Be(taxLineCount);
             VendorInvoiceTax nullTax = null;
 
@@ -489,7 +471,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 .Value;
             vendorInvoice.Status.Should().Be(VendorInvoiceStatus.Open);
 
-            vendorInvoice.SetVendorInvoiceStatus(VendorInvoiceStatus.Reconciled);
+            vendorInvoice.SetStatus(VendorInvoiceStatus.Reconciled);
 
             vendorInvoice.Status.Should().Be(VendorInvoiceStatus.Reconciled);
         }
@@ -533,7 +515,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
 
             vendorInvoice.DocumentType.Should().Be(VendorInvoiceDocumentType.Unknown);
             var newInvoiceNumber = VendorInvoiceDocumentType.Invoice;
-            var resultOrError = vendorInvoice.SetVendorInvoiceDocumentType(newInvoiceNumber);
+            var resultOrError = vendorInvoice.SetDocumentType(newInvoiceNumber);
 
             resultOrError.Value.Should().Be(newInvoiceNumber);
         }
@@ -678,7 +660,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoiceNumbers: vendorInvoiceNumbers)
                 .Value;
 
-            var resultOrError = vendorInvoice.SetVendorInvoiceStatus(invalidStatus);
+            var resultOrError = vendorInvoice.SetStatus(invalidStatus);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -719,7 +701,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
                 vendorInvoiceNumbers: vendorInvoiceNumbers).Value;
 
             vendorInvoice.DocumentType.Should().Be(VendorInvoiceDocumentType.Unknown);
-            var resultOrError = vendorInvoice.SetVendorInvoiceDocumentType(invalidDocumentType);
+            var resultOrError = vendorInvoice.SetDocumentType(invalidDocumentType);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
@@ -825,6 +807,26 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().NotBeNull();
             resultOrError.Error.Should().Contain("unique");
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Add_LineItems()
+        {
+            var vendorInvoice = GenerateVendorInvoices(count: 1)[0];
+            vendorInvoice.LineItems.Count.Should().BeGreaterThan(0);
+            var lineItemsCount = vendorInvoice.LineItems.Count;
+
+            //Add some LineItems
+            var lineItems = new VendorInvoiceLineItemFaker(generateId: true).Generate(3);
+
+            foreach (var lineItem in lineItems)
+                vendorInvoice.AddLineItem(lineItem);
+
+            var result = vendorInvoice.UpdateCollections(
+                new VendorInvoiceCollections(vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes));
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount + 3);
         }
 
         public class TestData

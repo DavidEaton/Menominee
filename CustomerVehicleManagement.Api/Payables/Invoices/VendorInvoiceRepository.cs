@@ -56,7 +56,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 
             return await invoiceFromContext is null
             ? null
-            : VendorInvoiceHelper.ConvertEntityToReadDto(await invoiceFromContext);
+            : VendorInvoiceHelper.ConvertToReadDto(await invoiceFromContext);
         }
 
         public async Task<Vendor> GetVendorAsync(long id)
@@ -105,7 +105,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 invoicesFromContext = invoicesFromContext.Where(invoice => invoice.Status == resourceParameters.Status.Value);
 
             var result = await invoicesFromContext?.Select(invoice =>
-                VendorInvoiceHelper.ConvertEntityToReadInListDto(invoice))
+                VendorInvoiceHelper.ConvertToReadInListDto(invoice))
                     // Calling .ToList() at the very end of the method,
                     // EF defers execution until the entire filter is
                     // built and applied to database query, minimizing
@@ -121,10 +121,9 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return await context.VendorInvoices.AnyAsync(invoice => invoice.Id == id);
         }
 
-        public async Task SaveChangesAsync()
-        {
+        public async Task SaveChanges() =>
             await context.SaveChangesAsync();
-        }
+
 
         public void DeleteInvoice(VendorInvoice invoice)
         {
@@ -157,21 +156,21 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 invoicesFromContext = invoicesFromContext.Where(invoice => invoice.Status == resourceParameters.Status.Value);
 
             return await invoicesFromContext?.Select(invoice =>
-                VendorInvoiceHelper.ConvertEntityToReadDto(invoice))
+                VendorInvoiceHelper.ConvertToReadDto(invoice))
                     .ToListAsync();
         }
 
         private async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceList()
         {
             return await GetInvoicesFromContextAsNoTracking()?.Select(invoice =>
-                VendorInvoiceHelper.ConvertEntityToReadInListDto(invoice))
+                VendorInvoiceHelper.ConvertToReadInListDto(invoice))
                     .ToListAsync();
         }
 
         private async Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices()
         {
             return await GetInvoicesFromContextAsNoTracking()?.Select(invoice =>
-                VendorInvoiceHelper.ConvertEntityToReadDto(invoice))
+                VendorInvoiceHelper.ConvertToReadDto(invoice))
                     .ToListAsync();
         }
 

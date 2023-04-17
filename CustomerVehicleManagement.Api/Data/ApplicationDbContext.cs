@@ -59,7 +59,10 @@ namespace CustomerVehicleManagement.Api.Data
                 Connection = GetTenantConnection();
 
             if (!options.IsConfigured) // Unit tests will configure context with test provider
-                options.UseSqlServer(Connection);
+                options
+                    .UseSqlServer(Connection)
+                    .EnableSensitiveDataLogging(); // TODO: Conditionally set this option: 
+                                                   // if (Environment.IsEnvironment("Testing"))
 
             base.OnConfiguring(options);
         }
@@ -205,7 +208,8 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<VendorInvoicePayment> VendorInvoicePayments { get; set; }
         public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }
         public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }
-
+        public DbSet<SaleCodeShopSupplies> SaleCodeShopSupplies { get; set; }
+        
         // Repair Orders
         public DbSet<RepairOrder> RepairOrders { get; set; }
         public DbSet<RepairOrderService> RepairOrderServices { get; set; }

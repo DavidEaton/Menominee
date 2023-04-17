@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             if (birthDate >= DateTime.Today)
                 return false;
 
-            int thisYear = DateTime.Now.Year;
+            int thisYear = DateTime.Today.Year;
             int birthYear = birthDate.Value.Year;
 
             if (birthYear <= thisYear && birthYear > (thisYear - 120))

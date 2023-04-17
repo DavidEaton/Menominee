@@ -25,7 +25,9 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                                 payment.PaymentMethod.Name,
                                 payment.PaymentMethod.IsActive,
                                 payment.PaymentMethod.PaymentType,
-                                Vendor.Create(
+                                payment.PaymentMethod.ReconcilingVendor is null
+                                ? null
+                                : Vendor.Create(
                                     payment.PaymentMethod.ReconcilingVendor.Name,
                                     payment.PaymentMethod.ReconcilingVendor.VendorCode,
                                     payment.PaymentMethod.ReconcilingVendor.VendorRole,

@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +11,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
     public class HealthCheckShould : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly HttpClient httpclient;
-        private const string BaseAddress = "/healthcheck";
+        private const string HealthCheckRoute = "/healthcheck";
 
         /*
         By default, xUnit creates a new instance of a test class for each test method.
@@ -19,7 +20,8 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
           - the same test server is used by each test method on the class
           - once tests are complete, it will clean up by calling Dispose (if present)
 
-        More efficient when test setup or teardown is expensive, and running multiple tests.
+        More efficient to use IClassFixture when test setup or teardown is expensive,
+        and running multiple tests.
         */
         public HealthCheckShould(WebApplicationFactory<Startup> factory)
         {
@@ -38,9 +40,9 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
               Routing sends requests to the expected endpoint
             ***********************************************************************/
 
-            var response = await httpclient.GetAsync(BaseAddress);
+            var response = await httpclient.GetAsync(HealthCheckRoute);
 
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
         }
     }
 }

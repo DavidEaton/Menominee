@@ -406,18 +406,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             invoiceTaxableTotalOrError.IsFailure.Should().BeFalse();
         }
 
-        private static VendorToRead CreateVendorToRead()
-        {
-            return new VendorToRead()
-            {
-                Id = 1,
-                IsActive = true,
-                VendorRole = VendorRole.PartsSupplier,
-                VendorCode = RandomCharacters(Vendor.MinimumLength + 1),
-                Name = RandomCharacters(Vendor.MinimumLength + 1)
-            };
 
-        }
         internal class TestData
         {
             public static IEnumerable<object[]> Data

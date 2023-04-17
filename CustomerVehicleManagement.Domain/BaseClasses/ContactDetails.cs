@@ -7,7 +7,12 @@ using Menominee.Common.ValueObjects;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {
-    public class ContactDetails : ValueObject
+    // TODO: Ask VK:    Why is this file located in BaseClasses?
+    //                  Why inherit from ValueObject and not AppValueObject?
+    //                  Why no protected, parameterless constructor?
+    //                  Why no factory method named Create (even tho you mentioned it in you comment)?
+
+    public class ContactDetails : AppValueObject
     {
         public IReadOnlyList<Phone> Phones { get; }
         public IReadOnlyList<Email> Emails { get; }
@@ -41,5 +46,13 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
             yield return Address;
         }
+
+        #region ORM
+
+        // EF requires a parameterless constructor
+        protected ContactDetails() { }
+
+        #endregion    
+
     }
 }

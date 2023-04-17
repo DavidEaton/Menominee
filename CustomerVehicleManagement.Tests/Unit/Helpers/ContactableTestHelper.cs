@@ -2,6 +2,9 @@
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
+using Address = Menominee.Common.ValueObjects.Address;
+using Email = CustomerVehicleManagement.Domain.Entities.Email;
+using Phone = CustomerVehicleManagement.Domain.Entities.Phone;
 
 namespace CustomerVehicleManagement.Tests.Unit.Helpers
 {
@@ -55,7 +58,38 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers
 
         public static Organization CreateOrganization()
         {
-            return Organization.Create(OrganizationName.Create(Utilities.LoremIpsum(10)).Value, "note").Value;
+            return Organization.Create(OrganizationName.Create(Utilities.RandomCharacters(10)).Value, "note").Value;
+        }
+
+        public static List<Organization> CreateOrganizations(int count)
+        {
+            var names = CreateOrganizationNames(count);
+            return CreateOrganizations(names);
+        }
+
+        public static List<Organization> CreateOrganizations(List<OrganizationName> names)
+        {
+            var orgs = new List<Organization>();
+
+            foreach (var name in names)
+                orgs.Add(CreateOrganization(name));
+
+            return orgs;
+        }
+
+        public static Organization CreateOrganization(OrganizationName name)
+        {
+            return Organization.Create(name, Utilities.LoremIpsum(100)).Value;
+        }
+
+        private static List<OrganizationName> CreateOrganizationNames(int count)
+        {
+            var names = new List<OrganizationName>();
+
+            for (int i = 0; i < count; i++)
+                names.Add(OrganizationName.Create(Utilities.LoremIpsum(10)).Value);
+
+            return names;
         }
 
         public static IList<Phone> CreatePhones(int count)

@@ -25,24 +25,28 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
                             VendorInvoiceItem.Create(
                                 lineItem.Item.PartNumber,
                                 lineItem.Item.Description,
-                                Manufacturer.Create(
-                                    lineItem.Item.Manufacturer.Name,
-                                    lineItem.Item.Manufacturer.Prefix,
-                                    lineItem.Item.Manufacturer.Code)
+                                lineItem?.Item?.Manufacturer is null
+                                ? null
+                                : Manufacturer.Create(
+                                    lineItem?.Item?.Manufacturer.Name,
+                                    lineItem?.Item?.Manufacturer.Prefix,
+                                    lineItem?.Item?.Manufacturer.Code)
                                 .Value,
-                                SaleCode.Create(
-                                    lineItem.Item.SaleCode.Name,
-                                    lineItem.Item.SaleCode.Code,
-                                    lineItem.Item.SaleCode.LaborRate,
-                                    lineItem.Item.SaleCode.DesiredMargin,
+                                lineItem?.Item?.SaleCode is null
+                                ? null
+                                : SaleCode.Create(
+                                    lineItem?.Item?.SaleCode.Name,
+                                    lineItem?.Item?.SaleCode.Code,
+                                    (double)(lineItem?.Item?.SaleCode.LaborRate),
+                                    (double)(lineItem?.Item?.SaleCode.DesiredMargin),
                                     shopSupplies)
                                 .Value)
                             .Value,
                             lineItem.Quantity,
                             lineItem.Cost,
                             lineItem.Core,
-                            lineItem.PONumber,
-                            lineItem.TransactionDate
+                            lineItem?.PONumber,
+                            lineItem?.TransactionDate
                         ));
                 });
         }

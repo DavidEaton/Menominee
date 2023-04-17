@@ -138,7 +138,6 @@ namespace CustomerVehicleManagement.Api
             {
                 services.AddDbContext<ApplicationDbContext>();
 
-                // All controller actions which are not marked with [AllowAnonymous] will require that the user is authenticated.
                 var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
@@ -146,13 +145,18 @@ namespace CustomerVehicleManagement.Api
                 AddControllersWithOptions(services, isProduction: true, requireAuthenticatedUserPolicy);
             }
 
-            if (HostEnvironment.IsDevelopment())
-            {
+            if (HostEnvironment.IsDevelopment() || HostEnvironment.IsEnvironment("Testing"))
                 AddControllersWithOptions(services, isProduction: false);
+
+            if (HostEnvironment.IsDevelopment())
                 // services.AddDbContext<ApplicationDbContext>();
                 // Uncomment next line and comment previous line to route all requests to a single tenant database during development
-                services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
-            }
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration[$"DatabaseSettings:MigrationsConnection"]));
+
+            if (HostEnvironment.IsEnvironment("Testing"))
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration[$"DatabaseSettings:IntegrationTestsConnectionString"]));
         }
 
         private static void AddControllersWithOptions(IServiceCollection services, bool isProduction, AuthorizationPolicy requireAuthenticatedUserPolicy = null)
@@ -179,7 +183,6 @@ namespace CustomerVehicleManagement.Api
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
             app.UseHttpsRedirection();
@@ -206,8 +209,6 @@ namespace CustomerVehicleManagement.Api
                         // middleware configuration will handle sending the correct response.
                         // So each and every controller method can shed their try/catch blocks.
                         context.Response.StatusCode = 500;
-                        //logMessage = context.Response.StatusCode.ToString();
-                        //logger.LogError(logMessage);
                         await context.Response.WriteAsync("An unexpected fault occurred. Fault logged.");
                     });
                 });

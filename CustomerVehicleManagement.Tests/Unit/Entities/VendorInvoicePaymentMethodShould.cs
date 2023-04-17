@@ -11,6 +11,20 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
     public class VendorInvoicePaymentMethodShould
     {
         [Fact]
+        public void Not_Set_Null_ReconcilingVendor()
+        {
+            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
+            var reconcilingVendor = VendorTestHelper.CreateVendor();
+            vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBe(reconcilingVendor);
+            vendorInvoicePaymentMethod.SetReconcilingVendor(reconcilingVendor);
+            vendorInvoicePaymentMethod.ReconcilingVendor.Should().Be(reconcilingVendor);
+
+            var resultOrError = vendorInvoicePaymentMethod.SetReconcilingVendor(null);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
         public void Create_VendorInvoicePaymentMethod()
         {
             // Arrange
@@ -60,7 +74,7 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             var vendorInvoicePaymentMethodOrError = VendorInvoicePaymentMethod.Create(
-                paymentMethodNames, nullName, true, /*true,*/ VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
+                paymentMethodNames, nullName, true, VendorInvoicePaymentMethodType.Normal, reconcilingVendor);
 
             vendorInvoicePaymentMethodOrError.IsFailure.Should().BeTrue();
         }
@@ -218,17 +232,6 @@ namespace CustomerVehicleManagement.Tests.Unit.Entities
             var invalidPaymentType = (VendorInvoicePaymentMethodType)(-1);
 
             var resultOrError = vendorInvoicePaymentMethod.SetPaymentType(invalidPaymentType);
-
-            resultOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Not_Set_Null_ReconcilingVendor()
-        {
-            var vendorInvoicePaymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
-            vendorInvoicePaymentMethod.ReconcilingVendor.Should().NotBeNull();
-
-            var resultOrError = vendorInvoicePaymentMethod.SetReconcilingVendor(null);
 
             resultOrError.IsFailure.Should().BeTrue();
         }

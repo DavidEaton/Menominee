@@ -1,4 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using AutoBogus;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
 
@@ -6,6 +8,11 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
 {
     public class VendorTestHelper
     {
+        public static List<Vendor> GenerateVendors(int count)
+        {
+            return new AutoFaker<Vendor>().Generate(count);
+        }
+
         public static List<Vendor> CreateVendors(int count, DefaultPaymentMethod defaultPaymentMethod = null)
         {
             var list = new List<Vendor>();
@@ -30,5 +37,16 @@ namespace CustomerVehicleManagement.Tests.Unit.Helpers.Payables
                 defaultPaymentMethod: defaultPaymentMethod).Value;
         }
 
+        public static VendorToRead CreateVendorToRead()
+        {
+            return new VendorToRead()
+            {
+                Id = 1,
+                IsActive = true,
+                VendorRole = VendorRole.PartsSupplier,
+                VendorCode = Utilities.RandomCharacters(Vendor.MinimumLength + 1),
+                Name = Utilities.RandomCharacters(Vendor.MinimumLength + 1)
+            };
+        }
     }
 }

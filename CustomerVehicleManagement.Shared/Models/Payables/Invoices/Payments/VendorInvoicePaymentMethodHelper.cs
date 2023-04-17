@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 {
@@ -21,6 +22,19 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
             };
         }
 
+        internal static VendorInvoicePaymentMethodToRead ConvertEntityToWriteDto(VendorInvoicePaymentMethod paymentMethod)
+        {
+            if (paymentMethod is null)
+                return null;
+
+            return new()
+            {
+                Name = paymentMethod.Name,
+                IsActive = paymentMethod.IsActive,
+                PaymentType = paymentMethod.PaymentType,
+                ReconcilingVendor = VendorHelper.ConvertToReadDto(paymentMethod.ReconcilingVendor)
+            };
+        }
         public static VendorInvoicePaymentMethodToRead ConvertEntityToReadDto(VendorInvoicePaymentMethod payMethod)
         {
             return payMethod is null
@@ -31,7 +45,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                     Name = payMethod.Name,
                     IsActive = payMethod.IsActive,
                     PaymentType = payMethod.PaymentType,
-                    ReconcilingVendor = VendorHelper.ConvertEntityToReadDto(payMethod.ReconcilingVendor)
+                    ReconcilingVendor = VendorHelper.ConvertToReadDto(payMethod.ReconcilingVendor)
                 };
         }
 
@@ -84,11 +98,33 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 {
                     Id = paymentMethod.Id,
                     Name = paymentMethod.Name,
-                    IsActive = paymentMethod.IsActive//,
+                    IsActive = paymentMethod.IsActive
+                    // TODO:
                     // may or may not need this...
                     //PaymentType = paymentMethod.PaymentType
                     //ReconcilingVendor = paymentMethod.ReconcilingVendorName
                 };
+        }
+
+        internal static DefaultPaymentMethod ConvertReadDtoToEntity(DefaultPaymentMethodToRead defaultPaymentMethod)
+        {
+            return DefaultPaymentMethod.Create(
+                ConvertReadDtoToEntity(defaultPaymentMethod.PaymentMethod),
+                defaultPaymentMethod.AutoCompleteDocuments)
+                .Value;
+        }
+
+        internal static VendorInvoicePaymentMethod ConvertReadDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod)
+        {
+            return VendorInvoicePaymentMethod.Create(
+                new List<string>(),
+                paymentMethod.Name,
+                paymentMethod.IsActive,
+                paymentMethod.PaymentType,
+                paymentMethod.ReconcilingVendor is null
+                    ? null
+                    : VendorHelper.ConvertReadToEntity(paymentMethod.ReconcilingVendor)
+                ).Value;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 .FirstOrDefaultAsync(vendor => vendor.Id == id);
 
             return vendorFromContext is not null
-                ? VendorHelper.ConvertEntityToReadDto(vendorFromContext)
+                ? VendorHelper.ConvertToReadDto(vendorFromContext)
                 : null;
         }
 
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 .ToListAsync();
 
             return vendorsFromContext is not null
-                ? vendorsFromContext.Select(vendor => VendorHelper.ConvertEntityToReadDto(vendor)).ToList()
+                ? vendorsFromContext.Select(vendor => VendorHelper.ConvertToReadDto(vendor)).ToList()
                 : null;
         }
 

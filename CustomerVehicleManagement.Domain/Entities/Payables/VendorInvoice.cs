@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -136,28 +137,178 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted));
         }
 
+        public Result UpdateProperties(Vendor vendor, VendorInvoiceStatus status,
+            VendorInvoiceDocumentType documentType, DateTime? datePosted, DateTime? date,
+            string invoiceNumber, IReadOnlyList<string> vendorInvoiceNumbers, double total)
+        {
+            return Result.Combine(
+                (vendor is not null) && (vendor.Id != Vendor.Id)
+                    ? SetVendor(vendor)
+                    : Result.Success(),
+                (status != Status)
+                    ? SetStatus(status)
+                    : Result.Success(),
+                (documentType != DocumentType)
+                    ? SetDocumentType(documentType)
+                    : Result.Success(),
+                (datePosted is not null) && (datePosted != DatePosted)
+                    ? SetDatePosted(datePosted)
+                    : Result.Success(),
+                (date is not null) && (date != Date)
+                    ? SetDate(date)
+                    : Result.Success(),
+                (invoiceNumber != InvoiceNumber)
+                    ? SetInvoiceNumber(invoiceNumber, vendorInvoiceNumbers)
+                    : Result.Success(),
+                (total != Total)
+                    ? SetTotal(total)
+                    : Result.Success());
+        }
+
+        public Result UpdateCollections(VendorInvoiceCollections vendorInvoiceCollections)
+        {
+            return Result.Combine(
+                SyncLineItems(vendorInvoiceCollections.LineItems),
+                SyncPayments(vendorInvoiceCollections.Payments),
+                SyncTaxes(vendorInvoiceCollections.Taxes));
+        }
+
+        private Result SyncTaxes(IReadOnlyList<VendorInvoiceTax> taxes)
+        {
+            var toAdd = taxes
+                .Where(tax => tax.Id == 0)
+                .ToArray();
+
+            var toDelete = taxes
+                .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id) == false)
+                .ToArray();
+
+            var toModify = taxes
+                .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id))
+                .ToArray();
+
+            foreach (var tax in toAdd)
+                AddTax(tax);
+
+            foreach (var tax in toDelete)
+                RemoveTax(tax);
+
+            foreach (var tax in toModify)
+            {
+                var callerTax = this.taxes.Find(payment => payment.Id == payment.Id);
+
+                if (tax.Amount != callerTax.Amount)
+                    tax.SetAmount(callerTax.Amount);
+
+                if (tax.SalesTax != callerTax.SalesTax)
+                    tax.SetSalesTax(callerTax.SalesTax);
+            }
+
+            return Result.Success();
+        }
+
+        private Result SyncPayments(IReadOnlyList<VendorInvoicePayment> payments)
+        {
+            var toAdd = payments
+                .Where(payment => payment.Id == 0)
+                .ToArray();
+
+            var toDelete = payments
+                .Where(payment => payments.Any(callerPayment => callerPayment.Id == payment.Id) == false)
+                .ToArray();
+
+            var toModify = payments
+                .Where(phone => payments.Any(callerPayment => callerPayment.Id == phone.Id))
+                .ToArray();
+
+            foreach (var payment in toAdd)
+                AddPayment(payment);
+
+            foreach (var payment in toDelete)
+                RemovePayment(payment);
+
+            foreach (var payment in toModify)
+            {
+                var callerPayment = this.payments.Find(payment => payment.Id == payment.Id);
+
+                if (payment.PaymentMethod != callerPayment.PaymentMethod)
+                    payment.SetPaymentMethod(callerPayment.PaymentMethod);
+
+                if (payment.Amount != callerPayment.Amount)
+                    payment.SetAmount(callerPayment.Amount);
+            }
+
+            return Result.Success();
+        }
+
+        private Result SyncLineItems(IReadOnlyList<VendorInvoiceLineItem> lineItems)
+        {
+            var toAdd = lineItems
+                .Where(lineItem => lineItem.Id == 0)
+                .ToArray();
+
+            var toDelete = lineItems
+                .Where(lineItem => lineItems.Any(callerLineItem => callerLineItem.Id == lineItem.Id) == false)
+                .ToArray();
+
+            var toModify = lineItems
+                .Where(lineItem => lineItems.Any(callerLineItem => callerLineItem.Id == lineItem.Id))
+                .ToArray();
+
+            foreach (var lineItem in toAdd)
+                AddLineItem(lineItem);
+
+            foreach (var lineItem in toDelete)
+                RemoveLineItem(lineItem);
+
+            foreach (var lineItem in toModify)
+            {
+                var callerLineItem = this.lineItems.Find(lineItem => lineItem.Id == lineItem.Id);
+
+                if (lineItem.Type != callerLineItem.Type)
+                    lineItem.SetType(callerLineItem.Type);
+
+                if (lineItem.Item != callerLineItem.Item)
+                    lineItem.SetItem(callerLineItem.Item);
+
+                if (lineItem.Cost != callerLineItem.Cost)
+                    lineItem.SetCost(callerLineItem.Cost);
+
+                if (lineItem.Core != callerLineItem.Core)
+                    lineItem.SetCore(callerLineItem.Core);
+
+                if (lineItem.PONumber != callerLineItem.PONumber)
+                    lineItem.SetPONumber(callerLineItem.PONumber);
+
+                if (lineItem.Quantity != callerLineItem.Quantity)
+                    lineItem.SetQuantity(callerLineItem.Quantity);
+
+                if (lineItem.TransactionDate != callerLineItem.TransactionDate)
+                    lineItem.SetTransactionDate(callerLineItem.TransactionDate);
+            }
+
+            return Result.Success();
+        }
+
         public Result<Vendor> SetVendor(Vendor vendor)
         {
-            if (vendor is null)
-                return Result.Failure<Vendor>(RequiredMessage);
-
-            return Result.Success(Vendor = vendor);
+            return vendor is null
+                ? Result.Failure<Vendor>(RequiredMessage)
+                : Result.Success(Vendor = vendor);
         }
 
-        public Result<VendorInvoiceStatus> SetVendorInvoiceStatus(VendorInvoiceStatus status)
+        public Result<VendorInvoiceStatus> SetStatus(VendorInvoiceStatus status)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
-                return Result.Failure<VendorInvoiceStatus>(RequiredMessage);
-
-            return Result.Success(Status = status);
+            return !Enum.IsDefined(typeof(VendorInvoiceStatus), status)
+                ? Result.Failure<VendorInvoiceStatus>(RequiredMessage)
+                : Result.Success(Status = status);
         }
 
-        public Result<VendorInvoiceDocumentType> SetVendorInvoiceDocumentType(VendorInvoiceDocumentType documentType)
+        public Result<VendorInvoiceDocumentType> SetDocumentType(VendorInvoiceDocumentType documentType)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
-                return Result.Failure<VendorInvoiceDocumentType>(RequiredMessage);
-
-            return Result.Success(DocumentType = documentType);
+            return !Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType)
+              ? Result.Failure<VendorInvoiceDocumentType>(RequiredMessage)
+              : Result.Success(DocumentType = documentType);
         }
 
         public Result<string> SetInvoiceNumber(string invoiceNumber, IReadOnlyList<string> vendorInvoiceNumbers)
@@ -178,10 +329,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<double> SetTotal(double total)
         {
-            if (total < MinimumValue)
-                return Result.Failure<double>(MinimumValueMessage);
-
-            return Result.Success(Total = total);
+            return total < MinimumValue
+                ? Result.Failure<double>(MinimumValueMessage)
+                : Result.Success(Total = total);
         }
 
         public Result<DateTime?> SetDate(DateTime? date)
@@ -189,10 +339,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (date is null)
                 return Result.Failure<DateTime?>(DateInvalidMessage);
 
-            if (date.HasValue && date.Value > DateTime.Today)
-                return Result.Failure<DateTime?>(DateInvalidMessage);
-
-            return Result.Success(Date = date.Value);
+            return date.HasValue && date.Value > DateTime.Today
+                ? Result.Failure<DateTime?>(DateInvalidMessage)
+                : Result.Success(Date = date.Value);
         }
 
         public void ClearDate() => Date = null;
@@ -202,10 +351,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (datePosted is null)
                 return Result.Failure<DateTime?>(DateInvalidMessage);
 
-            if (datePosted.HasValue && datePosted.Value > DateTime.Today)
-                return Result.Failure<DateTime?>(DateInvalidMessage);
-
-            return Result.Success(DatePosted = datePosted.Value);
+            return datePosted.HasValue && datePosted.Value > DateTime.Today
+                ? Result.Failure<DateTime?>(DateInvalidMessage)
+                : Result.Success(DatePosted = datePosted.Value);
         }
 
         public void ClearDatePosted() => DatePosted = null;
@@ -271,7 +419,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(tax);
         }
 
-        private static bool InvoiceNumberIsUnique(IReadOnlyList<string> vendorInvoiceNumbers, string invoiceNumber) => !string.IsNullOrWhiteSpace(invoiceNumber) && !vendorInvoiceNumbers.Contains(invoiceNumber);
+        private static bool InvoiceNumberIsUnique(
+            IReadOnlyList<string> vendorInvoiceNumbers,
+            string invoiceNumber)
+            =>
+                !string.IsNullOrWhiteSpace(invoiceNumber) && !vendorInvoiceNumbers.Contains(invoiceNumber);
 
         #region ORM
 
