@@ -1,4 +1,7 @@
 ﻿# Development Environment Setup
+
+- [HOME](ReadMe.md)
+
 ## Prerequsites:
 - Access to BitBucket Projects: (TenantManager, Menominee)
 - Telerik license setup

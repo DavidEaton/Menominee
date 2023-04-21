@@ -1,4 +1,6 @@
-<h3 style="color:#00bfff">Implementation Checklist</h3>
+<h1 style="color:#00bfff">Implementation Checklist</h1>
+
+- [HOME](ReadMe.md)
 
 #### Please use this guidance when implementing features.
 
@@ -43,22 +45,22 @@ Expose a public **Create** factory method that defines the domain class invarian
                 new ExciseFee(description, feeType, amount));
         }  
 
-Define public setter methods that validate the incoming data for each property. If data fails the validation check inside the Set method, throw an exception, signaling a bug; we somehow  failed to filter out invalid data in our Validator class (more on Validation classes later in this document): 
+Define public setter methods that validate the incoming data for each property. If data fails the validation check inside the Set method,  return Result<T>.Failure, signaling a bug; we somehow  failed to filter out invalid data in our Validator class (more on Validation classes later in this document): 
 
-        public void SetFeeType(ExciseFeeType feeType)
+        public Result<ExciseFeeType> SetFeeType(ExciseFeeType feeType)
         {
-            if (Enum.IsDefined(typeof(ExciseFeeType), feeType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
+            if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
+                return Result.Failure<ExciseFeeType>(InvalidMessage);
 
-            FeeType = feeType;
+            return Result.Success(FeeType = feeType);
         }
 
-        public void SetAmount(double amount)
+        public Result<double> SetAmount(double amount)
         {
-            if (amount < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
+            if (amount < MinimumValue || amount > MaximumValue)
+                return Result.Failure<double>(InvalidValueMessage);
 
-            Amount = amount;
+            return Result.Success(Amount = amount);
         }
         ...
 
@@ -119,9 +121,9 @@ Build the database constraintes to use the domain class invariant rules. For exa
 
 <h3 style="color:#00bfff">Create a database migration</h3>
 
-...if any domain class refactorings require a migration.
+Adding a migration 
 
-#### TODO: Unify database migrations with TenantManager sql scripts
+If any domain class refactorings require a migration. 
 
 Update API Startup.cs ConfigureServices to use the migrations database connection:
 
@@ -161,6 +163,9 @@ In ApplicationDbContext.OnConfiguring(), comment all but last line:
 Run in Package Manager console:  
 
             add-migration Initial -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
+
+Check the contents of your migration [Reference](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/managing?tabs=dotnet-core-cli) to make sure the intended results are actually there
+
             update-database -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
 
 If updating the Users database in IdentityServer4:
@@ -208,7 +213,7 @@ So no need to duplicate those rules inside controllers because the domain class 
 
 Controllers look like they aren't checking much because the ASP.NET request pipeline has already invoked the domain class validators.
 
-The only other place me must define constraints is in our persistence layer: the EntityConfiguration<T> classes in the API project. Our domain class invariants are the single source of truth containing our business rules. So our domain class invariants must be used to inform the EntityConfiguration<T> classes when we create them. 
+The only other place me must define constraints is in our persistence layer: the EntityConfiguration<T> classes in the API project. **Our domain class invariants are the single source of truth containing our business rules.** So our domain class invariants must be used to inform the EntityConfiguration<T> classes when we create them. 
 
 <h3 style="color:#00bfff">Create an API Repository Interface for each domain class</h3>
 

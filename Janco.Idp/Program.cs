@@ -66,7 +66,9 @@ namespace Janco.Idp
                     // Build the current set of configuration to load values from
                     // JSON files and environment variables, including VaultName.
                     var builtConfig = config.Build();
-
+                    string envName = context.HostingEnvironment.EnvironmentName;
+                    config.AddJsonFile("idp.appsettings.json", optional: false, reloadOnChange: true);
+                    config.AddJsonFile($"idp.appsettings.{envName}.json", optional: true, reloadOnChange: true);
                     // Use VaultName from the configuration to create the full vault URI.
                     var vaultName = builtConfig["VaultName"];
                     if (!string.IsNullOrEmpty(vaultName))
