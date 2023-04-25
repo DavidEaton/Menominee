@@ -77,5 +77,25 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor
                 }
             };
         }
+
+        internal static InventoryItemLaborToWrite ConvertToWriteDto(InventoryItemLabor labor)
+        {
+            return labor is null
+                ? new()
+                {
+                    LaborAmount = new LaborAmountToWrite()
+                    {
+                        Amount = labor.LaborAmount.Amount,
+                        PayType = labor.LaborAmount.PayType,
+                    },
+                    TechAmount = new TechAmountToWrite()
+                    {
+                        PayType = labor.TechAmount.PayType,
+                        Amount = labor.TechAmount.Amount,
+                        SkillLevel = labor.TechAmount.SkillLevel
+                    }
+                }
+                : new();
+        }
     }
 }

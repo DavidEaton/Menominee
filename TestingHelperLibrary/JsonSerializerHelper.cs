@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using CustomerVehicleManagement.Api.Common;
+using System.Text.Json;
 
 namespace TestingHelperLibrary
 {
@@ -29,6 +30,19 @@ namespace TestingHelperLibrary
                 JsonElement root = doc.RootElement;
                 int id = root.GetProperty("id").GetInt32();
                 return id;
+            }
+        }
+
+        public static (bool, ApiError) DeserializeApiError(string errorContent)
+        {
+            try
+            {
+                var apiError = JsonSerializer.Deserialize<ApiError>(errorContent, DefaultDeserializerOptions);
+                return (true, apiError ?? new() { Message = $"ApiError.Error unknown: ApiError is unavailable" });
+            }
+            catch (Exception ex)
+            {
+                return (false, new() { Message = ex.Message });
             }
         }
     }

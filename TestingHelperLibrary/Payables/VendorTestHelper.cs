@@ -2,7 +2,6 @@
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
-using System.Collections.Generic;
 
 namespace TestingHelperLibrary.Payables
 {

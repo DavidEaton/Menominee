@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire
         public static InventoryItemTireToWrite ConvertReadToWriteDto(InventoryItemTireToRead tire)
         {
             return tire is null
-                ? new InventoryItemTireToWrite()
+                ? new()
                 : (new()
                 {
                     List = tire.List,
@@ -62,61 +62,87 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire
 
         public static InventoryItemTireToRead ConvertEntityToReadDto(InventoryItemTire tire)
         {
-            if (tire is null)
-                return null;
-
-            return new()
-            {
-                Id = tire.Id,
-                List = tire.List,
-                Cost = tire.Cost,
-                Core = tire.Core,
-                Retail = tire.Retail,
-                TechAmount = new TechAmountToRead()
+            return tire is null
+                ? new()
+                : new()
                 {
-                    PayType = tire.TechAmount.PayType,
-                    Amount = tire.TechAmount.Amount,
-                    SkillLevel = tire.TechAmount.SkillLevel
-                },
-                LineCode = tire.LineCode,
-                SubLineCode = tire.SubLineCode,
-                Fractional = tire.Fractional,
-                Type = tire.Type,
-                Width = tire.Width,
-                AspectRatio = tire.AspectRatio,
-                Diameter = tire.Diameter,
-                LoadIndex = tire.LoadIndex,
-                SpeedRating = tire.SpeedRating
-            };
+                    Id = tire.Id,
+                    List = tire.List,
+                    Cost = tire.Cost,
+                    Core = tire.Core,
+                    Retail = tire.Retail,
+                    TechAmount = new TechAmountToRead()
+                    {
+                        PayType = tire.TechAmount.PayType,
+                        Amount = tire.TechAmount.Amount,
+                        SkillLevel = tire.TechAmount.SkillLevel
+                    },
+                    LineCode = tire.LineCode,
+                    SubLineCode = tire.SubLineCode,
+                    Fractional = tire.Fractional,
+                    Type = tire.Type,
+                    Width = tire.Width,
+                    AspectRatio = tire.AspectRatio,
+                    Diameter = tire.Diameter,
+                    LoadIndex = tire.LoadIndex,
+                    SpeedRating = tire.SpeedRating
+                };
         }
 
         public static InventoryItemTireToReadInList ConvertEntityToReadInListDto(InventoryItemTire tire)
         {
-            if (tire is null)
-                return null;
-
-            return new()
-            {
-                List = tire.List,
-                Cost = tire.Cost,
-                Core = tire.Core,
-                Retail = tire.Retail,
-                TechAmount = new TechAmountToRead()
+            return tire is null
+                ? new()
+                : new()
                 {
-                    PayType = tire.TechAmount.PayType,
-                    Amount = tire.TechAmount.Amount,
-                    SkillLevel = tire.TechAmount.SkillLevel
-                },
-                LineCode = tire.LineCode,
-                SubLineCode = tire.SubLineCode,
-                Fractional = tire.Fractional,
-                Type = tire.Type,
-                Width = tire.Width,
-                AspectRatio = tire.AspectRatio,
-                Diameter = tire.Diameter,
-                LoadIndex = tire.LoadIndex,
-                SpeedRating = tire.SpeedRating
-            };
+                    List = tire.List,
+                    Cost = tire.Cost,
+                    Core = tire.Core,
+                    Retail = tire.Retail,
+                    TechAmount = new TechAmountToRead()
+                    {
+                        PayType = tire.TechAmount.PayType,
+                        Amount = tire.TechAmount.Amount,
+                        SkillLevel = tire.TechAmount.SkillLevel
+                    },
+                    LineCode = tire.LineCode,
+                    SubLineCode = tire.SubLineCode,
+                    Fractional = tire.Fractional,
+                    Type = tire.Type,
+                    Width = tire.Width,
+                    AspectRatio = tire.AspectRatio,
+                    Diameter = tire.Diameter,
+                    LoadIndex = tire.LoadIndex,
+                    SpeedRating = tire.SpeedRating
+                };
+        }
+
+        public static InventoryItemTireToWrite ConvertToWriteDto(InventoryItemTire tire)
+        {
+            return tire is null
+                ? new()
+                : (new()
+                {
+                    List = tire.List,
+                    Cost = tire.Cost,
+                    Core = tire.Core,
+                    Retail = tire.Retail,
+                    TechAmount = new TechAmountToWrite()
+                    {
+                        Amount = tire.TechAmount.Amount,
+                        PayType = tire.TechAmount.PayType,
+                        SkillLevel = tire.TechAmount.SkillLevel
+                    },
+                    LineCode = tire.LineCode,
+                    SubLineCode = tire.SubLineCode,
+                    Fractional = tire.Fractional,
+                    Type = tire.Type,
+                    Width = tire.Width,
+                    AspectRatio = tire.AspectRatio,
+                    Diameter = tire.Diameter,
+                    LoadIndex = tire.LoadIndex,
+                    SpeedRating = tire.SpeedRating
+                });
         }
     }
 }

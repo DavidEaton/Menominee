@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Tests.Helpers;
 using Menominee.Common;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Data
         public void SeedData<T>(List<T> entities) where T : Entity
         {
             dbContext.AddRange(entities);
-            dbContext.SaveChanges();
+            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
         }
     }
 }

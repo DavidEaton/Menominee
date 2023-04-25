@@ -835,8 +835,13 @@ namespace CustomerVehicleManagement.Tests.Entities
                 get
                 {
                     yield return new object[] { null };
-                    yield return new object[] { DateTime.Today.AddDays(1) };
+                    yield return new object[] { GetFutureDate() };
                 }
+            }
+
+            private static DateTime? GetFutureDate()
+            {
+                return DateTime.Today.AddDays(1);
             }
         }
     }

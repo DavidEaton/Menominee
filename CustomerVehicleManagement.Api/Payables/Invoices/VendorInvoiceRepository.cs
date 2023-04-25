@@ -19,10 +19,22 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public void AddInvoice(VendorInvoice invoice)
+        public async Task AddInvoice(VendorInvoice invoice)
         {
             if (invoice is not null)
-                context.Attach(invoice);
+            {
+                if (await Exists(invoice.Id))
+                    throw new Exception("Invoice already exists");
+
+                // Detach any existing tracked entity with the same key
+                var existingEntity = context.VendorInvoices.Local.FirstOrDefault(i => i.Id == invoice.Id);
+                if (existingEntity != null)
+                {
+                    context.Entry(existingEntity).State = EntityState.Detached;
+                }
+
+                context.VendorInvoices.Attach(invoice);
+            }
         }
 
         public async Task DeleteInvoiceAsync(long id)
@@ -116,7 +128,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return result;
         }
 
-        public async Task<bool> InvoiceExistsAsync(long id)
+        public async Task<bool> Exists(long id)
         {
             return await context.VendorInvoices.AnyAsync(invoice => invoice.Id == id);
         }

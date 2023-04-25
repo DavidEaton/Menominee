@@ -1,9 +1,8 @@
 ﻿using Bogus;
-using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using CustomerVehicleManagement.Tests.Helpers;
 using CustomerVehicleManagement.Tests.Integration.Data;
 using FluentAssertions;
 using Menominee.Common.Enums;
@@ -23,13 +22,14 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Integration.Tests
 {
-    [Collection("Integration tests")]
+    // TODO: Mock httpClient or test the endpoints directly for CI/CD
+    [Collection("Integration")]
     public class VendorInvoicesControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
     {
         private readonly HttpClient httpClient;
         private readonly IDataSeeder dataSeeder;
         private readonly ApplicationDbContext dbContext;
-        private const string route = "vendorinvoices/";
+        private const string route = "vendorinvoices";
 
         public VendorInvoicesControllerShould(IntegrationTestWebApplicationFactory factory)
         {
@@ -60,12 +60,11 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         [Fact]
         public async Task Get_Invalid_Id_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync("vendorinvoices/0");
+            var response = await httpClient.GetAsync($"{route}/0");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        // TODO: Mock httpClient or test the endpoint directly for CI/CD
         [Fact]
         public async Task Get_Returns_Expected_Response()
         {
@@ -77,12 +76,11 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 Validates that response includes content
                 Uses case-insensitive deserialization
             */
-            var vendor = await httpClient.GetFromJsonAsync<VendorToRead>($"Vendors/{vendorFromDatabase.Id}");
+            var vendor = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{vendorFromDatabase.Id}");
 
-            vendor.Should().BeOfType<VendorToRead>();
+            vendor.Should().BeOfType<VendorInvoiceToRead>();
         }
 
-        // TODO: Mock httpClient or test the endpoint directly for CI/CD
         [Fact]
         public async Task Get_Valid_Id_Returns_Invoice()
         {
@@ -92,7 +90,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             int paymentsCount = invoiceFromDatabase.Payments.Count;
             int taxesCount = invoiceFromDatabase.Taxes.Count;
 
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"vendorinvoices/{invoiceFromDatabase.Id}");
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceFromDatabase.Id}");
 
             invoiceFromEndpoint.Should().BeOfType<VendorInvoiceToRead>();
             invoiceFromEndpoint.LineItems.Count.Should().Be(lineItemsCount);
@@ -100,106 +98,98 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             invoiceFromEndpoint.Taxes.Count.Should().Be(taxesCount);
         }
 
-        // TODO: Mock httpClient or test the endpoint directly for CI/CD
         [Fact]
         public async Task Add_an_Invoice()
         {
             var invoice = CreateInvoiceToPost();
 
-            var result = await PostInvoiceAsync(invoice);
+            var result = await PostInvoice(invoice);
 
-            var invoiceFromDatabase = dbContext
-                .VendorInvoices.FirstOrDefault(
-                invoice =>
-                invoice.Id == JsonSerializerHelper.GetIdFromString(result));
-            invoiceFromDatabase.Should().BeOfType<VendorInvoice>();
-            invoiceFromDatabase.Status.Should().Be(VendorInvoiceStatus.Open);
-            invoiceFromDatabase.Date.Should().Be(DateTime.Today);
-            invoiceFromDatabase.DatePosted.Should().Be(null);
-            invoiceFromDatabase.LineItems.Count.Should().Be(0);
-            invoiceFromDatabase.Payments.Count.Should().Be(0);
-            invoiceFromDatabase.Taxes.Count.Should().Be(0);
+            var id = JsonSerializerHelper.GetIdFromString(result);
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{id}");
+            invoiceFromEndpoint.Should().BeOfType<VendorInvoiceToRead>();
+            invoiceFromEndpoint.Status.Should().Be(VendorInvoiceStatus.Open);
+            invoiceFromEndpoint.DatePosted.Should().Be(null);
+            invoiceFromEndpoint.LineItems.Count.Should().Be(0);
+            invoiceFromEndpoint.Payments.Count.Should().Be(0);
+            invoiceFromEndpoint.Taxes.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task Update_an_Invoice()
+        {
+            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var updatedInvoiceNumber = "INV-12345";
+            var updatedInvoice = new VendorInvoiceToWrite()
+            {
+                DocumentType = invoiceToUpdate.DocumentType,
+                Date = invoiceToUpdate.Date,
+                Status = invoiceToUpdate.Status,
+                InvoiceNumber = updatedInvoiceNumber,
+                Total = invoiceToUpdate.Total,
+                Vendor = VendorHelper.ConvertToReadDto(invoiceToUpdate.Vendor)
+            };
+
+            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+
+            response.EnsureSuccessStatusCode();
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            invoiceFromEndpoint.Should().NotBeNull();
+            invoiceFromEndpoint.InvoiceNumber.Should().Be(updatedInvoiceNumber);
         }
 
         //[Fact]
-        //public void Update_an_Invoice()
-        //{
-            ////SeedData();
-            //var invoiceToUpdate = dbContext.VendorInvoices.First();
-
-            //// Update the invoice properties
-            //invoiceToUpdate.SetStatus(VendorInvoiceStatus.Completed);
-            //invoiceToUpdate.SetDate(DateTime.Today.AddDays(-1));
-            //invoiceToUpdate.SetDatePosted(DateTime.Today);
-
-            //// Serialize the updated invoice
-            //var content = new StringContent(JsonSerializer.Serialize(invoiceToUpdate, JsonSerializerHelper.DefaultSerializerOptions), Encoding.UTF8, "application/json");
-
-            //// Act
-            //var response = await httpclient.PutAsync($"vendorinvoices/{invoiceToUpdate.Id}", content);
-
-            //// Assert
-            //response.EnsureSuccessStatusCode();
-
-            //// Fetch the updated invoice from the API
-            //var responseStream = await httpclient.GetStreamAsync($"vendorinvoices/{invoiceToUpdate.Id}");
-            //var fetchedInvoice = await JsonSerializer.DeserializeAsync<VendorInvoiceToRead>(responseStream, JsonSerializerHelper.DefaultDeserializerOptions);
-
-            //// Verify the fetched invoice has the updated properties
-            //fetchedInvoice.Should().BeOfType<VendorInvoiceToRead>();
-            //fetchedInvoice.Status.Should().Be(VendorInvoiceStatus.Completed);
-            //fetchedInvoice.Date.Should().BeSameDateAs(DateTime.Today.AddDays(-1));
-            //fetchedInvoice.DatePosted.Should().BeSameDateAs(DateTime.Today);
-
-            //true.Should().BeTrue();
-        //}
+        // public async Task Update_an_Invoice_LineItems() {}
 
         //[Fact]
-        //public void Delete_an_Invoice()
-        //{
-        //    true.Should().BeTrue();
+        // public async Task Update_an_Invoice_Payments() {}
 
-        //    true.Should().BeFalse();
-        //}
+        //[Fact]
+        // public async Task Update_an_Invoice_Taxes() {}
+
+
+        [Fact]
+        public async Task Delete_an_Invoice()
+        {
+            var invoiceToDelete = dbContext.VendorInvoices.First();
+            invoiceToDelete.Should().NotBeNull();
+
+            var response = await httpClient.DeleteAsync($"{route}/{invoiceToDelete.Id}");
+
+            response.EnsureSuccessStatusCode();
+            var deletedInvoiceFromDatabase = dbContext.VendorInvoices.FirstOrDefault(invoice => invoice.Id == invoiceToDelete.Id);
+            deletedInvoiceFromDatabase.Should().BeNull();
+        }
 
         private VendorInvoiceToWrite CreateInvoiceToPost() => new()
         {
             DocumentType = VendorInvoiceDocumentType.Invoice,
-            Date = DateTime.Today,
             Status = VendorInvoiceStatus.Open,
             InvoiceNumber = VendorInvoiceFaker.GenerateInvoiceNumber(new Faker()),
             Total = 213.61,
             Vendor = VendorHelper.ConvertToReadDto(dbContext.Vendors.First())
         };
 
-        private async Task<string> PostInvoiceAsync(VendorInvoiceToWrite invoice)
+        private async Task<string> PostInvoice(VendorInvoiceToWrite invoice)
         {
-            var json = JsonSerializer.Serialize(invoice, JsonSerializerHelper.DefaultSerializerOptions);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await httpClient.PostAsync(route, content);
-
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsStringAsync();
-
-            var errorContent = await response.Content.ReadAsStringAsync();
-            ApiError apiError = null;
-
-            try
             {
-                apiError = JsonSerializer.Deserialize<ApiError>(
-                errorContent,
-                JsonSerializerHelper.DefaultDeserializerOptions);
+                var json = JsonSerializer.Serialize(invoice, JsonSerializerHelper.DefaultSerializerOptions);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            }
-            catch (Exception ex)
-            {
-                await Console.Out.WriteLineAsync($"{ex.Message}");
-                throw;
-            }
+                var response = await httpClient.PostAsync(route, content);
 
-            return $"Error: {response.StatusCode} - {response.ReasonPhrase}. Message: {apiError.Message}";
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadAsStringAsync();
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                var (success, apiError) = JsonSerializerHelper.DeserializeApiError(errorContent);
+
+                return success
+                    ? $"Error: {response.StatusCode} - {response.ReasonPhrase}. Message: {apiError.Message}"
+                    : throw new JsonException("Failed to deserialize ApiError");
+            }
         }
 
         private void SeedData()
@@ -217,7 +207,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             var vendorInvoiceLineItems = new VendorInvoiceLineItemFaker(false).Generate(count);
             var vendorInvoiceTaxes = new VendorInvoiceTaxFaker(false).Generate(count);
             var vendorInvoicePayments = new VendorInvoicePaymentFaker(false).Generate(count);
-            var invoices = new VendorInvoiceFaker().Generate(1);
+            var invoices = new VendorInvoiceFaker().Generate(2);
 
             // SeedData in correct order of creation heirarchy
             dataSeeder.SeedData(saleCodeShopSupplies);
@@ -269,28 +259,33 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
 
         public void Dispose()
         {
-            // Order matters!
-            // Set navigation properties to null before removing entities
-            foreach (var vendorInvoicePaymentMethod in dbContext.VendorInvoicePaymentMethods)
-                vendorInvoicePaymentMethod.RemoveReconcilingVendor();
-            dbContext.SaveChanges();
+            dbContext.VendorInvoicePaymentMethods
+                .ToList()
+                .ForEach(paymentMethod => paymentMethod
+                .RemoveReconcilingVendor());
 
-            foreach (var vendor in dbContext.Vendors)
-                vendor.ClearDefaultPaymentMethod();
-            dbContext.SaveChanges();
+            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
 
-            dbContext.VendorInvoicePayments.RemoveRange(dbContext.VendorInvoicePayments);
-            dbContext.VendorInvoiceTaxes.RemoveRange(dbContext.VendorInvoiceTaxes);
-            dbContext.VendorInvoiceLineItems.RemoveRange(dbContext.VendorInvoiceLineItems);
-            dbContext.ExciseFees.RemoveRange(dbContext.ExciseFees);
-            dbContext.SalesTaxes.RemoveRange(dbContext.SalesTaxes);
-            dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers);
-            dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies);
-            dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes);
-            dbContext.VendorInvoicePaymentMethods.RemoveRange(dbContext.VendorInvoicePaymentMethods);
-            dbContext.Vendors.RemoveRange(dbContext.Vendors);
-            dbContext.VendorInvoices.RemoveRange(dbContext.VendorInvoices);
-            dbContext.SaveChanges();
+            dbContext.Vendors
+                .ToList()
+                .ForEach(vendor => vendor
+                .ClearDefaultPaymentMethod());
+
+            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+
+            dbContext.VendorInvoicePayments.RemoveRange(dbContext.VendorInvoicePayments.ToList());
+            dbContext.VendorInvoiceTaxes.RemoveRange(dbContext.VendorInvoiceTaxes.ToList());
+            dbContext.VendorInvoiceLineItems.RemoveRange(dbContext.VendorInvoiceLineItems.ToList());
+            dbContext.ExciseFees.RemoveRange(dbContext.ExciseFees.ToList());
+            dbContext.SalesTaxes.RemoveRange(dbContext.SalesTaxes.ToList());
+            dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers.ToList());
+            dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());
+            dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes.ToList());
+            dbContext.VendorInvoicePaymentMethods.RemoveRange(dbContext.VendorInvoicePaymentMethods.ToList());
+            dbContext.VendorInvoices.RemoveRange(dbContext.VendorInvoices.ToList());
+            dbContext.Vendors.RemoveRange(dbContext.Vendors.ToList());
+
+            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
         }
     }
 }

@@ -73,9 +73,18 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
                 };
         }
 
-        internal static Manufacturer ConvertWriteToReadDto(ManufacturerToRead manufacturer)
+        public static ManufacturerToRead ConvertToWriteDto(Manufacturer manufacturer)
         {
-            throw new NotImplementedException();
+            return
+            manufacturer is null
+                ? null
+                : new()
+                {
+                    Id = manufacturer.Id,
+                    Code = manufacturer.Code,
+                    Prefix = manufacturer.Prefix,
+                    Name = manufacturer.Name
+                };
         }
     }
 }

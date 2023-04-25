@@ -4,7 +4,7 @@ using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty
 {
-    public class InventoryWarrantyHelper
+    public class InventoryItemWarrantyHelper
     {
         public static InventoryItemWarrantyToWrite ConvertReadToWriteDto(InventoryItemWarrantyToRead warranty)
         {
@@ -47,12 +47,24 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warra
                 });
         }
 
-        public static InventoryWarrantyToReadInList ConvertEntityToReadInListDto(InventoryItemWarranty warranty)
+        public static InventoryItemWarrantyToReadInList ConvertEntityToReadInListDto(InventoryItemWarranty warranty)
         {
             return warranty is null
                 ? null
                 : (new()
                 {
+                    PeriodType = warranty.WarrantyPeriod.PeriodType,
+                    Duration = warranty.WarrantyPeriod.Duration
+                });
+        }
+
+        public static InventoryItemWarrantyToWrite ConvertToWriteDto(InventoryItemWarranty warranty)
+        {
+            return warranty is null
+                ? null
+                : (new()
+                {
+                    Id = warranty.Id,
                     PeriodType = warranty.WarrantyPeriod.PeriodType,
                     Duration = warranty.WarrantyPeriod.Duration
                 });

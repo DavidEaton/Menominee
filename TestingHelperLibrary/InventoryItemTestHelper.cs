@@ -1,11 +1,8 @@
-﻿using CustomerVehicleManagement.Api.Inventory;
-using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary

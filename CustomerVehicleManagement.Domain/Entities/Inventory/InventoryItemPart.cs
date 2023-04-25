@@ -28,8 +28,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             lineCode = (lineCode ?? string.Empty).Trim();
             subLineCode = (subLineCode ?? string.Empty).Trim();
 
-            // TechAmount Value Object is validated before we ever get here
-
             if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
                 return Result.Failure<InventoryItemPart>(InvalidLengthMessage);
 

@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                     inventoryItemToRead.Inspection = InventoryItemInspectionHelper.ConvertEntityToReadDto(item.Inspection);
                     break;
                 case InventoryItemType.GiftCertificate:
-                    inventoryItemToRead.Warranty = InventoryWarrantyHelper.ConvertEntityToReadDto(item.Warranty);
+                    inventoryItemToRead.Warranty = InventoryItemWarrantyHelper.ConvertEntityToReadDto(item.Warranty);
                     break;
                 case InventoryItemType.Donation:
                     break;
@@ -145,12 +145,12 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 case InventoryItemType.Inspection:
                     inventoryItemToWrite.Inspection = InventoryItemInspectionHelper.ConvertReadToWriteDto(item.Inspection);
                     break;
+                case InventoryItemType.Warranty:
+                    inventoryItemToWrite.Warranty = InventoryItemWarrantyHelper.ConvertReadToWriteDto(item.Warranty);
+                    break;
                 case InventoryItemType.GiftCertificate:
-                    inventoryItemToWrite.Warranty = InventoryWarrantyHelper.ConvertReadToWriteDto(item.Warranty);
                     break;
                 case InventoryItemType.Donation:
-                    break;
-                case InventoryItemType.Warranty:
                     break;
                 default:
                     throw new ArgumentException("Invalid Inventory Item Type.");
@@ -188,7 +188,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                     : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
                 item.Warranty is null
                     ? null
-                    : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                    : InventoryItemWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
                 .Value;
 
             return inventoryItem;
@@ -221,8 +221,72 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                         : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
                     item.Warranty is null
                         ? null
-                        : InventoryWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                        : InventoryItemWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
                 .Value;
+        }
+
+        public static InventoryItemInspectionToWrite ConvertToWriteDto(InventoryItemInspection inspection)
+        {
+            return inspection is null
+                ? null
+                : new()
+                {
+                    Id = inspection.Id,
+                    LaborAmount = new() { Amount = inspection.LaborAmount.Amount, PayType = inspection.LaborAmount.PayType },
+                    TechAmount = new() { Amount = inspection.TechAmount.Amount, PayType = inspection.TechAmount.PayType, SkillLevel = inspection.TechAmount.SkillLevel },
+                    Type = inspection.InspectionType
+                };
+        }
+
+        public static InventoryItemLaborToWrite ConvertToWriteDto(InventoryItemLabor labor)
+        {
+            return labor is null
+                ? null
+                : new()
+                {
+                    Id = labor.Id,
+                    LaborAmount = new() { Amount = labor.LaborAmount.Amount, PayType = labor.LaborAmount.PayType },
+                    TechAmount = new() { Amount = labor.TechAmount.Amount, PayType = labor.TechAmount.PayType, SkillLevel = labor.TechAmount.SkillLevel }
+                };
+        }
+
+        internal static InventoryItemToWrite ConvertToWriteDto(InventoryItem item)
+        {
+            return item is null
+                ? null
+                : new()
+                {
+                    Id = item.Id,
+                    ItemNumber = item.ItemNumber,
+                    Description = item.Description,
+                    ItemType = item.ItemType,
+                    Manufacturer = new ManufacturerToRead
+                    {
+                        Id = item.ProductCode.Manufacturer.Id,
+                        Code = item.ProductCode.Manufacturer.Code,
+                        Name = item.ProductCode.Manufacturer.Name,
+                        Prefix = item.ProductCode.Manufacturer.Prefix
+                    },
+                    ProductCode = new ProductCodeToRead()
+                    {
+                        Name = item.ProductCode.Name,
+                        Code = item.ProductCode.Code,
+                        Id = item.ProductCode.Id,
+                        Manufacturer = new ManufacturerToRead()
+                        {
+                            Id = item.ProductCode.Manufacturer.Id,
+                            Code = item.ProductCode.Manufacturer.Code,
+                            Name = item.ProductCode.Manufacturer.Name,
+                            Prefix = item.ProductCode.Manufacturer.Prefix
+                        },
+                    },
+                    Part = InventoryItemPartHelper.ConvertToWriteDto(item.Part),
+                    Labor = InventoryItemLaborHelper.ConvertToWriteDto(item.Labor),
+                    Tire = InventoryItemTireHelper.ConvertToWriteDto(item.Tire),
+                    Package = InventoryItemPackageHelper.ConvertToWriteDto(item.Package),
+                    Inspection = InventoryItemInspectionHelper.ConvertToWriteDto(item.Inspection),
+                    Warranty = InventoryItemWarrantyHelper.ConvertToWriteDto(item.Warranty)
+                };
         }
     }
 }

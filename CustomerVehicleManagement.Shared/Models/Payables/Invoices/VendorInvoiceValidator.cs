@@ -11,27 +11,27 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
     {
         public VendorInvoiceValidator()
         {
-            IReadOnlyList<string> vendorInvoiceNumbers = new List<string>();
-            DefaultPaymentMethod defaultPaymentMethod = null;
+            //IReadOnlyList<string> vendorInvoiceNumbers = new List<string>();
+            //DefaultPaymentMethod defaultPaymentMethod = null;
 
-            RuleFor(invoice => invoice)
-                .MustBeEntity(
-                    invoice => VendorInvoice.Create(
-                        Vendor.Create(
-                            invoice.Vendor.Name,
-                            invoice.Vendor.VendorCode,
-                            invoice.Vendor.VendorRole,
-                            invoice.Vendor.Notes,
-                            defaultPaymentMethod
-                            ).Value,
-                        invoice.Status,
-                        invoice.DocumentType,
-                        invoice.Total,
-                        vendorInvoiceNumbers,
-                        invoice.InvoiceNumber,
-                        invoice.Date,
-                        invoice.DatePosted
-                        ));
+            //RuleFor(invoice => invoice)
+            //    .MustBeEntity(
+            //        invoice => VendorInvoice.Create(
+            //            Vendor.Create(
+            //                invoice.Vendor.Name,
+            //                invoice.Vendor.VendorCode,
+            //                invoice.Vendor.VendorRole,
+            //                invoice.Vendor.Notes,
+            //                invoice.Vendor.DefaultPaymentMethod
+            //                ).Value,
+            //            invoice.Status,
+            //            invoice.DocumentType,
+            //            invoice.Total,
+            //            vendorInvoiceNumbers,
+            //            invoice.InvoiceNumber,
+            //            invoice.Date,
+            //            invoice.DatePosted
+            //            ));
 
             RuleFor(invoice => invoice.LineItems)
                 .SetValidator(new VendorInvoiceLineItemsValidator())

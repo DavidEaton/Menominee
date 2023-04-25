@@ -27,6 +27,14 @@ namespace CustomerVehicleManagement.Api.Inventory
                 if (await Exists(item.Id))
                     throw new Exception("Inventory Item already exists");
 
+                // Detach any existing tracked entity with the same key
+                if (item.Manufacturer is not null)
+                {
+                    var existingManufacturer = context.Manufacturers.Local.FirstOrDefault(e => e.Id == item.Manufacturer.Id);
+                    if (existingManufacturer is not null)
+                        context.Entry(existingManufacturer).State = EntityState.Detached;
+                }
+
                 context.InventoryItems.Attach(item);
             }
         }

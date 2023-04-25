@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
@@ -45,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 : NotFound();
         }
 
-        [HttpGet("{manufacturerId:long}/partnumber/{partNumber}")]
+        [HttpGet("{manufacturerId:long}/itemNumber/{itemNumber}")]
         public async Task<ActionResult<InventoryItemToRead>> Get(long manufacturerId, string itemNumber)
         {
             var result = await itemRepository.GetItem(manufacturerId, itemNumber);
@@ -93,13 +94,16 @@ namespace CustomerVehicleManagement.Api.Inventory
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
-            // Get domain entities from repositories
             var (manufacturerFromRepository, productCodeFromRepository, inventoryItems) =
                 await GetEntitiesForAdd(itemToAdd);
-            if (manufacturerFromRepository == null || productCodeFromRepository == null || inventoryItems == null)
-                return NotFound(failureMessage);
 
-            // Convert and add the new inventory item
+            if (manufacturerFromRepository == null || productCodeFromRepository == null || inventoryItems == null)
+                return NotFound(
+                    new ApiError
+                    {
+                        Message = failureMessage
+                    });
+
             var inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
                 manufacturerFromRepository, productCodeFromRepository, inventoryItems);
 

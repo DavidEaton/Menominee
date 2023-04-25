@@ -104,20 +104,21 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            // TODO: VK Question: Is this how you would go about updating colections?
-            var vendorInvoiceCollections = VendorInvoiceCollectionsFactory.Create(
-                (IReadOnlyList<VendorInvoiceLineItemToWrite>)invoiceFromCaller.LineItems,
-                (IReadOnlyList<VendorInvoicePaymentToWrite>)invoiceFromCaller.Payments,
-                (IReadOnlyList<VendorInvoiceTaxToWrite>)invoiceFromCaller.Taxes,
-                manufacturers,
-                saleCodes);
+            //// TODO: VK Question: Is this how you would go about updating colections?
+            //var vendorInvoiceCollections = VendorInvoiceCollectionsFactory.Create(
+            //    (IReadOnlyList<VendorInvoiceLineItemToWrite>)invoiceFromCaller.LineItems,
+            //    (IReadOnlyList<VendorInvoicePaymentToWrite>)invoiceFromCaller.Payments,
+            //    (IReadOnlyList<VendorInvoiceTaxToWrite>)invoiceFromCaller.Taxes,
+            //    manufacturers,
+            //    saleCodes);
 
-            result = invoiceFromRepository.UpdateCollections(vendorInvoiceCollections);
+            //result = invoiceFromRepository.UpdateCollections(vendorInvoiceCollections);
 
-            if (result.IsFailure)
-                return BadRequest(result.Error);
+            //if (result.IsFailure)
+            //    return BadRequest(result.Error);
 
             await repository.SaveChanges();
+            invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
 
             return NoContent();
         }
@@ -144,95 +145,40 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPost]
         public async Task<ActionResult> Add(VendorInvoiceToWrite invoiceToAdd)
         {
-            // TODO: How do we return the domain class error message?
-            // TODO: Settle on error handling/messaging/logging
-            var vendor = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
+            var failureMessage = $"Could not add new Invoice, Number: {invoiceToAdd?.InvoiceNumber}. Vendor '{invoiceToAdd?.Vendor.Name}' not found.";
 
-            if (vendor is null)
-                return NotFound(
-                    new ApiError
-                    {
-                        Message = $"Could not add new Invoice, Number: {invoiceToAdd.InvoiceNumber}. Vendor '{invoiceToAdd.Vendor.Name}' not found."
-                    });
+            var vendorFromRepository = await vendorRepository.GetVendorEntityAsync(invoiceToAdd.Vendor.Id);
 
-            var invoiceOrError = VendorInvoice.Create(
-                vendor,
-                invoiceToAdd.Status,
-                invoiceToAdd.DocumentType,
-                invoiceToAdd.Total,
-                await repository.GetVendorInvoiceNumbers(vendor.Id),
-                invoiceToAdd.InvoiceNumber,
-                invoiceToAdd.Date,
-                invoiceToAdd.DatePosted);
+            if (vendorFromRepository is null)
+                return NotFound(new ApiError { Message = failureMessage });
 
-            if (invoiceOrError.IsFailure)
-                return BadRequest(
-                    new ApiError
-                    {
-                        Message = $"Could not add new Invoice Number '{invoiceToAdd.InvoiceNumber}': {invoiceOrError.Error}."
-                    });
+            var manufacturers = await manufacturerRepository.GetManufacturerEntitiesAsync(
+                invoiceToAdd.LineItems.Select(
+                    lineItem =>
+                    lineItem.Item.Manufacturer.Id)
+                .ToList());
 
-            VendorInvoice invoice = invoiceOrError.Value;
-            VendorInvoiceItem vendorInvoiceItem;
+            var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(
+                invoiceToAdd.LineItems.Select(
+                    lineItem =>
+                    lineItem.Item.SaleCode.Id)
+                .ToList());
 
-            if (invoiceToAdd?.LineItems.Count > 0)
-                foreach (var item in invoiceToAdd.LineItems)
-                {
-                    vendorInvoiceItem = VendorInvoiceItem.Create(
-                                item.Item.PartNumber,
-                                item.Item.Description,
-                                item.Item.Manufacturer is null
-                                    ? null
-                                    : await manufacturerRepository.GetManufacturerEntityAsync(item.Item.Manufacturer.Id),
-                                item.Item.SaleCode is null
-                                    ? null
-                                    : await saleCodeRepository.GetSaleCodeEntityAsync(item.Item.SaleCode.Id))
-                            .Value;
+            var invoiceCollections = VendorInvoiceCollectionsFactory.Create(
+                (IReadOnlyList<VendorInvoiceLineItemToWrite>)invoiceToAdd.LineItems,
+                (IReadOnlyList<VendorInvoicePaymentToWrite>)invoiceToAdd.Payments,
+                (IReadOnlyList<VendorInvoiceTaxToWrite>)invoiceToAdd.Taxes,
+                manufacturers,
+                saleCodes);
 
-                    invoice.AddLineItem(
-                        VendorInvoiceLineItem.Create(
-                            item.Type,
-                            vendorInvoiceItem,
-                            item.Quantity,
-                            item.Cost,
-                            item.Core,
-                            item.PONumber,
-                            item.TransactionDate)
-                        .Value);
-                };
+            var invoiceEntity = VendorInvoiceHelper.ConvertWriteToEntity(invoiceToAdd, vendorFromRepository, invoiceCollections.LineItems, invoiceCollections.Payments, invoiceCollections.Taxes, await repository.GetVendorInvoiceNumbers(vendorFromRepository.Id));
 
-            if (invoiceToAdd?.Payments.Count > 0)
-                foreach (var payment in invoiceToAdd.Payments)
-                    invoice.AddPayment(
-                        VendorInvoicePayment.Create(
-                            payment.PaymentMethod is null
-                            ? null
-                            : await paymentMethodRepository.GetPaymentMethodEntityAsync(payment.PaymentMethod.Id),
-                            payment.Amount).Value);
-
-            if (invoiceToAdd?.Taxes.Count > 0)
-                foreach (var tax in invoiceToAdd.Taxes)
-                {
-                    // Don't save new, zero amount taxes sent by client
-                    if (tax.Amount == 0)
-                        continue;
-
-                    invoice.AddTax(
-                        VendorInvoiceTax.Create(
-                            await salesTaxRepository.GetSalesTaxEntityAsync(tax.SalesTax.Id),
-                            tax.Amount).Value);
-                }
-
-            repository.AddInvoice(invoice);
+            await repository.AddInvoice(invoiceEntity);
             await repository.SaveChanges();
 
             return Created(
-                new Uri($"{BasePath}/{invoice.Id}",
-                UriKind.Relative),
-                new
-                {
-                    invoice.Id
-                });
+                new Uri($"{BasePath}/{invoiceEntity.Id}", UriKind.Relative),
+                new { invoiceEntity.Id });
         }
 
         [HttpDelete("{id:long}")]

@@ -211,11 +211,29 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                 .ToList();
         }
 
-        public static VendorInvoice ConvertWriteToEntity(VendorInvoiceToWrite invoice, Vendor vendor)
+        public static VendorInvoice ConvertWriteToEntity(
+            VendorInvoiceToWrite invoice,
+            Vendor vendor,
+            IReadOnlyList<VendorInvoiceLineItem> lineItems,
+            IReadOnlyList<VendorInvoicePayment> payments,
+            IReadOnlyList<VendorInvoiceTax> taxes,
+            IReadOnlyList<string> vendorInvoiceNumbers)
         {
-            return invoice is null
-                ? null
-                : VendorInvoice.Create(vendor, invoice.Status, invoice.DocumentType, invoice.Total, vendorInvoiceNumbers: null).Value;
+            if (vendorInvoiceNumbers is null || invoice is null || vendor is null)
+                throw new ArgumentNullException(nameof(vendorInvoiceNumbers));
+
+            var invoiceEntity = VendorInvoice.Create(vendor, invoice.Status, invoice.DocumentType, invoice.Total, vendorInvoiceNumbers: null).Value;
+
+            foreach (var lineItem in lineItems)
+                invoiceEntity.AddLineItem(lineItem);
+
+            foreach (var payment in payments)
+                invoiceEntity.AddPayment(payment);
+
+            foreach (var tax in taxes)
+                invoiceEntity.AddTax(tax);
+
+            return invoiceEntity;
         }
 
         public static VendorInvoiceToWrite ConvertToWriteDto(VendorInvoice invoice)

@@ -87,5 +87,27 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspe
                     Type = inspection.InspectionType,
                 });
         }
+
+        internal static InventoryItemInspectionToWrite ConvertToWriteDto(InventoryItemInspection inspection)
+        {
+            return inspection is null
+                ? null
+                : (new()
+                {
+                    LaborAmount = new LaborAmountToWrite()
+                    {
+                        Amount = inspection.LaborAmount.Amount,
+                        PayType = inspection.LaborAmount.PayType,
+                    },
+                    TechAmount = new TechAmountToWrite()
+                    {
+                        PayType = inspection.TechAmount.PayType,
+                        Amount = inspection.TechAmount.Amount,
+                        SkillLevel = inspection.TechAmount.SkillLevel
+                    },
+
+                    Type = inspection.InspectionType
+                });
+        }
     }
 }

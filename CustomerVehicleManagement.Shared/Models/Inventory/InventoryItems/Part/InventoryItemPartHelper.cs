@@ -1,6 +1,5 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
-using System.Data.Common;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
 {
@@ -84,6 +83,29 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
                     Core = part.Core,
                     Retail = part.Retail,
                     TechAmount = new TechAmountToRead()
+                    {
+                        PayType = part.TechAmount.PayType,
+                        Amount = part.TechAmount.Amount,
+                        SkillLevel = part.TechAmount.SkillLevel
+                    },
+                    LineCode = part.LineCode,
+                    SubLineCode = part.SubLineCode,
+                    Fractional = part.Fractional
+                });
+        }
+
+        public static InventoryItemPartToWrite ConvertToWriteDto(InventoryItemPart part)
+        {
+            return part is null
+                ? null
+                : (new()
+                {
+                    Id = part.Id,
+                    List = part.List,
+                    Cost = part.Cost,
+                    Core = part.Core,
+                    Retail = part.Retail,
+                    TechAmount = new TechAmountToWrite()
                     {
                         PayType = part.TechAmount.PayType,
                         Amount = part.TechAmount.Amount,

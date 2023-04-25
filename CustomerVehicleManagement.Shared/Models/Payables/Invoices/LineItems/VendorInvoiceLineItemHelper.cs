@@ -1,5 +1,6 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
 using System;
@@ -10,32 +11,31 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
 {
     public class VendorInvoiceLineItemHelper
     {
-        public static List<VendorInvoiceLineItem> ConvertWriteDtosToEntities(
-            IList<VendorInvoiceLineItemToWrite> lineItems,
-            IReadOnlyList<Manufacturer> manufacturer,
-            IReadOnlyList<SaleCode> saleCode)
+        public static IReadOnlyList<VendorInvoiceLineItem> ConvertWriteDtosToEntities(IList<VendorInvoiceLineItemToWrite> lineItemsToWrite, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
         {
-            return lineItems?.Select(ConvertWriteDtoToEntity(
-                manufacturer,
-                saleCode)).ToList()
-                ??
-                new List<VendorInvoiceLineItem>();
-        }
+            return lineItemsToWrite.Select(item =>
+            {
+                var vendorInvoiceItem = VendorInvoiceItem.Create(
+                    item.Item.PartNumber,
+                    item.Item.Description,
+                    item.Item.Manufacturer is null
+                        ? null
+                        : manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Item.Manufacturer.Id),
+                    item.Item.SaleCode is null
+                        ? null
+                        : saleCodes.FirstOrDefault(saleCode => saleCode.Id == item.Item.SaleCode.Id))
+                    .Value;
 
-        public static Func<VendorInvoiceLineItemToWrite, VendorInvoiceLineItem> ConvertWriteDtoToEntity(
-            IReadOnlyList<Manufacturer> manufacturers,
-            IReadOnlyList<SaleCode> saleCodes)
-        {
-            return lineItem =>
-                VendorInvoiceLineItem.Create(
-                    lineItem.Type,
-                    VendorInvoiceItemHelper.ConvertWriteDtoToEntity(lineItem.Item, manufacturers, saleCodes),
-                    lineItem.Quantity,
-                    lineItem.Cost,
-                    lineItem.Core,
-                    lineItem.PONumber,
-                    lineItem.TransactionDate
-                    ).Value;
+                return VendorInvoiceLineItem.Create(
+                    item.Type,
+                    vendorInvoiceItem,
+                    item.Quantity,
+                    item.Cost,
+                    item.Core,
+                    item.PONumber,
+                    item.TransactionDate)
+                    .Value;
+            }).ToList();
         }
 
         public static IList<VendorInvoiceLineItemToWrite> ConvertReadDtosToWriteDtos(IReadOnlyList<VendorInvoiceLineItemToRead> lineItems)
