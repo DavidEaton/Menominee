@@ -1,24 +1,26 @@
-﻿using CustomerVehicleManagement.Api.Common;
-using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
-using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Payables.Vendors
 {
-    public class VendorsController : ApplicationController
+    public class VendorsController : BaseApplicationController<VendorsController>
     {
         private readonly IVendorRepository repository;
         private readonly IVendorInvoicePaymentMethodRepository paymentMethodRepository;
         private readonly string BasePath = "/api/vendors";
 
-        public VendorsController(IVendorRepository repository, IVendorInvoicePaymentMethodRepository paymentMethodRepository)
+        public VendorsController(
+            IVendorRepository repository
+            , IVendorInvoicePaymentMethodRepository paymentMethodRepository
+            , ILogger<VendorsController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.paymentMethodRepository = paymentMethodRepository ?? throw new ArgumentNullException(nameof(paymentMethodRepository));

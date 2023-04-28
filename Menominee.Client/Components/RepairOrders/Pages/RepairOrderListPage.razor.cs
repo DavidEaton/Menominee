@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.RepairOrders.Pages
@@ -29,6 +31,7 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         private bool CanEdit { get; set; } = false;
         private bool CanDelete { get; set; } = false;
+        private bool Loading { get; set; } = true;
 
         private long selectedId = 0;
         public long SelectedId
@@ -44,9 +47,9 @@ namespace Menominee.Client.Components.RepairOrders.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            ROList = (await DataService.GetAllRepairOrders()).ToList();
-
-            if (ROList.Count > 0)
+            ROList = (await DataService.GetAllRepairOrders())?.ToList();
+            Loading = false;
+            if (ROList?.Any() == true)
             {
                 if (ROToSelect == 0)
                 {
@@ -63,6 +66,7 @@ namespace Menominee.Client.Components.RepairOrders.Pages
             {
                 SelectedId = 0;
             }
+            StateHasChanged();
         }
 
         private void OnAdd()

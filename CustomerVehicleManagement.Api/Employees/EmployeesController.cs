@@ -1,18 +1,21 @@
-﻿using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Menominee.Common.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Api.Common;
+using CustomerVehicleManagement.Shared;
+using CustomerVehicleManagement.Shared.Models;
+using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Employees
 {
     [Authorize(Policies.CanManageHumanResources)]
-    public class EmployeesController : ApplicationController
+    public class EmployeesController : BaseApplicationController<EmployeesController>
     {
+        public EmployeesController(ILogger<EmployeesController> logger): base(logger) { }
+        
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<EmployeeToRead>>> GetUsersAsync()
         {

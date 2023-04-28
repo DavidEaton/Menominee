@@ -1,5 +1,8 @@
 ﻿@page "/dispatch"
+@using Microsoft.AspNetCore.Authorization
 
-@using Menominee.Client.Components.Dispatch
+@attribute [Authorize(Policy = Policies.IsAdmin)]
 
 @*<DispatchMenu />*@
+<h1>This Page is working</h1>
+<p>for admin only</p>

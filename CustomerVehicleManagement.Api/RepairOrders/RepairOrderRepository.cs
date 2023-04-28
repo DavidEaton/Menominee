@@ -6,17 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.RepairOrders
 {
     public class RepairOrderRepository : IRepairOrderRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly ILogger<RepairOrderRepository> _logger;
 
-        public RepairOrderRepository(ApplicationDbContext context)
+        public RepairOrderRepository(ApplicationDbContext context, ILogger<RepairOrderRepository> logger)
         {
             this.context = context ??
-                throw new ArgumentNullException(nameof(context));
+                           throw new ArgumentNullException(nameof(context));
+            _logger = logger;
         }
 
         public async Task AddRepairOrderAsync(RepairOrder repairOrder)
@@ -103,6 +106,7 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 
         public async Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync()
         {
+            _logger.LogInformation("GetRepairOrderListAsync");
             IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
 
             return repairOrders

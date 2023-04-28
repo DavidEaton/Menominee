@@ -1,19 +1,19 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Api.Common;
-using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.ProductCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class InventoryItemsController : ApplicationController
+    public class InventoryItemsController : BaseApplicationController<InventoryItemsController>
     {
         private readonly IInventoryItemRepository itemRepository;
         private readonly IManufacturerRepository manufacturerRepository;
@@ -22,7 +22,8 @@ namespace CustomerVehicleManagement.Api.Inventory
 
         public InventoryItemsController(IInventoryItemRepository itemRepository,
             IManufacturerRepository manufacturerRepository,
-            IProductCodeRepository productCodeRepository)
+            IProductCodeRepository productCodeRepository
+            , ILogger<InventoryItemsController> logger) : base(logger)
         {
             this.itemRepository =
                 itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));

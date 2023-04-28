@@ -8,7 +8,7 @@
         <Authorized>
             @if (displayIsLarge)
             {
-                <p class="log-link">@context.User.Identity.Name</p>
+                <a href="/profile" class="log-link" title="Open My Profile">@context.User.Identity.Name</a>
                 <a class="log-link"
                @onclick="BeginSignOut"
                title="Log out user"

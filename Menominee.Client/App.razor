@@ -1,5 +1,5 @@
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+    <Router AppAssembly="@typeof(App).Assembly" PreferExactMatches="@true">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <Authorizing>
@@ -10,7 +10,7 @@
                     </div>
                 </Authorizing>
                 <NotAuthorized>
-                    @if (!context.User.Identity.IsAuthenticated)
+                    @if (context.User.Identity?.IsAuthenticated != true)
                     {
                         <RedirectToLogin />
                     }

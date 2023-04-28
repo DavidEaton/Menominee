@@ -1,19 +1,20 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.CreditCards
 {
-    public class CreditCardsController : ApplicationController
+    public class CreditCardsController : BaseApplicationController<CreditCardsController>
     {
         private readonly ICreditCardRepository repository;
         private readonly string BasePath = "/api/creditcards";
 
-        public CreditCardsController(ICreditCardRepository repository)
+        public CreditCardsController(ICreditCardRepository repository, ILogger<CreditCardsController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }

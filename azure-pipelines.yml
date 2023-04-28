@@ -51,13 +51,6 @@ stages:
             arguments: 'install --global dotnet-ef'
 
         - task: DotNetCoreCLI@2
-          displayName: 'IDP Create EF Migration Script'
-          inputs:
-            command: custom
-            custom: ef
-            arguments: 'migrations script --context UserDbContext --idempotent --project Janco.Idp\Janco.Idp.csproj -o idp-migrations.sql -- $(IdpConnectionString)'
-
-        - task: DotNetCoreCLI@2
           displayName: 'API Create EF Migration Script'
           inputs:
             command: custom
@@ -77,27 +70,18 @@ stages:
           inputs:
             PathtoPublish: '$(build.artifactStagingDirectory)\db-scripts'
             
-# Unit tests disabled until refactored            
+# Unit tests disabled until refactored - leaving off as we do this PRE pull request            
 #       - task: VSTest@2
 #         inputs:
 #           platform: 'Any CPU'
 #           configuration: 'Release'
   
-  - stage: StopIDP_APIApplications
-    displayName: 'Stop IDP & API Applications'
+  - stage: StopAPIApplication
+    displayName: 'Stop API Application'
     dependsOn: Build
     jobs:
       - job: 'Stopping'
         steps:
-          - task: AzureAppServiceManage@0
-            displayName: 'Stopping IDP'
-            inputs:
-              azureSubscription: MenomineeDev
-              Action: 'Stop Azure App Service'
-              WebAppName: 'menominee-idp'
-              SpecifySlotOrASE: true
-              ResourceGroupName: 'menominee'
-              Slot: 'stage'
           - task: AzureAppServiceManage@0
             displayName: 'Stopping API'
             inputs:
@@ -110,7 +94,7 @@ stages:
               
   - stage: DeployAPI
     displayName: 'Deploy API Application'
-    dependsOn: StopIDP_APIApplications
+    dependsOn: StopAPIApplications
     jobs:
       - deployment: DeployStockTracAPI
         displayName: Deploy StockTrac API
@@ -131,30 +115,6 @@ stages:
                   slotName: '$(Slot)'
                   ResourceGroupName: '$(ResourceGroup)' 
                   packageForLinux: '$(Pipeline.Workspace)/drop/CustomerVehicleManagement.Api.zip'
-  
-  - stage: DeployIDP
-    displayName: 'Deploy IDP Application'
-    dependsOn: StopIDP_APIApplications
-    jobs:
-      - deployment: DeployJancoIDP
-        displayName: Deploy Janco IDP
-        environment: Staging
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-              - download: current
-                artifact: drop
-              - task: AzureRmWebAppDeployment@4
-                inputs:
-                  ConnectionType: 'AzureRM'
-                  azureSubscription: MenomineeDev
-                  appType: 'webApp'
-                  WebAppName: '$(WebAppNameIdp)'
-                  deployToSlotOrASE: true
-                  slotName: '$(Slot)'
-                  ResourceGroupName: '$(ResourceGroup)' 
-                  packageForLinux: '$(Pipeline.Workspace)/drop/Janco.Idp.zip'
                   
   - stage: DeployClient
     displayName: 'Deploy Client Application'
@@ -181,28 +141,9 @@ stages:
                   packageForLinux: '$(Pipeline.Workspace)/drop/Menominee.Client.zip'
                   
 #   https://stackoverflow.com/questions/59761685/ef-migrations-with-azure-pipeline-tasks
-  - stage: IdpDatabaseMigrations
-    displayName: 'Deploy IDP Database Migrations'
-    dependsOn: StopIDP_APIApplications
-    jobs:
-      - job:
-        steps:
-          - download: current
-            artifact: drop
-          - task: SqlAzureDacpacDeployment@1
-            displayName: Execute IDP EF Migrations
-            inputs:
-              azureSubscription: MenomineeDev
-              ServerName: '$(SqlServerName)'
-              DatabaseName: '$(IdpDatabaseName)'
-              SqlUsername: '$(SqlUsername)'
-              SqlPassword: '$(SqlPassword)'
-              deployType: SqlTask
-              SqlFile: '$(Pipeline.Workspace)\**\idp-migrations.sql'
-              
   - stage: ApiDatabaseMigrations
     displayName: 'Deploy API Database Migrations'
-    dependsOn: StopIDP_APIApplications
+    dependsOn: StopAPIApplications
     jobs:
       - job:
         steps:
@@ -219,11 +160,10 @@ stages:
               deployType: SqlTask
               SqlFile: '$(Pipeline.Workspace)\**\api-migrations.sql'
               
-  - stage: StartIDP_APIApplications
-    displayName: 'Start IDP & API Applications'
+  - stage: StartAPIApplication
+    displayName: 'Start API Application'
     dependsOn:
       - ApiDatabaseMigrations
-      - IdpDatabaseMigrations
     jobs:
       - job: 'Starting'
         steps:
@@ -233,15 +173,6 @@ stages:
               azureSubscription: MenomineeDev
               Action: 'Start Azure App Service'
               WebAppName: 'menominee-api'
-              SpecifySlotOrASE: true
-              ResourceGroupName: 'menominee'
-              Slot: 'stage'
-          - task: AzureAppServiceManage@0
-            displayName: 'Starting IDP'
-            inputs:
-              azureSubscription: MenomineeDev
-              Action: 'Start Azure App Service'
-              WebAppName: 'menominee-idp'
               SpecifySlotOrASE: true
               ResourceGroupName: 'menominee'
               Slot: 'stage'

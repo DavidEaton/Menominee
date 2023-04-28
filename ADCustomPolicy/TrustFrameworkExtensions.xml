@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TrustFrameworkPolicy 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" 
+  PolicySchemaVersion="0.3.0.0" 
+  TenantId="JancoDEVB2C.onmicrosoft.com" 
+  PolicyId="B2C_1A_TrustFrameworkExtensions" 
+  PublicPolicyUri="http://JancoDEVB2C.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+  
+  <BasePolicy>
+    <TenantId>JancoDEVB2C.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
+  </BasePolicy>
+  
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="extension_shopRole">
+        <DisplayName>Shop Role</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>The StockTrac Shop Role</UserHelpText>
+        <!-- UserInputType>DropdownSingleSelect</UserInputType>
+	    <Restriction>
+	  	<Enumeration Text="Admin" Value="Admin" />
+	  	<Enumeration Text="Advisor" Value="Advisor" />
+	  	<Enumeration Text="Employee" Value="Employee" SelectByDefault="true" />
+	  	<Enumeration Text="Human Resources" Value="HumanResources" />
+	  	<Enumeration Text="Manager" Value="Manager" />
+	  	<Enumeration Text="Owner" Value="Owner" />
+	  	<Enumeration Text="Technician" Value="Technician" />
+	    </Restriction -->
+      </ClaimType>
+      <ClaimType Id="isForgotPassword">
+        <DisplayName>isForgotPassword</DisplayName>
+        <DataType>boolean</DataType>
+        <AdminHelpText>Whether the user has selected Forgot your Password</AdminHelpText>
+      </ClaimType>
+    </ClaimsSchema>
+  </BuildingBlocks>
+
+  <ClaimsProviders>
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+         <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">b8743aad-c7a7-423f-9bfa-9879c4495952</Item>
+            <Item Key="IdTokenAudience">58fd0de4-b947-4dd3-a1f9-85de49ebc176</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="b8743aad-c7a7-423f-9bfa-9879c4495952" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="58fd0de4-b947-4dd3-a1f9-85de49ebc176" />
+          </InputClaims>
+        </TechnicalProfile>
+        <TechnicalProfile Id="ForgotPassword">
+          <DisplayName>Forgot your password?</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="isForgotPassword" DefaultValue="true" AlwaysUseDefaultValue="true"/>
+			<OutputClaim ClaimTypeReferenceId="email" />			
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+          <Metadata>
+            <Item Key="setting.forgotPasswordLinkOverride">ForgotPasswordExchange</Item>
+          </Metadata>
+        </TechnicalProfile>
+        <TechnicalProfile Id="LocalAccountWritePasswordUsingObjectId">
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+
+	<ClaimsProvider>
+		<DisplayName>Azure Active Directory</DisplayName>
+		<TechnicalProfiles>
+		  <TechnicalProfile Id="AAD-Common">
+			<Metadata>
+			  <!--b2c-extensions-app. Do not modify. Used by AADB2C for storing user data.-->	
+			  <!--Insert b2c-extensions-app application ID here, for example: 11111111-1111-1111-1111-111111111111-->  
+			  <Item Key="ClientId">d3f9e7ba-57a3-4804-95de-63d625fb88e5</Item>
+			  <!--Insert b2c-extensions-app application ObjectId here, for example: 22222222-2222-2222-2222-222222222222-->
+			  <Item Key="ApplicationObjectId">1744abd5-b0f8-472b-85fd-d8e96a3e97ff</Item>
+			</Metadata>
+		  </TechnicalProfile>
+
+        <!-- The following technical profile is used to read data after user authenticates. -->
+        <TechnicalProfile Id="AAD-UserReadUsingObjectId">
+          <Metadata>
+            <Item Key="Operation">Read</Item>
+            <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
+          </Metadata>
+          <IncludeInSso>false</IncludeInSso>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" Required="true" />
+          </InputClaims>
+          <OutputClaims>
+            <!-- Optional claims -->
+            <OutputClaim ClaimTypeReferenceId="signInNames.emailAddress" />
+            <OutputClaim ClaimTypeReferenceId="displayName" />
+            <OutputClaim ClaimTypeReferenceId="otherMails" />
+            <OutputClaim ClaimTypeReferenceId="givenName" />
+            <OutputClaim ClaimTypeReferenceId="surname" />
+		    <OutputClaim ClaimTypeReferenceId="extension_shopRole" DefaultValue="none" />
+          </OutputClaims>
+          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+        </TechnicalProfile>
+ 		  <!-- https://learn.microsoft.com/en-us/azure/active-directory-b2c/user-flow-custom-attributes?pivots=b2c-custom-policy. --> 
+		</TechnicalProfiles> 
+	  </ClaimsProvider>
+  </ClaimsProviders>
+
+    <UserJourneys>
+	  <UserJourney Id="CustomSignUpSignIn">
+        <OrchestrationSteps>
+	  
+          <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+            <ClaimsProviderSelections>
+              <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+			  <ClaimsProviderSelection TargetClaimsExchangeId="ForgotPasswordExchange" />
+            </ClaimsProviderSelections>
+            <ClaimsExchanges>
+              <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
+	  
+          <OrchestrationStep Order="2" Type="ClaimsExchange">
+            <Preconditions>
+              <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                <Value>objectId</Value>
+                <Action>SkipThisOrchestrationStep</Action>
+              </Precondition>
+            </Preconditions>
+            <ClaimsExchanges>
+              <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+			  <ClaimsExchange Id="ForgotPasswordExchange" TechnicalProfileReferenceId="ForgotPassword" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
+
+	      <OrchestrationStep Order="3" Type="InvokeSubJourney">
+            <Preconditions>
+              <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+                <Value>isForgotPassword</Value>
+                <Action>SkipThisOrchestrationStep</Action>
+              </Precondition>
+            </Preconditions>
+            <JourneyList>
+              <Candidate SubJourneyReferenceId="PasswordReset" />
+            </JourneyList>
+          </OrchestrationStep>
+
+          <!-- This step reads any user attributes that we may not have received when in the token. -->
+          <OrchestrationStep Order="4" Type="ClaimsExchange">
+            <ClaimsExchanges>
+              <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
+	  
+          <OrchestrationStep Order="5" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+	  
+        </OrchestrationSteps>
+        <ClientDefinition ReferenceId="DefaultWeb" />
+      </UserJourney>
+	</UserJourneys>
+	
+	
+  <SubJourneys>
+    <SubJourney Id="PasswordReset" Type="Call">
+      <OrchestrationSteps>
+        <!-- Validate user's email address. -->
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="PasswordResetUsingEmailAddressExchange" TechnicalProfileReferenceId="LocalAccountDiscoveryUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+  
+        <!-- Collect and persist a new password. -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="LocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+      </OrchestrationSteps>
+    </SubJourney>
+  </SubJourneys>
+
+</TrustFrameworkPolicy>

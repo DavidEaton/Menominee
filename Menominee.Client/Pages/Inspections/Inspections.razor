@@ -1,5 +1,9 @@
 ﻿@page "/inspections"
-
-@using Menominee.Client.Components.Inspections
+@using Microsoft.AspNetCore.Authorization
 
 @*<InspectionsMenu />*@
+
+@attribute [Authorize(Policy = Policies.IsAuthenticated)]
+
+<h1>This Page is working</h1>
+<p>for authenticated users only</p>

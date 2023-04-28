@@ -1,4 +1,7 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Organizations;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
@@ -7,22 +10,22 @@ using CustomerVehicleManagement.Shared.Models.Organizations;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Customers
 {
-    public class CustomersController : ApplicationController
+    public class CustomersController : BaseApplicationController<CustomersController>
     {
         private readonly ICustomerRepository customerRepository;
         private readonly PersonsController personsController;
         private readonly OrganizationsController organizationsController;
         private readonly string BasePath = "/api/customers/";
 
-        public CustomersController(ICustomerRepository customerRepository,
-                                   PersonsController personsController,
-                                   OrganizationsController organizationsController)
+        public CustomersController(
+            ICustomerRepository customerRepository
+            , PersonsController personsController
+            , OrganizationsController organizationsController
+            , ILogger<CustomersController> logger) : base(logger)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));

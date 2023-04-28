@@ -1,20 +1,21 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Persons;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Persons
 {
-    public class PersonsController : ApplicationController
+    public class PersonsController : BaseApplicationController<PersonsController>
     {
         private readonly IPersonRepository repository;
         private readonly string BasePath = "/api/persons/";
 
-        public PersonsController(IPersonRepository repository)
+        public PersonsController(IPersonRepository repository, ILogger<PersonsController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));

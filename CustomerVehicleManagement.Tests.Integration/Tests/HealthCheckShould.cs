@@ -8,7 +8,7 @@ using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Integration.Tests
 {
-    public class HealthCheckShould : IClassFixture<WebApplicationFactory<Startup>>
+    public class HealthCheckShould : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient httpclient;
         private const string HealthCheckRoute = "/healthcheck";
@@ -23,7 +23,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         More efficient to use IClassFixture when test setup or teardown is expensive,
         and running multiple tests.
         */
-        public HealthCheckShould(WebApplicationFactory<Startup> factory)
+        public HealthCheckShould(WebApplicationFactory<Program> factory)
         {
             httpclient = factory.CreateDefaultClient();
         }

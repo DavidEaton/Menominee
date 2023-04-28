@@ -1,17 +1,18 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Shared.Models.Taxes;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
+using CustomerVehicleManagement.Shared.Models.Taxes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Taxes
 {
-    public class ExciseFeesController : ApplicationController
+    public class ExciseFeesController : BaseApplicationController<ExciseFeesController>
     {
         private readonly IExciseFeeRepository repository;
 
-        public ExciseFeesController(IExciseFeeRepository repository)
+        public ExciseFeesController(IExciseFeeRepository repository, ILogger<ExciseFeesController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }

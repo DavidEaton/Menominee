@@ -1,8 +1,9 @@
 ﻿@page "/persons"
 @using Telerik.FontIcons
+@using CustomerVehicleManagement.Shared
 
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
-(CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
+(Policies.CanManageHumanResources)]
 
 <div class="container">
     <div class="h5">Persons</div>

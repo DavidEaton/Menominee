@@ -1,0 +1,70 @@
+﻿@page "/profile"
+@using System.Security.Claims
+@using Telerik.FontIcons
+
+<h3>My Profile</h3>
+
+@if (User?.Identity?.IsAuthenticated == true)
+{
+    <p>Name: @Name</p>
+    <p>Shop Role: @ShopRole</p>
+    <TelerikButton ButtonType="ButtonType.Button"
+                   Icon="@DebugButton"
+                   Size="@ThemeConstants.Button.Size.Small"
+                   Rounded="@ThemeConstants.Button.Rounded.Full"
+                   OnClick="ToggleDebug"
+                   Id="expandToken"
+                   title="Expand Full Token"
+                   class="mb-3">
+        @DebugButtonText
+    </TelerikButton>
+    @if (ShowDebug)
+    {
+        <TelerikCard>
+            <CardHeader>
+                <strong>Token Claims</strong>
+            </CardHeader>
+            <CardBody>
+                <ul>
+                    @foreach (var claim in User.Claims)
+                    {
+                        <li>@claim.Type: @claim.Value</li>
+                    }
+                </ul>
+            </CardBody>
+        </TelerikCard>
+    }
+}
+else
+{
+    <p>Not Authenticated</p>
+}
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private ClaimsPrincipal User { get; set; }
+    private static bool ShowDebug { get; set; }
+    private string Name { get; set; }
+    private string ShopRole { get; set; }
+    private string DebugButton => ShowDebug ? FontIcon.X.ToString() : FontIcon.FolderOpen.ToString();
+    private string DebugButtonText => ShowDebug ? "Collapse Token" : "Expand Token";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateTask;
+        User = authenticationState.User;
+        Name = User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
+        ShopRole = User.Claims.FirstOrDefault(c => c.Type.Equals("extension_shopRole"))?.Value;
+    }
+
+    private void ToggleDebug()
+    {
+        ShowDebug = !ShowDebug;
+        StateHasChanged();
+    }
+
+}
+

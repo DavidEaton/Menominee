@@ -1,159 +1,153 @@
+using System;
+using System.Net.Http;
 using Blazored.Toast;
 using CustomerVehicleManagement.Shared;
+using Menominee.Client;
 using Menominee.Client.Components.RepairOrders;
-using Menominee.Client.MessageHandlers;
 using Menominee.Client.Services;
-using Menominee.Client.Services.CreditCards;
-using Menominee.Client.Services.Customers;
-using Menominee.Client.Services.Inventory;
-using Menominee.Client.Services.Manufacturers;
-using Menominee.Client.Services.Payables.Invoices;
-using Menominee.Client.Services.Payables.PaymentMethods;
-using Menominee.Client.Services.Payables.Vendors;
-using Menominee.Client.Services.ProductCodes;
-using Menominee.Client.Services.SaleCodes;
-using Menominee.Client.Services.Taxes;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Blazor;
-using System;
-using System.Threading.Tasks;
+using Syncfusion.Licensing;
 
-namespace Menominee.Client
+// Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
+//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
+SyncfusionLicenseProvider.RegisterLicense(
+    "NTg1MzU1QDMxMzkyZTM0MmUzMGVFZWRZcnBURWU0L3NnaE1qdzlJT1h3NEx2N3ZOSmJ1RWx3aXh5SGlrVnc9");
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+builder.Services.AddHttpClient("Menominee.ServerAPI"
+        , client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+builder.Services.AddScoped(sp =>
+    sp.GetRequiredService<IHttpClientFactory>().CreateClient("Menominee.ServerAPI"));
+
+builder.Services.AddMsalAuthentication(options =>
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
-            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTg1MzU1QDMxMzkyZTM0MmUzMGVFZWRZcnBURWU0L3NnaE1qdzlJT1h3NEx2N3ZOSmJ1RWx3aXh5SGlrVnc9");
+    builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://JancoDEVB2C.onmicrosoft.com/cvmapi/API.Access");
+});
 
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
+builder.Services.AddSyncfusionBlazor();
+builder.Services.AddBlazoredToast();
+builder.Services.AddTelerikBlazor();
 
-            builder.Services.AddSyncfusionBlazor();
-            builder.Services.AddBlazoredToast();
-            builder.Services.AddTelerikBlazor();
+builder.Services.AddScoped<LocalStorage>();
+builder.Services.AddScoped<IUserDataService, UserDataService>();
 
-            builder.Services.AddScoped<LocalStorage>();
+// builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
+builder.Services.AddScoped<IRepairOrderDataService, RepairOrderDataService>();
 
-            builder.Services.AddTransient<MenonineeApiAuthorizationMessageHandler>();
+builder.Services.AddAuthorizationCore(authorizationOptions =>
+{
+    authorizationOptions.AddPolicy(
+        Policies.IsAdmin,
+        // policy => policy.Requirements.Add(new CustomAuthorization(new[] { ShopRole.Admin.ToString(), ShopRole.SuperAdmin.ToString() })));
+        Policies.AdminPolicy());
 
-            builder.Services.AddOidcAuthentication(options =>
-            {
-                builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
-                builder.Configuration.Bind("UserOptions", options.UserOptions);
-            });
+    authorizationOptions.AddPolicy(
+        Policies.IsAuthenticated, 
+        Policies.RequireAuthenticatedUserPolicy());
 
-            builder.Services.AddAuthorizationCore(authorizationOptions =>
-            {
-                authorizationOptions.AddPolicy(
-                    Policies.AdminOnly,
-                    Policies.AdminPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.CanManageHumanResources,
+        Policies.CanManageHumanResourcesPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.RequireAuthenticatedUser,
-                    Policies.RequireAuthenticatedUserPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.CanManageUsers,
+        Policies.CanManageUsersPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.CanManageHumanResources,
-                    Policies.CanManageHumanResourcesPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.IsFree,
+        Policies.FreeUserPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.CanManageUsers,
-                    Policies.CanManageUsersPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.IsOwner,
+        Policies.OwnerPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.FreeUser,
-                    Policies.FreeUserPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.IsPaid,
+        Policies.PaidUserPolicy());
 
-                authorizationOptions.AddPolicy(
-                    Policies.OwnerOnly,
-                    Policies.OwnerPolicy());
+    authorizationOptions.AddPolicy(
+        Policies.IsTechnician,
+        Policies.TechnicianUserPolicy());
+});
 
-                authorizationOptions.AddPolicy(
-                    Policies.PaidUser,
-                    Policies.PaidUserPolicy());
+// var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
+//
+// builder.Services.AddHttpClient<IUserDataService, UserDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<ICustomerDataService, CustomerDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IEmployeeDataService, EmployeeDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IVendorDataService, VendorDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IVendorInvoicePaymentMethodDataService, VendorInvoicePaymentMethodDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IRepairOrderDataService, RepairOrderDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IManufacturerDataService, ManufacturerDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<ISaleCodeDataService, SaleCodeDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IProductCodeDataService, ProductCodeDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IInventoryItemDataService, InventoryItemDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IMaintenanceItemDataService, MaintenanceItemDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<ICreditCardDataService, CreditCardDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<IExciseFeeDataService, ExciseFeeDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+//
+// builder.Services.AddHttpClient<ISalesTaxDataService, SalesTaxDataService>(
+//     client => client.BaseAddress = baseAddress)
+//     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
-                authorizationOptions.AddPolicy(
-                    Policies.TechniciansUser,
-                    Policies.TechnicianUserPolicy());
-            });
-
-            var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
-
-            builder.Services.AddHttpClient<IUserDataService, UserDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IPersonDataService, PersonDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<ICustomerDataService, CustomerDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IOrganizationDataService, OrganizationDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IEmployeeDataService, EmployeeDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IVendorDataService, VendorDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IVendorInvoicePaymentMethodDataService, VendorInvoicePaymentMethodDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IRepairOrderDataService, RepairOrderDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IManufacturerDataService, ManufacturerDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<ISaleCodeDataService, SaleCodeDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IProductCodeDataService, ProductCodeDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IInventoryItemDataService, InventoryItemDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IMaintenanceItemDataService, MaintenanceItemDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<ICreditCardDataService, CreditCardDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<IExciseFeeDataService, ExciseFeeDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            builder.Services.AddHttpClient<ISalesTaxDataService, SalesTaxDataService>(
-                client => client.BaseAddress = baseAddress)
-                .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
-
-            await builder.Build().RunAsync();
-
-        }
-    }
-}
+await builder.Build().RunAsync();

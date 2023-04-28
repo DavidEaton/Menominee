@@ -1,20 +1,24 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Inventory
 {
-    public class MaintenanceItemsController : ApplicationController
+    public class MaintenanceItemsController : BaseApplicationController<MaintenanceItemsController>
     {
         private readonly IMaintenanceItemRepository maintenanceItemRepository;
         private readonly IInventoryItemRepository inventoryItemRepository;
         private readonly string BasePath = "/api/maintenanceitems";
 
-        public MaintenanceItemsController(IMaintenanceItemRepository maintenanceItemRepository, IInventoryItemRepository inventoryItemRepository)
+        public MaintenanceItemsController(
+            IMaintenanceItemRepository maintenanceItemRepository
+            , IInventoryItemRepository inventoryItemRepository
+            , ILogger<MaintenanceItemsController> logger) : base(logger)
         {
             this.maintenanceItemRepository =
                 maintenanceItemRepository ?? throw new ArgumentNullException(nameof(maintenanceItemRepository));

@@ -1,5 +1,6 @@
 ﻿@page "/repairorders/worklog"
 @page "/repairorders/worklog/{ROToSelect:long}"
+@using Telerik.Blazor.Components.Common.Loader
 
 @*<RepairOrdersMenu />*@
 
@@ -8,12 +9,13 @@
     <div class="m-form">
         <div>
             <ContentHeader Header="Work Log" />
-            @if (ROList == null)
+            @if (Loading)
             {
                 <p><em>Loading...</em></p>
-            }
-
-            @if (ROList != null)
+            } else if (ROList?.Any() != true)
+            {
+                <p><em>No Orders Found</em></p>
+            } else if (ROList != null)
             {
                 <TelerikGrid Data="ROList"
                              OnRowClick="@OnRowSelected"

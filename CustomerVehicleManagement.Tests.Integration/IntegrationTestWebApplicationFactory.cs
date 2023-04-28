@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomerVehicleManagement.Tests.Integration
 {
-    public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Startup>
+    public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

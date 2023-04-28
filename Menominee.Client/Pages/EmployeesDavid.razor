@@ -1,7 +1,8 @@
 ﻿@page "/employeesdavid"
+@using CustomerVehicleManagement.Shared
 
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
-(CustomerVehicleManagement.Shared.Policies.CanManageHumanResources)]
+(Policies.CanManageHumanResources)]
 
 <h4>Employees</h4>
 

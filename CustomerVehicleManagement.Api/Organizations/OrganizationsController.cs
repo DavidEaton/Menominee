@@ -1,29 +1,30 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Persons;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models;
 using CustomerVehicleManagement.Shared.Models.Organizations;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Address = Menominee.Common.ValueObjects.Address;
-using Phone = CustomerVehicleManagement.Domain.Entities.Phone;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Organizations
 {
-    public class OrganizationsController : ApplicationController
+    public class OrganizationsController : BaseApplicationController<OrganizationsController>
     {
         private readonly IOrganizationRepository repository;
         private readonly IPersonRepository personsRepository;
         private readonly PersonsController personsController;
         private readonly string BasePath = "/api/organizations";
 
-        public OrganizationsController(IOrganizationRepository repository,
-                                       PersonsController personsController,
-                                       IPersonRepository personsRepository)
+        public OrganizationsController(
+            IOrganizationRepository repository
+            , PersonsController personsController
+            , IPersonRepository personsRepository
+            , ILogger<OrganizationsController> logger) : base (logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));

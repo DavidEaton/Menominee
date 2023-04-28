@@ -1,22 +1,27 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.SaleCodes;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.ProductCodes
 {
-    public class ProductCodesController : ApplicationController
+    public class ProductCodesController : BaseApplicationController<ProductCodesController>
     {
         private readonly string BasePath = "/api/productcodes";
         private readonly IProductCodeRepository repository;
         private readonly IManufacturerRepository manufacturersRepository;
         private readonly ISaleCodeRepository saleCodesRepository;
-        public ProductCodesController(IProductCodeRepository repository, IManufacturerRepository manufacturersRepository, ISaleCodeRepository saleCodesRepository)
+        public ProductCodesController(
+            IProductCodeRepository repository
+            , IManufacturerRepository manufacturersRepository
+            , ISaleCodeRepository saleCodesRepository
+            , ILogger<ProductCodesController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));

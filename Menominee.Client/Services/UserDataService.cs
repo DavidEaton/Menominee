@@ -13,7 +13,7 @@ namespace Menominee.Client.Services
     public class UserDataService : IUserDataService
     {
         private readonly HttpClient httpClient;
-        private const string UriSegment = "api/users";
+        private const string UriSegment = "api/user";
         private const string MediaType = "application/json";
         private readonly IToastService toastService;
 
@@ -28,8 +28,8 @@ namespace Menominee.Client.Services
             try
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToRead>>($"{UriSegment}");
-            }
-            catch (Exception)
+            } 
+            catch (Exception ex)
             {
                 // TODO: log exception
             }

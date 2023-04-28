@@ -1,6 +1,9 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Api.Common;
-using CustomerVehicleManagement.Api.Data;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
 using CustomerVehicleManagement.Api.Payables.Vendors;
@@ -14,14 +17,11 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
-    public class VendorInvoicesController : ApplicationController
+    public class VendorInvoicesController : BaseApplicationController<VendorInvoicesController>
     {
         private readonly IVendorInvoiceRepository repository;
         private readonly IVendorRepository vendorRepository;
@@ -37,7 +37,8 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             IVendorInvoicePaymentMethodRepository paymentMethodRepository,
             ISalesTaxRepository salesTaxRepository,
             IManufacturerRepository manufacturerRepository,
-            ISaleCodeRepository saleCodeRepository)
+            ISaleCodeRepository saleCodeRepository
+            , ILogger<VendorInvoicesController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository)); ;

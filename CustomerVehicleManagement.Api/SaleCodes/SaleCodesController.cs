@@ -1,18 +1,19 @@
-﻿using CustomerVehicleManagement.Api.Data;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.SaleCodes
 {
-    public class SaleCodesController : ApplicationController
+    public class SaleCodesController : BaseApplicationController<SaleCodesController>
     {
         private readonly ISaleCodeRepository repository;
         //private readonly string BasePath = "/api/salecodes";
 
-        public SaleCodesController(ISaleCodeRepository repository)
+        public SaleCodesController(ISaleCodeRepository repository, ILogger<SaleCodesController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }

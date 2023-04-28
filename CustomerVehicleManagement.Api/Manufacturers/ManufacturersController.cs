@@ -1,19 +1,20 @@
-﻿using CustomerVehicleManagement.Api.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.Manufacturers
 {
-    public class ManufacturersController : ApplicationController
+    public class ManufacturersController : BaseApplicationController<ManufacturersController>
     {
         private readonly IManufacturerRepository repository;
         private readonly string BasePath = "/api/manufacturers";
 
-        public ManufacturersController(IManufacturerRepository repository)
+        public ManufacturersController(IManufacturerRepository repository, ILogger<ManufacturersController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }

@@ -26,7 +26,7 @@ namespace Menominee.Client.Pages
         private bool Adding { get; set; } = false;
         protected override async Task OnInitializedAsync()
         {
-            UsersList = (await UserDataService.GetAll()).ToList();
+            UsersList = (await UserDataService.GetAll())?.ToList();
 
             foreach (ShopRole item in Enum.GetValues(typeof(ShopRole)))
             {

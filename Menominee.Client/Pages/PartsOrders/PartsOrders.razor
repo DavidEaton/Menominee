@@ -1,5 +1,10 @@
 ﻿@page "/partsorders"
-
-@using Menominee.Client.Components.PartsOrders
+@using Microsoft.AspNetCore.Authorization
 
 @*<PartsOrdersMenu />*@
+
+
+@attribute [Authorize(Policy = Policies.IsOwner)]
+
+<h1>This Page is working</h1>
+<p>for owners only</p>

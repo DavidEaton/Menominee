@@ -1,56 +1,56 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerVehicleManagement.Shared
 {
-    // removed ".Policies" from namespace to avoid drilling into it twice
     public static class Policies
     {
         // TODO: Settle on a naming convention
-        public const string AdminOnly = "AdminPolicy";
+        public const string IsAdmin = "IsAdmin";
         public const string CanManageHumanResources = "CanManageHumanResourcesPolicy";
         public const string CanManageUsers = "CanManageUsersPolicy";
-        public const string FreeUser = "FreeUserPolicy";
-        public const string OwnerOnly = "OwnerPolicy";
-        public const string PaidUser = "PaidUserPolicy";
-        public const string TechniciansUser = "TechniciansUserPolicy";
-        public const string RequireAuthenticatedUser = "RequireAuthenticatedUser";
+        public const string IsFree = "IsFree";
+        public const string IsOwner = "IsOwner";
+        public const string IsPaid = "IsPaid";
+        public const string IsTechnician = "IsTechnician";
+        public const string IsAuthenticated = "IsAuthenticated";
 
+        public const string RoleClaimKey = "extension_shopRole";
+        
         public static AuthorizationPolicy AdminPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
-                                                  ShopRole.Owner.ToString() })
+                .RequireClaim(RoleClaimKey, new[] { ShopRole.Admin.ToString(), ShopRole.Owner.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy RequireAuthenticatedUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
         }
-
+        
         public static AuthorizationPolicy CanManageHumanResourcesPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.HumanResources.ToString(),
+                .RequireClaim(RoleClaimKey, new[] { ShopRole.HumanResources.ToString(),
                                                   ShopRole.Admin.ToString(),
                                                   ShopRole.Owner.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy CanManageUsersPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Admin.ToString(),
+                .RequireClaim(RoleClaimKey, new[] { ShopRole.Admin.ToString(),
                                                   ShopRole.Owner.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy FreeUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
@@ -58,15 +58,15 @@ namespace CustomerVehicleManagement.Shared
                                             //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.Free.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy OwnerPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Owner.ToString() })
+                .RequireClaim(RoleClaimKey, new[] { ShopRole.Owner.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy PaidUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
@@ -74,12 +74,12 @@ namespace CustomerVehicleManagement.Shared
                 //.RequireClaim("subscriptionLevel", new[] { SubscriptionLevel.PaidUser.ToString() })
                 .Build();
         }
-
+        
         public static AuthorizationPolicy TechnicianUserPolicy()
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim("ShopRole", new[] { ShopRole.Technician.ToString(),
+                .RequireClaim(RoleClaimKey, new[] { ShopRole.Technician.ToString(),
                                                   ShopRole.Admin.ToString(),
                                                   ShopRole.Owner.ToString() })
                 .Build();

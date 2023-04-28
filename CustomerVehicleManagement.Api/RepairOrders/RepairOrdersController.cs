@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerVehicleManagement.Api.RepairOrders
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RepairOrdersController : ControllerBase
