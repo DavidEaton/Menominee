@@ -76,7 +76,7 @@ stages:
 #           platform: 'Any CPU'
 #           configuration: 'Release'
   
-  - stage: StopAPIApplication
+  - stage: StopAPIApplications
     displayName: 'Stop API Application'
     dependsOn: Build
     jobs:
