@@ -369,6 +369,9 @@ app {
     color: white;
 }
 
+.k-drawer-container .k-drawer-items .k-icon + .k-item-text {
+    padding-left: 0 !important;
+}
 
 /*@media (max-width: 600px) {
     .main .top-row .sms {

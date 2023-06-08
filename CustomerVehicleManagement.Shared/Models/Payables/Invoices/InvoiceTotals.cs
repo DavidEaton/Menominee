@@ -111,6 +111,13 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
             return TaxableTotal;
         }
 
+        public void Calculate(VendorInvoiceToRead invoice)
+        {
+            var invoiceToWrite = VendorInvoiceHelper.ConvertReadToWriteDto(invoice);
+            if (invoiceToWrite is not null)
+                Calculate(invoiceToWrite);
+        }
+
         public void Calculate(VendorInvoiceToWrite invoice)
         {
             Clear();

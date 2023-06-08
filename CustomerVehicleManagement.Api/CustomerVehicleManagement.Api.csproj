@@ -43,6 +43,9 @@
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Telerik.Reporting.Services.AspNetCore" Version="17.0.23.315" />
+		<PackageReference Include="Telerik.ReportViewer.Blazor" Version="17.0.23.315" />
+		<PackageReference Include="Telerik.WebReportDesigner.Services" Version="17.0.23.315" />
 
 	</ItemGroup>
 

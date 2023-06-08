@@ -1,5 +1,6 @@
 ﻿@page "/payables/invoices/listing"
 @page "/payables/invoices/listing/{ItemToSelect:long}"
+@using Menominee.Client.Components.ReportViewer
 
 <div class="m-main-content">
     <div class="m-form">
@@ -56,9 +57,6 @@
                         </GridColumnMenuSettings>
                     </GridSettings>
                     <GridColumns>
-
-                        @*Field="@nameof(VendorInvoiceToReadInList.Vendor.VendorCode)"... displays nothing :(*@
-
                         <GridColumn Width="15%" Field="Vendor.VendorCode" Title="Vendor Code" Filterable="false"></GridColumn>
                         <GridColumn Width="25%" Field="Vendor.Name" Title="Vendor Name" Filterable="false"></GridColumn>
                         <GridColumn Width="15%" Field="@nameof(VendorInvoiceToReadInList.Date)" Title="Date" DisplayFormat="{0:yyyy MM dd}"></GridColumn>
@@ -68,11 +66,22 @@
                     </GridColumns>
                 </TelerikGrid>
 
-                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" CanEdit="@CanEdit" CanDelete="@CanDelete" />
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" OnPrint="@OnPrint"
+                                  CanEdit="@CanEdit" CanDelete="@CanDelete" CanPrint="@CanPrint" />
+@*                TODO: MEN-522 Add this back in once we can print directly to printer
+                <EditNewDeleteButtons OnDone="@OnDone" OnEdit="@OnEdit" OnNew="@OnAdd" OnDelete="@OnDelete" 
+                                      OnPrintDirectly="@OnPrint" OnPreview="@OnPreview" OnEmail="@OnPreview" OnExport="@OnPreview"
+                                      CanEdit="@CanEdit" CanDelete="@CanDelete" CanPrint="@CanPrint" />*@
             }
         </div>
     </div>
 </div>
+
+
+@if (PrintingInvoice)
+{
+    <ReportViewerForm ReportName="VendorInvoice.trdp" ReportParameters="@ReportParameters" OnDone="HideReport"/>
+}
 
 <style>
     .m-grid {

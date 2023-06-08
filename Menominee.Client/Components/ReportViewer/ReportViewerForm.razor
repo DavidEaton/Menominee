@@ -1,0 +1,31 @@
+﻿@inject IConfiguration Configuration
+
+<TelerikWindow Visible="true"
+               Modal="true"
+               Width="1200px"
+               Height="750px">
+    <WindowActions>
+        <WindowAction Name="Minimize" />
+        <WindowAction Name="Maximize" />
+        <WindowAction Name="Close" Hidden="false" OnClick="@OnDone" />
+    </WindowActions>
+    <WindowContent>
+        <ReportViewer ServiceUrl="@($"{Configuration["ApiBaseUrl"]}reports")"
+                      @bind-ReportSource="@ReportSource"
+                      @bind-ScaleMode="@ScaleMode"
+                      @bind-ViewMode="@ViewMode"
+                      @bind-ParametersAreaVisible="@ParametersAreaVisible"
+                      @bind-DocumentMapVisible="@DocumentMapVisible"
+                      @bind-Scale="@Scale"
+                      @ref="Report"
+                      PageMode="@PageMode.ContinuousScroll"
+                      PrintMode="@PrintMode"
+                      KeepClientAlive="true"
+                      EnableSendEmail="true"
+                      ServiceType="@ReportViewerServiceType.REST"
+                      Height="100%"
+                      Width="100%"
+                      Tools="@Tools">
+        </ReportViewer>
+    </WindowContent>
+</TelerikWindow>

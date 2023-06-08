@@ -1,4 +1,5 @@
-﻿<div class="form vendor-invoice-form">
+﻿@using Menominee.Client.Components.ReportViewer
+<div class="form vendor-invoice-form">
     <Card Title="@Title" BackgroundColor="CardBackgroundColor.white">
         <Content>
             <div class="container-fluid m-container">
@@ -75,6 +76,11 @@
         </Content>
     </Card>
 </div>
+
+@if (Printing)
+{
+    <ReportViewerForm ReportName="VendorInvoice.trdp" ReportParameters="@ReportParameters" OnDone="HideReport"/>
+}
 
 <style>
     .container-fluid.m-container {

@@ -21,8 +21,39 @@
         {
             <button class="btn m-button m-generic-btn" @onclick="OnPrint" disabled="@(CanPrint ? false : true)"><i class="fas fa-print"></i> Print</button>
         }
+        else if (ShowPrintOptions)
+        {
+            <TelerikSplitButton Id="print-options-btn" Class="m-print-btn" Icon="@("fas fa-print")" OnClick="@OnPrintDirectly" Enabled="@(CanPrint ? true : false)">
+                <SplitButtonContent>Print</SplitButtonContent>
+                <SplitButtonItems>
+                    <SplitButtonItem Icon="@("fas fa-print")" OnClick="@OnPrintDirectly">Print</SplitButtonItem>
+                    <SplitButtonItem Icon="@("fas fa-eye")" OnClick="@OnPreview">Preview</SplitButtonItem>
+                    <SplitButtonItem Icon="@("fas fa-envelope")" OnClick="@OnEmail">Email</SplitButtonItem>
+                    <SplitButtonItem Icon="@("fas fa-download")" OnClick="@OnExport">Export</SplitButtonItem>
+                </SplitButtonItems>
+            </TelerikSplitButton>
+        }
     </div>
 </div>
 
 <style>
+
+    #print-options-btn {
+        background-color: var(--btn-bg-color);
+        color: white;
+        margin-left: -6px;
+        border-radius: 0.25rem;
+    }
+
+        #print-options-btn:hover {
+            background-color: darkgray;
+            color: black;
+        }
+
+
+        #print-options-btn:disabled {
+            background-color: var(--btn-bg-disabled-color);
+            color: var(--btn-disabled-color);
+        }
+
 </style>

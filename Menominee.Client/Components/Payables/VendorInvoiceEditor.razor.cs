@@ -4,8 +4,6 @@ using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 
 namespace Menominee.Client.Components.Payables
@@ -13,10 +11,13 @@ namespace Menominee.Client.Components.Payables
     public partial class VendorInvoiceEditor
     {
         [Inject]
-        public IVendorDataService VendorDataService { get; set; }
+        public IVendorDataService? VendorDataService { get; set; }
 
         [Parameter]
-        public VendorInvoiceToWrite Invoice { get; set; }
+        public VendorInvoiceToWrite? Invoice { get; set; }
+
+        [Parameter]
+        public long InvoiceId { get; set; }
 
         [Parameter]
         public EventCallback OnSaveAndExit { get; set; }
@@ -31,10 +32,13 @@ namespace Menominee.Client.Components.Payables
         public FormMode FormMode { get; set; }
 
         [CascadingParameter]
-        public DialogFactory Dialogs { get; set; }
+        public DialogFactory? Dialogs { get; set; }
+
+        private Dictionary<string, object> ReportParameters = new Dictionary<string, object>();
 
         private InvoiceTotals InvoiceTotals { get; set; } = new();
-        private string Title { get; set; }
+        private string Title { get; set; } = "";
+        private bool Printing = false;
 
         protected override void OnParametersSet()
         {
@@ -66,7 +70,7 @@ namespace Menominee.Client.Components.Payables
         private async Task OnCompleteAsync()
         {
             bool inBalance = InvoiceTotals.Total == InvoiceTotals.Payments;
-            VendorToRead vendor = (Invoice?.Vendor is not null)
+            VendorToRead? vendor = (Invoice?.Vendor is not null)
                                 ? await VendorDataService.GetVendorAsync(Invoice.Vendor.Id)
                                 : null;
 
@@ -76,7 +80,7 @@ namespace Menominee.Client.Components.Payables
             //       Will need to support Statements too - another doctype or another entity?
             // DONE (DE): Vendors need a DefaultPaymentMethod field
 
-            if (Invoice.DocumentType == VendorInvoiceDocumentType.Invoice)
+            if (Invoice?.DocumentType == VendorInvoiceDocumentType.Invoice)
             {
                 if (!inBalance && vendor?.DefaultPaymentMethod != null)
                 {
@@ -184,7 +188,30 @@ namespace Menominee.Client.Components.Payables
 
         private void OnPrint()
         {
+            // TODO: Need to get the real shop name and number to display on the report
+            var documentTypeString = Invoice.DocumentType == VendorInvoiceDocumentType.Invoice ? "Vendor Invoice" : Invoice.DocumentType.GetDisplayName();
+            var nullDate = new DateTime(1899, 1, 1);
+            ReportParameters.Clear();
+            ReportParameters.Add("VendorInvoiceId", InvoiceId);
+            ReportParameters.Add("ShopName", "Al's AutoCare (need real name & shop #)");
+            ReportParameters.Add("ShopNumber", 1);
+            ReportParameters.Add("DocumentTypeString", documentTypeString);
+            ReportParameters.Add("VendorCode", Invoice.Vendor.VendorCode);
+            ReportParameters.Add("VendorName", Invoice.Vendor.Name);
+            ReportParameters.Add("VendorStreet", Invoice.Vendor.Address.AddressLine);
+            ReportParameters.Add("VendorCityStateZip", $"{Invoice.Vendor.Address.City}, {Invoice.Vendor.Address.State} {Invoice.Vendor.Address.PostalCode}");
+            ReportParameters.Add("InvoiceNumber", Invoice.InvoiceNumber);
+            ReportParameters.Add("DateCreated", Invoice.Date != null ? Invoice.Date : nullDate);
+            ReportParameters.Add("DatePosted", Invoice.DatePosted != null ? Invoice.DatePosted : nullDate);
+            ReportParameters.Add("StatusString", Invoice.Status.GetDisplayName());
+            ReportParameters.Add("Total", InvoiceTotals.Total);
+            ReportParameters.Add("Balance", InvoiceTotals.Total - InvoiceTotals.Payments);
+            Printing = true;
+        }
 
+        private void HideReport()
+        {
+            Printing = false;
         }
 
         private void ReverseInvoice()

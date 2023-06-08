@@ -25,6 +25,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
                     Status = invoice.Status,
+                    DocumentType = invoice.DocumentType,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = VendorHelper.ConvertToReadDto(invoice.Vendor),
@@ -142,6 +143,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Date = invoice.Date?.ToShortDateString(),
                     DatePosted = invoice.DatePosted?.ToShortDateString(),
                     Status = invoice.Status.ToString(),
+                    DocumentType = invoice.DocumentType,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total
                 };
@@ -156,6 +158,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     Date = invoice.Date,
                     DatePosted = invoice.DatePosted,
                     Status = invoice.Status,
+                    DocumentType = invoice.DocumentType,
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = invoice.Vendor,

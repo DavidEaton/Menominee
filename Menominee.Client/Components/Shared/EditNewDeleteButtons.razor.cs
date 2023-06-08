@@ -9,12 +9,20 @@ namespace Menominee.Client.Components.Shared
         private EventCallback onNew;
         private EventCallback onDelete;
         private EventCallback onPrint;
+        private EventCallback onPrintDirectly;
+        private EventCallback onPreview;
+        private EventCallback onExport;
+        private EventCallback onEmail;
 
         private bool ShowDone { get; set; } = false;
         private bool ShowEdit { get; set; } = false;
         private bool ShowNew { get; set; } = false;
         private bool ShowDelete { get; set; } = false;
         private bool ShowPrint { get; set; } = false;
+        private bool ShowPrintOptions { get; set; } = false;
+        private bool ShowPreview { get; set; } = false;
+        private bool ShowExport { get; set; } = false;
+        private bool ShowEmail { get; set; } = false;
 
         [Parameter]
         public bool CanEdit { get; set; } = true;
@@ -77,6 +85,50 @@ namespace Menominee.Client.Components.Shared
             {
                 onPrint = value;
                 ShowPrint = true;
+            }
+        }
+
+        [Parameter]
+        public EventCallback OnPrintDirectly
+        {
+            get => onPrintDirectly;
+            set
+            {
+                onPrintDirectly = value;
+                ShowPrintOptions = true;
+            }
+        }
+
+        [Parameter]
+        public EventCallback OnPreview
+        {
+            get => onPreview;
+            set
+            {
+                onPreview = value;
+                ShowPreview = true;
+            }
+        }
+
+        [Parameter]
+        public EventCallback OnExport
+        {
+            get => onExport;
+            set
+            {
+                onExport = value;
+                ShowExport = true;
+            }
+        }
+
+        [Parameter]
+        public EventCallback OnEmail
+        {
+            get => onEmail;
+            set
+            {
+                onEmail = value;
+                ShowEmail = true;
             }
         }
     }

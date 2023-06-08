@@ -15,6 +15,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         public DateTime? Date { get; set; }
         public DateTime? DatePosted { get; set; }
         public VendorInvoiceStatus Status { get; set; }
+        public VendorInvoiceDocumentType DocumentType { get; set; } = VendorInvoiceDocumentType.Invoice;
         public string InvoiceNumber { get; set; }
         public double Total { get; set; }
         public IReadOnlyList<VendorInvoiceLineItemToRead> LineItems { get; set; } = new List<VendorInvoiceLineItemToRead>();

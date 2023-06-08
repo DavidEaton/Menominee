@@ -31,7 +31,7 @@ namespace Menominee.Client.Shared
             new DrawerItem { ItemId = ModuleId.Schedule,     Text = "Schedule",      ElementId = "menuitem-schedule",     Url = "schedule", Icon = "date_range" },
             new DrawerItem { ItemId = ModuleId.PartOrders,   Text = "Parts Orders",  ElementId = "menuitem-partorders",   Url = "partsorders", Icon = "shopping_cart" },
             new DrawerItem { ItemId = ModuleId.Inventory,    Text = "Inventory",     ElementId = "menuitem-inventory",    Url = "inventory", Icon = "warehouse" },
-            new DrawerItem { ItemId = ModuleId.Reports,      Text = "Reports",       ElementId = "menuitem-reports",      Url = "reports", Icon = "bar_chart" },
+            new DrawerItem { ItemId = ModuleId.Reports,      Text = "Reports",       ElementId = "menuitem-reports",      Url = "reportviewer", Icon = "bar_chart" },
             new DrawerItem { ItemId = ModuleId.Customers,    Text = "Customers",     ElementId = "menuitem-customers",    Url = "customers", Icon = "people" },
             new DrawerItem { ItemId = ModuleId.Receivables,  Text = "Receivables",   ElementId = "menuitem-receivables",  Url = "receivables", Icon = "savings" },
             new DrawerItem { ItemId = ModuleId.Payables,     Text = "Payables",      ElementId = "menuitem-payables",     Url = "payables", Icon = "payments" },

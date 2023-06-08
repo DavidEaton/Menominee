@@ -4,6 +4,6 @@
 @if (Invoice is not null)
 {
     <div class="m-main-content m-boxshadow">
-        <VendorInvoiceEditor Invoice="@Invoice" FormMode="@FormMode" OnSaveAndExit="@SaveAndExit" OnSave="@Save" OnDiscard="@Discard" />
+        <VendorInvoiceEditor Invoice="@Invoice" InvoiceId="@Id" FormMode="@FormMode" OnSaveAndExit="@SaveAndExit" OnSave="@Save" OnDiscard="@Discard" />
     </div>
 }

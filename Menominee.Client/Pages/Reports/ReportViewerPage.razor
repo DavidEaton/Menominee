@@ -1,0 +1,26 @@
+﻿@page "/reportviewer"
+@page "/reportviewer/{reportName}"
+@page "/reportviewer/{reportName}/{previewMode:bool}"
+
+@inject IConfiguration Configuration
+
+<PageTitle>Report Viewer</PageTitle>
+
+<ReportViewer ServiceUrl="@($"{Configuration["ApiBaseUrl"]}reports")"
+              @bind-ReportSource="@ReportSource"
+              @bind-ScaleMode="@ScaleMode"
+              @bind-ViewMode="@ViewMode"
+              @bind-ParametersAreaVisible="@ParametersAreaVisible"
+              @bind-DocumentMapVisible="@DocumentMapVisible"
+              @bind-Scale="@Scale"
+              @ref="Report"
+              PageMode="@PageMode.ContinuousScroll"
+              PrintMode="@PrintMode.AutoSelect"
+              KeepClientAlive="true"
+              EnableSendEmail="true"
+              ServiceType="@ReportViewerServiceType.REST"
+              Height="900px"
+              Width="100%"
+              Tools="@Tools">
+</ReportViewer>
+

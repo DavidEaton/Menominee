@@ -1,4 +1,5 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Common.Enums;
 
 namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
 {
@@ -9,6 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
         public string Date { get; set; }
         public string DatePosted { get; set; }
         public string Status { get; set; }
+        public VendorInvoiceDocumentType DocumentType { get; set; } = VendorInvoiceDocumentType.Invoice;
         public string InvoiceNumber { get; set; }
         public double Total { get; set; }
     }

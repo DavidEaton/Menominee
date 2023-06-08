@@ -29,7 +29,7 @@ namespace Menominee.Client.Components.Payables
         private IList<VendorInvoiceStatusEnumModel> VendorInvoiceStatusEnumData { get; set; } = new List<VendorInvoiceStatusEnumModel>();
 
         private long vendorId = 0;
-        private string invoiceStatus;
+        private string invoiceStatus = "";
 
         protected override async Task OnInitializedAsync()
         {

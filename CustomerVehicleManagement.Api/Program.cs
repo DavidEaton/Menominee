@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Azure.Identity;
 using CustomerVehicleManagement.Api;
 using CustomerVehicleManagement.Api.CreditCards;
@@ -37,7 +39,8 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
-using System;
+using Telerik.Reporting.Cache.File;
+using Telerik.Reporting.Services;
 
 var logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -159,11 +162,35 @@ try
     if (builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment("Testing"))
         AddControllersWithOptions(services, isProduction: false);
 
+    var reportsPath = Path.Combine(builder.Environment.ContentRootPath, "Reports");
+
     if (builder.Environment.IsDevelopment())
     {
-        // services.AddDbContext<ApplicationDbContext>();
+        //services.AddDbContext<ApplicationDbContext>();
         // Uncomment next line and comment previous line to route all requests to a single tenant database during development
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration[$"DatabaseSettings:MigrationsConnection"]));
+
+        // Added per Telerik Reporting tutorial
+        services.AddControllers().AddNewtonsoftJson();
+        services.Configure<IISServerOptions>(options =>
+        {
+            options.AllowSynchronousIO = true;
+        });
+        services.TryAddSingleton<IReportServiceConfiguration>(sp =>
+            new ReportServiceConfiguration
+            {
+                // The default ReportingEngineConfiguration will be initialized from appsettings.json or appsettings.{EnvironmentName}.json:
+                ReportingEngineConfiguration = sp.GetService<IConfiguration>(),
+
+                // In case the ReportingEngineConfiguration needs to be loaded from a specific configuration file, use:
+                //ReportingEngineConfiguration = ResolveSpecificReportingConfiguration(sp.GetService<IWebHostEnvironment>()),
+                HostAppId = "Menominee",
+                Storage = new FileStorage(),
+                ReportSourceResolver = new TypeReportSourceResolver()
+                    .AddFallbackResolver(
+                        new UriReportSourceResolver(reportsPath))
+            });
+
     }
     if (builder.Environment.IsEnvironment("Testing"))
         services.AddDbContext<ApplicationDbContext>(options =>

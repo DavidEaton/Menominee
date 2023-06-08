@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,9 +28,12 @@
     </PackageReference>
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.4.0.48" />
     <PackageReference Include="Syncfusion.Blazor.Schedule" Version="19.4.0.48" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="Telerik.Reporting" Version="17.0.23.315" />
+    <PackageReference Include="Telerik.ReportViewer.BlazorNative" Version="17.0.23.315" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="4.0.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Shared\CustomerVehicleManagement.Shared.csproj" />
@@ -47,4 +52,13 @@
     <Folder Include="Services\RepairOrders\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Reports\VendorInvoiceReport.cs" />
+  </ItemGroup>
+  
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties properties_4launchsettings_1json__JsonSchema="https://json.schemastore.org/license-report-config.json" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

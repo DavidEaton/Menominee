@@ -1,26 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Syncfusion.Blazor.Navigations;
-using System.Collections.Generic;
+using Syncfusion.Blazor.SplitButtons;
 
 namespace Menominee.Client.Components.Payables
 {
     public partial class PayablesMenu
     {
         [Inject]
-        public NavigationManager navigationManager { get; set; }
+        public NavigationManager? NavigationManager { get; set; }
 
-        private static string ModuleUrl = "/payables";
-        public int menuWidth { get; set; } = 470;
+        private static readonly string ModuleUrl = "/payables";
+        public int MenuWidth { get; set; } = 470;
 
-        public void OnItemSelected(MenuItem selectedItem)
-        {
-            //if (Int32.Parse(selectedItem.Id) >= 0 && selectedItem.Url.Length > 0)
-            //{
-            //    navigationManager.NavigateTo(selectedItem.Url);
-            //}
-        }
-
-        private List<MenuItem> menuItems = new()
+        private readonly List<MenuItem> menuItems = new()
         {
 #pragma warning disable BL0005
             new MenuItem
@@ -33,7 +25,7 @@ namespace Menominee.Client.Components.Payables
             {
                 Text = "Credit Returns",
                 Id = ((int)PayablesMenuId.CreditReturns).ToString(),
-                Url = $"{ModuleUrl}/returns/listing"
+                Url = ""
             },
             new MenuItem
             {
@@ -50,10 +42,10 @@ namespace Menominee.Client.Components.Payables
             new MenuItem
             {
                 Text = "Reports",
-                Id = "-1",//((int)PayablesMenuId.Reports).ToString(),
+                Id = "-1",
                 Items = new List<MenuItem>
                 {
-                    new MenuItem { Text= "Vendor List", Url="", Id=((int)PayablesMenuId.VendorListReport).ToString() },
+                    new MenuItem { Text= "Vendor List", Url="reportviewer/vendorlisting.trdp/true", Id=((int)PayablesMenuId.VendorListReport).ToString() },
                     new MenuItem { Separator= true, Url="" },
                     new MenuItem { Text= "Vendor Detail", Url="", Id=((int)PayablesMenuId.VendorDetailReport).ToString() },
                     new MenuItem { Text= "Vendor Summary", Url="", Id=((int)PayablesMenuId.VendorSummaryReport).ToString() },
@@ -73,5 +65,11 @@ namespace Menominee.Client.Components.Payables
             }
          };
 #pragma warning restore BL0005
+
+        public void OnItemSelected(MenuItem selectedItem)
+        {
+            if (Int32.Parse(selectedItem.Id) == (int)PayablesMenuId.InvoiceSummaryReport)
+                NavigationManager?.NavigateTo("reportviewer/vendorInvoiceSummary.trdp/true");
+        }
     }
 }
