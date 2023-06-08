@@ -64,7 +64,7 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                 vendorFromRepository.SetName(vendorFromCaller.Name);
 
             if (vendorFromRepository.Notes != vendorFromCaller.Notes)
-                vendorFromRepository.SetNote(vendorFromCaller.Notes);
+                vendorFromRepository.SetNotes(vendorFromCaller.Notes);
 
             if (vendorFromCaller.IsActive.HasValue)
             {

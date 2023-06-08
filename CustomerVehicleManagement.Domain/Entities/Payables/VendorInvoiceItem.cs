@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -24,23 +23,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             Manufacturer manufacturer = null,
             SaleCode saleCode = null)
         {
-            partNumber = (partNumber ?? string.Empty).Trim();
-            description = (description ?? string.Empty).Trim();
-
-            if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
-            if (description.Length < MinimumLength || description.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
             PartNumber = partNumber;
             Description = description;
-
-            if (manufacturer is not null)
-                Manufacturer = manufacturer;
-
-            if (saleCode is not null)
-                SaleCode = saleCode;
+            Manufacturer = manufacturer;
+            SaleCode = saleCode;
         }
 
         public static Result<VendorInvoiceItem> Create(
@@ -62,45 +48,52 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 partNumber, description, manufacturer, saleCode));
         }
 
-        public Result<string> SetPartNumber(string partNumber)
+        public Result<VendorInvoiceItem> NewPartNumber(string partNumber)
         {
             partNumber = (partNumber ?? string.Empty).Trim();
 
             if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+                return Result.Failure<VendorInvoiceItem>(InvalidLengthMessage);
 
-            return Result.Success(PartNumber = partNumber);
+            return Result.Success(new VendorInvoiceItem(partNumber, Description, Manufacturer, SaleCode));
         }
 
-        public Result<string> SetDescription(string description)
+        public Result<VendorInvoiceItem> NewDescription(string description)
         {
             description = (description ?? string.Empty).Trim();
 
             if (description.Length < MinimumLength || description.Length > MaximumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+                return Result.Failure<VendorInvoiceItem>(InvalidLengthMessage);
 
-            return Result.Success(Description = description);
+            return Result.Success(new VendorInvoiceItem(PartNumber, description, Manufacturer, SaleCode));
         }
 
-        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
+        public Result<VendorInvoiceItem> NewManufacturer(Manufacturer manufacturer)
         {
             if (manufacturer is null)
-                return Result.Failure<Manufacturer>(RequiredMessage);
+                return Result.Failure<VendorInvoiceItem>(RequiredMessage);
 
-            return Result.Success(Manufacturer = manufacturer);
+            return Result.Success(new VendorInvoiceItem(PartNumber, Description, manufacturer, SaleCode));
         }
 
-        public void ClearManufacturer() => Manufacturer = null;
+        public Result<VendorInvoiceItem> ClearManufacturer()
+        {
+            return Result.Success(new VendorInvoiceItem(PartNumber, Description, null, SaleCode));
+        }
 
-        public Result<SaleCode> SetSaleCode(SaleCode saleCode)
+        public Result<VendorInvoiceItem> NewSaleCode(SaleCode saleCode)
         {
             if (saleCode is null)
-                return Result.Failure<SaleCode>(RequiredMessage);
+                return Result.Failure<VendorInvoiceItem>(RequiredMessage);
 
-            return Result.Success(SaleCode = saleCode);
+            return Result.Success(new VendorInvoiceItem(PartNumber, Description, Manufacturer, saleCode));
         }
 
-        public void ClearSaleCode() => SaleCode = null;
+        public Result<VendorInvoiceItem> ClearSaleCode()
+        {
+            return Result.Success(new VendorInvoiceItem(PartNumber, Description, Manufacturer, null));
+
+        }
 
         #region ORM
 

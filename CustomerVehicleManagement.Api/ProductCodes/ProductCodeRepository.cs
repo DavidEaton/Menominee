@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                                 productCode.Code == code);
 
             return pcFromContext is not null
-                ? ProductCodeHelper.ConvertEntityToReadDto(pcFromContext)
+                ? ProductCodeHelper.ConvertToReadDto(pcFromContext)
                 : null;
         }
 
@@ -64,7 +64,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                              .FirstOrDefaultAsync(pc => pc.Id == id);
 
             return pcFromContext is not null
-                ? ProductCodeHelper.ConvertEntityToReadDto(pcFromContext)
+                ? ProductCodeHelper.ConvertToReadDto(pcFromContext)
                 : null;
         }
 
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .ToArrayAsync();
 
             return productCodes
-                .Select(productCode => ProductCodeHelper.ConvertEntityToReadDto(productCode))
+                .Select(productCode => ProductCodeHelper.ConvertToReadDto(productCode))
                 .ToList();
         }
 
@@ -112,7 +112,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .ToArrayAsync();
 
             return productCodes
-                .Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
+                .Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
                 .ToList();
         }
 
@@ -127,7 +127,7 @@ namespace CustomerVehicleManagement.Api.ProductCodes
                                    .ToArrayAsync();
 
             return productCodes.
-                Select(productCode => ProductCodeHelper.ConvertEntityToReadInListDto(productCode))
+                Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
                 .ToList();
         }
 

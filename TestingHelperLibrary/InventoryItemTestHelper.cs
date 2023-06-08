@@ -72,8 +72,8 @@ namespace TestingHelperLibrary
 
         public static ProductCode CreateProductCode()
         {
-            var manufacturer = CreateManufacturer();
-            var saleCode = CreateSaleCode();
+            Manufacturer manufacturer = CreateManufacturer();
+            SaleCode saleCode = CreateSaleCode();
             List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
 
             return ProductCode.Create(manufacturer, "A1", "A One", manufacturerCodes, saleCode).Value;
@@ -82,8 +82,8 @@ namespace TestingHelperLibrary
         public static IReadOnlyList<ProductCode> CreateProductCodes(int count)
         {
             var manufacturers = CreateManufacturers(count);
-            var saleCodes = CreateSaleCodes(count);
-            List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with real list
+            var saleCodes = CreateSaleCodes(count); //TODO: replace with Faker list
+            List<string> manufacturerCodes = new() { "11" }; //TODO: replace hack for compiler with Faker list
             var productCodes = new List<ProductCode>();
 
             for (int i = 0; i < count; i++)

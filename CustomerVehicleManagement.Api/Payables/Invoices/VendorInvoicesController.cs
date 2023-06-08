@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Api.Common;
 using CustomerVehicleManagement.Api.Manufacturers;
 using CustomerVehicleManagement.Api.Payables.PaymentMethods;
@@ -18,6 +14,10 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
@@ -52,7 +52,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetList([FromQuery] ResourceParameters resourceParameters)
         {
-            var result = await repository.GetInvoiceListAsync(resourceParameters);
+            var result = await repository.GetList(resourceParameters);
 
             return result is null
                 ? NotFound()
@@ -72,7 +72,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
         public async Task<ActionResult<VendorInvoiceToRead>> Get(long id)
         {
-            var result = await repository.GetInvoiceAsync(id);
+            var result = await repository.Get(id);
 
             return result is null
                 ? NotFound()
@@ -91,7 +91,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, VendorInvoiceToWrite invoiceFromCaller)
         {
-            var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
+            var invoiceFromRepository = await repository.GetEntity(id);
 
             if (invoiceFromRepository is null)
                 return NotFound($"Could not find Vendor Invoice to update with Id = {id}.");
@@ -105,41 +105,122 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
-            //// TODO: VK Question: Is this how you would go about updating colections?
-            //var vendorInvoiceCollections = VendorInvoiceCollectionsFactory.Create(
-            //    (IReadOnlyList<VendorInvoiceLineItemToWrite>)invoiceFromCaller.LineItems,
-            //    (IReadOnlyList<VendorInvoicePaymentToWrite>)invoiceFromCaller.Payments,
-            //    (IReadOnlyList<VendorInvoiceTaxToWrite>)invoiceFromCaller.Taxes,
-            //    manufacturers,
-            //    saleCodes);
-
-            //result = invoiceFromRepository.UpdateCollections(vendorInvoiceCollections);
-
-            //if (result.IsFailure)
-            //    return BadRequest(result.Error);
+            UpdateLineItems(invoiceFromCaller, invoiceFromRepository, manufacturers, saleCodes);
+            await UpdatePayments(invoiceFromCaller, invoiceFromRepository);
+            await UpdateTaxes(invoiceFromCaller, invoiceFromRepository);
 
             await repository.SaveChanges();
-            invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
-
             return NoContent();
         }
 
-        private Result UpdateVendorInvoiceProperties(
+        private async Task UpdateTaxes(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
+        {
+            foreach (var tax in invoiceFromRepository.Taxes)
+            {
+                var taxFromCaller = invoiceFromCaller.Taxes.FirstOrDefault(taxFromCaller => taxFromCaller.Id == tax.Id);
+
+                if (taxFromCaller is null) continue;
+
+                if (tax.Amount != taxFromCaller.Amount)
+                    tax.SetAmount(taxFromCaller.Amount);
+
+                if (tax.SalesTax.Id != taxFromCaller.SalesTax.Id)
+                    tax.SetSalesTax(
+                        await salesTaxRepository.GetSalesTaxEntityAsync(taxFromCaller.SalesTax.Id));
+            }
+        }
+
+        private async Task UpdatePayments(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository)
+        {
+            foreach (var payment in invoiceFromRepository.Payments)
+            {
+                var paymentFromCaller = invoiceFromCaller.Payments.FirstOrDefault(paymentFromCaller => paymentFromCaller.Id == payment.Id);
+
+                if (paymentFromCaller is null) continue;
+
+                if (payment.Amount != paymentFromCaller.Amount)
+                    payment.SetAmount(paymentFromCaller.Amount);
+
+                if (payment.PaymentMethod.Id != paymentFromCaller.PaymentMethod.Id)
+                    payment.SetPaymentMethod(
+                        await paymentMethodRepository.GetPaymentMethodEntityAsync(paymentFromCaller.PaymentMethod.Id));
+            }
+        }
+
+        private static void UpdateLineItems(VendorInvoiceToWrite invoiceFromCaller, VendorInvoice invoiceFromRepository, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<SaleCode> saleCodes)
+        {
+            foreach (var line in invoiceFromRepository.LineItems)
+            {
+                var lineFromCaller = invoiceFromCaller.LineItems.FirstOrDefault(lineFromCaller => lineFromCaller.Id == line.Id);
+
+                if (lineFromCaller is null) continue;
+
+                if (line.TransactionDate != lineFromCaller.TransactionDate)
+                    line.SetTransactionDate(lineFromCaller.TransactionDate);
+
+                if (line.PONumber != lineFromCaller.PONumber)
+                    line.SetPONumber(lineFromCaller.PONumber);
+
+                if (line.Cost != lineFromCaller.Cost)
+                    line.SetCost(lineFromCaller.Cost);
+
+                if (line.Core != lineFromCaller.Core)
+                    line.SetCore(lineFromCaller.Core);
+
+                if (line.Quantity != lineFromCaller.Quantity)
+                    line.SetQuantity(lineFromCaller.Quantity);
+
+                if (line.Type != lineFromCaller.Type)
+                    line.SetType(lineFromCaller.Type);
+
+                if (line.Item.Description != lineFromCaller.Item.Description
+                    || line.Item.PartNumber != lineFromCaller.Item.PartNumber
+                    || line.Item.Manufacturer.Id != lineFromCaller.Item.Manufacturer.Id
+                    || line.Item.SaleCode.Id != lineFromCaller.Item.SaleCode.Id)
+                {
+                    line.SetItem(
+                        VendorInvoiceItem.Create(
+                            lineFromCaller.Item.PartNumber,
+                            lineFromCaller.Item.Description,
+                            lineFromCaller.Item.Manufacturer is null
+                            ? null
+                            : manufacturers.FirstOrDefault(m => m.Id == lineFromCaller.Item.Manufacturer.Id),
+                            lineFromCaller.Item.SaleCode is null
+                            ? null
+                            : saleCodes.FirstOrDefault(saleCode => saleCode.Id == lineFromCaller.Item.SaleCode.Id)
+                        ).Value);
+                }
+            }
+        }
+
+        private static Result UpdateVendorInvoiceProperties(
             VendorInvoice invoiceFromRepository,
             VendorInvoiceToWrite invoiceFromCaller,
             IReadOnlyList<string> vendorInvoiceNumbers,
             Vendor vendor)
         {
-            return invoiceFromRepository.UpdateProperties(
-                vendor,
-                invoiceFromCaller.Status,
-                invoiceFromCaller.DocumentType,
-                invoiceFromCaller.DatePosted,
-                invoiceFromCaller.Date,
-                invoiceFromCaller.InvoiceNumber,
-                vendorInvoiceNumbers,
-                invoiceFromCaller.Total
-                );
+            return Result.Combine(
+                (vendor is not null) && (vendor.Id != invoiceFromRepository.Vendor.Id)
+                    ? invoiceFromRepository.SetVendor(vendor)
+                    : Result.Success(),
+                (invoiceFromCaller.Status != invoiceFromRepository.Status)
+                    ? invoiceFromRepository.SetStatus(invoiceFromCaller.Status)
+                        : Result.Success(),
+                (invoiceFromCaller.DocumentType != invoiceFromRepository.DocumentType)
+                    ? invoiceFromRepository.SetDocumentType(invoiceFromCaller.DocumentType)
+                    : Result.Success(),
+                (invoiceFromCaller.DatePosted is not null) && (invoiceFromCaller.DatePosted != invoiceFromRepository.DatePosted)
+                    ? invoiceFromRepository.SetDatePosted(invoiceFromCaller.DatePosted)
+                        : Result.Success(),
+                (invoiceFromCaller.Date is not null) && (invoiceFromCaller.Date != invoiceFromRepository.Date)
+                    ? invoiceFromRepository.SetDate(invoiceFromCaller.Date)
+                    : Result.Success(),
+                (invoiceFromCaller.InvoiceNumber != invoiceFromRepository.InvoiceNumber)
+                    ? invoiceFromRepository.SetInvoiceNumber(invoiceFromCaller.InvoiceNumber, vendorInvoiceNumbers)
+                    : Result.Success(),
+                (invoiceFromCaller.Total != invoiceFromRepository.Total)
+                    ? invoiceFromRepository.SetTotal(invoiceFromCaller.Total)
+                    : Result.Success());
         }
 
         // POST: api/vendorinvoices
@@ -165,16 +246,15 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     lineItem.Item.SaleCode.Id)
                 .ToList());
 
-            var invoiceCollections = VendorInvoiceCollectionsFactory.Create(
-                (IReadOnlyList<VendorInvoiceLineItemToWrite>)invoiceToAdd.LineItems,
-                (IReadOnlyList<VendorInvoicePaymentToWrite>)invoiceToAdd.Payments,
-                (IReadOnlyList<VendorInvoiceTaxToWrite>)invoiceToAdd.Taxes,
-                manufacturers,
-                saleCodes);
+            var invoiceEntity = VendorInvoiceHelper.ConvertWriteToEntity(
+                invoiceToAdd,
+                vendorFromRepository,
+                VendorInvoiceLineItemHelper.ConvertWriteDtosToEntities(invoiceToAdd.LineItems, manufacturers, saleCodes),
+                VendorInvoicePaymentHelper.ConvertWriteDtosToEntities(invoiceToAdd.Payments),
+                VendorInvoiceTaxHelper.ConvertWriteDtosToEntities(invoiceToAdd.Taxes),
+                await repository.GetVendorInvoiceNumbers(vendorFromRepository.Id));
 
-            var invoiceEntity = VendorInvoiceHelper.ConvertWriteToEntity(invoiceToAdd, vendorFromRepository, invoiceCollections.LineItems, invoiceCollections.Payments, invoiceCollections.Taxes, await repository.GetVendorInvoiceNumbers(vendorFromRepository.Id));
-
-            await repository.AddInvoice(invoiceEntity);
+            await repository.Add(invoiceEntity);
             await repository.SaveChanges();
 
             return Created(
@@ -185,12 +265,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {
-            var invoiceFromRepository = await repository.GetInvoiceEntityAsync(id);
+            var invoiceFromRepository = await repository.GetEntity(id);
 
             if (invoiceFromRepository is null)
                 return NotFound($"Could not find Vendor Invoice in the database to delete with Id: {id}.");
 
-            repository.DeleteInvoice(invoiceFromRepository);
+            repository.Delete(invoiceFromRepository);
 
             await repository.SaveChanges();
 

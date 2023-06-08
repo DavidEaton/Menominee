@@ -114,7 +114,7 @@ namespace CustomerVehicleManagement.Api.Inventory
         private async Task<InventoryItemToRead> GetInventoryItemToRead(Expression<Func<InventoryItem, bool>> predicate) =>
             await GetInventoryItemsQuery()
                 .FirstOrDefaultAsync(predicate) is InventoryItem itemFromContext
-                ? InventoryItemHelper.ConvertEntityToReadDto(itemFromContext)
+                ? InventoryItemHelper.ConvertToReadDto(itemFromContext)
                 : null;
 
         private async Task<InventoryItem> GetInventoryItemEntity(Expression<Func<InventoryItem, bool>> predicate) =>
@@ -140,7 +140,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await query.ToListAsync();
 
             return itemsFromContext.Select(
-                item => InventoryItemHelper.ConvertEntityToReadDto(item))
+                item => InventoryItemHelper.ConvertToReadDto(item))
                 .ToList();
         }
 
@@ -167,7 +167,7 @@ namespace CustomerVehicleManagement.Api.Inventory
             var itemsFromContext = await query.ToListAsync();
 
             return itemsFromContext.Select(
-                item => InventoryItemHelper.ConvertEntityToReadInListDto(item))
+                item => InventoryItemHelper.ConvertToReadInListDto(item))
                 .ToList();
         }
 

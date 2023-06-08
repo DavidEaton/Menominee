@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -10,22 +9,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 255;
-
         public string Name { get; private set; }
         public string Prefix { get; private set; }
         public string Code { get; private set; }
 
         private Manufacturer(string name, string prefix, string code)
         {
-            name = (name ?? string.Empty).Trim();
-            prefix = (prefix ?? string.Empty).Trim();
-            code = (code ?? string.Empty).Trim();
-
-            if (name.Length > MaximumLength || name.Length < MinimumLength ||
-                prefix.Length > MaximumLength || prefix.Length < MinimumLength ||
-                code.Length > MaximumLength || code.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
             Name = name;
             Prefix = prefix;
             Code = code;

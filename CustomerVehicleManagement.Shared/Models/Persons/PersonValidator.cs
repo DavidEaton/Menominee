@@ -42,6 +42,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                             person.Name.FirstName,
                             person.Name.MiddleName).Value,
                         person.Gender,
+                        person.Notes,
                         person.Birthday));
         }
     }

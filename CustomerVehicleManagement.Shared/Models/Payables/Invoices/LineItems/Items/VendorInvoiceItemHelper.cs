@@ -42,7 +42,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
                 };
         }
 
-        internal static VendorInvoiceItemToWrite ConvertEntityToWriteDto(VendorInvoiceItem item)
+        internal static VendorInvoiceItemToWrite ConvertToWriteDto(VendorInvoiceItem item)
         {
             return
                 item is null
@@ -53,11 +53,30 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
                     Manufacturer =
                         item.Manufacturer is null
                         ? null
-                        : ManufacturerHelper.ConvertEntityToReadDto(item.Manufacturer),
+                        : ManufacturerHelper.ConvertToReadDto(item.Manufacturer),
                     PartNumber = item.PartNumber,
                     SaleCode =
                         item.SaleCode is null
-                        ? null : SaleCodeHelper.ConvertEntityToReadDto(item.SaleCode)
+                        ? null : SaleCodeHelper.ConvertToReadDto(item.SaleCode)
+                };
+        }
+
+        internal static VendorInvoiceItemToRead ConvertWriteToReadDto(VendorInvoiceItemToWrite item)
+        {
+            return
+                item is null
+                ? null
+                : new()
+                {
+                    Description = item.Description,
+                    Manufacturer =
+                        item.Manufacturer is null
+                        ? null
+                        : item.Manufacturer,
+                    PartNumber = item.PartNumber,
+                    SaleCode =
+                        item.SaleCode is null
+                        ? null : item.SaleCode
                 };
         }
     }

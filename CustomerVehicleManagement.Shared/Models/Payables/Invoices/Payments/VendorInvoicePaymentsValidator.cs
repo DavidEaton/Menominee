@@ -10,7 +10,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
 
         public VendorInvoicePaymentsValidator()
         {
-            IList<string> paymentMethodNames = new List<string>();
+            IReadOnlyList<string> paymentMethodNames = new List<string>();
 
             RuleFor(payments => payments)
                 .NotNull()

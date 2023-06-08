@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -27,24 +26,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
         {
-            if (list < MinimumMoneyAmount ||
-                cost < MinimumMoneyAmount ||
-                core < MinimumMoneyAmount ||
-                retail < MinimumMoneyAmount ||
-                list > MaximumMoneyAmount ||
-                cost > MaximumMoneyAmount ||
-                core > MaximumMoneyAmount ||
-                retail > MaximumMoneyAmount)
-                throw new ArgumentOutOfRangeException(InvalidMoneyAmountMessage);
-
-            // TechAmount is validated before we ever get here
-
-            lineCode = (lineCode ?? string.Empty).Trim();
-            subLineCode = (subLineCode ?? string.Empty).Trim();
-
-            if (lineCode.Length > MaximumLineCodeLength || subLineCode.Length > MaximumLineCodeLength)
-                throw new ArgumentOutOfRangeException(InvalidLineCodeLengthMessage);
-
             List = list;
             Cost = cost;
             Core = core;

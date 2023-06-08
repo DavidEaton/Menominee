@@ -8,15 +8,15 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
 {
     public class PhoneHelper
     {
-        public static IList<PhoneToRead> ConvertEntitiesToReadDtos(IList<Phone> phones)
+        public static List<PhoneToRead> ConvertToReadDtos(IReadOnlyList<Phone> phones)
         {
             return phones
                 .Select(phone =>
-                        ConvertEntityToReadDto(phone))
+                        ConvertToReadDto(phone))
                 .ToList();
         }
 
-        public static IList<PhoneToWrite> ConvertReadToWriteDtos(IList<PhoneToRead> phones)
+        public static List<PhoneToWrite> ConvertReadToWriteDtos(IReadOnlyList<PhoneToRead> phones)
         {
             return phones
                 .Select(phone =>
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 : null;
         }
 
-        private static PhoneToRead ConvertEntityToReadDto(Phone phone)
+        private static PhoneToRead ConvertToReadDto(Phone phone)
         {
             return (phone is not null)
                 ? new PhoneToRead()
@@ -51,15 +51,15 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 : null;
         }
 
-        public static IList<PhoneToWrite> ConvertEntitiesToWriteDtos(IList<Phone> phones)
+        public static IReadOnlyList<PhoneToWrite> ConvertToWriteDtos(IReadOnlyList<Phone> phones)
         {
             return phones
                 .Select(phone =>
-                        ConvertEntityToWriteDto(phone))
+                        ConvertToWriteDto(phone))
                 .ToList();
         }
 
-        private static PhoneToWrite ConvertEntityToWriteDto(Phone phone)
+        private static PhoneToWrite ConvertToWriteDto(Phone phone)
         {
             return (phone is not null)
                 ? new PhoneToWrite()
@@ -128,5 +128,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
         {
             return new string(input.Where(character => char.IsDigit(character)).ToArray());
         }
+
+
     }
 }

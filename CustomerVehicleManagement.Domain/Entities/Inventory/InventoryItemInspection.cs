@@ -13,9 +13,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public InventoryItemInspectionType InspectionType { get; private set; } //required
         private InventoryItemInspection(LaborAmount laborAmount, TechAmount techAmount, InventoryItemInspectionType type)
         {
-            if (!Enum.IsDefined(typeof(InventoryItemInspectionType), type))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             LaborAmount = laborAmount;
             TechAmount = techAmount;
             InspectionType = type;

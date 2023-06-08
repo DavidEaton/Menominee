@@ -20,7 +20,8 @@ namespace CustomerVehicleManagement.Api.Configurations
             builder.OwnsOne(organization => organization.Name)
                 .Property(name => name.Name)
                 .HasColumnName("Name")
-                .HasMaxLength(255);
+                .HasMaxLength(255)
+                .IsRequired();
 
             // Value Object: Address
             builder.OwnsOne(organization => organization.Address)

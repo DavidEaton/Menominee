@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -16,15 +15,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemPackageItem(int displayOrder, InventoryItem inventoryItem, InventoryItemPackageDetails details)
         {
-            if (displayOrder < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if (inventoryItem is null)
-                throw new ArgumentNullException(nameof(inventoryItem));
-
-            if (details is null)
-                throw new ArgumentNullException(nameof(details));
-
             DisplayOrder = displayOrder;
             Item = inventoryItem;
             Details = details;

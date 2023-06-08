@@ -59,5 +59,23 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
                     TransactionDate = lineItem.TransactionDate
                 };
         }
+
+        public static IReadOnlyList<VendorInvoiceLineItemToRead> ConvertWriteToReadDtos(IReadOnlyList<VendorInvoiceLineItemToWrite> updatedLineItems)
+        {
+            return
+                updatedLineItems is null
+                ? new List<VendorInvoiceLineItemToRead>()
+                : updatedLineItems.Select(lineItem => new VendorInvoiceLineItemToRead()
+                {
+                    Core = lineItem.Core,
+                    Cost = lineItem.Cost,
+                    Id = lineItem.Id,
+                    PONumber = lineItem?.PONumber,
+                    Quantity = lineItem.Quantity,
+                    TransactionDate = lineItem.TransactionDate,
+                    Type = lineItem.Type,
+                    Item = VendorInvoiceItemHelper.ConvertWriteToReadDto(lineItem.Item)
+                }).ToList();
+        }
     }
 }

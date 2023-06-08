@@ -7,6 +7,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
 {
     public class PersonNameShould
     {
+        private const string InvalidStringOverMaximumLength = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"; // 256 characters
+        private const string InvalidStringUnderMinimum = "";
+
         [Fact]
         public void Create_PersonName()
         {
@@ -30,7 +33,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(firstName, lastName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
@@ -42,7 +45,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(firstName, lastName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
@@ -54,19 +57,19 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
         public void Return_IsFailure_Result_On_Create_With_Short_LastName()
         {
             var firstName = "Molly";
-            var lastName = "M";
+            var lastName = "";
 
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameInvalidLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
@@ -78,7 +81,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameInvalidLengthMessage);
+            personNameOrError.Error.Should().Be(PersonName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -90,7 +93,20 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.FirstNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
+        }
+
+        [Theory]
+        //[InlineData(InvalidStringZeroLength)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_Length_FirstName(string firstName)
+        {
+            var lastName = "Moops";
+
+            var personNameOrError = PersonName.Create(lastName, firstName);
+
+            personNameOrError.IsFailure.Should().BeTrue();
+            personNameOrError.Error.Should().Be(PersonName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -102,7 +118,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.LastNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
@@ -114,7 +130,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var personNameOrError = PersonName.Create(lastName, firstName);
 
             personNameOrError.IsFailure.Should().BeTrue();
-            personNameOrError.Error.Should().Be(PersonName.FirstNameRequiredMessage);
+            personNameOrError.Error.Should().Be(PersonName.RequiredMessage);
         }
 
         [Fact]
@@ -157,6 +173,33 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             name.LastName.Should().Be(newLastName);
         }
 
+        [Theory]
+        [InlineData(InvalidStringUnderMinimum)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_On_UnderMinimum_NewLastName(string newLastName)
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName).Value;
+
+            var result = name.NewLastName(newLastName);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(PersonName.InvalidLengthMessage);
+        }
+
+        [Theory]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_On_OverMaximumLength_NewLastName(string lastName)
+        {
+            var firstName = "Jane";
+
+            var result = PersonName.Create(lastName, firstName);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(PersonName.InvalidLengthMessage);
+        }
+
         [Fact]
         public void Return_New_PersonName_On_NewFirstName()
         {
@@ -168,6 +211,21 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             name = name.NewFirstName(newFirstName).Value;
 
             name.FirstName.Should().Be(newFirstName);
+        }
+
+        [Theory]
+        [InlineData(InvalidStringUnderMinimum)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_On_UnderMinimum_NewFirstName(string newFirstName)
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName).Value;
+
+            var result = name.NewFirstName(newFirstName);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(PersonName.InvalidLengthMessage);
         }
 
         [Fact]
@@ -184,6 +242,31 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             name.MiddleName.Should().Be(newMiddleName);
         }
 
+        [Theory]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_On_UnderMinimum_NewMiddleName(string newMiddleName)
+        {
+            var firstName = "Jane";
+            var middleName = "Francis";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName, middleName).Value;
+
+            var result = name.NewMiddleName(newMiddleName);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(PersonName.InvalidLengthMessage);
+        }
+
+        [Fact]
+        public void Return_ToString()
+        {
+            var firstName = "Jane";
+            var middleName = "Francis";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName, middleName).Value;
+
+            name.ToString().Should().Be(name.LastFirstMiddleInitial);
+        }
 
         [Fact]
         public void Return_All_PersonName_Variants()

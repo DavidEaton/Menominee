@@ -9,6 +9,11 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
 {
     public class AddressShould
     {
+        private const string AddressUnderMinimumLength = "11";
+        private const string AddressOverMaximumLength = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis sem rutrum, mattis mi quis, euismod enim. Quisque fringilla pharetra tellus, nec vehicula libero ultricies sit amet. Sed pellentesque ornare consequat. Vestibulum sodales magna tempus egest"; // 257 characters
+        private const string PostalCodeUnderMinimumLength = "4973";
+        private const string PostalCodeOverMaximumLength = "497354973549735";
+
         [Fact]
         public void Create_Address()
         {
@@ -223,7 +228,8 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         public void Equate_Two_Instances_Having_Same_Values()
         {
             var address1 = ContactableTestHelper.CreateAddress();
-            var address2 = ContactableTestHelper.CreateAddress();
+            var address2 = Address.Create(
+                address1.AddressLine, address1.City, address1.State, address1.PostalCode).Value;
 
             address1.Should().BeEquivalentTo(address2);
         }
@@ -240,7 +246,6 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             address1.Should().NotBeSameAs(address2);
         }
 
-
         [Fact]
         public void Return_New_Address_On_NewAddressLine()
         {
@@ -250,6 +255,19 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             address = address.NewAddressLine("5432 One Street").Value;
 
             address.AddressLine.Should().Be(newAddressLine);
+        }
+
+        [Theory]
+        [InlineData(AddressUnderMinimumLength)]
+        [InlineData(AddressOverMaximumLength)]
+        public void Return_Failure_On_NewAddressLine_With_Invalid_Length(string addressLine)
+        {
+            var address = ContactableTestHelper.CreateAddress();
+
+            var result = address.NewAddressLine(addressLine);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("length");
         }
 
         [Fact]
@@ -273,6 +291,19 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             address.City.Should().Be(newCity);
         }
 
+        [Theory]
+        [InlineData(AddressUnderMinimumLength)]
+        [InlineData(AddressOverMaximumLength)]
+        public void Return_Failure_On_Invalid_NewCity(string city)
+        {
+            var address = ContactableTestHelper.CreateAddress();
+
+            var result = address.NewCity(city);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("length");
+        }
+
         [Fact]
         public void Throw_Exception_On_NewCity_Passing_Null_Parameter()
         {
@@ -294,6 +325,18 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
+        public void Return_Failure_On_NewState_With_Invalid_State()
+        {
+            var address = ContactableTestHelper.CreateAddress();
+            var invalidState = (State)(-1);
+
+            var result = address.NewState(invalidState);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Address.StateInvalidMessage);
+        }
+
+        [Fact]
         public void Return_New_Address_On_NewPostalCode()
         {
             var address = ContactableTestHelper.CreateAddress();
@@ -304,6 +347,19 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             address.PostalCode.Should().Be(newPostalCode);
         }
 
+        [Theory]
+        [InlineData(PostalCodeUnderMinimumLength)]
+        [InlineData(PostalCodeOverMaximumLength)]
+        public void Return_Failure_On_NewPostalCode_With_Invalid_PostalCode(string invalidPostalCode)
+        {
+            var address = ContactableTestHelper.CreateAddress();
+
+            var result = address.NewPostalCode(invalidPostalCode);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("length");
+        }
+
         [Fact]
         public void Throw_Exception_On_NewPostalCode_Passing_Null_Parameter()
         {
@@ -312,6 +368,17 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             Action action = () => address = address = address.NewPostalCode(null).Value;
 
             action.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void Return_ToString()
+        {
+            var address = ContactableTestHelper.CreateAddress();
+
+            string toString = address.ToString();
+
+            toString.Should().Be($"{address.AddressLine} {address.City}, {address.State} {address.PostalCode}");
+            toString.Should().Be(address.AddressFull);
         }
     }
 }

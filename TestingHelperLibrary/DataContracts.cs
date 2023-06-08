@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using Menominee.Common.Enums;
 

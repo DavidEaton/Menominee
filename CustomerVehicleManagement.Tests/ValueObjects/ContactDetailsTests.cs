@@ -16,9 +16,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var emails = ContactableTestHelper.CreateEmails(5);
             var address = ContactableTestHelper.CreateAddress();
 
-            var phonesToWrite = PhoneHelper.ConvertEntitiesToWriteDtos(phones);
-            var emailsToWrite = EmailHelper.ConvertEntitiesToWriteDtos(emails);
-            var addressToWrite = AddressHelper.ConvertEntityToWriteDto(address);
+            var phonesToWrite = PhoneHelper.ConvertToWriteDtos(phones);
+            var emailsToWrite = EmailHelper.ConvertToWriteDtos(emails);
+            var addressToWrite = AddressHelper.ConvertToWriteDto(address);
 
             var details = ContactDetailsFactory.Create(phonesToWrite, emailsToWrite, addressToWrite);
 

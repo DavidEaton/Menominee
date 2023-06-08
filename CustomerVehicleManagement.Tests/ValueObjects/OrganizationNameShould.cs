@@ -1,5 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Menominee.Common.ValueObjects;
 using Xunit;
 
@@ -53,6 +52,32 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
+        public void Return_New_OrganizationName_On_NewOrganizationName()
+        {
+            string name = Utilities.LoremIpsum(OrganizationName.MinimumLength + 1);
+            var organizationName = OrganizationName.Create(name).Value;
+
+            var newOrganizationName = "New Organization Name";
+            var result = organizationName.NewOrganizationName(newOrganizationName);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(newOrganizationName);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Invalid_NewOrganizationName()
+        {
+            string name = Utilities.LoremIpsum(OrganizationName.MinimumLength + 1);
+            var organizationName = OrganizationName.Create(name).Value;
+
+            var newOrganizationName = Utilities.LoremIpsum(OrganizationName.MinimumLength - 1);
+            var result = organizationName.NewOrganizationName(newOrganizationName);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain(OrganizationName.InvalidMessage);
+        }
+
+        [Fact]
         public void Return_IsFailure_Result_On_Create_When_Under_Minimum_Length()
         {
             string name = Utilities.LoremIpsum(OrganizationName.MinimumLength - 1);
@@ -65,20 +90,19 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
-        public void Equate_Two_OrganizationName_Instances_Having_Same_Values()
+        public void Equate_Two_Instances_Having_Same_Values()
         {
-            var name1 = "june's";
-            var name2 = "june's";
+            var name1 = "jane's";
+            var name2 = "jane's";
 
             var organizationNameOrError1 = OrganizationName.Create(name1);
             var organizationNameOrError2 = OrganizationName.Create(name2);
-
 
             organizationNameOrError1.Should().BeEquivalentTo(organizationNameOrError2);
         }
 
         [Fact]
-        public void Equate_Two_Instances_Having_Same_Values()
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
         {
             var name1 = "jane's";
             var name2 = "june's";
@@ -87,19 +111,6 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var organizationNameOrError2 = OrganizationName.Create(name2);
 
             organizationNameOrError1.Should().NotBeEquivalentTo(organizationNameOrError2);
-        }
-
-        [Fact]
-        public void Not_Equate_Two_Instances_Having_Differing_Values()
-        {
-            var name = "jane's";
-            Result<OrganizationName> organizationNameOrError = OrganizationName.Create(name);
-            organizationNameOrError.Value.Name.Should().Be(name);
-            name = "June's";
-
-            string newOrganizationName = OrganizationName.NewOrganizationName(name).Name;
-
-            newOrganizationName.Should().Be(name);
         }
 
     }

@@ -163,13 +163,11 @@ namespace Menominee.Client.Components.RepairOrders
                 : RepairOrderToEdit = RepairOrderHelper.CovertReadToWriteDto(RepairOrder);
 
             // replace these once correct fields are in place
-            string title = $"RO #{RandomInt()}";
+            var title = $"RO #{RandomInt()}";
 
-            if (RepairOrder?.CustomerName?.Length > 0)
-                title += $"   ~   {RepairOrder.CustomerName}";
+            title += $"   ~   {RepairOrder?.Customer?.Name}";
 
-            if (RepairOrder?.Vehicle?.Length > 0)
-                title += $"   ~   {RepairOrder.Vehicle}";
+            title += $"   ~   {RepairOrder?.Vehicle.ToString()}";
 
             Title = title;
 
@@ -215,7 +213,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             foreach (var service in RepairOrderToEdit?.Services)
             {
-                foreach (var item in service?.Items)
+                foreach (var item in service?.LineItems)
                 {
                     if (item?.Purchases is not null)
                         item.Purchases.RemoveAll(purchase =>
@@ -228,7 +226,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             foreach (var service in RepairOrderToEdit?.Services)
             {
-                foreach (var item in service?.Items)
+                foreach (var item in service?.LineItems)
                 {
                     if (item?.SerialNumbers is not null)
                         item.SerialNumbers.RemoveAll(serialNumber =>
@@ -241,7 +239,7 @@ namespace Menominee.Client.Components.RepairOrders
         {
             foreach (var service in RepairOrderToEdit?.Services)
             {
-                foreach (var item in service?.Items)
+                foreach (var item in service?.LineItems)
                 {
                     if (item?.Warranties is not null)
                         item.Warranties.RemoveAll(warranty =>

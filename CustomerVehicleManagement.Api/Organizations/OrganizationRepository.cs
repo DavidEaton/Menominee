@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Api.Organizations
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(organization => organization.Id == id);
 
-            return OrganizationHelper.ConvertEntityToReadDto(organizationFromContext);
+            return OrganizationHelper.ConvertToReadDto(organizationFromContext);
         }
 
         public async Task<IReadOnlyList<OrganizationToRead>> GetOrganizationsAsync()
@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext
                 .Select(organization =>
-                        OrganizationHelper.ConvertEntityToReadDto(organization))
+                        OrganizationHelper.ConvertToReadDto(organization))
                 .ToList();
         }
 
@@ -88,7 +88,7 @@ namespace CustomerVehicleManagement.Api.Organizations
 
             return organizationsFromContext
                 .Select(organization =>
-                       OrganizationHelper.ConvertEntityToReadInListDto(organization))
+                       OrganizationHelper.ConvertToReadInListDto(organization))
                 .OrderBy(organization => organization.Name)
                 .ToList();
         }

@@ -142,7 +142,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         {
             var detailsOne = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
             var detailsIwo = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
-            detailsIwo = detailsIwo.SetQuantity(InventoryItemPackageDetails.MinimumValue + 11).Value;
+            detailsIwo = detailsIwo.NewQuantity(InventoryItemPackageDetails.MinimumValue + 11).Value;
 
             var packageItem = InventoryItemPackageItem.Create(
                 InventoryItemPackageItem.MinimumValue + 1,

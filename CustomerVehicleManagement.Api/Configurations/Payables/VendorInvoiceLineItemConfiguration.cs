@@ -25,12 +25,6 @@ namespace CustomerVehicleManagement.Api.Configurations.Payables
                     builder.WithOwner();
                     builder.Navigation(item => item.Manufacturer)
                         .UsePropertyAccessMode(PropertyAccessMode.Property);
-                });
-
-            builder.OwnsOne(
-                lineItem => lineItem.Item, builder =>
-                {
-                    builder.WithOwner();
                     builder.Navigation(item => item.SaleCode)
                         .UsePropertyAccessMode(PropertyAccessMode.Property);
                 });

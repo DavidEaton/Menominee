@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Entities;
 
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -19,24 +20,104 @@ namespace CustomerVehicleManagement.Tests.Entities
             // Arrange
             var firstName = "Jane";
             var lastName = "Doe";
+            var notes = Utilities.LoremIpsum(100);
 
             // Act
             var name = PersonName.Create(lastName, firstName).Value;
-            var personOrError = Person.Create(name, Gender.Female);
+            var resultOrError = Person.Create(name, Gender.Female, notes);
 
             // Assert
-            personOrError.Value.Should().BeOfType<Person>();
-            personOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.Should().BeOfType<Person>();
+            resultOrError.IsFailure.Should().BeFalse();
 
+        }
+
+        [Fact]
+        public void Create_Person_With_Birthday()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName).Value;
+            var notes = Utilities.LoremIpsum(100);
+            var birthday = DateTime.Today.AddYears(-50);
+
+            var resultOrError = Person.Create(name, Gender.Female, notes, birthday);
+
+            resultOrError.Value.Should().BeOfType<Person>();
+            resultOrError.IsFailure.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Create_Person_With_Address()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName).Value;
+            var notes = Utilities.LoremIpsum(100);
+            var address = ContactableTestHelper.CreateAddress();
+
+            var resultOrError = Person.Create(name, Gender.Female, notes, address: address);
+
+            resultOrError.Value.Should().BeOfType<Person>();
+            resultOrError.IsFailure.Should().BeFalse();
         }
 
         [Fact]
         public void Return_Failure_On_Create_With_Null_Name()
         {
-            var person = Person.Create(null, Gender.Female);
+            var notes = Utilities.LoremIpsum(100);
+            var person = Person.Create(null, Gender.Female, notes);
 
             person.IsFailure.Should().BeTrue();
-            person.Error.Should().NotBeNull();
+            person.Error.Should().Be(Contactable.RequiredMessage);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Create_With_Invalid_Birthday()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var notes = Utilities.LoremIpsum(100);
+            var name = PersonName.Create(lastName, firstName).Value;
+            DateTime? invalidBirthday = DateTime.MinValue;
+
+            var personOrError = Person.Create(name, Gender.Female, notes, invalidBirthday);
+
+            personOrError.IsFailure.Should().BeTrue();
+            personOrError.Error.Should().NotBeNull();
+
+            invalidBirthday = DateTime.MaxValue;
+            personOrError = Person.Create(name, Gender.Female, notes, invalidBirthday);
+
+            personOrError.IsFailure.Should().BeTrue();
+            personOrError.Error.Should().NotBeNull();
+
+        }
+
+        [Fact]
+        public void Return_Failure_On_Create_With_Invalid_Name()
+        {
+            PersonName name = null;
+            var notes = Utilities.LoremIpsum(100);
+
+            var personOrError = Person.Create(name, Gender.Female, notes);
+
+            personOrError.IsFailure.Should().BeTrue();
+            personOrError.Error.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Return_Failure_On_Create_With_Invalid_Gender()
+        {
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var name = PersonName.Create(lastName, firstName).Value;
+            Gender invaidGender = (Gender)(-1);
+            var notes = Utilities.LoremIpsum(100);
+            var resultOrError = Person.Create(name, invaidGender, notes);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().NotBeNull();
         }
 
         [Fact]
@@ -170,13 +251,25 @@ namespace CustomerVehicleManagement.Tests.Entities
             result.IsFailure.Should().BeTrue();
         }
 
+        [Theory]
+        [InlineData(null)]
+        public void Not_Add_Invalid_Email(Email email)
+        {
+            var person = ContactableTestHelper.CreatePerson();
+
+            var result = person.AddEmail(email);
+
+            result.IsFailure.Should().BeTrue();
+        }
+
         [Fact]
         public void SetName()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = Person.Create(name, Gender.Female).Value;
+            var notes = Utilities.LoremIpsum(100);
+            var person = Person.Create(name, Gender.Female, notes).Value;
             firstName = "Jill";
             lastName = "Done";
             name = PersonName.Create(lastName, firstName).Value;
@@ -188,16 +281,18 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Throw_Exception_On_SetName_With_Null_Parameter()
+        public void Fail_SetName_With_Null_Parameter()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
-            var person = Person.Create(name, Gender.Female).Value;
+            var notes = Utilities.LoremIpsum(100);
+            var person = Person.Create(name, Gender.Female, notes).Value;
 
-            Action action = () => person.SetName(null);
+            var result = person.SetName(null);
 
-            action.Should().Throw<ArgumentException>();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.RequiredMessage);
         }
 
         [Fact]
@@ -212,13 +307,61 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void SetBirthday()
+        public void SetGender_Failure()
         {
             var person = ContactableTestHelper.CreatePerson();
 
-            person.SetBirthday(DateTime.Today.AddDays(10));
+            var result = person.SetGender((Gender)(-1));
 
-            person.Birthday.Should().BeCloseTo(DateTime.Today.AddDays(10), 1.Minutes());
+            result.IsFailure.Should().BeTrue(Contactable.RequiredMessage);
+        }
+
+        [Fact]
+        public void SetBirthday()
+        {
+            var person = ContactableTestHelper.CreatePerson();
+            var birthday = DateTime.Today.AddYears(-50);
+
+            var result = person.SetBirthday(birthday);
+
+            result.IsSuccess.Should().BeTrue();
+            person.Birthday.Should().BeCloseTo(birthday, 1.Minutes());
+        }
+
+        [Fact]
+        public void Not_Set_Null_Birthday()
+        {
+            var person = ContactableTestHelper.CreatePerson();
+            DateTime? birthday = null;
+
+            var result = person.SetBirthday(birthday);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.InvalidValueMessage);
+        }
+
+        [Fact]
+        public void SetBirthday_Failure_Too_Young()
+        {
+            var person = ContactableTestHelper.CreatePerson();
+            var birthday = DateTime.Today.AddYears(1);
+
+            var result = person.SetBirthday(birthday);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.InvalidValueMessage);
+        }
+
+        [Fact]
+        public void SetBirthday_Failure_Too_Old()
+        {
+            var person = ContactableTestHelper.CreatePerson();
+            var birthday = DateTime.Today.AddYears(-200);
+
+            var result = person.SetBirthday(birthday);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.InvalidValueMessage);
         }
 
         [Fact]
@@ -234,6 +377,17 @@ namespace CustomerVehicleManagement.Tests.Entities
             person.SetDriversLicense(driversLicenseOrError.Value);
 
             person.DriversLicense.Number.Should().Be(driversLicenseNumber);
+        }
+
+        [Fact]
+        public void SetDriversLicense_Failure()
+        {
+            var person = ContactableTestHelper.CreatePerson();
+
+            var result = person.SetDriversLicense(null);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.InvalidValueMessage);
         }
 
         [Fact]

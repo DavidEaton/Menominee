@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -22,19 +21,6 @@ namespace CustomerVehicleManagement.Domain.Entities
         // TODO - Should royalty be split out???
         private SaleCode(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
-            name = (name ?? string.Empty).Trim();
-            code = (code ?? string.Empty).Trim();
-
-            if (name.Length > MaximumLength || name.Length < MinimumLength ||
-                code.Length > MaximumLength || code.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
-            if (laborRate < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if (desiredMargin < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             Name = name;
             Code = code;
             LaborRate = laborRate;

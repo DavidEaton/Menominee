@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities
@@ -25,12 +24,6 @@ namespace CustomerVehicleManagement.Domain.Entities
             bool includeParts,
             bool includeLabor)
         {
-            if (percentage < MinimumValue ||
-                minimumJobAmount < MinimumValue ||
-                minimumCharge < MinimumValue ||
-                maximumCharge < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             Percentage = percentage;
             MinimumJobAmount = minimumJobAmount;
             MinimumCharge = minimumCharge;
@@ -94,14 +87,14 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(MaximumCharge = maximumCharge);
         }
 
-        public void SetIncludeParts(bool includeParts)
+        public Result<bool> SetIncludeParts(bool includeParts)
         {
-            IncludeParts = includeParts;
+            return Result.Success(IncludeParts = includeParts);
         }
 
-        public void SetIncludeLabor(bool includeLabor)
+        public Result<bool> SetIncludeLabor(bool includeLabor)
         {
-            IncludeLabor = includeLabor;
+            return Result.Success(IncludeLabor = includeLabor);
         }
 
         #region ORM

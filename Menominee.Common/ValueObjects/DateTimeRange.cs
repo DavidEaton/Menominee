@@ -6,7 +6,9 @@ namespace Menominee.Common.ValueObjects
 {
     public class DateTimeRange : AppValueObject
     {
+        public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly string EndBeforeStartMessage = "End date cannot occur before Start date";
+
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
 
@@ -18,50 +20,47 @@ namespace Menominee.Common.ValueObjects
 
         public static Result<DateTimeRange> Create(DateTime start, DateTime end)
         {
-            if (start >= end)
-                return Result.Failure<DateTimeRange>(EndBeforeStartMessage);
-
-            return Result.Success(new DateTimeRange(start, end));
+            return start >= end
+                ? Result.Failure<DateTimeRange>(EndBeforeStartMessage)
+                : Result.Success(new DateTimeRange(start, end));
         }
 
         public DateTimeRange(DateTime start, TimeSpan duration) : this(start, start.Add(duration))
         {
         }
 
-        public int DurationInMinutes()
+        public Result<int> DurationInMinutes()
         {
-            return (End - Start).Minutes;
+            return Result.Success((End - Start).Minutes);
         }
 
-        public DateTimeRange NewEnd(DateTime newEnd)
+        public Result<DateTimeRange> NewEnd(DateTime newEnd)
         {
-            if (Start >= newEnd)
-                throw new ArgumentOutOfRangeException(EndBeforeStartMessage);
-
-            return new DateTimeRange(Start, newEnd);
+            return Start >= newEnd
+                ? Result.Failure<DateTimeRange>(RequiredMessage)
+                : Result.Success(new DateTimeRange(Start, newEnd));
         }
 
-        public DateTimeRange NewDuration(TimeSpan newDuration)
+        public Result<DateTimeRange> NewDuration(TimeSpan newDuration)
         {
-            return new DateTimeRange(Start, newDuration);
+            return Result.Success(new DateTimeRange(Start, newDuration));
         }
 
-        public DateTimeRange NewStart(DateTime newStart)
+        public Result<DateTimeRange> NewStart(DateTime newStart)
         {
-            if (newStart >= End)
-                throw new ArgumentOutOfRangeException(EndBeforeStartMessage);
-
-            return new DateTimeRange(newStart, End);
+            return newStart >= End
+                ? Result.Failure<DateTimeRange>(RequiredMessage)
+                : Result.Success(new DateTimeRange(newStart, End));
         }
 
-        public static DateTimeRange CreateOneDayRange(DateTime start)
+        public static Result<DateTimeRange> CreateOneDayRange(DateTime start)
         {
-            return new DateTimeRange(start, start.AddDays(1));
+            return Result.Success(new DateTimeRange(start, start.AddDays(1)));
         }
 
-        public static DateTimeRange CreateOneWeekRange(DateTime start)
+        public static Result<DateTimeRange> CreateOneWeekRange(DateTime start)
         {
-            return new DateTimeRange(start, start.AddDays(7));
+            return Result.Success(new DateTimeRange(start, start.AddDays(7)));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

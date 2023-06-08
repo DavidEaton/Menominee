@@ -68,10 +68,10 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
             if (paymentMethodToUpdate.IsActive != paymentMethodFromRepository.IsActive)
             {
                 if (paymentMethodToUpdate.IsActive)
-                    paymentMethodFromRepository.SetActive();
+                    paymentMethodFromRepository.Activate();
 
                 if (!paymentMethodToUpdate.IsActive)
-                    paymentMethodFromRepository.SetInactive();
+                    paymentMethodFromRepository.Deactivate();
             }
 
             if (paymentMethodToUpdate.PaymentType != paymentMethodFromRepository.PaymentType)
@@ -98,7 +98,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
         public async Task<ActionResult> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
             var paymentMethodNames =
-                (IList<string>)await repository.GetPaymentMethodNamesAsync();
+                (IReadOnlyList<string>)await repository.GetPaymentMethodNamesAsync();
 
             var reconcilingVendorFromCaller = payMethodToAdd.ReconcilingVendor is not null ? payMethodToAdd.ReconcilingVendor : null;
             Vendor reconcilingVendor = null;

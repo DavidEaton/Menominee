@@ -4,7 +4,7 @@
             <Content>
                 <TelerikGrid Data="Services"
                              SelectionMode="GridSelectionMode.Single"
-                             @ref="@ServicesGrid">
+                             ref="@ServicesGrid">
                     <DetailTemplate>
                         @{
                             var service = context as RepairOrderServiceToWrite;
@@ -15,30 +15,30 @@
                                 OnRowDoubleClick="@OnEditItem"
                                 SelectedItemsChanged="@((IEnumerable<RepairOrderItemToWrite> itemList) => OnSelect(itemList))"
                                 SelectedItems="@SelectedItems">*@
-                            <TelerikGrid Data="service.Items"
+                            <TelerikGrid Data="service.LineItems"
                                          EditMode="GridEditMode.Popup"
                                          OnRowDoubleClick="@OnItemRowDoubleClickHandler"
                                          SelectionMode="GridSelectionMode.Single">
                                 <GridColumns>
                                     <GridColumn Width="20%"
-                                                Field="@nameof(RepairOrderItemToWrite.PartNumber)"
+                                            Field="@nameof(RepairOrderLineItemToWrite.Item.PartNumber)"
                                                 Title="Part Number">
                                         <FooterTemplate Context="service">
                                             <div class="m-job-total-row">Job Total</div>
                                         </FooterTemplate>
                                     </GridColumn>
                                     <GridColumn Width="30%"
-                                                Field="@nameof(RepairOrderItemToWrite.Description)"
+                                            Field="@nameof(RepairOrderLineItemToWrite.Item.Description)"
                                                 Title="Description">
                                     </GridColumn>
                                     <GridColumn Width="10%"
                                                 TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
-                                                Field="@nameof(RepairOrderItemToWrite.QuantitySold)"
+                                                Field="@nameof(RepairOrderLineItemToWrite.QuantitySold)"
                                                 Title="Qty">
                                     </GridColumn>
                                     <GridColumn Width="10%"
                                                 TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
-                                                Field="@nameof(RepairOrderItemToWrite.SellingPrice)"
+                                            Field="@nameof(RepairOrderLineItemToWrite.SellingPrice)"
                                                 DisplayFormat="{0:C}"
                                                 Title="Each">
                                         <FooterTemplate Context="service">
@@ -49,7 +49,7 @@
                                     </GridColumn>
                                     <GridColumn Width="10%"
                                                 TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
-                                                Field="@nameof(RepairOrderItemToWrite.LaborEach)"
+                                            Field="@nameof(RepairOrderLineItemToWrite.LaborAmount.Amount)"
                                                 DisplayFormat="{0:C}"
                                                 Title="Labor">
                                         <FooterTemplate Context="service">
@@ -75,7 +75,7 @@
                                         </GridColumn>*@
                                     <GridColumn Width="10%"
                                                 TextAlign="Telerik.Blazor.ColumnTextAlign.Right"
-                                                Field="@nameof(RepairOrderItemToWrite.Total)"
+                                            Field="@nameof(RepairOrderLineItemToWrite.Total)"
                                                 DisplayFormat="{0:C}"
                                                 Title="Total">
                                         <FooterTemplate Context="Service">
@@ -169,7 +169,7 @@
 
 @if (ItemToModify != null && EditItemDialogVisible)
 {
-    <RepairOrderItemEditor Item="@ItemToModify"
+    <RepairOrderItemEditor Item="@ItemToModify.Item"
                            DialogVisible="@EditItemDialogVisible"
                            Mode="@ItemFormMode"
                            OnSave="@OnSaveItemEdit"
@@ -178,7 +178,7 @@
 
 @if (ItemToModify != null && EditLaborDialogVisible)
 {
-    <RepairOrderLaborEditor Item="@ItemToModify"
+    <RepairOrderLaborEditor Item="@ItemToModify.Item"
                             DialogVisible="@EditLaborDialogVisible"
                             Mode="@ItemFormMode"
                             OnSave="@OnSaveItemEdit"

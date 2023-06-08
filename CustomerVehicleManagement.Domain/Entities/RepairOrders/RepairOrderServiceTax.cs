@@ -1,15 +1,42 @@
-﻿using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
+    // TODO: DDD: Rename this class to ServiceTax
     public class RepairOrderServiceTax : Entity
     {
-        public long RepairOrderServiceId { get; set; }
-        public long TaxId { get; set; }
-        public double PartTaxRate { get; set; }
-        public double LaborTaxRate { get; set; }
-        public double PartTax { get; set; }
-        public double LaborTax { get; set; }
+        public static readonly string RequiredMessage = $"Please include all required items.";
+        public PartTax PartTax { get; private set; }
+        public LaborTax LaborTax { get; private set; }
+        private RepairOrderServiceTax(PartTax partTax, LaborTax laborTax)
+        {
+            PartTax = partTax;
+            LaborTax = laborTax;
+        }
+
+        public static Result<RepairOrderServiceTax> Create(PartTax partTax, LaborTax laborTax)
+        {
+            // FluentValidation has already parsed caller's input
+            // (value objects); no need to duplicate validation here.
+            return Result.Success(new RepairOrderServiceTax(partTax, laborTax));
+        }
+
+        public Result<PartTax> SetPartTax(PartTax partTax)
+        {
+            return
+                partTax is null
+                ? Result.Failure<PartTax>(RequiredMessage)
+                : Result.Success(PartTax = partTax);
+        }
+
+        public Result<LaborTax> SetLaborTax(LaborTax laborTax)
+        {
+            return
+                laborTax is null
+                ? Result.Failure<LaborTax>(RequiredMessage)
+                : Result.Success(LaborTax = laborTax);
+        }
 
         #region ORM
 

@@ -1,6 +1,7 @@
 ﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Techs;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
@@ -8,9 +9,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
     public class RepairOrderServiceToWrite
     {
         public long Id { get; set; }
-        public long RepairOrderId { get; set; } = 0;
         public string ServiceName { get; set; } = string.Empty;
-        public string SaleCode { get; set; } = string.Empty;
+        public SaleCodeToRead SaleCode { get; set; }
         public bool IsCounterSale { get; set; } = false;
         public bool IsDeclined { get; set; } = false;
         public double PartsTotal { get; set; } = 0.0;
@@ -20,10 +20,11 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
         public double ShopSuppliesTotal { get; set; } = 0.0;
         public double Total { get; set; } = 0.0;
 
-        public List<RepairOrderItemToWrite> Items { get; set; } = new List<RepairOrderItemToWrite>();
-        public List<RepairOrderTechToWrite> Techs { get; set; } = new List<RepairOrderTechToWrite>();
-        public List<RepairOrderServiceTaxToWrite> Taxes { get; set; } = new List<RepairOrderServiceTaxToWrite>();
+        public List<RepairOrderLineItemToWrite> LineItems { get; set; } = new();
+        public List<RepairOrderServiceTechnicianToWrite> Techs { get; set; } = new();
+        public List<RepairOrderServiceTaxToWrite> Taxes { get; set; } = new();
 
+        // TODO: Move Recalculate() method out of this data contract (it should contain no behavior).
         public void Recalculate()
         {
             PartsTotal = 0.0;
@@ -32,13 +33,13 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
             TaxTotal = 0.0;
             ShopSuppliesTotal = 0.0;
 
-            if (Items?.Count > 0)
+            if (LineItems?.Count > 0)
             {
-                foreach (var item in Items)
+                foreach (var lineItem in LineItems)
                 {
-                    PartsTotal += item.SellingPrice * item.QuantitySold;
-                    LaborTotal += item.LaborEach * item.QuantitySold;
-                    DiscountTotal += item.DiscountEach * item.QuantitySold;
+                    PartsTotal += lineItem.SellingPrice * lineItem.QuantitySold;
+                    LaborTotal += lineItem.LaborAmount.Amount * lineItem.QuantitySold;
+                    DiscountTotal += lineItem.DiscountAmount.Amount * lineItem.QuantitySold;
                 }
             }
 
@@ -46,7 +47,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Services
             {
                 foreach (var tax in Taxes)
                 {
-                    TaxTotal += (tax.PartTax + tax.LaborTax);
+                    TaxTotal += (tax.PartTax.Amount + tax.LaborTax.Amount);
                 }
             }
 

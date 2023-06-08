@@ -105,10 +105,10 @@ namespace CustomerVehicleManagement.Api.Customers
             Customer customer = null;
 
             if (customerToAdd.EntityType == EntityType.Person)
-                customer = new(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType);
+                customer = Customer.Create(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType).Value;
 
             if (customerToAdd.EntityType == EntityType.Organization)
-                customer = new(OrganizationHelper.ConvertWriteDtoToEntity(customerToAdd.Organization), customerToAdd.CustomerType);
+                customer = Customer.Create(OrganizationHelper.ConvertWriteDtoToEntity(customerToAdd.Organization), customerToAdd.CustomerType).Value;
 
             await customerRepository.AddCustomerAsync(customer);
 

@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -14,12 +13,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private MaintenanceItem(int displayOrder, InventoryItem inventoryItem)
         {
-            if (inventoryItem is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (displayOrder < MinimumValue)
-                throw new ArgumentOutOfRangeException(InvalidMessage);
-
             DisplayOrder = displayOrder;
             InventoryItem = inventoryItem;
         }

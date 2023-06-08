@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using System.Linq;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Payables;
 using Xunit;
@@ -190,7 +191,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var organization = ContactableTestHelper.CreateOrganization();
 
             organization.SetAddress(addressOrError.Value);
-            var customerOrError = new Customer(organization, CustomerType.Retail);
+            var customerOrError = Customer.Create(organization, CustomerType.Retail).Value;
             var janes = customerOrError.Organization;
 
             customerOrError.Should().BeOfType<Customer>();
@@ -211,7 +212,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
             var organization = ContactableTestHelper.CreateOrganization();
             organization.SetAddress(addressOrError.Value);
-            var customerOrError = new Customer(organization, CustomerType.Retail);
+            var customerOrError = Customer.Create(organization, CustomerType.Retail).Value;
             var janes = customerOrError.Organization;
             customerOrError.Should().BeOfType<Customer>();
             customerOrError.EntityType.Should().Be(EntityType.Organization);

@@ -12,7 +12,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
         public static readonly string InvalidMessage = $"Invalid value(s). Please be sure all entries are valid";
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly double MinimumValue = 0;
-        public static readonly double MaximumValue = 99999;
+        public static readonly double MaximumValue = 99999.00;
         public static readonly string InvalidValueMessage = $"Value(s) must be within {MinimumValue} and {MaximumValue}.";
 
         public string Description { get; private set; }
@@ -21,20 +21,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
 
         private ExciseFee(string description, ExciseFeeType feeType, double amount)
         {
-            if (description is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            description = (description ?? string.Empty).Trim();
-
-            if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
-
-            if (!Enum.IsDefined(typeof(ExciseFeeType), feeType))
-                throw new ArgumentOutOfRangeException(InvalidMessage);
-
-            if (amount < MinimumValue || amount > MaximumValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
-
             Description = description;
             FeeType = feeType;
             Amount = amount;

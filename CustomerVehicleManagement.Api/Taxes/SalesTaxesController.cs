@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 4. Return new tax from database to consumer after save
             return CreatedAtRoute("GetSalesTaxAsync",
                 new { tax.Id },
-                SalesTaxHelper.ConvertEntityToReadDto(tax));
+                SalesTaxHelper.ConvertToReadDto(tax));
         }
 
         [HttpDelete("{id:long}")]

@@ -71,149 +71,11 @@
                 </TelerikTextBox>
             </div>
         </div>
-
+@*
         <hr class="m-section-divider">
 
-        <div class="form-row">
-            <div class="form-group col-4">
-                <label class="k-label" for="saleType">Sale Type</label>
-                <TelerikDropDownList @bind-Value="@Item.SaleType"
-                                     Data="SaleTypeEnumData"
-                                     Width="100%"
-                                     TextField="DisplayText"
-                                     ValueField="Value"
-                                     Id="saleType">
-                    <DropDownListSettings>
-                        <DropDownListPopupSettings Height="calc(32px * 5)" />
-                    </DropDownListSettings>
-                </TelerikDropDownList>
-            </div>
-            <div id="buyoutButton" class="form-group col-2">
-                <label class="k-label" for="buyout">Buyout</label>
-                <TelerikCheckBox Id="buyout" @bind-Value="@PlaceholderBuyout" />
-            </div>
-            <div class="form-group col-6">
-                <label class="k-label" for="rfr">Reason For Replacement</label>
-                <TelerikDropDownList @bind-Value="@PlaceholderReasonForReplacement"
-                                     Width="100%"
-                                     Data="@ReasonsForReplacement"
-                                     TextField="DisplayText"
-                                     ValueField="Code"
-                                     Id="rfr">
-                    <DropDownListSettings>
-                        <DropDownListPopupSettings Height="calc(32px * 8)" />
-                    </DropDownListSettings>
-                </TelerikDropDownList>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-3">
-                <label class="k-label" for="qtySold">Quantity Sold</label>
-                <TelerikNumericTextBox @bind-Value="@Item.QuantitySold"
-                                       Width="100%"
-                                       Id="qtySold">
-                </TelerikNumericTextBox>
-            </div>
-            <div class="form-group col-3">
-                <label class="k-label" for="onHand">On Hand</label>
-                <TelerikNumericTextBox @bind-Value="@PlaceholderQuantityOnHand"
-                                       Arrows="false"
-                                       Enabled="false"
-                                       Id="onHand">
-                </TelerikNumericTextBox>
-            </div>
-        </div>
 
         <hr class="m-section-divider">
-
-        <div class="form-row">
-            <div class="form-group col-3">
-                <label for="cost">Cost</label>
-                <div class="input-group">
-                    <TelerikNumericTextBox @bind-Value="@Item.Cost"
-                                           Width="80%"
-                                           Format="C"
-                                           Decimals="2"
-                                           Arrows="false"
-                                           Id="cost">
-                    </TelerikNumericTextBox>
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button"><i class="fas fa-key"></i></button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-3">
-                <label for="selling">Selling Price</label>
-                <div class="input-group">
-                    <TelerikNumericTextBox @bind-Value="@Item.SellingPrice"
-                                           Width="80%"
-                                           Format="C"
-                                           Decimals="2"
-                                           Arrows="false"
-                                           Id="">
-                    </TelerikNumericTextBox>
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button"><i class="fas fa-table"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-3">
-                <label for="laborType">Labor</label>
-                <TelerikDropDownList @bind-Value="@Item.LaborType"
-                                     Width="100%"
-                                     Data="@LaborTypeEnumData"
-                                     TextField="DisplayText"
-                                     ValueField="Value"
-                                     Id="laborType">
-                    <DropDownListSettings>
-                        <DropDownListPopupSettings Height="calc(32px * 3)" />
-                    </DropDownListSettings>
-                </TelerikDropDownList>
-            </div>
-            @if (Item.LaborType != ItemLaborType.None)
-            {
-                <div class="form-group col-3">
-                    <label for="laborEach">Labor Each</label>
-                    <TelerikNumericTextBox @bind-Value="@Item.LaborEach"
-                                           Width="100%"
-                                           Format="C"
-                                           Decimals="2"
-                                           Arrows="false"
-                                           Id="laborEach">
-                    </TelerikNumericTextBox>
-                </div>
-            }
-        </div>
-        <div class="form-row">
-            <div class="form-group col-3">
-                <label for="discType">Discount</label>
-                <TelerikDropDownList @bind-Value="@Item.DiscountType"
-                                     Width="100%"
-                                     Data="@DiscountTypeEnumData"
-                                     TextField="DisplayText"
-                                     ValueField="Value"
-                                     Id="discType">
-                    <DropDownListSettings>
-                        <DropDownListPopupSettings Height="calc(32px * 4)" />
-                    </DropDownListSettings>
-                </TelerikDropDownList>
-            </div>
-            @if (Item.DiscountType != ItemDiscountType.None)
-            {
-                <div class="form-group col-3">
-                    <label for="discountEach">Discount Each</label>
-                    <TelerikNumericTextBox @bind-Value="@Item.DiscountEach"
-                                           Width="100%"
-                                           Format="C"
-                                           Decimals="2"
-                                           Arrows="false"
-                                           Id="discountEach">
-                    </TelerikNumericTextBox>
-                </div>
-            }
-        </div>
 
         <hr class="m-button-divider">
         <div>
@@ -228,7 +90,7 @@
                            Class="dialog-button">
                 <i class="fas fa-times"></i> Cancel
             </TelerikButton>
-        </div>
+        </div>*@
     </WindowContent>
 </TelerikWindow>
 

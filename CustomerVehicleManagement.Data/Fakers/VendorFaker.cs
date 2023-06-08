@@ -29,7 +29,7 @@ namespace CustomerVehicleManagement.Data.Fakers
                                 name: faker.Company.CompanyName(),
                                 vendorCode: faker.Random.AlphaNumeric(10),
                                 vendorRole: faker.PickRandom<VendorRole>(),
-                                note: faker.Random.Words(25),
+                                notes: faker.Random.Words(25),
                                 address: FakeAddress.Generate(),
                                 emails: MakeEmailFakes(),
                                 phones: MakePhoneFakes()
@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Data.Fakers
             return new List<Vendor>();
         }
 
-        public static List<VendorInvoicePaymentMethod> MakePaymentMethodFakes(IList<string> paymentMethodNames, int count)
+        public static List<VendorInvoicePaymentMethod> MakePaymentMethodFakes(IReadOnlyList<string> paymentMethodNames, int count)
         {
             int retries = 10;
             bool success = false;

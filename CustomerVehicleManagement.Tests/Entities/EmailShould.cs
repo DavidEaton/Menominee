@@ -6,6 +6,10 @@ namespace CustomerVehicleManagement.Tests.Entities
 {
     public class EmailShould
     {
+        private const string InvalidStringOverMaximumLength = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"; // 256 characters
+        private const string InvalidStringZeroLength = "";
+        private const string InvalidUnderMinimumLength = "1";
+
         [Fact]
         public void Create_Email()
         {
@@ -43,16 +47,18 @@ namespace CustomerVehicleManagement.Tests.Entities
             result.Error.Should().Be(Email.EmptyMessage);
         }
 
-        [Fact]
-        public void Return_Failure_Result_With_Invalid_Address()
+        [Theory]
+        [InlineData(InvalidStringZeroLength)]
+        [InlineData(InvalidUnderMinimumLength)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        [InlineData("invalid-email-address.com")]
+        public void Return_Failure_Result_With_Invalid_Address(string address)
         {
-            var address = "johnatdoedotcom";
             var primary = true;
 
             var result = Email.Create(address, primary);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(Email.InvalidMessage);
         }
 
         [Fact]
@@ -89,6 +95,20 @@ namespace CustomerVehicleManagement.Tests.Entities
             email.SetAddress(newAddress);
 
             email.Address.Should().Be(newAddress);
+        }
+
+        [Theory]
+        [InlineData(InvalidStringZeroLength)]
+        [InlineData(InvalidUnderMinimumLength)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        [InlineData("invalid-email-address.com")]
+        public void Not_SetAddress_Email_With_Invalid_Parameter(string address)
+        {
+            var email = Create_Primary_Email();
+
+            var result = email.SetAddress(address);
+
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]

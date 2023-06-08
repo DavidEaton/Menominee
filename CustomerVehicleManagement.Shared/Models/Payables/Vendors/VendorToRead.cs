@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
         public DefaultPaymentMethodToRead DefaultPaymentMethod { get; set; }
         public AddressToRead Address { get; set; }
         public string Notes { get; set; }
-        public IList<PhoneToRead> Phones { get; set; }
-        public IList<EmailToRead> Emails { get; set; }
+        public List<PhoneToRead> Phones { get; set; }
+        public List<EmailToRead> Emails { get; set; }
     }
 }

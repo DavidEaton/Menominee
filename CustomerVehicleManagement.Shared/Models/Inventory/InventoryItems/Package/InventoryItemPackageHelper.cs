@@ -8,7 +8,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
 {
     public class InventoryItemPackageHelper
     {
-        public static InventoryItemPackageToRead ConvertEntityToReadDto(InventoryItemPackage package)
+        public static InventoryItemPackageToRead ConvertToReadDto(InventoryItemPackage package)
         {
             return package is null
                 ? null
@@ -19,18 +19,18 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                     BaseLaborAmount = package.BaseLaborAmount,
                     Script = package.Script,
                     IsDiscountable = package.IsDiscountable,
-                    Items = ConvertEntiiesToReadDtos(package.Items),
+                    Items = ConvertToReadDtos(package.Items),
                     Placeholders = ConvertEntiiesToReadDtos(package.Placeholders)
                 });
         }
 
-        private static List<InventoryItemPackageItemToRead> ConvertEntiiesToReadDtos(IList<InventoryItemPackageItem> items)
+        private static List<InventoryItemPackageItemToRead> ConvertToReadDtos(IList<InventoryItemPackageItem> items)
         {
-            return items?.Select(ConvertEntityToReadDto()).ToList()
+            return items?.Select(ConvertToReadDto()).ToList()
                 ?? new List<InventoryItemPackageItemToRead>();
         }
 
-        private static Func<InventoryItemPackageItem, InventoryItemPackageItemToRead> ConvertEntityToReadDto()
+        private static Func<InventoryItemPackageItem, InventoryItemPackageItemToRead> ConvertToReadDto()
         {
             return item => item is null
                 ? null
@@ -38,7 +38,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                 {
                     Id = item.Id,
                     DisplayOrder = item.DisplayOrder,
-                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.Item),
+                    Item = InventoryItemHelper.ConvertToReadDto(item.Item),
                     Details = new()
                     {
                         Quantity = item.Details.Quantity,

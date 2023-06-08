@@ -46,7 +46,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                                               .FirstOrDefaultAsync(tax => tax.Id == id);
 
             return taxFromContext is not null
-                ? SalesTaxHelper.ConvertEntityToReadDto(taxFromContext)
+                ? SalesTaxHelper.ConvertToReadDto(taxFromContext)
                 : null;
         }
 
@@ -65,7 +65,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();
 
             return salesTaxes
-                .Select(tax => SalesTaxHelper.ConvertEntityToReadDto(tax))
+                .Select(tax => SalesTaxHelper.ConvertToReadDto(tax))
                 .ToList();
         }
 
@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<SalesTax> salesTaxes = await context.SalesTaxes.ToListAsync();
 
             return salesTaxes
-                .Select(tax => SalesTaxHelper.ConvertEntityToReadInListDto(tax))
+                .Select(tax => SalesTaxHelper.ConvertToReadInListDto(tax))
                 .ToList();
         }
 

@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
-        public void SetPeriodType()
+        public void Return_New_On_NewPeriodType()
         {
             var duration = 1;
             var warrantyPeriod = InventoryItemWarrantyPeriod.Create(
@@ -59,11 +59,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var newPeriodType = InventoryItemWarrantyPeriodType.Months;
             warrantyPeriod.PeriodType.Should().Be(originalPeriodType);
 
-            var resultOrError = warrantyPeriod.SetPeriodType(newPeriodType);
+            var resultOrError = warrantyPeriod.NewPeriodType(newPeriodType);
 
-            resultOrError.IsFailure.Should().BeFalse();
-            warrantyPeriod.PeriodType.Should().Be(newPeriodType);
-            warrantyPeriod.PeriodType.Should().NotBe(originalPeriodType);
+            resultOrError.IsSuccess.Should().BeTrue();
+            resultOrError.Value.PeriodType.Should().Be(newPeriodType);
         }
 
         [Fact]
@@ -76,14 +75,14 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var invalidPeriodType = (InventoryItemWarrantyPeriodType)(-1);
             warrantyPeriod.PeriodType.Should().Be(originalPeriodType);
 
-            var resultOrError = warrantyPeriod.SetPeriodType(invalidPeriodType);
+            var resultOrError = warrantyPeriod.NewPeriodType(invalidPeriodType);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
         }
 
         [Fact]
-        public void SetDuration()
+        public void Return_New_On_NewDuration()
         {
             var duration = 1;
             var warrantyPeriod = InventoryItemWarrantyPeriod.Create(
@@ -92,11 +91,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var newDuration = 2;
             warrantyPeriod.Duration.Should().Be(originalDuration);
 
-            var resultOrError = warrantyPeriod.SetDuration(newDuration);
+            var resultOrError = warrantyPeriod.NewDuration(newDuration);
 
-            resultOrError.IsFailure.Should().BeFalse();
-            warrantyPeriod.Duration.Should().Be(newDuration);
-            warrantyPeriod.Duration.Should().NotBe(originalDuration);
+            resultOrError.IsSuccess.Should().BeTrue();
+            resultOrError.Value.Duration.Should().Be(newDuration);
         }
 
         [Fact]
@@ -107,7 +105,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
                 InventoryItemWarrantyPeriodType.Years, duration).Value;
             var invalidDuration = -1;
 
-            var resultOrError = warrantyPeriod.SetDuration(invalidDuration);
+            var resultOrError = warrantyPeriod.NewDuration(invalidDuration);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("Must");

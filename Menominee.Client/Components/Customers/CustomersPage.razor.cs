@@ -41,7 +41,7 @@ namespace Menominee.Client.Components.Customers
             FormMode = FormMode.Edit;
             Customers = null;
 
-            CustomerToRead customerReadDto = await CustomerDataService.GetCustomer(Id);
+            var customerReadDto = await CustomerDataService.GetCustomer(Id);
 
             Customer = CustomerHelper.ConvertReadToWriteDto(customerReadDto);
 

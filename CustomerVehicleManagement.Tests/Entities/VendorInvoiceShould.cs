@@ -1,5 +1,4 @@
-﻿using CustomerVehicleManagement.Domain.BaseClasses;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+﻿using CustomerVehicleManagement.Domain.Entities.Payables;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System;
@@ -555,7 +554,7 @@ namespace CustomerVehicleManagement.Tests.Entities
                 vendorInvoiceNumbers: vendorInvoiceNumbers)
                 .Value;
 
-            vendorInvoice.Date.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+            vendorInvoice.Date.Should().BeNull();
             DateTime? date = new(2000, 1, 1);
             vendorInvoice.SetDate(date);
 
@@ -811,21 +810,218 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void UpdateCollections_Can_Add_LineItems()
         {
-            var vendorInvoice = VendorInvoiceTestHelper.GenerateVendorInvoices(count: 1)[0];
-            vendorInvoice.LineItems.Count.Should().BeGreaterThan(0);
-            var lineItemsCount = vendorInvoice.LineItems.Count;
+            var lineItemsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: lineItemsCount, paymentsCount: 0, taxesCount: 0).Generate();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount);
 
-            //Add some LineItems
-            var lineItems = new VendorInvoiceLineItemFaker(generateId: true).Generate(3);
+            var lineItems = new VendorInvoiceLineItemFaker(generateId: true).Generate(lineItemsCount);
 
             foreach (var lineItem in lineItems)
                 vendorInvoice.AddLineItem(lineItem);
 
             var result = vendorInvoice.UpdateCollections(
-                new VendorInvoiceCollections(vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes));
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
 
             result.IsSuccess.Should().BeTrue();
-            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount + 3);
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount + lineItemsCount);
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Update_LineItems()
+        {
+            var lineItemsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: lineItemsCount, paymentsCount: 0, taxesCount: 0).Generate();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount);
+            var poNumber = "Test PoNumber";
+            var transactionDate = DateTime.Today;
+            var core = 3548.19;
+            var cost = 3461.87;
+            var quantity = 4678;
+            var item = new VendorInvoiceItemFaker(false).Generate();
+            var lineItems = vendorInvoice.LineItems;
+
+            foreach (var lineItem in lineItems)
+            {
+                lineItem.SetPONumber(poNumber);
+                lineItem.SetTransactionDate(transactionDate);
+                lineItem.SetCore(core);
+                lineItem.SetCost(cost);
+                lineItem.SetQuantity(quantity);
+                lineItem.SetItem(item);
+            }
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount);
+
+            foreach (var lineItem in vendorInvoice.LineItems)
+            {
+                lineItem.PONumber.Should().Be(poNumber);
+                lineItem.TransactionDate.Should().Be(transactionDate);
+                lineItem.Core.Should().Be(core);
+                lineItem.Cost.Should().Be(cost);
+                lineItem.Quantity.Should().Be(quantity);
+                lineItem.Item.Should().Be(item);
+            }
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Remove_LineItems()
+        {
+            var lineItemsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: lineItemsCount, paymentsCount: 0, taxesCount: 0).Generate();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount);
+
+            foreach (var lineItem in vendorInvoice.LineItems)
+                vendorInvoice.RemoveLineItem(lineItem);
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.LineItems.Count.Should().Be(lineItemsCount - lineItemsCount);
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Add_Payments()
+        {
+            var paymentsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: paymentsCount, taxesCount: 0).Generate();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount);
+
+            var payments = new VendorInvoicePaymentFaker(generateId: true).Generate(paymentsCount);
+
+            foreach (var payment in payments)
+                vendorInvoice.AddPayment(payment);
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount + paymentsCount);
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Update_Payments()
+        {
+            var paymentsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: paymentsCount, taxesCount: 0).Generate();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount);
+            var amount = 3548.19;
+            var paymentMethod = new VendorInvoicePaymentMethodFaker(true).Generate();
+
+            foreach (var payment in vendorInvoice.Payments)
+            {
+                payment.Amount.Should().NotBe(amount);
+                payment.PaymentMethod.Should().NotBe(paymentMethod);
+            }
+
+            foreach (var payment in vendorInvoice.Payments)
+            {
+                payment.SetAmount(amount);
+                payment.SetPaymentMethod(paymentMethod);
+            }
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount);
+
+            foreach (var payment in vendorInvoice.Payments)
+            {
+                payment.Amount.Should().Be(amount);
+                payment.PaymentMethod.Should().Be(paymentMethod);
+            }
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Remove_Payments()
+        {
+            var paymentsCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: paymentsCount, taxesCount: 0).Generate();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount);
+
+            foreach (var payment in vendorInvoice.Payments)
+                vendorInvoice.RemovePayment(payment);
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Payments.Count.Should().Be(paymentsCount - paymentsCount);
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Add_Taxes()
+        {
+            var taxesCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: 0, taxesCount: taxesCount).Generate();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount);
+
+            var taxes = new VendorInvoiceTaxFaker(generateId: true).Generate(taxesCount);
+
+            foreach (var tax in taxes)
+                vendorInvoice.AddTax(tax);
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount + taxesCount);
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Update_Taxes()
+        {
+            var taxesCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: 0, taxesCount: taxesCount).Generate();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount);
+            var amount = 3548.19;
+            var salesTax = new SalesTaxFaker(true).Generate();
+
+            foreach (var tax in vendorInvoice.Taxes)
+            {
+                tax.Amount.Should().NotBe(amount);
+                tax.SalesTax.Should().NotBe(salesTax);
+            }
+
+            foreach (var tax in vendorInvoice.Taxes)
+            {
+                tax.SetAmount(amount);
+                tax.SetSalesTax(salesTax);
+            }
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount);
+
+            foreach (var tax in vendorInvoice.Taxes)
+            {
+                tax.Amount.Should().Be(amount);
+                tax.SalesTax.Should().Be(salesTax);
+            }
+        }
+
+        [Fact]
+        public void UpdateCollections_Can_Remove_Taxes()
+        {
+            var taxesCount = 3;
+            var vendorInvoice = new VendorInvoiceFaker(generateId: true, lineItemsCount: 0, paymentsCount: 0, taxesCount: taxesCount).Generate();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount);
+
+            foreach (var tax in vendorInvoice.Taxes)
+                vendorInvoice.RemoveTax(tax);
+
+            var result = vendorInvoice.UpdateCollections(
+                vendorInvoice.LineItems, vendorInvoice.Payments, vendorInvoice.Taxes);
+
+            result.IsSuccess.Should().BeTrue();
+            vendorInvoice.Taxes.Count.Should().Be(taxesCount - taxesCount);
         }
 
         public class TestData

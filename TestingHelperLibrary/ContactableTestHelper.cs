@@ -1,9 +1,11 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using Bogus;
+using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
-using System.Collections.Generic;
+using TestingHelperLibrary.Fakers;
 using Address = Menominee.Common.ValueObjects.Address;
 using Email = CustomerVehicleManagement.Domain.Entities.Email;
+using Person = CustomerVehicleManagement.Domain.Entities.Person;
 using Phone = CustomerVehicleManagement.Domain.Entities.Phone;
 
 namespace TestingHelperLibrary
@@ -16,7 +18,7 @@ namespace TestingHelperLibrary
             var lastName = "Doe";
             var nameOrError = PersonName.Create(lastName, firstName);
 
-            return Person.Create(nameOrError.Value, Gender.Female).Value;
+            return Person.Create(nameOrError.Value, Gender.Female, "some notes").Value;
         }
 
         public static Person CreatePersonWithEmails(int emailCount)
@@ -92,7 +94,7 @@ namespace TestingHelperLibrary
             return names;
         }
 
-        public static IList<Phone> CreatePhones(int count)
+        public static IReadOnlyList<Phone> CreatePhones(int count)
         {
             var phones = new List<Phone>();
 
@@ -106,7 +108,7 @@ namespace TestingHelperLibrary
             return phones;
         }
 
-        public static IList<Email> CreateEmails(int count)
+        public static IReadOnlyList<Email> CreateEmails(int count)
         {
             var emails = new List<Email>();
 
@@ -123,13 +125,7 @@ namespace TestingHelperLibrary
 
         public static Address CreateAddress()
         {
-            string addressLine = "1234 Fifth Ave.";
-            string city = "Traverse City";
-            State state = State.MI;
-            string postalCode = "49686";
-
-            return Address.Create(addressLine, city, state, postalCode).Value;
+            return new AddressFaker().Generate();
         }
-
     }
 }

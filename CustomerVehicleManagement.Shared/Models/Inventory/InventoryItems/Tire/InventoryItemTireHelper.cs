@@ -60,7 +60,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire
             .Value;
         }
 
-        public static InventoryItemTireToRead ConvertEntityToReadDto(InventoryItemTire tire)
+        public static InventoryItemTireToRead ConvertToReadDto(InventoryItemTire tire)
         {
             return tire is null
                 ? new()
@@ -89,7 +89,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Tire
                 };
         }
 
-        public static InventoryItemTireToReadInList ConvertEntityToReadInListDto(InventoryItemTire tire)
+        public static InventoryItemTireToReadInList ConvertToReadInListDto(InventoryItemTire tire)
         {
             return tire is null
                 ? new()

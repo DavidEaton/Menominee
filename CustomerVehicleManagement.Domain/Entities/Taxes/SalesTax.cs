@@ -41,44 +41,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
             bool? isAppliedByDefault = null,
             bool? isTaxable = null)
         {
-            if (description is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            description = (description ?? string.Empty).Trim();
-
-            if (description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionMaximumLengthMessage);
-
-            if (!Enum.IsDefined(typeof(SalesTaxType), taxType))
-                throw new ArgumentOutOfRangeException(nameof(taxType));
-
-            if (order < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             Description = description;
             TaxType = taxType;
             Order = order;
-
-            if (partTaxRate < MinimumValue || laborTaxRate < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             PartTaxRate = partTaxRate;
             LaborTaxRate = laborTaxRate;
-
-            if (isAppliedByDefault.HasValue)
-                IsAppliedByDefault = isAppliedByDefault.Value;
-
-            if (isTaxable.HasValue)
-                IsTaxable = isTaxable.Value;
-
-            taxIdNumber = (taxIdNumber ?? string.Empty).Trim();
-
-            if (taxIdNumber.Length > TaxIdNumberMaximumLength)
-                throw new ArgumentOutOfRangeException(TaxIdNumberInvalidLengthMessage);
-
             TaxIdNumber = taxIdNumber;
-
-            this.exciseFees ??= exciseFees;
+            this.exciseFees = exciseFees ?? new List<ExciseFee>();
+            IsAppliedByDefault = isAppliedByDefault;
+            IsTaxable = isTaxable;
         }
 
         public static Result<SalesTax> Create(
@@ -121,7 +92,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 partTaxRate,
                 laborTaxRate,
                 taxIdNumber,
-                exciseFees is null ? null : exciseFees,
+                exciseFees,
                 isAppliedByDefault,
                 isTaxable
                 ));

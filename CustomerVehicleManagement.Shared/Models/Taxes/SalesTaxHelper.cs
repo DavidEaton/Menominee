@@ -9,22 +9,22 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
             return tax is null
                 ? null
                 : SalesTax.Create(
-                tax.Description,
-                tax.TaxType,
-                tax.Order,
-                tax.TaxIdNumber,
-                tax.PartTaxRate,
-                tax.LaborTaxRate,
-                ExciseFeeHelper.ConvertWriteDtosToEntities(tax.ExciseFees),
-                tax.IsAppliedByDefault,
-                tax.IsTaxable)
+                    tax.Description,
+                    tax.TaxType,
+                    tax.Order,
+                    tax.TaxIdNumber,
+                    tax.PartTaxRate,
+                    tax.LaborTaxRate,
+                    ExciseFeeHelper.ConvertWriteDtosToEntities(tax.ExciseFees),
+                    tax.IsAppliedByDefault,
+                    tax.IsTaxable)
                 .Value;
         }
 
         public static SalesTaxToWrite CovertReadToWriteDto(SalesTaxToRead taxToRead)
         {
             return taxToRead is null
-                ? null
+                ? new()
                 : new()
                 {
                     Description = taxToRead.Description,
@@ -39,10 +39,10 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 };
         }
 
-        public static SalesTaxToRead ConvertEntityToReadDto(SalesTax salesTax)
+        public static SalesTaxToRead ConvertToReadDto(SalesTax salesTax)
         {
             return salesTax is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = salesTax.Id,
@@ -54,14 +54,14 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                     TaxIdNumber = salesTax.TaxIdNumber,
                     PartTaxRate = salesTax.PartTaxRate,
                     LaborTaxRate = salesTax.LaborTaxRate,
-                    ExciseFees = ExciseFeeHelper.ConvertEntitiesToReadDtos(salesTax?.ExciseFees)
+                    ExciseFees = ExciseFeeHelper.ConvertToReadDtos(salesTax?.ExciseFees)
                 };
         }
 
-        public static SalesTaxToReadInList ConvertEntityToReadInListDto(SalesTax tax)
+        public static SalesTaxToReadInList ConvertToReadInListDto(SalesTax tax)
         {
             return tax is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = tax.Id,
@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Shared.Models.Taxes
                 salesTax.PartTaxRate,
                 salesTax.LaborTaxRate,
                 ExciseFeeHelper.CovertReadDtoToEntity(salesTax.ExciseFees))
-                .Value;
+            .Value;
         }
     }
 }

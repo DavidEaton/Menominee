@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CSharpFunctionalExtensions;
+using FluentAssertions;
 using FluentAssertions.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
@@ -64,7 +65,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var end = DateTime.Today.AddDays(1);
             var range = DateTimeRange.Create(start, end).Value;
 
-            range = range.NewStart(DateTime.Today.AddDays(-10));
+            range = range.NewStart(DateTime.Today.AddDays(-10)).Value;
 
             range.Start.Should().Be(DateTime.Today.AddDays(-10));
             range.End.Should().Be(DateTime.Today.AddDays(1));
@@ -77,9 +78,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var end = DateTime.Today.AddDays(1);
             var range = DateTimeRange.Create(start, end).Value;
 
-            Action action = () => range = range.NewStart(end.AddDays(1));
+            var result = range.NewStart(end.AddDays(1));
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(DateTimeRange.RequiredMessage);
         }
 
         [Fact]
@@ -89,7 +91,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var end = DateTime.Today.AddDays(1);
             var range = DateTimeRange.Create(start, end).Value;
 
-            range = range.NewEnd(DateTime.Today.AddDays(10));
+            range = range.NewEnd(DateTime.Today.AddDays(10)).Value;
 
             range.Start.Should().Be(DateTime.Today);
             range.End.Should().Be(DateTime.Today.AddDays(10));
@@ -102,9 +104,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var end = DateTime.Today.AddDays(1);
             var range = DateTimeRange.Create(start, end).Value;
 
-            Action action = () => range = range.NewEnd(start.AddDays(-1));
+            var result = range.NewEnd(start.AddDays(-1));
 
-            action.Should().Throw<ArgumentOutOfRangeException>();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(DateTimeRange.RequiredMessage);
         }
 
         [Fact]
@@ -115,7 +118,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             TimeSpan duration = new(TimeSpan.TicksPerDay);
             var range = DateTimeRange.Create(start, end).Value;
 
-            range = range.NewDuration(duration);
+            range = range.NewDuration(duration).Value;
 
             range.Start.Should().Be(DateTime.Today);
             range.End.Should().Be(DateTime.Today.AddTicks(TimeSpan.TicksPerDay));
@@ -124,7 +127,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         [Fact]
         public void CreateOneDayRange()
         {
-            var range = DateTimeRange.CreateOneDayRange(DateTime.Today);
+            var range = DateTimeRange.CreateOneDayRange(DateTime.Today).Value;
 
             range.Start.Should().Be(DateTime.Today);
             range.End.Should().Be(DateTime.Today.AddDays(1));
@@ -133,7 +136,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         [Fact]
         public void CreateOneWeekRange()
         {
-            var range = DateTimeRange.CreateOneWeekRange(DateTime.Today);
+            var range = DateTimeRange.CreateOneWeekRange(DateTime.Today).Value;
 
             range.Start.Should().Be(DateTime.Today);
             range.End.Should().Be(DateTime.Today.AddDays(7));

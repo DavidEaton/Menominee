@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -15,12 +14,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private VendorInvoicePayment(VendorInvoicePaymentMethod paymentMethod, double amount)
         {
-            if (paymentMethod is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (amount == InvalidValue)
-                throw new ArgumentOutOfRangeException(InvalidValueMessage);
-
             PaymentMethod = paymentMethod;
             Amount = amount;
         }

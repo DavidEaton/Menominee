@@ -12,6 +12,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
         public PersonNameToWrite Name { get; set; }
         public Gender Gender { get; set; }
         public DateTime? Birthday { get; set; }
+        public string Notes { get; set; }
         public DriversLicenseToWrite DriversLicense { get; set; }
         public AddressToWrite Address { get; set; }
         public IList<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();

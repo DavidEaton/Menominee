@@ -3,6 +3,7 @@ using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems.Item;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
@@ -35,9 +36,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         public TelerikGrid<RepairOrderServiceToWrite> ServicesGrid { get; set; }
 
-        public IEnumerable<RepairOrderItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<RepairOrderItemToWrite>();
-        public RepairOrderItemToWrite SelectedItem { get; set; }
-        public RepairOrderItemToWrite ItemToModify { get; set; } = null;
+        public IEnumerable<RepairOrderLineItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<RepairOrderLineItemToWrite>();
+        public RepairOrderLineItemToWrite SelectedItem { get; set; }
+        public RepairOrderLineItemToWrite ItemToModify { get; set; } = null;
 
         private FormMode ItemFormMode = FormMode.Unknown;
         private bool EditItemDialogVisible { get; set; } = false;
@@ -51,28 +52,29 @@ namespace Menominee.Client.Components.RepairOrders
         //private bool CanAddLabor { get; set; } = true;
         public RepairOrderServiceToWrite ServiceToEdit { get; set; }
 
-        private static void CopyItem(RepairOrderItemToWrite src, RepairOrderItemToWrite dst)
+        private static void CopyItem(RepairOrderLineItemToWrite src, RepairOrderLineItemToWrite dst)
         {
-            dst.RepairOrderServiceId = src.RepairOrderServiceId;
-            dst.Manufacturer = src.Manufacturer;
-            dst.ManufacturerId = src.ManufacturerId;
-            dst.PartNumber = src.PartNumber;
-            dst.Description = src.Description;
-            dst.SaleCode = src.SaleCode;
-            dst.ProductCode = src.ProductCode;
+            dst.Id = src.Id;
+            dst.Item.Manufacturer = src.Item.Manufacturer;
+            dst.Item.PartNumber = src.Item.PartNumber;
+            dst.Item.Description = src.Item.Description;
+            dst.Item.SaleCode = src.Item.SaleCode;
+            dst.Item.ProductCode = src.Item.ProductCode;
+            dst.Item.PartType = src.Item.PartType;
             dst.SaleType = src.SaleType;
-            dst.PartType = src.PartType;
             dst.IsDeclined = src.IsDeclined;
             dst.IsCounterSale = src.IsCounterSale;
             dst.QuantitySold = src.QuantitySold;
             dst.SellingPrice = src.SellingPrice;
-            dst.LaborType = src.LaborType;
-            dst.LaborEach = src.LaborEach;
-            dst.DiscountType = src.DiscountType;
-            dst.DiscountEach = src.DiscountEach;
+            dst.LaborAmount = src.LaborAmount;
+            dst.DiscountAmount = src.DiscountAmount;
             dst.Cost = src.Cost;
             dst.Core = src.Core;
             dst.Total = src.Total;
+            dst.SerialNumbers = src.SerialNumbers;
+            dst.Warranties = src.Warranties;
+            dst.Taxes = src.Taxes;
+            dst.Purchases = src.Purchases;
         }
 
         private void SelectInventoryItem()
@@ -83,20 +85,20 @@ namespace Menominee.Client.Components.RepairOrders
         private void AddItem()
         {
             SelectInventoryItemDialogVisible = false;
-            if (SelectedInventoryItem != null)
+            if (SelectedInventoryItem is not null)
             {
                 ItemToModify = new();
-                ItemToModify.Manufacturer = SelectedInventoryItem.Manufacturer;
-                ItemToModify.SaleCode = SelectedInventoryItem.ProductCode.SaleCode;
-                ItemToModify.ProductCode = SelectedInventoryItem.ProductCode;
-                ItemToModify.PartNumber = SelectedInventoryItem.ItemNumber;
-                ItemToModify.Description = SelectedInventoryItem.Description;
+                ItemToModify.Item.Manufacturer = SelectedInventoryItem.Manufacturer;
+                ItemToModify.Item.SaleCode = SelectedInventoryItem.ProductCode.SaleCode;
+                ItemToModify.Item.ProductCode = SelectedInventoryItem.ProductCode;
+                ItemToModify.Item.PartNumber = SelectedInventoryItem.ItemNumber;
+                ItemToModify.Item.Description = SelectedInventoryItem.Description;
                 //ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
-                //if (SelectedInventoryItem.Labor > 0)
-                //{
-                //    ItemToModify.LaborType = ItemLaborType.Flat;
-                //    ItemToModify.LaborEach = SelectedInventoryItem.Labor;
-                //}
+                if (SelectedInventoryItem.Labor.LaborAmount.Amount > 0)
+                {
+                    ItemToModify.LaborAmount.PayType = ItemLaborType.Flat;
+                    ItemToModify.LaborAmount.Amount = SelectedInventoryItem.Labor.LaborAmount.Amount;
+                }
                 //ItemToModify.Cost = SelectedInventoryItem.Cost;
                 //ItemToModify.Core = SelectedInventoryItem.Core;
 
@@ -107,70 +109,105 @@ namespace Menominee.Client.Components.RepairOrders
 
         private void AddCustomItem()
         {
-            ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToRead();
-            ItemToModify.ManufacturerId = 1;
-            ItemToModify.SaleCode = new SaleCodeToRead();
-            ItemToModify.ProductCode = new ProductCodeToRead();
-            ItemToModify.PartType = PartType.Part;
+            ItemToModify = new()
+            {
+                Item = new()
+                {
+                    Manufacturer = new ManufacturerToRead(),
+                    SaleCode = new SaleCodeToRead(),
+                    ProductCode = new ProductCodeToRead(),
+                    PartType = PartType.Part
+                }
+            };
+
             ItemFormMode = FormMode.Add;
             EditItemDialogVisible = true;
         }
 
+
         private void AddCustomLabor()
         {
-            ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToRead();
-            ItemToModify.ManufacturerId = 1;
-            ItemToModify.SaleCode = new SaleCodeToRead();
-            ItemToModify.ProductCode = new ProductCodeToRead();
-            ItemToModify.PartNumber = "INSTALLATION";
-            ItemToModify.PartType = PartType.Labor;
+            ItemToModify = new()
+            {
+                Item = new()
+                {
+                    Manufacturer = new ManufacturerToRead(),
+                    SaleCode = new SaleCodeToRead(),
+                    ProductCode = new ProductCodeToRead(),
+                    PartNumber = "INSTALLATION",
+                    PartType = PartType.Labor
+                }
+            };
+
             ItemFormMode = FormMode.Add;
             EditLaborDialogVisible = true;
         }
 
-        private void EditItem(RepairOrderItemToWrite item)
+        private void EditItem(RepairOrderLineItemToWrite item)
         {
             SelectedItem = item;
-            ItemToModify = new();
-            ItemToModify.Manufacturer = new ManufacturerToRead();
-            ItemToModify.SaleCode = new SaleCodeToRead();
-            ItemToModify.ProductCode = new ProductCodeToRead();
-            CopyItem(SelectedItem, ItemToModify);
+            ItemToModify = new()
+            {
+                Id = item.Id,
+                Item = new()
+                {
+                    Manufacturer = item.Item.Manufacturer,
+                    SaleCode = item.Item.SaleCode,
+                    ProductCode = item.Item.ProductCode,
+                    Description = item.Item.Description,
+                    PartNumber = item.Item.PartNumber,
+                    PartType = item.Item.PartType
+                },
+                SaleType = item.SaleType,
+                Core = item.Core,
+                Cost = item.Cost,
+                DiscountAmount = item.DiscountAmount,
+                IsCounterSale = item.IsCounterSale,
+                IsDeclined = item.IsDeclined,
+                LaborAmount = item.LaborAmount,
+                QuantitySold = item.QuantitySold,
+                SellingPrice = item.SellingPrice,
+                Total = item.Total,
+                Purchases = item.Purchases,
+                SerialNumbers = item.SerialNumbers,
+                Taxes = item.Taxes,
+                Warranties = item.Warranties
+            };
+            //CopyItem(SelectedItem, ItemToModify);
             ItemFormMode = FormMode.Edit;
-            if (ItemToModify.PartType == PartType.Labor)
+
+            if (ItemToModify.Item.PartType == PartType.Labor)
                 EditLaborDialogVisible = true;
             else
                 EditItemDialogVisible = true;
         }
 
-        void EditTechs(RepairOrderServiceToWrite service)
+        private void EditTechs(RepairOrderServiceToWrite service)
         {
             ServiceToEdit = service;
             EditTechDialogVisible = true;
         }
 
-        void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
+        private void OnItemRowDoubleClickHandler(GridRowClickEventArgs args)
         {
-            EditItem(args.Item as RepairOrderItemToWrite);
+            EditItem(args.Item as RepairOrderLineItemToWrite);
         }
 
         private void OnEditItemClick(GridCommandEventArgs args)
         {
-            EditItem(args.Item as RepairOrderItemToWrite);
+            EditItem(args.Item as RepairOrderLineItemToWrite);
         }
 
         private async Task OnDeleteItemClick(GridCommandEventArgs args)
         {
-            SelectedItem = args.Item as RepairOrderItemToWrite;
-            if (await ShowItemDeleteConfirm(SelectedItem.PartNumber))
+            SelectedItem = args.Item as RepairOrderLineItemToWrite;
+            if (await ShowItemDeleteConfirm(SelectedItem.Item.PartNumber))
             {
-                RepairOrderServiceToWrite service = FindServiceByCode(SelectedItem.SaleCode.Code);
+                var service = FindServiceByCode(SelectedItem.Item.SaleCode.Code);
                 if (service != null)
                 {
-                    service.Items.Remove(SelectedItem);
-                    if (service.Items.Count == 0)
+                    service.LineItems.Remove(SelectedItem);
+                    if (service.LineItems.Count == 0)
                     {
                         RepairOrder.Services.Remove(service);
                     }
@@ -187,21 +224,22 @@ namespace Menominee.Client.Components.RepairOrders
 
         private async Task OnSaveItemEdit()
         {
-            if (ItemFormMode != FormMode.Add && ItemFormMode != FormMode.Edit)
+            if (ItemFormMode is not FormMode.Add and not FormMode.Edit)
                 return;
 
             ItemToModify.Recalculate();
 
-            (string saleCode, string saleCodeName) = await GetSaleCode(ItemToModify.SaleCode.Id);
-            RepairOrderServiceToWrite service = FindServiceByCode(saleCode); //FindService(ItemToModify.SaleCode.Code);
+            (var saleCode, var saleCodeName) = await GetSaleCode(ItemToModify.Item.SaleCode.Id);
+            var service = FindServiceByCode(saleCode); //FindService(ItemToModify.SaleCode.Code);
 
             if (service is null)
                 service = AddService(saleCode, saleCodeName);   //AddService(ItemToModify.SaleCode.Code);
 
             if (ItemFormMode is FormMode.Add)
-                service.Items.Add(ItemToModify);
+                service.LineItems.Add(ItemToModify);
             else
                 CopyItem(ItemToModify, SelectedItem);
+
             service.Recalculate();
             RepairOrder?.Recalculate();
 
@@ -245,7 +283,7 @@ namespace Menominee.Client.Components.RepairOrders
                 {
                     if (techs.Length > 0)
                         techs += ", ";
-                    techs += tech.TechnicianId;
+                    techs += tech.Employee.Id;
                 }
             }
 
@@ -263,14 +301,17 @@ namespace Menominee.Client.Components.RepairOrders
 
         private RepairOrderServiceToWrite FindServiceByCode(string saleCode)
         {
-            return RepairOrder.Services?.Where(x => x.SaleCode == saleCode).FirstOrDefault();
+            return RepairOrder.Services?.Where(service => service.SaleCode.Name == saleCode).FirstOrDefault();
         }
 
         private RepairOrderServiceToWrite AddService(string saleCode, string name)
         {
-            RepairOrderServiceToWrite service = new();
-            service.SaleCode = saleCode;
-            service.ServiceName = name;
+            RepairOrderServiceToWrite service = new()
+            {
+                ServiceName = name,
+                SaleCode = new(),
+            };
+
             RepairOrder.Services.Add(service);
 
             return service;

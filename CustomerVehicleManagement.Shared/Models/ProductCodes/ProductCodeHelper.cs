@@ -7,21 +7,21 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
 {
     public class ProductCodeHelper
     {
-        public static ProductCodeToReadInList ConvertEntityToReadInListDto(ProductCode productCode)
+        public static ProductCodeToReadInList ConvertToReadInListDto(ProductCode productCode)
         {
             return productCode is null
                 ? new ProductCodeToReadInList()
                 : new()
                 {
                     Id = productCode.Id,
-                    Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(productCode.Manufacturer),
+                    Manufacturer = ManufacturerHelper.ConvertToReadDto(productCode.Manufacturer),
                     Code = productCode.Code,
-                    SaleCode = SaleCodeHelper.ConvertEntityToReadDto(productCode.SaleCode),
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(productCode.SaleCode),
                     Name = productCode.Name
                 };
         }
 
-        public static ProductCodeToRead ConvertEntityToReadDto(ProductCode productCode)
+        public static ProductCodeToRead ConvertToReadDto(ProductCode productCode)
         {
             return productCode is null
                 ? new ProductCodeToRead()
@@ -29,9 +29,9 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 {
                     Id = productCode.Id,
                     Code = productCode.Code,
-                    Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(productCode.Manufacturer),
+                    Manufacturer = ManufacturerHelper.ConvertToReadDto(productCode.Manufacturer),
                     Name = productCode.Name,
-                    SaleCode = SaleCodeHelper.ConvertEntityToReadDto(productCode.SaleCode)
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(productCode.SaleCode)
                 };
         }
 
@@ -57,9 +57,9 @@ namespace CustomerVehicleManagement.Shared.Models.ProductCodes
                 {
                     Id = productCode.Id,
                     Code = productCode.Code,
-                    Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(productCode.Manufacturer),
+                    Manufacturer = ManufacturerHelper.ConvertToReadDto(productCode.Manufacturer),
                     Name = productCode.Name,
-                    SaleCode = SaleCodeHelper.ConvertEntityToReadDto(productCode.SaleCode)
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(productCode.SaleCode)
                 };
         }
     }

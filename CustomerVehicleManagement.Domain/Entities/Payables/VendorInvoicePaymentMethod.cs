@@ -17,28 +17,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public string Name { get; private set; }
         public bool IsActive { get; private set; }
-        //public bool IsOnAccountPaymentType { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
+        // TODO: public bool IsOnAccountPaymentType { get; private set; } // This is basically a charge-type payment method.  Eventually it will become a line item on a vendor statement (similar to an invoice). -Al
         public VendorInvoicePaymentMethodType PaymentType { get; private set; }
         public Vendor ReconcilingVendor { get; private set; }
 
         private VendorInvoicePaymentMethod(
-            IList<string> paymentMethods,
+            IReadOnlyList<string> paymentMethods,
             string name,
             bool isActive,
             VendorInvoicePaymentMethodType paymentType,
             Vendor reconcilingVendor = null)
         {
-            name = (name ?? string.Empty).Trim();
-
-            if (paymentMethods.Contains(name))
-                throw new ArgumentOutOfRangeException(NonuniqueMessage);
-
-            if (name.Length > MaximumLength || name.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
-            if (!Enum.IsDefined(typeof(VendorInvoicePaymentMethodType), paymentType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             Name = name;
             IsActive = isActive;
             PaymentType = paymentType;
@@ -46,7 +35,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         }
 
         public static Result<VendorInvoicePaymentMethod> Create(
-            IList<string> paymentMethodNames,
+            IReadOnlyList<string> paymentMethodNames,
             string name,
             bool isActive,
             VendorInvoicePaymentMethodType paymentType,
@@ -67,7 +56,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 paymentMethodNames, name, isActive, paymentType, reconcilingVendor));
         }
 
-        public Result<string> SetName(string name, IEnumerable<string> paymentMethods)
+        public Result<string> SetName(string name, IReadOnlyList<string> paymentMethods)
         {
             name = (name ?? string.Empty).Trim();
 
@@ -80,12 +69,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(Name = name);
         }
 
-        public void SetActive()
+        public void Activate()
         {
             IsActive = true;
         }
 
-        public void SetInactive()
+        public void Deactivate()
         {
             IsActive = false;
         }

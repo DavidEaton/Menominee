@@ -25,18 +25,6 @@ namespace CustomerVehicleManagement.Domain.Entities
             double fee,
             bool? isAddedToDeposit)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(RequiredMessage);
-
-            name = (name ?? string.Empty).Trim();
-
-            if (name.Length < MinimumLength ||
-                name.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
-            if (!Enum.IsDefined(typeof(CreditCardFeeType), feeType))
-                throw new ArgumentNullException(RequiredMessage);
-
             Name = name;
             FeeType = feeType;
             Fee = fee;
@@ -54,13 +42,12 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             name = (name ?? string.Empty).Trim();
 
-            if (name.Length < MinimumLength ||
-                name.Length > MaximumLength)
+            if (name.Length is < MinimumLength or > MaximumLength)
                 return Result.Failure<CreditCard>(InvalidLengthMessage);
 
             if (!Enum.IsDefined(typeof(CreditCardFeeType), feeType))
                 return Result.Failure<CreditCard>(RequiredMessage);
-            
+
             return Result.Success(new CreditCard(name, feeType, fee, isAddedToDeposit));
         }
 
@@ -81,7 +68,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         public Result<CreditCardFeeType> SetFeeType(CreditCardFeeType feeType)
         {
             if (!Enum.IsDefined(typeof(CreditCardFeeType), feeType))
-                return Result.Failure<CreditCardFeeType>("Invalid Fee Type");
+                return Result.Failure<CreditCardFeeType>(RequiredMessage);
 
             return Result.Success(FeeType = feeType);
         }

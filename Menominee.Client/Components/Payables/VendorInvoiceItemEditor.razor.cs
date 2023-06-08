@@ -96,7 +96,7 @@ namespace Menominee.Client.Components.Payables
         private void OnSaleCodeChange()
         {
             if (saleCodeId > 0 && LineItem.Item.SaleCode?.Id != saleCodeId)
-                LineItem.Item.SaleCode = SaleCodeHelper.ConvertTorReadInListToReadDto(
+                LineItem.Item.SaleCode = SaleCodeHelper.ConvertReadInListToReadDto(
                     SaleCodes.FirstOrDefault(saleCode => saleCode.Id == saleCodeId));
         }
 

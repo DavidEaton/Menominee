@@ -7,13 +7,13 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
 {
     public interface IVendorInvoiceRepository
     {
-        Task AddInvoice(VendorInvoice entity);
-        Task<VendorInvoice> GetInvoiceEntityAsync(long id);
-        Task<VendorInvoiceToRead> GetInvoiceAsync(long id);
+        Task Add(VendorInvoice entity);
+        Task<VendorInvoice> GetEntity(long id);
+        Task<VendorInvoiceToRead> Get(long id);
         Task<IReadOnlyList<VendorInvoiceToRead>> GetInvoices(ResourceParameters resourceParameters);
-        Task<Vendor> GetVendorAsync(long id);
-        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync(ResourceParameters resourceParameters);
-        void DeleteInvoice(VendorInvoice entity);
+        Task<Vendor> GetVendor(long id);
+        Task<IReadOnlyList<VendorInvoiceToReadInList>> GetList(ResourceParameters resourceParameters);
+        void Delete(VendorInvoice entity);
         Task<bool> Exists(long id);
         Task SaveChanges();
         Task<IReadOnlyList<string>> GetVendorInvoiceNumbers(long vendorId);

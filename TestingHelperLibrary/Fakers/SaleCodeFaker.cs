@@ -11,11 +11,11 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                string name = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
-                string code = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
-                double laborRate = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                double desiredMargin = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                SaleCodeShopSupplies shopSupplies = new SaleCodeShopSuppliesFaker(generateId).Generate();
+                var name = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
+                var code = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
+                var laborRate = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var desiredMargin = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var shopSupplies = new SaleCodeShopSuppliesFaker(generateId).Generate();
 
                 var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
 

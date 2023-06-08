@@ -58,23 +58,23 @@ namespace CustomerVehicleManagement.Shared.Models.Organizations
                 : null;
         }
 
-        public static OrganizationToRead ConvertEntityToReadDto(Organization organization)
+        public static OrganizationToRead ConvertToReadDto(Organization organization)
         {
             return organization is not null
                 ? new OrganizationToRead()
                 {
                     Id = organization.Id,
                     Name = organization.Name.Name,
-                    Address = AddressHelper.ConvertEntityToReadDto(organization.Address),
+                    Address = AddressHelper.ConvertToReadDto(organization.Address),
                     Notes = organization.Notes,
-                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(organization.Phones),
-                    Emails = EmailHelper.ConvertEntitiesToReadDtos(organization.Emails),
+                    Phones = PhoneHelper.ConvertToReadDtos(organization.Phones),
+                    Emails = EmailHelper.ConvertToReadDtos(organization.Emails),
                     Contact = PersonHelper.ConvertToReadDto(organization.Contact)
                 }
                 : null;
         }
 
-        public static OrganizationToReadInList ConvertEntityToReadInListDto(Organization organization)
+        public static OrganizationToReadInList ConvertToReadInListDto(Organization organization)
         {
             return organization is not null
                 ? new OrganizationToReadInList

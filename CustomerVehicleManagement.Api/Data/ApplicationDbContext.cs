@@ -1,10 +1,13 @@
-﻿using CustomerVehicleManagement.Api.Configurations;
+﻿using CustomerVehicleManagement.Api.Company;
+using CustomerVehicleManagement.Api.Configurations;
 using CustomerVehicleManagement.Api.Configurations.CreditCards;
 using CustomerVehicleManagement.Api.Configurations.Inventory;
 using CustomerVehicleManagement.Api.Configurations.Payables;
 using CustomerVehicleManagement.Api.Configurations.RepairOrders;
 using CustomerVehicleManagement.Api.Configurations.Taxes;
+using CustomerVehicleManagement.Api.Employees;
 using CustomerVehicleManagement.Api.Users;
+using CustomerVehicleManagement.Api.Vehicles;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using CustomerVehicleManagement.Domain.Entities.Payables;
@@ -18,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using Entities = CustomerVehicleManagement.Domain.Entities;
 
 namespace CustomerVehicleManagement.Api.Data
 {
@@ -77,10 +81,12 @@ namespace CustomerVehicleManagement.Api.Data
 
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new EmailConfiguration());
-            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
             modelBuilder.ApplyConfiguration(new PersonConfiguration());
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
+            modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
+            modelBuilder.ApplyConfiguration(new CompanyConfiguration());
 
             // Payables
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
@@ -92,7 +98,9 @@ namespace CustomerVehicleManagement.Api.Data
 
             // Repair Orders
             modelBuilder.ApplyConfiguration(new RepairOrderConfiguration());
-            modelBuilder.ApplyConfiguration(new RepairOrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderItemLaborConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderItemPartConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderLineItemConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderItemTaxConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderPaymentConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderPurchaseConfiguration());
@@ -100,7 +108,6 @@ namespace CustomerVehicleManagement.Api.Data
             modelBuilder.ApplyConfiguration(new RepairOrderServiceConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderServiceTaxConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderTaxConfiguration());
-            modelBuilder.ApplyConfiguration(new RepairOrderTechConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderWarrantyConfiguration());
 
             // Manufacturers
@@ -198,6 +205,7 @@ namespace CustomerVehicleManagement.Api.Data
         }
 
         #region -------------------- DbSets -----------------------------
+        public DbSet<Entities.Company> Companies { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -209,19 +217,21 @@ namespace CustomerVehicleManagement.Api.Data
         public DbSet<VendorInvoiceTax> VendorInvoiceTaxes { get; set; }
         public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }
         public DbSet<SaleCodeShopSupplies> SaleCodeShopSupplies { get; set; }
-        
+
         // Repair Orders
         public DbSet<RepairOrder> RepairOrders { get; set; }
-        public DbSet<RepairOrderService> RepairOrderServices { get; set; }
+
+        // ONLY CREATE DbSet<> FOR AGGREGATE ROOT 
+        //public DbSet<RepairOrderService> RepairOrderServices { get; set; }
         public DbSet<RepairOrderItem> RepairOrderItems { get; set; }
-        public DbSet<RepairOrderItemTax> RepairOrderItemTaxes { get; set; }
-        public DbSet<RepairOrderSerialNumber> RepairOrderSerialNumbers { get; set; }
-        public DbSet<RepairOrderPurchase> RepairOrderPurchases { get; set; }
-        public DbSet<RepairOrderWarranty> RepairOrderWarranties { get; set; }
-        public DbSet<RepairOrderServiceTax> RepairOrderServiceTaxes { get; set; }
-        public DbSet<RepairOrderTech> RepairOrderTechs { get; set; }
-        public DbSet<RepairOrderTax> RepairOrderTaxes { get; set; }
-        public DbSet<RepairOrderPayment> RepairOrderPayments { get; set; }
+        public DbSet<RepairOrderLineItem> RepairOrderLineItems { get; set; }
+        //public DbSet<RepairOrderItemTax> RepairOrderItemTaxes { get; set; }
+        //public DbSet<RepairOrderSerialNumber> RepairOrderSerialNumbers { get; set; }
+        //public DbSet<RepairOrderPurchase> RepairOrderPurchases { get; set; }
+        //public DbSet<RepairOrderWarranty> RepairOrderWarranties { get; set; }
+        //public DbSet<RepairOrderServiceTax> RepairOrderServiceTaxes { get; set; }
+        //public DbSet<RepairOrderTax> RepairOrderTaxes { get; set; }
+        //public DbSet<RepairOrderPayment> RepairOrderPayments { get; set; }
 
         // Manufacturers
         public DbSet<Manufacturer> Manufacturers { get; set; }

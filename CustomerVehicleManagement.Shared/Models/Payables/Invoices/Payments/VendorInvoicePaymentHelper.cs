@@ -25,12 +25,21 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments
                 };
         }
 
+        public static IReadOnlyList<VendorInvoicePayment> ConvertWriteDtosToEntities(IList<VendorInvoicePaymentToWrite> payments)
+        {
+            return payments.Select(payment =>
+                VendorInvoicePayment.Create(
+                    ConvertWriteDtoToEntity(payment.PaymentMethod),
+                    payment.Amount).Value
+            ).ToList();
+        }
+
         // TODO: Add parameter IList<string> paymentMethodNames for validation
         public static VendorInvoicePaymentMethod ConvertWriteDtoToEntity(VendorInvoicePaymentMethodToRead paymentMethod)
         {
             IList<string> paymentMethodNames = new List<string>();
             return VendorInvoicePaymentMethod.Create(
-                paymentMethodNames,
+                (IReadOnlyList<string>)paymentMethodNames,
                 paymentMethod.Name,
                 paymentMethod.IsActive,
                 paymentMethod.PaymentType,

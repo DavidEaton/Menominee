@@ -46,10 +46,8 @@ namespace CustomerVehicleManagement.Tests.Entities
             bool? isAddedToDeposit,
             string expectedMessage)
         {
-            // Act
             var result = CreditCard.Create(name, feeType, fee, isAddedToDeposit);
 
-            // Assert
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(expectedMessage);
         }
@@ -104,7 +102,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = creditCard.SetFeeType((CreditCardFeeType)99);
 
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Be("Invalid Fee Type");
+            result.Error.Should().Be(CreditCard.RequiredMessage);
         }
 
         [Fact]

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CustomerVehicleManagement.Shared.Models.Customers;
+using CustomerVehicleManagement.Shared.Models.Vehicles;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.RepairOrders
 {
@@ -7,8 +9,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public long Id { get; set; }
         public long RepairOrderNumber { get; set; }
         public long InvoiceNumber { get; set; }
-        public string CustomerName { get; set; }
-        public string Vehicle { get; set; }
+        public CustomerToRead Customer { get; set; }
+        public VehicleToRead Vehicle { get; set; }
         public double PartsTotal { get; set; }
         public double LaborTotal { get; set; }
         public double DiscountTotal { get; set; }

@@ -95,6 +95,21 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
+        public void Not_Create_SaleCode_With_Invalid_ShopSupplies()
+        {
+            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            double laborRate = SaleCode.MinimumValue;
+            double desiredMargin = SaleCode.MinimumValue;
+            SaleCodeShopSupplies invalidShopSupplies = null;
+
+            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, invalidShopSupplies);
+
+            saleCode.IsFailure.Should().BeTrue();
+            saleCode.Error.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
         public void SetName()
         {
             var saleCode = InventoryItemTestHelper.CreateSaleCode();

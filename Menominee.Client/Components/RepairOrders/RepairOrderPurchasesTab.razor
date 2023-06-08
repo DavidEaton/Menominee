@@ -1,4 +1,5 @@
-﻿<div class="m-purchases-tab">
+﻿@using Telerik.FontIcons
+<div class="m-purchases-tab">
     <div>
         <Card Title="Purchases">
             <Content>
@@ -21,13 +22,13 @@
                                     if (purchase.IsComplete())
                                     {
                                         <div class="success-icon">
-                                            <TelerikIcon Icon="check" />
+                                                <TelerikFontIcon Icon="@FontIcon.Check" />
                                         </div>
                                     }
                                     else
                                     {
                                         <div class="danger-icon">
-                                            <TelerikIcon Icon="exclamation-circle" />
+                                                <TelerikFontIcon Icon="@FontIcon.ExclamationCircle" />
                                         </div>
                                     }
                                 }
@@ -35,7 +36,7 @@
                         </GridColumn>
                         <GridColumn Width="20%" Field="@nameof(PurchaseListItem.PartNumber)" Title="Part Number"></GridColumn>
                         <GridColumn Width="30%" Field="@nameof(PurchaseListItem.Description)" Title="Description"></GridColumn>
-                        <GridColumn Width="30%" Field="@nameof(PurchaseListItem.VendorName)" Title="Vendor"></GridColumn>
+                        <GridColumn Width="30%" Field="@nameof(PurchaseListItem.Vendor.Name)" Title="Vendor"></GridColumn>
                         <GridColumn Width="10%" Field="@nameof(PurchaseListItem.Quantity)" Title="Quantity" TextAlign="ColumnTextAlign.Right"></GridColumn>
                         <GridColumn Width="10%" Field="@nameof(PurchaseListItem.VendorCost)" Title="Cost" DisplayFormat="{0:C}" TextAlign="ColumnTextAlign.Right"></GridColumn>
                     </GridColumns>

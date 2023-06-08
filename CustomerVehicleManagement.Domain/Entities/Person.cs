@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
+using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -9,77 +10,90 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Person : Contactable
     {
-        public static readonly int NoteMaximumLength = 10000;
-        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
+        // Targeting tests at the abstract base class binds them to the code’s implementation details.
+        // Always test all concrete classes; don’t test abstract classes directly (like Contactable)
 
         public PersonName Name { get; private set; }
         public Gender Gender { get; private set; }
         public DateTime? Birthday { get; private set; }
         public DriversLicense DriversLicense { get; private set; }
-        private Person(PersonName name,
-                      Gender gender,
-                      Address address,
-                      IList<Email> emails,
-                      IList<Phone> phones,
-                      DateTime? birthday = null,
-                      DriversLicense driversLicense = null)
-             : base(address, phones, emails)
+        internal Person(
+            PersonName name,
+            Gender gender,
+            string notes,
+            Address address,
+            IReadOnlyList<Email> emails,
+            IReadOnlyList<Phone> phones,
+            DateTime? birthday = null,
+            DriversLicense driversLicense = null)
+            : base(notes, address, phones, emails)
         {
             Name = name;
             Gender = gender;
-
-            if (birthday.HasValue)
-                Birthday = birthday;
-
-            if (driversLicense != null)
-                DriversLicense = driversLicense;
+            Birthday = birthday;
+            DriversLicense = driversLicense;
         }
 
         public static Result<Person> Create(
             PersonName name,
             Gender gender,
+            string notes,
             DateTime? birthday = null,
-            IList<Email> emails = null,
-            IList<Phone> phones = null,
+            IReadOnlyList<Email> emails = null,
+            IReadOnlyList<Phone> phones = null,
             Address address = null,
             DriversLicense driversLicense = null)
         {
             if (name is null)
                 return Result.Failure<Person>(RequiredMessage);
 
+            notes = (notes ?? string.Empty).Trim().Truncate(NoteMaximumLength);
+
+            if (!string.IsNullOrWhiteSpace(notes) && notes.Length > NoteMaximumLength)
+                return Result.Failure<Person>(NoteMaximumLengthMessage);
+
             if (!Enum.IsDefined(typeof(Gender), gender))
-                return Result.Failure<Person>("Invalid Gender");
+                return Result.Failure<Person>(InvalidValueMessage);
 
             if (birthday.HasValue)
                 if (!IsValidAge(birthday))
-                    return Result.Failure<Person>("Invalid Birthday");
+                    return Result.Failure<Person>(InvalidValueMessage);
 
-            return Result.Success(new Person(name, gender, address, emails, phones, birthday, driversLicense));
+            return Result.Success(new Person(name, gender, notes, address, emails, phones, birthday, driversLicense));
         }
 
-        public void SetName(PersonName name)
+        public Result<PersonName> SetName(PersonName name)
         {
             if (name is null)
-                throw new ArgumentOutOfRangeException(nameof(name), RequiredMessage);
+                return Result.Failure<PersonName>(RequiredMessage);
 
-            Name = name;
+            return Result.Success(Name = name);
         }
 
-        public void SetGender(Gender gender)
+        public Result<Gender> SetGender(Gender gender)
         {
-            Gender = gender;
+            if (!Enum.IsDefined(typeof(Gender), gender))
+                return Result.Failure<Gender>(RequiredMessage);
+
+            return Result.Success(Gender = gender);
         }
 
-        public void SetBirthday(DateTime? birthday)
+        public Result<DateTime?> SetBirthday(DateTime? birthday)
         {
-            Birthday = birthday;
+            if (!IsValidAge(birthday))
+                return Result.Failure<DateTime?>(InvalidValueMessage);
+
+            return Result.Success(Birthday = birthday);
         }
 
-        public void SetDriversLicense(DriversLicense driversLicense)
+        public Result<DriversLicense> SetDriversLicense(DriversLicense driversLicense)
         {
-            if (driversLicense != null)
-                DriversLicense = driversLicense;
+            if (driversLicense is null)
+                return Result.Failure<DriversLicense>(InvalidValueMessage);
+
+            return Result.Success(DriversLicense = driversLicense);
         }
+
         protected static bool IsValidAge(DateTime? birthDate)
         {
             if (birthDate is null)
@@ -99,12 +113,16 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return Name.LastFirstMiddle;
+        }
         #region ORM
 
         // EF requires a parameterless constructor
         protected Person() { }
 
         #endregion
-
     }
 }

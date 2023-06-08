@@ -102,7 +102,7 @@ namespace CustomerVehicleManagement.Api.SaleCodes
                 {
                     Id = saleCode.Id
                 },
-                SaleCodeHelper.ConvertEntityToReadDto(saleCode));
+                SaleCodeHelper.ConvertToReadDto(saleCode));
         }
 
         [HttpDelete("{id:long}")]

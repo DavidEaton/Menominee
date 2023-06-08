@@ -53,7 +53,7 @@ namespace CustomerVehicleManagement.Api.Taxes
                                              .FirstOrDefaultAsync(fee => fee.Id == id);
 
             return feeFromContext is not null
-                ? ExciseFeeHelper.ConvertEntityToReadDto(feeFromContext)
+                ? ExciseFeeHelper.ConvertToReadDto(feeFromContext)
                 : null;
         }
 
@@ -67,7 +67,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             IReadOnlyList<ExciseFee> exciseFees = await context.ExciseFees.ToListAsync();
 
             return exciseFees
-                .Select(fee => ExciseFeeHelper.ConvertEntityToReadInListDto(fee))
+                .Select(fee => ExciseFeeHelper.ConvertToReadInListDto(fee))
                 .ToList();
         }
 

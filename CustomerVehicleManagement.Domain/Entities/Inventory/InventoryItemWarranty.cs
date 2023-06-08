@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -11,9 +10,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemWarranty(InventoryItemWarrantyPeriod warrantyPeriod)
         {
-            if (warrantyPeriod is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             WarrantyPeriod = warrantyPeriod;
         }
 

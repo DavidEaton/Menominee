@@ -8,6 +8,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
 {
     public class DriversLicenseShould
     {
+        private const string InvalidStringOverMaximumLength = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"; // 256 characters
+        private const string InvalidStringZeroLength = "";
+        private const string InvalidUnderMinimumLength = "1";
+
         [Fact]
         public void Create_New_DriversLicense()
         {
@@ -16,10 +20,26 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             driversLicense.Should().NotBeNull();
         }
 
-        [Fact]
-        public void Return_IsFailure_Result_With_Empty_Number()
+        [Theory]
+        [InlineData(InvalidUnderMinimumLength)]
+        [InlineData(InvalidStringOverMaximumLength)]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_Number(string driversLicenseNumber)
         {
-            string driversLicenseNumber = null;
+            var issued = DateTime.Today;
+            var expiry = DateTime.Today.AddYears(4);
+            DateTimeRange driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
+
+            var driversLicenseOrError = DriversLicense.Create(driversLicenseNumber, State.MI, driversLicenseValidRange);
+
+            driversLicenseOrError.IsFailure.Should().BeTrue();
+            driversLicenseOrError.Error.Should().Contain("length");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(InvalidStringZeroLength)]
+        public void Return_IsFailure_Result_On_Create_With_Empty_Number(string driversLicenseNumber)
+        {
             var issued = DateTime.Today;
             var expiry = DateTime.Today.AddYears(4);
             DateTimeRange driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
@@ -29,9 +49,23 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             driversLicenseOrError.IsFailure.Should().BeTrue();
             driversLicenseOrError.Error.Should().Be(DriversLicense.RequiredMessage);
         }
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_With_Invalid_State()
+        {
+            var driversLicenseNumber = "123456789POIUYTREWQ";
+            var issued = DateTime.Today;
+            var expiry = DateTime.Today.AddYears(4);
+            DateTimeRange driversLicenseValidRange = DateTimeRange.Create(issued, expiry).Value;
+            State invalidState = (State)(-1);
+
+            var result = DriversLicense.Create(driversLicenseNumber, invalidState, driversLicenseValidRange);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(DriversLicense.StateInvalidMessage);
+        }
 
         [Fact]
-        public void Return_IsFailure_Result_With_Empty_ValidRange()
+        public void Return_IsFailure_Result_On_Create_With_Empty_DateRange()
         {
             var driversLicenseNumber = "123456789POIUYTREWQ";
             DateTimeRange driversLicenseValidRange = null;
@@ -57,7 +91,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var driversLicense1 = Create_DriversLicense();
             var driversLicense2 = Create_DriversLicense();
 
-            driversLicense2 = driversLicense2.NewNumber("BR549");
+            driversLicense2 = driversLicense2.NewNumber("BR549").Value;
 
             driversLicense1.Should().NotBe(driversLicense2);
         }
@@ -68,9 +102,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var driversLicense = Create_DriversLicense();
             var newNumber = "BR549";
 
-            driversLicense = driversLicense.NewNumber(newNumber);
+            var result = driversLicense.NewNumber(newNumber);
 
-            driversLicense.Number.Should().Be(newNumber);
+            result.Value.Number.Should().Be(newNumber);
         }
 
         [Fact]
@@ -79,9 +113,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var driversLicense = Create_DriversLicense();
 
             var newState = State.CA;
-            driversLicense = driversLicense.NewState(State.CA);
+            var result = driversLicense.NewState(State.CA);
 
-            driversLicense.State.Should().Be(newState);
+            result.Value.State.Should().Be(newState);
         }
 
         [Fact]
@@ -91,10 +125,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var issued = DateTime.Today.AddYears(4);
             var expiry = DateTime.Today.AddYears(8);
 
-            driversLicense = driversLicense.NewValidRange(issued, expiry);
+            var result = driversLicense.NewValidRange(issued, expiry);
 
-            driversLicense.ValidDateRange.Start.Should().Be(issued);
-            driversLicense.ValidDateRange.End.Should().Be(expiry);
+            result.Value.ValidDateRange.Start.Should().Be(issued);
+            result.Value.ValidDateRange.End.Should().Be(expiry);
         }
 
         internal static DriversLicense Create_DriversLicense()

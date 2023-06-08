@@ -20,20 +20,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemPackagePlaceholder(PackagePlaceholderItemType itemType, string description, int displayOrder, InventoryItemPackageDetails details)
         {
-            if (!Enum.IsDefined(typeof(PackagePlaceholderItemType), itemType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            description = (description ?? string.Empty).Trim();
-
-            if (description.Length < DescriptionMinimumLength || description.Length > DescriptionMaximumLength)
-                throw new ArgumentOutOfRangeException(DescriptionInvalidMessage);
-
-            if (displayOrder < 1)
-                throw new ArgumentOutOfRangeException(DisplayOrderInvalidMessage);
-
-            if (details is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             ItemType = itemType;
             Description = description;
             DisplayOrder = displayOrder;

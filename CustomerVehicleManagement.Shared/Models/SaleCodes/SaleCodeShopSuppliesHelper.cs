@@ -9,12 +9,12 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
             return shopSupplies is null
                 ? null
                 : SaleCodeShopSupplies.Create(
-                shopSupplies.Percentage,
-                shopSupplies.MinimumJobAmount,
-                shopSupplies.MinimumCharge,
-                shopSupplies.MaximumCharge,
-                shopSupplies.IncludeParts,
-                shopSupplies.IncludeLabor)
+                    shopSupplies.Percentage,
+                    shopSupplies.MinimumJobAmount,
+                    shopSupplies.MinimumCharge,
+                    shopSupplies.MaximumCharge,
+                    shopSupplies.IncludeParts,
+                    shopSupplies.IncludeLabor)
                 .Value;
         }
     }

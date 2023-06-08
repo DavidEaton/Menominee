@@ -342,4 +342,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/.NCrunch_Menominee/StoredText/b415fdc7280349508ee0ec0a0a090f56
+/.NCrunch_Menominee/StoredText
+/CustomerVehicleManagement.Tests/CustomerVehicleManagement.Tests.v3.ncrunchproject
+/CustomerVehicleManagement.Tests.Integration/CustomerVehicleManagement.Tests.Integration.v3.ncrunchproject

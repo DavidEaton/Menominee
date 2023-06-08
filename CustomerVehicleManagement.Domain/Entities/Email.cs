@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Interfaces;
-using System;
 using System.ComponentModel.DataAnnotations;
 using Entity = Menominee.Common.Entity;
 
@@ -9,7 +8,7 @@ namespace CustomerVehicleManagement.Domain.Entities
     public class Email : Entity, IHasPrimary
     {
         public static readonly string InvalidMessage = "Email address and/or its format is invalid";
-        public static readonly int MinimumLength = 1;
+        public static readonly int MinimumLength = 5;
         public static readonly int MaximumLength = 254;
         public static readonly string MinimumLengthMessage = $"Email address cannot be less than {MinimumLength} character(s) in length.";
         public static readonly string MaximumLengthMessage = $"Email address cannot be over {MaximumLength} characters in length.";
@@ -46,22 +45,49 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(new Email(address, isPrimary));
         }
 
-        public void SetAddress(string address)
+        public Result Update(string address, bool isPrimary)
         {
+            var addressResult = SetAddress(address);
+            if (addressResult.IsFailure)
+                return Result.Failure(addressResult.Error);
 
-            address = address.Trim();
+
+            var isPrimaryResult = SetIsPrimary(isPrimary);
+            if (isPrimaryResult.IsFailure)
+                return Result.Failure(isPrimaryResult.Error);
+
+            return Result.Success();
+        }
+
+        public Result<string> SetAddress(string address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+                return Result.Failure<string>(EmptyMessage);
+
+            address = (address ?? string.Empty).Trim();
+
+            if (address.Length < MinimumLength)
+                return Result.Failure<string>(MinimumLengthMessage);
+
+            if (address.Length > MaximumLength)
+                return Result.Failure<string>(MaximumLengthMessage);
 
             var emailAddressAttribute = new EmailAddressAttribute();
 
             if (!emailAddressAttribute.IsValid(address))
-                throw new ArgumentOutOfRangeException(nameof(address), InvalidMessage);
+                return Result.Failure<string>(InvalidMessage);
 
-            Address = address;
+            return Result.Success(Address = address);
         }
 
-        public void SetIsPrimary(bool isPrimary)
+        public Result<bool> SetIsPrimary(bool isPrimary)
         {
-            IsPrimary = isPrimary;
+            return Result.Success(IsPrimary = isPrimary);
+        }
+
+        public override string ToString()
+        {
+            return Address;
         }
 
         #region ORM

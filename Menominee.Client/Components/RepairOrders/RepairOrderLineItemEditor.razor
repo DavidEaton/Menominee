@@ -1,0 +1,219 @@
+﻿<TelerikWindow Visible="DialogVisible"
+               Modal="true"
+               Width="900px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+
+        <div class="form-row">
+            <div class="form-group col-4">
+                <label class="k-label" for="saleType">Sale Type</label>
+                <TelerikDropDownList @bind-Value="@Line.SaleType"
+                                     Data="SaleTypeEnumData"
+                                     Width="100%"
+                                     TextField="DisplayText"
+                                     ValueField="Value"
+                                     Id="saleType">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="calc(32px * 5)" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+            <div id="buyoutButton" class="form-group col-2">
+                <label class="k-label" for="buyout">Buyout</label>
+                <TelerikCheckBox Id="buyout" @bind-Value="@PlaceholderBuyout" />
+            </div>
+            <div class="form-group col-6">
+                <label class="k-label" for="rfr">Reason For Replacement</label>
+                <TelerikDropDownList @bind-Value="@PlaceholderReasonForReplacement"
+                                     Width="100%"
+                                     Data="@ReasonsForReplacement"
+                                     TextField="DisplayText"
+                                     ValueField="Code"
+                                     Id="rfr">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="calc(32px * 8)" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label class="k-label" for="qtySold">Quantity Sold</label>
+                <TelerikNumericTextBox @bind-Value="@Line.QuantitySold"
+                                       Width="100%"
+                                       Id="qtySold">
+                </TelerikNumericTextBox>
+            </div>
+            <div class="form-group col-3">
+                <label class="k-label" for="onHand">On Hand</label>
+                <TelerikNumericTextBox @bind-Value="@PlaceholderQuantityOnHand"
+                                       Arrows="false"
+                                       Enabled="false"
+                                       Id="onHand">
+                </TelerikNumericTextBox>
+            </div>
+        </div>
+
+        <hr class="m-section-divider">
+
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label for="cost">Cost</label>
+                <div class="input-group">
+                    <TelerikNumericTextBox @bind-Value="@Line.Cost"
+                                           Width="80%"
+                                           Format="C"
+                                           Decimals="2"
+                                           Arrows="false"
+                                           Id="cost">
+                    </TelerikNumericTextBox>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button"><i class="fas fa-key"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-3">
+                <label for="selling">Selling Price</label>
+                <div class="input-group">
+                    <TelerikNumericTextBox @bind-Value="@Line.SellingPrice"
+                                           Width="80%"
+                                           Format="C"
+                                           Decimals="2"
+                                           Arrows="false"
+                                           Id="">
+                    </TelerikNumericTextBox>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button"><i class="fas fa-table"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label for="laborType">Labor</label>
+                <TelerikDropDownList @bind-Value="@Line.LaborAmount"
+                                     Width="100%"
+                                     Data="@LaborTypeEnumData"
+                                     TextField="DisplayText"
+                                     ValueField="Value"
+                                     Id="laborType">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="calc(32px * 3)" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+            @if (Line.LaborAmount.PayType is not ItemLaborType.None)
+            {
+                <div class="form-group col-3">
+                    <label for="laborEach">Labor Each</label>
+                    <TelerikNumericTextBox @bind-Value="@Line.LaborAmount"
+                                       Width="100%"
+                                       Format="C"
+                                       Decimals="2"
+                                       Arrows="false"
+                                       Id="laborEach">
+                    </TelerikNumericTextBox>
+                </div>
+            }
+        </div>
+        <div class="form-row">
+            <div class="form-group col-3">
+                <label for="discType">Discount</label>
+                <TelerikDropDownList @bind-Value="@Line.DiscountAmount.DiscountType"
+                                     Width="100%"
+                                     Data="@DiscountTypeEnumData"
+                                     TextField="DisplayText"
+                                     ValueField="Value"
+                                     Id="discType">
+                    <DropDownListSettings>
+                        <DropDownListPopupSettings Height="calc(32px * 4)" />
+                    </DropDownListSettings>
+                </TelerikDropDownList>
+            </div>
+            @if (Line.DiscountAmount.DiscountType is not ItemDiscountType.None)
+            {
+                <div class="form-group col-3">
+                    <label for="discountEach">Discount Each</label>
+                    <TelerikNumericTextBox @bind-Value="@Line.DiscountAmount.Amount"
+                                       Width="100%"
+                                       Format="C"
+                                       Decimals="2"
+                                       Arrows="false"
+                                       Id="discountEach">
+                    </TelerikNumericTextBox>
+                </div>
+            }
+        </div>
+
+        <hr class="m-button-divider">
+        <div>
+            <TelerikButton OnClick="OnSave"
+                           ButtonType="ButtonType.Button"
+                           ThemeColor="primary"
+                           Class="dialog-button">
+                <i class="fas fa-check"></i> OK
+            </TelerikButton>
+            <TelerikButton OnClick="OnCancel"
+                           ButtonType="ButtonType.Button"
+                           Class="dialog-button">
+                <i class="fas fa-times"></i> Cancel
+            </TelerikButton>
+        </div>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    .m-button-divider {
+        margin-top: 1em;
+        border-color: darkgrey;
+    }
+
+    .m-section-divider {
+        margin-top: .5rem !important;
+        margin-bottom: .5rem !important;
+        /*border-color: darkgrey;*/
+    }
+
+    .dialog-button {
+        margin-right: 0.7rem;
+    }
+
+    .popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+        background: #274c77;
+        color: white;
+    }
+
+    .m-form-control-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: .5rem !important;
+    }
+
+    .m-col-margin-right-16 {
+        /*margin-right: 16px;*/
+        /*column-gap: 16px;*/
+    }
+
+    .m-no-row-padding {
+        padding: 0 !important;
+        margin: 0 !important;
+        margin-inline: 12px;
+    }
+
+    .m-grid-form {
+        display: grid;
+    }
+
+    .k-label {
+        margin-bottom: .2rem !important;
+    }
+
+    #buyoutButton {
+        margin-top: 30px;
+    }
+</style>

@@ -1,26 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
 {
     public class Vendor : Contactable
     {
-        public static readonly int NoteMaximumLength = 10000;
-        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
+        // Targeting tests at the abstract base class binds them to the code’s implementation details.
+        // Always test all concrete classes; don’t test abstract classes directly
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
-        public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} character(s) {MaximumLength} and in length";
+        public static readonly string InvalidLengthMessage = $"Name, Code must be between {MinimumLength} characters {MaximumLength} and in length";
         public string Name { get; private set; }
         public string VendorCode { get; private set; }
         public VendorRole VendorRole { get; private set; }
         public DefaultPaymentMethod DefaultPaymentMethod { get; private set; }
-        public string Notes { get; private set; }
         public bool? IsActive { get; private set; }
+        public IReadOnlyList<Person> Contacts => contacts.ToList();
+        private readonly List<Person> contacts = new();
 
         // TODO: Vendor settings for requirements
         // TODO: Need another table of required fields for purchases which currently include:
@@ -32,47 +34,25 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         // TODO: Then we need to add a collection property containing these requirements
         // TODO: We may also want to add a collection of contacts (e.g., billing person, sales rep)
         //       We really only need their name, department, phone (1) & email (1).
+        //      Added Contacts collection (IReadOnlyList<Person>). We could create VendorContact
+        //      class having Department, Role (e.g., billing person, sales rep) members. Then 
+        //      replace IReadOnlyList<Person> with IReadOnlyList<VendorContact>.
 
         private Vendor(
             string name,
             string vendorCode,
             VendorRole vendorRole,
-            string note = null,
             DefaultPaymentMethod defaultPaymentMethod = null,
+            string notes = null,
             Address address = null,
-            IList<Email> emails = null,
-            IList<Phone> phones = null)
-            : base(address, phones, emails)
+            IReadOnlyList<Email> emails = null,
+            IReadOnlyList<Phone> phones = null)
+            : base(notes, address, phones, emails)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(RequiredMessage);
-
-            if (string.IsNullOrWhiteSpace(vendorCode))
-                throw new ArgumentNullException(RequiredMessage);
-
-            name = (name ?? string.Empty).Trim();
-            vendorCode = (vendorCode ?? string.Empty).Trim();
-            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
-
-            if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
-                throw new ArgumentNullException(RequiredMessage);
-
-            if (name.Length < MinimumLength ||
-                name.Length > MaximumLength ||
-                vendorCode.Length < MinimumLength ||
-                vendorCode.Length > MaximumLength)
-                throw new ArgumentOutOfRangeException(InvalidLengthMessage);
-
-            if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
-                throw new ArgumentOutOfRangeException(NoteMaximumLengthMessage);
-
-            if (defaultPaymentMethod is not null)
-                DefaultPaymentMethod = defaultPaymentMethod;
-
             Name = name;
             VendorCode = vendorCode;
             VendorRole = vendorRole;
-            Notes = note;
+            DefaultPaymentMethod = defaultPaymentMethod;
             IsActive = true;
         }
 
@@ -80,21 +60,18 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string name,
             string vendorCode,
             VendorRole vendorRole,
-            string note = null,
-            DefaultPaymentMethod defaultPaymentMethod = null,
+            string notes = null,
+             DefaultPaymentMethod defaultPaymentMethod = null,
             Address address = null,
-            IList<Email> emails = null,
-            IList<Phone> phones = null)
+            IReadOnlyList<Email> emails = null,
+            IReadOnlyList<Phone> phones = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                return Result.Failure<Vendor>(RequiredMessage);
-
-            if (string.IsNullOrWhiteSpace(vendorCode))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(vendorCode))
                 return Result.Failure<Vendor>(RequiredMessage);
 
             name = (name ?? string.Empty).Trim();
             vendorCode = (vendorCode ?? string.Empty).Trim();
-            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
+            notes = (notes ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
             if (!Enum.IsDefined(typeof(VendorRole), vendorRole))
                 return Result.Failure<Vendor>(RequiredMessage);
@@ -105,10 +82,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendorCode.Length > MaximumLength)
                 return Result.Failure<Vendor>(InvalidLengthMessage);
 
-            if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
+            if (!string.IsNullOrWhiteSpace(notes) && notes.Length > NoteMaximumLength)
                 return Result.Failure<Vendor>(NoteMaximumLengthMessage);
 
-            return Result.Success(new Vendor(name, vendorCode, vendorRole, note, defaultPaymentMethod, address, emails, phones));
+            return Result.Success(new Vendor(name, vendorCode, vendorRole, defaultPaymentMethod, notes, address, emails, phones));
         }
 
         public Result<string> SetName(string name)
@@ -148,16 +125,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         public Result ClearDefaultPaymentMethod()
         {
             return Result.Success(DefaultPaymentMethod = null);
-        }
-
-        public Result<string> SetNote(string note)
-        {
-            note = (note ?? string.Empty).Trim().Truncate(NoteMaximumLength);
-
-            if (!string.IsNullOrWhiteSpace(note) && note.Length > NoteMaximumLength)
-                return Result.Failure<string>(NoteMaximumLengthMessage);
-
-            return Result.Success(Notes = note.Trim().Truncate(NoteMaximumLength));
         }
 
         public void Enable() => IsActive = true;

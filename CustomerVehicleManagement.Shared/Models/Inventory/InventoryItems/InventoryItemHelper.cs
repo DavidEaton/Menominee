@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
 {
     public class InventoryItemHelper
     {
-        public static InventoryItemToReadInList ConvertEntityToReadInListDto(InventoryItem item)
+        public static InventoryItemToReadInList ConvertToReadInListDto(InventoryItem item)
         {
             return item is null
                 ? new InventoryItemToReadInList()
@@ -49,7 +49,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
                 });
         }
 
-        public static InventoryItemToRead ConvertEntityToReadDto(InventoryItem item)
+        public static InventoryItemToRead ConvertToReadDto(InventoryItem item)
         {
             if (item is null)
                 return null;
@@ -85,22 +85,22 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
             switch (item.ItemType)
             {
                 case InventoryItemType.Part:
-                    inventoryItemToRead.Part = InventoryItemPartHelper.ConvertEntityToReadDto(item.Part);
+                    inventoryItemToRead.Part = InventoryItemPartHelper.ConvertToReadDto(item.Part);
                     break;
                 case InventoryItemType.Labor:
-                    inventoryItemToRead.Labor = InventoryItemLaborHelper.ConvertEntityToReadDto(item.Labor);
+                    inventoryItemToRead.Labor = InventoryItemLaborHelper.ConvertToReadDto(item.Labor);
                     break;
                 case InventoryItemType.Tire:
-                    inventoryItemToRead.Tire = InventoryItemTireHelper.ConvertEntityToReadDto(item.Tire);
+                    inventoryItemToRead.Tire = InventoryItemTireHelper.ConvertToReadDto(item.Tire);
                     break;
                 case InventoryItemType.Package:
-                    inventoryItemToRead.Package = InventoryItemPackageHelper.ConvertEntityToReadDto(item.Package);
+                    inventoryItemToRead.Package = InventoryItemPackageHelper.ConvertToReadDto(item.Package);
                     break;
                 case InventoryItemType.Inspection:
-                    inventoryItemToRead.Inspection = InventoryItemInspectionHelper.ConvertEntityToReadDto(item.Inspection);
+                    inventoryItemToRead.Inspection = InventoryItemInspectionHelper.ConvertToReadDto(item.Inspection);
                     break;
                 case InventoryItemType.GiftCertificate:
-                    inventoryItemToRead.Warranty = InventoryItemWarrantyHelper.ConvertEntityToReadDto(item.Warranty);
+                    inventoryItemToRead.Warranty = InventoryItemWarrantyHelper.ConvertToReadDto(item.Warranty);
                     break;
                 case InventoryItemType.Donation:
                     break;

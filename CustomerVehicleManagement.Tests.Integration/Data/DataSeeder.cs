@@ -14,7 +14,7 @@ namespace CustomerVehicleManagement.Tests.Integration.Data
             this.dbContext = dbContext;
         }
 
-        public void SeedData<T>(List<T> entities) where T : Entity
+        public void Save<T>(List<T> entities) where T : Entity
         {
             dbContext.AddRange(entities);
             DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);

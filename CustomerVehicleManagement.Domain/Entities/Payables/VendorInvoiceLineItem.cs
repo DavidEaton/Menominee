@@ -31,32 +31,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             string poNumber = null,
             DateTime? transactionDate = null)
         {
-            if (!Enum.IsDefined(typeof(VendorInvoiceLineItemType), type))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (item is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (quantity <= MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if (cost < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if (core < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            poNumber = (poNumber ?? string.Empty).Trim();
-
-            if (poNumber is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (poNumber.Length > PONumberMaximumLength)
-                throw new ArgumentOutOfRangeException(PONumberMaximumLengthMessage);
-
-            if (transactionDate.HasValue && transactionDate.Value > DateTime.Today)
-                throw new ArgumentOutOfRangeException(TransactionDateInvalidMessage);
-
             Type = type;
             Item = item;
             Quantity = quantity;
@@ -152,7 +126,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(PONumber = poNumber);
         }
 
-        public void ClearPONumber() => PONumber = string.Empty;
+        public Result<string> ClearPONumber()
+        {
+            return Result.Success(PONumber = string.Empty);
+        }
 
         public Result<DateTime?> SetTransactionDate(DateTime? transactionDate)
         {
@@ -165,7 +142,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(TransactionDate = transactionDate);
         }
 
-        public void ClearTransactionDate() => TransactionDate = null;
+        public Result<DateTime?> ClearTransactionDate()
+        {
+            return Result.Success(TransactionDate = null);
+        }
 
         #region ORM
 

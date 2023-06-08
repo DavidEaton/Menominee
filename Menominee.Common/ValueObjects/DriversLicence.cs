@@ -48,18 +48,18 @@ namespace Menominee.Common.ValueObjects
             return Result.Success(new DriversLicense(number, state, validRange));
         }
 
-        public DriversLicense NewNumber(string newNumber)
+        public Result<DriversLicense> NewNumber(string newNumber)
         {
-            return new DriversLicense(newNumber, State, ValidDateRange);
+            return Result.Success(new DriversLicense(newNumber, State, ValidDateRange));
         }
-        public DriversLicense NewState(State newState)
+        public Result<DriversLicense> NewState(State newState)
         {
-            return new DriversLicense(Number, newState, ValidDateRange);
+            return Result.Success(new DriversLicense(Number, newState, ValidDateRange));
         }
 
-        public DriversLicense NewValidRange(DateTime start, DateTime end)
+        public Result<DriversLicense> NewValidRange(DateTime start, DateTime end)
         {
-            return Create(Number, State, DateTimeRange.Create(start, end).Value).Value;
+            return Result.Success(Create(Number, State, DateTimeRange.Create(start, end).Value).Value);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

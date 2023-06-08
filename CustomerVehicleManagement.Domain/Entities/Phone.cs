@@ -11,9 +11,13 @@ namespace CustomerVehicleManagement.Domain.Entities
 {
     public class Phone : Entity, IHasPrimary
     {
-        public static readonly string InvalidMessage = "Email address and/or its format is invalid";
+        public static readonly string InvalidMessage = "Phone number and/or its format is invalid";
         public static readonly string EmptyMessage = "Phone number cannot be empty";
         public static readonly string PhoneTypeInvalidMessage = $"Please enter a valid Phone Type";
+
+        public string Number { get; private set; }
+        public PhoneType PhoneType { get; private set; }
+        public bool IsPrimary { get; private set; }
 
         private Phone(string number, PhoneType phoneType, bool isPrimary)
         {
@@ -24,9 +28,6 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public static Result<Phone> Create(string number, PhoneType phoneType, bool isPrimary)
         {
-            if (string.IsNullOrWhiteSpace(number))
-                return Result.Failure<Phone>(EmptyMessage);
-
             if (!Enum.IsDefined(typeof(PhoneType), phoneType))
                 return Result.Failure<Phone>(PhoneTypeInvalidMessage);
 
@@ -39,10 +40,28 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             return Result.Success(new Phone(number, phoneType, isPrimary));
         }
+        public Result Update(string number, PhoneType phoneType, bool isPrimary)
+        {
+            var numberResult = SetNumber(number);
+            if (numberResult.IsFailure)
+            {
+                return Result.Failure(numberResult.Error);
+            }
 
-        public string Number { get; private set; }
-        public PhoneType PhoneType { get; private set; }
-        public bool IsPrimary { get; private set; }
+            var phoneTypeResult = SetPhoneType(phoneType);
+            if (phoneTypeResult.IsFailure)
+            {
+                return Result.Failure(phoneTypeResult.Error);
+            }
+
+            var isPrimaryResult = SetIsPrimary(isPrimary);
+            if (isPrimaryResult.IsFailure)
+            {
+                return Result.Failure(isPrimaryResult.Error);
+            }
+
+            return Result.Success();
+        }
 
         public override string ToString()
         {
@@ -56,32 +75,29 @@ namespace CustomerVehicleManagement.Domain.Entities
             };
         }
 
-        public void SetNumber(string number)
+        public Result<string> SetNumber(string number)
         {
-            if (number is null)
-                throw new ArgumentOutOfRangeException(nameof(number), "payment");
-
-            number = number.Trim();
+            number = (number ?? string.Empty).Trim();
 
             var phoneAttribute = new PhoneAttribute();
 
             if (!phoneAttribute.IsValid(number))
-                throw new ArgumentOutOfRangeException(nameof(number), InvalidMessage);
+                return Result.Failure<string>(InvalidMessage);
 
-            Number = number;
+            return Result.Success(Number = number);
         }
 
-        public void SetPhoneType(PhoneType phoneType)
+        public Result<PhoneType> SetPhoneType(PhoneType phoneType)
         {
             if (!Enum.IsDefined(typeof(PhoneType), phoneType))
-                throw new ArgumentOutOfRangeException(typeof(PhoneType).ToString(), InvalidMessage); ;
+                return Result.Failure<PhoneType>(InvalidMessage);
 
-            PhoneType = phoneType;
+            return Result.Success(PhoneType = phoneType);
         }
 
-        public void SetIsPrimary(bool isPrimary)
+        public Result<bool> SetIsPrimary(bool isPrimary)
         {
-            IsPrimary = isPrimary;
+            return Result.Success(IsPrimary = isPrimary);
         }
 
         private static string RemoveNonNumericCharacters(string input)

@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warra
             .Value;
         }
 
-        public static InventoryItemWarrantyToRead ConvertEntityToReadDto(InventoryItemWarranty warranty)
+        public static InventoryItemWarrantyToRead ConvertToReadDto(InventoryItemWarranty warranty)
         {
             return warranty is null
                 ? null
@@ -47,7 +47,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warra
                 });
         }
 
-        public static InventoryItemWarrantyToReadInList ConvertEntityToReadInListDto(InventoryItemWarranty warranty)
+        public static InventoryItemWarrantyToReadInList ConvertToReadInListDto(InventoryItemWarranty warranty)
         {
             return warranty is null
                 ? null

@@ -12,9 +12,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         private TechAmount(ItemLaborType payType, double amount, SkillLevel skillLevel)
             : base(payType, amount)
         {
-            if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             SkillLevel = skillLevel;
         }
 
@@ -23,18 +20,10 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
                 return Result.Failure<TechAmount>(RequiredMessage);
 
-            Result<TechAmount> result = null;
-
-            try
-            {
-                result = new TechAmount(payType, amount, skillLevel);
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure<TechAmount>(ex.Message);
-            }
-
-            return result;
+            if (amount < MinimumAmount)
+                return Result.Failure<TechAmount>(InvalidAmountMessage);
+            
+            return Result.Success(new TechAmount(payType, amount, skillLevel));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

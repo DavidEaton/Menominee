@@ -25,7 +25,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public static readonly int MaximumSpeedRatingLength = 3;
         public static readonly string InvalidDiameterMessage = $"Diameter must be between {MinimumDiameter} and {MaximumDiameter}.";
         public static readonly string InvalidSpeedRatingMessage = $"Speed Rating must be no more than {MaximumSpeedRatingLength} characters.";
-        public static readonly int MaximumLoadIndexLength = 3;
+        public static readonly int MaximumLoadIndexLength = 5;
         public static readonly string InvalidLoadIndexMessage = $"Load Index must be no more than {MaximumLoadIndexLength} characters.";
 
         // Optional
@@ -53,31 +53,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
              double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, string type = null, int? loadIndex = null, string speedRating = null)
              : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode)
         {
-            type = (type ?? string.Empty).Trim();
-            speedRating = (speedRating ?? string.Empty).Trim();
-
-            if (type?.Length > MaximumTypeLength)
-                throw new ArgumentOutOfRangeException(InvalidTypeMessage);
-
-            if (width < MinimumWidth || width > MaximumWidth)
-                throw new ArgumentOutOfRangeException(InvalidWidthMessage);
-
-            if (aspectRatio.ToString().Length != AspectRatioRequiredLength)
-                throw new ArgumentOutOfRangeException(InvalidAspectRatioMessage);
-
-            if (!Enum.IsDefined(typeof(TireConstructionType), constructionType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (diameter < MinimumDiameter || diameter > MaximumDiameter)
-                throw new ArgumentOutOfRangeException(InvalidDiameterMessage);
-
-            if (loadIndex.HasValue)
-                if (loadIndex < MinimumMoneyAmount || loadIndex.ToString().Length > MaximumLoadIndexLength)
-                    throw new ArgumentOutOfRangeException(InvalidLoadIndexMessage);
-
-            if (speedRating.Length > MaximumSpeedRatingLength)
-                throw new ArgumentOutOfRangeException(InvalidSpeedRatingMessage);
-
             Type = type;
             Width = width;
             AspectRatio = aspectRatio;

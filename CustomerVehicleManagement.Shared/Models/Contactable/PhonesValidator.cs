@@ -16,10 +16,11 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                     phone.NotEmpty()
                         .WithMessage(notEmptyMessage);
                     phone.MustBeEntity(
-                        x => Phone.Create(
-                            x.Number,
-                            x.PhoneType,
-                            x.IsPrimary));
+                        phoneToWrite =>
+                        Phone.Create(
+                            phoneToWrite.Number,
+                            phoneToWrite.PhoneType,
+                            phoneToWrite.IsPrimary));
                 });
         }
     }

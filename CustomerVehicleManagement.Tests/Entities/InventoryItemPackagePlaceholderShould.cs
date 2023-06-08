@@ -183,7 +183,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var placeholder = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
             var originalDetails = placeholder.Details;
             var newDetails = InventoryItemTestHelper.CreateInventoryItemPackageDetails();
-            newDetails = newDetails.SetQuantity(newDetails.Quantity + 1.0).Value;
+            newDetails = newDetails.NewQuantity(newDetails.Quantity + 1.0).Value;
             placeholder.Details.Should().Be(originalDetails);
 
             var resultOrError = placeholder.SetDetails(newDetails);

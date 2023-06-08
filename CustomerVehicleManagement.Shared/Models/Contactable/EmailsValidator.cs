@@ -17,7 +17,11 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 .ForEach(email =>
                 {
                     email.NotEmpty().WithMessage(notEmptyMessage);
-                    email.MustBeEntity(x => Email.Create(x.Address, x.IsPrimary));
+                    email.MustBeEntity(
+                        emailtoWrite => 
+                        Email.Create(
+                            emailtoWrite.Address, 
+                            emailtoWrite.IsPrimary));
                 });
         }
 

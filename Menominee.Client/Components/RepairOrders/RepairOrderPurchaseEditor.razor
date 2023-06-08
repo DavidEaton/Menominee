@@ -37,7 +37,7 @@
                     @if (Vendors != null)
                     {
                         <label class="k-label" for="vendor">Vendor</label>
-                        <TelerikDropDownList @bind-Value="@Purchase.VendorId"
+                        <TelerikDropDownList @bind-Value="@Purchase.Vendor.Id"
                                          Width="100%"
                                          Data="@VendorList"
                                          TextField="DisplayText"

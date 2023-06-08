@@ -1,14 +1,12 @@
 ﻿using Bogus;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using Menominee.Common.Enums;
-using System;
-using System.Linq;
 
 namespace TestingHelperLibrary.Fakers
 {
     public class VendorInvoiceFaker : Faker<VendorInvoice>
     {
-        public VendorInvoiceFaker(bool generateId = false, bool createCollections = false)
+        public VendorInvoiceFaker(bool generateId = false, int lineItemsCount = 0, int paymentsCount = 0, int taxesCount = 0)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
@@ -20,31 +18,20 @@ namespace TestingHelperLibrary.Fakers
                 var vendorInvoiceNumbers = faker.MakeLazy(5, () => faker.Random.String2(10)).ToList();
                 var vendor = new VendorFaker(generateId).Generate();
                 var invoiceNumber = GenerateInvoiceNumber(faker);
-                var lineItems = new VendorInvoiceLineItemFaker(generateId: generateId).GenerateBetween(1, 5);
-                var payments = new VendorInvoicePaymentFaker(generateId: generateId).GenerateBetween(1, 5);
-                var taxes = new VendorInvoiceTaxFaker(generateId: generateId).GenerateBetween(1, 5);
+                var lineItems = new VendorInvoiceLineItemFaker(generateId: generateId).Generate(lineItemsCount);
+                var payments = new VendorInvoicePaymentFaker(generateId: generateId).Generate(paymentsCount);
+                var taxes = new VendorInvoiceTaxFaker(generateId: generateId).Generate(taxesCount);
 
-                var result = VendorInvoice.Create(vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber);
+                var invoice = VendorInvoice.Create(vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber).Value;
 
-                VendorInvoice invoice = null;
+                lineItems.ForEach(line =>
+                    invoice.AddLineItem(line));
 
-                if (result.IsSuccess)
-                    invoice = result.Value;
+                payments.ForEach(payment =>
+                    invoice.AddPayment(payment));
 
-                if (result.IsFailure)
-                    throw new InvalidOperationException(result.Error);
-
-                if (createCollections)
-                {
-                    foreach (var line in lineItems)
-                        invoice.AddLineItem(line);
-
-                    foreach (var payment in payments)
-                        invoice.AddPayment(payment);
-
-                    foreach (var tax in taxes)
-                        invoice.AddTax(tax);
-                }
+                taxes.ForEach(tax =>
+                    invoice.AddTax(tax));
 
                 return invoice;
             });

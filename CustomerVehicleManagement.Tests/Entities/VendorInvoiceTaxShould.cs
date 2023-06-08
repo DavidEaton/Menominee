@@ -37,7 +37,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void Not_Create_VendorInvoiceTax_With_Invalid_Amount()
         {
-            double invalidAmount = -0.1;
+            var invalidAmount = -0.1;
 
             var vendorInvoiceTaxOrError = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), invalidAmount);
 
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount).Value;
 
             vendorInvoiceTax.Amount.Should().Be(validAmount);
-            double newAmount = 2.1;
+            var newAmount = 2.1;
             vendorInvoiceTax.SetAmount(newAmount);
 
             vendorInvoiceTax.Amount.Should().Be(newAmount);
@@ -83,7 +83,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorInvoiceTax = VendorInvoiceTax.Create(VendorInvoiceTestHelper.CreateSalesTax(), validAmount).Value;
 
             vendorInvoiceTax.Amount.Should().Be(validAmount);
-            double invalidAmount = -0.1;
+            var invalidAmount = -0.1;
             var resultOrError = vendorInvoiceTax.SetAmount(invalidAmount);
 
             resultOrError.IsFailure.Should().BeTrue();

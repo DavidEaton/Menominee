@@ -1,5 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems.Item;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;
@@ -123,16 +124,5 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        public class LaborTypeEnumModel
-        {
-            public ItemLaborType Value { get; set; }
-            public string DisplayText { get; set; }
-        }
-
-        public enum ReasonForReplacementType
-        {
-            Required,
-            Suggested
-        }
     }
 }

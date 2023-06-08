@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
 using CustomerVehicleManagement.Shared.Models.DriversLicenses;
+using CustomerVehicleManagement.Shared.Models.Persons.PersonNames;
 using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
@@ -16,18 +17,21 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                 : new()
                 {
                     Id = person.Id,
-                    FirstName = person.Name.FirstName,
-                    MiddleName = person.Name.MiddleName,
-                    LastName = person.Name.LastName,
+                    Name = new PersonNameToRead()
+                    {
+                        FirstName = person.Name.FirstName,
+                        LastName = person.Name.LastName,
+                        MiddleName = person.Name?.MiddleName
+                    },
                     Gender = person.Gender,
                     DriversLicense = DriversLicenseHelper.ConvertToReadDto(person.DriversLicense),
                     Address =
                         person?.Address is not null
-                        ? AddressHelper.ConvertEntityToReadDto(person.Address)
+                        ? AddressHelper.ConvertToReadDto(person.Address)
                         : null,
                     Birthday = person?.Birthday,
-                    Phones = PhoneHelper.ConvertEntitiesToReadDtos(person.Phones),
-                    Emails = EmailHelper.ConvertEntitiesToReadDtos(person.Emails)
+                    Phones = PhoneHelper.ConvertToReadDtos(person.Phones),
+                    Emails = EmailHelper.ConvertToReadDtos(person.Emails)
                 };
         }
 
@@ -65,7 +69,16 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
                     dateTimeRange).Value;
             }
 
-            return Person.Create(personName, person.Gender, person.Birthday, emails, phones, address, driversLicense).Value;
+            return Person.Create(
+                personName, 
+                person.Gender,
+                person.Notes,
+                person.Birthday,
+                emails,
+                phones, 
+                address,
+                driversLicense)
+                .Value;
         }
         public static PersonToWrite ConvertReadToWriteDto(PersonToRead person)
         {
@@ -73,9 +86,9 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
             {
                 Name = new()
                 {
-                    LastName = person.LastName,
-                    MiddleName = person.MiddleName,
-                    FirstName = person.FirstName
+                    LastName = person.Name.LastName,
+                    MiddleName = person.Name?.MiddleName,
+                    FirstName = person.Name.FirstName
                 },
 
                 Gender = person.Gender,
@@ -128,7 +141,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons
             return Person;
         }
 
-        public static PersonToReadInList ConvertEntityToReadInListDto(Person person)
+        public static PersonToReadInList ConvertToReadInListDto(Person person)
         {
             return person is null
                 ? null

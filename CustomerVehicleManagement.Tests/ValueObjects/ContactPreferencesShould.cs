@@ -62,5 +62,23 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             contactPreferences.AllowMail.Should().BeFalse();
             contactPreferences.AllowSms.Should().BeTrue();
         }
+
+        [Fact]
+        public void Equate_Two_Instances_Having_Same_Values()
+        {
+            var contactPreferencesOne = ContactPreferences.Create(false, false, false).Value;
+            var contactPreferencesTwo = ContactPreferences.Create(false, false, false).Value;
+
+            contactPreferencesOne.Should().BeEquivalentTo(contactPreferencesTwo);
+        }
+
+        [Fact]
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
+        {
+            var contactPreferencesOne = ContactPreferences.Create(false, false, false).Value;
+            var contactPreferencesTwo = ContactPreferences.Create(true, true, true).Value;
+
+            contactPreferencesOne.Should().NotBeSameAs(contactPreferencesTwo);
+        }
     }
 }

@@ -24,6 +24,9 @@ namespace CustomerVehicleManagement.Api.Configurations
                    .Property(contactPreferences => contactPreferences.AllowSms)
                    .HasColumnName("AllowSms")
                    .IsRequired();
+
+            builder.Ignore(customer => customer.Emails);
+            builder.Ignore(customer => customer.Phones);
         }
     }
 }

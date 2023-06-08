@@ -1,5 +1,7 @@
 ﻿using Bogus;
 using CustomerVehicleManagement.Api.Data;
+using CustomerVehicleManagement.Domain.Entities.Payables;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Tests.Helpers;
@@ -138,15 +140,136 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             invoiceFromEndpoint.InvoiceNumber.Should().Be(updatedInvoiceNumber);
         }
 
-        //[Fact]
-        // public async Task Update_an_Invoice_LineItems() {}
+        [Fact]
+        public async Task Update_Invoice_LineItems()
+        {
+            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var poNumber = "Test PoNumber";
+            var transactionDate = DateTime.Today;
+            var core = 3548.19;
+            var cost = 3461.87;
+            var quantity = 4678;
+            var item = new VendorInvoiceItemFaker(false).Generate();
+            foreach (var line in invoiceToUpdate.LineItems)
+            {
+                line.PONumber.Should().NotBe(poNumber);
+                line.SetPONumber(poNumber);
 
-        //[Fact]
-        // public async Task Update_an_Invoice_Payments() {}
+                line.TransactionDate.Should().NotBe(transactionDate);
+                line.SetTransactionDate(transactionDate);
 
-        //[Fact]
-        // public async Task Update_an_Invoice_Taxes() {}
+                line.Core.Should().NotBe(core);
+                line.SetCore(core);
 
+                line.Cost.Should().NotBe(cost);
+                line.SetCost(cost);
+
+                line.Quantity.Should().NotBe(quantity);
+                line.SetQuantity(quantity);
+
+                line.Item.Should().NotBe(item);
+                line.SetItem(item);
+            }
+            var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
+
+            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+
+            response.EnsureSuccessStatusCode();
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            invoiceFromEndpoint.Should().NotBeNull();
+            foreach (var line in invoiceFromEndpoint.LineItems)
+            {
+                line.PONumber.Should().Be(poNumber);
+                line.TransactionDate.Should().Be(transactionDate);
+                line.Core.Should().Be(core);
+                line.Cost.Should().Be(cost);
+                line.Quantity.Should().Be(quantity);
+                line.Item.Description.Should().Be(item.Description);
+                line.Item.PartNumber.Should().Be(item.PartNumber);
+
+                if (line.Item.Manufacturer is not null)
+                    if (line.Item.Manufacturer.Id != 0)
+                        line.Item.Manufacturer.Id.Should().Be(item.Manufacturer.Id);
+
+                if (line.Item.SaleCode is not null)
+                    if (line.Item.SaleCode.Id != 0)
+                        line.Item.SaleCode.Id.Should().Be(item.SaleCode.Id);
+            }
+        }
+
+        [Fact]
+        public async Task Update_Invoice_Payments()
+        {
+            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var amount = 3548.19;
+            var paymentMethod = GetUnusedPaymentMethod(invoiceToUpdate);
+            foreach (var payment in invoiceToUpdate.Payments)
+            {
+                payment.Amount.Should().NotBe(amount);
+                payment.SetAmount(amount);
+
+                payment.PaymentMethod.Id.Should().NotBe(paymentMethod.Id);
+                payment.SetPaymentMethod(paymentMethod);
+            }
+            var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
+
+            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+
+            response.EnsureSuccessStatusCode();
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            invoiceFromEndpoint.Should().NotBeNull();
+            foreach (var payment in invoiceFromEndpoint.Payments)
+            {
+                payment.Amount.Should().Be(amount);
+                payment.PaymentMethod.Id.Should().Be(paymentMethod.Id);
+            }
+        }
+        private VendorInvoicePaymentMethod GetUnusedPaymentMethod(VendorInvoice invoiceToUpdate)
+        {
+            var paymentMethodsInUse = invoiceToUpdate.Payments
+                .Select(payment => payment.PaymentMethod).ToList();
+
+            return dbContext.VendorInvoicePaymentMethods
+                .FirstOrDefault(paymentMethod => !paymentMethodsInUse.Contains(paymentMethod));
+        }
+
+        [Fact]
+        public async Task Update_Invoice_Taxes()
+        {
+            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var amount = 3548.19;
+            var salesTax = GetUnusedSalesTax(invoiceToUpdate);
+            foreach (var tax in invoiceToUpdate.Taxes)
+            {
+                tax.Amount.Should().NotBe(amount);
+                tax.SetAmount(amount);
+
+                tax.SalesTax.Id.Should().NotBe(salesTax.Id);
+                tax.SetSalesTax(salesTax);
+            }
+            var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
+
+            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+
+            response.EnsureSuccessStatusCode();
+            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            invoiceFromEndpoint.Should().NotBeNull();
+            foreach (var tax in invoiceFromEndpoint.Taxes)
+            {
+                tax.Amount.Should().Be(amount);
+                tax.SalesTax.Id.Should().Be(salesTax.Id);
+            }
+        }
+
+        private SalesTax GetUnusedSalesTax(VendorInvoice invoiceToUpdate)
+        {
+            var salesTaxInUse = invoiceToUpdate.Taxes
+                .Select(tax => tax.SalesTax).ToList();
+
+            return dbContext.SalesTaxes
+                .FirstOrDefault(salesTax => !salesTaxInUse.Contains(salesTax));
+
+        }
 
         [Fact]
         public async Task Delete_an_Invoice()
@@ -195,67 +318,56 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         private void SeedData()
         {
             var count = 2;
+            var random = new Random();
+
             var paymentMethods = new VendorInvoicePaymentMethodFaker(false).Generate(count);
-            var defaultPaymentMethods = new DefaultPaymentMethodFaker(false).Generate(count);
-            var vendors = new VendorFaker(false).Generate(count);
+            var defaultPaymentMethods = new DefaultPaymentMethodFaker(false).Generate(count)
+                .Select(defaultPaymentMethod =>
+                {
+                    defaultPaymentMethod.NewPaymentMethod(paymentMethods[random.Next(paymentMethods.Count)]);
+                    return defaultPaymentMethod;
+                }).ToList();
+            var vendors = new VendorFaker(false).Generate(count)
+                .Select(vendor =>
+                {
+                    vendor.SetDefaultPaymentMethod(defaultPaymentMethods[random.Next(defaultPaymentMethods.Count)]);
+                    return vendor;
+                }).ToList();
             var saleCodeShopSupplies = new SaleCodeShopSuppliesFaker(false).Generate(count);
-            var saleCodes = new SaleCodeFaker(false).Generate(count);
+            var saleCodes = new SaleCodeFaker(false).Generate(count)
+                .Select(saleCode =>
+                {
+                    saleCode.SetShopSupplies(saleCodeShopSupplies[0]);
+                    return saleCode;
+                }).ToList();
             var manufacturers = new ManufacturerFaker(false).Generate(count);
-            var vendorInvoiceItems = new VendorInvoiceItemFaker(false).Generate(count);
+            var vendorInvoiceItems = new VendorInvoiceItemFaker(false).Generate(count)
+                .Select(item =>
+                {
+                    item.NewManufacturer(manufacturers[random.Next(manufacturers.Count)]);
+                    item.NewSaleCode(saleCodes[random.Next(saleCodes.Count)]);
+                    return item;
+                }).ToList();
             var exciseFees = new ExciseFeeFaker(generateId: false).Generate(count);
-            var salesTaxes = new SalesTaxFaker(false).Generate(count);
+            var salesTaxes = new SalesTaxFaker(false).Generate(count)
+                .Select(salesTax =>
+                {
+                    salesTax.AddExciseFee(exciseFees[random.Next(exciseFees.Count)]);
+                    return salesTax;
+                }).ToList();
             var vendorInvoiceLineItems = new VendorInvoiceLineItemFaker(false).Generate(count);
-            var vendorInvoiceTaxes = new VendorInvoiceTaxFaker(false).Generate(count);
+            var vendorInvoiceTaxes = new VendorInvoiceTaxFaker(false).Generate(count)
+                .Select(tax =>
+                {
+                    tax.SetSalesTax(salesTaxes[random.Next(salesTaxes.Count)]);
+                    return tax;
+                }).ToList();
             var vendorInvoicePayments = new VendorInvoicePaymentFaker(false).Generate(count);
-            var invoices = new VendorInvoiceFaker().Generate(2);
+            var invoices = new VendorInvoiceFaker(generateId: false, lineItemsCount: count, paymentsCount: count, taxesCount: count).Generate(count);
 
-            // SeedData in correct order of creation heirarchy
-            dataSeeder.SeedData(saleCodeShopSupplies);
-            foreach (var saleCode in saleCodes)
-                saleCode.SetShopSupplies(saleCodeShopSupplies[0]);
-            dataSeeder.SeedData(saleCodes);
-
-            dataSeeder.SeedData(manufacturers);
-            foreach (var item in vendorInvoiceItems)
-            {
-                item.SetManufacturer(manufacturers[new Random().Next(manufacturers.Count)]);
-                item.SetSaleCode(saleCodes[new Random().Next(saleCodes.Count)]);
-            }
-
-            dataSeeder.SeedData(paymentMethods);
-            foreach (var defaultPaymentMethod in defaultPaymentMethods)
-                defaultPaymentMethod.SetPaymentMethod(paymentMethods[new Random().Next(paymentMethods.Count)]);
-
-            foreach (var vendor in vendors)
-                vendor.SetDefaultPaymentMethod(defaultPaymentMethods[new Random().Next(defaultPaymentMethods.Count)]);
-            dataSeeder.SeedData(vendors);
-
-            foreach (var paymentMethod in paymentMethods)
-                paymentMethod.SetReconcilingVendor(vendors[new Random().Next(vendors.Count)]);
-            // Save paymentMethods changes to database
-            dbContext.SaveChanges();
-
-            dataSeeder.SeedData(exciseFees);
-            foreach (var salesTax in salesTaxes)
-                salesTax.AddExciseFee(exciseFees[new Random().Next(exciseFees.Count)]);
-
-            dataSeeder.SeedData(salesTaxes);
-            foreach (var tax in vendorInvoiceTaxes)
-                tax.SetSalesTax(salesTaxes[new Random().Next(salesTaxes.Count)]);
-
-            invoices[0].SetVendor(vendors[new Random().Next(vendors.Count)]);
-
-            foreach (var lineItem in vendorInvoiceLineItems)
-                invoices[0].AddLineItem(lineItem);
-
-            foreach (var payment in vendorInvoicePayments)
-                invoices[0].AddPayment(payment);
-
-            foreach (var tax in vendorInvoiceTaxes)
-                invoices[0].AddTax(tax);
-
-            dataSeeder.SeedData(invoices);
+            dataSeeder.Save(invoices);
         }
+
 
         public void Dispose()
         {

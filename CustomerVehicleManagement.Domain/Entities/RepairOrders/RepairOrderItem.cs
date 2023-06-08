@@ -1,112 +1,142 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
+    // TODO: DDD: Rename this class to ServiceLineItem?
     public class RepairOrderItem : Entity
     {
-        // TODO: DDD Notes
-        // Invariant: check if this part's ProductCode requires serial numbers to be entered for EACH sold.
-        // For example, if three of same part are sold, three serial numbers are required.
-        public long RepairOrderServiceId { get; set; }
-        public virtual Manufacturer Manufacturer { get; set; }
-        public long ManufacturerId { get; set; }
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public virtual SaleCode SaleCode { get; set; }
-        public long SaleCodeId { get; set; }
-        public virtual ProductCode ProductCode { get; set; }
-        public long ProductCodeId { get; set; }
-        public SaleType SaleType { get; set; }
-        public PartType PartType { get; set; }
-        public bool IsDeclined { get; set; }
-        public bool IsCounterSale { get; set; }
-        public double QuantitySold { get; set; }
-        public double SellingPrice { get; set; }
-        public ItemLaborType LaborType { get; set; }
-        public double LaborEach { get; set; }
-        public double Cost { get; set; }
-        public double Core { get; set; }
-        public ItemDiscountType DiscountType { get; set; }
-        public double DiscountEach { get; set; }
-        public double Total { get; set; }
-
-        public virtual List<RepairOrderSerialNumber> SerialNumbers { get; set; } = new();
-        public virtual List<RepairOrderWarranty> Warranties { get; set; } = new();
-        public virtual List<RepairOrderItemTax> Taxes { get; set; } = new();
-        public virtual List<RepairOrderPurchase> Purchases { get; set; } = new();
-
-        public void AddSerialNumber(RepairOrderSerialNumber serialNumber)
+        // TODO: RepairOrderItem should have additional detail in new classes like RepairOrderItemPart, RepairOrderItemLabor, etc., similar to InventoryItem.cs - Al
+        public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly int MaximumLength = 255;
+        public static readonly int MinimumLength = 1;
+        public static readonly string InvalidLengthMessage = $"Must be within {MinimumLength} to {MaximumLength} character(s) in length.";
+        public Manufacturer Manufacturer { get; private set; } //required
+        public string PartNumber { get; private set; } //required
+        public string Description { get; private set; } //required
+        public SaleCode SaleCode { get; private set; } //required
+        public ProductCode ProductCode { get; private set; } //required
+        public PartType PartType { get; private set; } //required
+        public RepairOrderItemPart Part { get; private set; } //optional
+        public RepairOrderItemLabor Labor { get; private set; } //optional
+        private RepairOrderItem(
+            Manufacturer manufacturer,
+            string partNumber,
+            string description,
+            SaleCode saleCode,
+            ProductCode productCode,
+            PartType partType,
+            RepairOrderItemPart part = null,
+            RepairOrderItemLabor labor = null
+        )
         {
-            if (serialNumber is null)
-                throw new ArgumentOutOfRangeException(nameof(serialNumber), "serialNumber");
-
-            SerialNumbers.Add(serialNumber);
+            Manufacturer = manufacturer;
+            PartNumber = partNumber;
+            Description = description;
+            SaleCode = saleCode;
+            ProductCode = productCode;
+            PartType = partType;
+            Part = part;
+            Labor = labor;
         }
 
-        public void RemoveSerialNumber(RepairOrderSerialNumber serialNumber)
+        public static Result<RepairOrderItem> Create(
+            Manufacturer manufacturer,
+            string partNumber,
+            string description,
+            SaleCode saleCode,
+            ProductCode productCode,
+            PartType partType,
+            RepairOrderItemPart part = null,
+            RepairOrderItemLabor labor = null
+        )
         {
-            if (serialNumber is null)
-                throw new ArgumentOutOfRangeException(nameof(serialNumber), "serialNumber");
-            SerialNumbers.Remove(serialNumber);
+            partNumber = (partNumber ?? string.Empty).Trim();
+            description = (description ?? string.Empty).Trim();
+
+            if (partNumber.Length > MaximumLength || partNumber.Length < MinimumLength ||
+                description.Length < MinimumLength || description.Length > MaximumLength)
+                return Result.Failure<RepairOrderItem>(InvalidLengthMessage);
+
+            if (manufacturer is null || saleCode is null || productCode is null)
+                return Result.Failure<RepairOrderItem>(RequiredMessage);
+
+            if (!Enum.IsDefined(typeof(PartType), partType))
+                return Result.Failure<RepairOrderItem>(RequiredMessage);
+
+            // Enforce invariant: one and only one optional member
+            var validOptionalMembersCount = new[]
+            {
+                part is not null,
+                labor is not null
+            }.Count(optionalMembersCount => optionalMembersCount is true) == 1;
+
+            return !validOptionalMembersCount
+                ? Result.Failure<RepairOrderItem>(RequiredMessage)
+                : Result.Success(new RepairOrderItem(manufacturer, partNumber, description, saleCode, productCode, partType, part, labor));
         }
 
-        public void AddWarranty(RepairOrderWarranty warranty)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
         {
-            if (warranty is null)
-                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty");
-
-            Warranties.Add(warranty);
+            return
+                manufacturer is null
+                ? Result.Failure<Manufacturer>(RequiredMessage)
+                : Result.Success(Manufacturer = manufacturer);
         }
 
-        public void RemoveWarranty(RepairOrderWarranty warranty)
+        public Result<string> SetPartNumber(string partNumber)
         {
-            if (warranty is null)
-                throw new ArgumentOutOfRangeException(nameof(warranty), "warranty");
+            partNumber = (partNumber ?? string.Empty).Trim();
 
-            Warranties.Remove(warranty);
+            if (partNumber.Length < MinimumLength ||
+                partNumber.Length > MaximumLength)
+                return Result.Failure<string>(InvalidLengthMessage);
+
+            return Result.Success(PartNumber = partNumber);
         }
 
-        public void AddTax(RepairOrderItemTax tax)
+        public Result<string> SetDescription(string description)
         {
-            if (tax is null)
-                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
+            description = (description ?? string.Empty).Trim();
 
-            Taxes.Add(tax);
+            return
+                description.Length < MinimumLength || description.Length > MaximumLength
+                ? Result.Failure<string>(InvalidLengthMessage)
+                : Result.Success(Description = description);
         }
 
-        public void RemoveTax(RepairOrderItemTax tax)
+        public Result<SaleCode> SetSaleCode(SaleCode saleCode)
         {
-            if (tax is null)
-                throw new ArgumentOutOfRangeException(nameof(tax), "tax");
-
-            Taxes.Remove(tax);
+            return
+                saleCode is null
+                ? Result.Failure<SaleCode>(RequiredMessage)
+                : Result.Success(SaleCode = saleCode);
         }
 
-        public void AddPurchase(RepairOrderPurchase purchase)
+        public Result<RepairOrderItem> SetProductCode(ProductCode productCode)
         {
-            if (purchase is null)
-                throw new ArgumentOutOfRangeException(nameof(purchase), "purchase");
+            if (productCode is null)
+                return Result.Failure<RepairOrderItem>(RequiredMessage);
 
-            Purchases.Add(purchase);
+            return Result.Success(new RepairOrderItem(Manufacturer, PartNumber, Description, SaleCode, productCode, PartType));
         }
 
-        public void RemovePurchase(RepairOrderPurchase purchase)
+        public Result<RepairOrderItem> SetPartType(PartType partType)
         {
-            if (purchase is null)
-                throw new ArgumentOutOfRangeException(nameof(purchase), "purchase");
+            if (!Enum.IsDefined(typeof(PartType), partType))
+                return Result.Failure<RepairOrderItem>(RequiredMessage);
 
-            Purchases.Remove(purchase);
+            return Result.Success(new RepairOrderItem(Manufacturer, PartNumber, Description, SaleCode, ProductCode, partType));
         }
-
 
         #region ORM
 
         // EF requires a parameterless constructor
-        public RepairOrderItem() { }
+        protected RepairOrderItem() { }
 
         #endregion
 

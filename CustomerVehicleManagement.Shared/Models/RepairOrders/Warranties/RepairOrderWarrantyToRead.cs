@@ -5,7 +5,6 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties
     public class RepairOrderWarrantyToRead
     {
         public long Id { get; set; }
-        public long RepairOrderItemId { get; set; }
         public double Quantity { get; set; }
         public WarrantyType Type { get; set; }
         public string NewWarranty { get; set; }

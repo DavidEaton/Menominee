@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Interfaces;
+using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -11,26 +12,36 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 {
     public abstract class Contactable : Entity, IContactLists
     {
+        // Targeting tests at the abstract base class binds them to the code’s implementation details.
+        // Always test only concrete classes; don’t test abstract classes directly
+        public static readonly int NoteMaximumLength = 10000;
+        public static readonly string NoteMaximumLengthMessage = $"Notes cannot be over {NoteMaximumLength} characters in length.";
         public static readonly string RequiredMessage = $"Please enter all required items.";
         public static readonly string NonuniqueMessage = $"Item has already been entered; each item must be unique.";
         public static readonly string PrimaryExistsMessage = $"Primary has already been entered.";
+        public static readonly string InvalidValueMessage = $"Value was invalid";
+        public string Notes { get; private set; }
+        public Address Address { get; private set; }
 
-        public IList<Phone> Phones { get; private set; } = new List<Phone>();
-        public IList<Email> Emails { get; private set; } = new List<Email>();
-        public Address Address { get; private set; } //VK: Initialize?
+        private readonly List<Phone> phones = new();
+        public IReadOnlyList<Phone> Phones => phones.ToList();
+        private readonly List<Email> emails = new();
+        public IReadOnlyList<Email> Emails => emails.ToList();
 
-        internal Contactable(Address address, IList<Phone> phones, IList<Email> emails)
+        internal Contactable(string notes, Address address, IReadOnlyList<Phone> phones, IReadOnlyList<Email> emails)
         {
+            Notes = notes;
+
             if (address is not null)
                 SetAddress(address);
 
             if (phones is not null)
                 foreach (var phone in phones)
-                    Phones.Add(phone);
+                    AddPhone(phone);
 
             if (emails is not null)
                 foreach (var email in emails)
-                    Emails.Add(email);
+                    AddEmail(email);
         }
 
         public Result<Email> AddEmail(Email email)
@@ -44,16 +55,19 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             if (ContactableHasPrimaryEmail() && email.IsPrimary)
                 return Result.Failure<Email>(PrimaryExistsMessage);
 
-            Emails.Add(email);
+            emails.Add(email);
+
             return Result.Success(email);
         }
 
-        public Result RemoveEmail(Email email)
+        public Result<Email> RemoveEmail(Email email)
         {
             if (email is null)
                 return Result.Failure<Email>(RequiredMessage);
 
-            return Result.Success(Emails.Remove(email));
+            var removed = emails.Remove(email);
+
+            return removed ? Result.Success(email) : Result.Failure<Email>(RequiredMessage);
         }
 
         public Result<Phone> AddPhone(Phone phone)
@@ -67,29 +81,40 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             if (ContactableHasPrimaryPhone() && phone.IsPrimary)
                 return Result.Failure<Phone>(PrimaryExistsMessage);
 
-            Phones.Add(phone);
+            phones.Add(phone);
+
             return Result.Success(phone);
         }
 
-        public Result RemovePhone(Phone phone)
+        public Result<Phone> RemovePhone(Phone phone)
         {
             if (phone is null)
                 return Result.Failure<Phone>(RequiredMessage);
 
-            return Result.Success(Phones.Remove(phone));
+            phones.Remove(phone);
+
+            return Result.Success(phone);
+        }
+
+        public Result<string> SetNotes(string note)
+        {
+            return Result.Success(Notes = note.Trim().Truncate(NoteMaximumLength));
         }
 
         // VK Im.2: you don't need to return REsult here, just void is fine
         public Result SetAddress(Address address)
         {
-            // Address is guaranteed to be valid; it was validated on creation.
-            // Address is optional, so excluding it shouldn't throw an exception:
+            if (address is null)
+                return Result.Failure<Address>(RequiredMessage);
+
+            // Address (if present) is guaranteed to be valid;
+            // it was validated on creation.
             return Result.Success(Address = address);
         }
 
-        public void ClearAddress()
+        public Result ClearAddress()
         {
-            Address = null;
+            return Result.Success(Address = null);
         }
 
         private bool ContactableHasPhone(Phone phone)
@@ -122,67 +147,64 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         private void SyncPhones(IReadOnlyList<Phone> phones)
         {
-            Phone[] toAdd = phones
+            var toAdd = phones
                 .Where(phone => phone.Id == 0)
                 .ToArray();
 
-            Phone[] toDelete = Phones
+            var toDelete = Phones
                 .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id) == false)
                 .ToArray();
 
-            Phone[] toModify = Phones
+            var toModify = Phones
                 .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id))
                 .ToArray();
 
-            foreach (Phone phone in toDelete)
-            {
-                RemovePhone(phone);
-            }
+            toDelete.ToList()
+                .ForEach(phone => RemovePhone(phone));
 
-            foreach (Phone phone in toModify)
-            {
-                Phone phoneFromCaller = phones.Single(phone => phone.Id == phone.Id);
+            toModify.ToList()
+                .ForEach(phone =>
+                {
+                    var phoneFromCaller = phones.Single(callerPhone => callerPhone.Id == phone.Id);
 
-                if (phone.Number != phoneFromCaller.Number)
-                    phone.SetNumber(phoneFromCaller.Number);
+                    if (phone.Number != phoneFromCaller.Number)
+                        phone.SetNumber(phoneFromCaller.Number);
 
-                if (phone.PhoneType != phoneFromCaller.PhoneType)
-                    phone.SetPhoneType(phoneFromCaller.PhoneType);
+                    if (phone.PhoneType != phoneFromCaller.PhoneType)
+                        phone.SetPhoneType(phoneFromCaller.PhoneType);
 
-                if (phone.IsPrimary != phoneFromCaller.IsPrimary)
-                    phone.SetIsPrimary(phoneFromCaller.IsPrimary);
-            }
+                    if (phone.IsPrimary != phoneFromCaller.IsPrimary)
+                        phone.SetIsPrimary(phoneFromCaller.IsPrimary);
+                });
 
-            foreach (Phone phone in toAdd)
-            {
-                Result result = AddPhone(phone);
-                if (result.IsFailure)
-                    throw new Exception(result.Error);
-            }
+            toAdd.ToList()
+                .ForEach(phone =>
+                {
+                    var result = AddPhone(phone);
+                    if (result.IsFailure)
+                        throw new Exception(result.Error);
+                });
         }
 
         private void SyncEmails(IReadOnlyList<Email> emails)
         {
-            Email[] toAdd = emails
+            var toAdd = emails
                 .Where(email => email.Id == 0)
                 .ToArray();
 
-            Email[] toDelete = Emails
+            var toDelete = Emails
                 .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id) == false)
                 .ToArray();
 
-            Email[] toModify = Emails
+            var toModify = Emails
                 .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id))
                 .ToArray();
 
-            foreach (Email email in toDelete)
-            {
-                RemoveEmail(email);
-            }
+            toDelete.ToList().ForEach(email => RemoveEmail(email));
 
-            foreach (Email email in toModify)
+            foreach (var email in toModify)
             {
-                Email emailFromCaller = emails.Single(callerEmail => callerEmail.Id == email.Id);
+                var emailFromCaller = emails.Single(callerEmail => callerEmail.Id == email.Id);
 
                 if (email.Address != emailFromCaller.Address)
                     email.SetAddress(emailFromCaller.Address);
@@ -191,12 +213,13 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                     email.SetIsPrimary(emailFromCaller.IsPrimary);
             }
 
-            foreach (Email email in toAdd)
-            {
-                Result result = AddEmail(email);
-                if (result.IsFailure)
-                    throw new Exception(result.Error);
-            }
+            toAdd.ToList()
+                .ForEach(email =>
+                {
+                    Result result = AddEmail(email);
+                    if (result.IsFailure)
+                        throw new Exception(result.Error);
+                });
         }
 
         #region ORM

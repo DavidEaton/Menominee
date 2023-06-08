@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,13 +11,16 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
             base.Configure(builder);
             builder.ToTable("RepairOrderItem", "dbo");
 
-            builder.Property(item => item.SaleType)
-               .HasDefaultValue(SaleType.Regular)
-               .IsRequired();
-
-            builder.Property(item => item.PartType)
-               .HasDefaultValue(PartType.Part)
-               .IsRequired();
+            builder.Property(item => item.Manufacturer)
+                .IsRequired();
+            builder.Property(item => item.PartNumber)
+                .IsRequired()
+                .HasMaxLength(255);
+            builder.Property(item => item.Description)
+                .IsRequired()
+                .HasMaxLength(255);
+            builder.Property(item => item.SaleCode)
+                .IsRequired();
         }
     }
 }

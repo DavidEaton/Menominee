@@ -16,12 +16,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemWarrantyPeriod(InventoryItemWarrantyPeriodType periodType, int duration)
         {
-            if (!Enum.IsDefined(typeof(InventoryItemWarrantyPeriodType), periodType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (duration < 0)
-                throw new ArgumentOutOfRangeException(NonNegativeMessage);
-
             PeriodType = periodType;
             Duration = duration;
         }
@@ -37,20 +31,20 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new InventoryItemWarrantyPeriod(periodType, duration));
         }
 
-        public Result<InventoryItemWarrantyPeriodType> SetPeriodType(InventoryItemWarrantyPeriodType periodType)
+        public Result<InventoryItemWarrantyPeriod> NewPeriodType(InventoryItemWarrantyPeriodType periodType)
         {
             if (!Enum.IsDefined(typeof(InventoryItemWarrantyPeriodType), periodType))
-                return Result.Failure<InventoryItemWarrantyPeriodType>(RequiredMessage);
+                return Result.Failure<InventoryItemWarrantyPeriod>(RequiredMessage);
 
-            return Result.Success(PeriodType = periodType);
+            return Result.Success(new InventoryItemWarrantyPeriod(periodType, Duration));
         }
 
-        public Result<int> SetDuration(int duration)
+        public Result<InventoryItemWarrantyPeriod> NewDuration(int duration)
         {
             if (duration < 0)
-                return Result.Failure<int>(NonNegativeMessage);
+                return Result.Failure<InventoryItemWarrantyPeriod>(NonNegativeMessage);
 
-            return Result.Success(Duration = duration);
+            return Result.Success(new InventoryItemWarrantyPeriod(PeriodType, duration));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

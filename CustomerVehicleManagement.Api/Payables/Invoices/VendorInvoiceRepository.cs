@@ -19,7 +19,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddInvoice(VendorInvoice invoice)
+        public async Task Add(VendorInvoice invoice)
         {
             if (invoice is not null)
             {
@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                 context.Remove(invoiceFromContext);
         }
 
-        public async Task<VendorInvoiceToRead> GetInvoiceAsync(long id)
+        public async Task<VendorInvoiceToRead> Get(long id)
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
@@ -54,8 +54,6 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
                     .ThenInclude(item => item.Item.Manufacturer)
                 .Include(invoice => invoice.LineItems)
                     .ThenInclude(item => item.Item.SaleCode)
-                .Include(invoice => invoice.Payments)
-                    .ThenInclude(payment => payment.PaymentMethod)
                 .Include(invoice => invoice.Payments)
                     .ThenInclude(payment => payment.PaymentMethod)
                         .ThenInclude(method => method.ReconcilingVendor)
@@ -71,12 +69,12 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             : VendorInvoiceHelper.ConvertToReadDto(await invoiceFromContext);
         }
 
-        public async Task<Vendor> GetVendorAsync(long id)
+        public async Task<Vendor> GetVendor(long id)
         {
             return await context.Vendors.FirstOrDefaultAsync(vendor => vendor.Id == id);
         }
 
-        public async Task<VendorInvoice> GetInvoiceEntityAsync(long id)
+        public async Task<VendorInvoice> GetEntity(long id)
         {
             var invoiceFromContext = context.VendorInvoices
                 .Include(invoice => invoice.Vendor)
@@ -100,7 +98,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             return await invoiceFromContext;
         }
 
-        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetInvoiceListAsync(ResourceParameters resourceParameters)
+        public async Task<IReadOnlyList<VendorInvoiceToReadInList>> GetList(ResourceParameters resourceParameters)
         {
             if (resourceParameters is null)
                 throw new ArgumentException(nameof(resourceParameters));
@@ -137,7 +135,7 @@ namespace CustomerVehicleManagement.Api.Payables.Invoices
             await context.SaveChangesAsync();
 
 
-        public void DeleteInvoice(VendorInvoice invoice)
+        public void Delete(VendorInvoice invoice)
         {
             context.Remove(invoice);
         }

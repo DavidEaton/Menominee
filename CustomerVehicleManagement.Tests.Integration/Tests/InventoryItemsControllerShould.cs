@@ -224,10 +224,10 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
         private InventoryItemToWrite CreateInventoryItemToPost() => new()
         {
             Description = new Faker().Commerce.ProductDescription().Truncate(255),
-            Manufacturer = ManufacturerHelper.ConvertEntityToReadDto(dbContext.Manufacturers.First()),
+            Manufacturer = ManufacturerHelper.ConvertToReadDto(dbContext.Manufacturers.First()),
             ItemNumber = new Faker().Random.AlphaNumeric(10).ToUpper(),
             ItemType = InventoryItemType.Part,
-            ProductCode = ProductCodeHelper.ConvertEntityToReadDto(dbContext.ProductCodes.First()),
+            ProductCode = ProductCodeHelper.ConvertToReadDto(dbContext.ProductCodes.First()),
             Part = InventoryItemPartHelper.ConvertToWriteDto(dbContext.InventoryItemParts.First())
         };
 
@@ -241,12 +241,12 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
             var productCodes = new ProductCodeFaker(generateId).Generate(count);
             var parts = new InventoryItemPartFaker(generateId).Generate(count);
 
-            dataSeeder.SeedData(saleCodeShopSupplies);
+            dataSeeder.Save(saleCodeShopSupplies);
             foreach (var saleCode in saleCodes)
                 saleCode.SetShopSupplies(saleCodeShopSupplies[0]);
-            dataSeeder.SeedData(saleCodes);
+            dataSeeder.Save(saleCodes);
 
-            dataSeeder.SeedData(manufacturers);
+            dataSeeder.Save(manufacturers);
             foreach (var productCode in productCodes)
             {
                 productCode.SetManufacturer(
@@ -256,10 +256,10 @@ namespace CustomerVehicleManagement.Tests.Integration.Tests
                 productCode.SetSaleCode(saleCodes[new Random().Next(saleCodes.Count)]);
             }
 
-            dataSeeder.SeedData(parts);
-            dataSeeder.SeedData(productCodes);
+            dataSeeder.Save(parts);
+            dataSeeder.Save(productCodes);
 
-            dataSeeder.SeedData(
+            dataSeeder.Save(
                 new InventoryItemFaker(generateId: generateId)
                 .Generate(count));
         }

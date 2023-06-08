@@ -25,24 +25,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             Manufacturer manufacturer,
             string code,
             string name,
-            IReadOnlyList<string> manufacturerCodes,
             SaleCode saleCode = null)
         {
-            code = (code ?? string.Empty).Trim();
-            name = (name ?? string.Empty).Trim();
-            if (name.Length > MaximumNameLength || name.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidNameLengthMessage);
-
-            if (code.Length > MaximumCodeLength || code.Length < MinimumLength)
-                throw new ArgumentOutOfRangeException(InvalidCodeLengthMessage);
-
-            if (manufacturer is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            // Manufacturer/Code pair must be unique. The same code value may be used by more than one Manufacturer.
-            if (manufacturerCodes.Contains($"{manufacturer.Id}{code}"))
-                throw new ArgumentOutOfRangeException(NonuniqueMessage);
-
             Manufacturer = manufacturer;
             Code = code;
             SaleCode = saleCode;
@@ -71,7 +55,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             if (manufacturerCodes.Contains($"{manufacturer.Id}{code}"))
                 return Result.Failure<ProductCode>(NonuniqueMessage);
 
-            return Result.Success(new ProductCode(manufacturer, code, name, manufacturerCodes, saleCode));
+            return Result.Success(new ProductCode(manufacturer, code, name, saleCode));
         }
 
         public Result<string> SetName(string name)

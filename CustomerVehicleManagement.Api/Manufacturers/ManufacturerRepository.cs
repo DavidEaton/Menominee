@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(string code)
         {
-            return ManufacturerHelper.ConvertEntityToReadDto(
+            return ManufacturerHelper.ConvertToReadDto(
                 await context.Manufacturers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Code == code));
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
 
         public async Task<ManufacturerToRead> GetManufacturerAsync(long id)
         {
-            return ManufacturerHelper.ConvertEntityToReadDto(
+            return ManufacturerHelper.ConvertToReadDto(
                 await context.Manufacturers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id));
@@ -76,7 +76,7 @@ namespace CustomerVehicleManagement.Api.Manufacturers
                 .ToListAsync();
 
             return manufacturers.
-                Select(manufacturer => ManufacturerHelper.ConvertEntityToReadInListDto(manufacturer))
+                Select(manufacturer => ManufacturerHelper.ConvertToReadInListDto(manufacturer))
                 .ToList();
         }
 

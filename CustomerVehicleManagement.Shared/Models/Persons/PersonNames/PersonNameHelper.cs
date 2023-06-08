@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Persons.PersonNames
 {
     public class PersonNameHelper
     {
-        public static PersonNameToRead ConvertEntityToReadDto(PersonName name)
+        public static PersonNameToRead ConvertToReadDto(PersonName name)
         {
             return name is not null
                 ? new PersonNameToRead()
@@ -15,7 +15,5 @@ namespace CustomerVehicleManagement.Shared.Models.Persons.PersonNames
                 }
                 : null;
         }
-
-
     }
 }

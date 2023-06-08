@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -14,9 +13,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private DefaultPaymentMethod(VendorInvoicePaymentMethod paymentMethod, bool autoCompleteDocuments)
         {
-            if (paymentMethod is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
             PaymentMethod = paymentMethod;
             AutoCompleteDocuments = autoCompleteDocuments;
         }
@@ -29,17 +25,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             return Result.Success(new DefaultPaymentMethod(paymentMethod, autoCompleteDocuments));
         }
 
-        public Result<VendorInvoicePaymentMethod> SetPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
+        public Result<DefaultPaymentMethod> NewPaymentMethod(VendorInvoicePaymentMethod paymentMethod)
         {
             if (paymentMethod is null)
-                return Result.Failure<VendorInvoicePaymentMethod>(RequiredMessage);
+                return Result.Failure<DefaultPaymentMethod>(RequiredMessage);
 
-            return Result.Success(PaymentMethod = paymentMethod);
+            return Result.Success(new DefaultPaymentMethod(paymentMethod, AutoCompleteDocuments));
         }
 
-        public Result<bool> SetAutoCompleteDocuments(bool autoCompleteDocuments)
+        public Result<DefaultPaymentMethod> SetAutoCompleteDocuments(bool autoCompleteDocuments)
         {
-            return Result.Success(AutoCompleteDocuments = autoCompleteDocuments);
+            return Result.Success(new DefaultPaymentMethod(PaymentMethod, autoCompleteDocuments));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

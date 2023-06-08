@@ -1,4 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using CustomerVehicleManagement.Domain.BaseClasses;
+using CustomerVehicleManagement.Domain.Entities;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Menominee.Common.Enums;
@@ -70,7 +71,8 @@ namespace CustomerVehicleManagement.Tests.Entities
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = Person.Create(personName, Gender.Female).Value;
+            var notes = LoremIpsum(100);
+            var contact = Person.Create(personName, Gender.Female, notes).Value;
 
             organization.SetContact(contact);
 
@@ -83,7 +85,10 @@ namespace CustomerVehicleManagement.Tests.Entities
         {
             var phoneCount = 10;
             var phones = ContactableTestHelper.CreatePhones(phoneCount);
-            var organization = Organization.Create(OrganizationName.Create("   Jane's").Value, "note", phones: phones).Value;
+            var organization = Organization.Create(
+                OrganizationName.Create(
+                    "   Jane's").Value, "note", phones: phones)
+                .Value;
 
             organization.Phones.Count.Should().BeGreaterThanOrEqualTo(phoneCount);
         }
@@ -162,6 +167,34 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
+        public void Not_Add_Duplicate_Phone()
+        {
+            var organization = ContactableTestHelper.CreateOrganization();
+            var number = "555.444.3333";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            organization.AddPhone(phone);
+            phone = Phone.Create(number, phoneType, true).Value;
+
+            var result = organization.AddPhone(phone);
+
+            result.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Have_Empty_Emails_On_Create()
+        {
+            var organization = ContactableTestHelper.CreateOrganization();
+            var address = "jane@doe.com";
+            var email = Email.Create(address, true).Value;
+
+            organization.Emails.Count.Should().Be(0);
+
+            organization.AddEmail(email);
+            organization.Emails.Count.Should().Be(1);
+        }
+        [Fact]
+
         public void AddEmail()
         {
             var organization = ContactableTestHelper.CreateOrganization();
@@ -222,32 +255,6 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void SetName()
-        {
-            var organization = ContactableTestHelper.CreateOrganization();
-            var name = "jane's";
-            var organizationNameOrError = OrganizationName.Create(name);
-
-            organization.SetName(organizationNameOrError.Value);
-
-            organization.Name.Should().Be(organizationNameOrError.Value);
-        }
-
-        [Fact]
-        public void SetContact()
-        {
-            var organization = ContactableTestHelper.CreateOrganization();
-            var firstName = "Jane";
-            var lastName = "Doe";
-            var personName = PersonName.Create(lastName, firstName).Value;
-            var contact = Person.Create(personName, Gender.Female).Value;
-
-            organization.SetContact(contact);
-
-            organization.Contact.Name.FirstName.Should().Be(firstName);
-        }
-
-        [Fact]
         public void SetAddress()
         {
             var organization = ContactableTestHelper.CreateOrganization();
@@ -269,12 +276,39 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
+        public void SetName()
+        {
+            var organization = ContactableTestHelper.CreateOrganization();
+            var name = "jane's";
+            var organizationNameOrError = OrganizationName.Create(name);
+
+            organization.SetName(organizationNameOrError.Value);
+
+            organization.Name.Should().Be(organizationNameOrError.Value);
+        }
+
+        [Fact]
+        public void SetContact()
+        {
+            var organization = ContactableTestHelper.CreateOrganization();
+            var firstName = "Jane";
+            var lastName = "Doe";
+            var personName = PersonName.Create(lastName, firstName).Value;
+            var notes = LoremIpsum(100);
+            var contact = Person.Create(personName, Gender.Female, notes).Value;
+
+            organization.SetContact(contact);
+
+            organization.Contact.Name.FirstName.Should().Be(firstName);
+        }
+
+        [Fact]
         public void SetNotes()
         {
             var organization = ContactableTestHelper.CreateOrganization();
             var notes = "Behold, notes!";
 
-            organization.SetNote(notes);
+            organization.SetNotes(notes);
 
             organization.Notes.Should().Be(notes);
         }
@@ -283,11 +317,11 @@ namespace CustomerVehicleManagement.Tests.Entities
         public void Truncate_Note_To_Note_Maximum_Length()
         {
             var organization = ContactableTestHelper.CreateOrganization();
-            var notes = $"Lorem ipsum {LoremIpsum(Organization.NoteMaximumLength)}";
+            var notes = $"Lorem ipsum {LoremIpsum(Contactable.NoteMaximumLength)}";
 
-            organization.SetNote(notes);
+            organization.SetNotes(notes);
 
-            organization.Notes.Length.Should().Be(Organization.NoteMaximumLength);
+            organization.Notes.Length.Should().Be(Contactable.NoteMaximumLength);
         }
     }
 }

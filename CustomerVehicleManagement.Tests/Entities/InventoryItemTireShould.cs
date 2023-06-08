@@ -262,6 +262,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
         }
+
         [Fact]
         public void Not_Create_InventoryItemTire_With_Overrange_Retail()
         {
@@ -294,6 +295,210 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
+        }
+
+        [Fact]
+        public void Not_Create_InventoryItemTire_With_Overrange_Type()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int width = InventoryItemTire.MinimumWidth;
+            int aspectRatio = 65;
+            TireConstructionType constructionType = TireConstructionType.R;
+            int diameter = InventoryItemTire.MaximumDiameter;
+            string typeOVERRANGE = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength + 1);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatio, constructionType, diameter,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                typeOVERRANGE, loadIndex, speedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Fact]
+        public void Not_Create_InventoryItemTire_With_Invalid_AsectRatio()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int width = InventoryItemTire.MinimumWidth;
+            int aspectRatioInvalid = 6;
+            TireConstructionType constructionType = TireConstructionType.R;
+            int diameter = InventoryItemTire.MaximumDiameter;
+            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatioInvalid, constructionType, diameter,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                type, loadIndex, speedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemTire.InvalidAspectRatioMessage);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(1000)]
+        public void Not_Create_InventoryItemTire_With_Overrange_Width(int width)
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int aspectRatio = 65;
+            TireConstructionType constructionType = TireConstructionType.R;
+            int diameter = InventoryItemTire.MaximumDiameter;
+            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatio, constructionType, diameter,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                type, loadIndex, speedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Fact]
+        public void Not_Create_InventoryItemTire_With_Invalid_ConstructionType()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int width = InventoryItemTire.MinimumWidth;
+            int aspectRatio = 65;
+            var constructionTypeInvalid = (TireConstructionType)(-1);
+            int diameter = InventoryItemTire.MaximumDiameter;
+            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatio, constructionTypeInvalid, diameter,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                type, loadIndex, speedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("required");
+        }
+
+        [Fact]
+        public void Not_Create_InventoryItemTire_With_Invalid_Diameter()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int width = InventoryItemTire.MinimumWidth;
+            int aspectRatio = 65;
+            var constructionType = TireConstructionType.R;
+            int diameterInvalid = InventoryItemTire.MaximumDiameter + 1;
+            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRating = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatio, constructionType, diameterInvalid,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                type, loadIndex, speedRating);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemTire.InvalidDiameterMessage);
+        }
+        [Fact]
+        public void Not_Create_InventoryItemTire_With_Invalid_SpeedRating()
+        {
+            var fractional = false;
+            string lineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            string subLineCode = Utilities.RandomCharacters(InventoryItemTire.MaximumLength);
+            int width = InventoryItemTire.MinimumWidth;
+            int aspectRatio = 65;
+            var constructionType = TireConstructionType.R;
+            int diameter = InventoryItemTire.MaximumDiameter;
+            string type = Utilities.RandomCharacters(InventoryItemTire.MaximumTypeLength);
+            int? loadIndex = InstallablePart.MaximumMoneyAmount;
+            string speedRatingInvalid = Utilities.RandomCharacters(InventoryItemTire.MaximumSpeedRatingLength + 1);
+
+            var list = InstallablePart.MaximumMoneyAmount;
+            var cost = InstallablePart.MaximumMoneyAmount;
+            var core = InstallablePart.MaximumMoneyAmount;
+            var retail = InstallablePart.MaximumMoneyAmount;
+
+            var resultOrError = InventoryItemTire.Create(
+                width, aspectRatio, constructionType, diameter,
+                list,
+                cost,
+                core,
+                retail,
+                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
+                fractional,
+                lineCode, subLineCode,
+                type, loadIndex, speedRatingInvalid);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemTire.InvalidSpeedRatingMessage);
         }
 
         [Fact]
@@ -427,7 +632,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         public void Not_Set_Invalid_LoadIndex()
         {
             InventoryItemTire tire = CreateInventoryItemTire();
-            int invalidLoadIndex = 1234;
+            int invalidLoadIndex = 123456;
             var resultOrError = tire.SetLoadIndex(invalidLoadIndex);
 
             resultOrError.IsFailure.Should().BeTrue();

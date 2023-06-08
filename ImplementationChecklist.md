@@ -252,25 +252,25 @@ Reads with child collections must include .AsSplitQuery() to prevent performance
 |Entity|Read|Write|Method|Inverted|
 |---:|---:| ---:|
 |0|1|1|CovertReadToWriteDto|CoverWriteToReadDto|
-|1|0|1|ConvertEntityToWriteDto|ConvertWriteDtoToEntity|
-|1|1|0|ConvertEntityToReadDto|ConvertReadDtoToEntity|
+|1|0|1|ConvertToWriteDto|ConvertWriteDtoToEntity|
+|1|1|0|ConvertToReadDto|ConvertReadDtoToEntity|
 
 Results in six possible methods named:  
 CovertReadToWriteDto  
 CoverWriteToReadDto  
-ConvertEntityToWriteDto  
+ConvertToWriteDto  
 ConvertWriteDtoToEntity  
-ConvertEntityToReadDto  
+ConvertToReadDto  
 ConvertReadDtoToEntity  
 
 When dto convert methods in a helper class convert child classes, and no helper class exists for those child classes, methods names of varying types may collide. If so, the fix is to include the Entity type name. For example:  
 Convert**Payment**ReadToWriteDto()  
 Convert**Purchase**ReadToWriteDto()  
 
-For methods that convert collections, same naming convention but pluralize using "Dtos" and "Entities" (if it appears):  
+For methods that convert collections, same naming convention but pluralize using "Dtos":  
 
 ConvertReadToWriteDto**s**  
-ConvertEntit**ies**ToWriteDto**s**  
+ConvertToWriteDto**s**  
 ConvertPurchase**s**ReadToWriteDto**s**  
 
 

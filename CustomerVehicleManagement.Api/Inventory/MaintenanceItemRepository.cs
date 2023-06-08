@@ -51,7 +51,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                .AsSplitQuery()
                                                .FirstOrDefaultAsync(item => item.Id == id);
 
-            return MaintenanceItemHelper.ConvertEntityToReadDto(itemFromContext);
+            return MaintenanceItemHelper.ConvertToReadDto(itemFromContext);
         }
 
         public async Task<MaintenanceItem> GetItemEntityAsync(long id)
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                                                 .AsNoTracking()
                                                 .ToArrayAsync();
 
-            return itemsFromContext.Select(item => MaintenanceItemHelper.ConvertEntityToReadInListDto(item))
+            return itemsFromContext.Select(item => MaintenanceItemHelper.ConverToReadInListDto(item))
                                    .ToList();
         }
 

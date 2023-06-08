@@ -48,7 +48,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
             .Value;
         }
 
-        public static InventoryItemPartToRead ConvertEntityToReadDto(InventoryItemPart part)
+        public static InventoryItemPartToRead ConvertToReadDto(InventoryItemPart part)
         {
             return part is null
                 ? null
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part
                 });
         }
 
-        public static InventoryItemPartToReadInList ConvertEntityToReadInListDto(InventoryItemPart part)
+        public static InventoryItemPartToReadInList ConvertToReadInListDto(InventoryItemPart part)
         {
             return part is null
                 ? null

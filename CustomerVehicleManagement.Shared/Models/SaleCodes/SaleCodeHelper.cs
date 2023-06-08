@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities;
-using System;
 
 namespace CustomerVehicleManagement.Shared.Models.SaleCodes
 {
@@ -22,7 +21,7 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
         public static SaleCodeToWrite ConvertReadToWriteDto(SaleCodeToRead saleCode)
         {
             return saleCode is null
-                ? null
+                ? new()
                 : new()
                 {
                     Code = saleCode.Code,
@@ -41,10 +40,10 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 };
         }
 
-        public static SaleCodeToRead ConvertEntityToReadDto(SaleCode saleCode)
+        public static SaleCodeToRead ConvertToReadDto(SaleCode saleCode)
         {
             return saleCode is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = saleCode.Id,
@@ -68,10 +67,10 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 };
         }
 
-        public static SaleCodeToReadInList ConvertEntityToReadInListDto(SaleCode saleCode)
+        public static SaleCodeToReadInList ConvertToReadInListDto(SaleCode saleCode)
         {
             return saleCode is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = saleCode.Id,
@@ -82,10 +81,10 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 };
         }
 
-        public static SaleCodeShopSuppliesToReadInList ConvertEntityToShopSuppliesToReadInListDto(SaleCode saleCode)
+        public static SaleCodeShopSuppliesToReadInList ConvertShopSuppliesToReadInListDto(SaleCode saleCode)
         {
             return saleCode is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = saleCode.Id,
@@ -100,10 +99,10 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 };
         }
 
-        public static SaleCodeToRead ConvertTorReadInListToReadDto(SaleCodeToReadInList saleCode)
+        public static SaleCodeToRead ConvertReadInListToReadDto(SaleCodeToReadInList saleCode)
         {
             return saleCode is null
-                ? null
+                ? new()
                 : new()
                 {
                     Id = saleCode.Id,
@@ -112,11 +111,6 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                     DesiredMargin = saleCode.DesiredMargin,
                     LaborRate = saleCode.LaborRate
                 };
-        }
-
-        internal static SaleCode ConvertWriteDtoToEntity(SaleCodeToRead saleCode)
-        {
-            throw new NotImplementedException();
         }
     }
 }

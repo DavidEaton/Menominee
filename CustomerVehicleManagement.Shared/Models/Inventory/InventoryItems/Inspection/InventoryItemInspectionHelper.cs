@@ -44,7 +44,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspe
                 inspection.Type).Value;
         }
 
-        public static InventoryItemInspectionToRead ConvertEntityToReadDto(InventoryItemInspection inspection)
+        public static InventoryItemInspectionToRead ConvertToReadDto(InventoryItemInspection inspection)
         {
             return inspection is null
                 ? null
@@ -66,7 +66,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Inspe
                 });
         }
 
-        public static InventoryItemInspectionToReadInList ConvertEntityToReadInListDto(InventoryItemInspection inspection)
+        public static InventoryItemInspectionToReadInList ConvertToReadInListDto(InventoryItemInspection inspection)
         {
             return inspection is null
                 ? null

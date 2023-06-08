@@ -2,8 +2,6 @@
 {
     public class SerialNumberListItem
     {
-        public long RepairOrderItemId { get; set; }
-        public long ItemId { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
         public RepairOrderSerialNumberToWrite SerialNumberType { get; set; }

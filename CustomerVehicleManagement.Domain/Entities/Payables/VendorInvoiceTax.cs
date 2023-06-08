@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
-using System;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Payables
@@ -17,12 +16,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         private VendorInvoiceTax(SalesTax salesTax, double amount)
         {
-            if (salesTax is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (amount < 0.0)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             SalesTax = salesTax;
             Amount = amount;
         }

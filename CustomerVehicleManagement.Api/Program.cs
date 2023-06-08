@@ -1,4 +1,3 @@
-using System;
 using Azure.Identity;
 using CustomerVehicleManagement.Api;
 using CustomerVehicleManagement.Api.CreditCards;
@@ -38,6 +37,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
+using System;
 
 var logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -56,14 +56,14 @@ try
     var services = builder.Services;
 
     IdentityModelEventSource.ShowPII = builder.Environment.IsDevelopment();
-    
+
     if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
         builder.Configuration.AddAzureKeyVault(
             new Uri($"https://{builder.Configuration["VaultName"]}.vault.azure.net/"),
             new DefaultAzureCredential());
     }
-    
+
     builder.Logging.ClearProviders();
     builder.Logging.AddSerilog(logger);
 
@@ -75,7 +75,7 @@ try
     var graphConfig = new GraphConfig();
     builder.Configuration.Bind("MSGraphConfig", graphConfig);
     services.AddSingleton(graphConfig);
-    
+
     services.AddControllersWithViews();
     services.AddRazorPages();
 
@@ -84,36 +84,36 @@ try
         authorizationOptions.AddPolicy(
             Policies.IsAdmin,
             Policies.AdminPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.IsAuthenticated,
             Policies.RequireAuthenticatedUserPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.CanManageHumanResources,
             Policies.CanManageHumanResourcesPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.CanManageUsers,
             Policies.CanManageUsersPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.IsFree,
             Policies.FreeUserPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.IsOwner,
             Policies.OwnerPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.IsPaid,
             Policies.PaidUserPolicy());
-    
+
         authorizationOptions.AddPolicy(
             Policies.IsTechnician,
             Policies.TechnicianUserPolicy());
     });
-    
+
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.TryAddScoped<UserContext, UserContext>();
@@ -169,15 +169,11 @@ try
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration[$"DatabaseSettings:IntegrationTestsConnectionString"]));
 
-    
     var app = builder.Build();
-    
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
-    {
         app.UseWebAssemblyDebugging();
-    }
     else
     {
         app.UseExceptionHandler("/Error");

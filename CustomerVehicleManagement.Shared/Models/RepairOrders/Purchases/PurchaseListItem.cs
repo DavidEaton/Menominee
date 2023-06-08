@@ -1,18 +1,13 @@
-﻿using System;
+﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using System;
 
 namespace CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases
 {
     public class PurchaseListItem
     {
-        public long RepairOrderItemId { get; set; }
-        public long VendorId
-        {
-            get => PurchaseType.VendorId;
-            set => PurchaseType.VendorId = value;
-        }
+        public VendorToRead Vendor { get; set; }
         public string PartNumber { get; set; }
         public string Description { get; set; }
-        public string VendorName { get; set; }
         public string VendorPartNumber
         {
             get =>

@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Data.Generators
             var vendors = VendorFaker.MakeVendorFakes(CountOfVendorsToCreate);
             var paymentMethodNames = faker.Make(CountOfVendorsToCreate / 2, () => faker.Random.Words());
             var paymentMethods = VendorFaker.MakePaymentMethodFakes(
-                paymentMethodNames: paymentMethodNames,
+                paymentMethodNames: (IReadOnlyList<string>)paymentMethodNames,
                 count: CountOfPaymentMethodsToCreate);
 
             List<DefaultPaymentMethod> defaultPaymentMethods = new();

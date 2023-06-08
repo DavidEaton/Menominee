@@ -10,6 +10,6 @@ namespace CustomerVehicleManagement.Domain.Enums
         Counter = 3,
 
         [Display(Name = "Service Advisor")]
-        ServiceAdvisor
+        ServiceAdvisor = 4
     }
 }

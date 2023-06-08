@@ -73,9 +73,9 @@ namespace Menominee.Client.Pages.Persons
             {
                 Name = new PersonNameToWrite
                 {
-                    FirstName = readDto.FirstName,
-                    MiddleName = readDto.MiddleName,
-                    LastName = readDto.LastName
+                    FirstName = readDto.Name.FirstName,
+                    MiddleName = readDto.Name.MiddleName,
+                    LastName = readDto.Name.LastName
                 },
                 Gender = readDto.Gender,
                 Birthday = readDto.Birthday

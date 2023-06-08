@@ -1,6 +1,6 @@
 ﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems.Item;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
@@ -43,33 +43,33 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        [Parameter]
-        public EventCallback OnSave { get; set; }
+        //[Parameter]
+        //public EventCallback OnSave { get; set; }
 
-        [Parameter]
-        public EventCallback OnCancel { get; set; }
+        //[Parameter]
+        //public EventCallback OnCancel { get; set; }
 
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes = null;
         private IReadOnlyList<ProductCodeToReadInList> ProductCodes = null;
 
-        protected override void OnInitialized()
-        {
-            foreach (SaleType item in Enum.GetValues(typeof(SaleType)))
-            {
-                SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(item), Value = item });
-            }
-            foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
-            {
-                LaborTypeEnumData.Add(new LaborTypeEnumModel { DisplayText = item.ToString(), Value = item });
-            }
-            foreach (ItemDiscountType item in Enum.GetValues(typeof(ItemDiscountType)))
-            {
-                DiscountTypeEnumData.Add(new DiscountTypeEnumModel { DisplayText = item.ToString(), Value = item });
-            }
+        //protected override void OnInitialized()
+        //{
+        //    foreach (SaleType item in Enum.GetValues(typeof(SaleType)))
+        //    {
+        //        SaleTypeEnumData.Add(new SaleTypeEnumModel { DisplayText = EnumExtensions.GetDisplayName(item), Value = item });
+        //    }
+        //    foreach (ItemLaborType item in Enum.GetValues(typeof(ItemLaborType)))
+        //    {
+        //        LaborTypeEnumData.Add(new LaborTypeEnumModel { DisplayText = item.ToString(), Value = item });
+        //    }
+        //    foreach (ItemDiscountType item in Enum.GetValues(typeof(ItemDiscountType)))
+        //    {
+        //        DiscountTypeEnumData.Add(new DiscountTypeEnumModel { DisplayText = item.ToString(), Value = item });
+        //    }
 
-            base.OnInitialized();
-        }
+        //    base.OnInitialized();
+        //}
 
         protected override async Task OnParametersSetAsync()
         {
@@ -116,21 +116,17 @@ namespace Menominee.Client.Components.RepairOrders
         }
 
         private FormMode formMode;
-        private List<SaleTypeEnumModel> SaleTypeEnumData { get; set; } = new List<SaleTypeEnumModel>();
-        private List<LaborTypeEnumModel> LaborTypeEnumData { get; set; } = new List<LaborTypeEnumModel>();
-        private List<DiscountTypeEnumModel> DiscountTypeEnumData { get; set; } = new List<DiscountTypeEnumModel>();
+        //private List<SaleTypeEnumModel> SaleTypeEnumData { get; set; } = new();
+        //private List<LaborTypeEnumModel> LaborTypeEnumData { get; set; } = new();
+        //private List<DiscountTypeEnumModel> DiscountTypeEnumData { get; set; } = new();
         private string Title { get; set; }
 
         private bool CanChangePart { get; set; } = true;    // will eventually stop them from changing part #, salecode, etc. as needed
 
-        // replace the following when able
-        private string PlaceholderReasonForReplacement { get; set; } = string.Empty;
-        private int PlaceholderQuantityOnHand { get; set; } = 0;
-        private bool PlaceholderBuyout { get; set; } = false;
 
-        private int ManufacturerId { get; set; } = 0;
-        private int SaleCodeId { get; set; } = 0;
-        private int ProductCodeId { get; set; } = 0;
+        //private int ManufacturerId { get; set; } = 0;
+        //private int SaleCodeId { get; set; } = 0;
+        //private int ProductCodeId { get; set; } = 0;
         private List<ManufacturerX> ManufacturerList = new();
         private List<SaleCodeX> SaleCodeList = new();
         private List<ProductCodeX> ProductCodeList = new();
@@ -173,17 +169,6 @@ namespace Menominee.Client.Components.RepairOrders
         //    new ProductCodeX { ManufacturerId="5700", SaleCode="E", Code="3332", Description="Exhaust Pipe" }
         //};
 
-        public List<ReasonForReplacement> ReasonsForReplacement = new()
-        {
-            new ReasonForReplacement { Code = "A", Type = ReasonForReplacementType.Required, Description = "Part no longer performs intended function" },
-            new ReasonForReplacement { Code = "B", Type = ReasonForReplacementType.Required, Description = "Part does not meet a design specification" },
-            new ReasonForReplacement { Code = "C", Type = ReasonForReplacementType.Required, Description = "Part is missing" },
-            new ReasonForReplacement { Code = "D", Type = ReasonForReplacementType.Required, Description = "Necessary component of service" },
-            new ReasonForReplacement { Code = "1", Type = ReasonForReplacementType.Suggested, Description = "Part is close to end of useful life" },
-            new ReasonForReplacement { Code = "2", Type = ReasonForReplacementType.Suggested, Description = "Customer need, convenience or request" },
-            new ReasonForReplacement { Code = "3", Type = ReasonForReplacementType.Suggested, Description = "Comply with recommended maintenance" },
-            new ReasonForReplacement { Code = "4", Type = ReasonForReplacementType.Suggested, Description = "Technician's recommendation" }
-        };
 
         public class ManufacturerX
         {
@@ -229,42 +214,6 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        public class SaleTypeEnumModel
-        {
-            public SaleType Value { get; set; }
-            public string DisplayText { get; set; }
-        }
 
-        public class LaborTypeEnumModel
-        {
-            public ItemLaborType Value { get; set; }
-            public string DisplayText { get; set; }
-        }
-
-        public class DiscountTypeEnumModel
-        {
-            public ItemDiscountType Value { get; set; }
-            public string DisplayText { get; set; }
-        }
-
-        public enum ReasonForReplacementType
-        {
-            Required,
-            Suggested
-        }
-
-        public class ReasonForReplacement
-        {
-            public string Code { get; set; }
-            public ReasonForReplacementType Type { get; set; }
-            public string Description { get; set; }
-            public string DisplayText
-            {
-                get
-                {
-                    return Code + " - " + Description;
-                }
-            }
-        }
     }
 }

@@ -75,45 +75,46 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
-        public void SetPartNumber()
+        public void Return_New_On_NewPartNumber()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
             item.PartNumber.Should().Be("a part");
             var part = "different part";
 
-            item.SetPartNumber(part);
+            var result = item.NewPartNumber(part);
 
-            item.PartNumber.Should().Be(part);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.PartNumber.Should().Be(part);
         }
 
         [Fact]
-        public void SetDescription()
+        public void Return_New_On_NewDescription()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
             item.Description.Should().Be("a description");
             var description = "different description";
 
-            item.SetDescription(description);
+            var result = item.NewDescription(description);
 
-            item.Description.Should().Be(description);
+            result.Value.Description.Should().Be(description);
         }
 
         [Fact]
-        public void SetManufacturer()
+        public void Return_New_On_NewManufacturer()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
             item.Manufacturer.Should().BeNull();
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
-            item.SetManufacturer(manufacturer);
+            var result = item.NewManufacturer(manufacturer);
 
-            item.Manufacturer.Should().Be(manufacturer);
+            result.Value.Manufacturer.Should().Be(manufacturer);
         }
 
         [Fact]
-        public void SetSaleCode()
+        public void Return_New_On_NewSaleCode()
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
@@ -121,9 +122,9 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
             var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
 
-            item.SetSaleCode(saleCode);
+            var result = item.NewSaleCode(saleCode);
 
-            item.SaleCode.Should().Be(saleCode);
+            result.Value.SaleCode.Should().Be(saleCode);
         }
 
         [Fact]
@@ -133,9 +134,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer).Value;
 
             item.Manufacturer.Should().Be(manufacturer);
-            item.ClearManufacturer();
+            var result = item.ClearManufacturer();
 
-            item.Manufacturer.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Manufacturer.Should().BeNull();
         }
 
         [Fact]
@@ -147,9 +149,10 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer, saleCode).Value;
 
             item.SaleCode.Should().Be(saleCode);
-            item.ClearSaleCode();
+            var result = item.ClearSaleCode();
 
-            item.SaleCode.Should().BeNull();
+            result.IsSuccess.Should().BeTrue();
+            result.Value.SaleCode.Should().BeNull();
         }
 
         [Theory]
@@ -159,7 +162,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var invalidPartNumber = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            var resultOrError = item.SetPartNumber(invalidPartNumber);
+            var resultOrError = item.NewPartNumber(invalidPartNumber);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -171,7 +174,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var invalidDescription = Utilities.RandomCharacters(length);
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            var resultOrError = item.SetDescription(invalidDescription);
+            var resultOrError = item.NewDescription(invalidDescription);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -181,7 +184,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            var resultOrError = item.SetManufacturer(null);
+            var resultOrError = item.NewManufacturer(null);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -191,7 +194,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         {
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
-            var resultOrError = item.SetSaleCode(null);
+            var resultOrError = item.NewSaleCode(null);
 
             resultOrError.IsFailure.Should().BeTrue();
         }

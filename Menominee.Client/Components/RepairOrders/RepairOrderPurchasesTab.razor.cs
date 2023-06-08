@@ -3,7 +3,6 @@ using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;
-
 namespace Menominee.Client.Components.RepairOrders
 {
     public partial class RepairOrderPurchasesTab : ComponentBase

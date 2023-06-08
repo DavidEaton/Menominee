@@ -10,7 +10,6 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
-using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Payables
 {
@@ -244,7 +243,7 @@ namespace TestingHelperLibrary.Payables
                 payments.Add(new VendorInvoicePaymentToWrite()
                 {
                     Amount = paymentAmount,
-                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(paymentMethod)
+                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertToReadDto(paymentMethod)
                 });
             }
 
@@ -259,7 +258,7 @@ namespace TestingHelperLibrary.Payables
             {
                 payments.Add(VendorInvoicePayment.Create(
                     VendorInvoicePaymentMethod.Create(
-                        CreatePaymentMethodNames(5),
+                        (IReadOnlyList<string>)CreatePaymentMethodNames(5),
                         Utilities.RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + i),
                         isActive: true,
                         VendorInvoicePaymentMethodType.Normal,
@@ -439,11 +438,5 @@ namespace TestingHelperLibrary.Payables
 
             return invoice;
         }
-
-        public static List<VendorInvoice> GenerateVendorInvoices(int? count = null)
-        {
-            return new VendorInvoiceFaker(generateId: true, createCollections: true).Generate(count.Value);
-        }
-
     }
 }

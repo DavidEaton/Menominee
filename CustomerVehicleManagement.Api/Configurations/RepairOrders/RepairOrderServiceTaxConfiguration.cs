@@ -10,6 +10,22 @@ namespace CustomerVehicleManagement.Api.Configurations.RepairOrders
         {
             base.Configure(builder);
             builder.ToTable("RepairOrderServiceTax", "dbo");
+
+            // Value Object: LaborTax
+            builder.OwnsOne(serviceTax => serviceTax.LaborTax)
+               .Property(laborTax => laborTax.Amount)
+               .HasColumnName("LaborTaxAmount");
+            builder.OwnsOne(serviceTax => serviceTax.LaborTax)
+               .Property(laborAmount => laborAmount.Rate)
+               .HasColumnName("LaborTaxRate");
+
+            // Value Object: PartTax
+            builder.OwnsOne(serviceTax => serviceTax.PartTax)
+               .Property(partTax => partTax.Amount)
+               .HasColumnName("PartTaxAmount");
+            builder.OwnsOne(serviceTax => serviceTax.PartTax)
+               .Property(partTax => partTax.Rate)
+               .HasColumnName("PartTaxRate");
         }
     }
 }

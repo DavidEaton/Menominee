@@ -39,7 +39,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .FirstOrDefaultAsync(method => method.Id == id);
 
             return payMethodFromContext is not null
-                ? VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethodFromContext)
+                ? VendorInvoicePaymentMethodHelper.ConvertToReadDto(payMethodFromContext)
                 : null;
         }
 
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .AsNoTracking()
                 .ToListAsync();
 
-            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertEntityToReadInListDto(payMethod))
+            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertToReadInListDto(payMethod))
                              .ToList();
         }
 
@@ -90,7 +90,7 @@ namespace CustomerVehicleManagement.Api.Payables.PaymentMethods
                 .AsNoTracking()
                 .ToListAsync();
 
-            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertEntityToReadDto(payMethod))
+            return payMethods.Select(payMethod => VendorInvoicePaymentMethodHelper.ConvertToReadDto(payMethod))
                              .ToList();
         }
 

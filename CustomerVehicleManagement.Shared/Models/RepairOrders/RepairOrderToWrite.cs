@@ -1,6 +1,9 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+﻿using CustomerVehicleManagement.Shared.Models.Customers;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Statuses;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
+using CustomerVehicleManagement.Shared.Models.Vehicles;
 using System;
 using System.Collections.Generic;
 
@@ -10,8 +13,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
     {
         public long RepairOrderNumber { get; set; } = 0;
         public long InvoiceNumber { get; set; } = 0;
-        public string CustomerName { get; set; } = string.Empty;
-        public string Vehicle { get; set; } = string.Empty;
+        public CustomerToRead Customer { get; set; }
+        public VehicleToRead Vehicle { get; set; }
         public double PartsTotal { get; set; } = 0.0;
         public double LaborTotal { get; set; } = 0.0;
         public double DiscountTotal { get; set; } = 0.0;
@@ -21,8 +24,8 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
         public double Total { get; set; } = 0.0;
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
-        public DateTime? DateInvoiced { get; set; }
-
+        public DateTime AccountingDate { get; set; }
+        public List<RepairOrderStatusToWrite> Statuses { get; set; } = new List<RepairOrderStatusToWrite>();
         public List<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
         public List<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
         public List<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
@@ -51,7 +54,7 @@ namespace CustomerVehicleManagement.Shared.Models.RepairOrders
             {
                 foreach (var tax in Taxes)
                 {
-                    TaxTotal += (tax.PartTax + tax.LaborTax);
+                    TaxTotal += (tax.PartTax.Amount + tax.LaborTax.Amount);
                 }
             }
 

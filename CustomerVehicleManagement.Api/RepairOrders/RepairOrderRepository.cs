@@ -2,11 +2,11 @@
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace CustomerVehicleManagement.Api.RepairOrders
 {
@@ -22,45 +22,45 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             _logger = logger;
         }
 
-        public async Task AddRepairOrderAsync(RepairOrder repairOrder)
+        public async Task Add(RepairOrder repairOrder)
         {
             if (repairOrder != null)
                 await context.AddAsync(repairOrder);
         }
 
-        public async Task DeleteRepairOrderAsync(long id)
+        public async Task Delete(long id)
         {
             var repairOrderFromContext = await context.RepairOrders.FindAsync(id);
             if (repairOrderFromContext != null)
                 context.Remove(repairOrderFromContext);
         }
 
-        public async Task<RepairOrderToRead> GetRepairOrderAsync(long id)
+        public async Task<RepairOrderToRead> Get(long id)
         {
             var repairOrderFromContext = await context.RepairOrders
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.Manufacturer)
+                                                 .ThenInclude(service => service.LineItems)
+                                                     .ThenInclude(lineItem => lineItem.Item.Manufacturer)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.ProductCode)
+                                                 .ThenInclude(service => service.LineItems)
+                                                     .ThenInclude(lineItem => lineItem.Item.ProductCode)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.SaleCode)
+                                                 .ThenInclude(service => service.LineItems)
+                                                     .ThenInclude(lineItem => lineItem.Item.SaleCode)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Items)
+                                                 .ThenInclude(service => service.LineItems)
                                                      .ThenInclude(repairOrderItem => repairOrderItem.Taxes)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.SerialNumbers)
+                                                 .ThenInclude(service => service.LineItems)
+                                                     .ThenInclude(lineItem => lineItem.SerialNumbers)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(repairOrderItem => repairOrderItem.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.Warranties)
+                                                 .ThenInclude(lineItem => lineItem.LineItems)
+                                                     .ThenInclude(service => service.Warranties)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(repairOrderItem => repairOrderItem.Items)
-                                                     .ThenInclude(repairOrderItem => repairOrderItem.Purchases)
+                                                 .ThenInclude(service => service.LineItems)
+                                                     .ThenInclude(lineItem => lineItem.Purchases)
                                              .Include(repairOrder => repairOrder.Services)
-                                                 .ThenInclude(service => service.Techs)
+                                                 .ThenInclude(service => service.Technicians)
                                              .Include(repairOrder => repairOrder.Services)
                                                  .ThenInclude(service => service.Taxes)
                                              .Include(repairOrder => repairOrder.Taxes)
@@ -69,34 +69,34 @@ namespace CustomerVehicleManagement.Api.RepairOrders
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
 
-            return RepairOrderHelper.Transform(repairOrderFromContext);
+            return RepairOrderHelper.ConvertToReadDto(repairOrderFromContext);
         }
 
-        public async Task<RepairOrder> GetRepairOrderEntityAsync(long id)
+        public async Task<RepairOrder> GetEntity(long id)
         {
             var repairOrderFromContext = await context.RepairOrders
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(m => m.Manufacturer)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.Item.Manufacturer)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(p => p.ProductCode)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.Item.ProductCode)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(s => s.SaleCode)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.Item.SaleCode)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(t => t.Taxes)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.Taxes)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(s => s.SerialNumbers)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.SerialNumbers)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(i => i.Items)
-                        .ThenInclude(w => w.Warranties)
+                    .ThenInclude(service => service.LineItems)
+                        .ThenInclude(lineItem => lineItem.Warranties)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(t => t.Techs)
+                    .ThenInclude(service => service.Technicians)
                 .Include(repairOrder => repairOrder.Services)
-                    .ThenInclude(t => t.Taxes)
+                    .ThenInclude(service => service.Taxes)
                 .Include(repairOrder => repairOrder.Taxes)
                 .Include(repairOrder => repairOrder.Payments)
                 .FirstOrDefaultAsync(repairOrder => repairOrder.Id == id);
@@ -104,33 +104,43 @@ namespace CustomerVehicleManagement.Api.RepairOrders
             return repairOrderFromContext;
         }
 
-        public async Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync()
+        public async Task<IReadOnlyList<RepairOrderToReadInList>> Get()
         {
             _logger.LogInformation("GetRepairOrderListAsync");
             IReadOnlyList<RepairOrder> repairOrders = await context.RepairOrders.ToListAsync();
 
             return repairOrders
                 .Select(repairOrder =>
-                       RepairOrderHelper.TransformInList(repairOrder))
+                       RepairOrderHelper.ConvertToReadInListDto(repairOrder))
                 .ToList();
         }
 
-        public async Task<bool> RepairOrderExistsAsync(long id)
+        public async Task<List<long>> GetTodaysRepairOrderNumbers()
+        {
+            var repairOrders = await context.RepairOrders.ToListAsync();
+            var todayDatePart = long.Parse(DateTime.Today.ToString("yyyyMMdd")) * 1000;
+
+            return repairOrders
+                .Select(repairOrder => repairOrder.RepairOrderNumber)
+                .Where(number => number >= todayDatePart && number < todayDatePart + 1000)
+                .ToList();
+        }
+
+        public async Task<bool> Exists(long id)
         {
             return await context.RepairOrders.AnyAsync(repairOrder => repairOrder.Id == id);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChanges() =>
+            await context.SaveChangesAsync();
+
+        public long GetLastInvoiceNumberOrSeed()
         {
-            try
-            {
-                var moops = await context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                // TODO: log exception
-                throw;
-            }
+            var invoiceNumbers = context.RepairOrders
+                .Select(repairOrder => repairOrder.InvoiceNumber)
+                .Max();
+
+            return invoiceNumbers;
         }
     }
 }

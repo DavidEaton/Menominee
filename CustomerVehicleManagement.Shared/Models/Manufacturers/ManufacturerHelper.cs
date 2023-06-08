@@ -1,5 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Manufacturers
 {
@@ -31,7 +30,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
                 .Value;
         }
 
-        public static ManufacturerToRead ConvertEntityToReadDto(Manufacturer manufacturer)
+        public static ManufacturerToRead ConvertToReadDto(Manufacturer manufacturer)
         {
             return
             manufacturer is null
@@ -45,7 +44,7 @@ namespace CustomerVehicleManagement.Shared.Models.Manufacturers
                 };
         }
 
-        public static ManufacturerToReadInList ConvertEntityToReadInListDto(Manufacturer manufacturer)
+        public static ManufacturerToReadInList ConvertToReadInListDto(Manufacturer manufacturer)
         {
             return
             manufacturer is null

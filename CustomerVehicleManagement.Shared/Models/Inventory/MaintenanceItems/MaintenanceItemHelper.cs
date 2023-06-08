@@ -5,7 +5,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
 {
     public class MaintenanceItemHelper
     {
-        public static MaintenanceItemToReadInList ConvertEntityToReadInListDto(MaintenanceItem item)
+        public static MaintenanceItemToReadInList ConverToReadInListDto(MaintenanceItem item)
         {
             return item is null
                 ? null
@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
                 });
         }
 
-        public static MaintenanceItemToRead ConvertEntityToReadDto(MaintenanceItem item)
+        public static MaintenanceItemToRead ConvertToReadDto(MaintenanceItem item)
         {
             return item is null
                 ? null
@@ -28,7 +28,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems
                 {
                     Id = item.Id,
                     DisplayOrder = item.DisplayOrder,
-                    Item = InventoryItemHelper.ConvertEntityToReadDto(item.InventoryItem)
+                    Item = InventoryItemHelper.ConvertToReadDto(item.InventoryItem)
                 });
         }
 

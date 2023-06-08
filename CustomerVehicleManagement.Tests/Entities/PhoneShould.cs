@@ -31,7 +31,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = Phone.Create(number, phoneType, true);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(Phone.EmptyMessage);
+            result.Error.Should().Be(Phone.InvalidMessage);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = Phone.Create(number, phoneType, true);
 
             result.IsFailure.Should().BeTrue();
-            result.Error.Should().Be(Phone.EmptyMessage);
+            result.Error.Should().Be(Phone.InvalidMessage);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void UpdatePhoneNumberOnSetNumber()
+        public void SetNumber()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
@@ -86,7 +86,21 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void UpdatePhoneTypeOnSetPhoneType()
+        public void Not_Set_Invalid_Number()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            var invalidNumber = "555-555-5555?";
+
+            var result = phone.SetNumber(invalidNumber);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void SetPhoneType()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
@@ -99,7 +113,22 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void UpdatePhoneIsPrimaryOnSetIsPrimary()
+        public void Not_Set_Invalid_PhoneType()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            var invalidPhoneType = (PhoneType)(-1);
+            phone.PhoneType.Should().Be(PhoneType.Home);
+
+            var result = phone.SetPhoneType(invalidPhoneType);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void SetIsPrimary()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
@@ -114,8 +143,8 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void ReturnFormattedTenDigitPhoneNumberOnToString()
         {
-            var number = "9896279206";
-            var numberFormatted = "(989) 627-9206";
+            var number = "5551234567";
+            var numberFormatted = "(555) 123-4567";
             var phoneType = PhoneType.Home;
 
             var phone = Phone.Create(number, phoneType, true).Value;

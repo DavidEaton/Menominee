@@ -7,13 +7,14 @@ namespace CustomerVehicleManagement.Api.RepairOrders
 {
     public interface IRepairOrderRepository
     {
-        Task AddRepairOrderAsync(RepairOrder repairOrder);
-        Task<RepairOrder> GetRepairOrderEntityAsync(long id);
-        Task<RepairOrderToRead> GetRepairOrderAsync(long id);
-        //Task<IReadOnlyList<RepairOrderToRead>> GetRepairOrdersAsync();
-        Task<IReadOnlyList<RepairOrderToReadInList>> GetRepairOrderListAsync();
-        Task DeleteRepairOrderAsync(long id);
-        Task<bool> RepairOrderExistsAsync(long id);
-        Task SaveChangesAsync();
+        Task Add(RepairOrder repairOrder);
+        Task<RepairOrder> GetEntity(long id);
+        Task<RepairOrderToRead> Get(long id);
+        Task<IReadOnlyList<RepairOrderToReadInList>> Get();
+        Task Delete(long id);
+        Task<bool> Exists(long id);
+        Task SaveChanges();
+        Task<List<long>> GetTodaysRepairOrderNumbers();
+        long GetLastInvoiceNumberOrSeed();
     }
 }

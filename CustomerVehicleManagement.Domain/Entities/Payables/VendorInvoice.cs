@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.BaseClasses;
 using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
@@ -53,49 +52,13 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             DateTime? date = null,
             DateTime? datePosted = null)
         {
-            if (vendor is null)
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (!Enum.IsDefined(typeof(VendorInvoiceStatus), status))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (!Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType))
-                throw new ArgumentOutOfRangeException(RequiredMessage);
-
-            if (total < MinimumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if ((invoiceNumber ?? string.Empty).Trim().Length > InvoiceNumberMaximumLength)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
-            if ((invoiceNumber ?? string.Empty).Trim().Length > 0)
-                if (!InvoiceNumberIsUnique(vendorInvoiceNumbers, invoiceNumber))
-                    throw new ArgumentOutOfRangeException(NonuniqueMessage);
-
-            if (!date.HasValue)
-                Date = DateTime.UtcNow;
-
-            if (date.HasValue)
-            {
-                if (date.Value > DateTime.Today)
-                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
-
-                Date = date.Value;
-            }
-
-            if (datePosted.HasValue)
-            {
-                if (datePosted.Value > DateTime.Today)
-                    throw new ArgumentOutOfRangeException(DateInvalidMessage);
-
-                DatePosted = datePosted.Value;
-            }
-
             Vendor = vendor;
             Status = status;
             DocumentType = documentType;
             Total = total;
             InvoiceNumber = invoiceNumber;
+            Date = date;
+            DatePosted = datePosted;
         }
 
         public static Result<VendorInvoice> Create(
@@ -137,40 +100,15 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted));
         }
 
-        public Result UpdateProperties(Vendor vendor, VendorInvoiceStatus status,
-            VendorInvoiceDocumentType documentType, DateTime? datePosted, DateTime? date,
-            string invoiceNumber, IReadOnlyList<string> vendorInvoiceNumbers, double total)
+        public Result UpdateCollections(
+            IReadOnlyList<VendorInvoiceLineItem> lineItems,
+            IReadOnlyList<VendorInvoicePayment> payments,
+            IReadOnlyList<VendorInvoiceTax> taxes)
         {
             return Result.Combine(
-                (vendor is not null) && (vendor.Id != Vendor.Id)
-                    ? SetVendor(vendor)
-                    : Result.Success(),
-                (status != Status)
-                    ? SetStatus(status)
-                    : Result.Success(),
-                (documentType != DocumentType)
-                    ? SetDocumentType(documentType)
-                    : Result.Success(),
-                (datePosted is not null) && (datePosted != DatePosted)
-                    ? SetDatePosted(datePosted)
-                    : Result.Success(),
-                (date is not null) && (date != Date)
-                    ? SetDate(date)
-                    : Result.Success(),
-                (invoiceNumber != InvoiceNumber)
-                    ? SetInvoiceNumber(invoiceNumber, vendorInvoiceNumbers)
-                    : Result.Success(),
-                (total != Total)
-                    ? SetTotal(total)
-                    : Result.Success());
-        }
-
-        public Result UpdateCollections(VendorInvoiceCollections vendorInvoiceCollections)
-        {
-            return Result.Combine(
-                SyncLineItems(vendorInvoiceCollections.LineItems),
-                SyncPayments(vendorInvoiceCollections.Payments),
-                SyncTaxes(vendorInvoiceCollections.Taxes));
+                SyncLineItems(lineItems),
+                SyncPayments(payments),
+                SyncTaxes(taxes));
         }
 
         private Result SyncTaxes(IReadOnlyList<VendorInvoiceTax> taxes)
@@ -363,7 +301,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
             if (lineItem is null)
                 return Result.Failure<VendorInvoiceLineItem>(RequiredMessage);
 
-            // TODO: VK: Is this the correct use of Result<T> in domain collection mutation method?
             lineItems.Add(lineItem);
 
             return Result.Success(lineItem);

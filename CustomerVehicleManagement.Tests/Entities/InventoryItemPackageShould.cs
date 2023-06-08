@@ -8,6 +8,12 @@ namespace CustomerVehicleManagement.Tests.Entities
 {
     public class InventoryItemPackageShould
     {
+        private const string InvalidOverMaximumLength = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in"; // 256 characters
+        private const string InvalidZeroLengthString = "";
+        private const string InvalidUnderMinimumLength = "1";
+        private const int InvalidMinimumAmount = -1;
+        private const int InvalidMaximumAmount = 100000;
+
         [Fact]
         public void Create_InventoryItemPackage()
         {
@@ -61,6 +67,30 @@ namespace CustomerVehicleManagement.Tests.Entities
             double basePartsAmount = InventoryItemPackage.MinimumAmount;
             double baseLaborAmount = InventoryItemPackage.MinimumAmount - .01;
             string script = Utilities.LoremIpsum(InventoryItemPackage.ScriptMaximumLength);
+            bool isDiscountable = true;
+            List<InventoryItemPackageItem> items = new();
+            List<InventoryItemPackagePlaceholder> placeholders = new();
+
+            var resultOrError = InventoryItemPackage.Create(
+                basePartsAmount,
+                baseLaborAmount,
+                script,
+                isDiscountable,
+                items,
+                placeholders);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Contain("must");
+        }
+
+        [Theory]
+        [InlineData(InvalidZeroLengthString)]
+        [InlineData(InvalidUnderMinimumLength)]
+        [InlineData(InvalidOverMaximumLength)]
+        public void Not_Create_InventoryItemPackage_With_Invalid_Script(string script)
+        {
+            double basePartsAmount = InventoryItemPackage.MinimumAmount;
+            double baseLaborAmount = InventoryItemPackage.MinimumAmount - .01;
             bool isDiscountable = true;
             List<InventoryItemPackageItem> items = new();
             List<InventoryItemPackagePlaceholder> placeholders = new();
@@ -140,16 +170,17 @@ namespace CustomerVehicleManagement.Tests.Entities
             package.BasePartsAmount.Should().NotBe(originalAmount);
         }
 
-        [Fact]
-        public void Not_Set_Invalid_BasePartsAmount()
+        [Theory]
+        [InlineData(InvalidMinimumAmount)]
+        [InlineData(InvalidMaximumAmount)]
+        public void Not_Set_Invalid_BasePartsAmount(double basePartsAmount)
         {
             InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
-            double invalidBasePartsAmount = InventoryItemPackage.MaximumAmount + .01;
 
-            var resultOrError = package.SetBaseLaborAmount(invalidBasePartsAmount);
+            var resultOrError = package.SetBasePartsAmount(basePartsAmount);
 
             resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            resultOrError.Error.Should().Be(InventoryItemPackage.InvalidAmountMessage);
         }
 
         [Fact]
@@ -209,6 +240,19 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
+        public void Not_Add_Invalid_Item()
+        {
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            InventoryItemPackageItem invalidItem = null;
+            package.Items.Count.Should().Be(0);
+
+            var resultOrError = package.AddItem(invalidItem);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemPackage.RequiredMessage);
+        }
+
+        [Fact]
         public void RemoveItem()
         {
             InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
@@ -231,6 +275,24 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
+        public void Not_Remove_Invalid_Item()
+        {
+            InventoryItemPackage package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            InventoryItemPackageItem invalidItem = null;
+            InventoryItemPackageItem itemTwo = InventoryItemTestHelper.CreateInventoryItemPackageItem();
+            InventoryItemPackageItem itemThree = InventoryItemTestHelper.CreateInventoryItemPackageItem();
+            package.Items.Count.Should().Be(0);
+            package.AddItem(itemTwo);
+            package.AddItem(itemThree);
+            package.Items.Count.Should().Be(2);
+
+            var resultOrError = package.RemoveItem(invalidItem);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemPackage.RequiredMessage);
+        }
+
+        [Fact]
         public void AddPlaceholder()
         {
             var package = InventoryItemTestHelper.CreateInventoryItemPackage();
@@ -241,6 +303,19 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             resultOrError.IsFailure.Should().BeFalse();
             package.Placeholders.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public void Not_Add_Invalid_Placeholder()
+        {
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            InventoryItemPackagePlaceholder invalidPlaceholder = null;
+            package.Placeholders.Count.Should().Be(0);
+
+            var resultOrError = package.AddPlaceholder(invalidPlaceholder);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemPackage.RequiredMessage);
         }
 
         [Fact]
@@ -265,6 +340,24 @@ namespace CustomerVehicleManagement.Tests.Entities
             package.Placeholders.Should().NotContain(placeholderOne);
             package.Placeholders.Should().Contain(placeholderTwo);
             package.Placeholders.Should().Contain(placeholderThree);
+        }
+
+        [Fact]
+        public void Not_Remove_Invalid_Placeholder()
+        {
+            var package = InventoryItemTestHelper.CreateInventoryItemPackage();
+            var placeholderOne = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
+            var placeholderTwo = InventoryItemTestHelper.CreateInventoryItemPackagePlaceholder();
+            InventoryItemPackagePlaceholder invalidPlaceholder = null;
+            package.Placeholders.Count.Should().Be(0);
+            package.AddPlaceholder(placeholderOne);
+            package.AddPlaceholder(placeholderTwo);
+            package.Placeholders.Count.Should().Be(2);
+
+            var resultOrError = package.RemovePlaceholder(invalidPlaceholder);
+
+            resultOrError.IsFailure.Should().BeTrue();
+            resultOrError.Error.Should().Be(InventoryItemPackage.RequiredMessage);
         }
 
     }

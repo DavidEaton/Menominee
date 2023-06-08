@@ -16,4 +16,8 @@
     <None Include="C:\Users\david\source\repos\menominee\CustomerVehicleManagement.Domain\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\" />
+  </ItemGroup>
+
 </Project>

@@ -74,7 +74,7 @@ namespace CustomerVehicleManagement.Api.Taxes
             // 4. Return new fee from database to consumer after save
             return CreatedAtRoute("GetExciseFeeAsync",
                 new { exciseFee.Id },
-                ExciseFeeHelper.ConvertEntityToReadDto(exciseFee));
+                ExciseFeeHelper.ConvertToReadDto(exciseFee));
         }
 
         [HttpDelete("{id:long}")]

@@ -4,7 +4,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
 {
     public class AddressHelper
     {
-        public static AddressToRead ConvertEntityToReadDto(Address address)
+        public static AddressToRead ConvertToReadDto(Address address)
         {
             return (address is not null)
                 ? new AddressToRead
@@ -16,7 +16,7 @@ namespace CustomerVehicleManagement.Shared.Models.Addresses
                 : null;
         }
 
-        public static AddressToWrite ConvertEntityToWriteDto(Address address)
+        public static AddressToWrite ConvertToWriteDto(Address address)
         {
             return (address is not null)
                 ? new AddressToWrite()

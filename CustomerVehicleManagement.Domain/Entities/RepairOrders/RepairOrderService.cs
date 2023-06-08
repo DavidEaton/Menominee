@@ -1,90 +1,160 @@
-﻿using Menominee.Common;
+﻿using CSharpFunctionalExtensions;
 using System.Collections.Generic;
+using System.Linq;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
+    // TODO: DDD: Rename this class to TicketService
     public class RepairOrderService : Entity
     {
-        public long RepairOrderId { get; set; }
-        public string ServiceName { get; set; }
-        public string SaleCode { get; set; }
-        public bool IsCounterSale { get; set; }
-        public bool IsDeclined { get; set; }
-        public double PartsTotal { get; set; }
-        public double LaborTotal { get; set; }
-        public double DiscountTotal { get; set; }
-        public double TaxTotal { get; set; }
-        public double ShopSuppliesTotal { get; set; }
-        public double Total { get; set; }
+        public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly int MinimumLength = 2;
+        public static readonly int MaximumLength = 255;
+        public static readonly string InvalidLengthMessage = $"Name must be between {MinimumLength} character(s) {MaximumLength} and in length";
 
-        public virtual List<RepairOrderItem> Items { get; set; } = new List<RepairOrderItem>();
-        public virtual List<RepairOrderTech> Techs { get; set; } = new List<RepairOrderTech>();
-        public virtual List<RepairOrderServiceTax> Taxes { get; set; } = new List<RepairOrderServiceTax>();
+        public string ServiceName { get; private set; }
+        public SaleCode SaleCode { get; private set; }
+        public bool IsCounterSale => LineItems.All(item => item.IsCounterSale);
+        public bool IsDeclined => LineItems.All(item => item.IsDeclined);
+        public double PartsTotal => LineItems.Select(
+            lineItem => lineItem.SellingPrice * lineItem.QuantitySold).Sum();
+        public double LaborTotal => LineItems.Select(
+            lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold).Sum();
+        public double DiscountTotal => LineItems.Select(
+            lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold).Sum(); // Usually negative -AL
+        public double TaxTotal => Taxes.Select(
+            lineItem => lineItem.LaborTax.Amount + lineItem.PartTax.Amount).Sum();
+        public double HazMatTotal { get; private set; }
+        public double ShopSuppliesTotal { get; private set; }
+        //  Looks like we previously left the discount amount positive, then subtracted it from the total.  I'm not sure if it really matters one way or the other as long as we pick one and stick with it. -AL
+        public double Total =>
+            PartsTotal + LaborTotal + DiscountTotal + HazMatTotal + ShopSuppliesTotal;
+        public double TotalWithTax =>
+            PartsTotal + LaborTotal + DiscountTotal + HazMatTotal + ShopSuppliesTotal + TaxTotal;
 
-        public void AddItem(RepairOrderItem item)
+        private readonly List<RepairOrderLineItem> lineItems = new();
+        public IReadOnlyList<RepairOrderLineItem> LineItems => lineItems.ToList();
+
+        private readonly List<RepairOrderServiceTechnician> technicians = new();
+        public IReadOnlyList<RepairOrderServiceTechnician> Technicians => technicians.ToList();
+
+        private readonly List<RepairOrderServiceTax> taxes = new();
+        public IReadOnlyList<RepairOrderServiceTax> Taxes => taxes.ToList();
+
+        private RepairOrderService(string serviceName, SaleCode saleCode, double shopSuppliesTotal, List<RepairOrderLineItem> lineItems, List<RepairOrderServiceTechnician> technicians, List<RepairOrderServiceTax> taxes)
         {
-            Items.Add(item);
+            ServiceName = serviceName;
+            SaleCode = saleCode;
+            ShopSuppliesTotal = shopSuppliesTotal;
+            this.lineItems = lineItems ?? new List<RepairOrderLineItem>();
+            this.technicians = technicians ?? new List<RepairOrderServiceTechnician>();
+            this.taxes = taxes ?? new List<RepairOrderServiceTax>();
         }
 
-        public void RemoveItem(RepairOrderItem item)
+        public static Result<RepairOrderService> Create(
+            string serviceName,
+            SaleCode saleCode,
+            double shopSuppliesTotal,
+            List<RepairOrderLineItem> lineItems = null,
+            List<RepairOrderServiceTechnician> techs = null,
+            List<RepairOrderServiceTax> taxes = null)
         {
-            Items.Remove(item);
+            serviceName = (serviceName ?? string.Empty).Trim();
+
+            if (serviceName.Length > MaximumLength || serviceName.Length < MinimumLength)
+                return Result.Failure<RepairOrderService>(InvalidLengthMessage);
+
+            if (saleCode is null)
+                return Result.Failure<RepairOrderService>(RequiredMessage);
+
+            return Result.Success(new RepairOrderService(serviceName, saleCode, shopSuppliesTotal, lineItems, techs, taxes));
         }
 
-        public void SetItems(IList<RepairOrderItem> items)
+        public Result<string> SetServiceName(string serviceName)
         {
-            Items.Clear();
-            if (items.Count > 0)
-            {
-                foreach (var item in items)
-                    AddItem(item);
-            }
+            serviceName = (serviceName ?? string.Empty).Trim();
+
+            if (serviceName.Length < MinimumLength ||
+                serviceName.Length > MaximumLength)
+                return Result.Failure<string>(InvalidLengthMessage);
+
+            return Result.Success(ServiceName = serviceName);
         }
 
-        public void AddTech(RepairOrderTech tech)
+        public Result<SaleCode> SetSaleCode(SaleCode saleCode)
         {
-            Techs.Add(tech);
+            return
+                saleCode is null
+                ? Result.Failure<SaleCode>(RequiredMessage)
+                : Result.Success(SaleCode = saleCode);
         }
 
-        public void RemoveTech(RepairOrderTech tech)
+        public Result<RepairOrderLineItem> AddLineItem(RepairOrderLineItem lineItem)
         {
-            Techs.Remove(tech);
+            if (lineItem is null)
+                return Result.Failure<RepairOrderLineItem>(RequiredMessage);
+
+            lineItems.Add(lineItem);
+
+            return Result.Success(lineItem);
         }
 
-        public void SetTechs(IList<RepairOrderTech> techs)
+        public Result<RepairOrderLineItem> RemoveLineItem(RepairOrderLineItem lineItem)
         {
-            Techs.Clear();
-            if (techs.Count > 0)
-            {
-                foreach (var tech in techs)
-                    AddTech(tech);
-            }
+            if (lineItem is null)
+                return Result.Failure<RepairOrderLineItem>(RequiredMessage);
+
+            lineItems.Remove(lineItem);
+
+            return Result.Success(lineItem);
         }
 
-        public void AddTax(RepairOrderServiceTax tax)
+        public Result<RepairOrderServiceTechnician> AddTechnician(RepairOrderServiceTechnician technician)
         {
-            Taxes.Add(tax);
+            if (technician is null)
+                return Result.Failure<RepairOrderServiceTechnician>(RequiredMessage);
+
+            technicians.Add(technician);
+
+            return Result.Success(technician);
         }
 
-        public void RemoveTax(RepairOrderServiceTax tax)
+        public Result<RepairOrderServiceTechnician> RemoveTechnician(RepairOrderServiceTechnician technician)
         {
-            Taxes.Remove(tax);
+            if (technician is null)
+                return Result.Failure<RepairOrderServiceTechnician>(RequiredMessage);
+
+            technicians.Remove(technician);
+
+            return Result.Success(technician);
         }
 
-        public void SetTaxes(IList<RepairOrderServiceTax> taxes)
+
+        public Result<RepairOrderServiceTax> AddTax(RepairOrderServiceTax tax)
         {
-            Taxes.Clear();
-            if (taxes.Count > 0)
-            {
-                foreach (var tax in taxes)
-                    AddTax(tax);
-            }
+            if (tax is null)
+                return Result.Failure<RepairOrderServiceTax>(RequiredMessage);
+
+            taxes.Add(tax);
+
+            return Result.Success(tax);
+        }
+
+        public Result<RepairOrderServiceTax> RemoveTax(RepairOrderServiceTax tax)
+        {
+            if (tax is null)
+                return Result.Failure<RepairOrderServiceTax>(RequiredMessage);
+
+            taxes.Remove(tax);
+
+            return Result.Success(tax);
         }
 
         #region ORM
 
         // EF requires a parameterless constructor
-        public RepairOrderService() { }
+        protected RepairOrderService() { }
 
         #endregion
     }

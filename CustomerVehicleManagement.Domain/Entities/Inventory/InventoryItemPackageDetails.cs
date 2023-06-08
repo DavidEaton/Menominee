@@ -1,6 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -19,9 +18,6 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
         private InventoryItemPackageDetails(double quantity, bool partAmountIsAdditional, bool laborAmountIsAdditional, bool exciseFeeIsAdditional)
         {
-            if (quantity <= MinimumValue || quantity > MaximumValue)
-                throw new ArgumentOutOfRangeException(MinimumValueMessage);
-
             Quantity = quantity;
             PartAmountIsAdditional = partAmountIsAdditional;
             LaborAmountIsAdditional = laborAmountIsAdditional;
@@ -36,15 +32,27 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(new InventoryItemPackageDetails(quantity, partAmountIsAdditional, laborAmountIsAdditional, exciseFeeIsAdditional));
         }
 
-        public Result<InventoryItemPackageDetails> SetQuantity(double quantity)
+        public Result<InventoryItemPackageDetails> NewQuantity(double quantity)
         {
             if (quantity <= MinimumValue || quantity > MaximumValue)
                 return Result.Failure<InventoryItemPackageDetails>(MinimumValueMessage);
 
-            var result = Result.Success(new InventoryItemPackageDetails(
-                quantity, PartAmountIsAdditional, LaborAmountIsAdditional, ExciseFeeIsAdditional)).Value;
+            return Result.Success(new InventoryItemPackageDetails(quantity, PartAmountIsAdditional, LaborAmountIsAdditional, ExciseFeeIsAdditional));
+        }
 
-            return Result.Success(result);
+        public Result<InventoryItemPackageDetails> NewPartAmountIsAdditional(bool isAdditional)
+        {
+            return Result.Success(new InventoryItemPackageDetails(Quantity, isAdditional, LaborAmountIsAdditional, ExciseFeeIsAdditional));
+        }
+
+        public Result<InventoryItemPackageDetails> NewLaborAmountIsAdditional(bool isAdditional)
+        {
+            return Result.Success(new InventoryItemPackageDetails(Quantity, PartAmountIsAdditional, isAdditional, ExciseFeeIsAdditional));
+        }
+
+        public Result<InventoryItemPackageDetails> NewExciseFeeIsAdditional(bool isAdditional)
+        {
+            return Result.Success(new InventoryItemPackageDetails(Quantity, PartAmountIsAdditional, LaborAmountIsAdditional, isAdditional));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

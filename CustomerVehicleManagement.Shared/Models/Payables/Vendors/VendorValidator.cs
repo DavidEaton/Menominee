@@ -28,7 +28,6 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             // HOWEVER, that would create a circular dependency from this project to API
             // and back again. So we miss an edge case if the client somehow sends a
             // DefaultPaymentMethod read dto that represents a non-existent entity
-
             DefaultPaymentMethod defaultPaymentMethod = null;
 
             RuleFor(vendor => vendor)

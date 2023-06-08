@@ -35,7 +35,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor
             .Value;
         }
 
-        public static InventoryItemLaborToRead ConvertEntityToReadDto(InventoryItemLabor labor)
+        public static InventoryItemLaborToRead ConvertToReadDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;
@@ -57,7 +57,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor
             };
         }
 
-        public static InventoryItemLaborToReadInList ConvertEntityToReadInListDto(InventoryItemLabor labor)
+        public static InventoryItemLaborToReadInList ConvertToReadInListDto(InventoryItemLabor labor)
         {
             if (labor is null)
                 return null;

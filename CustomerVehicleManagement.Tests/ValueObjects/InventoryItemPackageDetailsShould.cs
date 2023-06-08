@@ -30,13 +30,13 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
-        public void SetQuantity()
+        public void Return_New_On_NewQuantity()
         {
             var package = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
             double quantity = 10;
             package.Quantity.Should().NotBe(quantity);
 
-            var resultOrError = package.SetQuantity(quantity);
+            var resultOrError = package.NewQuantity(quantity);
 
             resultOrError.IsFailure.Should().BeFalse();
             resultOrError.Value.Quantity.Should().Be(quantity);
@@ -50,7 +50,7 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             double quantity = 10;
             package.Quantity.Should().NotBe(quantity);
 
-            var resultOrError = package.SetQuantity(invalidValue);
+            var resultOrError = package.NewQuantity(invalidValue);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("must");
@@ -72,6 +72,45 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var packageTwo = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + 1, true, true, true).Value;
 
             packageOne.Should().NotBe(packageTwo);
+        }
+
+        [Fact]
+        public void Return_New_On_NewPartAmountIsAdditional()
+        {
+            var package = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+            bool partAmountIsAdditionalquantity = true;
+            package.PartAmountIsAdditional.Should().Be(partAmountIsAdditionalquantity);
+
+            var resultOrError = package.NewPartAmountIsAdditional(!partAmountIsAdditionalquantity);
+
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.PartAmountIsAdditional.Should().Be(!partAmountIsAdditionalquantity);
+        }
+
+        [Fact]
+        public void Return_New_On_NewLaborAmountIsAdditional()
+        {
+            var package = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+            bool laborAmountIsAdditionalquantity = true;
+            package.LaborAmountIsAdditional.Should().Be(laborAmountIsAdditionalquantity);
+
+            var resultOrError = package.NewLaborAmountIsAdditional(!laborAmountIsAdditionalquantity);
+
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.LaborAmountIsAdditional.Should().Be(!laborAmountIsAdditionalquantity);
+        }
+
+        [Fact]
+        public void Return_New_On_NewExciseFeeIsAdditional()
+        {
+            var package = InventoryItemPackageDetails.Create(InventoryItemPackageDetails.MinimumValue + .1, true, true, true).Value;
+            bool exciseFeeIsAdditionalquantity = true;
+            package.ExciseFeeIsAdditional.Should().Be(exciseFeeIsAdditionalquantity);
+
+            var resultOrError = package.NewExciseFeeIsAdditional(!exciseFeeIsAdditionalquantity);
+
+            resultOrError.IsFailure.Should().BeFalse();
+            resultOrError.Value.ExciseFeeIsAdditional.Should().Be(!exciseFeeIsAdditionalquantity);
         }
 
         internal class TestData

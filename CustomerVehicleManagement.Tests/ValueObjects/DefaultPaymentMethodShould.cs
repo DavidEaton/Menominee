@@ -35,17 +35,17 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
         }
 
         [Fact]
-        public void SetPaymentMethod()
+        public void Return_New_On_NewPaymentMethod()
         {
             var paymentMethod = CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
             var anotherPaymentMethod = CreateVendorInvoicePaymentMethod();
 
             defaultPaymentMethod.PaymentMethod.Should().Be(paymentMethod);
-            var resultOrError = defaultPaymentMethod.SetPaymentMethod(anotherPaymentMethod);
+            var resultOrError = defaultPaymentMethod.NewPaymentMethod(anotherPaymentMethod);
 
-            resultOrError.IsFailure.Should().BeFalse();
-            defaultPaymentMethod.PaymentMethod.Should().Be(anotherPaymentMethod);
+            resultOrError.IsSuccess.Should().BeTrue();
+            resultOrError.Value.PaymentMethod.Should().Be(anotherPaymentMethod);
         }
 
         [Fact]
@@ -55,13 +55,13 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
             VendorInvoicePaymentMethod nullPaymentMethod = null;
 
-            var resultOrError = defaultPaymentMethod.SetPaymentMethod(nullPaymentMethod);
+            var resultOrError = defaultPaymentMethod.NewPaymentMethod(nullPaymentMethod);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void SetAutoCompleteDocuments()
+        public void Return_New_On_NewAutoCompleteDocuments()
         {
             var defaultPaymentMethod = DefaultPaymentMethod.Create(CreateVendorInvoicePaymentMethod(), true).Value;
 
@@ -69,15 +69,38 @@ namespace CustomerVehicleManagement.Tests.ValueObjects
             var resultOrError = defaultPaymentMethod.SetAutoCompleteDocuments(false);
 
             resultOrError.IsFailure.Should().BeFalse();
-            defaultPaymentMethod.AutoCompleteDocuments.Should().Be(false);
+            resultOrError.Value.AutoCompleteDocuments.Should().Be(false);
+        }
+
+
+        [Fact]
+        public void Equate_Two_Instances_Having_Same_Values()
+        {
+            VendorInvoicePaymentMethod paymentMethod = CreateVendorInvoicePaymentMethod();
+
+            var defaultPaymentMethod1 = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+            var defaultPaymentMethod2 = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+
+            defaultPaymentMethod1.Should().BeEquivalentTo(defaultPaymentMethod2);
+        }
+
+        [Fact]
+        public void Not_Equate_Two_Instances_Having_Differing_Values()
+        {
+            VendorInvoicePaymentMethod paymentMethod = CreateVendorInvoicePaymentMethod();
+
+            var defaultPaymentMethod1 = DefaultPaymentMethod.Create(paymentMethod, true).Value;
+            var defaultPaymentMethod2 = DefaultPaymentMethod.Create(paymentMethod, false).Value;
+
+            defaultPaymentMethod1.Should().NotBeSameAs(defaultPaymentMethod2);
         }
 
         private static VendorInvoicePaymentMethod CreateVendorInvoicePaymentMethod()
         {
-            IList<string> paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
+            var paymentMethodNames = VendorInvoiceTestHelper.CreatePaymentMethodNames(5);
 
             return VendorInvoicePaymentMethod.Create(
-                paymentMethodNames,
+                (IReadOnlyList<string>)paymentMethodNames,
                 RandomCharacters(VendorInvoicePaymentMethod.MinimumLength + 5),
                 true,
                 VendorInvoicePaymentMethodType.Normal,

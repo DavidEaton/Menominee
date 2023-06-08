@@ -63,10 +63,10 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Vendors
             vendorToRead.DefaultPaymentMethod = defaultPaymentMethod;
 
             if (vendor.Address is not null)
-                vendorToRead.Address = AddressHelper.ConvertEntityToReadDto(vendor.Address);
+                vendorToRead.Address = AddressHelper.ConvertToReadDto(vendor.Address);
 
-            vendorToRead.Phones = PhoneHelper.ConvertEntitiesToReadDtos(vendor.Phones);
-            vendorToRead.Emails = EmailHelper.ConvertEntitiesToReadDtos(vendor.Emails);
+            vendorToRead.Phones = PhoneHelper.ConvertToReadDtos(vendor.Phones);
+            vendorToRead.Emails = EmailHelper.ConvertToReadDtos(vendor.Emails);
 
             return vendorToRead;
         }
