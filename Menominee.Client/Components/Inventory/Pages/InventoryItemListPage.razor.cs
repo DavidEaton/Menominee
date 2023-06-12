@@ -66,25 +66,14 @@ namespace Menominee.Client.Components.Inventory.Pages
 
             SelectedItemType = InventoryItemType.Part;
 
-            //ItemsList = (await DataService.GetAllItems()).ToList();
+            ItemsList = (await DataService.GetAllItemsAsync()).ToList();
 
-            //if (ItemsList.Count > 0)
-            //{
-            //    if (ItemToSelect == 0)
-            //    {
-            //        SelectedItem = ItemsList.FirstOrDefault();
-            //    }
-            //    else
-            //    {
-            //        SelectedItem = ItemsList.Where(x => x.Id == ItemToSelect).FirstOrDefault();
-            //    }
-            //    SelectedId = SelectedItem.Id;
-            //    SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
-            //}
-            //else
-            //{
-            //    SelectedId = 0;
-            //}
+            SelectedItem = ItemsList.DefaultIfEmpty(new InventoryItemToReadInList { Id = 0 })
+                                     .FirstOrDefault(item => ItemToSelect == 0 || item.Id == ItemToSelect);
+
+            SelectedId = SelectedItem.Id;
+            SelectedList = new List<InventoryItemToReadInList> { SelectedItem };
+
         }
 
         protected override async Task OnParametersSetAsync()

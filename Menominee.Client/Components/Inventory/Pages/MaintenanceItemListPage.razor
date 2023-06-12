@@ -18,17 +18,17 @@
                              Sortable="false"
                              FilterMode="GridFilterMode.None"
                              SelectionMode="GridSelectionMode.Single"
-                         SelectedItemsChanged="@((IEnumerable<MaintenanceItemToReadInList> itemList) => OnSelect(itemList))"
+                             SelectedItemsChanged="@((IEnumerable<MaintenanceItemToReadInList> itemList) => OnSelect(itemList))"
                              SelectedItems="@SelectedList"
                              Class="m-grid"
-                             @ref="@Grid">
+                @ref="@Grid">
                     <GridColumns>
                         <Telerik.Blazor.Components.GridColumn Width="35%"
-                                                          Field="@nameof(MaintenanceItemToReadInList.ItemNumber)"
+                                                              Field="@nameof(MaintenanceItemToReadInList.ItemNumber)"
                                                               Title="Item Number">
                         </Telerik.Blazor.Components.GridColumn>
                         <Telerik.Blazor.Components.GridColumn Width="65%"
-                                                          Field="@nameof(MaintenanceItemToReadInList.Description)"
+                                                              Field="@nameof(MaintenanceItemToReadInList.Description)"
                                                               Title="Description">
                         </Telerik.Blazor.Components.GridColumn>
                     </GridColumns>
@@ -52,10 +52,10 @@
     </div>
 </div>
 
-@*<InventoryItemSelectForm DialogVisible="@ShowItemSelector"
-                         @bind-SelectedItem="@SelectedInventoryItem"
+<InventoryItemSelectForm DialogVisible="@ShowItemSelector"
+@bind-SelectedItem="@SelectedInventoryItem"
                          OnSelect="@SubmitAddItemHandlerAsync"
-                         OnCancel="@EndAddItem" />*@
+                         OnCancel="@EndAddItem" />
 
 <style>
     .m-gid-container, .m-grid {

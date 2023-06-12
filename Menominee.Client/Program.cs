@@ -63,7 +63,7 @@ builder.Services.AddAuthorizationCore(authorizationOptions =>
         Policies.AdminPolicy());
 
     authorizationOptions.AddPolicy(
-        Policies.IsAuthenticated, 
+        Policies.IsAuthenticated,
         Policies.RequireAuthenticatedUserPolicy());
 
     authorizationOptions.AddPolicy(
@@ -91,7 +91,7 @@ builder.Services.AddAuthorizationCore(authorizationOptions =>
         Policies.TechnicianUserPolicy());
 });
 
-var baseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
 
 builder.Services.AddHttpClient<IUserDataService, UserDataService>(
     client => client.BaseAddress = baseAddress)
@@ -118,7 +118,7 @@ builder.Services.AddHttpClient<IVendorDataService, VendorDataService>(
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<IVendorInvoiceDataService, VendorInvoiceDataService>(
-        client => client.BaseAddress = baseAddress)
+    client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<IVendorInvoicePaymentMethodDataService, VendorInvoicePaymentMethodDataService>(
