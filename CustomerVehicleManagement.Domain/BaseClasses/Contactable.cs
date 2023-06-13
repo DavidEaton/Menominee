@@ -20,6 +20,7 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         public static readonly string NonuniqueMessage = $"Item has already been entered; each item must be unique.";
         public static readonly string PrimaryExistsMessage = $"Primary has already been entered.";
         public static readonly string InvalidValueMessage = $"Value was invalid";
+        public static readonly string NotFoundMessage = $"Item was not found";
         public string Notes { get; private set; }
         public Address Address { get; private set; }
 
@@ -65,9 +66,12 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             if (email is null)
                 return Result.Failure<Email>(RequiredMessage);
 
-            var removed = emails.Remove(email);
+            if (!emails.Contains(email))
+                return Result.Failure<Email>(NotFoundMessage);
 
-            return removed ? Result.Success(email) : Result.Failure<Email>(RequiredMessage);
+            emails.Remove(email);
+
+            return Result.Success(email);
         }
 
         public Result<Phone> AddPhone(Phone phone)
@@ -91,6 +95,9 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             if (phone is null)
                 return Result.Failure<Phone>(RequiredMessage);
 
+            if (!phones.Contains(phone))
+                return Result.Failure<Phone>(NotFoundMessage);
+
             phones.Remove(phone);
 
             return Result.Success(phone);
@@ -101,7 +108,6 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             return Result.Success(Notes = note.Trim().Truncate(NoteMaximumLength));
         }
 
-        // VK Im.2: you don't need to return REsult here, just void is fine
         public Result SetAddress(Address address)
         {
             if (address is null)
@@ -225,7 +231,11 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
         #region ORM
 
         // EF requires parameterless constructor
-        protected Contactable() { }
+        protected Contactable()
+        {
+            phones = new List<Phone>();
+            emails = new List<Email>();
+        }
 
         #endregion
     }

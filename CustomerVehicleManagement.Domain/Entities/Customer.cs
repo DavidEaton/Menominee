@@ -25,23 +25,23 @@ namespace CustomerVehicleManagement.Domain.Entities
         public IReadOnlyList<Vehicle> Vehicles => vehicles.ToList();
         public string Name =>
             Person is not null
-                ? Person.Name.FirstMiddleLast 
-                : Organization is not null 
-                    ? Organization.Name.Name 
+                ? Person.Name.FirstMiddleLast
+                : Organization is not null
+                    ? Organization.Name.Name
                     : string.Empty;
 
         public string Notes =>
-            Person is not null 
-                ? Person.Notes 
-                : Organization is not null 
-                    ? Organization.Notes 
+            Person is not null
+                ? Person.Notes
+                : Organization is not null
+                    ? Organization.Notes
                     : string.Empty;
 
         public IReadOnlyList<Phone> Phones =>
-            Person is not null 
+            Person is not null
                 ? Person.Phones.ToList()
-                : Organization is not null 
-                    ? Organization.Phones.ToList() 
+                : Organization is not null
+                    ? Organization.Phones.ToList()
                     : new List<Phone>();
 
         public IReadOnlyList<Email> Emails =>
@@ -55,7 +55,7 @@ namespace CustomerVehicleManagement.Domain.Entities
             Person is not null
                 ? Person.Address
                 : Organization is not null
-                    ? Organization.Address 
+                    ? Organization.Address
                     : null;
 
         public Person Contact => Organization?.Contact;
@@ -261,7 +261,10 @@ namespace CustomerVehicleManagement.Domain.Entities
         #region ORM
 
         // EF requires a parameterless constructor
-        protected Customer() { }
+        protected Customer()
+        {
+            vehicles = new List<Vehicle>();
+        }
 
         #endregion
 

@@ -99,6 +99,22 @@ namespace CustomerVehicleManagement.Shared.Models.SaleCodes
                 };
         }
 
+        public static SaleCodeShopSuppliesToRead ConvertShopSuppliesToReadDto(SaleCode saleCode)
+        {
+            return saleCode is null
+                ? new()
+                : new()
+                {
+                    Id = saleCode.Id,
+                    Percentage = saleCode.ShopSupplies.Percentage,
+                    MinimumJobAmount = saleCode.ShopSupplies.MinimumJobAmount,
+                    MinimumCharge = saleCode.ShopSupplies.MinimumCharge,
+                    MaximumCharge = saleCode.ShopSupplies.MaximumCharge,
+                    IncludeParts = saleCode.ShopSupplies.IncludeParts,
+                    IncludeLabor = saleCode.ShopSupplies.IncludeLabor
+                };
+        }
+
         public static SaleCodeToRead ConvertReadInListToReadDto(SaleCodeToReadInList saleCode)
         {
             return saleCode is null

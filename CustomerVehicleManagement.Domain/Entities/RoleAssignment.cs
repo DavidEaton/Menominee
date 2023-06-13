@@ -21,7 +21,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         {
             if (!Enum.IsDefined(typeof(EmploymentRole), role))
                 return Result.Failure<RoleAssignment>(RequiredMessage);
-            
+
             return Result.Success(new RoleAssignment(role));
         }
 

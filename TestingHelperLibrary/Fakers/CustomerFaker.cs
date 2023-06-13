@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities;
-using Menominee.Common;
 using Menominee.Common.Enums;
 using Entity = Menominee.Common.Entity;
 using Person = CustomerVehicleManagement.Domain.Entities.Person;

@@ -144,6 +144,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         // EF requires a parameterless constructor
         protected Vendor()
         {
+            contacts = new List<Person>();
         }
 
         #endregion

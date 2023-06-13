@@ -103,7 +103,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         #region ORM
 
         // EF requires a parameterless constructor
-        public ProductCode() { }
+        protected ProductCode() { }
 
         #endregion    
     }

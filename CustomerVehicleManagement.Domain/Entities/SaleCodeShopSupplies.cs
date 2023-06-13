@@ -100,7 +100,7 @@ namespace CustomerVehicleManagement.Domain.Entities
         #region ORM
 
         // EF requires a parameterless constructor
-        public SaleCodeShopSupplies() { }
+        protected SaleCodeShopSupplies() { }
 
         #endregion 
     }

@@ -241,7 +241,13 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         #region ORM
 
         // EF requires a parameterless constructor
-        protected RepairOrderLineItem() { }
+        protected RepairOrderLineItem()
+        {
+            serialNumbers = new List<RepairOrderSerialNumber>();
+            warranties = new List<RepairOrderWarranty>();
+            taxes = new List<RepairOrderItemTax>();
+            purchases = new List<RepairOrderPurchase>();
+        }
 
         #endregion
 

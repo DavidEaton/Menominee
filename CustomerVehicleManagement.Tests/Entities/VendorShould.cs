@@ -20,7 +20,7 @@ namespace CustomerVehicleManagement.Tests.Entities
 {
     public class VendorShould
     {
-        private static readonly Faker Faker = new Faker();
+        private static readonly Faker Faker = new();
 
         [Fact]
         public void Create_Vendor()
@@ -360,7 +360,47 @@ namespace CustomerVehicleManagement.Tests.Entities
             vendor.RemovePhone(phone);
 
             vendor.Phones.Count.Should().Be(1);
+        }
 
+        [Fact]
+        public void Return_Failure_On_Remove_Null_Phone()
+        {
+            var vendor = VendorTestHelper.CreateVendor();
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Mobile;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            vendor.AddPhone(phone);
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = Phone.Create(number, phoneType, false).Value;
+            vendor.AddPhone(phone);
+
+            vendor.Phones.Count.Should().Be(2);
+            var result = vendor.RemovePhone(null);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.RequiredMessage);
+            vendor.Phones.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Remove_Nonexistent_Phone()
+        {
+            var vendor = VendorTestHelper.CreateVendor();
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Mobile;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            vendor.AddPhone(phone);
+            number = "231.546.2102";
+            phoneType = PhoneType.Home;
+            phone = Phone.Create(number, phoneType, false).Value;
+
+            vendor.Phones.Count.Should().Be(1);
+            var result = vendor.RemovePhone(phone);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.NotFoundMessage);
+            vendor.Phones.Count.Should().Be(1);
         }
 
         [Fact]
@@ -419,6 +459,43 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             vendor.Emails.Count.Should().Be(1);
             vendor.Emails.Should().Contain(email1);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Remove_Null_Email()
+        {
+            var vendor = VendorTestHelper.CreateVendor();
+            var address = "jane@doe.com";
+            var email0 = Email.Create(address, true).Value;
+            vendor.AddEmail(email0);
+            address = "june@doe.com";
+            var email1 = Email.Create(address, false).Value;
+            vendor.AddEmail(email1);
+
+            vendor.Emails.Count.Should().Be(2);
+            var result = vendor.RemoveEmail(null);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.RequiredMessage);
+            vendor.Emails.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Remove_Nonexistent_Email()
+        {
+            var vendor = VendorTestHelper.CreateVendor();
+            var address = "jane@doe.com";
+            var email0 = Email.Create(address, true).Value;
+            vendor.AddEmail(email0);
+            address = "june@doe.com";
+            var email1 = Email.Create(address, false).Value;
+
+            vendor.Emails.Count.Should().Be(1);
+            var result = vendor.RemoveEmail(email1);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.NotFoundMessage);
+            vendor.Emails.Count.Should().Be(1);
         }
 
         [Fact]
@@ -491,6 +568,17 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             vendor.SetAddress(address);
             vendor.Address.Should().Be(address);
+        }
+
+        [Fact]
+        public void Not_Set_Inavlid_Address()
+        {
+            var vendor = VendorTestHelper.CreateVendor();
+            Address address = null;
+
+            var result = vendor.SetAddress(address);
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Contactable.RequiredMessage);
         }
 
         [Fact]

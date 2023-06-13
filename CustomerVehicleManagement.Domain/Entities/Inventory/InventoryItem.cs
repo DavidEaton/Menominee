@@ -223,31 +223,31 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
                     ? SetManufacturer(manufacturer)
                     : Result.Success(),
                 (itemNumber is not null) && (itemNumber != ItemNumber)
-                    ? SetItemNumber(itemNumber) 
+                    ? SetItemNumber(itemNumber)
                     : Result.Success(),
                 (description is not null) && (description != Description)
-                    ? SetDescription(description) 
+                    ? SetDescription(description)
                     : Result.Success(),
                 (productCode is not null) && (productCode != ProductCode)
-                    ? SetProductCode(productCode) 
+                    ? SetProductCode(productCode)
                     : Result.Success(),
                 (part is not null) && (part != Part)
                     ? SetPart(part)
                     : Result.Success(),
                 (labor is not null) && (labor != Labor)
-                    ? SetLabor(labor) 
+                    ? SetLabor(labor)
                     : Result.Success(),
                 (tire is not null) && (tire != Tire)
                     ? SetTire(tire)
                     : Result.Success(),
                 (package is not null) && (package != Package)
-                    ? SetPackage(package) 
+                    ? SetPackage(package)
                     : Result.Success(),
                 (inspection is not null) && (inspection != Inspection)
-                    ? SetInspection(inspection) 
+                    ? SetInspection(inspection)
                     : Result.Success(),
                 (warranty is not null) && (warranty != Warranty)
-                    ? SetWarranty(warranty) 
+                    ? SetWarranty(warranty)
                     : Result.Success());
         }
 

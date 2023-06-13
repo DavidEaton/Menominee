@@ -3,6 +3,7 @@
 using FluentAssertions;
 using System.Collections.Generic;
 using TestingHelperLibrary;
+using TestingHelperLibrary.Fakers;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Entities
@@ -13,34 +14,34 @@ namespace CustomerVehicleManagement.Tests.Entities
         public void Create_SaleCode()
         {
             // Arrange
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var desiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             // Act
-            var saleCodeOrError = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
+            var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
 
             // Assert
-            saleCodeOrError.Value.Should().BeOfType<SaleCode>();
-            saleCodeOrError.IsSuccess.Should().BeTrue();
-            saleCodeOrError.Value.Name.Should().Be(name);
-            saleCodeOrError.Value.Code.Should().Be(code);
-            saleCodeOrError.Value.LaborRate.Should().Be(laborRate);
-            saleCodeOrError.Value.DesiredMargin.Should().Be(desiredMargin);
-            saleCodeOrError.Value.ShopSupplies.Should().Be(shopSupplies);
+            result.Value.Should().BeOfType<SaleCode>();
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(name);
+            result.Value.Code.Should().Be(code);
+            result.Value.LaborRate.Should().Be(laborRate);
+            result.Value.DesiredMargin.Should().Be(desiredMargin);
+            result.Value.ShopSupplies.Should().Be(shopSupplies);
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_SaleCode_With_Invalid_Name(int length)
         {
-            string invalidName = Utilities.RandomCharacters(length);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
+            var invalidName = Utilities.RandomCharacters(length);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var desiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             var saleCode = SaleCode.Create(invalidName, code, laborRate, desiredMargin, shopSupplies);
 
@@ -52,11 +53,11 @@ namespace CustomerVehicleManagement.Tests.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_SaleCode_With_Invalid_Code(int length)
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string invalidCode = Utilities.RandomCharacters(length);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var invalidCode = Utilities.RandomCharacters(length);
+            var laborRate = SaleCode.MinimumValue;
+            var desiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             var saleCode = SaleCode.Create(name, invalidCode, laborRate, desiredMargin, shopSupplies);
 
@@ -67,11 +68,11 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void Not_Create_SaleCode_With_Invalid_LaborRate()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double invalidLaborRate = SaleCode.MinimumValue - .01;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var invalidLaborRate = SaleCode.MinimumValue - .01;
+            var desiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             var saleCode = SaleCode.Create(name, code, invalidLaborRate, desiredMargin, shopSupplies);
 
@@ -82,11 +83,11 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void Not_Create_SaleCode_With_Invalid_DesiredMargin()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double invalidDesiredMargin = SaleCode.MinimumValue - .01;
-            SaleCodeShopSupplies shopSupplies = new();
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var invalidDesiredMargin = SaleCode.MinimumValue - .01;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             var saleCode = SaleCode.Create(name, code, laborRate, invalidDesiredMargin, shopSupplies);
 
@@ -97,10 +98,10 @@ namespace CustomerVehicleManagement.Tests.Entities
         [Fact]
         public void Not_Create_SaleCode_With_Invalid_ShopSupplies()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var desiredMargin = SaleCode.MinimumValue;
             SaleCodeShopSupplies invalidShopSupplies = null;
 
             var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, invalidShopSupplies);
@@ -158,7 +159,8 @@ namespace CustomerVehicleManagement.Tests.Entities
             var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             SaleCodeShopSupplies originalShopSupplies = saleCode.ShopSupplies;
-            SaleCodeShopSupplies newShopSupplies = new();
+            var newShopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
+
             saleCode.SetShopSupplies(newShopSupplies);
 
             saleCode.ShopSupplies.Should().NotBe(originalShopSupplies);

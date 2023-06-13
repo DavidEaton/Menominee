@@ -128,7 +128,11 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         #region ORM
 
         // EF requires a parameterless constructor
-        protected InventoryItemPackage() { }
+        protected InventoryItemPackage()
+        {
+            items = new List<InventoryItemPackageItem>();
+            placeholders = new List<InventoryItemPackagePlaceholder>();
+        }
 
         #endregion 
     }

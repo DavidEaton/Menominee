@@ -2,7 +2,6 @@
 using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
-using System;
 
 namespace CustomerVehicleManagement.Tests.Helpers.Fakers
 {

@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using CustomerVehicleManagement.Domain.Entities;
-using System;
 
 namespace TestingHelperLibrary.Fakers
 {
@@ -12,12 +11,12 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                double percentage = (double)faker.Random.Decimal(0.01M, 1M);
-                double minimumJobAmount = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                double minimumCharge = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                double maximumCharge = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                bool includeParts = faker.Random.Bool();
-                bool includeLabor = faker.Random.Bool();
+                var percentage = (double)faker.Random.Decimal(0.01M, 1M);
+                var minimumJobAmount = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var minimumCharge = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var maximumCharge = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var includeParts = faker.Random.Bool();
+                var includeLabor = faker.Random.Bool();
 
                 var result = SaleCodeShopSupplies.Create(percentage, minimumJobAmount, minimumCharge, maximumCharge, includeParts, includeLabor);
 

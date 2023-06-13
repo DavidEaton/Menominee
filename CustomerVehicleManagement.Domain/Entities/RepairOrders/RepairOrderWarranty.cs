@@ -93,7 +93,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         #region ORM
 
         // EF requires a parameterless constructor
-        public RepairOrderWarranty() { }
+        protected RepairOrderWarranty() { }
 
         #endregion
     }

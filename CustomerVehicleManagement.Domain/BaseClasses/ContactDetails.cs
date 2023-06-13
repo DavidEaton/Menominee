@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common.ValueObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomerVehicleManagement.Domain.BaseClasses
 {

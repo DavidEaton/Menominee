@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_More_Than_One_Primary_Phone()
+        public void Return_Failure_On_Add_More_Than_One_Primary_Phone()
         {
             var person = ContactableTestHelper.CreatePerson();
             var number = "555.627.9206";
@@ -178,7 +178,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_Duplicate_Phone()
+        public void Return_Failure_On_Add_Duplicate_Phone()
         {
             var person = ContactableTestHelper.CreatePerson();
             var number = "555.444.3333";
@@ -223,7 +223,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_GreaterThan_One_Primary_Email()
+        public void Return_Failure_On_Add_GreaterThan_One_Primary_Email()
         {
             var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
@@ -238,7 +238,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_Duplicate_Email()
+        public void Return_Failure_On_Add_Duplicate_Email()
         {
             var person = ContactableTestHelper.CreatePerson();
             var address = "jane@doe.com";
@@ -253,11 +253,22 @@ namespace CustomerVehicleManagement.Tests.Entities
 
         [Theory]
         [InlineData(null)]
-        public void Not_Add_Invalid_Email(Email email)
+        public void Return_Failure_On_Add_Invalid_Email(Email email)
         {
             var person = ContactableTestHelper.CreatePerson();
 
             var result = person.AddEmail(email);
+
+            result.IsFailure.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        public void Return_Failure_On_Add_Invalid_Phone(Phone phone)
+        {
+            var person = ContactableTestHelper.CreatePerson();
+
+            var result = person.AddPhone(phone);
 
             result.IsFailure.Should().BeTrue();
         }
@@ -329,7 +340,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Set_Null_Birthday()
+        public void Return_Failure_On_Set_Null_Birthday()
         {
             var person = ContactableTestHelper.CreatePerson();
             DateTime? birthday = null;

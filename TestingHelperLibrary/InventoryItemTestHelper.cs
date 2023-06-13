@@ -4,6 +4,7 @@ using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
 using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
 using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using Menominee.Common.Enums;
+using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary
 {
@@ -11,9 +12,9 @@ namespace TestingHelperLibrary
     {
         public static InventoryItem CreateInventoryItem()
         {
-            Manufacturer manufacturer = CreateManufacturer();
-            ProductCode productCode = CreateProductCode();
-            InventoryItemPart part = CreateInventoryItemPart();
+            var manufacturer = CreateManufacturer();
+            var productCode = CreateProductCode();
+            var part = CreateInventoryItemPart();
 
             return InventoryItem.Create(manufacturer, "001", "a description", productCode, InventoryItemType.Part, part: part).Value;
         }
@@ -38,10 +39,10 @@ namespace TestingHelperLibrary
 
         public static InventoryItemPackage CreateInventoryItemPackage()
         {
-            double basePartsAmount = InventoryItemPackage.MinimumAmount;
-            double baseLaborAmount = InventoryItemPackage.MinimumAmount;
-            string script = Utilities.LoremIpsum(InventoryItemPackage.ScriptMaximumLength - 100);
-            bool isDiscountable = true;
+            var basePartsAmount = InventoryItemPackage.MinimumAmount;
+            var baseLaborAmount = InventoryItemPackage.MinimumAmount;
+            var script = Utilities.LoremIpsum(InventoryItemPackage.ScriptMaximumLength - 100);
+            var isDiscountable = true;
             List<InventoryItemPackageItem> items = new();
             List<InventoryItemPackagePlaceholder> placeholders = new();
 
@@ -57,10 +58,10 @@ namespace TestingHelperLibrary
         public static InventoryItemTire CreateInventoryItemTire()
         {
             var fractional = false;
-            int width = InventoryItemTire.MaximumWidth;
-            int aspectRatio = 65;
-            TireConstructionType constructionType = TireConstructionType.R;
-            int diameter = InventoryItemTire.MaximumDiameter;
+            var width = InventoryItemTire.MaximumWidth;
+            var aspectRatio = 65;
+            var constructionType = TireConstructionType.R;
+            var diameter = InventoryItemTire.MaximumDiameter;
 
             return InventoryItemTire.Create(
                 width, aspectRatio, constructionType, diameter,
@@ -124,10 +125,10 @@ namespace TestingHelperLibrary
 
         public static InventoryItemPart CreateInventoryItemPart()
         {
-            double list = InstallablePart.MinimumMoneyAmount;
-            double cost = InstallablePart.MinimumMoneyAmount;
-            double core = InstallablePart.MinimumMoneyAmount;
-            double retail = InstallablePart.MinimumMoneyAmount;
+            var list = InstallablePart.MinimumMoneyAmount;
+            var cost = InstallablePart.MinimumMoneyAmount;
+            var core = InstallablePart.MinimumMoneyAmount;
+            var retail = InstallablePart.MinimumMoneyAmount;
             return InventoryItemPart.Create(
                 list, cost, core, retail,
                 TechAmount.Create(ItemLaborType.Flat, 20, SkillLevel.A).Value,
@@ -155,9 +156,9 @@ namespace TestingHelperLibrary
         public static InventoryItemPackageDetails CreateInventoryItemPackageDetails()
         {
             var quantity = InventoryItemPackageDetails.MinimumValue + 1;
-            bool partAmountIsAdditional = true;
-            bool laborAmountIsAdditional = true;
-            bool exciseFeeIsAdditional = true;
+            var partAmountIsAdditional = true;
+            var laborAmountIsAdditional = true;
+            var exciseFeeIsAdditional = true;
 
             return InventoryItemPackageDetails.Create(
                 quantity,
@@ -205,11 +206,11 @@ namespace TestingHelperLibrary
 
         public static SaleCode CreateSaleCode()
         {
-            string name = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            string code = Utilities.RandomCharacters(SaleCode.MinimumLength);
-            double laborRate = SaleCode.MinimumValue;
-            double desiredMargin = SaleCode.MinimumValue;
-            SaleCodeShopSupplies shopSupplies = new();
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var desiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true);
 
             return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
         }
@@ -220,11 +221,11 @@ namespace TestingHelperLibrary
 
             for (int i = 0; i < count; i++)
             {
-                string name = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
-                string code = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
-                double laborRate = SaleCode.MinimumValue + count;
-                double desiredMargin = SaleCode.MinimumValue + count;
-                SaleCodeShopSupplies shopSupplies = new();
+                var name = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
+                var code = Utilities.RandomCharacters(SaleCode.MinimumLength + count);
+                var laborRate = SaleCode.MinimumValue + count;
+                var desiredMargin = SaleCode.MinimumValue + count;
+                var shopSupplies = new SaleCodeShopSuppliesFaker(true);
                 list.Add(SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value);
             }
 

@@ -12,7 +12,8 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
 
         public VendorInvoiceLineItemsValidator()
         {
-            SaleCodeShopSupplies shopSupplies = new();
+            // TODO: Replace empty shopSupplies with injected repository call to real SaleCodeShopSupplies from database
+            var shopSupplies = SaleCodeShopSupplies.Create(0, 0, 0, 0, true, true).Value;
 
             RuleFor(lineItems => lineItems)
                 .NotNull()

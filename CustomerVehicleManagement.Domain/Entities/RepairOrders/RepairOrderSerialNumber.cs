@@ -32,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
                 return Result.Failure<string>(RequiredMessage);
-            
+
             serialNumber = (serialNumber ?? string.Empty).Trim();
 
             if (serialNumber.Length < MinimumLength ||

@@ -365,7 +365,12 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         #region ORM
 
         // EF requires a parameterless constructor
-        protected VendorInvoice() { }
+        protected VendorInvoice()
+        {
+            lineItems = new List<VendorInvoiceLineItem>();
+            payments = new List<VendorInvoicePayment>();
+            taxes = new List<VendorInvoiceTax>();
+        }
 
         #endregion
     }

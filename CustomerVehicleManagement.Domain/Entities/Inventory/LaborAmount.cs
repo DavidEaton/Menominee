@@ -64,8 +64,8 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             yield return PayType;
             yield return Amount;
         }
- 
-       #region ORM
+
+        #region ORM
 
         // EF requires a parameterless constructor
         protected LaborAmount() { }

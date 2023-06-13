@@ -70,16 +70,34 @@ namespace CustomerVehicleManagement.Api.SaleCodes
 
         public async Task<IReadOnlyList<SaleCodeToReadInList>> GetSaleCodeListAsync()
         {
-            IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
+            var saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
                 .Select(saleCode => SaleCodeHelper.ConvertToReadInListDto(saleCode))
                 .ToList();
         }
 
+        public async Task<IReadOnlyList<SaleCodeShopSuppliesToRead>> GetSaleCodeShopSupplies(long Id)
+        {
+            var shopSupplies = await context.SaleCodeShopSupplies.ToListAsync();
+
+            return shopSupplies
+                .Select(shopSupply => new SaleCodeShopSuppliesToRead()
+                {
+                    Id = shopSupply.Id,
+                    Percentage = shopSupply.Percentage,
+                    IncludeLabor = shopSupply.IncludeLabor,
+                    IncludeParts = shopSupply.IncludeParts,
+                    MaximumCharge = shopSupply.MaximumCharge,
+                    MinimumCharge = shopSupply.MinimumCharge,
+                    MinimumJobAmount = shopSupply.MinimumJobAmount
+                })
+                .ToList();
+        }
+
         public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync()
         {
-            IReadOnlyList<SaleCode> saleCodes = await context.SaleCodes.ToListAsync();
+            var saleCodes = await context.SaleCodes.ToListAsync();
 
             return saleCodes
                 .Select(saleCode => SaleCodeHelper.ConvertShopSuppliesToReadInListDto(saleCode))

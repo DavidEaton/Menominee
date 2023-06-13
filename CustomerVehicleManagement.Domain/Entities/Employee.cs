@@ -84,7 +84,10 @@ namespace CustomerVehicleManagement.Domain.Entities
         #region ORM
 
         // EF requires a parameterless constructor
-        protected Employee() { }
+        protected Employee()
+        {
+            roleAssignments = new List<RoleAssignment>();
+        }
 
         #endregion
     }

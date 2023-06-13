@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
 
             if (amount < MinimumAmount)
                 return Result.Failure<TechAmount>(InvalidAmountMessage);
-            
+
             return Result.Success(new TechAmount(payType, amount, skillLevel));
         }
 
