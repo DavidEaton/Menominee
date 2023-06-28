@@ -91,7 +91,8 @@ builder.Services.AddAuthorizationCore(authorizationOptions =>
         Policies.TechnicianUserPolicy());
 });
 
-var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
+//var baseAddress = new Uri(builder.Configuration.GetValue<string>("ApiBaseUrl"));
+var baseAddress = new Uri(builder.HostEnvironment.BaseAddress);
 
 builder.Services.AddHttpClient<IUserDataService, UserDataService>(
     client => client.BaseAddress = baseAddress)
