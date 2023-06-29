@@ -41,6 +41,7 @@ using System;
 using System.IO;
 using Telerik.Reporting.Cache.File;
 using Telerik.Reporting.Services;
+using CustomerVehicleManagement.Api.Vehicles;
 
 var logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -138,6 +139,7 @@ try
     services.TryAddScoped<IExciseFeeRepository, ExciseFeeRepository>();
     services.TryAddScoped<ISalesTaxRepository, SalesTaxRepository>();
     services.TryAddScoped<IMSGraphUserService, MSGraphUserService>();
+    services.TryAddScoped<IVehicleRepository, VehicleRepository>();
 
     services.AddHealthChecks();
     services.AddCors(o => o.AddPolicy("AllowAll", policyBuilder =>
