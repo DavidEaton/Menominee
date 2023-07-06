@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj" />
     <ProjectReference Include="..\CustomerVehicleManagement.Domain\CustomerVehicleManagement.Domain.csproj" />
+    <ProjectReference Include="..\TestingHelperLibrary\TestingHelperLibrary.csproj" />
   </ItemGroup>
 
 </Project>

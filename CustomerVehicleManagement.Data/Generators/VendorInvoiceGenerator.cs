@@ -22,7 +22,7 @@ namespace CustomerVehicleManagement.Data.Generators
             var CountOfVendorInvoicesToCreate = 25;
             IReadOnlyList<string> vendorInvoiceNumbers = new List<string>();
 
-            List<VendorInvoice> vendorInvoices = VendorInvoiceFaker.MakeVendorInvoiceFakes(
+            var vendorInvoices = VendorInvoiceFaker.MakeVendorInvoiceFakes(
                 CountOfVendorInvoicesToCreate,
                 vendors,
                 vendorInvoiceNumbers);

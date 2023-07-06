@@ -17,7 +17,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public string ItemNumber { get; private set; } //required
         public string Description { get; private set; } //required
         public ProductCode ProductCode { get; private set; } //required
-        public InventoryItemType ItemType { get; private set; } //required
+        public InventoryItemType ItemType { get; private set; } //required TODO: Move itemType to InventoryItem{Type}, make this property derive from 
         public InventoryItemPart Part { get; private set; }
         public InventoryItemLabor Labor { get; private set; }
         public InventoryItemTire Tire { get; private set; }

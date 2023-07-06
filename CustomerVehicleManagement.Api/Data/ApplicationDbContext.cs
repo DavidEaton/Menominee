@@ -185,20 +185,20 @@ namespace CustomerVehicleManagement.Api.Data
 
         private string GetTenantName(UserContext userContext)
         {
-            if (userContext == null)
+            if (userContext is null)
                 return Configuration["DatabaseSettings:Tenant:Name"];
 
-            var claims = userContext.Claims;
+            var claims = userContext?.Claims;
             var tenantName = Configuration["DatabaseSettings:Tenant:Name"];
 
             try
             {
-                tenantName = claims.First(claim => claim.Type == "tenantName").Value;
+                tenantName = claims?.First(claim => claim?.Type == "tenantName").Value;
             }
             catch (Exception ex)
             {
                 Logger.LogError($"Exception message from GetTenantName(): {ex.Message}");
-                tenantName = "menominee-stage";
+                return "menominee-stage";
             }
 
             return tenantName;

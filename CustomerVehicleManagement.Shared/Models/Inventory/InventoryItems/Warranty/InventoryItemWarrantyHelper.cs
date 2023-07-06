@@ -1,6 +1,4 @@
 ﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using Menominee.Common.Enums;
-using System;
 
 namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warranty
 {
@@ -10,14 +8,11 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warra
         {
             return warranty is null
                 ? null
-                : (new()
+                : new()
                 {
-                    PeriodType =
-                    (InventoryItemWarrantyPeriodType)Enum.Parse(
-                        typeof(InventoryItemWarrantyPeriodType),
-                        warranty.WarrantyPeriod.PeriodType),
+                    PeriodType = warranty.WarrantyPeriod.PeriodType,
                     Duration = warranty.WarrantyPeriod.Duration
-                });
+                };
         }
 
         public static InventoryItemWarranty ConvertWriteDtoToEntity(InventoryItemWarrantyToWrite warranty)
@@ -36,38 +31,38 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Warra
         {
             return warranty is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = warranty.Id,
                     WarrantyPeriod = new InventoryItemWarrantyPeriodToRead()
                     {
-                        PeriodType = warranty.WarrantyPeriod.PeriodType.ToString(),
+                        PeriodType = warranty.WarrantyPeriod.PeriodType,
                         Duration = warranty.WarrantyPeriod.Duration
                     }
-                });
+                };
         }
 
         public static InventoryItemWarrantyToReadInList ConvertToReadInListDto(InventoryItemWarranty warranty)
         {
             return warranty is null
                 ? null
-                : (new()
+                : new()
                 {
                     PeriodType = warranty.WarrantyPeriod.PeriodType,
                     Duration = warranty.WarrantyPeriod.Duration
-                });
+                };
         }
 
         public static InventoryItemWarrantyToWrite ConvertToWriteDto(InventoryItemWarranty warranty)
         {
             return warranty is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = warranty.Id,
                     PeriodType = warranty.WarrantyPeriod.PeriodType,
                     Duration = warranty.WarrantyPeriod.Duration
-                });
+                };
         }
     }
 }

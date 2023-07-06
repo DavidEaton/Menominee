@@ -20,33 +20,151 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems
         {
             return item is null
                 ? new InventoryItemToReadInList()
-                : (new()
+                : new()
                 {
                     Id = item.Id,
-                    Manufacturer = new ManufacturerToRead()
-                    {
-                        Code = item.Manufacturer.Code,
-                        Id = item.Manufacturer.Id,
-                        Name = item.Manufacturer.Name,
-                        Prefix = item.Manufacturer.Prefix
-                    },
+                    Manufacturer = item.Manufacturer is null
+                        ? new()
+                        : new()
+                        {
+                            Code = item.Manufacturer.Code,
+                            Id = item.Manufacturer.Id,
+                            Name = item.Manufacturer.Name,
+                            Prefix = item.Manufacturer.Prefix
+                        },
                     ItemNumber = item.ItemNumber,
                     Description = item.Description,
-                    ProductCode = new ProductCodeToRead()
-                    {
-                        Name = item.ProductCode.Name,
-                        Code = item.ProductCode.Code,
-                        Id = item.ProductCode.Id,
-                        Manufacturer = new ManufacturerToRead()
+                    ProductCode = item.ProductCode is null
+                        ? new()
+                        : new()
                         {
-                            Id = item.ProductCode.Manufacturer.Id,
-                            Code = item.ProductCode.Manufacturer.Code,
-                            Name = item.ProductCode.Manufacturer.Name,
-                            Prefix = item.ProductCode.Manufacturer.Prefix
+                            Id = item.ProductCode.Id,
+                            Name = item.ProductCode.Name,
+                            Code = item.ProductCode.Code,
+                            Manufacturer = new ManufacturerToRead()
+                            {
+                                Id = item.ProductCode.Manufacturer.Id,
+                                Code = item.ProductCode.Manufacturer.Code,
+                                Name = item.ProductCode.Manufacturer.Name,
+                                Prefix = item.ProductCode.Manufacturer.Prefix
+                            },
+                    SaleCode = item.ProductCode.SaleCode is null
+                        ? new()
+                        : new()
+                        {
+                            Id = item.ProductCode.SaleCode.Id,
+                            Code = item.ProductCode.SaleCode?.Code,
+                            Name = item.ProductCode.SaleCode.Name,
+                            DesiredMargin = item.ProductCode.SaleCode.DesiredMargin,
+                            LaborRate = item.ProductCode.SaleCode.LaborRate,
+                            ShopSupplies = item.ProductCode.SaleCode.ShopSupplies is null
+                                ? new()
+                                : new()
+                                {
+                                    Id = item.ProductCode.SaleCode.ShopSupplies.Id,
+                                    IncludeLabor = item.ProductCode.SaleCode.ShopSupplies.IncludeLabor,
+                                    IncludeParts = item.ProductCode.SaleCode.ShopSupplies.IncludeParts,
+                                    MaximumCharge = item.ProductCode.SaleCode.ShopSupplies.MaximumCharge,
+                                    MinimumCharge = item.ProductCode.SaleCode.ShopSupplies.MinimumCharge,
+                                    MinimumJobAmount = item.ProductCode.SaleCode.ShopSupplies.MinimumJobAmount,
+                                    Percentage = item.ProductCode.SaleCode.ShopSupplies.Percentage
+                                }
+                        }
                         },
-                    },
                     ItemType = item.ItemType,
-                });
+                    Part = item.Part is null
+                        ? null
+                        : new()
+                        {
+                            Id = item.Part.Id,
+                            Core = item.Part.Core,
+                            Cost = item.Part.Cost,
+                            Fractional = item.Part.Fractional,
+                            LineCode = item.Part.LineCode,
+                            List = item.Part.List,
+                            Retail = item.Part.Retail,
+                            SubLineCode = item.Part.SubLineCode,
+                            TechAmount = item.Part.TechAmount is null
+                                ? new()
+                                : new()
+                                {
+                                    Amount = item.Part.TechAmount.Amount,
+                                    PayType = item.Part.TechAmount.PayType,
+                                    SkillLevel = item.Part.TechAmount.SkillLevel
+                                }
+                        },
+                    Inspection = item.Inspection is null
+                        ? null
+                        : new()
+                        {
+                            Id = item.Inspection.Id,
+                            Type = item.Inspection.InspectionType,
+                            TechAmount = item.Inspection.TechAmount is null
+                                ? null
+                                : new()
+                                {
+                                    Amount = item.Inspection.TechAmount.Amount,
+                                    PayType = item.Inspection.TechAmount.PayType,
+                                    SkillLevel = item.Inspection.TechAmount.SkillLevel
+                                },
+                            LaborAmount = item.Inspection.LaborAmount is null
+                                ? null
+                                : new()
+                                {
+                                    Amount = item.Inspection.LaborAmount.Amount,
+                                    PayType = item.Inspection.TechAmount.PayType
+                                }
+                        },
+                    Labor = item.Labor is null
+                        ? null
+                        : new()
+                        {
+                            Id = item.Labor.Id,
+                            LaborAmount = item.Labor.LaborAmount is null
+                                ? new()
+                                : new()
+                                {
+                                    Amount = item.Labor.LaborAmount.Amount,
+                                    PayType = item.Labor.LaborAmount.PayType
+                                },
+                            TechAmount = item.Labor.TechAmount is null
+                                ? new()
+                                : new()
+                                {
+                                    Amount = item.Labor.TechAmount.Amount,
+                                    PayType = item.Labor.TechAmount.PayType,
+                                    SkillLevel = item.Labor.TechAmount.SkillLevel
+                                }
+                        },
+                    Package = item.Package is null
+                        ? null
+                        : new()
+                        {
+                            Id = item.Package.Id,
+                            BaseLaborAmount = item.Package.BaseLaborAmount,
+                            BasePartsAmount = item.Package.BasePartsAmount,
+                            IsDiscountable = item.Package.IsDiscountable,
+                            Script = item.Package.Script,
+                            Items = InventoryItemPackageHelper.ConvertToReadDtos(item.Package.Items),
+                            Placeholders = InventoryItemPackagePlaceholderHelper.ConvertToReadDtos(item.Package.Placeholders)
+                        },
+                    Tire = item.Tire is null
+                        ? null
+                        : InventoryItemTireHelper.ConvertToReadDto(item.Tire),
+                    Warranty = item.Warranty is null
+                        ? null
+                        : new()
+                        {
+                            Id = item.Warranty.Id,
+                            WarrantyPeriod = item.Warranty.WarrantyPeriod is null
+                                ? new()
+                                : new()
+                                {
+                                    Duration = item.Warranty.WarrantyPeriod.Duration,
+                                    PeriodType = item.Warranty.WarrantyPeriod.PeriodType
+                                }
+                        }
+                };
         }
 
         public static InventoryItemToRead ConvertToReadDto(InventoryItem item)

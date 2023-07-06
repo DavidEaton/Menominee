@@ -6,10 +6,21 @@ namespace CustomerVehicleManagement.Data
     {
         internal static void Main(string[] args)
         {
-            VendorGenerator.GenerateData();
-            VendorInvoiceGenerator.GenerateData();
+            var message = "Database will be deleted, recreated and seeded with data. Please press 1 to proceed, or any other key to cancel";
+            Console.WriteLine(message);
 
-            Console.ReadLine();
+            var input = Console.ReadLine();
+            input = (input ?? string.Empty).Trim();
+
+            if (input == "1")
+            {
+                VendorGenerator.GenerateData();
+                VendorInvoiceGenerator.GenerateData();
+                InventoryItemGenerator.GenerateData();
+
+                Console.ReadLine();
+            }
+
         }
     }
 }

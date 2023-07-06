@@ -24,7 +24,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
                 });
         }
 
-        private static List<InventoryItemPackageItemToRead> ConvertToReadDtos(IList<InventoryItemPackageItem> items)
+        public static List<InventoryItemPackageItemToRead> ConvertToReadDtos(IList<InventoryItemPackageItem> items)
         {
             return items?.Select(ConvertToReadDto()).ToList()
                 ?? new List<InventoryItemPackageItemToRead>();
@@ -63,7 +63,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
             {
                 Id = placeholder.Id,
                 DisplayOrder = placeholder.DisplayOrder,
-                ItemType = placeholder.ItemType.ToString(),
+                ItemType = placeholder.ItemType,
                 Details = new InventoryItemPackageDetailsToRead()
                 {
                     Quantity = placeholder.Details.Quantity,
@@ -184,7 +184,7 @@ namespace CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Packa
             {
                 Id = placeholder.Id,
                 DisplayOrder = placeholder.DisplayOrder,
-                ItemType = Utilities.ParseEnum<PackagePlaceholderItemType>(placeholder.ItemType),
+                ItemType = placeholder.ItemType,
                 Details = new()
                 {
                     ExciseFeeIsAdditional = placeholder.Details.ExciseFeeIsAdditional,

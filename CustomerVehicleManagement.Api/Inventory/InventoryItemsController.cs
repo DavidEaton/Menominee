@@ -42,9 +42,7 @@ namespace CustomerVehicleManagement.Api.Inventory
                 ? await itemRepository.GetItemsInList(manufacturerId.Value)
                 : await itemRepository.GetItemsInList();
 
-            return result.Count > 0
-                ? Ok(result)
-                : NotFound();
+            return Ok(result);
         }
 
         [HttpGet("{manufacturerId:long}/itemNumber/{itemNumber}")]
