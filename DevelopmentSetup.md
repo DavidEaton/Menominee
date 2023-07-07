@@ -6,30 +6,20 @@
 - Access to BitBucket Projects: (TenantManager, Menominee)
 - Telerik license setup
 - `localhost` SQL Server Developer instance
+- Developer Admin account in Azure AD B2C
 ## Databases
 Clone the TenantManager and Menominee projects locally
 ### Menominee API Database
 This is found in the CustomerVehicleManagement.Api project as entity framework migrations
 
 1. Start with the Menominee solution
-2. Check the Menominee project settings:
 
-    1. \Data\ApplicationDbContext.cs comment out lines of OnConfiguring regaring unit tests
-    2. \StartUp.cs un/comment lines at the end of `ConfigureServices` regarding the `ApplicationDbContext`
-
-3. Add the [Telerik Nuget Source](https://docs.telerik.com/blazor-ui/installation/nuget)
-4. Optionally run `dotnet restore` for the API Project
-5. Run a database update with Entity Framework migrations from the solution root with the command line: `dotnet ef database update -p CustomerVehicleManagement.Api/CustomerVehicleManagement.Api.csproj
+2. Add the [Telerik Nuget Source](https://docs.telerik.com/blazor-ui/installation/nuget)
+3. Optionally run `dotnet restore` for the API Project
+4. Run a database update with Entity Framework migrations from the solution root with the command line: `dotnet ef database update -p CustomerVehicleManagement.Api/CustomerVehicleManagement.Api.csproj
    --context CustomerVehicleManagement.Api.Data.ApplicationDbContext`
-6. Check your server for the new database named Menominee
+5. Check your server for the new database named Menominee-stage
 
-### Identity Database
-This is found in the Janco.Idp project as entity framework migrations
-
-1. Start with the Menominee solution
-2. Open a command line at the solution root and run the update script: `dotnet ef database update -p Janco.Idp/Janco.Idp.csproj`
-3. Check your server for the new database named JancoIdentity and look for the AspNet identity tables
-   
 ### Tenant Database
 This is in a separate solution
 
@@ -39,10 +29,6 @@ This is in a separate solution
 4. Check your server for the new database named according to your choices in the script
 
 ## Web Application
-setup multiple startup projects:
+startup with the API project (CustomerVehicleManagement.Api) which serves the Client as well 
 
-1. CustomerVehicleManagement.Api
-2. Janco.Idp
-3. Menominee.Client
-
-Start up and you should be able to login with the login set up during the Tenant Database Setup 
+Start up and you should be able to login with Azure AD B2C login 
