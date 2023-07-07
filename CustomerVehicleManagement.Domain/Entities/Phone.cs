@@ -40,38 +40,16 @@ namespace CustomerVehicleManagement.Domain.Entities
 
             return Result.Success(new Phone(number, phoneType, isPrimary));
         }
-        public Result Update(string number, PhoneType phoneType, bool isPrimary)
-        {
-            var numberResult = SetNumber(number);
-            if (numberResult.IsFailure)
-            {
-                return Result.Failure(numberResult.Error);
-            }
-
-            var phoneTypeResult = SetPhoneType(phoneType);
-            if (phoneTypeResult.IsFailure)
-            {
-                return Result.Failure(phoneTypeResult.Error);
-            }
-
-            var isPrimaryResult = SetIsPrimary(isPrimary);
-            if (isPrimaryResult.IsFailure)
-            {
-                return Result.Failure(isPrimaryResult.Error);
-            }
-
-            return Result.Success();
-        }
 
         public override string ToString()
         {
-            Number = RemoveNonNumericCharacters(Number);
+            var numericNumber = RemoveNonNumericCharacters(Number);
 
-            return Number.Length switch
+            return numericNumber.Length switch
             {
-                7 => Regex.Replace(Number, @"(\d{3})(\d{4})", "$1-$2"),
-                10 => Regex.Replace(Number, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3"),
-                _ => Number,
+                7 => Regex.Replace(numericNumber, @"(\d{3})(\d{4})", "$1-$2"),
+                10 => Regex.Replace(numericNumber, @"(\d{3})(\d{3})(\d{4})", "($1) $2-$3"),
+                _ => numericNumber,
             };
         }
 

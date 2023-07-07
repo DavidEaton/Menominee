@@ -2,6 +2,7 @@
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
 using FluentAssertions;
 using System;
+using System.Linq;
 using TestingHelperLibrary.Fakers;
 using Xunit;
 
@@ -43,6 +44,32 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.SetServiceName(invalidName);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.InvalidLengthMessage);
+        }
+
+        [Fact]
+        public void SetSaleCode()
+        {
+            var service = new RepairOrderServiceFaker(true).Generate();
+            var newSaleCode = new SaleCodeFaker(true).Generate();
+
+            var result = service.SetSaleCode(newSaleCode);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().Be(newSaleCode);
+            service.SaleCode.Should().Be(newSaleCode);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Set_Invalid_SaleCode()
+        {
+            var service = new RepairOrderServiceFaker(true).Generate();
+            var invalidName = new Faker().Random.String(RepairOrderService.MaximumLength + 1);
+
+            var result = service.SetSaleCode(null);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -65,6 +92,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.AddLineItem(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -90,6 +118,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.RemoveLineItem(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -112,6 +141,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.AddTechnician(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -137,6 +167,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.RemoveTechnician(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -159,6 +190,7 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.AddTax(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
         }
 
         [Fact]
@@ -184,6 +216,44 @@ namespace CustomerVehicleManagement.Tests.Entities
             var result = service.RemoveTax(null);
 
             result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrderService.RequiredMessage);
+        }
+
+        [Fact]
+        public void Return_Correct_Totals()
+        {
+            var service = new RepairOrderServiceFaker(true, lineItemsCount: 3, taxesCount: 2).Generate(count: 1)[0];
+
+            var partsTotal = service.LineItems.Select(
+                lineItem => lineItem.SellingPrice * lineItem.QuantitySold)
+                .Sum();
+            var laborTotal = service.LineItems.Select(
+                lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold)
+                .Sum();
+            var discountTotal = service.LineItems.Select(
+                lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold)
+                .Sum();
+            var exciseFeesTotal = service.LineItems.Select(
+                lineItem => lineItem.ExciseFeesTotal)
+                .Sum();
+            var serviceTaxTotal = service.LineItems.Select(
+                lineItem => lineItem.Taxes.Sum(tax => tax.LaborTax.Amount + tax.PartTax.Amount));
+            var taxTotal = service.Taxes.Select(
+                tax => tax.LaborTax.Amount + tax.PartTax.Amount)
+                .Sum();
+            var shopSuppliesTotal = service.ShopSuppliesTotal;
+            var total = partsTotal + laborTotal + discountTotal + exciseFeesTotal + shopSuppliesTotal;
+            var totalWithTax = total + taxTotal;
+
+            service.PartsTotal.Should().Be(partsTotal);
+            service.LaborTotal.Should().Be(laborTotal);
+            service.DiscountTotal.Should().Be(discountTotal);
+            service.ExciseFeesTotal.Should().Be(exciseFeesTotal);
+            service.TaxTotal.Should().Be(taxTotal);
+            service.ShopSuppliesTotal.Should().Be(shopSuppliesTotal);
+            service.Total.Should().Be(total);
+            service.TaxTotal.Should().Be(taxTotal);
+            service.TotalWithTax.Should().Be(totalWithTax);
         }
     }
 }

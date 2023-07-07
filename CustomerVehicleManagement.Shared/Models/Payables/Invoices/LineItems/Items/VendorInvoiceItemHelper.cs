@@ -79,5 +79,25 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.It
                         ? null : item.SaleCode
                 };
         }
+
+        public static VendorInvoiceItemToWrite ConvertToReadDto(VendorInvoiceItem item)
+        {
+            return
+                item is null
+                ? null
+                : new()
+                {
+                    Description = item.Description,
+                    Manufacturer =
+                        item.Manufacturer is null
+                        ? null
+                        : ManufacturerHelper.ConvertToReadDto(item.Manufacturer),
+                    PartNumber = item.PartNumber,
+                    SaleCode =
+                        item.SaleCode is null
+                        ? null
+                        : SaleCodeHelper.ConvertToReadDto(item.SaleCode)
+                };
+        }
     }
 }

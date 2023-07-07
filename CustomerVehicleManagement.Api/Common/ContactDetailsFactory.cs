@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.BaseClasses;
 using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Shared.Models.Addresses;
 using CustomerVehicleManagement.Shared.Models.Contactable;
-using Menominee.Common;
 using Menominee.Common.ValueObjects;
+using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Api.Common
 {
     public static class ContactDetailsFactory
     {
-        // VK: the assumption is that all data is validated beforehand and if not, we just throw an exception
-        public static ContactDetails Create(
+        public static Result<ContactDetails> Create(
             IReadOnlyList<PhoneToWrite> phonesToWrite,
             IReadOnlyList<EmailToWrite> emailsToWrite,
             AddressToWrite addressToWrite)
@@ -42,8 +42,7 @@ namespace CustomerVehicleManagement.Api.Common
                 addressToWrite.State,
                 addressToWrite.PostalCode).Value;
 
-            return new ContactDetails(phones, emails, address);
+            return ContactDetails.Create(phones, emails, address);
         }
-
     }
 }

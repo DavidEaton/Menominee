@@ -9,7 +9,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public static readonly string RequiredMessage = $"Please include all required items.";
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
-        public static readonly string InvalidLengthMessage = $"SerialNumber must be between {MinimumLength} character(s) {MaximumLength} and in length";
+        public static readonly string InvalidLengthMessage = $"SerialNumber must be between {MinimumLength} and {MaximumLength} characters in length";
         public string SerialNumber { get; private set; }
 
         private RepairOrderSerialNumber(string serialNumber)

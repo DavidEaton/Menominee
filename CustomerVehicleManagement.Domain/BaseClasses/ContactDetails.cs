@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities;
 using Menominee.Common.ValueObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,28 +14,30 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
 
         // VK: The factory method (Create) is outside of this class so that it doesn't depend on data contracts
 
-        public ContactDetails(IReadOnlyList<Phone> phones, IReadOnlyList<Email> emails, Maybe<Address> address)
+        private ContactDetails(IReadOnlyList<Phone> phones, IReadOnlyList<Email> emails, Maybe<Address> address)
         {
-            if (phones == null || emails == null)
-                throw new Exception("Phones or emails is null");
-
-            if (phones.Count(phone => phone.IsPrimary) > 1)
-                throw new Exception("Must have only 1 primary phone");
-
-            if (emails.Count(email => email.IsPrimary) > 1)
-                throw new Exception("Must have only 1 primary email");
-
             Phones = phones;
             Emails = emails;
             Address = address;
         }
 
+        public static Result<ContactDetails> Create(IReadOnlyList<Phone> phones, IReadOnlyList<Email> emails, Maybe<Address> address)
+        {
+            if (phones?.Count(phone => phone.IsPrimary) > 1)
+                return Result.Failure<ContactDetails>(Contactable.PrimaryExistsMessage);
+
+            if (emails?.Count(email => email.IsPrimary) > 1)
+                return Result.Failure<ContactDetails>(Contactable.PrimaryExistsMessage);
+
+            return Result.Success(new ContactDetails(phones, emails, address));
+        }
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            foreach (Phone phone in Phones)
+            foreach (var phone in Phones)
                 yield return phone;
 
-            foreach (Email email in Emails)
+            foreach (var email in Emails)
                 yield return email;
 
             yield return Address;

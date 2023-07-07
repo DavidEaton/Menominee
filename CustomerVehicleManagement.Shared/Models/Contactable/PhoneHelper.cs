@@ -59,7 +59,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 .ToList();
         }
 
-        private static PhoneToWrite ConvertToWriteDto(Phone phone)
+        public static PhoneToWrite ConvertToWriteDto(Phone phone)
         {
             return (phone is not null)
                 ? new PhoneToWrite()

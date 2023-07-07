@@ -45,20 +45,6 @@ namespace CustomerVehicleManagement.Domain.Entities
             return Result.Success(new Email(address, isPrimary));
         }
 
-        public Result Update(string address, bool isPrimary)
-        {
-            var addressResult = SetAddress(address);
-            if (addressResult.IsFailure)
-                return Result.Failure(addressResult.Error);
-
-
-            var isPrimaryResult = SetIsPrimary(isPrimary);
-            if (isPrimaryResult.IsFailure)
-                return Result.Failure(isPrimaryResult.Error);
-
-            return Result.Success();
-        }
-
         public Result<string> SetAddress(string address)
         {
             if (string.IsNullOrWhiteSpace(address))

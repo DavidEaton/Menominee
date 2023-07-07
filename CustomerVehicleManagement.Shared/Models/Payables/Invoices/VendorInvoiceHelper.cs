@@ -162,7 +162,7 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices
                     InvoiceNumber = invoice.InvoiceNumber,
                     Total = invoice.Total,
                     Vendor = invoice.Vendor,
-                    LineItems = VendorInvoiceLineItemHelper.ConvertReadDtosToWriteDtos(invoice.LineItems),
+                    LineItems = VendorInvoiceLineItemHelper.ConvertReadToWriteDtos(invoice.LineItems),
                     Payments = VendorInvoicePaymentHelper.ConvertReadDtosToWriteDtos(invoice.Payments),
                     Taxes = VendorInvoiceTaxHelper.ConvertReadDtosToWriteDtos(invoice.Taxes)
                 };

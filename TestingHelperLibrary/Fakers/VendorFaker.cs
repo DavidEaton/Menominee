@@ -6,7 +6,7 @@ namespace TestingHelperLibrary.Fakers
 {
     public class VendorFaker : Faker<Vendor>
     {
-        public VendorFaker(bool generateId, int emailsCount = 0, int phonesCount = 0)
+        public VendorFaker(bool generateId, int emailsCount = 0, int phonesCount = 0, bool includeAddress = false)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
@@ -17,7 +17,9 @@ namespace TestingHelperLibrary.Fakers
                 var vendorRole = faker.PickRandom<VendorRole>();
                 var note = faker.Lorem.Sentence(20);
                 var defaultPaymentMethod = new DefaultPaymentMethodFaker(generateId).Generate();
-                var address = new AddressFaker().Generate();
+                var address = includeAddress
+                    ? new AddressFaker().Generate()
+                    : null;
                 var emails = new EmailFaker(generateId).Generate(emailsCount);
                 var phones = new PhoneFaker(generateId).Generate(phonesCount);
 

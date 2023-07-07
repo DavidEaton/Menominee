@@ -100,129 +100,132 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
                 vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber, date, datePosted));
         }
 
-        public Result UpdateCollections(
-            IReadOnlyList<VendorInvoiceLineItem> lineItems,
-            IReadOnlyList<VendorInvoicePayment> payments,
-            IReadOnlyList<VendorInvoiceTax> taxes)
-        {
-            return Result.Combine(
-                SyncLineItems(lineItems),
-                SyncPayments(payments),
-                SyncTaxes(taxes));
-        }
-
-        private Result SyncTaxes(IReadOnlyList<VendorInvoiceTax> taxes)
+        public Result UpdateTaxes(IReadOnlyList<VendorInvoiceTax> taxes)
         {
             var toAdd = taxes
                 .Where(tax => tax.Id == 0)
-                .ToArray();
+                .ToList();
 
-            var toDelete = taxes
-                .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id) == false)
-                .ToArray();
+            var toDelete = Taxes
+                .Where(tax => !taxes.Any(callerTax => callerTax.Id == tax.Id))
+                .ToList();
 
-            var toModify = taxes
+            var toModify = Taxes
                 .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id))
-                .ToArray();
+                .ToList();
 
-            foreach (var tax in toAdd)
-                AddTax(tax);
+            var addResults = toAdd
+                .Select(tax => AddTax(tax))
+                .ToList();
 
-            foreach (var tax in toDelete)
-                RemoveTax(tax);
+            var deleteResults = toDelete
+                .Select(tax => RemoveTax(tax))
+                .ToList();
 
             foreach (var tax in toModify)
             {
-                var callerTax = this.taxes.Find(payment => payment.Id == payment.Id);
+                var taxFromCaller = taxes.Single(callerTax => callerTax.Id == tax.Id);
 
-                if (tax.Amount != callerTax.Amount)
-                    tax.SetAmount(callerTax.Amount);
+                if (tax.Amount != taxFromCaller.Amount)
+                {
+                    var result = tax.SetAmount(taxFromCaller.Amount);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
 
-                if (tax.SalesTax != callerTax.SalesTax)
-                    tax.SetSalesTax(callerTax.SalesTax);
+                if (tax.SalesTax != taxFromCaller.SalesTax)
+                {
+                    var result = tax.SetSalesTax(taxFromCaller.SalesTax);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
             }
 
             return Result.Success();
         }
 
-        private Result SyncPayments(IReadOnlyList<VendorInvoicePayment> payments)
+        public Result UpdatePayments(IReadOnlyList<VendorInvoicePayment> payments)
         {
             var toAdd = payments
                 .Where(payment => payment.Id == 0)
-                .ToArray();
+                .ToList();
 
-            var toDelete = payments
-                .Where(payment => payments.Any(callerPayment => callerPayment.Id == payment.Id) == false)
-                .ToArray();
+            var toDelete = Payments
+                .Where(payment => !payments.Any(callerPayment => callerPayment.Id == payment.Id))
+                .ToList();
 
-            var toModify = payments
-                .Where(phone => payments.Any(callerPayment => callerPayment.Id == phone.Id))
-                .ToArray();
+            var toModify = Payments
+                .Where(payment => payments.Any(callerPayment => callerPayment.Id == payment.Id))
+                .ToList();
 
-            foreach (var payment in toAdd)
-                AddPayment(payment);
+            var addResults = toAdd
+                .Select(payment => AddPayment(payment))
+                .ToList();
 
-            foreach (var payment in toDelete)
-                RemovePayment(payment);
+            var deleteResults = toDelete
+                .Select(payment => RemovePayment(payment))
+                .ToList();
 
             foreach (var payment in toModify)
             {
-                var callerPayment = this.payments.Find(payment => payment.Id == payment.Id);
+                var paymentFromCaller = payments.Single(callerPayment => callerPayment.Id == payment.Id);
 
-                if (payment.PaymentMethod != callerPayment.PaymentMethod)
-                    payment.SetPaymentMethod(callerPayment.PaymentMethod);
+                if (payment.PaymentMethod != paymentFromCaller.PaymentMethod)
+                    payment.SetPaymentMethod(paymentFromCaller.PaymentMethod);
 
-                if (payment.Amount != callerPayment.Amount)
-                    payment.SetAmount(callerPayment.Amount);
+                if (payment.Amount != paymentFromCaller.Amount)
+                    payment.SetAmount(paymentFromCaller.Amount);
             }
 
             return Result.Success();
         }
 
-        private Result SyncLineItems(IReadOnlyList<VendorInvoiceLineItem> lineItems)
+        public Result UpdateLineItems(IReadOnlyList<VendorInvoiceLineItem> lineItems)
         {
             var toAdd = lineItems
                 .Where(lineItem => lineItem.Id == 0)
-                .ToArray();
+                .ToList();
 
-            var toDelete = lineItems
-                .Where(lineItem => lineItems.Any(callerLineItem => callerLineItem.Id == lineItem.Id) == false)
-                .ToArray();
+            var toDelete = LineItems
+                .Where(lineItem => !lineItems.Any(callerLineItem => callerLineItem.Id == lineItem.Id))
+                .ToList();
 
-            var toModify = lineItems
+            var toModify = LineItems
                 .Where(lineItem => lineItems.Any(callerLineItem => callerLineItem.Id == lineItem.Id))
-                .ToArray();
+                .ToList();
 
-            foreach (var lineItem in toAdd)
-                AddLineItem(lineItem);
+            var addResults = toAdd
+                .Select(lineItem => AddLineItem(lineItem))
+                .ToList();
 
-            foreach (var lineItem in toDelete)
-                RemoveLineItem(lineItem);
+            var deleteResults = toDelete
+                .Select(lineItem => RemoveLineItem(lineItem))
+                .ToList();
 
             foreach (var lineItem in toModify)
             {
-                var callerLineItem = this.lineItems.Find(lineItem => lineItem.Id == lineItem.Id);
+                var lineItemFromCaller = lineItems.Single(callerLineItem => callerLineItem.Id == lineItem.Id);
 
-                if (lineItem.Type != callerLineItem.Type)
-                    lineItem.SetType(callerLineItem.Type);
+                if (lineItem.Type != lineItemFromCaller.Type)
+                    lineItem.SetType(lineItemFromCaller.Type);
 
-                if (lineItem.Item != callerLineItem.Item)
-                    lineItem.SetItem(callerLineItem.Item);
+                if (lineItem.Item != lineItemFromCaller.Item)
+                    lineItem.SetItem(lineItemFromCaller.Item);
 
-                if (lineItem.Cost != callerLineItem.Cost)
-                    lineItem.SetCost(callerLineItem.Cost);
+                if (lineItem.Cost != lineItemFromCaller.Cost)
+                    lineItem.SetCost(lineItemFromCaller.Cost);
 
-                if (lineItem.Core != callerLineItem.Core)
-                    lineItem.SetCore(callerLineItem.Core);
+                if (lineItem.Core != lineItemFromCaller.Core)
+                    lineItem.SetCore(lineItemFromCaller.Core);
 
-                if (lineItem.PONumber != callerLineItem.PONumber)
-                    lineItem.SetPONumber(callerLineItem.PONumber);
+                if (lineItem.PONumber != lineItemFromCaller.PONumber)
+                    lineItem.SetPONumber(lineItemFromCaller.PONumber);
 
-                if (lineItem.Quantity != callerLineItem.Quantity)
-                    lineItem.SetQuantity(callerLineItem.Quantity);
+                if (lineItem.Quantity != lineItemFromCaller.Quantity)
+                    lineItem.SetQuantity(lineItemFromCaller.Quantity);
 
-                if (lineItem.TransactionDate != callerLineItem.TransactionDate)
-                    lineItem.SetTransactionDate(callerLineItem.TransactionDate);
+                if (lineItem.TransactionDate != lineItemFromCaller.TransactionDate)
+                    lineItem.SetTransactionDate(lineItemFromCaller.TransactionDate);
             }
 
             return Result.Success();
@@ -230,21 +233,24 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<Vendor> SetVendor(Vendor vendor)
         {
-            return vendor is null
+            return 
+                vendor is null
                 ? Result.Failure<Vendor>(RequiredMessage)
                 : Result.Success(Vendor = vendor);
         }
 
         public Result<VendorInvoiceStatus> SetStatus(VendorInvoiceStatus status)
         {
-            return !Enum.IsDefined(typeof(VendorInvoiceStatus), status)
+            return
+                !Enum.IsDefined(typeof(VendorInvoiceStatus), status)
                 ? Result.Failure<VendorInvoiceStatus>(RequiredMessage)
                 : Result.Success(Status = status);
         }
 
         public Result<VendorInvoiceDocumentType> SetDocumentType(VendorInvoiceDocumentType documentType)
         {
-            return !Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType)
+            return
+                !Enum.IsDefined(typeof(VendorInvoiceDocumentType), documentType)
               ? Result.Failure<VendorInvoiceDocumentType>(RequiredMessage)
               : Result.Success(DocumentType = documentType);
         }
@@ -274,10 +280,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<DateTime?> SetDate(DateTime? date)
         {
-            if (date is null)
-                return Result.Failure<DateTime?>(DateInvalidMessage);
-
-            return date.HasValue && date.Value > DateTime.Today
+            return date is null
+                ? Result.Failure<DateTime?>(DateInvalidMessage)
+                : date.HasValue && date.Value > DateTime.Today
                 ? Result.Failure<DateTime?>(DateInvalidMessage)
                 : Result.Success(Date = date.Value);
         }
@@ -286,10 +291,9 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
 
         public Result<DateTime?> SetDatePosted(DateTime? datePosted)
         {
-            if (datePosted is null)
-                return Result.Failure<DateTime?>(DateInvalidMessage);
-
-            return datePosted.HasValue && datePosted.Value > DateTime.Today
+            return datePosted is null
+                ? Result.Failure<DateTime?>(DateInvalidMessage)
+                : datePosted.HasValue && datePosted.Value > DateTime.Today
                 ? Result.Failure<DateTime?>(DateInvalidMessage)
                 : Result.Success(DatePosted = datePosted.Value);
         }

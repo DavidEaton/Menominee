@@ -19,10 +19,28 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public static Result<RoleAssignment> Create(EmploymentRole role)
         {
-            if (!Enum.IsDefined(typeof(EmploymentRole), role))
-                return Result.Failure<RoleAssignment>(RequiredMessage);
+            return
+                !Enum.IsDefined(typeof(EmploymentRole), role)
+                ? Result.Failure<RoleAssignment>(RequiredMessage)
+                : Result.Success(new RoleAssignment(role));
+        }
 
-            return Result.Success(new RoleAssignment(role));
+        public Result<EmploymentRole> SetRole(EmploymentRole role)
+        {
+            return
+                !Enum.IsDefined(typeof(EmploymentRole), role)
+                ? Result.Failure<EmploymentRole>(RequiredMessage)
+                : Result.Success(Role = role);
+        }
+
+        public Result<bool> Activate()
+        {
+            return Result.Success(IsActive = true);
+        }
+
+        public Result<bool> Deactivate()
+        {
+            return Result.Success(IsActive = false);
         }
 
         #region ORM

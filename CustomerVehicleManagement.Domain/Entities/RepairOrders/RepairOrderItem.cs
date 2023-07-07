@@ -23,6 +23,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public PartType PartType { get; private set; } //required
         public RepairOrderItemPart Part { get; private set; } //optional
         public RepairOrderItemLabor Labor { get; private set; } //optional
+        public double ExciseFeesTotal => Part?.ExciseFeesTotal ?? 0;
         private RepairOrderItem(
             Manufacturer manufacturer,
             string partNumber,
@@ -117,20 +118,36 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
                 : Result.Success(SaleCode = saleCode);
         }
 
-        public Result<RepairOrderItem> SetProductCode(ProductCode productCode)
+        public Result<ProductCode> SetProductCode(ProductCode productCode)
         {
-            if (productCode is null)
-                return Result.Failure<RepairOrderItem>(RequiredMessage);
-
-            return Result.Success(new RepairOrderItem(Manufacturer, PartNumber, Description, SaleCode, productCode, PartType));
+            return
+                productCode is null
+                ? Result.Failure<ProductCode>(RequiredMessage)
+                : Result.Success(ProductCode = productCode);
         }
 
-        public Result<RepairOrderItem> SetPartType(PartType partType)
+        public Result<PartType> SetPartType(PartType partType)
         {
-            if (!Enum.IsDefined(typeof(PartType), partType))
-                return Result.Failure<RepairOrderItem>(RequiredMessage);
+            return
+                !Enum.IsDefined(typeof(PartType), partType)
+                ? Result.Failure<PartType>(RequiredMessage)
+                : Result.Success(PartType = partType);
+        }
 
-            return Result.Success(new RepairOrderItem(Manufacturer, PartNumber, Description, SaleCode, ProductCode, partType));
+        public Result<RepairOrderItemPart> SetPart(RepairOrderItemPart part)
+        {
+            return
+                part is null
+                ? Result.Failure<RepairOrderItemPart>(RequiredMessage)
+                : Result.Success(Part = part);
+        }
+
+        public Result<RepairOrderItemLabor> SetLabor(RepairOrderItemLabor labor)
+        {
+            return
+                labor is null
+                ? Result.Failure<RepairOrderItemLabor>(RequiredMessage)
+                : Result.Success(Labor = labor);
         }
 
         #region ORM

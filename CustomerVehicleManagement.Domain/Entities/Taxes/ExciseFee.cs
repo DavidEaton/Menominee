@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using System;
+using System.Reflection;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Taxes
@@ -76,6 +77,17 @@ namespace CustomerVehicleManagement.Domain.Entities.Taxes
                 return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(Amount = amount);
+        }
+
+        public ExciseFee Clone()
+        {
+            var cloneResult = Create(Description, FeeType, Amount);
+
+            // If the cloneResult is a success, set the Id of the cloned object
+            if (cloneResult.IsSuccess)
+                typeof(Entity).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).SetValue(cloneResult.Value, Id);
+
+            return cloneResult.Value;
         }
 
         #region ORM

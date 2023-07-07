@@ -14,10 +14,10 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public ItemDiscountType Type { get; private set; }
         public double Amount { get; private set; }
 
-        private DiscountAmount(ItemDiscountType type, double discount)
+        private DiscountAmount(ItemDiscountType type, double amount)
         {
             Type = type;
-            Amount = discount;
+            Amount = amount;
         }
 
         public static Result<DiscountAmount> Create(ItemDiscountType type, double amount)

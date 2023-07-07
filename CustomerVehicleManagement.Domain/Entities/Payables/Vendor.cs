@@ -36,7 +36,7 @@ namespace CustomerVehicleManagement.Domain.Entities.Payables
         //       We really only need their name, department, phone (1) & email (1).
         //      Added Contacts collection (IReadOnlyList<Person>). We could create VendorContact
         //      class having Department, Role (e.g., billing person, sales rep) members. Then 
-        //      replace IReadOnlyList<Person> with IReadOnlyList<VendorContact>.
+        //      replace IReadOnlyList<Person> with IReadOnlyList<VendorContact>. DE
 
         private Vendor(
             string name,

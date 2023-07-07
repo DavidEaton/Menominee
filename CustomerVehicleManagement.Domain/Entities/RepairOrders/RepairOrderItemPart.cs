@@ -1,5 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System.Collections.Generic;
 
 namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 {
@@ -8,11 +10,11 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 10;
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
-        private RepairOrderItemPart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
-            : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode)
+        private RepairOrderItemPart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, List<ExciseFee> exciseFees = null)
+            : base(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode, exciseFees)
         { }
 
-        public static Result<RepairOrderItemPart> Create(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
+        public static Result<RepairOrderItemPart> Create(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, List<ExciseFee> exciseFees = null)
         {
             if (list < MinimumMoneyAmount ||
                 cost < MinimumMoneyAmount ||
@@ -30,7 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             if (lineCode.Length > MaximumLength || subLineCode.Length > MaximumLength)
                 return Result.Failure<RepairOrderItemPart>(InvalidLengthMessage);
 
-            return Result.Success(new RepairOrderItemPart(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode));
+            return Result.Success(new RepairOrderItemPart(list, cost, core, retail, techAmount, fractional, lineCode, subLineCode, exciseFees));
         }
 
         #region ORM

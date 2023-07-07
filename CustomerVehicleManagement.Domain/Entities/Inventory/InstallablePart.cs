@@ -1,4 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
+using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace CustomerVehicleManagement.Domain.Entities.Inventory
@@ -23,8 +26,14 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
         public string LineCode { get; private set; }
         public string SubLineCode { get; private set; }
         public bool Fractional { get; private set; }
+        public double ExciseFeesTotal => ExciseFees.Select(
+            exciseFee => exciseFee.Amount)
+            .Sum();
 
-        protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null)
+        private IList<ExciseFee> exciseFees = new List<ExciseFee>();
+        public IReadOnlyList<ExciseFee> ExciseFees => exciseFees.ToList();
+
+        protected InstallablePart(double list, double cost, double core, double retail, TechAmount techAmount, bool fractional, string lineCode = null, string subLineCode = null, List<ExciseFee> exciseFees = null)
         {
             List = list;
             Cost = cost;
@@ -34,7 +43,77 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             LineCode = lineCode;
             SubLineCode = subLineCode;
             Fractional = fractional;
+            this.exciseFees = exciseFees ?? new List<ExciseFee>();
         }
+
+        public Result<List<ExciseFee>> UpdateExciseFees(IReadOnlyList<ExciseFee> exciseFees)
+        {
+            var toAdd = exciseFees
+                .Where(fee => fee.Id == 0)
+                .ToList();
+
+            var toModify = ExciseFees
+                .Where(fee => exciseFees.Any(
+                    callerfee => callerfee.Id == fee.Id))
+                .ToList();
+
+            var toDelete = ExciseFees
+                .Where(fee => !exciseFees.Any(callerfee => callerfee.Id == fee.Id))
+                .ToList();
+
+            var combinedAddResult = toAdd
+                .Select(fee => AddExciseFee(fee))
+                .ToList()
+                .Combine()
+                .Map(list => list.ToList());
+
+            var fees = new List<ExciseFee>();
+            var errors = new List<string>();
+
+            foreach (var fee in toModify)
+            {
+                var feeFromCaller = exciseFees.Single(callerfee => callerfee.Id == fee.Id);
+
+                var feeTypeResult = fee.FeeType != feeFromCaller.FeeType
+                    ? fee.SetFeeType(feeFromCaller.FeeType).Map(_ => fee)
+                    : Result.Success(fee);
+
+                var amountResult = fee.Amount != feeFromCaller.Amount
+                    ? fee.SetAmount(feeFromCaller.Amount).Map(_ => fee)
+                    : Result.Success(fee);
+
+                var descriptionResult = fee.Description != feeFromCaller.Description
+                    ? fee.SetDescription(feeFromCaller.Description).Map(_ => fee)
+                    : Result.Success(fee);
+
+                var feeCombinedResult = Result.Combine(new[] { feeTypeResult, amountResult, descriptionResult });
+
+                if (feeCombinedResult.IsSuccess)
+                    fees.Add(fee);
+                else
+                    errors.Add(feeCombinedResult.Error);
+            }
+
+            var combinedModifyResult = errors.Any()
+                ? Result.Failure<List<ExciseFee>>(string.Join(", ", errors))
+                : Result.Success(fees);
+
+            var combinedDeleteResult = toDelete
+                .Select(fee => RemoveExciseFee(fee))
+                .ToList()
+                .Combine()
+                .Map(list => list.ToList());
+
+            var combinedResult = Result.Combine(
+                combinedAddResult,
+                combinedModifyResult,
+                combinedDeleteResult);
+
+            return combinedResult.IsSuccess
+                ? Result.Success(ExciseFees.ToList())
+                : Result.Failure<List<ExciseFee>>(combinedResult.Error);
+        }
+
 
         public Result<double> SetList(double list)
         {
@@ -97,10 +176,34 @@ namespace CustomerVehicleManagement.Domain.Entities.Inventory
             return Result.Success(Fractional = fractional);
         }
 
+        public Result<ExciseFee> AddExciseFee(ExciseFee fee)
+        {
+            if (fee is null)
+                return Result.Failure<ExciseFee>(RequiredMessage);
+
+            exciseFees.Add(fee);
+
+            return Result.Success(fee);
+
+        }
+
+        public Result<ExciseFee> RemoveExciseFee(ExciseFee fee)
+        {
+            if (fee is null)
+                return Result.Failure<ExciseFee>(RequiredMessage);
+
+            exciseFees.Remove(fee);
+
+            return Result.Success(fee);
+        }
+
         #region ORM
 
         // EF requires a parameterless constructor
-        protected InstallablePart() { }
+        protected InstallablePart()
+        {
+            exciseFees = new List<ExciseFee>();
+        }
 
         #endregion
     }

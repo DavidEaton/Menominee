@@ -7,9 +7,13 @@ namespace TestingHelperLibrary.Fakers
 {
     public class RepairOrderLineItemFaker : Faker<RepairOrderLineItem>
     {
-        public RepairOrderLineItemFaker(bool generateId = false, int serialNumbersCount = 0, int warrantiesCount = 0, int taxesCount = 0, int purchasesCount = 0)
+        public RepairOrderLineItemFaker(bool generateId = false, int serialNumbersCount = 0, int warrantiesCount = 0, int taxesCount = 0, int purchasesCount = 0, long id = 0)
         {
-            RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+            if (generateId)
+                RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+
+            if (id > 0)
+                RuleFor(entity => entity.Id, faker => id > 0 ? id : 0);
 
             CustomInstantiator(faker =>
             {

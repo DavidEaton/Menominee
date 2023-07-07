@@ -2,12 +2,13 @@
 using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
+using TestingHelperLibrary.Fakers;
 
 namespace CustomerVehicleManagement.Tests.Helpers.Fakers
 {
     public class InventoryItemPartFaker : Faker<InventoryItemPart>
     {
-        public InventoryItemPartFaker(bool generateId)
+        public InventoryItemPartFaker(bool generateId, int exciseFeeCount = 0)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
@@ -18,6 +19,12 @@ namespace CustomerVehicleManagement.Tests.Helpers.Fakers
                         1.1, 2.2, 1.1, 4.4, techAmount, false))
                     .OnFailure(error => throw new InvalidOperationException($"Failed to create TechAmount: {error}"))
                     .Result;
+
+                var exciseFees = new ExciseFeeFaker(generateId).Generate(exciseFeeCount);
+
+                var combinedAddResult = Result.Combine(exciseFees
+                    .Select(fee => result.Value.AddExciseFee(fee))
+                    .ToList());
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

@@ -32,6 +32,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public double Cost { get; private set; }
         public double Core { get; private set; }
         public DiscountAmount DiscountAmount { get; private set; }
+        public double ExciseFeesTotal => Item.ExciseFeesTotal;
         public double TotalAmount => (LaborAmount.Amount + SellingPrice + DiscountAmount.Amount) * QuantitySold;
         public double TotalTax => Taxes.Select(
             tax => (tax.PartTax.Amount + tax.PartTax.Amount) * QuantitySold).Sum();

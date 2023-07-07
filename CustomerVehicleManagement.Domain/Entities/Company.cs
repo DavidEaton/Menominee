@@ -30,10 +30,9 @@ namespace CustomerVehicleManagement.Domain.Entities
 
         public Result<long> SetInvoiceNumberSeed(long seed)
         {
-            if (seed <= MinimumValue || seed > long.MaxValue)
-                return Result.Failure<long>(MinimumValueMessage);
-
-            return Result.Success(NextInvoiceNumberOrSeed = seed);
+            return seed <= MinimumValue || seed > long.MaxValue
+                ? Result.Failure<long>(MinimumValueMessage)
+                : Result.Success(NextInvoiceNumberOrSeed = seed);
         }
 
         #region ORM

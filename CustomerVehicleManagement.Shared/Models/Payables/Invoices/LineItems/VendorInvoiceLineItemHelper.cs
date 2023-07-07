@@ -38,13 +38,13 @@ namespace CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems
             }).ToList();
         }
 
-        public static IList<VendorInvoiceLineItemToWrite> ConvertReadDtosToWriteDtos(IReadOnlyList<VendorInvoiceLineItemToRead> lineItems)
+        public static IList<VendorInvoiceLineItemToWrite> ConvertReadToWriteDtos(IReadOnlyList<VendorInvoiceLineItemToRead> lineItems)
         {
-            return lineItems?.Select(ConvertReadDtoToWriteDto()).ToList()
+            return lineItems?.Select(ConvertReadToWriteDto()).ToList()
                 ?? new List<VendorInvoiceLineItemToWrite>();
         }
 
-        private static Func<VendorInvoiceLineItemToRead, VendorInvoiceLineItemToWrite> ConvertReadDtoToWriteDto()
+        private static Func<VendorInvoiceLineItemToRead, VendorInvoiceLineItemToWrite> ConvertReadToWriteDto()
         {
             return lineItem =>
                 new VendorInvoiceLineItemToWrite()

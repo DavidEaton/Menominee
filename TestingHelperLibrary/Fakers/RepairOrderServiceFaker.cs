@@ -5,9 +5,13 @@ namespace TestingHelperLibrary.Fakers
 {
     public class RepairOrderServiceFaker : Faker<RepairOrderService>
     {
-        public RepairOrderServiceFaker(bool generateId = false, int lineItemsCount = 0, int techniciansCount = 0, int taxesCount = 0)
+        public RepairOrderServiceFaker(bool generateId = false, int lineItemsCount = 0, int techniciansCount = 0, int taxesCount = 0, long id = 0)
         {
-            RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+            if (generateId)
+                RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+
+            if (id > 0)
+                RuleFor(entity => entity.Id, faker => id > 0 ? id : 0);
 
             CustomInstantiator(faker =>
             {
@@ -16,9 +20,9 @@ namespace TestingHelperLibrary.Fakers
                 var isCounterSale = faker.Random.Bool();
                 var shopSuppliesTotal = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
 
-                var lineItems = new RepairOrderLineItemFaker(generateId).Generate(lineItemsCount);
-                var technicians = new RepairOrderServiceTechnicianFaker(generateId).Generate(techniciansCount);
-                var taxes = new RepairOrderServiceTaxFaker(generateId).Generate(taxesCount);
+                var lineItems = new RepairOrderLineItemFaker(generateId: generateId, id: id).Generate(lineItemsCount);
+                var technicians = new RepairOrderServiceTechnicianFaker(generateId: generateId, id: id).Generate(techniciansCount);
+                var taxes = new RepairOrderServiceTaxFaker(generateId: generateId, id: id).Generate(taxesCount);
 
                 var service = RepairOrderService.Create(serviceName, saleCode, shopSuppliesTotal).Value;
 

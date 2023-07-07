@@ -81,21 +81,20 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
             if (DefaultPaymentMethodHasEdits(vendorFromRepository?.DefaultPaymentMethod, vendorFromCaller?.DefaultPaymentMethod))
                 if (vendorFromCaller?.DefaultPaymentMethod is not null)
                 {
-                    DefaultPaymentMethod defaultPaymentMethod = DefaultPaymentMethod.Create(
+                    vendorFromRepository.SetDefaultPaymentMethod(
+                        DefaultPaymentMethod.Create(
                         await paymentMethodRepository.GetPaymentMethodEntityAsync(
                             vendorFromCaller.DefaultPaymentMethod.PaymentMethod.Id),
-                            vendorFromCaller.DefaultPaymentMethod.AutoCompleteDocuments).Value;
-
-                    vendorFromRepository.SetDefaultPaymentMethod(defaultPaymentMethod);
+                            vendorFromCaller.DefaultPaymentMethod.AutoCompleteDocuments).Value);
                 }
 
             if (vendorFromCaller?.DefaultPaymentMethod is null)
                 vendorFromRepository.ClearDefaultPaymentMethod();
 
             var contactDetails = ContactDetailsFactory.Create(
-                vendorFromCaller.Phones, vendorFromCaller.Emails, vendorFromCaller.Address);
+                vendorFromCaller.Phones, vendorFromCaller.Emails, vendorFromCaller.Address).Value;
 
-            vendorFromRepository.SyncContactDetails(contactDetails);
+            vendorFromRepository.UpdateContactDetails(contactDetails);
 
             await repository.SaveChangesAsync();
 
@@ -141,10 +140,8 @@ namespace CustomerVehicleManagement.Api.Payables.Vendors
                     return NotFound($"Could not add new Vendor '{vendorToAdd.Name}': {setDefaultPaymentMethodResult.Error}");
             }
 
-            var contactDetails = ContactDetailsFactory.Create(
-                vendorToAdd.Phones, vendorToAdd.Emails, vendorToAdd.Address);
-
-            vendor.SyncContactDetails(contactDetails);
+            vendor.UpdateContactDetails(ContactDetailsFactory.Create(
+                vendorToAdd.Phones, vendorToAdd.Emails, vendorToAdd.Address).Value);
 
             await repository.AddVendorAsync(vendor);
             await repository.SaveChangesAsync();

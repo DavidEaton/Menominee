@@ -18,20 +18,26 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public bool IsCounterSale => LineItems.All(item => item.IsCounterSale);
         public bool IsDeclined => LineItems.All(item => item.IsDeclined);
         public double PartsTotal => LineItems.Select(
-            lineItem => lineItem.SellingPrice * lineItem.QuantitySold).Sum();
+            lineItem => lineItem.SellingPrice * lineItem.QuantitySold)
+            .Sum();
         public double LaborTotal => LineItems.Select(
-            lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold).Sum();
+            lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold)
+            .Sum();
         public double DiscountTotal => LineItems.Select(
-            lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold).Sum(); // Usually negative -AL
+            lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold)
+            .Sum(); // Usually negative -AL
         public double TaxTotal => Taxes.Select(
-            lineItem => lineItem.LaborTax.Amount + lineItem.PartTax.Amount).Sum();
-        public double HazMatTotal { get; private set; }
+            lineItem => lineItem.LaborTax.Amount + lineItem.PartTax.Amount)
+            .Sum();
+        public double ExciseFeesTotal => LineItems.Select(
+            lineItem => lineItem.ExciseFeesTotal)
+            .Sum();
         public double ShopSuppliesTotal { get; private set; }
         //  Looks like we previously left the discount amount positive, then subtracted it from the total.  I'm not sure if it really matters one way or the other as long as we pick one and stick with it. -AL
         public double Total =>
-            PartsTotal + LaborTotal + DiscountTotal + HazMatTotal + ShopSuppliesTotal;
+            PartsTotal + LaborTotal + DiscountTotal + ExciseFeesTotal + ShopSuppliesTotal;
         public double TotalWithTax =>
-            PartsTotal + LaborTotal + DiscountTotal + HazMatTotal + ShopSuppliesTotal + TaxTotal;
+            PartsTotal + LaborTotal + DiscountTotal + ExciseFeesTotal + ShopSuppliesTotal + TaxTotal;
 
         private readonly List<RepairOrderLineItem> lineItems = new();
         public IReadOnlyList<RepairOrderLineItem> LineItems => lineItems.ToList();

@@ -28,14 +28,13 @@ namespace CustomerVehicleManagement.Domain.Entities
             PersonalDetails = personalDetails;
             Hired = hired;
             Notes = notes;
-            this.roleAssignments = roleAssignments;
 
             if (roleAssignments is not null)
                 foreach (var assignment in roleAssignments)
                     AddRoleAssignment(assignment);
         }
 
-        private Result<RoleAssignment> AddRoleAssignment(RoleAssignment assignment)
+        public Result<RoleAssignment> AddRoleAssignment(RoleAssignment assignment)
         {
             if (assignment is null)
                 return Result.Failure<RoleAssignment>(RequiredMessage);

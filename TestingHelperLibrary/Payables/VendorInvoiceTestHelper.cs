@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities;
 using CustomerVehicleManagement.Domain.Entities.Payables;
 using CustomerVehicleManagement.Domain.Entities.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
@@ -10,6 +9,7 @@ using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
 using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
 using CustomerVehicleManagement.Shared.Models.Taxes;
 using Menominee.Common.Enums;
+using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Payables
 {
@@ -190,7 +190,6 @@ namespace TestingHelperLibrary.Payables
             return taxes;
         }
 
-
         public static IList<VendorInvoiceTax> CreateTaxes(int taxLineCount, double taxAmount)
         {
             var taxes = new List<VendorInvoiceTax>();
@@ -206,6 +205,40 @@ namespace TestingHelperLibrary.Payables
             return taxes;
         }
 
+        public static List<VendorInvoiceTax> CreateVendorInvoiceTaxes(IReadOnlyList<VendorInvoiceTaxToWrite> taxes)
+        {
+            return (taxes ?? new List<VendorInvoiceTaxToWrite>())
+            .Select(tax =>
+            {
+                var createdTax = createTax(tax);
+                var createdSalesTax = createSalesTax(tax);
+                createdTax.SetSalesTax(createdSalesTax);
+                return createdTax;
+
+                static VendorInvoiceTax createTax(VendorInvoiceTaxToWrite tax)
+                {
+                    var editedTax = new VendorInvoiceTaxFaker(generateId: false, id: tax.Id).Generate();
+                    editedTax.SetAmount(tax.Amount);
+                    return editedTax;
+                }
+
+                static SalesTax createSalesTax(VendorInvoiceTaxToWrite tax)
+                {
+                    var editedSalesTax = new SalesTaxFaker(generateId: false, id: tax.SalesTax.Id).Generate();
+                    editedSalesTax.SetTaxType(tax.SalesTax.TaxType);
+                    editedSalesTax.SetTaxIdNumber(tax.SalesTax.TaxIdNumber);
+                    editedSalesTax.SetPartTaxRate(tax.SalesTax.PartTaxRate);
+                    editedSalesTax.SetDescription(tax.SalesTax.Description);
+                    editedSalesTax.SetIsAppliedByDefault(tax.SalesTax.IsAppliedByDefault);
+                    editedSalesTax.SetIsTaxable(tax.SalesTax.IsTaxable);
+                    editedSalesTax.SetLaborTaxRate(tax.SalesTax.LaborTaxRate);
+                    editedSalesTax.SetOrder(tax.SalesTax.Order);
+                    return editedSalesTax;
+                }
+            })
+            .ToList();
+        }
+
         public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount, VendorInvoicePaymentMethodToRead paymentMethod)
         {
             var payments = new List<VendorInvoicePaymentToWrite>();
@@ -216,34 +249,6 @@ namespace TestingHelperLibrary.Payables
                 {
                     Amount = paymentAmount,
                     PaymentMethod = paymentMethod
-                });
-            }
-
-            return payments;
-        }
-
-        public static IList<DefaultPaymentMethod> CreatDefaultPaymentMethods(
-            int count,
-            IReadOnlyList<VendorInvoicePaymentMethod> paymentMethods)
-        {
-            var payments = new List<DefaultPaymentMethod>();
-
-            for (int i = 0; i < count; i++)
-                payments.Add(DefaultPaymentMethod.Create(paymentMethods[i], true).Value);
-
-            return payments;
-        }
-
-        public static IList<VendorInvoicePaymentToWrite> CreatePaymentsToWrite(int paymentCount, double paymentAmount, VendorInvoicePaymentMethod paymentMethod)
-        {
-            var payments = new List<VendorInvoicePaymentToWrite>();
-
-            for (int i = 0; i < paymentCount; i++)
-            {
-                payments.Add(new VendorInvoicePaymentToWrite()
-                {
-                    Amount = paymentAmount,
-                    PaymentMethod = VendorInvoicePaymentMethodHelper.ConvertToReadDto(paymentMethod)
                 });
             }
 
@@ -284,16 +289,6 @@ namespace TestingHelperLibrary.Payables
             var paymentMethod = CreateVendorInvoicePaymentMethod();
             double amount = VendorInvoicePayment.InvalidValue + 1;
             return VendorInvoicePayment.Create(paymentMethod, amount).Value;
-        }
-
-        public static List<VendorInvoicePaymentMethod> CreateVendorInvoicePaymentMethods(int count)
-        {
-            var result = new List<VendorInvoicePaymentMethod>();
-
-            for (int i = 0; i < count; i++)
-                result.Add(CreateVendorInvoicePaymentMethod());
-
-            return result;
         }
 
         public static IList<VendorInvoicePaymentMethodToRead> CreateVendorInvoicePaymentMethodsToRead(int count)
@@ -359,19 +354,6 @@ namespace TestingHelperLibrary.Payables
             };
         }
 
-        public static List<VendorInvoice> CreateVendorInvoices(List<Vendor> vendors, int childRowCount)
-        {
-            var vendorInvoices = new List<VendorInvoice>();
-
-            foreach (var vendor in vendors)
-            {
-                var invoice = CreateVendorInvoice(vendor, childRowCount);
-                vendorInvoices.Add(invoice);
-            }
-
-            return vendorInvoices;
-        }
-
         public static VendorInvoice CreateVendorInvoice(Vendor vendor, int childRowCount)
         {
             var invoice = VendorInvoice.Create(
@@ -399,44 +381,36 @@ namespace TestingHelperLibrary.Payables
             return invoice;
         }
 
-        internal static List<VendorInvoice> CreateVendorInvoices(List<Vendor> vendors, List<SaleCode> saleCodes, int childRowCount)
+        public static List<VendorInvoicePayment> CreateVendorInvoicePayments(IReadOnlyList<VendorInvoicePaymentToWrite> payments)
         {
-            var vendorInvoices = new List<VendorInvoice>();
-
-            foreach (var vendor in vendors)
-            {
-                var invoice = CreateVendorInvoice(vendor, saleCodes, childRowCount);
-                vendorInvoices.Add(invoice);
-            }
-
-            return vendorInvoices;
+            return (payments ?? new List<VendorInvoicePaymentToWrite>())
+                .Select(payment =>
+                {
+                    var editedPayment = new VendorInvoicePaymentFaker(generateId: false, id: payment.Id).Generate();
+                    var paymentMethod = new VendorInvoicePaymentMethodFaker(generateId: false, payment.PaymentMethod.Id).Generate();
+                    editedPayment.SetAmount(payment.Amount);
+                    editedPayment.SetPaymentMethod(paymentMethod);
+                    return editedPayment;
+                })
+                .ToList();
         }
 
-        private static VendorInvoice CreateVendorInvoice(Vendor vendor, List<SaleCode> saleCodes, int childRowCount)
+        public static List<VendorInvoiceLineItem> CreateVendorInvoiceLineItems(List<VendorInvoiceLineItemToWrite> lineItems)
         {
-            var invoice = VendorInvoice.Create(
-                vendor: vendor,
-                status: VendorInvoiceStatus.Open,
-                documentType: VendorInvoiceDocumentType.Invoice,
-                total: VendorInvoice.MinimumValue + new Random().NextDouble() * (999999 - VendorInvoice.MinimumValue),
-                vendorInvoiceNumbers: new List<string>(),
-                invoiceNumber: $"{Utilities.RandomCharacters(7)}")
-                .Value;
-
-            var lineItems = CreateLineItems(VendorInvoiceLineItemType.Purchase, childRowCount, 1.1, 2.2, 3);
-            var payments = CreatePayments(childRowCount, 1.2);
-            var taxes = CreateTaxes(childRowCount, .75);
-
-            foreach (var item in lineItems)
-                invoice.AddLineItem(item);
-
-            foreach (var payment in payments)
-                invoice.AddPayment(payment);
-
-            foreach (var tax in taxes)
-                invoice.AddTax(tax);
-
-            return invoice;
+            return (lineItems ?? new List<VendorInvoiceLineItemToWrite>())
+                .Select(lineItem =>
+                {
+                    var editedLineItem = new VendorInvoiceLineItemFaker(generateId: false, id: lineItem.Id).Generate();
+                    editedLineItem.SetCore(lineItem.Core);
+                    editedLineItem.SetCost(lineItem.Cost);
+                    editedLineItem.SetItem(VendorInvoiceItem.Create(lineItem.Item.PartNumber, lineItem.Item.Description).Value);
+                    editedLineItem.SetPONumber(lineItem.PONumber);
+                    editedLineItem.SetQuantity(lineItem.Quantity);
+                    editedLineItem.SetTransactionDate(lineItem.TransactionDate);
+                    editedLineItem.SetType(lineItem.Type);
+                    return editedLineItem;
+                })
+                .ToList();
         }
     }
 }

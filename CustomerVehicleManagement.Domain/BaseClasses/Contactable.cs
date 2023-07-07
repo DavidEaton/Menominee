@@ -143,27 +143,34 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
             return Emails.Any(email => email.IsPrimary);
         }
 
-        // VK: I haven't tested how it would work with EF Core, but the logic of syncing should be as follows
-        public void SyncContactDetails(ContactDetails contactDetails)
+        public void UpdateContactDetails(ContactDetails contactDetails)
         {
-            SyncPhones(contactDetails.Phones);
-            SyncEmails(contactDetails.Emails);
+            UpdatePhones(contactDetails.Phones);
+            UpdateEmails(contactDetails.Emails);
             Address = contactDetails.Address.GetValueOrDefault();
         }
 
-        private void SyncPhones(IReadOnlyList<Phone> phones)
+        private void UpdatePhones(IReadOnlyList<Phone> phones)
         {
             var toAdd = phones
                 .Where(phone => phone.Id == 0)
                 .ToArray();
 
             var toDelete = Phones
-                .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id) == false)
+                .Where(phone => !phones.Any(callerPhone => callerPhone.Id == phone.Id))
                 .ToArray();
 
             var toModify = Phones
                 .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id))
                 .ToArray();
+
+            toAdd.ToList()
+                .ForEach(phone =>
+                {
+                    var result = AddPhone(phone);
+                    if (result.IsFailure)
+                        throw new Exception(result.Error);
+                });
 
             toDelete.ToList()
                 .ForEach(phone => RemovePhone(phone));
@@ -182,24 +189,16 @@ namespace CustomerVehicleManagement.Domain.BaseClasses
                     if (phone.IsPrimary != phoneFromCaller.IsPrimary)
                         phone.SetIsPrimary(phoneFromCaller.IsPrimary);
                 });
-
-            toAdd.ToList()
-                .ForEach(phone =>
-                {
-                    var result = AddPhone(phone);
-                    if (result.IsFailure)
-                        throw new Exception(result.Error);
-                });
         }
 
-        private void SyncEmails(IReadOnlyList<Email> emails)
+        private void UpdateEmails(IReadOnlyList<Email> emails)
         {
             var toAdd = emails
                 .Where(email => email.Id == 0)
                 .ToArray();
 
             var toDelete = Emails
-                .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id) == false)
+                .Where(email => !emails.Any(callerEmail => callerEmail.Id == email.Id))
                 .ToArray();
 
             var toModify = Emails

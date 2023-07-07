@@ -17,8 +17,12 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public static Result<RepairOrderTax> Create(PartTax partTax, LaborTax laborTax)
         {
-            // FluentValidation has already parsed caller's input
-            // (value objects); no need to duplicate validation here.
+            if (partTax is null)
+                return Result.Failure<RepairOrderTax>(RequiredMessage);
+
+            if (laborTax is null)
+                return Result.Failure<RepairOrderTax>(RequiredMessage);
+
             return Result.Success(new RepairOrderTax(partTax, laborTax));
         }
 

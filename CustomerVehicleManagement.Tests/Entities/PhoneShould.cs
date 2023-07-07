@@ -86,7 +86,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Set_Invalid_Number()
+        public void Return_Failure_On_Set_Invalid_Number()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
@@ -113,7 +113,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Set_Invalid_PhoneType()
+        public void Return_Failure_On_Set_Invalid_PhoneType()
         {
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
@@ -202,5 +202,60 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             phone.ToString().Should().Be("6");
         }
+
+        [Fact]
+        public void Not_Set_Null_Number()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            string nullNumber = null;
+
+            var result = phone.SetNumber(nullNumber);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Set_Empty_Number()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            var emptyNumber = string.Empty;
+
+            var result = phone.SetNumber(emptyNumber);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Set_Undefined_PhoneType()
+        {
+            var number = "989.627.9206";
+            var phoneType = PhoneType.Home;
+            var phone = Phone.Create(number, phoneType, true).Value;
+            var undefinedPhoneType = (PhoneType)99;
+
+            var result = phone.SetPhoneType(undefinedPhoneType);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Create_With_Whitespace_Number()
+        {
+            var number = "    ";
+            var phoneType = PhoneType.Home;
+
+            var result = Phone.Create(number, phoneType, true);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Phone.InvalidMessage);
+        }
+
     }
 }

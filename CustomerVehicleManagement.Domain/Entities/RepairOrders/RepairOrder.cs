@@ -37,8 +37,8 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             tax => tax.PartTax.Amount + tax.LaborTax.Amount).Sum();
         public double ServiceTaxTotal => Services.Select(
             service => service.TaxTotal).Sum();
-        public double HazMatTotal => Services.Select(
-            service => service.HazMatTotal).Sum();
+        public double ExciseFeesTotal => Services.Select(
+            service => service.ExciseFeesTotal).Sum();
         public double ShopSuppliesTotal => Services.Select(
             service => service.ShopSuppliesTotal).Sum();
         public double Total => Services.Select(
@@ -68,7 +68,6 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
         public IReadOnlyList<RepairOrderTax> Taxes => taxes.ToList();
 
         private readonly List<RepairOrderPayment> payments = new();
-
         public IReadOnlyList<RepairOrderPayment> Payments => payments.ToList();
 
         private RepairOrder(
@@ -106,7 +105,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             List<RepairOrderTax> taxes = null,
             List<RepairOrderPayment> payments = null)
         {
-            // TODO: The user will be able to configure the point in the process at which they will be required. -AL
+            // TODO: The user will be able to configure the point in the process at which they (customer, vehicle) will be required. -AL
             //if (customer is null || vehicle is null)
             //    return Result.Failure<RepairOrder>(RequiredMessage);
 
@@ -119,167 +118,181 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             return Result.Success(new RepairOrder(customer, vehicle, accountingDate, nextRepairOrderNumber, nextInvoiceNumber, statuses, services, taxes, payments));
         }
 
-        public void UpdateCollections(
-            List<RepairOrderStatus> statuses,
-            List<RepairOrderService> services,
-            List<RepairOrderTax> taxes,
-            List<RepairOrderPayment> payments)
-        {
-            UpdateStatuses(statuses, new List<long>());
-            UpdateServices(services);
-            UpdateTaxes(taxes);
-            UpdatePayments(payments);
-        }
-
-        private void UpdatePayments(List<RepairOrderPayment> payments)
+        public Result UpdatePayments(IReadOnlyList<RepairOrderPayment> payments)
         {
             var toAdd = payments
                 .Where(payment => payment.Id == 0)
-                .ToArray();
+                .ToList();
 
             var toDelete = Payments
-                .Where(payment => payments.Any(callerPayment => callerPayment.Id == payment.Id) == false)
-                .ToArray();
+                .Where(payment => !payments.Any(callerPayment => callerPayment.Id == payment.Id))
+                .ToList();
 
             var toModify = Payments
                 .Where(payment => payments.Any(callerPayment => callerPayment.Id == payment.Id))
-                .ToArray();
+                .ToList();
 
-            toDelete.ToList()
-                .ForEach(payment => RemovePayment(payment));
+            var addResults = toAdd
+                .Select(payment => AddPayment(payment))
+                .ToList();
 
-            toModify.ToList()
-                .ForEach(payment =>
+            var deleteResults = toDelete
+                .Select(payment => RemovePayment(payment))
+                .ToList();
+
+            foreach (var payment in toModify)
+            {
+                var paymentFromCaller = payments.Single(callerPayment => callerPayment.Id == payment.Id);
+
+                if (payment.PaymentMethod != paymentFromCaller.PaymentMethod)
                 {
-                    var paymentFromCaller = payments.Single(callerPayment => callerPayment.Id == payment.Id);
-
-                    if (payment.Amount != paymentFromCaller.Amount)
-                        payment.SetAmount(paymentFromCaller.Amount);
-
-                    if (payment.PaymentMethod != paymentFromCaller.PaymentMethod)
-                        payment.SetPaymentMethod(paymentFromCaller.PaymentMethod);
-                });
-
-            toAdd.ToList()
-                .ForEach(payment =>
-                {
-                    var result = AddPayment(payment);
+                    var result = payment.SetPaymentMethod(paymentFromCaller.PaymentMethod);
                     if (result.IsFailure)
-                        throw new Exception(result.Error);
-                });
+                        return Result.Failure(result.Error);
+                }
+
+                if (payment.Amount != paymentFromCaller.Amount)
+                {
+                    var result = payment.SetAmount(paymentFromCaller.Amount);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
+            }
+
+            return Result.Success();
         }
 
-        private void UpdateTaxes(List<RepairOrderTax> taxes)
+        public Result UpdateTaxes(IReadOnlyList<RepairOrderTax> taxes)
         {
             var toAdd = taxes
                 .Where(tax => tax.Id == 0)
-                .ToArray();
+                .ToList();
 
             var toDelete = Taxes
-                .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id) == false)
-                .ToArray();
+                .Where(tax => !taxes.Any(callerTax => callerTax.Id == tax.Id))
+                .ToList();
 
             var toModify = Taxes
                 .Where(tax => taxes.Any(callerTax => callerTax.Id == tax.Id))
-                .ToArray();
+                .ToList();
 
-            toDelete.ToList()
-                .ForEach(tax => RemoveTax(tax));
+            var addResults = toAdd
+                .Select(tax => AddTax(tax))
+                .ToList();
 
-            toModify.ToList()
-                .ForEach(tax =>
+            var deleteResults = toDelete
+                .Select(tax => RemoveTax(tax))
+                .ToList();
+
+            foreach (var tax in toModify)
+            {
+                var taxFromCaller = taxes.Single(callerTax => callerTax.Id == tax.Id);
+
+                if (tax.LaborTax != taxFromCaller.LaborTax)
                 {
-                    var taxFromCaller = taxes.Single(callerTax => callerTax.Id == tax.Id);
-
-                    if (tax.LaborTax != taxFromCaller.LaborTax)
-                        tax.SetLaborTax(taxFromCaller.LaborTax);
-
-                    if (tax.PartTax != taxFromCaller.PartTax)
-                        tax.SetPartTax(taxFromCaller.PartTax);
-                });
-
-            toAdd.ToList()
-                .ForEach(tax =>
-                {
-                    var result = AddTax(tax);
+                    var result = tax.SetLaborTax(taxFromCaller.LaborTax);
                     if (result.IsFailure)
-                        throw new Exception(result.Error);
-                });
+                        return Result.Failure(result.Error);
+                }
+
+                if (tax.PartTax != taxFromCaller.PartTax)
+                {
+                    var result = tax.SetPartTax(taxFromCaller.PartTax);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
+            }
+
+            return Result.Success();
         }
 
-        private void UpdateServices(List<RepairOrderService> services)
+        public Result UpdateServices(List<RepairOrderService> services)
         {
             var toAdd = services
                 .Where(service => service.Id == 0)
-                .ToArray();
+                .ToList();
 
             var toDelete = Services
-                .Where(service => services.Any(callerService => callerService.Id == service.Id) == false)
-                .ToArray();
+                .Where(service => !services.Any(callerService => callerService.Id == service.Id))
+                .ToList();
 
             var toModify = Services
                 .Where(service => services.Any(callerService => callerService.Id == service.Id))
-                .ToArray();
+                .ToList();
 
-            toDelete.ToList()
-                .ForEach(service => RemoveService(service));
+            var addResults = toAdd
+                .Select(service => AddService(service))
+                .ToList();
 
-            toModify.ToList().ForEach(service =>
+            var deleteResults = toDelete
+                .Select(service => RemoveService(service))
+                .ToList();
+
+            foreach (var service in toModify)
             {
                 var serviceFromCaller = services.Single(callerService => callerService.Id == service.Id);
 
                 if (service.SaleCode != serviceFromCaller.SaleCode)
-                    service.SetSaleCode(serviceFromCaller.SaleCode);
+                {
+                    var result = service.SetSaleCode(serviceFromCaller.SaleCode);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
 
                 if (service.ServiceName != serviceFromCaller.ServiceName)
-                    service.SetServiceName(serviceFromCaller.ServiceName);
-            });
-
-            toAdd.ToList()
-                .ForEach(service =>
                 {
-                    var result = AddService(service);
+                    var result = service.SetServiceName(serviceFromCaller.ServiceName);
                     if (result.IsFailure)
-                        throw new Exception(result.Error);
-                });
+                        return Result.Failure(result.Error);
+                }
+            }
+
+            return Result.Success();
         }
 
-        private void UpdateStatuses(IReadOnlyList<RepairOrderStatus> statuses, List<long> repairOrderNumbers)
+        public Result UpdateStatuses(IReadOnlyList<RepairOrderStatus> statuses, List<long> repairOrderNumbers)
         {
-            var toAdd = Statuses
+            var toAdd = statuses
                 .Where(status => status.Id == 0)
-                .ToArray();
+                .ToList();
 
             var toDelete = Statuses
-                .Where(status => statuses.Any(callerStatus => callerStatus.Id == status.Id) == false)
-                .ToArray();
+                .Where(status => !statuses.Any(callerStatus => callerStatus.Id == status.Id))
+                .ToList();
 
             var toModify = Statuses
                 .Where(status => statuses.Any(callerStatus => callerStatus.Id == status.Id))
-                .ToArray();
+                .ToList();
 
-            foreach (var status in toDelete)
-            {
-                RemoveStatus(status);
-            }
+            var addResults = toAdd
+                .Select(status => AddStatus(status, repairOrderNumbers))
+                .ToList();
+
+            var deleteResults = toDelete
+                .Select(status => RemoveStatus(status))
+                .ToList();
+
 
             foreach (var status in toModify)
             {
                 var statusFromCaller = statuses.Single(callerStatus => callerStatus.Id == status.Id);
 
                 if (status.Description != statusFromCaller.Description)
-                    status.SetDescription(statusFromCaller.Description);
+                {
+                    var result = status.SetDescription(statusFromCaller.Description);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
 
                 if (status.Type != statusFromCaller.Type)
-                    status.SetStatus(statusFromCaller.Type);
+                {
+                    var result = status.SetStatus(statusFromCaller.Type);
+                    if (result.IsFailure)
+                        return Result.Failure(result.Error);
+                }
             }
 
-            foreach (var status in toAdd)
-            {
-                Result result = AddStatus(status, repairOrderNumbers);
-                if (result.IsFailure)
-                    throw new Exception(result.Error);
-            }
+            return Result.Success();
         }
 
         private static long CalculateNextRepairOrderNumber(IReadOnlyList<long> repairOrderNumbers, DateTime currentDate)

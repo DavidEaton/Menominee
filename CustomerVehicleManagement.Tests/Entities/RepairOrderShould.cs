@@ -1,11 +1,17 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
 using CustomerVehicleManagement.Domain.Entities.RepairOrders;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Statuses;
+using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
+using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TestingHelperLibrary.Fakers;
+using TestingHelperLibrary.RepairOrders;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Entities
@@ -72,7 +78,6 @@ namespace CustomerVehicleManagement.Tests.Entities
 
             service.IsDeclined.Should().BeFalse();
         }
-
 
         [Fact]
         public void Return_Failure_On_Create_RepairOrder_With_AccountingDate_In_The_Future()
@@ -557,13 +562,13 @@ namespace CustomerVehicleManagement.Tests.Entities
             var partsTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.SellingPrice * lineItem.QuantitySold);
             var laborTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold);
             var discountTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold);
-            //var hazMatTotal = CalculateTotal(...);
+            var exciseFeesTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.ExciseFeesTotal);
             var serviceTaxTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.Taxes.Sum(tax => tax.LaborTax.Amount + tax.PartTax.Amount));
             var shopSuppliesTotal = repairOrder.Services.Select(service =>
                 service.ShopSuppliesTotal).Sum();
             var total = repairOrder.Services.Select(service =>
-                    service.PartsTotal + service.LaborTotal + service.DiscountTotal + service.HazMatTotal + service.ShopSuppliesTotal)
-                    .Sum();
+                service.PartsTotal + service.LaborTotal + service.DiscountTotal + service.ExciseFeesTotal + service.ShopSuppliesTotal)
+                .Sum();
             var taxTotal = repairOrder.Taxes.Select(tax =>
                 tax.PartTax.Amount + tax.LaborTax.Amount).Sum();
             var totalWithTax = total + taxTotal;
@@ -571,12 +576,390 @@ namespace CustomerVehicleManagement.Tests.Entities
             repairOrder.PartsTotal.Should().Be(partsTotal);
             repairOrder.LaborTotal.Should().Be(laborTotal);
             repairOrder.DiscountTotal.Should().Be(discountTotal);
-            //repairOrder.HazMatTotal.Should().Be(hazMatTotal);
+            repairOrder.ExciseFeesTotal.Should().Be(exciseFeesTotal);
             repairOrder.ServiceTaxTotal.Should().Be(serviceTaxTotal);
             repairOrder.ShopSuppliesTotal.Should().Be(shopSuppliesTotal);
             repairOrder.Total.Should().Be(total);
             repairOrder.TaxTotal.Should().Be(taxTotal);
             repairOrder.TotalWithTax.Should().Be(totalWithTax);
+        }
+
+        [Fact]
+        public void Add_Added_Payments_On_UpdatePayments()
+        {
+            var paymentsCount = 3;
+            var repairOrder = new RepairOrderFaker(true, paymentsCount: paymentsCount).Generate();
+            var addedPayments = new RepairOrderPaymentFaker(generateId: false).Generate(paymentsCount);
+            var updatedPayments = repairOrder.Payments.Concat(addedPayments).ToList();
+            repairOrder.Payments.Should().NotBeEquivalentTo(addedPayments);
+
+            var result = repairOrder.UpdatePayments(updatedPayments);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Payments.Should().NotBeEquivalentTo(addedPayments);
+            repairOrder.Payments.Count.Should().Be(paymentsCount + paymentsCount);
+        }
+
+        [Fact]
+        public void Update_Edited_Payments_On_UpdatePayments()
+        {
+            var paymentsCount = 3;
+            var repairOrder = new RepairOrderFaker(true, paymentsCount: paymentsCount).Generate();
+            // Faker randomly selects PaymentMethod in Payments so reset to known:
+            foreach (var payment in repairOrder.Payments)
+                payment.SetPaymentMethod(Menominee.Common.Enums.PaymentMethod.Card);
+
+            var originalPayments = repairOrder.Payments.Select(payment =>
+            {
+                return new RepairOrderPaymentToWrite
+                {
+                    Id = payment.Id,
+                    PaymentMethod = payment.PaymentMethod,
+                    Amount = payment.Amount,
+                };
+            }).ToList();
+            var editedPayments = repairOrder.Payments.Select(payment =>
+            {
+                return new RepairOrderPaymentToWrite
+                {
+                    Id = payment.Id,
+                    PaymentMethod = payment.PaymentMethod,
+                    Amount = payment.Amount + 1,
+                };
+            }).ToList();
+            repairOrder.Payments.Should().NotBeEquivalentTo(editedPayments);
+            var updatedPayments = RepairOrderTestHelper.CreateRepairOrderPayments(editedPayments);
+
+            var result = repairOrder.UpdatePayments(updatedPayments);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Payments.Count.Should().Be(paymentsCount);
+            foreach (var payment in repairOrder.Payments)
+            {
+                var paymentFromCaller = editedPayments.Single(callerPayment => callerPayment.Id == payment.Id);
+                paymentFromCaller.Should().NotBeNull();
+                paymentFromCaller.Amount.Should().Be(payment.Amount);
+                paymentFromCaller.PaymentMethod.Should().Be(payment.PaymentMethod);
+            }
+            repairOrder.Payments.Should().NotBeEquivalentTo(originalPayments);
+        }
+
+        [Fact]
+        public void Delete_Deleted_Payments_On_UpdatePayments()
+        {
+            var paymentsCount = 3;
+            var repairOrder = new RepairOrderFaker(true, paymentsCount: paymentsCount).Generate();
+            var originalPayments = repairOrder.Payments.Select(payment =>
+            {
+                return new RepairOrderPaymentToWrite
+                {
+                    Id = payment.Id,
+                    PaymentMethod = payment.PaymentMethod,
+                    Amount = payment.Amount,
+                };
+            }).ToList();
+            var deletedPayments = repairOrder.Payments.ToList();
+            deletedPayments.RemoveAt(0);
+            repairOrder.Payments.Should().NotBeEquivalentTo(deletedPayments);
+            var updatedPayments = deletedPayments;
+
+            var result = repairOrder.UpdatePayments(updatedPayments);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Payments.Count.Should().Be(paymentsCount - 1);
+            repairOrder.Payments.Should().NotBeEquivalentTo(originalPayments);
+        }
+
+        [Fact]
+        public void Add_Added_Taxes_On_UpdateTaxes()
+        {
+            var taxesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, taxesCount: taxesCount).Generate();
+            var addedTaxes = new RepairOrderTaxFaker(generateId: false).Generate(taxesCount);
+            var updatedTaxes = repairOrder.Taxes.Concat(addedTaxes).ToList();
+            repairOrder.Taxes.Should().NotBeEquivalentTo(addedTaxes);
+
+            var result = repairOrder.UpdateTaxes(updatedTaxes);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Taxes.Should().NotBeEquivalentTo(addedTaxes);
+            repairOrder.Taxes.Count.Should().Be(taxesCount + taxesCount);
+        }
+
+        [Fact]
+        public void Update_Edited_Taxes_On_UpdateTaxes()
+        {
+            var taxesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, taxesCount: taxesCount).Generate();
+            var originalTaxes = repairOrder.Taxes.Select(tax =>
+            {
+                return new RepairOrderTaxToWrite
+                {
+                    Id = tax.Id,
+                    PartTax = tax.PartTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.PartTax.Amount,
+                            Rate = tax.PartTax.Rate
+                        },
+                    LaborTax = tax.LaborTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.LaborTax.Amount,
+                            Rate = tax.LaborTax.Rate
+                        }
+                };
+            }).ToList();
+            var editedTaxes = repairOrder.Taxes.Select(tax =>
+            {
+                return new RepairOrderTaxToWrite
+                {
+                    Id = tax.Id,
+                    PartTax = tax.PartTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.PartTax.Amount + 1,
+                            Rate = tax.PartTax.Rate
+                        },
+                    LaborTax = tax.LaborTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.LaborTax.Amount + 1,
+                            Rate = tax.LaborTax.Rate
+                        }
+                };
+            }).ToList();
+            repairOrder.Taxes.Should().NotBeEquivalentTo(editedTaxes);
+            var updatedTaxes = RepairOrderTestHelper.CreateRepairOrderTaxes(editedTaxes);
+
+            var result = repairOrder.UpdateTaxes(updatedTaxes);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Taxes.Count.Should().Be(taxesCount);
+            repairOrder.Taxes.Should().BeEquivalentTo(editedTaxes);
+            repairOrder.Taxes.Should().NotBeEquivalentTo(originalTaxes);
+        }
+
+        [Fact]
+        public void Delete_Deleted_Taxes_On_UpdateTaxes()
+        {
+            var taxesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, taxesCount: taxesCount).Generate();
+            var originalTaxes = repairOrder.Taxes.Select(tax =>
+            {
+                return new RepairOrderTaxToWrite
+                {
+                    Id = tax.Id,
+                    PartTax = tax.PartTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.PartTax.Amount,
+                            Rate = tax.PartTax.Rate
+                        },
+                    LaborTax = tax.LaborTax is null
+                        ? new()
+                        : new()
+                        {
+                            Amount = tax.LaborTax.Amount,
+                            Rate = tax.LaborTax.Rate
+                        }
+                };
+            }).ToList();
+
+            var deletedTaxes = repairOrder.Taxes.ToList();
+            deletedTaxes.RemoveAt(0);
+            repairOrder.Taxes.Should().NotBeEquivalentTo(deletedTaxes);
+            var updatedTaxes = deletedTaxes;
+
+            var result = repairOrder.UpdateTaxes(updatedTaxes);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Taxes.Count.Should().Be(taxesCount - 1);
+            repairOrder.Taxes.Should().NotBeEquivalentTo(originalTaxes);
+        }
+
+        [Fact]
+        public void Add_Added_Statuses_On_UpdateStatuses()
+        {
+            var statusesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, statusesCount: statusesCount).Generate();
+            var addedStatuses = new RepairOrderStatusFaker(generateId: false).Generate(statusesCount);
+            var updatedStatuses = repairOrder.Statuses.Concat(addedStatuses).ToList();
+            repairOrder.Statuses.Should().NotBeEquivalentTo(addedStatuses);
+            var repairOrderNumbers = new List<long>();
+
+            var result = repairOrder.UpdateStatuses(updatedStatuses, repairOrderNumbers);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Statuses.Should().NotBeEquivalentTo(addedStatuses);
+            repairOrder.Statuses.Count.Should().Be(statusesCount + statusesCount);
+        }
+
+        [Fact]
+        public void Update_Edited_Statuses_On_UpdateStatuses()
+        {
+            var updatedDescription = "a description updated by test";
+            var statusesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, statusesCount: statusesCount).Generate();
+            var originalStatuses = repairOrder.Statuses.Select(status =>
+                new RepairOrderStatusToWrite
+                {
+                    Id = status.Id,
+                    Status = status.Type,
+                    Description = status.Description,
+                    Date = status.Date
+                }).ToList();
+            var editedStatuses = repairOrder.Statuses.Select(status =>
+                new RepairOrderStatusToWrite
+                {
+                    Id = status.Id,
+                    Status = status.Type,
+                    Description = updatedDescription,
+                    Date = status.Date
+                }).ToList();
+            repairOrder.Statuses.Should().NotBeEquivalentTo(editedStatuses);
+            var updatedStatuses = RepairOrderTestHelper.CreateRepairOrderStatuses(editedStatuses);
+            var repairOrderNumbers = new List<long>();
+
+            var result = repairOrder.UpdateStatuses(updatedStatuses, repairOrderNumbers);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Statuses.Count.Should().Be(statusesCount);
+            foreach (var status in repairOrder.Statuses)
+            {
+                var item = editedStatuses.FirstOrDefault(item => item.Id == status.Id);
+                item.Status.Should().Be(status.Type);
+                item.Description.Should().Be(status.Description);
+                item.Date.Should().Be(status.Date);
+            }
+            repairOrder.Statuses.Should().NotBeEquivalentTo(originalStatuses);
+        }
+
+        [Fact]
+        public void Delete_Deleted_Statuses_On_UpdateStatuses()
+        {
+            var statusesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, statusesCount: statusesCount).Generate();
+            var originalStatuses = repairOrder.Statuses.Select(status =>
+                new RepairOrderStatusToWrite
+                {
+                    Id = status.Id,
+                    Status = status.Type,
+                    Description = status.Description,
+                    Date = status.Date
+                }).ToList();
+            var repairOrderNumbers = new List<long>();
+            var deletedStatuses = repairOrder.Statuses.ToList();
+            deletedStatuses.RemoveAt(0);
+            repairOrder.Statuses.Should().NotBeEquivalentTo(deletedStatuses);
+            var updatedStatuses = deletedStatuses;
+
+            var result = repairOrder.UpdateStatuses(updatedStatuses, repairOrderNumbers);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Statuses.Count.Should().Be(statusesCount - 1);
+            repairOrder.Statuses.Should().NotBeEquivalentTo(originalStatuses);
+        }
+
+        [Fact]
+        public void Add_Added_Services_On_UpdateServices()
+        {
+            var servicesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, servicesCount: servicesCount).Generate();
+            var addedServices = new RepairOrderServiceFaker(generateId: false).Generate(servicesCount);
+            var updatedServices = repairOrder.Services.Concat(addedServices).ToList();
+            repairOrder.Services.Should().NotBeEquivalentTo(addedServices);
+
+            var result = repairOrder.UpdateServices(updatedServices);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Services.Should().NotBeEquivalentTo(addedServices);
+            repairOrder.Services.Count.Should().Be(servicesCount + servicesCount);
+        }
+
+        [Fact]
+        public void Update_Edited_Services_On_UpdateServices()
+        {
+            var updatedServiceName = "a ServiceName updated by test";
+            var servicesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, servicesCount: servicesCount).Generate();
+            var originalServices = repairOrder.Services.Select(service =>
+                new RepairOrderServiceToWrite
+                {
+                    Id = service.Id,
+                    ServiceName = service.ServiceName,
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(service.SaleCode),
+                    IsCounterSale = service.IsCounterSale,
+                    IsDeclined = service.IsDeclined,
+                    PartsTotal = service.PartsTotal,
+                    LaborTotal = service.LaborTotal,
+                    DiscountTotal = service.DiscountTotal
+                }).ToList();
+            var editedServices = repairOrder.Services.Select(service =>
+                new RepairOrderServiceToWrite
+                {
+                    Id = service.Id,
+                    ServiceName = updatedServiceName,
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(service.SaleCode),
+                    IsCounterSale = service.IsCounterSale,
+                    IsDeclined = service.IsDeclined,
+                    PartsTotal = service.PartsTotal,
+                    LaborTotal = service.LaborTotal,
+                    DiscountTotal = service.DiscountTotal
+                }).ToList();
+            repairOrder.Services.Should().NotBeEquivalentTo(editedServices);
+            var updatedServices = RepairOrderTestHelper.CreateRepairOrderServices(editedServices);
+
+            var result = repairOrder.UpdateServices(updatedServices);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Services.Count.Should().Be(servicesCount);
+            foreach (var service in repairOrder.Services)
+            {
+                var editedService = editedServices.FirstOrDefault(item => item.Id == service.Id);
+                editedService.ServiceName.Should().Be(service.ServiceName);
+                editedService.SaleCode.Id.Should().Be(service.SaleCode.Id);
+                editedService.SaleCode.Code.Should().Be(service.SaleCode.Code);
+                editedService.SaleCode.DesiredMargin.Should().Be(service.SaleCode.DesiredMargin);
+                editedService.SaleCode.LaborRate.Should().Be(service.SaleCode.LaborRate);
+                editedService.SaleCode.Name.Should().Be(service.SaleCode.Name);
+            }
+            repairOrder.Services.Should().NotBeEquivalentTo(originalServices);
+        }
+
+        [Fact]
+        public void Delete_Deleted_Services_On_UpdateServices()
+        {
+            var servicesCount = 3;
+            var repairOrder = new RepairOrderFaker(true, servicesCount: servicesCount).Generate();
+            var originalServices = repairOrder.Services.Select(status =>
+                new RepairOrderServiceToWrite
+                {
+                    Id = status.Id,
+                    DiscountTotal = status.DiscountTotal,
+                    IsCounterSale = status.IsCounterSale,
+                    IsDeclined = status.IsDeclined,
+                    LaborTotal = status.LaborTotal,
+                    PartsTotal = status.PartsTotal,
+                    SaleCode = SaleCodeHelper.ConvertToReadDto(status.SaleCode),
+                    ServiceName = status.ServiceName,
+                    Total = status.Total
+                }).ToList();
+            var deletedServices = repairOrder.Services.ToList();
+            deletedServices.RemoveAt(0);
+            repairOrder.Services.Should().NotBeEquivalentTo(deletedServices);
+            var updatedServices = deletedServices;
+
+            var result = repairOrder.UpdateServices(updatedServices);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.Services.Count.Should().Be(servicesCount - 1);
+            repairOrder.Services.Should().NotBeEquivalentTo(originalServices);
         }
 
         private static Result<RepairOrder> CreateRepairOrder(

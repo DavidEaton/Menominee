@@ -82,7 +82,7 @@ namespace CustomerVehicleManagement.Shared.Models.Contactable
                 .ToList();
         }
 
-        private static EmailToWrite ConvertToWriteDto(Email email)
+        public static EmailToWrite ConvertToWriteDto(Email email)
         {
             return (email is not null)
                 ? new EmailToWrite()

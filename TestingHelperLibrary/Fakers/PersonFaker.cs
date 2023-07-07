@@ -7,9 +7,13 @@ namespace TestingHelperLibrary.Fakers
 {
     public class PersonFaker : Faker<Person>
     {
-        public PersonFaker(bool generateId, bool includeAddress = false, bool includeDriversLicense = false, int emailsCount = 0, int phonesCount = 0)
+        public PersonFaker(bool generateId, bool includeAddress = false, bool includeDriversLicense = false, int emailsCount = 0, int phonesCount = 0, long id = 0)
         {
-            RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+            if (generateId)
+                RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+
+            if (id > 0)
+                RuleFor(entity => entity.Id, faker => id > 0 ? id : 0);
 
             CustomInstantiator(faker =>
             {

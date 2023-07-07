@@ -9,8 +9,9 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
     public class RepairOrderWarranty : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
+        public static readonly int MinimumValue = -99999;
         public static readonly int MaximumValue = 99999;
-        public static readonly string InvalidValueMessage = $"Value must be less than or equa to {MaximumValue}.";
+        public static readonly string InvalidValueMessage = $"Value must be between {MinimumValue} and {MaximumValue}.";
         public static readonly int MinimumLength = 2;
         public static readonly int MaximumLength = 255;
         public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
@@ -36,7 +37,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
             string originalWarranty,
             long originalInvoiceId)
         {
-            if (quantity > MaximumValue)
+            if (quantity > MaximumValue || quantity < MinimumValue)
                 return Result.Failure<RepairOrderWarranty>(InvalidValueMessage);
 
             if (!Enum.IsDefined(typeof(WarrantyType), type))
@@ -56,7 +57,7 @@ namespace CustomerVehicleManagement.Domain.Entities.RepairOrders
 
         public Result<double> SetQuantity(double quantity)
         {
-            if (quantity > MaximumValue)
+            if (quantity > MaximumValue || quantity < MinimumValue)
                 return Result.Failure<double>(InvalidValueMessage);
 
             return Result.Success(Quantity = quantity);

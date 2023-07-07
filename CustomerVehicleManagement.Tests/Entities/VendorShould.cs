@@ -30,13 +30,13 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorCode = "V1";
 
             // Act
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             // Assert
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Should().BeOfType<Vendor>();
-            vendorOrError.Value.Name.Should().Be(name);
-            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<Vendor>();
+            result.Value.Name.Should().Be(name);
+            result.Value.VendorCode.Should().Be(vendorCode);
         }
 
         [Fact]
@@ -47,13 +47,13 @@ namespace CustomerVehicleManagement.Tests.Entities
             var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
             var defaultPaymentMethod = DefaultPaymentMethod.Create(paymentMethod, true).Value;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
 
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Should().BeOfType<Vendor>();
-            vendorOrError.Value.DefaultPaymentMethod.Should().BeOfType<DefaultPaymentMethod>();
-            vendorOrError.Value.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
-            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<Vendor>();
+            result.Value.DefaultPaymentMethod.Should().BeOfType<DefaultPaymentMethod>();
+            result.Value.DefaultPaymentMethod.Should().Be(defaultPaymentMethod);
+            result.Value.VendorCode.Should().Be(vendorCode);
         }
 
         [Fact]
@@ -63,12 +63,12 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorCode = "V1";
             DefaultPaymentMethod defaultPaymentMethod = null;
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, string.Empty, defaultPaymentMethod);
 
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Should().BeOfType<Vendor>();
-            vendorOrError.Value.DefaultPaymentMethod.Should().Be(null);
-            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<Vendor>();
+            result.Value.DefaultPaymentMethod.Should().Be(null);
+            result.Value.VendorCode.Should().Be(vendorCode);
         }
 
         [Fact]
@@ -86,11 +86,11 @@ namespace CustomerVehicleManagement.Tests.Entities
             var phone1 = Phone.Create(number, phoneType, false).Value;
             phones.Add(phone1);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Should().BeOfType<Vendor>();
-            vendorOrError.Value.VendorCode.Should().Be(vendorCode);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<Vendor>();
+            result.Value.VendorCode.Should().Be(vendorCode);
         }
 
         [Fact]
@@ -100,23 +100,23 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorCode = "V1";
             var phones = ContactableTestHelper.CreatePhones(10);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, phones: phones);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, phones: phones);
 
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Should().BeOfType<Vendor>();
-            vendorOrError.Value.Phones.Count.Should().BeGreaterThan(1);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<Vendor>();
+            result.Value.Phones.Count.Should().BeGreaterThan(1);
         }
 
         [Fact]
-        public void Not_Create_Vendor_With_Inavlid_VendorRole()
+        public void Return_Failure_On_Create_Vendor_With_Inavlid_VendorRole()
         {
             var name = "Vendor One";
             var vendorCode = "V1";
             var vendorRole = (VendorRole)(-1);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, vendorRole);
+            var result = Vendor.Create(name, vendorCode, vendorRole);
 
-            vendorOrError.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -126,34 +126,34 @@ namespace CustomerVehicleManagement.Tests.Entities
             var vendorNote = RandomCharacters(Contactable.NoteMaximumLength * 2);
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, vendorNote);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier, vendorNote);
 
-            vendorOrError.IsFailure.Should().BeFalse();
-            vendorOrError.Value.Notes.Length.Should().Be(Contactable.NoteMaximumLength);
+            result.IsFailure.Should().BeFalse();
+            result.Value.Notes.Length.Should().Be(Contactable.NoteMaximumLength);
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_Vendor_With_Invalid_Name(int length)
+        public void Return_Failure_On_Create_Vendor_With_Invalid_Name(int length)
         {
             var name = RandomCharacters(length);
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
-            vendorOrError.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_Vendor_With_Invalid_Code(int length)
+        public void Return_Failure_On_Create_Vendor_With_Invalid_Code(int length)
         {
             var name = RandomCharacters(Vendor.MinimumLength);
             var vendorCode = RandomCharacters(length);
 
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
-            vendorOrError.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]
@@ -169,14 +169,14 @@ namespace CustomerVehicleManagement.Tests.Entities
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Name_With_Invalid_Name(int length)
+        public void Return_Failure_On_Set_Name_With_Invalid_Name(int length)
         {
             var name = RandomCharacters(Vendor.MinimumLength);
             var vendorCode = RandomCharacters(Vendor.MinimumLength);
-            var vendorOrError = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
+            var result = Vendor.Create(name, vendorCode, VendorRole.PartsSupplier);
 
             var invalidName = RandomCharacters(length);
-            var resultOrError = vendorOrError.Value.SetName(invalidName);
+            var resultOrError = result.Value.SetName(invalidName);
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -226,7 +226,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_SetDefaultPaymentMethod_With_Null_DefaultPaymentMethod()
+        public void Return_Failure_On_SetDefaultPaymentMethod_With_Null_DefaultPaymentMethod()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var paymentMethod = VendorInvoiceTestHelper.CreateVendorInvoicePaymentMethod();
@@ -254,7 +254,7 @@ namespace CustomerVehicleManagement.Tests.Entities
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Invalid_Vendor_Code(int length)
+        public void Return_Failure_On_Set_Invalid_Vendor_Code(int length)
         {
             var vendor = VendorTestHelper.CreateVendor();
 
@@ -287,7 +287,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_Duplicate_Phone()
+        public void Return_Failure_On_Add_Duplicate_Phone()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var number = "555.444.3333";
@@ -298,16 +298,16 @@ namespace CustomerVehicleManagement.Tests.Entities
             var phoneTwo = Phone.Create(numberTwo, phoneTypeTwo, true).Value;
 
             vendor.AddPhone(phoneOne);
-            var vendorOrError = vendor.AddPhone(phoneTwo);
+            var result = vendor.AddPhone(phoneTwo);
 
             vendor.Phones.Should().Contain(phoneOne);
             vendor.Phones.Should().NotContain(phoneTwo);
-            vendorOrError.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Theory]
         [InlineData(null)]
-        public void Not_Add_Invalid_Phone(Phone phone)
+        public void Return_Failure_On_Add_Invalid_Phone(Phone phone)
         {
             var vendor = VendorTestHelper.CreateVendor();
 
@@ -404,7 +404,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_More_Than_One_Primary_Phone()
+        public void Return_Failure_On_Add_More_Than_One_Primary_Phone()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var number = "555.627.9206";
@@ -499,7 +499,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_More_Than_One_Primary_Email()
+        public void Return_Failure_On_Add_More_Than_One_Primary_Email()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var address = "jane@doe.com";
@@ -514,7 +514,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Add_Duplicate_Email()
+        public void Return_Failure_On_Add_Duplicate_Email()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var address = "jane@doe.com";
@@ -530,7 +530,7 @@ namespace CustomerVehicleManagement.Tests.Entities
 
         [Theory]
         [InlineData(null)]
-        public void Not_Add_Invalid_Email(Email email)
+        public void Return_Failure_On_Add_Invalid_Email(Email email)
         {
             var vendor = VendorTestHelper.CreateVendor();
 
@@ -571,7 +571,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void Not_Set_Inavlid_Address()
+        public void Return_Failure_On_Set_Inavlid_Address()
         {
             var vendor = VendorTestHelper.CreateVendor();
             Address address = null;
@@ -595,23 +595,73 @@ namespace CustomerVehicleManagement.Tests.Entities
 
 
         [Fact]
-        public void Not_Set_Inavlid_VendorRole()
+        public void Return_Failure_On_Set_Inavlid_VendorRole()
         {
             var vendor = VendorTestHelper.CreateVendor();
             var invalidVendorRole = (VendorRole)(-1);
 
-            var vendorOrError = vendor.SetVendorRole(invalidVendorRole);
+            var result = vendor.SetVendorRole(invalidVendorRole);
 
-            vendorOrError.IsFailure.Should().BeTrue();
+            result.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void SyncContactDetails()
+        public void Update_Added_ContactDetails()
         {
-            var vendor = new VendorFaker(true, emailsCount: 3, phonesCount: 3).Generate();
+            var generateId = true; // phone/emails created with generateId = true will have Id values.
+            var emailsCount = 3;
+            var phonesCount = 3;
+            var vendor = new VendorFaker(generateId, emailsCount, phonesCount).Generate();
+            var addressToAdd = new AddressFaker().Generate();
+            var phonesToAdd = PhoneHelper.ConvertToWriteDtos(
+                new PhoneFaker(!generateId).Generate(phonesCount));
+            var phonesToUpdate =
+                vendor.Phones.Select(phone =>
+                {
+                    return new PhoneToWrite
+                    {
+                        Id = phone.Id,
+                        PhoneType = phone.PhoneType,
+                        Number = phone.Number,
+                        IsPrimary = phone.IsPrimary
+                    };
+                }).ToList();
+            // Include the exiting phones with phonesToAdd
+            phonesToUpdate.AddRange(phonesToAdd);
+            var emailsToAdd = EmailHelper.ConvertToWriteDtos(
+                new EmailFaker(!generateId).Generate(emailsCount));
+            var emailsToUpdate =
+                vendor.Emails.Select(email =>
+                {
+                    return new EmailToWrite
+                    {
+                        Id = email.Id,
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
+                    };
+                }).ToList();
+            // Include the exiting emails with emailsToAdd
+            emailsToUpdate.AddRange(emailsToAdd);
+            vendor.Phones.Should().NotBeEquivalentTo(phonesToUpdate);
+            vendor.Emails.Should().NotBeEquivalentTo(emailsToUpdate);
+            vendor.Address.Should().NotBe(addressToAdd);
+            var updatedContactDetails = ContactDetailsFactory.Create(
+                phonesToWrite: phonesToUpdate,
+                emailsToWrite: emailsToUpdate,
+                addressToWrite: AddressHelper.ConvertToWriteDto(addressToAdd)).Value;
 
+            vendor.UpdateContactDetails(updatedContactDetails);
+
+            vendor.Address.Should().Be(addressToAdd);
+            vendor.Phones.Count.Should().Be(phonesCount + phonesCount);
+            vendor.Emails.Count.Should().Be(emailsCount + emailsCount);
+        }
+
+        [Fact]
+        public void Update_Edited_ContactDetails()
+        {
+            var vendor = new VendorFaker(true, emailsCount: 3, phonesCount: 3, includeAddress: true).Generate();
             var updatedAddress = new AddressFaker().Generate();
-
             var updatedPhones = vendor.Phones.Select(phone =>
             {
                 return new PhoneToWrite
@@ -622,28 +672,72 @@ namespace CustomerVehicleManagement.Tests.Entities
                     IsPrimary = phone.IsPrimary
                 };
             }).ToList();
-
             var updatedEmails = vendor.Emails.Select(email => new EmailToWrite
             {
                 Id = email.Id,
                 Address = $"updated-{email.Address}",
                 IsPrimary = email.IsPrimary
             }).ToList();
-
             var updatedContactDetails = ContactDetailsFactory.Create(
                 phonesToWrite: updatedPhones,
                 emailsToWrite: updatedEmails,
-                addressToWrite: AddressHelper.ConvertToWriteDto(updatedAddress));
-
+                addressToWrite: AddressHelper.ConvertToWriteDto(updatedAddress)).Value;
             vendor.Phones.Should().NotBeEquivalentTo(updatedPhones);
             vendor.Emails.Should().NotBeEquivalentTo(updatedEmails);
             vendor.Address.Should().NotBe(updatedAddress);
 
-            vendor.SyncContactDetails(updatedContactDetails);
+            vendor.UpdateContactDetails(updatedContactDetails);
 
             vendor.Phones.Should().BeEquivalentTo(updatedPhones);
             vendor.Emails.Should().BeEquivalentTo(updatedEmails);
             vendor.Address.Should().Be(updatedAddress);
+        }
+
+        [Fact]
+        public void Update_Removed_ContactDetails()
+        {
+            var generateId = true;
+            var emailsCount = 3;
+            var phonesCount = 3;
+            var vendor = new VendorFaker(generateId, phonesCount: phonesCount, emailsCount: emailsCount, includeAddress: true).Generate();
+            vendor.Phones.Count.Should().Be(phonesCount);
+            vendor.Emails.Count.Should().Be(emailsCount);
+            // remove a phone
+            var phoneToRemove = vendor.Phones[0];
+            // remove an email
+            var emailToRemove = vendor.Emails[0];
+            var updatedPhones = vendor.Phones.Select(phone =>
+            {
+                return new PhoneToWrite
+                {
+                    Id = phone.Id,
+                    PhoneType = phone.PhoneType,
+                    Number = phone.Number,
+                    IsPrimary = phone.IsPrimary
+                };
+            }).Where(phone => phone.Id != phoneToRemove.Id)
+              .ToList();
+            var updatedEmails = vendor.Emails.Select(email =>
+            {
+                return new EmailToWrite
+                {
+                    Id = email.Id,
+                    Address = email.Address,
+                    IsPrimary = email.IsPrimary
+                };
+            }).Where(email => email.Id != emailToRemove.Id)
+              .ToList();
+            var updatedContactDetails = ContactDetailsFactory.Create(
+                phonesToWrite: updatedPhones,
+                emailsToWrite: updatedEmails,
+                addressToWrite: AddressHelper.ConvertToWriteDto(vendor.Address)).Value;
+
+            vendor.UpdateContactDetails(updatedContactDetails);
+
+            vendor.Phones.Count.Should().Be(phonesCount - 1);
+            vendor.Phones.Should().NotContain(phoneToRemove);
+            vendor.Emails.Count.Should().Be(emailsCount - 1);
+            vendor.Emails.Should().NotContain(emailToRemove);
         }
 
         internal class TestData

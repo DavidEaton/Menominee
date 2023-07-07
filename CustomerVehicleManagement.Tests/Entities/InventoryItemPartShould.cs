@@ -1,13 +1,31 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
+﻿using Bogus;
+using CustomerVehicleManagement.Api.Common;
+using CustomerVehicleManagement.Domain.Entities.Inventory;
+using CustomerVehicleManagement.Domain.Entities.Taxes;
+using CustomerVehicleManagement.Shared.Models.Taxes;
+using CustomerVehicleManagement.Tests.Helpers.Fakers;
 using FluentAssertions;
 using Menominee.Common.Enums;
 using System.Collections.Generic;
+using System.Linq;
+using Telerik.DataSource.Extensions;
+using TestingHelperLibrary.Fakers;
 using Xunit;
 
 namespace CustomerVehicleManagement.Tests.Entities
 {
     public class InventoryItemPartShould
     {
+        private readonly Faker faker;
+        private readonly InventoryItemPartFaker inventoryItemPartFaker;
+
+
+        public InventoryItemPartShould()
+        {
+            faker = new Faker();
+            inventoryItemPartFaker = new InventoryItemPartFaker(generateId: true);
+
+        }
         [Fact]
         public void Create_InventoryItemPart()
         {
@@ -15,14 +33,14 @@ namespace CustomerVehicleManagement.Tests.Entities
             var fractional = false;
 
             // Act
-            var resultOrError = InventoryItemPart.Create(
+            var result = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional);
 
             // Assert
-            resultOrError.Value.Should().BeOfType<InventoryItemPart>();
-            resultOrError.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<InventoryItemPart>();
+            result.IsFailure.Should().BeFalse();
         }
 
         [Fact]
@@ -32,33 +50,33 @@ namespace CustomerVehicleManagement.Tests.Entities
             string lineCode = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
             string subLineCode = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
-            var resultOrError = InventoryItemPart.Create(
+            var result = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional,
                 lineCode, subLineCode);
 
-            resultOrError.Value.Should().BeOfType<InventoryItemPart>();
-            resultOrError.IsFailure.Should().BeFalse();
+            result.Value.Should().BeOfType<InventoryItemPart>();
+            result.IsFailure.Should().BeFalse();
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_InventoryItem_With_Invalid_Money_Values(double invalidValue)
         {
-            var resultOrError = InventoryItemPart.Create(
+            var result = InventoryItemPart.Create(
                 invalidValue, invalidValue, invalidValue, invalidValue,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
                 fractional: false);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void Not_Create_InventoryItem_With_Invalid_Line_Codes()
         {
-            var resultOrError = InventoryItemPart.Create(
+            var result = InventoryItemPart.Create(
                 InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
                 TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
 
@@ -67,19 +85,19 @@ namespace CustomerVehicleManagement.Tests.Entities
 
                 fractional: false);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetList()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
-            var resultOrError = part.SetList(value);
+            var result = part.SetList(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.List.Should().Be(value);
         }
 
@@ -87,23 +105,23 @@ namespace CustomerVehicleManagement.Tests.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_List(double invalidValue)
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetList(invalidValue);
+            var result = part.SetList(invalidValue);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetCost()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
-            var resultOrError = part.SetCost(value);
+            var result = part.SetCost(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.Cost.Should().Be(value);
         }
 
@@ -111,23 +129,23 @@ namespace CustomerVehicleManagement.Tests.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Cost(double invalidValue)
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetCost(invalidValue);
+            var result = part.SetCost(invalidValue);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetCore()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
-            var resultOrError = part.SetCore(value);
+            var result = part.SetCore(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.Core.Should().Be(value);
         }
 
@@ -135,23 +153,23 @@ namespace CustomerVehicleManagement.Tests.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Core(double invalidValue)
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetCore(invalidValue);
+            var result = part.SetCore(invalidValue);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetRetail()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = InstallablePart.MinimumMoneyAmount + 1.01;
 
-            var resultOrError = part.SetRetail(value);
+            var result = part.SetRetail(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.Retail.Should().Be(value);
         }
 
@@ -159,102 +177,180 @@ namespace CustomerVehicleManagement.Tests.Entities
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Set_Invalid_Retail(double invalidValue)
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetRetail(invalidValue);
+            var result = part.SetRetail(invalidValue);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetTechAmount()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value;
 
-            var resultOrError = part.SetTechAmount(value);
+            var result = part.SetTechAmount(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.TechAmount.Should().Be(value);
         }
 
         [Fact]
         public void Not_Set_Null_TechAmount()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetTechAmount(null);
+            var result = part.SetTechAmount(null);
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("required");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("required");
         }
 
         [Fact]
         public void SetLineCode()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
-            var resultOrError = part.SetLineCode(value);
+            var result = part.SetLineCode(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.LineCode.Should().Be(value);
         }
 
         [Fact]
         public void Not_Set_Invalid_LineCode()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
+            var result = part.SetLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Fact]
         public void SetSubLineCode()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
             var value = Utilities.RandomCharacters(InventoryItemPart.MaximumLength);
 
-            var resultOrError = part.SetSubLineCode(value);
+            var result = part.SetSubLineCode(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.SubLineCode.Should().Be(value);
         }
 
         [Fact]
         public void Not_Set_Invalid_SubLineCode()
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetSubLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
+            var result = part.SetSubLineCode(Utilities.RandomCharacters(InventoryItemPart.MaximumLength + 1));
 
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("must");
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("must");
         }
 
         [Theory]
         [MemberData(nameof(TestData.DataBoolean), MemberType = typeof(TestData))]
         public void SetFractional(bool value)
         {
-            var part = CreateInventoryItemPart();
+            var part = new InventoryItemPartFaker(true).Generate();
 
-            var resultOrError = part.SetFractional(value);
+            var result = part.SetFractional(value);
 
-            resultOrError.IsFailure.Should().BeFalse();
+            result.IsFailure.Should().BeFalse();
             part.Fractional.Should().Be(value);
         }
 
-
-        private static InventoryItemPart CreateInventoryItemPart()
+        [Fact]
+        public void Update_Edited_ExciseFees_On_UpdateExciseFees()
         {
-            return InventoryItemPart.Create(
-                InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount, InstallablePart.MaximumMoneyAmount,
-                TechAmount.Create(ItemLaborType.Flat, LaborAmount.MinimumAmount, SkillLevel.A).Value,
-                fractional: false).Value;
+            var feeCount = 3;
+            var part = new InventoryItemPartFaker(true, feeCount).Generate();
+            var originalFees = part.ExciseFees.Select(fee =>
+            {
+                return new ExciseFeeToWrite
+                {
+                    Id = fee.Id,
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount
+                };
+            }).ToList();
+            var editedFees = part.ExciseFees.Select(fee =>
+            {
+                return new ExciseFeeToWrite
+                {
+                    Id = fee.Id,
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount + 1
+                };
+            }).ToList();
+            part.ExciseFees.Should().NotBeEquivalentTo(editedFees);
+            var updatedExciseFees = ExciseFeesFactory.Create(editedFees);
+
+            var result = part.UpdateExciseFees(updatedExciseFees);
+
+            result.IsSuccess.Should().BeTrue();
+            part.ExciseFees.Count.Should().Be(feeCount);
+            part.ExciseFees.Should().BeEquivalentTo(editedFees);
+            part.ExciseFees.Should().NotBeEquivalentTo(originalFees);
+        }
+
+        [Fact]
+        public void Add_New_Fees_On_UpdateExciseFees()
+        {
+            var feeCount = 3;
+            var part = new InventoryItemPartFaker(true, feeCount).Generate();
+            var exciseFeesToAdd = new ExciseFeeFaker(generateId: false).Generate(feeCount);
+            exciseFeesToAdd.AddRange(part.ExciseFees);
+
+            var result = part.UpdateExciseFees(exciseFeesToAdd);
+
+            result.IsSuccess.Should().BeTrue();
+            part.ExciseFees.Count.Should().Be(feeCount + feeCount);
+        }
+
+        [Fact]
+        public void Remove_Deleted_Fees_On_UpdateExciseFees()
+        {
+            var feeCount = 3;
+            var part = new InventoryItemPartFaker(true, feeCount).Generate();
+            var originalFees = part.ExciseFees.Select(fee =>
+            {
+                return new ExciseFeeToWrite
+                {
+                    Id = fee.Id,
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount
+                };
+            }).ToList();
+            var feesAfterDelete = part.ExciseFees.Select(fee =>
+            {
+                return new ExciseFeeToWrite
+                {
+                    Id = fee.Id,
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount + 1
+                };
+            }).ToList();
+            feesAfterDelete.RemoveAt(0);
+            part.ExciseFees.Should().NotBeEquivalentTo(feesAfterDelete);
+            var updatedExciseFees = ExciseFeesFactory.Create(feesAfterDelete);
+
+            var result = part.UpdateExciseFees(updatedExciseFees);
+
+            result.IsSuccess.Should().BeTrue();
+            part.ExciseFees.Count.Should().Be(feeCount - 1);
+            part.ExciseFees.Should().BeEquivalentTo(updatedExciseFees);
+            part.ExciseFees.Should().NotBeEquivalentTo(originalFees);
         }
 
         internal class TestData

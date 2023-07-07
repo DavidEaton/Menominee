@@ -451,7 +451,7 @@ namespace CustomerVehicleManagement.Tests.Entities
         }
 
         [Fact]
-        public void SyncContactDetails()
+        public void UpdateContactDetails()
         {
             var organization = new OrganizationFaker(true, emailsCount: 3, phonesCount: 3).Generate();
 
@@ -478,13 +478,13 @@ namespace CustomerVehicleManagement.Tests.Entities
             var updatedContactDetails = ContactDetailsFactory.Create(
                 phonesToWrite: updatedPhones,
                 emailsToWrite: updatedEmails,
-                addressToWrite: AddressHelper.ConvertToWriteDto(updatedAddress));
+                addressToWrite: AddressHelper.ConvertToWriteDto(updatedAddress)).Value;
 
             organization.Phones.Should().NotBeEquivalentTo(updatedPhones);
             organization.Emails.Should().NotBeEquivalentTo(updatedEmails);
             organization.Address.Should().NotBe(updatedAddress);
 
-            organization.SyncContactDetails(updatedContactDetails);
+            organization.UpdateContactDetails(updatedContactDetails);
 
             organization.Phones.Should().BeEquivalentTo(updatedPhones);
             organization.Emails.Should().BeEquivalentTo(updatedEmails);

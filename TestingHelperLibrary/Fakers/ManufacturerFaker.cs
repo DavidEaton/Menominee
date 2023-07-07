@@ -11,9 +11,9 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                string name = faker.Company.CompanyName();
-                string prefix = faker.Random.AlphaNumeric(3).ToUpper();
-                string code = name[..3].ToUpper();
+                var name = faker.Company.CompanyName();
+                var prefix = faker.Random.AlphaNumeric(3).ToUpper();
+                var code = name[..3].ToUpper();
 
                 var result = Manufacturer.Create(name, prefix, code);
 
