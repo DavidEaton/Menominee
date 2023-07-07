@@ -2,14 +2,14 @@
     <div class="form-row">
         <div class="form-group col">
             <label for="vehicle">Vehicle</label>
-            <input type="text" class="form-control" @bind-value="@RepairOrder.Vehicle" id="vehicle">
+            <input type="text" class="form-control" value="@RepairOrder?.Vehicle?.ToString()" disabled id="vehicle">
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-12 col-md-6">
             <label for="plate">Plate</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="plate">
+                <input type="text" class="form-control" disabled id="plate">
                 <div class="input-group-append">
                     <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
                 </div>
@@ -18,7 +18,7 @@
         <div class="form-group col">
             <label for="unitNumber">Unit Number</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="unitNumber">
+                <input type="text" class="form-control" disabled id="unitNumber">
                 <div class="input-group-append">
                     <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
                 </div>
@@ -29,7 +29,7 @@
         <div class="form-group col">
             <label for="vin">VIN</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="vin">
+                <input type="text" class="form-control" value="@RepairOrder?.Vehicle?.VIN" disabled id="vin">
                 <div class="input-group-append">
                     <button class="btn btn-secondary" type="button"><i class="fas fa-search"></i></button>
                 </div>
@@ -39,11 +39,11 @@
     <div class="form-row">
         <div class="form-group col-12 col-lg-6">
             <label for="engine">Engine</label>
-            <input type="text" class="form-control" id="engine">
+            <input type="text" class="form-control" disabled id="engine">
         </div>
         <div class="form-group col-12 col-lg-6">
             <label for="color">Color</label>
-            <input type="text" class="form-control" id="color">
+            <input type="text" class="form-control" disabled id="color">
         </div>
     </div>
     <div class="form-row m-align-bottoms">

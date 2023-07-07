@@ -8,10 +8,6 @@ using Menominee.Client.Services.SaleCodes;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
@@ -43,15 +39,17 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
-        //[Parameter]
-        //public EventCallback OnSave { get; set; }
+        [Parameter]
+        public EventCallback OnSave { get; set; }
 
-        //[Parameter]
-        //public EventCallback OnCancel { get; set; }
+        [Parameter]
+        public EventCallback OnCancel { get; set; }
 
         private IReadOnlyList<ManufacturerToReadInList> Manufacturers = null;
         private IReadOnlyList<SaleCodeToReadInList> SaleCodes = null;
         private IReadOnlyList<ProductCodeToReadInList> ProductCodes = null;
+
+        private bool parametersSet = false;
 
         //protected override void OnInitialized()
         //{
@@ -73,6 +71,9 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override async Task OnParametersSetAsync()
         {
+            if (parametersSet)
+                return;
+            parametersSet = true;
             Manufacturers = (await ManufacturerDataService.GetAllManufacturersAsync()).ToList();
             SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
             ProductCodes = (await ProductCodeDataService.GetAllProductCodesAsync()).ToList();    // FIX ME - need to restrict list to mfr, salecode

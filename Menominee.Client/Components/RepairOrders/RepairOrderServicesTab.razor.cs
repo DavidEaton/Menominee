@@ -3,15 +3,11 @@ using CustomerVehicleManagement.Shared.Models.Manufacturers;
 using CustomerVehicleManagement.Shared.Models.ProductCodes;
 using CustomerVehicleManagement.Shared.Models.RepairOrders;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems.Item;
 using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
 using CustomerVehicleManagement.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
@@ -94,7 +90,7 @@ namespace Menominee.Client.Components.RepairOrders
                 ItemToModify.Item.PartNumber = SelectedInventoryItem.ItemNumber;
                 ItemToModify.Item.Description = SelectedInventoryItem.Description;
                 //ItemToModify.SellingPrice = SelectedInventoryItem.SuggestedPrice;
-                if (SelectedInventoryItem.Labor.LaborAmount.Amount > 0)
+                if (SelectedInventoryItem.Labor?.LaborAmount.Amount > 0)
                 {
                     ItemToModify.LaborAmount.PayType = ItemLaborType.Flat;
                     ItemToModify.LaborAmount.Amount = SelectedInventoryItem.Labor.LaborAmount.Amount;

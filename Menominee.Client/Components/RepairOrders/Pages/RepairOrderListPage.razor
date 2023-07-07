@@ -12,10 +12,8 @@
             @if (Loading)
             {
                 <p><em>Loading...</em></p>
-            } else if (ROList?.Any() != true)
-            {
-                <p><em>No Orders Found</em></p>
-            } else if (ROList != null)
+            } 
+            else if (ROList != null)
             {
                 <TelerikGrid Data="ROList"
                              OnRowClick="@OnRowSelected"

@@ -4,7 +4,7 @@
             <Content>
                 <TelerikGrid Data="Services"
                              SelectionMode="GridSelectionMode.Single"
-                             ref="@ServicesGrid">
+                             @ref="@ServicesGrid">
                     <DetailTemplate>
                         @{
                             var service = context as RepairOrderServiceToWrite;

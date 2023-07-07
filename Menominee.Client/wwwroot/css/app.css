@@ -364,7 +364,7 @@ app {
     color: black !important;
 }
 
-.popupWindowClass .k-dialog-titlebar.k-header.k-window-titlebar { /* targets the entire titlebar */
+.k-window-titlebar { /* targets the entire titlebar */
     background: #274c77;
     color: white;
 }
