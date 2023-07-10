@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace CustomerVehicleManagement.Tests.Helpers
+namespace Menominee.Tests.Helpers
 {
     public class DbContextHelper
     {

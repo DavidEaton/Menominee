@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using CustomerVehicleManagement.Domain.Entities;
+using Menominee.Domain.Entities;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Fakers

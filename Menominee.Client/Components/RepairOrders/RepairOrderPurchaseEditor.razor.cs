@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
+﻿using Menominee.Shared.Models.Payables.Vendors;
+using Menominee.Shared.Models.RepairOrders.Purchases;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;

@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using Menominee.Shared.Models.SaleCodes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

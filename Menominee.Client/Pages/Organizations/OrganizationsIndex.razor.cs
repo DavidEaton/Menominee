@@ -1,7 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using CustomerVehicleManagement.Shared.Models.Addresses;
-using CustomerVehicleManagement.Shared.Models.Contactable;
-using CustomerVehicleManagement.Shared.Models.Organizations;
+﻿using Menominee.Shared.Models;
+using Menominee.Shared.Models.Addresses;
+using Menominee.Shared.Models.Contactable;
+using Menominee.Shared.Models.Organizations;
 using Menominee.Client.Components.Address;
 using Menominee.Client.Services;
 using Menominee.Common.Enums;

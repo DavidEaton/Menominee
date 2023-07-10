@@ -1,13 +1,13 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
-using CustomerVehicleManagement.Shared.Models.Taxes;
+using Menominee.Domain.Entities.Payables;
+using Menominee.Domain.Entities.Taxes;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Invoices.LineItems;
+using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
+using Menominee.Shared.Models.Payables.Invoices.Taxes;
+using Menominee.Shared.Models.Payables.Vendors;
+using Menominee.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using TestingHelperLibrary.Fakers;
 

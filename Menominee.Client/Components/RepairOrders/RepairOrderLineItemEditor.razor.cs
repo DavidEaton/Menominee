@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems;
+﻿using Menominee.Shared.Models.RepairOrders.Items;
+using Menominee.Shared.Models.RepairOrders.LineItems;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

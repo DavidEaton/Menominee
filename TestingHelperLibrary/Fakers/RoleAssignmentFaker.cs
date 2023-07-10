@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Enums;
+using Menominee.Domain.Entities;
+using Menominee.Domain.Enums;
 
 namespace TestingHelperLibrary.Fakers
 {

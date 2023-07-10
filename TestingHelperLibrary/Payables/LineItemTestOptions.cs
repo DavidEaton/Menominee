@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems.Items;
+﻿using Menominee.Shared.Models.Payables.Invoices.LineItems.Items;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Payables

@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.Inventory.MaintenanceItems;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Inventory.MaintenanceItems;
 using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;

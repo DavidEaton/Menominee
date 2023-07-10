@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Api.Common;
+﻿using Menominee.Api.Common;
 using System.Text.Json;
 
 namespace TestingHelperLibrary

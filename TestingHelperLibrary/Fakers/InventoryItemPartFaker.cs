@@ -1,10 +1,10 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
+using Menominee.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
 using TestingHelperLibrary.Fakers;
 
-namespace CustomerVehicleManagement.Tests.Helpers.Fakers
+namespace Menominee.Tests.Helpers.Fakers
 {
     public class InventoryItemPartFaker : Faker<InventoryItemPart>
     {

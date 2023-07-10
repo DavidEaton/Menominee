@@ -55,7 +55,7 @@ stages:
           inputs:
             command: custom
             custom: ef
-            arguments: 'migrations script --context ApplicationDbContext --idempotent --project CustomerVehicleManagement.Api\CustomerVehicleManagement.Api.csproj -o api-migrations.sql -- $(ApiConnectionString)'
+            arguments: 'migrations script --context ApplicationDbContext --idempotent --project Menominee.Api\Menominee.Api.csproj -o api-migrations.sql -- $(ApiConnectionString)'
 
         - task: CopyFiles@2
           displayName: 'Copy EF Scripts to Staging Directory'
@@ -114,7 +114,7 @@ stages:
                   deployToSlotOrASE: true
                   slotName: '$(Slot)'
                   ResourceGroupName: '$(ResourceGroup)' 
-                  packageForLinux: '$(Pipeline.Workspace)/drop/CustomerVehicleManagement.Api.zip'
+                  packageForLinux: '$(Pipeline.Workspace)/drop/Menominee.Api.zip'
                   
   - stage: DeployClient
     displayName: 'Deploy Client Application'

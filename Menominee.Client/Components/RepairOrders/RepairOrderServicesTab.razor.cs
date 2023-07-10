@@ -1,10 +1,10 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Items;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
+using Menominee.Shared.Models.ProductCodes;
+using Menominee.Shared.Models.RepairOrders;
+using Menominee.Shared.Models.RepairOrders.Items;
+using Menominee.Shared.Models.RepairOrders.Services;
+using Menominee.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

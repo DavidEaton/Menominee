@@ -1,7 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.LineItems;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
+using Menominee.Shared.Models.Payables.Invoices.LineItems;
+using Menominee.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;

@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Taxes;
+﻿using Menominee.Shared.Models.Taxes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

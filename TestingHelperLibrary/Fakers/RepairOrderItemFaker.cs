@@ -1,7 +1,7 @@
 ﻿using Bogus;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using CustomerVehicleManagement.Tests.Helpers.Fakers;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Tests.Helpers.Fakers;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Fakers

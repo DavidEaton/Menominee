@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+﻿using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Menominee.Common.ValueObjects;
-using Organization = CustomerVehicleManagement.Domain.Entities.Organization;
-using Person = CustomerVehicleManagement.Domain.Entities.Person;
+using Organization = Menominee.Domain.Entities.Organization;
+using Person = Menominee.Domain.Entities.Person;
 
 namespace TestingHelperLibrary.Fakers
 {

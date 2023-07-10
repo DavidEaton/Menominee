@@ -1,8 +1,8 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
-using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Labor;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Part;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
+using Menominee.Shared.Models.Inventory.InventoryItems.Part;
+using Menominee.Shared.Models.Manufacturers;
 using Menominee.Common.Enums;
 using TestingHelperLibrary.Fakers;
 

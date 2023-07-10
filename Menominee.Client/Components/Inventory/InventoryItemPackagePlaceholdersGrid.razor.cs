@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems.Package;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems.Package;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using System;

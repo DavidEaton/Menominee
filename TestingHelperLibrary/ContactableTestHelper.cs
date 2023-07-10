@@ -1,11 +1,11 @@
-﻿using CustomerVehicleManagement.Domain.Entities;
+﻿using Menominee.Domain.Entities;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using TestingHelperLibrary.Fakers;
 using Address = Menominee.Common.ValueObjects.Address;
-using Email = CustomerVehicleManagement.Domain.Entities.Email;
-using Person = CustomerVehicleManagement.Domain.Entities.Person;
-using Phone = CustomerVehicleManagement.Domain.Entities.Phone;
+using Email = Menominee.Domain.Entities.Email;
+using Person = Menominee.Domain.Entities.Person;
+using Phone = Menominee.Domain.Entities.Phone;
 
 namespace TestingHelperLibrary
 {

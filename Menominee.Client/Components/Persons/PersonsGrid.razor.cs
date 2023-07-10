@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Persons;
+﻿using Menominee.Shared.Models.Persons;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

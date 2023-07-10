@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Invoices;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared.Models;
@@ -244,7 +244,7 @@ namespace Menominee.Client.Components.Payables.Pages
             //    }
             //    //var reportSource = new TypeReportSource
             //    //{
-            //    //    TypeName = typeof(VendorInvoiceReport).AssemblyQualifiedName// "CustomerVehicleManagement.Api.Reports.VendorInvoice"
+            //    //    TypeName = typeof(VendorInvoiceReport).AssemblyQualifiedName// "Menominee.Api.Reports.VendorInvoice"
             //    //};
             //    var reportSource = new UriReportSource
             //    {

@@ -1,6 +1,6 @@
-﻿using CustomerVehicleManagement.Shared;
-using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.Manufacturers;
+﻿using Menominee.Shared;
+using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Manufacturers;
 using Menominee.Client.Services.Inventory;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Common.Enums;

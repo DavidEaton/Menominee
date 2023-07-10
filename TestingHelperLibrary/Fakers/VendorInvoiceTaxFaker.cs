@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using CustomerVehicleManagement.Domain.Entities.Payables;
+using Menominee.Domain.Entities.Payables;
 
 namespace TestingHelperLibrary.Fakers
 {

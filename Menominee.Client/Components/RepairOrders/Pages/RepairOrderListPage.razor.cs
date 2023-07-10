@@ -1,9 +1,9 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
+﻿using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CustomerVehicleManagement.Shared;
+using Menominee.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Telerik.Blazor.Components;
 

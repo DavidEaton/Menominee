@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Techs;
+﻿using Menominee.Shared.Models.RepairOrders.Services;
+using Menominee.Shared.Models.RepairOrders.Techs;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 

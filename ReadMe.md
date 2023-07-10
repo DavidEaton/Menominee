@@ -28,7 +28,7 @@ _definition:_ target branch - normally this is master but if you're working on a
 ### Save Your Progress
 Commit your work on a regular basis with real comments. Comments such as "responding to PR feedback" are less than useful. What actually changed in this commit makes a better comment and development trail.
 ### Test Your Work
-If you didn't write unit tests along the way. Add them now.
+If you didn't write unit tests along the way, add them now.
 
 When you think you're done, actually go back to the "definition of done" on the task and do a full manual test.
 

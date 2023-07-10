@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Payments;
+using Menominee.Shared.Models.Payables.Invoices.Payments;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

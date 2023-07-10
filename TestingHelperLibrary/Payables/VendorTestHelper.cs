@@ -1,6 +1,6 @@
 ﻿using AutoBogus;
-using CustomerVehicleManagement.Domain.Entities.Payables;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Domain.Entities.Payables;
+using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Payables

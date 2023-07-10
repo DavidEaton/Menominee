@@ -1,7 +1,7 @@
-﻿using CustomerVehicleManagement.Shared.Models.Manufacturers;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.LineItems.Item;
-using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using Menominee.Shared.Models.Manufacturers;
+using Menominee.Shared.Models.ProductCodes;
+using Menominee.Shared.Models.RepairOrders.LineItems.Item;
+using Menominee.Shared.Models.SaleCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Client.Services.SaleCodes;

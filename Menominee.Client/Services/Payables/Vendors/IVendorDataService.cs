@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+﻿using Menominee.Shared.Models;
+using Menominee.Shared.Models.Payables.Vendors;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

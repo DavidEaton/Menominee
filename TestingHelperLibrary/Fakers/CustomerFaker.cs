@@ -1,9 +1,9 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Domain.Entities;
+using Menominee.Domain.Entities;
 using Menominee.Common.Enums;
 using Entity = Menominee.Common.Entity;
-using Person = CustomerVehicleManagement.Domain.Entities.Person;
+using Person = Menominee.Domain.Entities.Person;
 
 namespace TestingHelperLibrary.Fakers
 {

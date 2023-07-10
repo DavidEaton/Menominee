@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
+﻿using Menominee.Shared.Models.Payables.Invoices;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

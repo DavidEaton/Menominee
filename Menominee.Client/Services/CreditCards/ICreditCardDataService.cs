@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.CreditCards;
+﻿using Menominee.Shared.Models.CreditCards;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

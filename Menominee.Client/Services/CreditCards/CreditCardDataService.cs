@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.CreditCards;
+using Menominee.Shared.Models.CreditCards;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

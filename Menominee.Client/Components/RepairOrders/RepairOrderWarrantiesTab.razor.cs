@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Warranties;
+﻿using Menominee.Shared.Models.RepairOrders;
+using Menominee.Shared.Models.RepairOrders.Warranties;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using Telerik.Blazor.Components;

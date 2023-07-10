@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

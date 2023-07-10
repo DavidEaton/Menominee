@@ -1,8 +1,8 @@
-﻿using CustomerVehicleManagement.Domain.Entities.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Payments;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Services;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Statuses;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Taxes;
+﻿using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Shared.Models.RepairOrders.Payments;
+using Menominee.Shared.Models.RepairOrders.Services;
+using Menominee.Shared.Models.RepairOrders.Statuses;
+using Menominee.Shared.Models.RepairOrders.Taxes;
 using TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.RepairOrders

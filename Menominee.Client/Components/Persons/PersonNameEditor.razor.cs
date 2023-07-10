@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Persons;
+﻿using Menominee.Shared.Models.Persons;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.Persons

@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.SaleCodes;
+﻿using Menominee.Shared.Models.SaleCodes;
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

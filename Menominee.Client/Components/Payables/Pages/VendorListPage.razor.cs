@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+﻿using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;

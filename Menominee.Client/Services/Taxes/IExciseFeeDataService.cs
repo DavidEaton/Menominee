@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.Taxes;
+﻿using Menominee.Shared.Models.Taxes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

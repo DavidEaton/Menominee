@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders.SerialNumbers;
+﻿using Menominee.Shared.Models.RepairOrders.SerialNumbers;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

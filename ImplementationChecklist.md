@@ -71,16 +71,16 @@ The outcome is an encapsulated class with properties that can only be modified t
 Test class name + test name should tell a story. For example, ExciseFee domain class unit test class is named ExciseFeeShould.cs.  
 
 ExciseFeeShould.cs tests:  
-	CreateExciseFee  
-	Not_Create_ExciseFee_With_Invalid_Description  
-	Not_Create_ExciseFee_With_Null_Description  
-	Not_Create_ExciseFee_With_Invalid_Order  
-	Not_Create_ExciseFee_With_Invalid_TaxIdNumber  
-	Not_Create_ExciseFee_With_Invalid_PartTaxRate  
-	Not_Create_ExciseFee_With_Invalid_LaborTaxRate  
-	Not_Create_ExciseFee_With_Invalid_SalesTaxes  
+	Create_ExciseFee  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_Description  
+	Return_Failure_On_Create_ExciseFee_With_Null_Description  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_Order  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_TaxIdNumber  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_PartTaxRate  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_LaborTaxRate  
+	Return_Failure_On_Create_ExciseFee_With_Invalid_SalesTaxes  
 
-So one story from the ExciseFee unit tests: ExciseFeeShould.Not_Create_ExciseFee_With_Invalid_Description.  
+So one story from the ExciseFee unit tests: ExciseFeeShould.Return_Failure_On_Create_ExciseFee_With_Invalid_Description.  
 
 Create a test for every possible condition for each domain class invariant.
 
@@ -162,19 +162,15 @@ In ApplicationDbContext.OnConfiguring(), comment all but last line:
 
 Run in Package Manager console:  
 
-            add-migration Initial -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
+            add-migration Initial -Context Menominee.Api.Data.ApplicationDbContext
 
 Check the contents of your migration [Reference](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/managing?tabs=dotnet-core-cli) to make sure the intended results are actually there
 
-            update-database -Context CustomerVehicleManagement.Api.Data.ApplicationDbContext
-
-If updating the Users database in IdentityServer4:
-
-            Script-Migration -Idempotent -Context Janco.Idp.Data.Contexts.UserDbContext
+            update-database -Context Menominee.Api.Data.ApplicationDbContext
 
 Create idempotent script for tenants/Tenant Manager:  
 
-            Script-Migration -Idempotent -Context CustomerVehicleManagement
+            Script-Migration -Idempotent -Context Menominee
                 .Api.Data.ApplicationDbContext
 
 
@@ -215,7 +211,7 @@ Controllers look like they aren't checking much because the ASP.NET request pipe
 
 The only other place me must define constraints is in our persistence layer: the EntityConfiguration<T> classes in the API project. **Our domain class invariants are the single source of truth containing our business rules.** So our domain class invariants must be used to inform the EntityConfiguration<T> classes when we create them. 
 
-<h3 style="color:#00bfff">Create an API Repository Interface for each domain class</h3>
+<h3 style="color:#00bfff">Create an API Repository Interface for each domain aggregate class</h3>
 
 ...named I[DomainClass]Repository. For example, IExciseFeeRepository.  
 
@@ -224,13 +220,13 @@ For example:
 
     public interface IExciseFeeRepository
     {
-        Task AddExciseFeeAsync(ExciseFee entity);
-        Task<ExciseFee> GetExciseFeeEntityAsync(long id);
-        Task<ExciseFeeToRead> GetExciseFeeAsync(long id);
-        Task<IReadOnlyList<ExciseFeeToReadInList>> GetExciseFeeListAsync();
+        Task AddExciseFee(ExciseFee entity);
+        Task<ExciseFee> GetExciseFeeEntity(long id);
+        Task<ExciseFeeToRead> GetExciseFee(long id);
+        Task<IReadOnlyList<ExciseFeeToReadInList>> GetExciseFeeList();
         void DeleteExciseFee(ExciseFee entity);
-        Task<bool> ExciseFeeExistsAsync(long id);
-        Task SaveChangesAsync();
+        Task<bool> ExciseFeeExists(long id);
+        Task SaveChanges();
     }
 
 Implement repository in concrete class:  
@@ -277,7 +273,7 @@ ConvertPurchase**s**ReadToWriteDto**s**
 #### Controllers
  Refer to OrganizationsController.cs for implementation guidance.  
 #### Register interface and repository with API dependency injection (DI) container.
-#### Add DBSets to AppDbContext
+#### Add domain aggregate root DBSets to AppDbContext
 #### Test API with Postman  
 #### Test validators with Postman  
 #### Create integration tests

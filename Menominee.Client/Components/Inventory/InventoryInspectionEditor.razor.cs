@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Inventory.InventoryItems;
-using CustomerVehicleManagement.Shared.Models.ProductCodes;
+﻿using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.ProductCodes;
 using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Common.Enums;

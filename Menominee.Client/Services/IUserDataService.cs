@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using Menominee.Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telerik.Blazor.Components;
 using Telerik.Blazor;
-using CustomerVehicleManagement.Shared.Models.Contactable;
+using Menominee.Shared.Models.Contactable;
 using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Phones

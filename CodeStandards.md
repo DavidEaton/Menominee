@@ -162,7 +162,7 @@ Framework of choice is <a href="https://xunit.net/">xunit</a>. With it we use <a
             // Fluent output
             customer.Entity.Should().BeOfType<Email>();
             Message: 
-                Expected type to be CustomerVehicleManagement.Domain.Entities.Email, but found CustomerVehicleManagement.Domain.Entities.Person.
+                Expected type to be Menominee.Domain.Entities.Email, but found Menominee.Domain.Entities.Person.
 
             // As you may have noticed, the fluent message reveals enough info to quickly determine the cause of the failed test; without fluent assertions the message is vague and may require debugging to determine the cause.
 

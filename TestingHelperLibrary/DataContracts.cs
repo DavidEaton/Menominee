@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Domain.Entities.Inventory;
-using CustomerVehicleManagement.Domain.Entities.Taxes;
+﻿using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Entities.Taxes;
 using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary

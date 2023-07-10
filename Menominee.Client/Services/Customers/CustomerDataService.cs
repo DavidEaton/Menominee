@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.Customers;
+using Menominee.Shared.Models.Customers;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

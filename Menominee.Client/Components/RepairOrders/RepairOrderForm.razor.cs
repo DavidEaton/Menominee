@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.RepairOrders;
-using CustomerVehicleManagement.Shared.Models.RepairOrders.Purchases;
+﻿using Menominee.Shared.Models.RepairOrders;
+using Menominee.Shared.Models.RepairOrders.Purchases;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;

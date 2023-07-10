@@ -1,5 +1,5 @@
-﻿using CustomerVehicleManagement.Shared.Models.Customers;
-using CustomerVehicleManagement.Shared.Models.Persons;
+﻿using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Persons;
 using Menominee.Client.Services.Customers;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;

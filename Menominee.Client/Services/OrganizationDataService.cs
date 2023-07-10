@@ -1,4 +1,4 @@
-﻿using CustomerVehicleManagement.Shared.Models;
+﻿using Menominee.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
-using CustomerVehicleManagement.Shared.Models.Organizations;
+using Menominee.Shared.Models.Organizations;
 
 namespace Menominee.Client.Services
 {

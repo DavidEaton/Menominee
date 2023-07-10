@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 using Blazored.Toast;
-using CustomerVehicleManagement.Shared;
+using Menominee.Shared;
 using Menominee.Client;
 using Menominee.Client.Components.RepairOrders;
 using Menominee.Client.MessageHandlers;

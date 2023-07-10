@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Vendors;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared.Models;
 using Menominee.Common.Enums;

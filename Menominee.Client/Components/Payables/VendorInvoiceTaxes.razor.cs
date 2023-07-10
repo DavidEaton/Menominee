@@ -1,6 +1,6 @@
-﻿using CustomerVehicleManagement.Shared.Models.Payables.Invoices;
-using CustomerVehicleManagement.Shared.Models.Payables.Invoices.Taxes;
-using CustomerVehicleManagement.Shared.Models.Taxes;
+﻿using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Invoices.Taxes;
+using Menominee.Shared.Models.Taxes;
 using Menominee.Client.Services.Taxes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
