@@ -4,10 +4,6 @@ using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {
@@ -39,7 +35,7 @@ namespace Menominee.Client.Components.Inventory
 
         protected override async Task OnInitializedAsync()
         {
-            manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous)).Id;
+            manufacturerId = (await manufacturerDataService.GetManufacturerAsync(StaticManufacturerCodes.Miscellaneous))?.Id ?? 0;
 
             ProductCodes = (await productCodeDataService
                 .GetAllProductCodesAsync(manufacturerId))
@@ -94,7 +90,7 @@ namespace Menominee.Client.Components.Inventory
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
                 Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
-            if (Item != null && Item.ProductCode != null)
+            if (Item != null && Item.ProductCode != null && Item.ProductCode.SaleCode != null && Item.ProductCode.SaleCode?.Id != 0)
                 SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;
             else
                 SaleCode = string.Empty;

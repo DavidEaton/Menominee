@@ -9,8 +9,8 @@ namespace Menominee.Shared.Models.SaleCodes
             return saleCode is null
                 ? null
                 : SaleCode.Create(
-                    saleCode.Code.ToUpper(),
                     saleCode.Name,
+                    saleCode.Code.ToUpper(),
                     saleCode.DesiredMargin,
                     saleCode.LaborRate,
                     SaleCodeShopSuppliesHelper.ConvertWriteDtoToEntity(

@@ -102,7 +102,7 @@ namespace Menominee.Client.Components.Inventory
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
                 Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
-            if (Item != null && Item.ProductCode != null)
+            if (Item != null && Item.ProductCode != null && Item.ProductCode.SaleCode != null && Item.ProductCode.SaleCode.Id != 0)
                 SaleCode = Item.ProductCode.SaleCode.Code + " - " + Item.ProductCode.SaleCode.Name;
             else
                 SaleCode = string.Empty;

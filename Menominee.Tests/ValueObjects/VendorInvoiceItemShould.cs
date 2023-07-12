@@ -36,7 +36,7 @@ namespace Menominee.Tests.ValueObjects
         public void Create_VendorInvoiceItem_With_Optional_SaleCode()
         {
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
-            var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
+            var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies).Value;
 
             var resultOrError = VendorInvoiceItem.Create("a part", "a description", saleCode: saleCode);
 
@@ -120,7 +120,7 @@ namespace Menominee.Tests.ValueObjects
 
             item.SaleCode.Should().BeNull();
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
-            var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
+            var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies).Value;
 
             var result = item.NewSaleCode(saleCode);
 
@@ -145,7 +145,7 @@ namespace Menominee.Tests.ValueObjects
         {
             var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
-            var saleCode = SaleCode.Create("SC1", "Sale Code One", .25, 100.00, supplies).Value;
+            var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies).Value;
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer, saleCode).Value;
 
             item.SaleCode.Should().Be(saleCode);

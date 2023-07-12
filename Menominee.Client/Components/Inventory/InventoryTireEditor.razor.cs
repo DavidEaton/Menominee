@@ -5,9 +5,6 @@ using Menominee.Client.Services.Manufacturers;
 using Menominee.Client.Services.ProductCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory
 {
@@ -127,8 +124,8 @@ namespace Menominee.Client.Components.Inventory
             if (productCodeId > 0 && Item.ProductCode?.Id != productCodeId)
                 Item.ProductCode = await productCodeDataService.GetProductCodeAsync(productCodeId);
 
-            if (Item != null && Item.ProductCode != null)
-                SaleCode = Item.ProductCode?.SaleCode.Code + " - " + Item.ProductCode?.Name;
+            if (Item != null && Item.ProductCode != null && Item.ProductCode.SaleCode != null && Item.ProductCode.SaleCode.Id != 0)
+                    SaleCode = Item.ProductCode?.SaleCode.Code + " - " + Item.ProductCode?.Name;
             else
                 SaleCode = string.Empty;
         }
