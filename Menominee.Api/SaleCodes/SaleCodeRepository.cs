@@ -35,14 +35,19 @@ namespace Menominee.Api.SaleCodes
         public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)
         {
             return SaleCodeHelper.ConvertToReadDto(await context.SaleCodes
+                .Include(saleCode => saleCode.ShopSupplies)
+                .AsNoTracking()
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(saleCode => saleCode.Code == code));
         }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {
-            return SaleCodeHelper.ConvertToReadDto(
-                await context.SaleCodes.FirstOrDefaultAsync(
-                    saleCode => saleCode.Id == id));
+            return SaleCodeHelper.ConvertToReadDto(await context.SaleCodes
+                .Include(saleCode => saleCode.ShopSupplies)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(saleCode => saleCode.Id == id));
         }
 
         public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids)
