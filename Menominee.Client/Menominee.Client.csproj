@@ -32,9 +32,15 @@
     <PackageReference Include="Telerik.Reporting" Version="17.0.23.315" />
     <PackageReference Include="Telerik.ReportViewer.BlazorNative" Version="17.0.23.315" />
   </ItemGroup>
+	
   <ItemGroup>
     <PackageReference Include="Telerik.UI.for.Blazor" Version="4.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+	<TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+  </ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\Menominee.Domain\Menominee.Domain.csproj" />
     <ProjectReference Include="..\Menominee.Shared\Menominee.Shared.csproj" />
