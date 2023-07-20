@@ -2,7 +2,7 @@
     <div>
         <Card Title="Services">
             <Content>
-                <TelerikGrid Data="Services"
+                <TelerikGrid Data="ServicesObservable"
                              SelectionMode="GridSelectionMode.Single"
                              @ref="@ServicesGrid">
                     <DetailTemplate>
@@ -118,6 +118,7 @@
 
                             <div class="m-job-items-bottom-spacer"></div>
                         }
+
                     </DetailTemplate>
 
                     <GridColumns>

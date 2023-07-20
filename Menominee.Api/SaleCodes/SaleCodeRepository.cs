@@ -32,14 +32,6 @@ namespace Menominee.Api.SaleCodes
                 context.Remove(saleCodeFromContext);
         }
 
-        public async Task<SaleCodeToRead> GetSaleCodeAsync(string code)
-        {
-            return SaleCodeHelper.ConvertToReadDto(await context.SaleCodes
-                .Include(saleCode => saleCode.ShopSupplies)
-                .AsNoTracking()
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(saleCode => saleCode.Code == code));
-        }
 
         public async Task<SaleCodeToRead> GetSaleCodeAsync(long id)
         {

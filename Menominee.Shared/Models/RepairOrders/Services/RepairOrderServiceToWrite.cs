@@ -10,7 +10,7 @@ namespace Menominee.Shared.Models.RepairOrders.Services
     {
         public long Id { get; set; }
         public string ServiceName { get; set; } = string.Empty;
-        public SaleCodeToRead SaleCode { get; set; }
+        public SaleCodeToRead SaleCode { get; set; } = new();
         public bool IsCounterSale { get; set; } = false;
         public bool IsDeclined { get; set; } = false;
         public double PartsTotal { get; set; } = 0.0;

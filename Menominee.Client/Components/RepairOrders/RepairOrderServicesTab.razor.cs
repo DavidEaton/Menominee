@@ -10,6 +10,7 @@ using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
+using System.Collections.ObjectModel;
 
 namespace Menominee.Client.Components.RepairOrders
 {
@@ -23,19 +24,14 @@ namespace Menominee.Client.Components.RepairOrders
 
         [Parameter]
         public IList<RepairOrderServiceToWrite> Services { get; set; }
-
         [CascadingParameter]
         public DialogFactory Dialogs { get; set; }
-
         [CascadingParameter]
         public RepairOrderToWrite RepairOrder { get; set; }
-
         public TelerikGrid<RepairOrderServiceToWrite> ServicesGrid { get; set; }
-
         public IEnumerable<RepairOrderLineItemToWrite> SelectedItems { get; set; } = Enumerable.Empty<RepairOrderLineItemToWrite>();
         public RepairOrderLineItemToWrite SelectedItem { get; set; }
         public RepairOrderLineItemToWrite ItemToModify { get; set; } = null;
-
         private FormMode ItemFormMode = FormMode.Unknown;
         private bool EditItemDialogVisible { get; set; } = false;
         private bool EditLaborDialogVisible { get; set; } = false;
@@ -47,6 +43,12 @@ namespace Menominee.Client.Components.RepairOrders
         private bool CanAddPart { get; set; } = true;
         //private bool CanAddLabor { get; set; } = true;
         public RepairOrderServiceToWrite ServiceToEdit { get; set; }
+
+        public ObservableCollection<RepairOrderServiceToWrite> ServicesObservable { get; set; }
+        protected override async Task OnInitializedAsync()
+        {
+            ServicesObservable = new ObservableCollection<RepairOrderServiceToWrite>(Services);
+        }
 
         private static void CopyItem(RepairOrderLineItemToWrite src, RepairOrderLineItemToWrite dst)
         {
@@ -213,7 +215,6 @@ namespace Menominee.Client.Components.RepairOrders
                     }
                     ServicesGrid?.Rebind();
                 }
-
                 RepairOrder?.Recalculate();
             }
         }
@@ -229,7 +230,7 @@ namespace Menominee.Client.Components.RepairOrders
             var service = FindServiceByCode(saleCode); //FindService(ItemToModify.SaleCode.Code);
 
             if (service is null)
-                service = AddService(saleCode, saleCodeName);   //AddService(ItemToModify.SaleCode.Code);
+                service = await AddService(ItemToModify.Item.SaleCode.Id, saleCodeName);   //AddService(ItemToModify.SaleCode.Code);
 
             if (ItemFormMode is FormMode.Add)
                 service.LineItems.Add(ItemToModify);
@@ -238,6 +239,7 @@ namespace Menominee.Client.Components.RepairOrders
 
             service.Recalculate();
             RepairOrder?.Recalculate();
+            ServicesObservable.Add(service);
 
             EditItemDialogVisible = false;
             EditLaborDialogVisible = false;
@@ -297,15 +299,15 @@ namespace Menominee.Client.Components.RepairOrders
 
         private RepairOrderServiceToWrite FindServiceByCode(string saleCode)
         {
-            return RepairOrder.Services?.Where(service => service.SaleCode.Name == saleCode).FirstOrDefault();
+            return RepairOrder.Services?.Where(service => service.SaleCode.Code == saleCode).FirstOrDefault();
         }
 
-        private RepairOrderServiceToWrite AddService(string saleCode, string name)
-        {
-            RepairOrderServiceToWrite service = new()
+        private async Task<RepairOrderServiceToWrite> AddService(long saleCode, string name)
+        {            
+            RepairOrderServiceToWrite service = new RepairOrderServiceToWrite()
             {
                 ServiceName = name,
-                SaleCode = new(),
+                SaleCode = await SaleCodeDataService.GetSaleCodeAsync(saleCode),
             };
 
             RepairOrder.Services.Add(service);

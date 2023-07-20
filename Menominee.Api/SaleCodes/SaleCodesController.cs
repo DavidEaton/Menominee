@@ -36,18 +36,6 @@ namespace Menominee.Api.SaleCodes
             return Ok(results);
         }
 
-        // api/salecodes/a
-        [HttpGet("{code}")]
-        public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(string code)
-        {
-            var result = await repository.GetSaleCodeAsync(code);
-
-            if (result == null)
-                return NotFound();
-
-            return result;
-        }
-
         // api/salecodes/1
         [HttpGet("{id:long}", Name = "GetSaleCodeAsync")]
         public async Task<ActionResult<SaleCodeToRead>> GetSaleCodeAsync(long id)
