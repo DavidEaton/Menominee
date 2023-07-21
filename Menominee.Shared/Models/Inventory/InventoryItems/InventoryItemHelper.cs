@@ -11,6 +11,7 @@ using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Menominee.Shared.Models.SaleCodes;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems
 {
@@ -196,6 +197,16 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                         Name = item.ProductCode.Manufacturer.Name,
                         Prefix = item.ProductCode.Manufacturer.Prefix
                     },
+                    SaleCode = item.ProductCode.SaleCode is null
+                        ? null
+                        : new SaleCodeToRead()
+                        {
+                            Id = item.ProductCode.SaleCode.Id,
+                            Code = item.ProductCode.SaleCode.Code,
+                            Name = item.ProductCode.SaleCode.Name,
+                            LaborRate = item.ProductCode.SaleCode.LaborRate,
+                            DesiredMargin = item.ProductCode.SaleCode.DesiredMargin
+                        }
                 },
                 ItemType = item.ItemType
             };
@@ -242,7 +253,29 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                 Manufacturer = item.Manufacturer,
                 ItemNumber = item.ItemNumber,
                 Description = item.Description,
-                ProductCode = item.ProductCode,
+                ProductCode = new ProductCodeToRead
+                {
+                    Id = item.ProductCode.Id,
+                    Code = item.ProductCode.Code,
+                    Name = item.ProductCode.Name,
+                    Manufacturer = new ManufacturerToRead
+                    {
+                        Id = item.ProductCode.Manufacturer.Id,
+                        Code = item.ProductCode.Manufacturer.Code,
+                        Name = item.ProductCode.Manufacturer.Name,
+                        Prefix = item.ProductCode.Manufacturer.Prefix
+                    },
+                    SaleCode = item.ProductCode.SaleCode is null
+                        ? null
+                        : new SaleCodeToRead()
+                        {
+                            Id = item.ProductCode.SaleCode.Id,
+                            Code = item.ProductCode.SaleCode.Code,
+                            Name = item.ProductCode.SaleCode.Name,
+                            LaborRate = item.ProductCode.SaleCode.LaborRate,
+                            DesiredMargin = item.ProductCode.SaleCode.DesiredMargin
+                        }
+                },
                 ItemType = item.ItemType
             };
 
@@ -397,6 +430,16 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                             Name = item.ProductCode.Manufacturer.Name,
                             Prefix = item.ProductCode.Manufacturer.Prefix
                         },
+                        SaleCode = item.ProductCode.SaleCode is null
+                        ? null
+                        : new SaleCodeToRead()
+                        {
+                            Id = item.ProductCode.SaleCode.Id,
+                            Code = item.ProductCode.SaleCode.Code,
+                            Name = item.ProductCode.SaleCode.Name,
+                            LaborRate = item.ProductCode.SaleCode.LaborRate,
+                            DesiredMargin = item.ProductCode.SaleCode.DesiredMargin
+                        }
                     },
                     Part = InventoryItemPartHelper.ConvertToWriteDto(item.Part),
                     Labor = InventoryItemLaborHelper.ConvertToWriteDto(item.Labor),
