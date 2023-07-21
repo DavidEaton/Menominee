@@ -1,4 +1,6 @@
-﻿<div id="services-tab">
+﻿@using Telerik.FontIcons
+
+<div id="services-tab">
     <div>
         <Card Title="Services">
             <Content>
@@ -96,19 +98,19 @@
                                     <GridCommandColumn Width="10%"
                                                        Context="RepairOrderServiceToWrite">
                                         <GridCommandButton Command="_Edit"
-                                                           IconClass="fas fa-edit"
+                                                           Icon="@FontIcon.Pencil"
                                                            Size="sm"
                                                            Class="m-inline-button m-edit-btn"
                                                            OnClick="@OnEditItemClick">
                                         </GridCommandButton>
                                         <GridCommandButton Command="_Delete"
-                                                           IconClass="fas fa-trash"
+                                                           Icon="@FontIcon.Trash"
                                                            Size="sm"
                                                            Class="m-inline-button m-delete-btn"
                                                            OnClick="@OnDeleteItemClick">
                                         </GridCommandButton>
                                         <GridCommandButton Command="_ItemMenu"
-                                                           IconClass="fas fa-bars"
+                                                           Icon="@FontIcon.MoreHorizontal"
                                                            Size="sm"
                                                            Class="m-inline-button m-generic-btn">
                                         </GridCommandButton>
