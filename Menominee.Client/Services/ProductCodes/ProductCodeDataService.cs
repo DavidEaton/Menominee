@@ -1,8 +1,4 @@
 ﻿using Menominee.Shared.Models.ProductCodes;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -14,13 +10,15 @@ namespace Menominee.Client.Services.ProductCodes
     {
         private readonly HttpClient httpClient;
         private readonly IToastService toastService;
+        private readonly ILogger<ProductCodeDataService> logger;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/productcodes";
 
-        public ProductCodeDataService(HttpClient httpClient, IToastService toastService)
+        public ProductCodeDataService(HttpClient httpClient, IToastService toastService, ILogger<ProductCodeDataService> logger)
         {
             this.httpClient = httpClient;
             this.toastService = toastService;
+            this.logger = logger;
         }
 
         public async Task<ProductCodeToRead> AddProductCodeAsync(ProductCodeToWrite productCode)
@@ -95,6 +93,19 @@ namespace Menominee.Client.Services.ProductCodes
             }
 
             toastService.ShowError($"Product Code failed to update.  Id = {id}", "Save Failed");
+        }
+
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetAllProductCodesAsync(long mfrId, long saleCodeId)
+        {
+            try
+            {
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing/{mfrId}/{saleCodeId}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+            }
+            return null;
         }
     }
 }

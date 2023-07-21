@@ -76,7 +76,6 @@ namespace Menominee.Client.Components.RepairOrders
             parametersSet = true;
             Manufacturers = (await ManufacturerDataService.GetAllManufacturersAsync()).ToList();
             SaleCodes = (await SaleCodeDataService.GetAllSaleCodesAsync()).ToList();
-            ProductCodes = (await ProductCodeDataService.GetAllProductCodesAsync()).ToList();    // FIX ME - need to restrict list to mfr, salecode
 
             ManufacturerList = new();
             foreach (var mfr in Manufacturers)
@@ -105,15 +104,6 @@ namespace Menominee.Client.Components.RepairOrders
             }
 
             ProductCodeList = new();
-            foreach (var prodCode in ProductCodes)
-            {
-                ProductCodeList.Add(new ProductCodeX
-                {
-                    Id = prodCode.Id,
-                    Code = prodCode.Code,
-                    Name = prodCode.Name
-                });
-            }
         }
 
         private FormMode formMode;
@@ -123,6 +113,9 @@ namespace Menominee.Client.Components.RepairOrders
         private string Title { get; set; }
 
         private bool CanChangePart { get; set; } = true;    // will eventually stop them from changing part #, salecode, etc. as needed
+        private bool CanChangeProductCode { get; set; } = false;
+        private long LastOnChangeManufacturerId { get; set; } = 0;
+        private long LastOnChangeSaleCodeId { get; set; } = 0;
 
 
         //private int ManufacturerId { get; set; } = 0;
@@ -215,6 +208,56 @@ namespace Menominee.Client.Components.RepairOrders
             }
         }
 
+        public async Task HandleManufacturerChange(object userInput)
+        {
+            var currentManufacturerId = (long)userInput;
 
+            if (currentManufacturerId.Equals(LastOnChangeManufacturerId) || Item.SaleCode is null)
+                return;
+
+            LastOnChangeManufacturerId = currentManufacturerId;
+
+            await LoadProductCodes();
+        }
+
+        public async Task HandleSaleCodeChange(object userInput)
+        {
+            var currentSaleCodeId = (long)userInput;
+
+            if (currentSaleCodeId.Equals(LastOnChangeSaleCodeId) || Item.Manufacturer is null)
+                return;
+
+            LastOnChangeSaleCodeId = currentSaleCodeId;
+
+            await LoadProductCodes();
+        }
+
+        private async Task LoadProductCodes()
+        {
+            ProductCodes = (await ProductCodeDataService.GetAllProductCodesAsync(Item.Manufacturer.Id, Item.SaleCode.Id)).ToList();
+
+            ProductCodeList = new();
+            foreach (var prodCode in ProductCodes)
+            {
+                ProductCodeList.Add(new ProductCodeX
+                {
+                    Id = prodCode.Id,
+                    Code = prodCode.Code,
+                    Name = prodCode.Name
+                });
+            }
+
+            CanChangeProductCode = ProductCodeList.Count > 0;
+
+            if (ProductCodeList.Count.Equals(1))
+            {
+                Item.ProductCode = new()
+                {
+                    Id = ProductCodes[0].Id,
+                    Code = ProductCodes[0].Code,
+                    Name = ProductCodes[0].Name,
+                };
+            }
+        }
     }
 }

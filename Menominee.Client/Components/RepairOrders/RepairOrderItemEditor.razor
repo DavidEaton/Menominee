@@ -17,7 +17,8 @@
                                          TextField="DisplayText"
                                          ValueField="Id"
                                          Enabled="@CanChangePart"
-                                         Id="category">
+                                         Id="category"
+                                         OnChange="@HandleManufacturerChange">
                     </TelerikDropDownList>
                 }
             </div>
@@ -31,7 +32,8 @@
                                          TextField="DisplayText"
                                          ValueField="Id"
                                          Enabled="@CanChangePart"
-                                         Id="saleCode">
+                                         Id="saleCode"
+                                         OnChange="@HandleSaleCodeChange">
                     </TelerikDropDownList>
                 }
             </div>
@@ -47,18 +49,15 @@
                 </TelerikTextBox>
             </div>
             <div class="form-group col-6">
-                @if (ProductCodes != null)
-                {
-                    <label class="k-label" for="productCode">Product Code</label>
-                    <TelerikDropDownList @bind-Value="Item.ProductCode"
-                                         Width="100%"
-                                         Data="ProductCodeList"
-                                         TextField="DisplayText"
-                                         ValueField="Value"
-                                         Enabled="CanChangePart"
-                                         Id="productCode">
-                    </TelerikDropDownList>
-                }
+                <label class="k-label" for="productCode">Product Code</label>
+                <TelerikDropDownList @bind-Value="Item.ProductCode.Id"
+                                        Width="100%"
+                                        Data="ProductCodeList"
+                                        TextField="DisplayText"
+                                        ValueField="Id"
+                                        Enabled="@CanChangeProductCode"
+                                        Id="productCode">
+                </TelerikDropDownList>
             </div>
         </div>
         <div class="form-row">

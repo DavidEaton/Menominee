@@ -34,25 +34,10 @@ namespace Menominee.Api.ProductCodes
         }
 
         [Route("listing")]
-        [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync()
+        [HttpGet("listing/{manufacturerId:long}/{saleCodeId:long}")]
+        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long? manufacturerId = null, long? saleCodeId = null)
         {
-            var result = await repository.GetProductCodesInListAsync();
-
-            return result is null
-                ? NotFound()
-                : Ok(result);
-        }
-
-        [Route("listing")]
-        [HttpGet("listing/{manufacturerId:long}")]
-        public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync(long manufacturerId)
-        {
-            var result = await repository.GetProductCodesInListAsync(manufacturerId);
-
-            return result is null
-                ? NotFound()
-                : Ok(result);
+            return Ok(await repository.GetProductCodesInListAsync(manufacturerId, saleCodeId));
         }
 
         [HttpGet("{manufacturercode}/{code}")]

@@ -13,8 +13,7 @@ namespace Menominee.Api.ProductCodes
         Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string productCode);
         Task<ProductCodeToRead> GetProductCodeAsync(long id);
         Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync();
-        Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync();
-        Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long manufacturerId);
+        Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId);
         Task DeleteProductCodeAsync(long id);
         Task<bool> ProductCodeExistsAsync(long id);
         Task SaveChangesAsync();

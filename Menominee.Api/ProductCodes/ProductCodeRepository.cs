@@ -102,35 +102,6 @@ namespace Menominee.Api.ProductCodes
                 .ToList();
         }
 
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync()
-        {
-            ProductCode[] productCodes = await context.ProductCodes
-                                   .Include(productCode => productCode.Manufacturer)
-                                   .Include(productCode => productCode.SaleCode)
-                                   .AsSplitQuery()
-                                   .AsNoTracking()
-                                   .ToArrayAsync();
-
-            return productCodes
-                .Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
-                .ToList();
-        }
-
-        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long manufacturerId)
-        {
-            var productCodes = await context.ProductCodes
-                                   .Include(productCode => productCode.Manufacturer)
-                                   .Include(productCode => productCode.SaleCode)
-                                   .Where(productCode => productCode.Manufacturer.Id == manufacturerId)
-                                   .AsSplitQuery()
-                                   .AsNoTracking()
-                                   .ToArrayAsync();
-
-            return productCodes.
-                Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
-                .ToList();
-        }
-
         public async Task<bool> ProductCodeExistsAsync(long id)
         {
             return await context.ProductCodes.AnyAsync(productCode => (productCode.Id == id));
@@ -139,6 +110,25 @@ namespace Menominee.Api.ProductCodes
         public async Task SaveChangesAsync()
         {
             await context.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId)
+        {
+            var query = context.ProductCodes
+                .Include(productCode => productCode.Manufacturer)
+                .Include(productCode => productCode.SaleCode)
+                .AsSplitQuery()
+                .AsNoTracking();
+
+            if (manufacturerId is not null)
+                query = query.Where(productCode => productCode.Manufacturer.Id == manufacturerId);
+
+            if (saleCodeId is not null)
+                query = query.Where(productCode => productCode.SaleCode.Id == saleCodeId);
+
+            return await query
+                .Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
+                .ToListAsync();
         }
     }
 }
