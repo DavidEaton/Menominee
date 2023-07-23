@@ -79,7 +79,7 @@ namespace Menominee.Client.Components.Settings.Pages
                 {
                     foreach (var tax in readDto.ExciseFees)
                     {
-                        SalesTax.ExciseFees.Add(new ExciseFeeToUpdate
+                        SalesTax.ExciseFees.Add(new ExciseFeeToWrite
                         {
                             Amount = tax.Amount,
                             Description = tax.Description,

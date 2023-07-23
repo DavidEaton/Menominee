@@ -6,7 +6,7 @@ namespace Menominee.Shared.Models.Taxes
 {
     public class ExciseFeeHelper
     {
-        public static ExciseFee ConvertWriteDtoToEntity(ExciseFeeToUpdate exciseFee)
+        public static ExciseFee ConvertWriteDtoToEntity(ExciseFeeToWrite exciseFee)
         {
             return exciseFee is null
                 ? null
@@ -17,7 +17,7 @@ namespace Menominee.Shared.Models.Taxes
                 .Value;
         }
 
-        public static ExciseFeeToUpdate CovertReadToWriteDto(ExciseFeeToRead exciseFee)
+        public static ExciseFeeToWrite CovertReadToWriteDto(ExciseFeeToRead exciseFee)
         {
             return exciseFee is null
                 ? new()
@@ -55,17 +55,17 @@ namespace Menominee.Shared.Models.Taxes
                 };
         }
 
-        internal static List<ExciseFeeToUpdate> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
+        internal static List<ExciseFeeToWrite> CovertReadToWriteDtos(List<ExciseFeeToRead> exciseFees)
         {
             return exciseFees?.Select(
                 fee =>
-                new ExciseFeeToUpdate()
+                new ExciseFeeToWrite()
                 {
                     Description = fee.Description,
                     FeeType = fee.FeeType,
                     Amount = fee.Amount
                 }).ToList()
-            ?? new List<ExciseFeeToUpdate>();
+            ?? new List<ExciseFeeToWrite>();
         }
 
         public static List<ExciseFeeToRead> ConvertToReadDtos(IReadOnlyList<ExciseFee> exciseFees)
@@ -82,7 +82,7 @@ namespace Menominee.Shared.Models.Taxes
             ?? new List<ExciseFeeToRead>();
         }
 
-        public static List<ExciseFee> ConvertWriteDtosToEntities(List<ExciseFeeToUpdate> exciseFees)
+        public static List<ExciseFee> ConvertWriteDtosToEntities(List<ExciseFeeToWrite> exciseFees)
         {
             return exciseFees?.Select(
                 fee =>
@@ -113,7 +113,22 @@ namespace Menominee.Shared.Models.Taxes
                         fee.FeeType,
                         fee.Amount)
                     .Value)
-                .ToList();
+                .ToList()
+                ?? new List<ExciseFee>();
+        }
+
+        internal static List<ExciseFeeToWrite> ConvertToWriteDtos(IReadOnlyList<ExciseFee> exciseFees)
+        {
+            return exciseFees?.Select(
+                fee =>
+                new ExciseFeeToWrite()
+                {
+                    Id = fee.Id,
+                    Description = fee.Description,
+                    FeeType = fee.FeeType,
+                    Amount = fee.Amount
+                }).ToList()
+            ?? new List<ExciseFeeToWrite>();
         }
     }
 }

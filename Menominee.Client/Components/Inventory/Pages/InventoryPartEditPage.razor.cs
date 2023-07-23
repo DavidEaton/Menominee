@@ -1,7 +1,6 @@
 ﻿using Menominee.Shared.Models.Inventory.InventoryItems;
 using Menominee.Client.Services.Inventory;
 using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.Inventory.Pages
 {
@@ -45,7 +44,7 @@ namespace Menominee.Client.Components.Inventory.Pages
             if (ItemId == 0)
             {
                 var item = await DataService.AddItemAsync(Item);
-                ItemId = Item.Id;
+                ItemId = item.Id;
             }
             else
             {

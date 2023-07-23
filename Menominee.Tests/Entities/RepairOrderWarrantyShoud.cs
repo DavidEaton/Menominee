@@ -108,13 +108,18 @@ namespace Menominee.Tests.Entities
         public void SetQuantity()
         {
             var warranty = new RepairOrderWarrantyFaker(true).Generate();
-            var newQuantity = faker.Random.Int(2, 10);
-            warranty.Quantity.Should().NotBe(newQuantity);
+            var newQuantity = GenerateNewQuantity(warranty.Quantity);
 
             var result = warranty.SetQuantity(newQuantity);
 
             result.IsSuccess.Should().BeTrue();
             warranty.Quantity.Should().Be(newQuantity);
+        }
+
+        private double GenerateNewQuantity(double currentQuantity)
+        {
+            var newQuantity = faker.Random.Double(2, 10);
+            return newQuantity == currentQuantity ? GenerateNewQuantity(currentQuantity) : newQuantity;
         }
 
         [Theory]

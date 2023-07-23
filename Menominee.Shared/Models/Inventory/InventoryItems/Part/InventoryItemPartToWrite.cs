@@ -1,4 +1,6 @@
 ﻿using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
+using Menominee.Shared.Models.Taxes;
+using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
 {
@@ -13,5 +15,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
         public string LineCode { get; set; }
         public string SubLineCode { get; set; }
         public bool Fractional { get; set; }
+        public List<ExciseFeeToWrite> ExciseFees { get; set; } = new();
     }
 }

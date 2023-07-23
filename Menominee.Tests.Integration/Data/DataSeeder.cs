@@ -16,8 +16,20 @@ namespace Menominee.Tests.Integration.Data
 
         public void Save<T>(List<T> entities) where T : Entity
         {
-            dbContext.AddRange(entities);
+            foreach (var entity in entities)
+            {
+                if (entity.Id > 0)
+                {
+                    dbContext.Attach(entity);
+                }
+                else
+                {
+                    dbContext.Add(entity);
+                }
+            }
+
             DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
         }
+
     }
 }

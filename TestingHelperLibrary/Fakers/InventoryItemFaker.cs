@@ -8,7 +8,7 @@ namespace Menominee.Tests.Helpers.Fakers
 {
     public class InventoryItemFaker : Faker<InventoryItem>
     {
-        public InventoryItemFaker(bool generateId)
+        public InventoryItemFaker(bool generateId, int collectionCount = 0)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
@@ -19,7 +19,7 @@ namespace Menominee.Tests.Helpers.Fakers
                 var name = faker.Commerce.ProductName().Truncate(255);
                 var description = faker.Commerce.ProductDescription().Truncate(255);
                 var productCode = new ProductCodeFaker(generateId).Generate();
-                var part = new InventoryItemPartFaker(generateId).Generate();
+                var part = new InventoryItemPartFaker(generateId, collectionCount).Generate();
 
                 var result = InventoryItem.Create(manufacturer, itemNumber, description, productCode, InventoryItemType.Part, part);
 

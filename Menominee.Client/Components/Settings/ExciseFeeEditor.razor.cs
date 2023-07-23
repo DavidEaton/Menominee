@@ -11,7 +11,7 @@ namespace Menominee.Client.Components.Settings
     public partial class ExciseFeeEditor
     {
         [Parameter]
-        public ExciseFeeToUpdate ExciseFee { get; set; }
+        public ExciseFeeToWrite ExciseFee { get; set; }
 
         [Parameter]
         public string Title { get; set; } = "Edit Fee";

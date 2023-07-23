@@ -1,5 +1,7 @@
-﻿using Menominee.Domain.Entities.Inventory;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
+using Menominee.Shared.Models.Taxes;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
 {
@@ -9,7 +11,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
         {
             return part is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = part.Id,
                     List = part.List,
@@ -25,7 +27,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
                     LineCode = part.LineCode,
                     SubLineCode = part.SubLineCode,
                     Fractional = part.Fractional
-                });
+                };
         }
 
         public static InventoryItemPart ConvertWriteDtoToEntity(InventoryItemPartToWrite part)
@@ -33,26 +35,27 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
             return part is null
                 ? null
                 : InventoryItemPart.Create(
-                part.List,
-                part.Cost,
-                part.Core,
-                part.Retail,
-                TechAmount.Create(
-                    part.TechAmount.PayType,
-                    part.TechAmount.Amount,
-                    part.TechAmount.SkillLevel)
-                .Value,
-                part.Fractional,
-                part.LineCode,
-                part.SubLineCode)
-            .Value;
+                    part.List,
+                    part.Cost,
+                    part.Core,
+                    part.Retail,
+                    TechAmount.Create(
+                        part.TechAmount.PayType,
+                        part.TechAmount.Amount,
+                        part.TechAmount.SkillLevel)
+                    .Value,
+                    part.Fractional,
+                    part.LineCode,
+                    part.SubLineCode)
+                .Check(part => part.UpdateExciseFees(part.ExciseFees))
+                .Value;
         }
 
         public static InventoryItemPartToRead ConvertToReadDto(InventoryItemPart part)
         {
             return part is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = part.Id,
                     List = part.List,
@@ -67,15 +70,16 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
                     },
                     LineCode = part.LineCode,
                     SubLineCode = part.SubLineCode,
-                    Fractional = part.Fractional
-                });
+                    Fractional = part.Fractional,
+                    ExciseFees = ExciseFeeHelper.ConvertToReadDtos(part.ExciseFees)
+                };
         }
 
         public static InventoryItemPartToReadInList ConvertToReadInListDto(InventoryItemPart part)
         {
             return part is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = part.Id,
                     List = part.List,
@@ -91,14 +95,14 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
                     LineCode = part.LineCode,
                     SubLineCode = part.SubLineCode,
                     Fractional = part.Fractional
-                });
+                };
         }
 
         public static InventoryItemPartToWrite ConvertToWriteDto(InventoryItemPart part)
         {
             return part is null
                 ? null
-                : (new()
+                : new()
                 {
                     Id = part.Id,
                     List = part.List,
@@ -113,8 +117,9 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Part
                     },
                     LineCode = part.LineCode,
                     SubLineCode = part.SubLineCode,
-                    Fractional = part.Fractional
-                });
+                    Fractional = part.Fractional,
+                    ExciseFees = ExciseFeeHelper.ConvertToWriteDtos(part.ExciseFees)
+                };
         }
     }
 }

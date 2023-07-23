@@ -40,7 +40,7 @@ namespace Menominee.Api.Taxes
 
         // api/excisefees/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToUpdate exciseFee)
+        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
         {
             if (!await repository.ExciseFeeExistsAsync(id))
                 return NotFound($"Could not find Excise Fee to update: {exciseFee.Description}");

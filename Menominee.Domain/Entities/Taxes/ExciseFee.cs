@@ -79,17 +79,6 @@ namespace Menominee.Domain.Entities.Taxes
             return Result.Success(Amount = amount);
         }
 
-        public ExciseFee Clone()
-        {
-            var cloneResult = Create(Description, FeeType, Amount);
-
-            // If the cloneResult is a success, set the Id of the cloned object
-            if (cloneResult.IsSuccess)
-                typeof(Entity).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).SetValue(cloneResult.Value, Id);
-
-            return cloneResult.Value;
-        }
-
         #region ORM
 
         // EF requires a parameterless constructor

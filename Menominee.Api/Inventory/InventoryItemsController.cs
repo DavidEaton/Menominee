@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Api.Common;
 using Menominee.Api.Manufacturers;
 using Menominee.Api.ProductCodes;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Inventory.InventoryItems.Part;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Inventory
 {
@@ -76,7 +77,7 @@ namespace Menominee.Api.Inventory
             if (itemFromRepository == null || manufacturerFromRepository == null || productCodeFromRepository == null)
                 return NotFound(notFoundMessage);
 
-            Result result = await UpdateInventoryItemPropertiesAsync(itemFromRepository, itemFromCaller,
+            var result = await UpdateInventoryItemProperties(itemFromRepository, itemFromCaller,
                 manufacturerFromRepository, productCodeFromRepository);
 
             if (result.IsFailure)
@@ -161,7 +162,7 @@ namespace Menominee.Api.Inventory
             return (manufacturerFromRepository, productCodeFromRepository, inventoryItems);
         }
 
-        private async Task<Result> UpdateInventoryItemPropertiesAsync(InventoryItem itemFromRepository, InventoryItemToWrite itemFromCaller, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)
+        private async Task<Result> UpdateInventoryItemProperties(InventoryItem itemFromRepository, InventoryItemToWrite itemFromCaller, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)
         {
             return itemFromRepository.UpdateProperties(
                 itemFromCaller.ItemNumber,
@@ -169,7 +170,7 @@ namespace Menominee.Api.Inventory
                 manufacturerFromRepository,
                 productCodeFromRepository,
                 itemFromCaller.Part is not null
-                    ? await itemRepository.GetInventoryItemPartEntity(itemFromCaller.Part.Id)
+                    ? UpdateInventoryItemPart(itemFromCaller.Part).Result.Value
                     : null,
                 itemFromCaller.Labor is not null
                     ? await itemRepository.GetInventoryItemLaborEntity(itemFromCaller.Labor.Id)
@@ -186,6 +187,54 @@ namespace Menominee.Api.Inventory
                 itemFromCaller.Warranty is not null
                     ? await itemRepository.GetInventoryItemWarrantyEntity(itemFromCaller.Warranty.Id)
                     : null);
+        }
+
+        private async Task<Result<InventoryItemPart>> UpdateInventoryItemPart(InventoryItemPartToWrite part)
+        {
+            var partFromRepository = await itemRepository.GetInventoryItemPartEntity(part.Id);
+
+            var results = new Result[]
+            {
+                partFromRepository.SetList(part.List),
+                partFromRepository.SetRetail(part.Retail),
+                partFromRepository.SetCost(part.Cost),
+                partFromRepository.SetCore(part.Core),
+                partFromRepository.SetTechAmount(TechAmount.Create(part.TechAmount.PayType, part.TechAmount.Amount, part.TechAmount.SkillLevel).Value),
+                partFromRepository.SetLineCode(part.LineCode),
+                partFromRepository.SetSubLineCode(part.SubLineCode),
+                partFromRepository.SetFractional(part.Fractional),
+            };
+
+            var exciseFeeResults = partFromRepository.ExciseFees.Select(fee =>
+            {
+                var feeToWrite = part.ExciseFees.FirstOrDefault(f => f.Id == fee.Id);
+                if (feeToWrite != null)
+                {
+                    var descriptionResult = fee.SetDescription(feeToWrite.Description);
+                    var feeTypeResult = fee.SetFeeType(feeToWrite.FeeType);
+                    var amountResult = fee.SetAmount(feeToWrite.Amount);
+
+                    return Result.Combine(descriptionResult, feeTypeResult, amountResult);
+                }
+
+                return Result.Success();
+            }).ToList();
+
+            var updateExciseFeesResult = Result.Combine(exciseFeeResults);
+
+            if (updateExciseFeesResult.IsFailure)
+                return Result.Failure<InventoryItemPart>(updateExciseFeesResult.Error);
+
+            if (results.Any(result => result.IsFailure))
+            {
+                var errorMessages = results.Where(result => result.IsFailure)
+                                           .Select(result => result.Error)
+                                           .Aggregate((message1, message2) => $"{message1}, {message2}");
+
+                return Result.Failure<InventoryItemPart>(errorMessages);
+            }
+
+            return Result.Success(partFromRepository);
         }
 
         private static List<long> GetItemIds(InventoryItemToWrite itemToAdd)

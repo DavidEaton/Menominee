@@ -48,45 +48,30 @@ namespace Menominee.Domain.Entities.Inventory
 
         public Result<List<ExciseFee>> UpdateExciseFees(IReadOnlyList<ExciseFee> exciseFees)
         {
-            var toAdd = exciseFees
-                .Where(fee => fee.Id == 0)
-                .ToList();
+            var toAdd = exciseFees.Where(fee => fee.Id == 0).ToList();
+            var toModify = ExciseFees.Where(fee => exciseFees.Any(callerfee => callerfee.Id == fee.Id)).ToList();
+            var toDelete = ExciseFees.Where(fee => !exciseFees.Any(callerfee => callerfee.Id == fee.Id)).ToList();
 
-            var toModify = ExciseFees
-                .Where(fee => exciseFees.Any(
-                    callerfee => callerfee.Id == fee.Id))
-                .ToList();
+            var combinedAddResult = toAdd.Select(AddExciseFee).ToList().Combine().Map(list => list.ToList());
+            var combinedModifyResult = UpdateFees(toModify, exciseFees);
+            var combinedDeleteResult = toDelete.Select(RemoveExciseFee).ToList().Combine().Map(list => list.ToList());
 
-            var toDelete = ExciseFees
-                .Where(fee => !exciseFees.Any(callerfee => callerfee.Id == fee.Id))
-                .ToList();
+            var combinedResult = Result.Combine(combinedAddResult, combinedModifyResult, combinedDeleteResult);
 
-            var combinedAddResult = toAdd
-                .Select(fee => AddExciseFee(fee))
-                .ToList()
-                .Combine()
-                .Map(list => list.ToList());
+            return combinedResult.IsSuccess
+                ? Result.Success(ExciseFees.ToList())
+                : Result.Failure<List<ExciseFee>>(combinedResult.Error);
+        }
 
+        private Result<List<ExciseFee>> UpdateFees(List<ExciseFee> toModify, IReadOnlyList<ExciseFee> exciseFees)
+        {
             var fees = new List<ExciseFee>();
             var errors = new List<string>();
 
             foreach (var fee in toModify)
             {
                 var feeFromCaller = exciseFees.Single(callerfee => callerfee.Id == fee.Id);
-
-                var feeTypeResult = fee.FeeType != feeFromCaller.FeeType
-                    ? fee.SetFeeType(feeFromCaller.FeeType).Map(_ => fee)
-                    : Result.Success(fee);
-
-                var amountResult = fee.Amount != feeFromCaller.Amount
-                    ? fee.SetAmount(feeFromCaller.Amount).Map(_ => fee)
-                    : Result.Success(fee);
-
-                var descriptionResult = fee.Description != feeFromCaller.Description
-                    ? fee.SetDescription(feeFromCaller.Description).Map(_ => fee)
-                    : Result.Success(fee);
-
-                var feeCombinedResult = Result.Combine(new[] { feeTypeResult, amountResult, descriptionResult });
+                var feeCombinedResult = UpdateFee(fee, feeFromCaller);
 
                 if (feeCombinedResult.IsSuccess)
                     fees.Add(fee);
@@ -94,26 +79,28 @@ namespace Menominee.Domain.Entities.Inventory
                     errors.Add(feeCombinedResult.Error);
             }
 
-            var combinedModifyResult = errors.Any()
+            return errors.Any()
                 ? Result.Failure<List<ExciseFee>>(string.Join(", ", errors))
                 : Result.Success(fees);
-
-            var combinedDeleteResult = toDelete
-                .Select(fee => RemoveExciseFee(fee))
-                .ToList()
-                .Combine()
-                .Map(list => list.ToList());
-
-            var combinedResult = Result.Combine(
-                combinedAddResult,
-                combinedModifyResult,
-                combinedDeleteResult);
-
-            return combinedResult.IsSuccess
-                ? Result.Success(ExciseFees.ToList())
-                : Result.Failure<List<ExciseFee>>(combinedResult.Error);
         }
 
+        private Result<ExciseFee> UpdateFee(ExciseFee fee, ExciseFee feeFromCaller)
+        {
+            var feeTypeResult = fee.FeeType != feeFromCaller.FeeType
+                ? fee.SetFeeType(feeFromCaller.FeeType)
+                : Result.Success();
+
+            var amountResult = fee.Amount != feeFromCaller.Amount
+                ? fee.SetAmount(feeFromCaller.Amount)
+                : Result.Success();
+
+            var descriptionResult = fee.Description != feeFromCaller.Description
+                ? fee.SetDescription(feeFromCaller.Description)
+                : Result.Success();
+
+            return Result.Combine(feeTypeResult, amountResult, descriptionResult)
+                .Map(() => fee);
+        }
 
         public Result<double> SetList(double list)
         {

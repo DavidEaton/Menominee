@@ -78,6 +78,7 @@ namespace Menominee.Api.Inventory
                 .Include(item => item.ProductCode)
                     .ThenInclude(productCode => productCode.Manufacturer)
                 .Include(item => item.Part)
+                    .ThenInclude(part => part.ExciseFees)
                 .Include(item => item.Labor)
                 .Include(item => item.Tire)
                 .Include(item => item.Package)

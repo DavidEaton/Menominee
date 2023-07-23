@@ -13,6 +13,6 @@ namespace Menominee.Shared.Models.Taxes
         public string TaxIdNumber { get; set; }
         public double PartTaxRate { get; set; }
         public double LaborTaxRate { get; set; }
-        public List<ExciseFeeToUpdate> ExciseFees { get; set; } = new List<ExciseFeeToUpdate>();
+        public List<ExciseFeeToWrite> ExciseFees { get; set; } = new List<ExciseFeeToWrite>();
     }
 }
