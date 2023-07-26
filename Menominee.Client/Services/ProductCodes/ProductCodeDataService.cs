@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Blazored.Toast.Services;
+using System.Web;
 
 namespace Menominee.Client.Services.ProductCodes
 {
@@ -58,7 +59,16 @@ namespace Menominee.Client.Services.ProductCodes
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing/{mfrId}");
+                var uriBuilder = new UriBuilder(
+                    "https",
+                    httpClient.BaseAddress.Host,
+                    (int)httpClient.BaseAddress.Port,
+                    UriSegment + "/listing");
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                query["manufacturerId"] = mfrId.ToString();
+                uriBuilder.Query = query.ToString();
+
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uriBuilder.Uri);
             }
             catch (Exception)
             {
@@ -99,7 +109,17 @@ namespace Menominee.Client.Services.ProductCodes
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing/{mfrId}/{saleCodeId}");
+                var uriBuilder = new UriBuilder(
+                    "https",
+                    httpClient.BaseAddress.Host,
+                    (int)httpClient.BaseAddress.Port,
+                    UriSegment + "/listing");
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                query["manufacturerId"] = mfrId.ToString();
+                query["saleCodeId"] = saleCodeId.ToString();
+                uriBuilder.Query = query.ToString();
+
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uriBuilder.Uri);
             }
             catch (Exception ex)
             {
