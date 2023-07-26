@@ -135,7 +135,7 @@ namespace Menominee.Domain.Entities
                 return Result.Failure<Phone>(RequiredMessage);
 
             if (CustomerHasPhone(phone))
-                return Result.Failure<Phone>($"{DuplicateItemMessagePrefix} Phone: {phone.PhoneType} - {phone.ToString}");
+                return Result.Failure<Phone>($"{DuplicateItemMessagePrefix} Phone: {phone.PhoneType} - {phone}");
 
             switch (EntityType)
             {
@@ -238,7 +238,7 @@ namespace Menominee.Domain.Entities
                 return Result.Failure<Vehicle>(RequiredMessage);
 
             if (CustomerHasVehicle(vehicle))
-                return Result.Failure<Vehicle>($"{DuplicateItemMessagePrefix} Vehicle: {vehicle.ToString}, VIN: {vehicle.VIN}");
+                return Result.Failure<Vehicle>($"{DuplicateItemMessagePrefix} Vehicle: {vehicle}, VIN: {vehicle.VIN}");
 
             vehicles.Add(vehicle);
             return Result.Success(vehicle);
