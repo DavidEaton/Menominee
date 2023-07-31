@@ -1,26 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Persons;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services
 {
     public class PersonDataService : IPersonDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<PersonDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/persons";
 
-        public PersonDataService(HttpClient httpClient,
-                                 IToastService toastService)
+        public PersonDataService(HttpClient httpClient, ILogger<PersonDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -37,6 +34,7 @@ namespace Menominee.Client.Services
             }
 
             toastService.ShowError($"{person.Name.LastName}, {person.Name.FirstName} failed to add. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -46,9 +44,9 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<PersonToReadInList>>($"{UriSegment}/list");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all persons");
             }
 
             return null;
@@ -60,10 +58,11 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get person details with id {id}", id);
             }
+
             return null;
         }
 
@@ -73,9 +72,9 @@ namespace Menominee.Client.Services
             {
                 await httpClient.DeleteAsync($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to delete person with id {id}", id);
             }
         }
 
@@ -100,14 +99,12 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<PersonToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get person with id {id}", id);
             }
+
             return null;
         }
-
-
     }
-
 }

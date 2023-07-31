@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services
 {
     public class UserDataService : IUserDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<UserDataService> logger;
         private const string UriSegment = "api/user";
         private const string MediaType = "application/json";
         private readonly IToastService toastService;
 
-        public UserDataService(HttpClient httpClient, IToastService toastService)
+        public UserDataService(HttpClient httpClient, ILogger<UserDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -28,10 +26,10 @@ namespace Menominee.Client.Services
             try
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<UserToRead>>($"{UriSegment}");
-            } 
+            }
             catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all users");
             }
 
             return null;
@@ -43,10 +41,11 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<UserToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get user with id {id}", id);
             }
+
             return null;
         }
 
@@ -62,6 +61,7 @@ namespace Menominee.Client.Services
             }
 
             toastService.ShowError($"{registerModel.Email} failed to add. {response.ReasonPhrase}.", "Add Failed");
+
             return false;
         }
 

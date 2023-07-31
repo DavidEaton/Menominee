@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Payables.PaymentMethods
 {
     public class VendorInvoicePaymentMethodDataService : IVendorInvoicePaymentMethodDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<VendorInvoicePaymentMethodDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/vendorinvoicepaymentmethods";
 
-        public VendorInvoicePaymentMethodDataService(HttpClient httpClient, IToastService toastService)
+        public VendorInvoicePaymentMethodDataService(HttpClient httpClient, ILogger<VendorInvoicePaymentMethodDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -29,9 +27,9 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all payment methods");
             }
 
             return null;
@@ -43,10 +41,11 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             {
                 return await httpClient.GetFromJsonAsync<VendorInvoicePaymentMethodToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get payment method with id {id}", id);
             }
+
             return null;
         }
 
@@ -66,6 +65,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
             }
 
             toastService.ShowError($"Failed to add payment method. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 

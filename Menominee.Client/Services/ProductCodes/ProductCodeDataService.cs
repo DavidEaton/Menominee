@@ -10,16 +10,16 @@ namespace Menominee.Client.Services.ProductCodes
     public class ProductCodeDataService : IProductCodeDataService
     {
         private readonly HttpClient httpClient;
-        private readonly IToastService toastService;
         private readonly ILogger<ProductCodeDataService> logger;
+        private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/productcodes";
 
-        public ProductCodeDataService(HttpClient httpClient, IToastService toastService, ILogger<ProductCodeDataService> logger)
+        public ProductCodeDataService(HttpClient httpClient, ILogger<ProductCodeDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
-            this.toastService = toastService;
             this.logger = logger;
+            this.toastService = toastService;
         }
 
         public async Task<ProductCodeToRead> AddProductCodeAsync(ProductCodeToWrite productCode)
@@ -38,6 +38,7 @@ namespace Menominee.Client.Services.ProductCodes
             }
 
             toastService.ShowError($"Failed to add Product Code. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -47,9 +48,9 @@ namespace Menominee.Client.Services.ProductCodes
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all product codes");
             }
 
             return null;
@@ -70,9 +71,9 @@ namespace Menominee.Client.Services.ProductCodes
 
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ProductCodeToReadInList>>(uriBuilder.Uri);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get product codes with manufacturer id {mfrId}", mfrId);
             }
 
             return null;
@@ -84,10 +85,11 @@ namespace Menominee.Client.Services.ProductCodes
             {
                 return await httpClient.GetFromJsonAsync<ProductCodeToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get product code with id {id}", id);
             }
+
             return null;
         }
 
@@ -123,8 +125,9 @@ namespace Menominee.Client.Services.ProductCodes
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());
+                logger.LogError(ex, "Failed to get product codes with manufacturer id {mfrId} and sale code id {saleCodeId}", mfrId, saleCodeId);
             }
+
             return null;
         }
     }

@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.RepairOrders;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Components.RepairOrders
 {
     public class RepairOrderDataService : IRepairOrderDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<RepairOrderDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/repairorders";
 
-        public RepairOrderDataService(HttpClient httpClient, IToastService toastService)
+        public RepairOrderDataService(HttpClient httpClient, ILogger<RepairOrderDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -34,6 +32,7 @@ namespace Menominee.Client.Components.RepairOrders
             }
 
             toastService.ShowError($"Failed to add repair order. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -45,7 +44,7 @@ namespace Menominee.Client.Components.RepairOrders
             }
             catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all repair orders");
             }
 
             return null;
@@ -57,10 +56,11 @@ namespace Menominee.Client.Components.RepairOrders
             {
                 return await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get repair order with id {id}", id);
             }
+
             return null;
         }
 

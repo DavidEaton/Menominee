@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Taxes;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Taxes
 {
     public class ExciseFeeDataService : IExciseFeeDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<ExciseFeeDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/excisefees";
 
-        public ExciseFeeDataService(HttpClient httpClient, IToastService toastService)
+        public ExciseFeeDataService(HttpClient httpClient, ILogger<ExciseFeeDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -39,6 +37,7 @@ namespace Menominee.Client.Services.Taxes
             }
 
             toastService.ShowError($"Failed to add Excise Fee. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -48,9 +47,9 @@ namespace Menominee.Client.Services.Taxes
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ExciseFeeToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all excise fees");
             }
 
             return null;
@@ -62,10 +61,11 @@ namespace Menominee.Client.Services.Taxes
             {
                 return await httpClient.GetFromJsonAsync<ExciseFeeToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get excise fee with id {id}", id);
             }
+
             return null;
         }
 

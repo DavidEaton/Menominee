@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Manufacturers;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Manufacturers
 {
     public class ManufacturerDataService : IManufacturerDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<ManufacturerDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/manufacturers";
 
-        public ManufacturerDataService(HttpClient httpClient, IToastService toastService)
+        public ManufacturerDataService(HttpClient httpClient, ILogger<ManufacturerDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -39,6 +37,7 @@ namespace Menominee.Client.Services.Manufacturers
             }
 
             toastService.ShowError($"Failed to add Manufacturer. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -48,9 +47,9 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all manufacturers");
             }
 
             return null;
@@ -62,10 +61,11 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get manufacturer with id {id}", id);
             }
+
             return null;
         }
 
@@ -75,10 +75,11 @@ namespace Menominee.Client.Services.Manufacturers
             {
                 return await httpClient.GetFromJsonAsync<ManufacturerToRead>($"{UriSegment}/code/{code}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get manufacturer with code {code}", code);
             }
+
             return null;
         }
 

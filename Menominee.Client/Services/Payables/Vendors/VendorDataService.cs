@@ -1,26 +1,24 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models;
 using Menominee.Shared.Models.Payables.Vendors;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Payables.Vendors
 {
     public class VendorDataService : IVendorDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<VendorDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/vendors";
 
-        public VendorDataService(HttpClient httpClient, IToastService toastService)
+        public VendorDataService(HttpClient httpClient, ILogger<VendorDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -39,12 +37,14 @@ namespace Menominee.Client.Services.Payables.Vendors
                 }
                 catch (Exception ex)
                 {
+                    logger.LogError(ex, "Failed to add new vendor with vendor code {code}", vendor.VendorCode);
                     Console.WriteLine(ex.Message);
                     throw;
                 }
             }
 
             toastService.ShowError($"{vendor.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
+
             return new() { Id = 0 };
         }
 
@@ -54,9 +54,9 @@ namespace Menominee.Client.Services.Payables.Vendors
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorToRead>>($"{UriSegment}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all vendors");
             }
 
             return null;
@@ -70,9 +70,10 @@ namespace Menominee.Client.Services.Payables.Vendors
             }
             catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex.ToString());
                 Console.WriteLine($"Error getting vendor #{id}: {ex.Message}");
             }
+
             return null;
         }
 

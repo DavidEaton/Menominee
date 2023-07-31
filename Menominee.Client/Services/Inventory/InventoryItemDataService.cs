@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Inventory.InventoryItems;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Inventory
 {
     public class InventoryItemDataService : IInventoryItemDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<InventoryItemDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/inventoryitems";
 
-        public InventoryItemDataService(HttpClient httpClient, IToastService toastService)
+        public InventoryItemDataService(HttpClient httpClient, ILogger<InventoryItemDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -39,6 +37,7 @@ namespace Menominee.Client.Services.Inventory
             }
 
             toastService.ShowError($"Failed to add Inventory Item. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -48,9 +47,9 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all inventory items");
             }
 
             return null;
@@ -62,9 +61,9 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing/{mfrId}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all inventory items");
             }
 
             return null;
@@ -76,10 +75,11 @@ namespace Menominee.Client.Services.Inventory
             {
                 return await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get inventory item with id {id}", id);
             }
+
             return null;
         }
 

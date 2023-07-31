@@ -1,12 +1,8 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Customers;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using static Menominee.Common.Enums.EntityType;
 
 namespace Menominee.Client.Services.Customers
@@ -14,16 +10,18 @@ namespace Menominee.Client.Services.Customers
     public class CustomerDataService : ICustomerDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<CustomerDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/customers";
 
-        public CustomerDataService(HttpClient httpClient,
-                                 IToastService toastService)
+        public CustomerDataService(HttpClient httpClient, ILogger<CustomerDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
+
         public async Task<CustomerToRead> AddCustomer(CustomerToWrite customer)
         {
             var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
@@ -48,9 +46,9 @@ namespace Menominee.Client.Services.Customers
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all customers");
             }
 
             return null;
@@ -62,10 +60,11 @@ namespace Menominee.Client.Services.Customers
             {
                 return await httpClient.GetFromJsonAsync<CustomerToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get customer with id {id}", id);
             }
+
             return null;
         }
 
@@ -93,9 +92,9 @@ namespace Menominee.Client.Services.Customers
             {
                 await httpClient.DeleteAsync($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to delete customer with id {id}", id);
             }
         }
     }

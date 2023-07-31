@@ -1,26 +1,24 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.Payables.Invoices;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Payables.Invoices
 {
     public class VendorInvoiceDataService : IVendorInvoiceDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<VendorInvoiceDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         //private const string UriSegment = "api/payables/vendorinvoices";
         private const string UriSegment = "api/vendorinvoices";
 
-        public VendorInvoiceDataService(HttpClient httpClient, IToastService toastService)
+        public VendorInvoiceDataService(HttpClient httpClient, ILogger<VendorInvoiceDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -34,9 +32,9 @@ namespace Menominee.Client.Services.Payables.Invoices
                 return await httpClient
                     .GetFromJsonAsync<IReadOnlyList<VendorInvoiceToReadInList>>($"{UriSegment}/listing?{parameters}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all vendor invoices");
             }
 
             return null;
@@ -50,9 +48,10 @@ namespace Menominee.Client.Services.Payables.Invoices
             }
             catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get vendoir invoice with id {id}", id);
                 Console.WriteLine($"Error getting invoice #{id}: {ex.Message}");
             }
+
             return null;
         }
 
@@ -73,6 +72,7 @@ namespace Menominee.Client.Services.Payables.Invoices
             }
 
             toastService.ShowError($"Failed to add vendor invoice. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 

@@ -1,25 +1,23 @@
 ﻿using Blazored.Toast.Services;
 using Menominee.Shared.Models.CreditCards;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.CreditCards
 {
     public class CreditCardDataService : ICreditCardDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<CreditCardDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/creditcards";
 
-        public CreditCardDataService(HttpClient httpClient, IToastService toastService)
+        public CreditCardDataService(HttpClient httpClient, ILogger<CreditCardDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -40,6 +38,7 @@ namespace Menominee.Client.Services.CreditCards
             }
 
             toastService.ShowError($"Failed to add credit card. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -49,9 +48,9 @@ namespace Menominee.Client.Services.CreditCards
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<CreditCardToReadInList>>($"{UriSegment}/listing");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all credit cards");
             }
 
             return null;
@@ -63,10 +62,11 @@ namespace Menominee.Client.Services.CreditCards
             {
                 return await httpClient.GetFromJsonAsync<CreditCardToRead>($"{UriSegment}/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get credit card with id {id}", id);
             }
+
             return null;
         }
 

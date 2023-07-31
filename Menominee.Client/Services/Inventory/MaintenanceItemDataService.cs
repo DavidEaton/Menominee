@@ -1,11 +1,7 @@
 ﻿using Blazored.Toast.Services;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http.Json;
-using System;
 using Menominee.Shared.Models.Inventory.MaintenanceItems;
 
 namespace Menominee.Client.Services.Inventory
@@ -13,13 +9,15 @@ namespace Menominee.Client.Services.Inventory
     public class MaintenanceItemDataService : IMaintenanceItemDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<MaintenanceItemDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/maintenanceitems";
 
-        public MaintenanceItemDataService(HttpClient httpClient, IToastService toastService)
+        public MaintenanceItemDataService(HttpClient httpClient, ILogger<MaintenanceItemDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -46,6 +44,7 @@ namespace Menominee.Client.Services.Inventory
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Failed to get all maintenance items");
                 Console.WriteLine($"Message: {ex.Message}");
             }
 
@@ -60,8 +59,10 @@ namespace Menominee.Client.Services.Inventory
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Failed to get maintenance item with id {id}", id);
                 Console.WriteLine($"Message: {ex.Message}");
             }
+
             return null;
         }
 
@@ -87,6 +88,7 @@ namespace Menominee.Client.Services.Inventory
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Failed to delete maintenance item with id {id}", id);
                 Console.WriteLine($"Message :{ex.Message}");
             }
         }

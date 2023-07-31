@@ -1,11 +1,7 @@
 ﻿using Menominee.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Blazored.Toast.Services;
 using Menominee.Shared.Models.Organizations;
 
@@ -14,14 +10,15 @@ namespace Menominee.Client.Services
     public class OrganizationDataService : IOrganizationDataService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<OrganizationDataService> logger;
         private readonly IToastService toastService;
         private const string MediaType = "application/json";
         private const string UriSegment = "api/organizations";
 
-        public OrganizationDataService(HttpClient httpClient,
-                                       IToastService toastService)
+        public OrganizationDataService(HttpClient httpClient, ILogger<OrganizationDataService> logger, IToastService toastService)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
             this.toastService = toastService;
         }
 
@@ -37,6 +34,7 @@ namespace Menominee.Client.Services
             }
 
             toastService.ShowError($"{organization.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
+
             return null;
         }
 
@@ -46,9 +44,9 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<IReadOnlyList<OrganizationToReadInList>>($"{UriSegment}/list");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get all organizations");
             }
 
             return null;
@@ -60,10 +58,11 @@ namespace Menominee.Client.Services
             {
                 return await httpClient.GetFromJsonAsync<OrganizationToRead>(UriSegment + $"/{id}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // TODO: log exception
+                logger.LogError(ex, "Failed to get organization with id {id}", id);
             }
+
             return null;
         }
 
