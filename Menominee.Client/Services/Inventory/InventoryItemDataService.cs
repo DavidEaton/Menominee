@@ -59,7 +59,7 @@ namespace Menominee.Client.Services.Inventory
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing/{mfrId}");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<InventoryItemToReadInList>>($"{UriSegment}/listing?manufacturerId={mfrId}");
             }
             catch (Exception ex)
             {
