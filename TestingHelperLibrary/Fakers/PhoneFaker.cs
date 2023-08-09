@@ -6,10 +6,20 @@ namespace TestingHelperLibrary.Fakers
 {
     public class PhoneFaker : Faker<Phone>
     {
-        public PhoneFaker(bool generateId)
+        public PhoneFaker(bool generateId = false)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
+            GeneratePhone();
+        }
 
+        public PhoneFaker(long id = 0)
+        {
+            RuleFor(entity => entity.Id, faker => id > 0 ? id : 0);
+            GeneratePhone();
+        }
+
+        private void GeneratePhone()
+        {
             CustomInstantiator(faker =>
             {
                 var phoneType = faker.PickRandom<PhoneType>();

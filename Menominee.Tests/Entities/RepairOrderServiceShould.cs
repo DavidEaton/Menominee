@@ -27,7 +27,7 @@ namespace Menominee.Tests.Entities
         public void SetServiceName()
         {
             var service = new RepairOrderServiceFaker(true).Generate();
-            var newName = new Faker().Company.CompanyName();
+            var newName = GenerateNewServiceName(service.ServiceName);
 
             var result = service.SetServiceName(newName);
 
@@ -35,11 +35,20 @@ namespace Menominee.Tests.Entities
             service.ServiceName.Should().Be(newName);
         }
 
+        private static string GenerateNewServiceName(string currentName)
+        {
+            var newName = new Faker().Company.CompanyName();
+
+            return newName.Equals(currentName)
+                ? GenerateNewServiceName(currentName)
+                : newName;
+        }
+
         [Fact]
         public void Return_Failure_On_Set_Invalid_ServiceName()
         {
             var service = new RepairOrderServiceFaker(true).Generate();
-            var invalidName = new Faker().Random.String(RepairOrderService.MaximumLength + 1);
+            var invalidName = new Faker().Random.Utf16String(RepairOrderService.MaximumLength + 1, RepairOrderService.MaximumLength + 1);
 
             var result = service.SetServiceName(invalidName);
 
@@ -64,7 +73,6 @@ namespace Menominee.Tests.Entities
         public void Return_Failure_On_Set_Invalid_SaleCode()
         {
             var service = new RepairOrderServiceFaker(true).Generate();
-            var invalidName = new Faker().Random.String(RepairOrderService.MaximumLength + 1);
 
             var result = service.SetSaleCode(null);
 

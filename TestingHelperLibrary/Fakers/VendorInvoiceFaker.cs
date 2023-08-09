@@ -18,19 +18,40 @@ namespace TestingHelperLibrary.Fakers
                 var vendorInvoiceNumbers = faker.MakeLazy(5, () => faker.Random.String2(10)).ToList();
                 var vendor = new VendorFaker(generateId).Generate();
                 var invoiceNumber = GenerateInvoiceNumber(faker);
-                var lineItems = new VendorInvoiceLineItemFaker(generateId: generateId).Generate(lineItemsCount);
-                var payments = new VendorInvoicePaymentFaker(generateId: generateId).Generate(paymentsCount);
-                var taxes = new VendorInvoiceTaxFaker(generateId: generateId).Generate(taxesCount);
+
+                var lineItems = lineItemsCount <= 0
+                    ? null
+                    : generateId
+                        ? Utilities.GenerateRandomUniqueLongValues(lineItemsCount)
+                            .Select(id => new VendorInvoiceLineItemFaker(generateId: false, id: id).Generate())
+                            .ToList()
+                        : new VendorInvoiceLineItemFaker(generateId: false).Generate(lineItemsCount);
+
+                var payments = paymentsCount <= 0
+                    ? null
+                    : generateId 
+                        ? Utilities.GenerateRandomUniqueLongValues(paymentsCount)
+                            .Select(id => new VendorInvoicePaymentFaker(generateId: false, id: id).Generate())
+                            .ToList()
+                        : new VendorInvoicePaymentFaker(generateId: false).Generate(paymentsCount);
+
+                var taxes = taxesCount <= 0
+                    ? null
+                    : generateId
+                        ? Utilities.GenerateRandomUniqueLongValues(taxesCount)
+                            .Select(id => new VendorInvoiceTaxFaker(generateId: false, id: id).Generate())
+                            .ToList()
+                        : new VendorInvoiceTaxFaker(generateId: false).Generate(taxesCount);
 
                 var invoice = VendorInvoice.Create(vendor, status, documentType, total, vendorInvoiceNumbers, invoiceNumber).Value;
 
-                lineItems.ForEach(line =>
+                lineItems?.ForEach(line =>
                     invoice.AddLineItem(line));
 
-                payments.ForEach(payment =>
+                payments?.ForEach(payment =>
                     invoice.AddPayment(payment));
 
-                taxes.ForEach(tax =>
+                taxes?.ForEach(tax =>
                     invoice.AddTax(tax));
 
                 return invoice;

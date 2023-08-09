@@ -2,6 +2,7 @@
 using CSharpFunctionalExtensions;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Common.Enums;
+using TestingHelperLibrary;
 using TestingHelperLibrary.Fakers;
 
 namespace Menominee.Tests.Helpers.Fakers
@@ -20,7 +21,13 @@ namespace Menominee.Tests.Helpers.Fakers
                     .OnFailure(error => throw new InvalidOperationException($"Failed to create TechAmount: {error}"))
                     .Result;
 
-                var exciseFees = new ExciseFeeFaker(generateId).Generate(exciseFeeCount);
+                var exciseFees = exciseFeeCount <= 0
+                    ? new()
+                    : generateId
+                        ? Utilities.GenerateRandomUniqueLongValues(exciseFeeCount)
+                            .Select(id => new ExciseFeeFaker(id: id).Generate())
+                            .ToList()
+                        : new ExciseFeeFaker(generateId: false).Generate(exciseFeeCount);
 
                 var combinedAddResult = Result.Combine(exciseFees
                     .Select(fee => result.Value.AddExciseFee(fee))

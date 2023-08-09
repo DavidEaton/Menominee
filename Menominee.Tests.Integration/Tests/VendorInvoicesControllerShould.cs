@@ -348,13 +348,7 @@ namespace Menominee.Tests.Integration.Tests
                     item.NewSaleCode(saleCodes[random.Next(saleCodes.Count)]);
                     return item;
                 }).ToList();
-            var exciseFees = new ExciseFeeFaker(generateId: false).Generate(count);
-            var salesTaxes = new SalesTaxFaker(false).Generate(count)
-                .Select(salesTax =>
-                {
-                    salesTax.AddExciseFee(exciseFees[random.Next(exciseFees.Count)]);
-                    return salesTax;
-                }).ToList();
+            var salesTaxes = new SalesTaxFaker(false).Generate(count);
             var vendorInvoiceLineItems = new VendorInvoiceLineItemFaker(false).Generate(count);
             var vendorInvoiceTaxes = new VendorInvoiceTaxFaker(false).Generate(count)
                 .Select(tax =>

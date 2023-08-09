@@ -20,8 +20,22 @@ namespace TestingHelperLibrary.Fakers
                 var address = includeAddress
                     ? new AddressFaker().Generate()
                     : null;
-                var emails = new EmailFaker(generateId).Generate(emailsCount);
-                var phones = new PhoneFaker(generateId).Generate(phonesCount);
+
+                var emails = emailsCount <= 0
+                    ? null
+                    : generateId 
+                        ? Utilities.GenerateRandomUniqueLongValues(emailsCount)
+                            .Select(id => new EmailFaker(id).Generate())
+                            .ToList()
+                        : new EmailFaker(generateId: false).Generate(emailsCount);
+
+                var phones = phonesCount <= 0
+                    ? null
+                    : generateId
+                        ? Utilities.GenerateRandomUniqueLongValues(phonesCount)
+                            .Select(id => new PhoneFaker(id).Generate())
+                            .ToList()
+                        : new PhoneFaker(generateId: false).Generate(phonesCount);
 
                 var result = Vendor.Create(name, vendorCode, vendorRole, note, defaultPaymentMethod, address, emails, phones);
 
