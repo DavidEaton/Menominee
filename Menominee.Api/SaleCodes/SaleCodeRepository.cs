@@ -94,11 +94,10 @@ namespace Menominee.Api.SaleCodes
 
         public async Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetSaleCodeShopSuppliesListAsync()
         {
-            var saleCodes = await context.SaleCodes.ToListAsync();
-
-            return saleCodes
+            return await context.SaleCodes
+                .Include(saleCode => saleCode.ShopSupplies)
                 .Select(saleCode => SaleCodeHelper.ConvertShopSuppliesToReadInListDto(saleCode))
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<bool> SaleCodeExistsAsync(long id)
