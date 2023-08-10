@@ -20,15 +20,15 @@
                                     var warranty = context as WarrantyListItem;
                                     if (warranty.IsComplete())
                                     {
-                                        <div class="success-icon">
-                                            <TelerikIcon Icon="check" />
-                                        </div>
+                                        <span class="success-icon">
+                                            <TelerikFontIcon Icon="@FontIcon.Check" />
+                                        </span>
                                     }
                                     else
                                     {
-                                        <div class="danger-icon">
-                                            <TelerikIcon Icon="exclamation-circle" />
-                                        </div>
+                                        <span class="danger-icon">
+                                            <TelerikFontIcon Icon="@FontIcon.ExclamationCircle" />
+                                        </span>
                                     }
                                 }
                             </Template>

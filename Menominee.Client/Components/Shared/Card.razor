@@ -5,7 +5,7 @@
             @if (Collapsible)
             {
                 <span @onclick="ToggleExpanded">
-                    <TelerikIcon Icon=@(Collapsed ? "caret-alt-down" : "caret-alt-up")></TelerikIcon>
+                    <TelerikFontIcon Icon="@FontIcon.CaretAltDown" Flip=@(Collapsed ? IconFlip.None : IconFlip.Vertical) />
                 </span>
             }
             @Title

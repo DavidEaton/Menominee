@@ -28,7 +28,9 @@
                     @{
                         @if ((context as PhoneToWrite).IsPrimary)
                         {
-                            <TelerikIcon Icon="check-circle" Class="green-check"></TelerikIcon>
+                            <span class="green-check">
+                                <TelerikFontIcon Icon="@FontIcon.CheckCircle" />
+                            </span>
                         }
                         @((context as PhoneToWrite).ToString())
                     }
