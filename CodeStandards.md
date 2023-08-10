@@ -77,7 +77,7 @@ For example, a method converting to Int64 should be named `ToInt64`, not `ToLong
 
 The Domain Model is the heart of our software, the place for all domain logic and knowledge that make up the competitive advantage of our company. This is where we focus most of our efforts, keeping it fully encapsulated, covered well by tests, and refactored as often as needed to adapt to changing requirements. It’s the space where we are sure that all data remains consistent and no invariants are violated. We adhere to the Always-Valid Domain Model philosophy. 
 ## <a href="https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations">Design validation into the domain model layer</a>
-In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Organization domain aggregate class enforces the business rule, "Organization must have a Name", via the Organization.Create factory method. Each domain class enforces its invariants in its Create factory method.
+In DDD, validation rules can be thought as invariants. The main responsibility of an aggregate is to enforce invariants across state changes for all the entities within that aggregate. For example, the Business domain aggregate class enforces the business rule, "Business must have a Name", via the Business.Create factory method. Each domain class enforces its invariants in its Create factory method.
 ### Implement validations in the domain model layer
 Validations are implemented in domain entity constructors or in methods that can update the entity. 
 
@@ -99,10 +99,10 @@ In practice it means that value objects are immutable, and public setters are no
         }
 #### Collections of Value Objects
         /// This entity will act as a thin wrapper on top of Phone value object
-        /// with just an identifier and a reference to the owning Organization.
+        /// with just an identifier and a reference to the owning Business.
         /// Necessary to enable searchable value object collection of phones.
         /// Although we do now have an additional entity in our domain model,
-        /// we don’t ever have to expose it outside of the aggregate (Organization).
+        /// we don’t ever have to expose it outside of the aggregate (Business).
 
 ### [ApiController] Attribute
 ... makes the next two checks in Controllers unnecessary. 
@@ -127,7 +127,7 @@ N+1 problem ONLY HAPPENS IN READS.
 So, adhere to CQRS Pattern, don't use ORM or domain model in reads. Instead of ORM reads, use plain sql or micro-ORM such as Dapper.
 
 
-            return await context.Organizations
+            return await context.Businesses
                 // Tracking is not needed (and expensive) for this disconnected data collection
                 // Lazy-loading is not supported for detached entities or entities that are loaded with 'AsNoTracking'.
                 .AsNoTracking()
@@ -175,4 +175,4 @@ Test projects include unit tests, integration tests.
 ### Code Readability and Comments
 
 Code should be as self-documenting as possible, and we strive to write clear, focused code that is human-readable, and attempts to adhere to the Single Responsibility Principle.
-That said, some comments have been included in our source code for further explanation. We've tried to limit those comments to the Organization class, its Data Transfer Objects (DTOs), repository, controller, which contain comments that are applicable to most other domain types and their related classes.
+That said, some comments have been included in our source code for further explanation. We've tried to limit those comments to the Business class, its Data Transfer Objects (DTOs), repository, controller, which contain comments that are applicable to most other domain types and their related classes.

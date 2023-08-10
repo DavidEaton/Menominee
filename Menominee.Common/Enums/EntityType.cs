@@ -3,6 +3,6 @@
     public enum EntityType
     {
         Person,
-        Organization
+        Business
     }
 }

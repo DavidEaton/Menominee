@@ -3,9 +3,9 @@ using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
 using System.Collections.Generic;
 
-namespace Menominee.Shared.Models.Organizations
+namespace Menominee.Shared.Models.Businesses
 {
-    public class OrganizationToRead
+    public class BusinessToRead
     {
         public long Id { get; set; }
         public string Name { get; set; }

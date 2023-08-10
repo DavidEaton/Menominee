@@ -29,12 +29,12 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void CreateCustomerWithOrganizationEntity()
+        public void CreateCustomerWithBusinessEntity()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
 
-            var customer = Customer.Create(organization, CustomerType.Retail).Value;
-            customer.EntityType.Should().Be(EntityType.Organization);
+            var customer = Customer.Create(business, CustomerType.Retail).Value;
+            customer.EntityType.Should().Be(EntityType.Business);
         }
 
         [Fact]
@@ -61,23 +61,23 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void Not_Create_Organization_Customer_With_Null_Organization_Entity()
+        public void Not_Create_Business_Customer_With_Null_Business_Entity()
         {
-            Organization organization = null;
+            Business business = null;
 
-            var result = Customer.Create(organization, CustomerType.Retail);
+            var result = Customer.Create(business, CustomerType.Retail);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
         }
 
         [Fact]
-        public void Not_Create_Organization_Customer_With_Invalid_CustomerType()
+        public void Not_Create_Business_Customer_With_Invalid_CustomerType()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var invalidCustomerType = (CustomerType)(-1);
 
-            var result = Customer.Create(organization, invalidCustomerType);
+            var result = Customer.Create(business, invalidCustomerType);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
@@ -130,17 +130,17 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void CreateOrganizationCustomerWithPersonContact()
+        public void CreateBusinessCustomerWithPersonContact()
         {
             var firstName = "Jane";
             var lastName = "Doe";
             var name = PersonName.Create(lastName, firstName).Value;
             var notes = Utilities.LoremIpsum(100);
             var person = Person.Create(name, Gender.Female, notes).Value;
-            var organization = ContactableTestHelper.CreateOrganization();
-            organization.SetContact(person);
+            var business = ContactableTestHelper.CreateBusiness();
+            business.SetContact(person);
 
-            var customer = Customer.Create(organization, CustomerType.Retail).Value;
+            var customer = Customer.Create(business, CustomerType.Retail).Value;
             var contact = customer.Contact;
 
             contact.Should().BeOfType<Person>();
@@ -379,7 +379,7 @@ namespace Menominee.Tests.Entities
         [MemberData(nameof(TestData.DataCustomer), MemberType = typeof(TestData))]
         public void Customer_Name_Is_Entity_Name(Customer customer)
         {
-            customer.Name.Should().Be(customer.EntityType == EntityType.Person ? customer.Person.Name.FirstMiddleLast : customer.Organization.Name.Name);
+            customer.Name.Should().Be(customer.EntityType == EntityType.Person ? customer.Person.Name.FirstMiddleLast : customer.Business.Name.Name);
         }
 
         private static Vehicle CreatePontiacTransSport()
@@ -410,7 +410,7 @@ namespace Menominee.Tests.Entities
                 {
                     yield return new object[] { Customer.Create(ContactableTestHelper.CreatePerson(), CustomerType.Retail).Value
                 };
-                    yield return new object[] { Customer.Create(ContactableTestHelper.CreateOrganization(), CustomerType.Retail).Value };
+                    yield return new object[] { Customer.Create(ContactableTestHelper.CreateBusiness(), CustomerType.Retail).Value };
                 }
             }
         }

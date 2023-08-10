@@ -6,16 +6,16 @@ using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities
 {
-    public class Organization : Contactable
+    public class Business : Contactable
     {
         // Targeting tests at the abstract base class binds them to the code’s implementation details.
         // Always test all concrete classes; don’t test abstract classes directly
-        public static readonly string InvalidMessage = $"Invalid organization.";
+        public static readonly string InvalidMessage = $"Invalid business.";
 
-        public OrganizationName Name { get; private set; }
+        public BusinessName Name { get; private set; }
         public Person Contact { get; private set; }
-        private Organization(
-            OrganizationName name,
+        private Business(
+            BusinessName name,
             string notes = null,
             Person contact = null,
             Address address = null,
@@ -27,15 +27,15 @@ namespace Menominee.Domain.Entities
             Contact = contact;
         }
 
-        public static Result<Organization> Create(
-            OrganizationName name,
+        public static Result<Business> Create(
+            BusinessName name,
             string notes = null,
             Person contact = null,
             Address address = null,
             IReadOnlyList<Email> emails = null,
             IReadOnlyList<Phone> phones = null)
         {
-            // ValueObject parameters are already validated by OrganizationValidator,
+            // ValueObject parameters are already validated by BusinessValidator,
             // which runs within the asp.net request pipeline, invoking each
             // ValueObject's contract validator. For example, AddressValidator :
             // AbstractValidator<AddressToWrite>
@@ -45,15 +45,15 @@ namespace Menominee.Domain.Entities
             notes = (notes ?? string.Empty).Trim().Truncate(NoteMaximumLength);
 
             if (name is null)
-                return Result.Failure<Organization>(InvalidMessage);
+                return Result.Failure<Business>(InvalidMessage);
 
             if (!string.IsNullOrWhiteSpace(notes) && notes.Length > NoteMaximumLength)
-                return Result.Failure<Organization>(NoteMaximumLengthMessage);
+                return Result.Failure<Business>(NoteMaximumLengthMessage);
 
-            return Result.Success(new Organization(name, notes, contact, address, emails, phones));
+            return Result.Success(new Business(name, notes, contact, address, emails, phones));
         }
 
-        public void SetName(OrganizationName name)
+        public void SetName(BusinessName name)
         {
             Name = name;
         }
@@ -74,7 +74,7 @@ namespace Menominee.Domain.Entities
         // is necessary for EntityFramework, makes our model <100% persistence ignorant.
 
         // EF requires a parameterless constructor
-        protected Organization() { }
+        protected Business() { }
 
         #endregion
     }

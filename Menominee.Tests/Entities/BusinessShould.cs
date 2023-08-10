@@ -17,155 +17,155 @@ using Person = Menominee.Domain.Entities.Person;
 
 namespace Menominee.Tests.Entities
 {
-    public class OrganizationShould
+    public class BusinessShould
     {
         private static readonly Faker Faker = new();
 
         [Fact]
-        public void Create_Organization()
+        public void Create_Business()
         {
             // Arrange
             var name = "   Jane's";
 
             // Act
-            var organizationOrError = Organization.Create(OrganizationName.Create(name).Value, null, null);
+            var businessOrError = Business.Create(BusinessName.Create(name).Value, null, null);
 
             // Assert
-            organizationOrError.Value.Should().BeOfType<Organization>();
-            organizationOrError.IsFailure.Should().BeFalse();
-            organizationOrError.Value.Name.Name.Should().Be(name.Trim());
+            businessOrError.Value.Should().BeOfType<Business>();
+            businessOrError.IsFailure.Should().BeFalse();
+            businessOrError.Value.Name.Name.Should().Be(name.Trim());
         }
 
         [Fact]
-        public void Return_Failure_On_Create_Empty_Organization()
+        public void Return_Failure_On_Create_Empty_Business()
         {
-            var organizationOrError = Organization.Create(null, null, null);
+            var businessOrError = Business.Create(null, null, null);
 
-            organizationOrError.IsFailure.Should().BeTrue();
-            organizationOrError.Error.Should().Contain(Organization.InvalidMessage);
+            businessOrError.IsFailure.Should().BeTrue();
+            businessOrError.Error.Should().Contain(Business.InvalidMessage);
         }
 
         [Fact]
-        public void Return_Failure_On_Create_Organization_With_Null_Name()
+        public void Return_Failure_On_Create_Business_With_Null_Name()
         {
             string name = null;
-            var organizationNameOrError = OrganizationName.Create(name);
+            var businessNameOrError = BusinessName.Create(name);
 
-            organizationNameOrError.IsFailure.Should().BeTrue();
-            organizationNameOrError.Error.Should().Contain(OrganizationName.InvalidMessage);
+            businessNameOrError.IsFailure.Should().BeTrue();
+            businessNameOrError.Error.Should().Contain(BusinessName.InvalidMessage);
         }
 
         [Fact]
-        public void Create_Organization_With_Address()
+        public void Create_Business_With_Address()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
             var address = Address.Create(addressLine, city, state, postalCode);
 
-            organization.SetAddress(address.Value);
+            business.SetAddress(address.Value);
 
-            organization.Address.AddressLine.Should().Be(addressLine);
-            organization.Address.City.Should().Be(city);
-            organization.Address.State.Should().Be(state);
-            organization.Address.PostalCode.Should().Be(postalCode);
+            business.Address.AddressLine.Should().Be(addressLine);
+            business.Address.City.Should().Be(city);
+            business.Address.State.Should().Be(state);
+            business.Address.PostalCode.Should().Be(postalCode);
         }
 
         [Fact]
-        public void Create_Organization_With_Contact()
+        public void Create_Business_With_Contact()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
             var notes = LoremIpsum(100);
             var contact = Person.Create(personName, Gender.Female, notes).Value;
 
-            organization.SetContact(contact);
+            business.SetContact(contact);
 
-            organization.Name.Should().NotBeNull();
-            organization.Contact.Name.FirstName.Should().Be(firstName);
+            business.Name.Should().NotBeNull();
+            business.Contact.Name.FirstName.Should().Be(firstName);
         }
 
         [Fact]
-        public void Create_Organization_With_Phones()
+        public void Create_Business_With_Phones()
         {
             var phoneCount = 10;
             var phones = ContactableTestHelper.CreatePhones(phoneCount);
-            var organization = Organization.Create(
-                OrganizationName.Create(
+            var business = Business.Create(
+                BusinessName.Create(
                     "   Jane's").Value, "note", phones: phones)
                 .Value;
 
-            organization.Phones.Count.Should().BeGreaterThanOrEqualTo(phoneCount);
+            business.Phones.Count.Should().BeGreaterThanOrEqualTo(phoneCount);
         }
 
         [Fact]
-        public void Create_Organization_With_Emails()
+        public void Create_Business_With_Emails()
         {
             var emailCount = 10;
             var emails = ContactableTestHelper.CreateEmails(emailCount);
-            var organization = Organization.Create(OrganizationName.Create("   Jane's").Value, "note", emails: emails).Value;
+            var business = Business.Create(BusinessName.Create("   Jane's").Value, "note", emails: emails).Value;
 
-            organization.Emails.Count.Should().BeGreaterThanOrEqualTo(emailCount);
+            business.Emails.Count.Should().BeGreaterThanOrEqualTo(emailCount);
 
         }
 
         [Fact]
         public void Have_Empty_Phones_On_Create()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
 
-            organization.Phones.Count.Should().Be(0);
+            business.Phones.Count.Should().Be(0);
 
-            organization.AddPhone(phone);
-            organization.Phones.Count.Should().Be(1);
+            business.AddPhone(phone);
+            business.Phones.Count.Should().Be(1);
         }
 
         [Fact]
         public void AddPhone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "989.627.9206";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
 
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
 
-            organization.Phones.Should().Contain(phone);
+            business.Phones.Should().Contain(phone);
         }
 
         [Fact]
         public void RemovePhone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = Phone.Create(number, phoneType, true).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = Phone.Create(number, phoneType, false).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
 
-            organization.Phones.Count.Should().Be(2);
-            organization.RemovePhone(phone);
+            business.Phones.Count.Should().Be(2);
+            business.RemovePhone(phone);
 
-            organization.Phones.Count.Should().Be(1);
+            business.Phones.Count.Should().Be(1);
 
         }
 
         [Fact]
         public void Return_Failure_On_Add_Null_Phone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
 
-            var result = organization.AddPhone(null);
+            var result = business.AddPhone(null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
@@ -174,55 +174,55 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_Remove_Null_Phone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = Phone.Create(number, phoneType, true).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = Phone.Create(number, phoneType, false).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
 
-            organization.Phones.Count.Should().Be(2);
-            var result = organization.RemovePhone(null);
+            business.Phones.Count.Should().Be(2);
+            var result = business.RemovePhone(null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
-            organization.Phones.Count.Should().Be(2);
+            business.Phones.Count.Should().Be(2);
         }
 
         [Fact]
         public void Return_Failure_On_Remove_Nonexistent_Phone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "989.627.9206";
             var phoneType = PhoneType.Mobile;
             var phone = Phone.Create(number, phoneType, true).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
             number = "231.546.2102";
             phoneType = PhoneType.Home;
             phone = Phone.Create(number, phoneType, false).Value;
 
-            organization.Phones.Count.Should().Be(1);
-            var result = organization.RemovePhone(phone);
+            business.Phones.Count.Should().Be(1);
+            var result = business.RemovePhone(phone);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.NotFoundMessage);
-            organization.Phones.Count.Should().Be(1);
+            business.Phones.Count.Should().Be(1);
         }
 
         [Fact]
         public void Return_Failure_On_Add_More_Than_One_Primary_Phone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "555.627.9206";
             var phone = Phone.Create(number, PhoneType.Home, true).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
             number = "444.627.9206";
             phone = Phone.Create(number, PhoneType.Mobile, true).Value;
 
-            var result = organization.AddPhone(phone);
+            var result = business.AddPhone(phone);
 
             result.IsFailure.Should().BeTrue();
         }
@@ -230,14 +230,14 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_Add_Duplicate_Phone()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var number = "555.444.3333";
             var phoneType = PhoneType.Home;
             var phone = Phone.Create(number, phoneType, true).Value;
-            organization.AddPhone(phone);
+            business.AddPhone(phone);
             phone = Phone.Create(number, phoneType, true).Value;
 
-            var result = organization.AddPhone(phone);
+            var result = business.AddPhone(phone);
 
             result.IsFailure.Should().BeTrue();
         }
@@ -245,71 +245,71 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Have_Empty_Emails_On_Create()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
-            organization.Emails.Count.Should().Be(0);
+            business.Emails.Count.Should().Be(0);
 
-            organization.AddEmail(email);
-            organization.Emails.Count.Should().Be(1);
+            business.AddEmail(email);
+            business.Emails.Count.Should().Be(1);
         }
         [Fact]
 
         public void AddEmail()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
-            organization.AddEmail(email);
+            business.AddEmail(email);
 
-            organization.Emails.Should().Contain(email);
+            business.Emails.Should().Contain(email);
         }
 
         [Fact]
         public void RemoveEmail()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
-            organization.AddEmail(email0);
+            business.AddEmail(email0);
             address = "june@doe.com";
             var email1 = Email.Create(address, false).Value;
-            organization.AddEmail(email1);
+            business.AddEmail(email1);
 
-            organization.Emails.Count.Should().Be(2);
-            organization.RemoveEmail(email0);
+            business.Emails.Count.Should().Be(2);
+            business.RemoveEmail(email0);
 
-            organization.Emails.Count.Should().Be(1);
-            organization.Emails.Should().Contain(email1);
+            business.Emails.Count.Should().Be(1);
+            business.Emails.Should().Contain(email1);
         }
 
         [Fact]
         public void Return_Failure_On_Remove_Null_Email()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
-            organization.AddEmail(email0);
+            business.AddEmail(email0);
             address = "june@doe.com";
             var email1 = Email.Create(address, false).Value;
-            organization.AddEmail(email1);
+            business.AddEmail(email1);
 
-            organization.Emails.Count.Should().Be(2);
-            var result = organization.RemoveEmail(null);
+            business.Emails.Count.Should().Be(2);
+            var result = business.RemoveEmail(null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
-            organization.Emails.Count.Should().Be(2);
+            business.Emails.Count.Should().Be(2);
         }
 
         [Fact]
         public void Return_Failure_On_Add_Null_Email()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
 
-            var result = organization.AddEmail(null);
+            var result = business.AddEmail(null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
@@ -318,32 +318,32 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_Remove_Nonexistent_Email()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email0 = Email.Create(address, true).Value;
-            organization.AddEmail(email0);
+            business.AddEmail(email0);
             address = "june@doe.com";
             var email1 = Email.Create(address, false).Value;
 
-            organization.Emails.Count.Should().Be(1);
-            var result = organization.RemoveEmail(email1);
+            business.Emails.Count.Should().Be(1);
+            var result = business.RemoveEmail(email1);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.NotFoundMessage);
-            organization.Emails.Count.Should().Be(1);
+            business.Emails.Count.Should().Be(1);
         }
 
         [Fact]
         public void Return_Failure_On_Add_More_Than_One_Primary_Email()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
-            organization.AddEmail(email);
+            business.AddEmail(email);
             address = "june@done.com";
             email = Email.Create(address, true).Value;
 
-            var result = organization.AddEmail(email);
+            var result = business.AddEmail(email);
 
             result.IsFailure.Should().BeTrue();
         }
@@ -351,14 +351,14 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_Add_Duplicate_Email()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = "jane@doe.com";
             var email = Email.Create(address, true).Value;
 
-            organization.AddEmail(email);
+            business.AddEmail(email);
             email = Email.Create(address, true).Value;
 
-            var result = organization.AddEmail(email);
+            var result = business.AddEmail(email);
 
             result.IsFailure.Should().BeTrue();
         }
@@ -366,31 +366,31 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetAddress()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
             var address = Address.Create(addressLine, city, state, postalCode);
 
-            organization.SetAddress(address.Value);
+            business.SetAddress(address.Value);
 
             using (new AssertionScope())
             {
-                organization.Address.AddressLine.Should().Be(addressLine);
-                organization.Address.City.Should().Be(city);
-                organization.Address.State.Should().Be(state);
-                organization.Address.PostalCode.Should().Be(postalCode);
+                business.Address.AddressLine.Should().Be(addressLine);
+                business.Address.City.Should().Be(city);
+                business.Address.State.Should().Be(state);
+                business.Address.PostalCode.Should().Be(postalCode);
             }
         }
 
         [Fact]
         public void Return_Failure_On_Set_Inavlid_Address()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             Address address = null;
 
-            var result = organization.SetAddress(address);
+            var result = business.SetAddress(address);
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Contactable.RequiredMessage);
         }
@@ -398,66 +398,66 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void ClearAddress()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var address = Address.Create(
                 "1234 Five Street",
                 "Gaylord",
                 State.MI,
                 "49735").Value;
-            organization.SetAddress(address);
-            organization.Address.Should().Be(address);
+            business.SetAddress(address);
+            business.Address.Should().Be(address);
 
-            organization.ClearAddress();
+            business.ClearAddress();
 
-            organization.Address.Should().BeNull();
+            business.Address.Should().BeNull();
         }
 
         [Fact]
         public void SetName()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var name = "jane's";
-            var organizationNameOrError = OrganizationName.Create(name);
+            var businessNameOrError = BusinessName.Create(name);
 
-            organization.SetName(organizationNameOrError.Value);
+            business.SetName(businessNameOrError.Value);
 
-            organization.Name.Should().Be(organizationNameOrError.Value);
+            business.Name.Should().Be(businessNameOrError.Value);
         }
 
         [Fact]
         public void SetContact()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var firstName = "Jane";
             var lastName = "Doe";
             var personName = PersonName.Create(lastName, firstName).Value;
             var notes = LoremIpsum(100);
             var contact = Person.Create(personName, Gender.Female, notes).Value;
 
-            organization.SetContact(contact);
+            business.SetContact(contact);
 
-            organization.Contact.Name.FirstName.Should().Be(firstName);
+            business.Contact.Name.FirstName.Should().Be(firstName);
         }
 
         [Fact]
         public void SetNotes()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var notes = "Behold, notes!";
 
-            organization.SetNotes(notes);
+            business.SetNotes(notes);
 
-            organization.Notes.Should().Be(notes);
+            business.Notes.Should().Be(notes);
         }
 
         [Fact]
         public void UpdateContactDetails()
         {
-            var organization = new OrganizationFaker(true, emailsCount: 3, phonesCount: 3).Generate();
+            var business = new BusinessFaker(true, emailsCount: 3, phonesCount: 3).Generate();
 
             var updatedAddress = new AddressFaker().Generate();
 
-            var updatedPhones = organization.Phones.Select(phone =>
+            var updatedPhones = business.Phones.Select(phone =>
             {
                 return new PhoneToWrite
                 {
@@ -468,7 +468,7 @@ namespace Menominee.Tests.Entities
                 };
             }).ToList();
 
-            var updatedEmails = organization.Emails.Select(email => new EmailToWrite
+            var updatedEmails = business.Emails.Select(email => new EmailToWrite
             {
                 Id = email.Id,
                 Address = $"updated-{email.Address}",
@@ -480,26 +480,26 @@ namespace Menominee.Tests.Entities
                 emailsToWrite: updatedEmails,
                 addressToWrite: AddressHelper.ConvertToWriteDto(updatedAddress)).Value;
 
-            organization.Phones.Should().NotBeEquivalentTo(updatedPhones);
-            organization.Emails.Should().NotBeEquivalentTo(updatedEmails);
-            organization.Address.Should().NotBe(updatedAddress);
+            business.Phones.Should().NotBeEquivalentTo(updatedPhones);
+            business.Emails.Should().NotBeEquivalentTo(updatedEmails);
+            business.Address.Should().NotBe(updatedAddress);
 
-            organization.UpdateContactDetails(updatedContactDetails);
+            business.UpdateContactDetails(updatedContactDetails);
 
-            organization.Phones.Should().BeEquivalentTo(updatedPhones);
-            organization.Emails.Should().BeEquivalentTo(updatedEmails);
-            organization.Address.Should().Be(updatedAddress);
+            business.Phones.Should().BeEquivalentTo(updatedPhones);
+            business.Emails.Should().BeEquivalentTo(updatedEmails);
+            business.Address.Should().Be(updatedAddress);
         }
 
         [Fact]
         public void Truncate_Note_To_Note_Maximum_Length()
         {
-            var organization = ContactableTestHelper.CreateOrganization();
+            var business = ContactableTestHelper.CreateBusiness();
             var notes = $"Lorem ipsum {LoremIpsum(Contactable.NoteMaximumLength)}";
 
-            organization.SetNotes(notes);
+            business.SetNotes(notes);
 
-            organization.Notes.Length.Should().Be(Contactable.NoteMaximumLength);
+            business.Notes.Length.Should().Be(Contactable.NoteMaximumLength);
         }
     }
 }

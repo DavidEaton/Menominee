@@ -1,19 +1,19 @@
 ﻿using Bogus;
 using Menominee.Common.ValueObjects;
-using Organization = Menominee.Domain.Entities.Organization;
+using Business = Menominee.Domain.Entities.Business;
 using Person = Menominee.Domain.Entities.Person;
 
 namespace TestingHelperLibrary.Fakers
 {
-    public class OrganizationFaker : Faker<Organization>
+    public class BusinessFaker : Faker<Business>
     {
-        public OrganizationFaker(bool generateId, bool includeAddress = false, bool includeContact = false, int emailsCount = 0, int phonesCount = 0)
+        public BusinessFaker(bool generateId, bool includeAddress = false, bool includeContact = false, int emailsCount = 0, int phonesCount = 0)
         {
             RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
 
             CustomInstantiator(faker =>
             {
-                var name = OrganizationName.Create(faker.Company.CompanyName()).Value;
+                var name = BusinessName.Create(faker.Company.CompanyName()).Value;
                 var notes = faker.Lorem.Sentence(20);
                 var birthday = faker.Person.DateOfBirth;
 
@@ -46,7 +46,7 @@ namespace TestingHelperLibrary.Fakers
                             .ToList()
                         : new PhoneFaker(generateId: false).Generate(phonesCount);
 
-                var result = Organization.Create(name, notes, contact, address, emails, phones);
+                var result = Business.Create(name, notes, contact, address, emails, phones);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

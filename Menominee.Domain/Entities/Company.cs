@@ -9,23 +9,23 @@ namespace Menominee.Domain.Entities
         public static readonly string MinimumValueMessage = $"Invoice Number Starting value must be >= {MinimumValue}.";
         public static readonly string RequiredMessage = $"Please include all required items.";
 
-        public Organization Organization { get; private set; }
+        public Business Business { get; private set; }
         public long NextInvoiceNumberOrSeed { get; private set; } = 0;
-        private Company(Organization organization, long invoiceNumberSeed)
+        private Company(Business business, long invoiceNumberSeed)
         {
-            Organization = organization;
+            Business = business;
             NextInvoiceNumberOrSeed = invoiceNumberSeed;
         }
 
-        public static Result<Company> Create(Organization organization, long seed)
+        public static Result<Company> Create(Business business, long seed)
         {
-            if (organization is null)
+            if (business is null)
                 return Result.Failure<Company>(RequiredMessage);
 
             if (seed <= MinimumValue || seed > long.MaxValue)
                 return Result.Failure<Company>(MinimumValueMessage);
 
-            return Result.Success(new Company(organization, seed));
+            return Result.Success(new Company(business, seed));
         }
 
         public Result<long> SetInvoiceNumberSeed(long seed)

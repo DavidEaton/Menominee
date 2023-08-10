@@ -6,25 +6,25 @@ using Menominee.Api.Common;
 using Menominee.Api.Persons;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Menominee.Api.Organizations
+namespace Menominee.Api.Businesses
 {
-    public class OrganizationsController : BaseApplicationController<OrganizationsController>
+    public class BusinessesController : BaseApplicationController<BusinessesController>
     {
-        private readonly IOrganizationRepository repository;
+        private readonly IBusinessRepository repository;
         private readonly IPersonRepository personsRepository;
         private readonly PersonsController personsController;
-        private readonly string BasePath = "/api/organizations";
+        private readonly string BasePath = "/api/businesses";
 
-        public OrganizationsController(
-            IOrganizationRepository repository
+        public BusinessesController(
+            IBusinessRepository repository
             , PersonsController personsController
             , IPersonRepository personsRepository
-            , ILogger<OrganizationsController> logger) : base (logger)
+            , ILogger<BusinessesController> logger) : base (logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
@@ -33,46 +33,46 @@ namespace Menominee.Api.Organizations
             this.personsRepository = personsRepository;
         }
 
-        // api/organizations/list
+        // api/businesses/list
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrganizationToReadInList>>> GetOrganizationsListAsync()
+        public async Task<ActionResult<IReadOnlyList<BusinessToReadInList>>> GetBusinessesListAsync()
         {
-            var organizations = await repository.GetOrganizationsListAsync();
+            var businesses = await repository.GetBusinessesListAsync();
 
-            if (organizations is null)
+            if (businesses is null)
                 return NotFound();
 
-            return Ok(organizations);
+            return Ok(businesses);
         }
 
-        // api/organizations
+        // api/businesses
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrganizationToRead>>> GetOrganizationsAsync()
+        public async Task<ActionResult<IReadOnlyList<BusinessToRead>>> GetBusinessesAsync()
         {
-            var organizations = await repository.GetOrganizationsAsync();
+            var businesses = await repository.GetBusinessesAsync();
 
-            if (organizations is null)
+            if (businesses is null)
                 return NotFound();
 
-            return Ok(organizations);
+            return Ok(businesses);
         }
 
-        // api/organizations/1
-        [HttpGet("{id:long}", Name = "GetOrganizationAsync")]
-        public async Task<ActionResult<OrganizationToRead>> GetOrganizationAsync(long id)
+        // api/businesses/1
+        [HttpGet("{id:long}", Name = "GetBusinessAsync")]
+        public async Task<ActionResult<BusinessToRead>> GetBusinessAsync(long id)
         {
-            var organization = await repository.GetOrganizationAsync(id);
+            var business = await repository.GetBusinessAsync(id);
 
-            if (organization is null)
+            if (business is null)
                 return NotFound();
 
-            return organization;
+            return business;
         }
 
-        // api/organizations/1
+        // api/businesses/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateOrganizationAsync(long id, OrganizationToWrite organizationFromCaller)
+        public async Task<IActionResult> UpdateBusinessAsync(long id, BusinessToWrite businessFromCaller)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -81,59 +81,59 @@ namespace Menominee.Api.Organizations
                 4) return NoContent()
             */
             // VK: here, the logic should be:
-            // 1. Get the Organization entity (not DTO) from the DB
-            // 3. Update the corresponding fields in the Organization
+            // 1. Get the Business entity (not DTO) from the DB
+            // 3. Update the corresponding fields in the Business
             // 4. Save back to the DB
 
-            var notFoundMessage = $"Could not find Organization to update: {organizationFromCaller.Name}";
+            var notFoundMessage = $"Could not find Business to update: {businessFromCaller.Name}";
 
-            if (!await repository.OrganizationExistsAsync(id))
+            if (!await repository.BusinessExistsAsync(id))
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            Organization organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
+            Business businessFromRepository = await repository.GetBusinessEntityAsync(id);
 
-            if (organizationFromRepository is null)
+            if (businessFromRepository is null)
                 return NotFound(notFoundMessage);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            var organizationNameOrError = OrganizationName.Create(organizationFromCaller.Name);
+            var businessNameOrError = BusinessName.Create(businessFromCaller.Name);
 
-            if (organizationNameOrError.IsSuccess)
-                organizationFromRepository.SetName(organizationNameOrError.Value);
+            if (businessNameOrError.IsSuccess)
+                businessFromRepository.SetName(businessNameOrError.Value);
 
-            if (organizationFromCaller?.Address != null)
-                organizationFromRepository.SetAddress(
+            if (businessFromCaller?.Address != null)
+                businessFromRepository.SetAddress(
                     Address.Create(
-                        organizationFromCaller.Address.AddressLine,
-                        organizationFromCaller.Address.City,
-                        organizationFromCaller.Address.State,
-                        organizationFromCaller.Address.PostalCode).Value);
+                        businessFromCaller.Address.AddressLine,
+                        businessFromCaller.Address.City,
+                        businessFromCaller.Address.State,
+                        businessFromCaller.Address.PostalCode).Value);
 
             // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
-            if (organizationFromCaller?.Address is null)
-                organizationFromRepository.SetAddress(null);
+            if (businessFromCaller?.Address is null)
+                businessFromRepository.SetAddress(null);
 
-            organizationFromRepository.SetNotes(organizationFromCaller.Notes);
+            businessFromRepository.SetNotes(businessFromCaller.Notes);
 
             // Client may send an empty or null phones collection of ENTITIES, signifying
             // NO CHANGE TO COLLECTION
-            foreach (var phone in organizationFromCaller?.Phones)
+            foreach (var phone in businessFromCaller?.Phones)
             {
                 if (phone.Id == 0)
-                    organizationFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
+                    businessFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
 
                 if (phone.Id != 0)
                 {
-                    var contextPhone = organizationFromRepository.Phones.FirstOrDefault(contextPhone => contextPhone.Id == phone.Id);
+                    var contextPhone = businessFromRepository.Phones.FirstOrDefault(contextPhone => contextPhone.Id == phone.Id);
                     contextPhone.SetNumber(phone.Number);
                     contextPhone.SetIsPrimary(phone.IsPrimary);
                     contextPhone.SetPhoneType(phone.PhoneType);
                 }
 
                 if (phone.Id != 0)
-                    organizationFromRepository.RemovePhone(
-                        organizationFromRepository.Phones.FirstOrDefault(
+                    businessFromRepository.RemovePhone(
+                        businessFromRepository.Phones.FirstOrDefault(
                             contextPhone =>
                             contextPhone.Id == phone.Id));
             }
@@ -141,25 +141,25 @@ namespace Menominee.Api.Organizations
             // Client may send an empty or null emails collection, signifying
             // NO CHANGE TO COLLECTION
             List<Email> emails = new();
-            if (organizationFromCaller?.Emails.Count > 0)
+            if (businessFromCaller?.Emails.Count > 0)
             {
-                emails.AddRange(organizationFromCaller.Emails
+                emails.AddRange(businessFromCaller.Emails
                     .Select(email =>
                             Email.Create(email.Address,
                                          email.IsPrimary).Value));
             }
 
             // Contact
-            if (organizationFromCaller?.Contact != null)
+            if (businessFromCaller?.Contact != null)
             {
                 var result = await personsController.UpdatePersonAsync(
-                                    organizationFromRepository.Contact.Id,
-                                    organizationFromCaller.Contact);
+                                    businessFromRepository.Contact.Id,
+                                    businessFromCaller.Contact);
 
-                var person = await personsRepository.GetPersonEntityAsync(organizationFromRepository.Contact.Id);
+                var person = await personsRepository.GetPersonEntityAsync(businessFromRepository.Contact.Id);
 
                 if (person != null)
-                    organizationFromRepository.SetContact(person);
+                    businessFromRepository.SetContact(person);
             }
 
             /* Returning the updated resource is acceptible, for example:
@@ -185,7 +185,7 @@ namespace Menominee.Api.Organizations
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrganizationAsync(OrganizationToWrite organizationToAdd)
+        public async Task<IActionResult> AddBusinessAsync(BusinessToWrite businessToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -201,23 +201,23 @@ namespace Menominee.Api.Organizations
                 4. Return to consumer */
 
             // 1. Convert dto to domain entity
-            var organization = OrganizationHelper.ConvertWriteDtoToEntity(organizationToAdd);
+            var business = BusinessHelper.ConvertWriteDtoToEntity(businessToAdd);
 
             // 2. Add domain entity to repository
-            await repository.AddOrganizationAsync(organization);
+            await repository.AddBusinessAsync(business);
 
             // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
             // 4. Return new id and route to new resource after save
-            return Created(new Uri($"{BasePath}/{organization.Id}",
+            return Created(new Uri($"{BasePath}/{business.Id}",
                                UriKind.Relative),
-                               new { organization.Id });
+                               new { business.Id });
         }
 
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteOrganizationAsync(long id)
+        public async Task<IActionResult> DeleteBusinessAsync(long id)
         {
             /* Delete Pattern in Controllers:
              1) Get domain entity from repository
@@ -225,12 +225,12 @@ namespace Menominee.Api.Organizations
              3) Save changes
              4) return NoContent()
             */
-            var organizationFromRepository = await repository.GetOrganizationEntityAsync(id);
+            var businessFromRepository = await repository.GetBusinessEntityAsync(id);
 
-            if (organizationFromRepository is null)
-                return NotFound($"Could not find Organization in the database to delete with Id: {id}.");
+            if (businessFromRepository is null)
+                return NotFound($"Could not find Business in the database to delete with Id: {id}.");
 
-            repository.DeleteOrganization(organizationFromRepository);
+            repository.DeleteBusiness(businessFromRepository);
 
             await repository.SaveChangesAsync();
 

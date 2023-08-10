@@ -1,6 +1,6 @@
-﻿<EditForm Model="@Organization">
+﻿<EditForm Model="@Business">
 
-    <OrganizationEditor Organization="@Organization"
+    <BusinessEditor Business="@Business"
                         Enabled="true"
                         FormMode="FormMode" />
 
@@ -15,13 +15,13 @@
         </GridLayoutRows>
         <GridLayoutItems>
             <GridLayoutItem>
-                <OrganizationAddressEditor Organization="@Organization" />
+                <BusinessAddressEditor Business="@Business" />
             </GridLayoutItem>
             <GridLayoutItem>
-                <PhonesEditor Phones="@Organization?.Phones"></PhonesEditor>
+                <PhonesEditor Phones="@Business?.Phones"></PhonesEditor>
             </GridLayoutItem>
             <GridLayoutItem>
-                <EmailsEditor Emails="@Organization?.Emails"></EmailsEditor>
+                <EmailsEditor Emails="@Business?.Emails"></EmailsEditor>
             </GridLayoutItem>
         </GridLayoutItems>
     </TelerikGridLayout>
@@ -35,7 +35,7 @@
 </EditForm>
 
 @code {
-    [Parameter] public OrganizationToWrite Organization { get; set; }
+    [Parameter] public BusinessToWrite Business { get; set; }
     [Parameter] public FormMode FormMode { get; set; }
     [Parameter] public EventCallback Close { get; set; }
     [Parameter] public EventCallback Save { get; set; }

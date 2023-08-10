@@ -22,23 +22,23 @@ ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.Constructo
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
 SqlServer:ValueGenerationStrategy: IdentityColumn" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
 <Node Id = "Customer.ContactPreferences" Label="ContactPreferences (1)" Name="ContactPreferences" Category="Navigation Property" Type="ContactPreferences"  Field="" Dependent="ContactPreferences" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Customer.Organization" Label="Organization (1)" Name="Organization" Category="Navigation Property" Type="Organization"  Field="" Dependent="" Principal="Organization" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Customer.Business" Label="Business (1)" Name="Business" Category="Navigation Property" Type="Business"  Field="" Dependent="" Principal="Business" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
 <Node Id = "Customer.Person" Label="Person (1)" Name="Person" Category="Navigation Property" Type="Person"  Field="" Dependent="" Principal="Person" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
 <Node Id = "Customer.Vehicles" Label="Vehicles (*)" Name="Vehicles" Category="Navigation Collection" Type="IList&lt;Vehicle&gt;"  Field="" Dependent="Vehicle" Principal="" Inverse="Customer" PropertyAccessMode="PropertyAccessMode.Default" />
 <Node Id = "Customer.Created" Label="Created" Name="Created" Category="Property Required" Type="DateTime" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "Customer.CustomerType" Label="CustomerType" Name="CustomerType" Category="Property Required" Type="CustomerType" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Customer.OrganizationId" Label="OrganizationId" Name="OrganizationId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Customer.BusinessId" Label="BusinessId" Name="BusinessId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "Customer.PersonId" Label="PersonId" Name="PersonId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization" Label="Organization" Name="Organization" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
+<Node Id = "Business" Label="Business" Name="Business" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
 DiscriminatorProperty:
 Relational:DefaultMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMappingBase]
 Relational:Schema: dbo
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]
-Relational:TableName: Organization
+Relational:TableName: Business
 ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding" Category="EntityType" Group="Expanded" />
 <Node Id = "Email.Id" Label="Id" Name="Id" Category="Property Primary" Type="long" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
@@ -49,7 +49,7 @@ Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft
 <Node Id = "Email.IsPrimary" Label="IsPrimary" Name="IsPrimary" Category="Property Required" Type="bool" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:DefaultValue: False
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
-<Node Id = "Email.OrganizationId" Label="OrganizationId" Name="OrganizationId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Email.BusinessId" Label="BusinessId" Name="BusinessId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "Email.PersonId" Label="PersonId" Name="PersonId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
@@ -60,17 +60,17 @@ Relational:Schema: dbo
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]
 Relational:TableName: Person
 ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding" Category="EntityType" Group="Expanded" />
-<Node Id = "Organization.Id" Label="Id" Name="Id" Category="Property Primary" Type="long" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Business.Id" Label="Id" Name="Id" Category="Property Primary" Type="long" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
 SqlServer:ValueGenerationStrategy: IdentityColumn" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
-<Node Id = "Organization.Address" Label="Address (1)" Name="Address" Category="Navigation Property" Type="Address"  Field="" Dependent="Organization.Address#Address" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Organization.Contact" Label="Contact (1)" Name="Contact" Category="Navigation Property" Type="Person"  Field="" Dependent="" Principal="Person" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Organization.Emails" Label="Emails (*)" Name="Emails" Category="Navigation Collection" Type="IList&lt;Email&gt;"  Field="" Dependent="Email" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Organization.Name" Label="Name (1)" Name="Name" Category="Navigation Property" Type="OrganizationName"  Field="" Dependent="OrganizationName" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Organization.Phones" Label="Phones (*)" Name="Phones" Category="Navigation Collection" Type="IList&lt;Phone&gt;"  Field="" Dependent="Phone" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
-<Node Id = "Organization.ContactId" Label="ContactId" Name="ContactId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Business.Address" Label="Address (1)" Name="Address" Category="Navigation Property" Type="Address"  Field="" Dependent="Business.Address#Address" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Business.Contact" Label="Contact (1)" Name="Contact" Category="Navigation Property" Type="Person"  Field="" Dependent="" Principal="Person" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Business.Emails" Label="Emails (*)" Name="Emails" Category="Navigation Collection" Type="IList&lt;Email&gt;"  Field="" Dependent="Email" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Business.Name" Label="Name (1)" Name="Name" Category="Navigation Property" Type="BusinessName"  Field="" Dependent="BusinessName" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Business.Phones" Label="Phones (*)" Name="Phones" Category="Navigation Collection" Type="IList&lt;Phone&gt;"  Field="" Dependent="Phone" Principal="" Inverse="" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "Business.ContactId" Label="ContactId" Name="ContactId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization.Note" Label="Note" Name="Note" Category="Property Optional" Type="string" MaxLength="(10000)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 10000
+<Node Id = "Business.Note" Label="Note" Name="Note" Category="Property Optional" Type="string" MaxLength="(10000)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 10000
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "Phone" Label="Phone" Name="Phone" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
@@ -107,7 +107,7 @@ Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft
 <Node Id = "Phone.Number" Label="Number" Name="Number" Category="Property Required" Type="string" MaxLength="(50)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 50
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Phone.OrganizationId" Label="OrganizationId" Name="OrganizationId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Phone.BusinessId" Label="BusinessId" Name="BusinessId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "Phone.PersonId" Label="PersonId" Name="PersonId" Category="Property Foreign" Type="Nullable&lt;long&gt;" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="True" IsRequired="False" IsIndexed="True" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
@@ -291,7 +291,7 @@ Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft
 <Node Id = "DateTimeRange.Start" Label="Start" Name="Start" Category="Property Required" Type="DateTime" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:ColumnName: DriversLicenseIssued
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "OrganizationName" Label="OrganizationName" Name="OrganizationName" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
+<Node Id = "BusinessName" Label="BusinessName" Name="BusinessName" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
 Relational:DefaultMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMappingBase]
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]" Category="EntityType" Group="Expanded" />
 <Node Id = "DriversLicense.PersonId" Label="PersonId" Name="PersonId" Category="Property Primary" Type="long" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
@@ -311,14 +311,14 @@ ValueConverter: Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConve
 Relational:DefaultMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMappingBase]
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]
 ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding" Category="EntityType" Group="Expanded" />
-<Node Id = "OrganizationName.OrganizationId" Label="OrganizationId" Name="OrganizationId" Category="Property Primary" Type="long" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "BusinessName.BusinessId" Label="BusinessId" Name="BusinessId" Category="Property Primary" Type="long" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
 SqlServer:ValueGenerationStrategy: IdentityColumn" IsPrimaryKey="True" IsForeignKey="True" IsRequired="True" IsIndexed="False" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
-<Node Id = "OrganizationName.Name" Label="Name" Name="Name" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
+<Node Id = "BusinessName.Name" Label="Name" Name="Name" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
 Relational:ColumnName: Name
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization.Address#Address" Label="Organization.Address#Address" Name="Organization.Address#Address" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
+<Node Id = "Business.Address#Address" Label="Business.Address#Address" Name="Business.Address#Address" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="ConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding
 Relational:DefaultMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMappingBase]
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]
 ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding" Category="EntityType" Group="Expanded" />
@@ -341,22 +341,22 @@ Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft
 Relational:DefaultMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMappingBase]
 Relational:TableMappings: System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.Internal.TableMapping]
 ServiceOnlyConstructorBinding: Microsoft.EntityFrameworkCore.Metadata.ConstructorBinding" Category="EntityType" Group="Expanded" />
-<Node Id = "Organization.Address#Address.OrganizationId" Label="OrganizationId" Name="OrganizationId" Category="Property Primary" Type="long" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
+<Node Id = "Business.Address#Address.BusinessId" Label="BusinessId" Name="BusinessId" Category="Property Primary" Type="long" MaxLength="None" Field="nofield" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
 SqlServer:ValueGenerationStrategy: IdentityColumn" IsPrimaryKey="True" IsForeignKey="True" IsRequired="True" IsIndexed="False" IsShadow="True" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
-<Node Id = "Organization.Address#Address.AddressLine" Label="AddressLine" Name="AddressLine" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
+<Node Id = "Business.Address#Address.AddressLine" Label="AddressLine" Name="AddressLine" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
 Relational:ColumnName: AddressLine
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization.Address#Address.City" Label="City" Name="City" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
+<Node Id = "Business.Address#Address.City" Label="City" Name="City" Category="Property Optional" Type="string" MaxLength="(255)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 255
 Relational:ColumnName: AddressCity
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization.Address#Address.PostalCode" Label="PostalCode" Name="PostalCode" Category="Property Optional" Type="string" MaxLength="(15)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 15
+<Node Id = "Business.Address#Address.PostalCode" Label="PostalCode" Name="PostalCode" Category="Property Optional" Type="string" MaxLength="(15)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 15
 Relational:ColumnName: AddressPostalCode
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
-<Node Id = "Organization.Address#Address.State" Label="State" Name="State" Category="Property Required" Type="State" MaxLength="(2)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 2
+<Node Id = "Business.Address#Address.State" Label="State" Name="State" Category="Property Required" Type="State" MaxLength="(2)" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="MaxLength: 2
 Relational:ColumnName: AddressState
 Relational:DefaultColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMappingBase]
 Relational:TableColumnMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ColumnMapping]
@@ -387,34 +387,34 @@ ValueConverter: Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConve
 <Link Source = "IModel" Target="Customer" Category="Contains" />
 <Link Source = "IModel" Target="Email" Category="Contains" />
 <Link Source = "Customer" Target="Customer.ContactPreferences" Category="Contains" />
-<Link Source = "Customer" Target="Customer.Organization" Category="Contains" />
+<Link Source = "Customer" Target="Customer.Business" Category="Contains" />
 <Link Source = "Customer" Target="Customer.Person" Category="Contains" />
 <Link Source = "Customer" Target="Customer.Vehicles" Category="Contains" />
 <Link Source = "Customer" Target="Customer.Id" Category="Contains" />
-<Link Source="Customer" Target="Organization" From="Customer.OrganizationId" To="Organization.Id" Name="Customer -> Organization" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source="Customer" Target="Business" From="Customer.BusinessId" To="Business.Id" Name="Customer -> Business" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source="Customer" Target="Person" From="Customer.PersonId" To="Person.Id" Name="Customer -> Person" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source = "Customer" Target="Customer.Created" Category="Contains" />
 <Link Source = "Customer" Target="Customer.CustomerType" Category="Contains" />
-<Link Source = "Customer" Target="Customer.OrganizationId" Category="Contains" />
+<Link Source = "Customer" Target="Customer.BusinessId" Category="Contains" />
 <Link Source = "Customer" Target="Customer.PersonId" Category="Contains" />
-<Link Source = "IModel" Target="Organization" Category="Contains" />
+<Link Source = "IModel" Target="Business" Category="Contains" />
 <Link Source = "Email" Target="Email.Id" Category="Contains" />
-<Link Source="Email" Target="Organization" From="Email.OrganizationId" To="Organization.Id" Name="Email -> Organization" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source="Email" Target="Business" From="Email.BusinessId" To="Business.Id" Name="Email -> Business" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source="Email" Target="Person" From="Email.PersonId" To="Person.Id" Name="Email -> Person" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source = "Email" Target="Email.Address" Category="Contains" />
 <Link Source = "Email" Target="Email.IsPrimary" Category="Contains" />
-<Link Source = "Email" Target="Email.OrganizationId" Category="Contains" />
+<Link Source = "Email" Target="Email.BusinessId" Category="Contains" />
 <Link Source = "Email" Target="Email.PersonId" Category="Contains" />
 <Link Source = "IModel" Target="Person" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Address" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Contact" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Emails" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Name" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Phones" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Id" Category="Contains" />
-<Link Source="Organization" Target="Person" From="Organization.ContactId" To="Person.Id" Name="Organization -> Person" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
-<Link Source = "Organization" Target="Organization.ContactId" Category="Contains" />
-<Link Source = "Organization" Target="Organization.Note" Category="Contains" />
+<Link Source = "Business" Target="Business.Address" Category="Contains" />
+<Link Source = "Business" Target="Business.Contact" Category="Contains" />
+<Link Source = "Business" Target="Business.Emails" Category="Contains" />
+<Link Source = "Business" Target="Business.Name" Category="Contains" />
+<Link Source = "Business" Target="Business.Phones" Category="Contains" />
+<Link Source = "Business" Target="Business.Id" Category="Contains" />
+<Link Source="Business" Target="Person" From="Business.ContactId" To="Person.Id" Name="Business -> Person" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source = "Business" Target="Business.ContactId" Category="Contains" />
+<Link Source = "Business" Target="Business.Note" Category="Contains" />
 <Link Source = "IModel" Target="Phone" Category="Contains" />
 <Link Source = "Person" Target="Person.Address" Category="Contains" />
 <Link Source = "Person" Target="Person.DriversLicense" Category="Contains" />
@@ -426,11 +426,11 @@ ValueConverter: Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConve
 <Link Source = "Person" Target="Person.Gender" Category="Contains" />
 <Link Source = "IModel" Target="Vehicle" Category="Contains" />
 <Link Source = "Phone" Target="Phone.Id" Category="Contains" />
-<Link Source="Phone" Target="Organization" From="Phone.OrganizationId" To="Organization.Id" Name="Phone -> Organization" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source="Phone" Target="Business" From="Phone.BusinessId" To="Business.Id" Name="Phone -> Business" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source="Phone" Target="Person" From="Phone.PersonId" To="Person.Id" Name="Phone -> Person" Annotations="Relational:ForeignKeyMappings: System.Collections.Generic.SortedSet`1[Microsoft.EntityFrameworkCore.Metadata.Internal.ForeignKeyConstraint]" IsUnique="False" Label="1:*" Category="Foreign Key" />
 <Link Source = "Phone" Target="Phone.IsPrimary" Category="Contains" />
 <Link Source = "Phone" Target="Phone.Number" Category="Contains" />
-<Link Source = "Phone" Target="Phone.OrganizationId" Category="Contains" />
+<Link Source = "Phone" Target="Phone.BusinessId" Category="Contains" />
 <Link Source = "Phone" Target="Phone.PersonId" Category="Contains" />
 <Link Source = "Phone" Target="Phone.PhoneType" Category="Contains" />
 <Link Source = "IModel" Target="Vendor" Category="Contains" />
@@ -504,29 +504,29 @@ ValueConverter: Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConve
 <Link Source="DateTimeRange" Target="DriversLicense" From="DateTimeRange.DriversLicensePersonId" To="DriversLicense.PersonId" Name="DateTimeRange -> DriversLicense" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
 <Link Source = "DateTimeRange" Target="DateTimeRange.End" Category="Contains" />
 <Link Source = "DateTimeRange" Target="DateTimeRange.Start" Category="Contains" />
-<Link Source = "IModel" Target="OrganizationName" Category="Contains" />
+<Link Source = "IModel" Target="BusinessName" Category="Contains" />
 <Link Source = "DriversLicense" Target="DriversLicense.ValidDateRange" Category="Contains" />
 <Link Source = "DriversLicense" Target="DriversLicense.PersonId" Category="Contains" />
 <Link Source="DriversLicense" Target="Person" From="DriversLicense.PersonId" To="Person.Id" Name="DriversLicense -> Person" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
 <Link Source = "DriversLicense" Target="DriversLicense.Number" Category="Contains" />
 <Link Source = "DriversLicense" Target="DriversLicense.State" Category="Contains" />
 <Link Source = "IModel" Target="PersonName" Category="Contains" />
-<Link Source = "OrganizationName" Target="OrganizationName.OrganizationId" Category="Contains" />
-<Link Source="OrganizationName" Target="Organization" From="OrganizationName.OrganizationId" To="Organization.Id" Name="OrganizationName -> Organization" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
-<Link Source = "OrganizationName" Target="OrganizationName.Name" Category="Contains" />
-<Link Source = "IModel" Target="Organization.Address#Address" Category="Contains" />
+<Link Source = "BusinessName" Target="BusinessName.BusinessId" Category="Contains" />
+<Link Source="BusinessName" Target="Business" From="BusinessName.BusinessId" To="Business.Id" Name="BusinessName -> Business" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
+<Link Source = "BusinessName" Target="BusinessName.Name" Category="Contains" />
+<Link Source = "IModel" Target="Business.Address#Address" Category="Contains" />
 <Link Source = "PersonName" Target="PersonName.PersonId" Category="Contains" />
 <Link Source="PersonName" Target="Person" From="PersonName.PersonId" To="Person.Id" Name="PersonName -> Person" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
 <Link Source = "PersonName" Target="PersonName.FirstName" Category="Contains" />
 <Link Source = "PersonName" Target="PersonName.LastName" Category="Contains" />
 <Link Source = "PersonName" Target="PersonName.MiddleName" Category="Contains" />
 <Link Source = "IModel" Target="Person.Address#Address" Category="Contains" />
-<Link Source = "Organization.Address#Address" Target="Organization.Address#Address.OrganizationId" Category="Contains" />
-<Link Source="Organization.Address#Address" Target="Organization" From="Organization.Address#Address.OrganizationId" To="Organization.Id" Name="Organization.Address#Address -> Organization" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
-<Link Source = "Organization.Address#Address" Target="Organization.Address#Address.AddressLine" Category="Contains" />
-<Link Source = "Organization.Address#Address" Target="Organization.Address#Address.City" Category="Contains" />
-<Link Source = "Organization.Address#Address" Target="Organization.Address#Address.PostalCode" Category="Contains" />
-<Link Source = "Organization.Address#Address" Target="Organization.Address#Address.State" Category="Contains" />
+<Link Source = "Business.Address#Address" Target="Business.Address#Address.BusinessId" Category="Contains" />
+<Link Source="Business.Address#Address" Target="Business" From="Business.Address#Address.BusinessId" To="Business.Id" Name="Business.Address#Address -> Business" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />
+<Link Source = "Business.Address#Address" Target="Business.Address#Address.AddressLine" Category="Contains" />
+<Link Source = "Business.Address#Address" Target="Business.Address#Address.City" Category="Contains" />
+<Link Source = "Business.Address#Address" Target="Business.Address#Address.PostalCode" Category="Contains" />
+<Link Source = "Business.Address#Address" Target="Business.Address#Address.State" Category="Contains" />
 <Link Source = "IModel" Target="Person.Address#Address" Category="Contains" />
 <Link Source = "Person.Address#Address" Target="Person.Address#Address.PersonId" Category="Contains" />
 <Link Source="Person.Address#Address" Target="Person" From="Person.Address#Address.PersonId" To="Person.Id" Name="Person.Address#Address -> Person" Annotations="" IsUnique="True" Label="1:1" Category="Foreign Key" />

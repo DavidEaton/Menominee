@@ -21,13 +21,13 @@ namespace TestingHelperLibrary.Fakers
 
                 Entity customer = faker.Random.Bool()
                     ? new PersonFaker(true, includeAddress, includeDriversLicense, emailsCount, phonesCount).Generate()
-                    : new OrganizationFaker(true, includeAddress, false, emailsCount, phonesCount).Generate();
+                    : new BusinessFaker(true, includeAddress, false, emailsCount, phonesCount).Generate();
 
                 if (customer.GetType() == typeof(Person))
                     result = Customer.Create((Person)customer, customerType);
 
-                if (customer.GetType() == typeof(Organization))
-                    result = Customer.Create((Organization)customer, customerType);
+                if (customer.GetType() == typeof(Business))
+                    result = Customer.Create((Business)customer, customerType);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

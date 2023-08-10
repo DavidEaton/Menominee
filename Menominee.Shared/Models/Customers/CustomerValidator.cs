@@ -2,7 +2,7 @@
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 
 namespace Menominee.Shared.Models.Customers
@@ -21,9 +21,9 @@ namespace Menominee.Shared.Models.Customers
                 .SetValidator(new PersonValidator())
                 .When(customer => customer.EntityType == EntityType.Person);
 
-            RuleFor(customer => customer.Organization)
-                .SetValidator(new OrganizationValidator())
-                .When(customer => customer.EntityType == EntityType.Organization);
+            RuleFor(customer => customer.Business)
+                .SetValidator(new BusinessValidator())
+                .When(customer => customer.EntityType == EntityType.Business);
 
             RuleFor(customer => customer)
                  .MustBeEntity(customer =>
@@ -39,10 +39,10 @@ namespace Menominee.Shared.Models.Customers
             RuleFor(customer => customer)
                 .MustBeEntity(customer =>
                     Customer.Create(
-                        Organization.Create(
-                            OrganizationName.Create(customer.Organization.Name).Value, customer.Organization.Notes).Value,
+                        Business.Create(
+                            BusinessName.Create(customer.Business.Name).Value, customer.Business.Notes).Value,
                             customer.CustomerType))
-                .When(customer => customer.EntityType == EntityType.Organization);
+                .When(customer => customer.EntityType == EntityType.Business);
         }
     }
 }

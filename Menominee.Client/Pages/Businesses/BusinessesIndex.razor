@@ -1,38 +1,38 @@
-﻿@page "/organizations"
+﻿@page "/businesses"
 @using Telerik.FontIcons
 @using Menominee.Shared
 @attribute [Microsoft.AspNetCore.Authorization.Authorize
 (Policies.CanManageHumanResources)]
 
 <div class="container">
-    <div class="h5">Organizations</div>
+    <div class="h5">Businesses</div>
 
-    @if (OrganizationFormMode != FormMode.Add && OrganizationFormMode != FormMode.Edit)
+    @if (BusinessFormMode != FormMode.Add && BusinessFormMode != FormMode.Edit)
     {
-        @if (Organizations == null)
+        @if (Businesses == null)
         {
             <p><em>Loading...</em></p>
         }
-        @if (Organizations != null)
+        @if (Businesses != null)
         {
             <div class="pb-3">
                 <TelerikButton OnClick="Add"
                        ThemeColor="primary"
                        Icon="@FontIcon.Plus"
-                       title="Add New Organization">
-                    Add Organization
+                       title="Add New Business">
+                    Add Business
                 </TelerikButton>
             </div>
 
-            <OrganizationsGrid Organizations="Organizations"
+            <BusinessesGrid Businesses="Businesses"
                        OnRowClicked="@EditAsync" />
         }
     }
 
-    @if ((OrganizationFormMode == FormMode.Add || OrganizationFormMode == FormMode.Edit) && Organization != null)
+    @if ((BusinessFormMode == FormMode.Add || BusinessFormMode == FormMode.Edit) && Business != null)
     {
-        <OrganizationContactableEditor Organization="Organization"
-                                   FormMode="OrganizationFormMode"
+        <BusinessContactableEditor Business="Business"
+                                   FormMode="BusinessFormMode"
                                    Save="SubmitHandlerAsync"
                                    Close="SubmitHandlerAsync" />
     }

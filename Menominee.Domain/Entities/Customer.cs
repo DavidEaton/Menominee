@@ -15,7 +15,7 @@ namespace Menominee.Domain.Entities
         public static readonly string RequiredMessage = "Please include all required items.";
 
         public Person Person { get; private set; }
-        public Organization Organization { get; private set; }
+        public Business Business { get; private set; }
         public EntityType EntityType => GetEntityType();
         public CustomerType CustomerType { get; private set; }
         private DateTime Created { get; set; }
@@ -26,39 +26,39 @@ namespace Menominee.Domain.Entities
         public string Name =>
             Person is not null
                 ? Person.Name.FirstMiddleLast
-                : Organization is not null
-                    ? Organization.Name.Name
+                : Business is not null
+                    ? Business.Name.Name
                     : string.Empty;
 
         public string Notes =>
             Person is not null
                 ? Person.Notes
-                : Organization is not null
-                    ? Organization.Notes
+                : Business is not null
+                    ? Business.Notes
                     : string.Empty;
 
         public IReadOnlyList<Phone> Phones =>
             Person is not null
                 ? Person.Phones.ToList()
-                : Organization is not null
-                    ? Organization.Phones.ToList()
+                : Business is not null
+                    ? Business.Phones.ToList()
                     : new List<Phone>();
 
         public IReadOnlyList<Email> Emails =>
             Person is not null
                 ? Person.Emails.ToList()
-                : Organization is not null
-                    ? Organization.Emails.ToList()
+                : Business is not null
+                    ? Business.Emails.ToList()
                     : new List<Email>();
 
         public Address Address =>
             Person is not null
                 ? Person.Address
-                : Organization is not null
-                    ? Organization.Address
+                : Business is not null
+                    ? Business.Address
                     : null;
 
-        public Person Contact => Organization?.Contact;
+        public Person Contact => Business?.Contact;
 
         private Customer(Person person, CustomerType customerType)
         {
@@ -67,9 +67,9 @@ namespace Menominee.Domain.Entities
             Created = DateTime.Now;
         }
 
-        private Customer(Organization organization, CustomerType customerType)
+        private Customer(Business business, CustomerType customerType)
         {
-            Organization = organization;
+            Business = business;
             CustomerType = customerType;
             Created = DateTime.Now;
         }
@@ -85,21 +85,21 @@ namespace Menominee.Domain.Entities
             return Result.Success(new Customer(person, customerType));
         }
 
-        public static Result<Customer> Create(Organization organization, CustomerType customerType)
+        public static Result<Customer> Create(Business business, CustomerType customerType)
         {
-            if (organization is null)
+            if (business is null)
                 return Result.Failure<Customer>(RequiredMessage);
 
             if (!Enum.IsDefined(typeof(CustomerType), customerType))
                 return Result.Failure<Customer>(RequiredMessage);
 
-            return Result.Success(new Customer(organization, customerType));
+            return Result.Success(new Customer(business, customerType));
         }
 
         private EntityType GetEntityType() => Person is not null
                 ? EntityType.Person
-                : Organization is not null
-                    ? EntityType.Organization
+                : Business is not null
+                    ? EntityType.Business
                     : throw new InvalidOperationException(UnknownEntityTypeMessage);
 
         public Result SetAddress(Address address)
@@ -112,8 +112,8 @@ namespace Menominee.Domain.Entities
             if (Person is not null)
                 return Result.Success(Person.SetAddress(address));
 
-            if (Organization is not null)
-                return Result.Success(Organization.SetAddress(address));
+            if (Business is not null)
+                return Result.Success(Business.SetAddress(address));
 
             return Result.Failure<Address>(UnknownEntityTypeMessage);
         }
@@ -123,8 +123,8 @@ namespace Menominee.Domain.Entities
             if (Person is not null)
                 return Result.Success(Person.ClearAddress());
 
-            if (Organization is not null)
-                return Result.Success(Organization.ClearAddress());
+            if (Business is not null)
+                return Result.Success(Business.ClearAddress());
 
             return Result.Failure<Address>(UnknownEntityTypeMessage);
         }
@@ -143,8 +143,8 @@ namespace Menominee.Domain.Entities
                     Person.AddPhone(phone);
                     return Result.Success(phone);
 
-                case EntityType.Organization:
-                    Organization.AddPhone(phone);
+                case EntityType.Business:
+                    Business.AddPhone(phone);
                     return Result.Success(phone);
 
                 default: return Result.Failure<Phone>(UnknownEntityTypeMessage);
@@ -162,8 +162,8 @@ namespace Menominee.Domain.Entities
                     Person.RemovePhone(phone);
                     return Result.Success(phone);
 
-                case EntityType.Organization:
-                    Organization.RemovePhone(phone);
+                case EntityType.Business:
+                    Business.RemovePhone(phone);
                     return Result.Success(phone);
 
                 default: return Result.Failure<Phone>(UnknownEntityTypeMessage);
@@ -175,8 +175,8 @@ namespace Menominee.Domain.Entities
             if (Person is not null)
                 return Person.Phones.Any(x => x == phone);
 
-            if (Organization is not null)
-                return Organization.Phones.Any(x => x == phone);
+            if (Business is not null)
+                return Business.Phones.Any(x => x == phone);
 
             throw new InvalidOperationException(UnknownEntityTypeMessage);
         }
@@ -195,8 +195,8 @@ namespace Menominee.Domain.Entities
                     Person.AddEmail(email);
                     return Result.Success(email);
 
-                case EntityType.Organization:
-                    Organization.AddEmail(email);
+                case EntityType.Business:
+                    Business.AddEmail(email);
                     return Result.Success(email);
 
                 default: return Result.Failure<Email>(UnknownEntityTypeMessage);
@@ -208,8 +208,8 @@ namespace Menominee.Domain.Entities
             if (Person is not null)
                 return Person.Emails.Any(x => x == email);
 
-            if (Organization is not null)
-                return Organization.Emails.Any(x => x == email);
+            if (Business is not null)
+                return Business.Emails.Any(x => x == email);
 
             throw new InvalidOperationException(UnknownEntityTypeMessage);
         }
@@ -225,8 +225,8 @@ namespace Menominee.Domain.Entities
                     Person.RemoveEmail(email);
                     return Result.Success(email);
 
-                case EntityType.Organization:
-                    Organization.RemoveEmail(email);
+                case EntityType.Business:
+                    Business.RemoveEmail(email);
                     return Result.Success(email);
 
                 default: return Result.Failure<Email>(UnknownEntityTypeMessage);

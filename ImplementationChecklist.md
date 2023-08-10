@@ -237,7 +237,7 @@ Implement repository in concrete class:
         ...
 
 Implement methods to Add, Delete, Exists, Get, Update, SaveChanges. In this disconnected web application, all reads via EF Core should disable the change tracker, except for reads of objects inside controller Update methods, which DO need the change tracker.  
-Reads with child collections must include .AsSplitQuery() to prevent performance degradation; without .AsSplitQuery(), emitted sql from Entity Framework selects a cartesian product for each child type when we only need to add a single sql result for each child type. See OrganizationsController for implementation guidance.
+Reads with child collections must include .AsSplitQuery() to prevent performance degradation; without .AsSplitQuery(), emitted sql from Entity Framework selects a cartesian product for each child type when we only need to add a single sql result for each child type. See BusinessesController for implementation guidance.
 
 <h3 style="color:#00bfff">Create helper methods to convert domain class data contract classes from each contract type</h3>
 
@@ -271,7 +271,7 @@ ConvertPurchase**s**ReadToWriteDto**s**
 
 
 #### Controllers
- Refer to OrganizationsController.cs for implementation guidance.  
+ Refer to BusinessesController.cs for implementation guidance.  
 #### Register interface and repository with API dependency injection (DI) container.
 #### Add domain aggregate root DBSets to AppDbContext
 #### Test API with Postman  

@@ -61,8 +61,8 @@ namespace Menominee.Client.Shared
                 },
                 new MenuModel()
                 {
-                    Text = "Organizations",
-                    Url = "organizations",
+                    Text = "Businesses",
+                    Url = "businesses",
                     Icon = "building-blocks"
                 },
                 new MenuModel()

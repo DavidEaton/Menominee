@@ -57,38 +57,38 @@ namespace TestingHelperLibrary
             return person;
         }
 
-        public static Organization CreateOrganization()
+        public static Business CreateBusiness()
         {
-            return Organization.Create(OrganizationName.Create(Utilities.RandomCharacters(10)).Value, "note").Value;
+            return Business.Create(BusinessName.Create(Utilities.RandomCharacters(10)).Value, "note").Value;
         }
 
-        public static List<Organization> CreateOrganizations(int count)
+        public static List<Business> CreateBusinesses(int count)
         {
-            var names = CreateOrganizationNames(count);
-            return CreateOrganizations(names);
+            var names = CreateBusinessNames(count);
+            return CreateBusinesses(names);
         }
 
-        public static List<Organization> CreateOrganizations(List<OrganizationName> names)
+        public static List<Business> CreateBusinesses(List<BusinessName> names)
         {
-            var orgs = new List<Organization>();
+            var orgs = new List<Business>();
 
             foreach (var name in names)
-                orgs.Add(CreateOrganization(name));
+                orgs.Add(CreateBusiness(name));
 
             return orgs;
         }
 
-        public static Organization CreateOrganization(OrganizationName name)
+        public static Business CreateBusiness(BusinessName name)
         {
-            return Organization.Create(name, Utilities.LoremIpsum(100)).Value;
+            return Business.Create(name, Utilities.LoremIpsum(100)).Value;
         }
 
-        private static List<OrganizationName> CreateOrganizationNames(int count)
+        private static List<BusinessName> CreateBusinessNames(int count)
         {
-            var names = new List<OrganizationName>();
+            var names = new List<BusinessName>();
 
             for (int i = 0; i < count; i++)
-                names.Add(OrganizationName.Create(Utilities.LoremIpsum(10)).Value);
+                names.Add(BusinessName.Create(Utilities.LoremIpsum(10)).Value);
 
             return names;
         }

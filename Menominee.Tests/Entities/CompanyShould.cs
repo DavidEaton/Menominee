@@ -10,8 +10,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Create_Company()
         {
-            var organization = new OrganizationFaker(true).Generate();
-            var result = Company.Create(organization, 999);
+            var business = new BusinessFaker(true).Generate();
+            var result = Company.Create(business, 999);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<Company>();
@@ -19,7 +19,7 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void Return_Failure_On_Create_Company_With_Null_Organization()
+        public void Return_Failure_On_Create_Company_With_Null_Business()
         {
             var result = Company.Create(null, 1000);
 
@@ -30,8 +30,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_Create_Company_With_Invalid_Seed()
         {
-            var organization = new OrganizationFaker(true).Generate();
-            var result = Company.Create(organization, Company.MinimumValue - 1);
+            var business = new BusinessFaker(true).Generate();
+            var result = Company.Create(business, Company.MinimumValue - 1);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Company.MinimumValueMessage);
@@ -40,8 +40,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetInvoiceNumberSeed()
         {
-            var organization = new OrganizationFaker(true).Generate();
-            var company = Company.Create(organization, 1000).Value;
+            var business = new BusinessFaker(true).Generate();
+            var company = Company.Create(business, 1000).Value;
 
             var result = company.SetInvoiceNumberSeed(2000);
 
@@ -53,8 +53,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_SetInvoiceNumberSeed_Invalid_Seed()
         {
-            var organization = new OrganizationFaker(true).Generate();
-            var company = Company.Create(organization, 1000).Value;
+            var business = new BusinessFaker(true).Generate();
+            var company = Company.Create(business, 1000).Value;
 
             var result = company.SetInvoiceNumberSeed(Company.MinimumValue - 1);
 

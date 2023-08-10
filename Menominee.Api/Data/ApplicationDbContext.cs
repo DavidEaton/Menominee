@@ -24,6 +24,7 @@ using System.Linq;
 using Entities = Menominee.Domain.Entities;
 using Menominee.Api.Configurations.Settings;
 using Menominee.Domain.Entities.Settings;
+using Menominee.Api.Businesses;
 
 namespace Menominee.Api.Data
 {
@@ -87,7 +88,7 @@ namespace Menominee.Api.Data
             modelBuilder.ApplyConfiguration(new PhoneConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
-            modelBuilder.ApplyConfiguration(new OrganizationConfiguration());
+            modelBuilder.ApplyConfiguration(new BusinessConfiguration());
             modelBuilder.ApplyConfiguration(new CompanyConfiguration());
 
             // Payables
@@ -212,7 +213,7 @@ namespace Menominee.Api.Data
         #region -------------------- DbSets -----------------------------
         public DbSet<Entities.Company> Companies { get; set; }
         public DbSet<Person> Persons { get; set; }
-        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Business> Businesses { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Vendor> Vendors { get; set; }

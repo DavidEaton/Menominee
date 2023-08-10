@@ -28,11 +28,11 @@ namespace Menominee.Client.Services.Inventory
 
             if (response.IsSuccessStatusCode)
             {
-                //toastService.ShowSuccess($"{organization.Name} added successfully", "Added");
+                //toastService.ShowSuccess($"{business.Name} added successfully", "Added");
                 return await JsonSerializer.DeserializeAsync<MaintenanceItemToRead>(await response.Content.ReadAsStreamAsync());
             }
 
-            //toastService.ShowError($"{organization.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
+            //toastService.ShowError($"{business.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
             return null;
         }
 

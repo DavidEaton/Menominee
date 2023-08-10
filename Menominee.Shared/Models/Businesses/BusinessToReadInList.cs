@@ -1,6 +1,6 @@
-﻿namespace Menominee.Shared.Models.Organizations
+﻿namespace Menominee.Shared.Models.Businesses
 {
-    public class OrganizationToReadInList
+    public class BusinessToReadInList
     {
         public long Id { get; set; }
         public string Name { get; set; }

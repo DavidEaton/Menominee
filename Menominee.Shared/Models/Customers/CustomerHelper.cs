@@ -1,7 +1,7 @@
 ﻿using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
 
@@ -19,9 +19,9 @@ namespace Menominee.Shared.Models.Customers
                     = customer.Person is not null
                     ? PersonHelper.ConvertReadToWriteDto(customer.Person)
                     : null,
-                Organization
-                    = customer.Organization is not null
-                    ? OrganizationHelper.CovertReadToWriteDto(customer.Organization)
+                Business
+                    = customer.Business is not null
+                    ? BusinessHelper.CovertReadToWriteDto(customer.Business)
                     : null
             };
 
@@ -37,7 +37,7 @@ namespace Menominee.Shared.Models.Customers
                     Id = customer.Id,
                     CustomerType = customer.CustomerType,
                     EntityType = customer.EntityType,
-                    Organization = OrganizationHelper.ConvertToReadDto(customer.Organization),
+                    Business = BusinessHelper.ConvertToReadDto(customer.Business),
                     Person = PersonHelper.ConvertToReadDto(customer.Person),
                     Vehicles = VehicleHelper.ConvertToReadDtos(customer.Vehicles),
                     Contact = PersonHelper.ConvertToReadDto(customer.Contact),
@@ -65,7 +65,7 @@ namespace Menominee.Shared.Models.Customers
                     CustomerType = customer.CustomerType,
                     EntityType = customer.EntityType,
                     Person = PersonHelper.ConvertReadToWriteDto(customer.Person),
-                    Organization = OrganizationHelper.CovertReadToWriteDto(customer.Organization)
+                    Business = BusinessHelper.CovertReadToWriteDto(customer.Business)
                 };
 
                 return customerWriteDto;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Shared.Models
 {
-    public class OrganizationToWrite
+    public class BusinessToWrite
     {
         public string Name { get; set; } = string.Empty;
 

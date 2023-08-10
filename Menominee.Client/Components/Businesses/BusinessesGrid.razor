@@ -1,17 +1,17 @@
 ﻿@using Telerik.FontIcons
-@if (Organizations == null)
+@if (Businesses == null)
 {
     <img src="/assets/loader-blue-purple.gif" />
 }
 
-@if (Organizations.Count == 0)
+@if (Businesses.Count == 0)
 {
-    <p>There are no Organization records.</p>
+    <p>There are no Business records.</p>
 }
 
-@if (Organizations != null)
+@if (Businesses != null)
 {
-    <TelerikGrid Data="Organizations"
+    <TelerikGrid Data="Businesses"
              OnRowClick="GridRowClicked"
              Sortable="true"
              Pageable="true"
@@ -19,8 +19,8 @@
              Resizable="true"
              Reorderable="true"
              ShowColumnMenu="true"
-             OnStateInit="@((GridStateEventArgs<Menominee.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateInitHandler(args))"
-             OnStateChanged="@((GridStateEventArgs<Menominee.Shared.Models.Organizations.OrganizationToReadInList> args) => OnStateChangedHandler(args))"
+             OnStateInit="@((GridStateEventArgs<Menominee.Shared.Models.Businesses.BusinessToReadInList> args) => OnStateInitHandler(args))"
+             OnStateChanged="@((GridStateEventArgs<Menominee.Shared.Models.Businesses.BusinessToReadInList> args) => OnStateChangedHandler(args))"
              @ref="@Grid">
         <GridToolBarTemplate>
             <TelerikButton OnClick="@ResetState"
@@ -45,7 +45,7 @@
             <GridSearchBox />
         </GridToolBarTemplate>
         <GridExport>
-            <GridExcelExport FileName="Organizations" AllPages="true" />
+            <GridExcelExport FileName="Businesses" AllPages="true" />
         </GridExport>
         <GridColumns>
             <GridColumn Field="Name" Title="Name"></GridColumn>

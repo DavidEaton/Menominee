@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Menominee.Api.Common;
-using Menominee.Api.Organizations;
+using Menominee.Api.Businesses;
 using Menominee.Api.Persons;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Customers;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -18,21 +18,21 @@ namespace Menominee.Api.Customers
     {
         private readonly ICustomerRepository customerRepository;
         private readonly PersonsController personsController;
-        private readonly OrganizationsController organizationsController;
+        private readonly BusinessesController businessesController;
         private readonly string BasePath = "/api/customers/";
 
         public CustomersController(
             ICustomerRepository customerRepository
             , PersonsController personsController
-            , OrganizationsController organizationsController
+            , BusinessesController businessesController
             , ILogger<CustomersController> logger) : base(logger)
         {
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
             this.personsController = personsController ??
                 throw new ArgumentNullException(nameof(personsController));
-            this.organizationsController = organizationsController ??
-                throw new ArgumentNullException(nameof(organizationsController));
+            this.businessesController = businessesController ??
+                throw new ArgumentNullException(nameof(businessesController));
         }
 
         // GET: api/customers/list
@@ -87,8 +87,8 @@ namespace Menominee.Api.Customers
             if (customerFromRepository == null || customerFromRepository?.EntityType == null)
                 return NotFound($"Could not find Customer in the database to update.");
 
-            if (customerFromRepository.EntityType == EntityType.Organization)
-                await organizationsController.UpdateOrganizationAsync(customerFromRepository.Organization.Id, customerToWrite.Organization);
+            if (customerFromRepository.EntityType == EntityType.Business)
+                await businessesController.UpdateBusinessAsync(customerFromRepository.Business.Id, customerToWrite.Business);
 
             if (customerFromRepository.EntityType == EntityType.Person)
                 await personsController.UpdatePersonAsync(customerFromRepository.Person.Id, customerToWrite.Person);
@@ -107,8 +107,8 @@ namespace Menominee.Api.Customers
             if (customerToAdd.EntityType == EntityType.Person)
                 customer = Customer.Create(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType).Value;
 
-            if (customerToAdd.EntityType == EntityType.Organization)
-                customer = Customer.Create(OrganizationHelper.ConvertWriteDtoToEntity(customerToAdd.Organization), customerToAdd.CustomerType).Value;
+            if (customerToAdd.EntityType == EntityType.Business)
+                customer = Customer.Create(BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business), customerToAdd.CustomerType).Value;
 
             await customerRepository.AddCustomerAsync(customer);
 

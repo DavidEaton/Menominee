@@ -4,6 +4,7 @@ using Menominee.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Menominee.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230809191002_RenameOrganizationToBusiness")]
+    partial class RenameOrganizationToBusiness
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1320,37 +1323,6 @@ namespace Menominee.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SaleCodeShopSupplies");
-                });
-
-            modelBuilder.Entity("Menominee.Domain.Entities.Settings.ConfigurationSetting", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<int>("SettingGroup")
-                        .HasMaxLength(255)
-                        .HasColumnType("int");
-
-                    b.Property<int>("SettingName")
-                        .HasMaxLength(255)
-                        .HasColumnType("int");
-
-                    b.Property<string>("SettingValueType")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Setting", "dbo");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.Taxes.ExciseFee", b =>

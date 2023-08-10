@@ -31,7 +31,7 @@ namespace Menominee.Client.Services.Customers
             {
                 var customerName = customer.EntityType == Person
                                               ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
-                                              : customer.Organization.Name;
+                                              : customer.Business.Name;
 
                 toastService.ShowSuccess($"{customerName} added successfully", "Added");
                 return await JsonSerializer.DeserializeAsync<CustomerToRead>(await response.Content.ReadAsStreamAsync());
@@ -75,7 +75,7 @@ namespace Menominee.Client.Services.Customers
             var name =
                 customer.EntityType == Person
                 ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
-                : customer.Organization.Name;
+                : customer.Business.Name;
 
             if (response.IsSuccessStatusCode)
             {

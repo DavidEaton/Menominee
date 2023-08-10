@@ -1,9 +1,8 @@
 ﻿using Menominee.Shared.Models;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Client.Components.Address;
-using Menominee.Client.Services;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -11,36 +10,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
+using Menominee.Client.Services.Businesses;
 
-namespace Menominee.Client.Pages.Organizations
+namespace Menominee.Client.Pages.Businesses
 {
-    public partial class OrganizationsIndex : ComponentBase
+    public partial class BusinessesIndex : ComponentBase
     {
         [Inject]
-        public IOrganizationDataService OrganizationDataService { get; set; }
+        public IBusinessDataService BusinessDataService { get; set; }
 
         [Inject]
-        public ILogger<OrganizationsIndex> Logger { get; set; }
+        public ILogger<BusinessesIndex> Logger { get; set; }
 
-        public IReadOnlyList<OrganizationToReadInList> Organizations;
+        public IReadOnlyList<BusinessToReadInList> Businesses;
 
-        public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
+        public TelerikGrid<BusinessToReadInList> Grid { get; set; }
         private long Id { get; set; }
 
-        private FormMode OrganizationFormMode = FormMode.Unknown;
+        private FormMode BusinessFormMode = FormMode.Unknown;
 
         private FormMode AddressFormMode = FormMode.Unknown;
-        private OrganizationToWrite Organization { get; set; }
+        private BusinessToWrite Business { get; set; }
 
         private readonly AddressEditor addressEditor;
         protected override async Task OnInitializedAsync()
         {
-            Organizations = (await OrganizationDataService.GetAllOrganizations()).ToList();
+            Businesses = (await BusinessDataService.GetAllBusinesses()).ToList();
         }
 
         private void AddAddress()
         {
-            Organization.Address = new();
+            Business.Address = new();
             AddressFormMode = FormMode.Add;
         }
 
@@ -56,23 +56,23 @@ namespace Menominee.Client.Pages.Organizations
                 AddressFormMode = FormMode.Unknown;
             }
 
-            if (OrganizationFormMode == FormMode.Add && Organization.Address is not null)
+            if (BusinessFormMode == FormMode.Add && Business.Address is not null)
             {
                 AddressFormMode = FormMode.Unknown;
-                StateHasChanged();  //TODO: When Organization is new and Address is new, how to cancel?
+                StateHasChanged();  //TODO: When Business is new and Address is new, how to cancel?
                                     //Dialog does not close, console error: null reference exception
-                Organization.Address = null;
+                Business.Address = null;
             }
         }
 
         private async Task EditAsync(GridRowClickEventArgs args)
         {
-            Id = (args.Item as OrganizationToReadInList).Id;
-            OrganizationFormMode = FormMode.Edit;
-            Organizations = null; // TODO: Huh?
+            Id = (args.Item as BusinessToReadInList).Id;
+            BusinessFormMode = FormMode.Edit;
+            Businesses = null; // TODO: Huh?
 
-            var readDto = await OrganizationDataService.GetOrganization(Id);
-            Organization = new OrganizationToWrite
+            var readDto = await BusinessDataService.GetBusiness(Id);
+            Business = new BusinessToWrite
             {
                 Name = readDto.Name,
                 Notes = readDto.Notes
@@ -80,7 +80,7 @@ namespace Menominee.Client.Pages.Organizations
 
             if (readDto.Address != null)
             {
-                Organization.Address = new AddressToWrite
+                Business.Address = new AddressToWrite
                 {
                     AddressLine = readDto.Address.AddressLine,
                     City = readDto.Address.City,
@@ -91,7 +91,7 @@ namespace Menominee.Client.Pages.Organizations
 
             foreach (var email in readDto?.Emails)
             {
-                Organization.Emails.Add(new EmailToWrite
+                Business.Emails.Add(new EmailToWrite
                 {
                     Address = email.Address,
                     IsPrimary = email.IsPrimary
@@ -100,7 +100,7 @@ namespace Menominee.Client.Pages.Organizations
 
             foreach (var phone in readDto?.Phones)
             {
-                Organization.Phones.Add(new PhoneToWrite
+                Business.Phones.Add(new PhoneToWrite
                 {
                     Id = phone.Id,
                     Number = phone.Number,
@@ -113,46 +113,46 @@ namespace Menominee.Client.Pages.Organizations
 
         private void Add()
         {
-            OrganizationFormMode = FormMode.Add;
-            Organizations = null;
-            Organization = new();
+            BusinessFormMode = FormMode.Add;
+            Businesses = null;
+            Business = new();
         }
 
         protected async Task HandleAddSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(Organization.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                await OrganizationDataService.AddOrganization(Organization);
+                await BusinessDataService.AddBusiness(Business);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task HandleEditSubmit()
         {
-            if (!string.IsNullOrWhiteSpace(Organization.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                await OrganizationDataService.UpdateOrganization(Organization, Id);
+                await BusinessDataService.UpdateBusiness(Business, Id);
                 await EndAddEditAsync();
             }
         }
 
         protected async Task SubmitHandlerAsync()
         {
-            if (!string.IsNullOrWhiteSpace(Organization.Name))
+            if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                if (OrganizationFormMode == FormMode.Add)
+                if (BusinessFormMode == FormMode.Add)
                     await HandleAddSubmit();
 
-                if (OrganizationFormMode == FormMode.Edit)
+                if (BusinessFormMode == FormMode.Edit)
                     await HandleEditSubmit();
             }
         }
 
         protected async Task EndAddEditAsync()
         {
-            OrganizationFormMode = FormMode.Unknown;
+            BusinessFormMode = FormMode.Unknown;
             AddressFormMode = FormMode.Unknown;
-            Organizations = (await OrganizationDataService.GetAllOrganizations()).ToList();
+            Businesses = (await BusinessDataService.GetAllBusinesses()).ToList();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.Organizations;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.Common.Enums;
@@ -12,13 +12,13 @@ namespace Menominee.Shared.Models.Customers
     {
         public long Id { get; set; }
         public PersonToRead Person { get; set; }
-        public OrganizationToRead Organization { get; set; }
+        public BusinessToRead Business { get; set; }
         public EntityType EntityType { get; set; }
         public string Name =>
             Person is not null
                 ? Person.Name.FirstMiddleLast
-                : Organization is not null
-                    ? Organization.Name
+                : Business is not null
+                    ? Business.Name
                     : string.Empty;
         public CustomerType CustomerType { get; set; }
         public AddressToRead Address { get; set; }

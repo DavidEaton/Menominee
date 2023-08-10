@@ -1,5 +1,5 @@
 ﻿@using Telerik.FontIcons
-<div hidden="@(Organization?.Address is not null)">
+<div hidden="@(Business?.Address is not null)">
     <TelerikButton ButtonType="ButtonType.Button"
                    Icon="@FontIcon.Plus"
                    Size="@ThemeConstants.Button.Size.Small"
@@ -14,7 +14,7 @@
     </label>
 </div>
 
-@if (Organization?.Address is not null)
+@if (Business?.Address is not null)
 {
     <div class="form-group">
         <div>
@@ -33,7 +33,7 @@
                     Address
                 </label>
                 <span @onclick="EditAddress">
-                    <AddressEditor Address="@Organization?.Address"
+                    <AddressEditor Address="@Business?.Address"
                                Enabled="FormMode == FormMode.Edit || FormMode == FormMode.Add"
                                FormMode="FormMode" />
                 </span>
@@ -43,12 +43,12 @@
 }
 
 @code {
-    [Parameter] public OrganizationToWrite Organization { get; set; }
+    [Parameter] public BusinessToWrite Business { get; set; }
     public FormMode FormMode { get; set; } = FormMode.Unknown;
 
     private void AddAddress()
     {
-        Organization.Address = new();
+        Business.Address = new();
         FormMode = FormMode.Add;
     }
 
@@ -59,6 +59,6 @@
 
     private void RemoveAddress()
     {
-        Organization.Address = null;
+        Business.Address = null;
     }
 }

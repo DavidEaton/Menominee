@@ -30,7 +30,7 @@
             }
             @if ((FormMode == FormMode.Add || FormMode == FormMode.Edit))
             {
-                @if (Customer?.Person is null && Customer?.Organization is null)
+                @if (Customer?.Person is null && Customer?.Business is null)
                 {
                     <img src="/assets/loader-blue-purple.gif" />
                 }
@@ -68,9 +68,9 @@
                                              Close="Close" />
                         }
 
-                        @if (Customer.EntityType == Common.Enums.EntityType.Organization)
+                        @if (Customer.EntityType == Common.Enums.EntityType.Business)
                         {
-                            <OrganizationContactableEditor Organization="Customer.Organization"
+                            <BusinessContactableEditor Business="Customer.Business"
                                                    FormMode="FormMode"
                                                    Save="Submit"
                                                    Close="Close" />

@@ -48,8 +48,8 @@ namespace Menominee.Client.Components.Customers
             if (customerReadDto.EntityType == EntityType.Person)
                 Caption = $"Editing Customer: {customerReadDto.Person.FirstMiddleLast}";
 
-            if (customerReadDto.EntityType == EntityType.Organization)
-                Caption = $"Editing Customer: {customerReadDto.Organization.Name}";
+            if (customerReadDto.EntityType == EntityType.Business)
+                Caption = $"Editing Customer: {customerReadDto.Business.Name}";
 
         }
 
@@ -63,7 +63,7 @@ namespace Menominee.Client.Components.Customers
                 CustomerType = CustomerType.Retail,
                 EntityType = EntityType.Person,
                 Person = new(),
-                Organization = new()
+                Business = new()
             };
 
             Customer.Person.Name = name;
@@ -73,10 +73,10 @@ namespace Menominee.Client.Components.Customers
 
         private void EntityTypeChanged()
         {
-            if (Customer.EntityType == EntityType.Organization)
+            if (Customer.EntityType == EntityType.Business)
             {
-                if (Customer.Organization is null)
-                    Customer.Organization = new();
+                if (Customer.Business is null)
+                    Customer.Business = new();
 
                 Customer.Person = null;
             }
@@ -91,7 +91,7 @@ namespace Menominee.Client.Components.Customers
                 }
 
                 Customer.Person.Name = name;
-                Customer.Organization = null;
+                Customer.Business = null;
             }
         }
 

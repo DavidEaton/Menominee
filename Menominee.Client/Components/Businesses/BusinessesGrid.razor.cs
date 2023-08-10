@@ -1,4 +1,4 @@
-﻿using Menominee.Shared.Models.Organizations;
+﻿using Menominee.Shared.Models.Businesses;
 using Menominee.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Components.Organizations
+namespace Menominee.Client.Components.Businesses
 {
-    public partial class OrganizationsGrid : ComponentBase
+    public partial class BusinessesGrid : ComponentBase
     {
         [Parameter]
-        public IReadOnlyList<OrganizationToReadInList> Organizations { get; set; }
+        public IReadOnlyList<BusinessToReadInList> Businesses { get; set; }
 
         [Parameter]
         public EventCallback<GridRowClickEventArgs> OnRowClicked { get; set; }
 
-        public OrganizationToReadInList SelectedOrganization { get; set; }
+        public BusinessToReadInList SelectedBusiness { get; set; }
 
         [Inject]
         public LocalStorage LocalStorage { get; set; }
@@ -25,7 +25,7 @@ namespace Menominee.Client.Components.Organizations
         [Inject]
         IJSRuntime JsInterop { get; set; }
 
-        public TelerikGrid<OrganizationToReadInList> Grid { get; set; }
+        public TelerikGrid<BusinessToReadInList> Grid { get; set; }
 
         private async Task GridRowClicked(GridRowClickEventArgs args)
         {
@@ -44,11 +44,11 @@ namespace Menominee.Client.Components.Organizations
             isExporting = false;
         }
 
-        protected async Task OnStateInitHandler(GridStateEventArgs<OrganizationToReadInList> args)
+        protected async Task OnStateInitHandler(GridStateEventArgs<BusinessToReadInList> args)
         {
             try
             {
-                var state = await LocalStorage.GetItem<GridState<OrganizationToReadInList>>(UniqueStorageKey);
+                var state = await LocalStorage.GetItem<GridState<BusinessToReadInList>>(UniqueStorageKey);
                 if (state != null)
                 {
                     args.GridState = state;
@@ -62,7 +62,7 @@ namespace Menominee.Client.Components.Organizations
             }
         }
 
-        protected async void OnStateChangedHandler(GridStateEventArgs<OrganizationToReadInList> args)
+        protected async void OnStateChangedHandler(GridStateEventArgs<BusinessToReadInList> args)
         {
             await LocalStorage.SetItem(UniqueStorageKey, args.GridState);
         }

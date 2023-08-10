@@ -104,12 +104,12 @@ namespace Menominee.Api.Customers
                 .Include(customer =>
                     customer.Person.Emails
                         .Where(email => email.IsPrimary == true))
-                // Organization and Organization.Contact
+                // Business and Business.Contact
                 .Include(customer =>
-                    customer.Organization.Contact.Phones
+                    customer.Business.Contact.Phones
                         .Where(phone => phone.IsPrimary == true))
                 .Include(customer =>
-                    customer.Organization.Contact.Emails
+                    customer.Business.Contact.Emails
                         .Where(email => email.IsPrimary == true))
                 .AsNoTracking()
                 .AsSplitQuery()
@@ -148,12 +148,12 @@ namespace Menominee.Api.Customers
                 .Include(customer =>
                     customer.Person.Emails
                         .Where(email => email.IsPrimary == true))
-                // Organization and Organization.Contact
+                // Business and Business.Contact
                 .Include(customer =>
-                    customer.Organization.Contact.Phones
+                    customer.Business.Contact.Phones
                         .Where(phone => phone.IsPrimary == true))
                 .Include(customer =>
-                    customer.Organization.Contact.Emails
+                    customer.Business.Contact.Emails
                         .Where(email => email.IsPrimary == true))
 
                 .AsSplitQuery()
