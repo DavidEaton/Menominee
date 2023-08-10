@@ -22,6 +22,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using Entities = Menominee.Domain.Entities;
+using Menominee.Api.Configurations.Settings;
+using Menominee.Domain.Entities.Settings;
 
 namespace Menominee.Api.Data
 {
@@ -140,6 +142,9 @@ namespace Menominee.Api.Data
 
             // Credit Cards
             modelBuilder.ApplyConfiguration(new CreditCardConfiguration());
+
+            // Settings
+            modelBuilder.ApplyConfiguration(new SettingConfiguration());
         }
 
         private string GetTenantConnection()
@@ -262,6 +267,9 @@ namespace Menominee.Api.Data
         // Taxes/Fees
         public DbSet<ExciseFee> ExciseFees { get; set; }
         public DbSet<SalesTax> SalesTaxes { get; set; }
+
+        // Settings
+        public DbSet<ConfigurationSetting> Settings { get; set; }
         #endregion
     }
 

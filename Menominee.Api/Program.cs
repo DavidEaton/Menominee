@@ -42,6 +42,7 @@ using System.IO;
 using Telerik.Reporting.Cache.File;
 using Telerik.Reporting.Services;
 using Menominee.Api.Vehicles;
+using Menominee.Api.Settings;
 
 var logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -140,6 +141,7 @@ try
     services.TryAddScoped<ISalesTaxRepository, SalesTaxRepository>();
     services.TryAddScoped<IMSGraphUserService, MSGraphUserService>();
     services.TryAddScoped<IVehicleRepository, VehicleRepository>();
+    services.TryAddScoped<ISettingsRepository, SettingsRepository>();
 
     services.AddHealthChecks();
     services.AddCors(o => o.AddPolicy("AllowAll", policyBuilder =>
