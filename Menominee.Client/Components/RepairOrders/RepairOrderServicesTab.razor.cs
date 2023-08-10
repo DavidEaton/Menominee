@@ -215,7 +215,8 @@ namespace Menominee.Client.Components.RepairOrders
                     }
                     ServicesGrid?.Rebind();
                 }
-                RepairOrder?.Recalculate();
+
+                RepairOrderCalculator.RecalculateRepairOrder(RepairOrder);
             }
         }
 
@@ -238,9 +239,8 @@ namespace Menominee.Client.Components.RepairOrders
                 CopyItem(ItemToModify, SelectedItem);
 
             service.Recalculate();
-            RepairOrder?.Recalculate();
+            RepairOrderCalculator.RecalculateRepairOrder(RepairOrder);
             ServicesObservable.Add(service);
-
             EditItemDialogVisible = false;
             EditLaborDialogVisible = false;
             if (ItemFormMode == FormMode.Add)

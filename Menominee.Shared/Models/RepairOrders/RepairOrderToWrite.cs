@@ -29,36 +29,5 @@ namespace Menominee.Shared.Models.RepairOrders
         public List<RepairOrderServiceToWrite> Services { get; set; } = new List<RepairOrderServiceToWrite>();
         public List<RepairOrderTaxToWrite> Taxes { get; set; } = new List<RepairOrderTaxToWrite>();
         public List<RepairOrderPaymentToWrite> Payments { get; set; } = new List<RepairOrderPaymentToWrite>();
-
-        // TODO: Move this logic down into the domain aggregate class: Domain.Entities.RepairOrders.RepairOrder.cs
-        public void Recalculate()
-        {
-            PartsTotal = 0.0;
-            LaborTotal = 0.0;
-            DiscountTotal = 0.0;
-            TaxTotal = 0.0;
-            ShopSuppliesTotal = 0.0;
-
-            if (Services?.Count > 0)
-            {
-                foreach (var service in Services)
-                {
-                    PartsTotal += service.PartsTotal;
-                    LaborTotal += service.LaborTotal;
-                    DiscountTotal += service.DiscountTotal;
-                    ShopSuppliesTotal += service.ShopSuppliesTotal;
-                }
-            }
-
-            if (Taxes?.Count > 0)
-            {
-                foreach (var tax in Taxes)
-                {
-                    TaxTotal += (tax.PartTax.Amount + tax.LaborTax.Amount);
-                }
-            }
-
-            Total = PartsTotal + LaborTotal - DiscountTotal + ShopSuppliesTotal;
-        }
     }
 }
