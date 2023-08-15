@@ -12,7 +12,7 @@ namespace Menominee.Data.Database
         internal static int savedVendors = 0;
         internal static int savedVendorInvoices = 0;
         internal static int savedInventoryItems = 0;
-        internal static bool EnsureDeletedEnsureCreated { get; private set; } = true;
+        internal static bool EnsureDeletedEnsureMigrated { get; private set; } = true;
 
         internal static void SaveToDatabase(Vendor vendor)
         {
@@ -119,7 +119,7 @@ namespace Menominee.Data.Database
             return vendorsFromContext;
         }
 
-        internal static void ClearDatabase()
+        internal static void DeleteAndMigrateDatabase()
         {
             using (var context = new ApplicationDbContext(ConnectionString))
             {
@@ -133,19 +133,19 @@ namespace Menominee.Data.Database
                     catch (Exception ex)
                     {
                         Console.WriteLine();
-                        Console.WriteLine($"failed ClearDatabase(): {ex.Message}");
+                        Console.WriteLine($"failed DeleteAndMigrateDatabase(): {ex.Message}");
 
                         Console.WriteLine();
                         Console.WriteLine($"Creating database...");
                         Console.WriteLine();
-                        context.Database.EnsureCreated();
-                        EnsureDeletedEnsureCreated = false;
+                        context.Database.Migrate();
+                        EnsureDeletedEnsureMigrated = false;
                     }
                 }
 
                 try
                 {
-                    if (EnsureDeletedEnsureCreated)
+                    if (EnsureDeletedEnsureMigrated)
                     {
                         Console.WriteLine();
                         Console.WriteLine($"Deleting database...");
@@ -155,13 +155,13 @@ namespace Menominee.Data.Database
                         Console.WriteLine();
                         Console.WriteLine($"Creating database...");
                         Console.WriteLine();
-                        context.Database.EnsureCreated();
+                        context.Database.Migrate();
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"failed ClearDatabase(): {ex.Message}");
+                    Console.WriteLine($"failed DeleteAndMigrateDatabase(): {ex.Message}");
                     Console.WriteLine();
                 }
             }

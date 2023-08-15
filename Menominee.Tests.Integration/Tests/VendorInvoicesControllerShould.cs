@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Fakers;
 using Xunit;
+using Microsoft.EntityFrameworkCore;
 
 namespace Menominee.Tests.Integration.Tests
 {
@@ -46,7 +47,7 @@ namespace Menominee.Tests.Integration.Tests
             dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
 
             dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            dbContext.Database.Migrate();
 
             SeedData();
         }

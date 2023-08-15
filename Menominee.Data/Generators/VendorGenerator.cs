@@ -10,7 +10,6 @@ namespace Menominee.Data.Generators
     {
         public static void GenerateData()
         {
-            Helper.ClearDatabase();
             GenerateVendors();
 
             foreach (var vendor in VendorGeneratorResult.Vendors)

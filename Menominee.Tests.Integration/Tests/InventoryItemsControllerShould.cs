@@ -18,6 +18,7 @@ using Menominee.Tests.Helpers;
 using Menominee.Tests.Helpers.Fakers;
 using Menominee.Tests.Integration.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,7 @@ namespace Menominee.Tests.Integration.Tests
             dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
             dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
             dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            dbContext.Database.Migrate();
 
             SeedData();
         }
