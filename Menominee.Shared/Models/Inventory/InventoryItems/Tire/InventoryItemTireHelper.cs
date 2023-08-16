@@ -73,7 +73,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Tire
                     Retail = tire.Retail,
                     TechAmount = new TechAmountToRead()
                     {
-                        PayType = tire.TechAmount.PayType,
+                        PayType = tire.TechAmount.Type,
                         Amount = tire.TechAmount.Amount,
                         SkillLevel = tire.TechAmount.SkillLevel
                     },
@@ -101,7 +101,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Tire
                     Retail = tire.Retail,
                     TechAmount = new TechAmountToRead()
                     {
-                        PayType = tire.TechAmount.PayType,
+                        PayType = tire.TechAmount.Type,
                         Amount = tire.TechAmount.Amount,
                         SkillLevel = tire.TechAmount.SkillLevel
                     },
@@ -130,7 +130,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Tire
                     TechAmount = new TechAmountToWrite()
                     {
                         Amount = tire.TechAmount.Amount,
-                        PayType = tire.TechAmount.PayType,
+                        PayType = tire.TechAmount.Type,
                         SkillLevel = tire.TechAmount.SkillLevel
                     },
                     LineCode = tire.LineCode,

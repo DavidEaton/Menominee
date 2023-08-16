@@ -12,12 +12,12 @@ namespace Menominee.Domain.Entities.Inventory
         public static readonly double MinimumAmount = 0;
         public static readonly string InvalidAmountMessage = $"Invalid Amount.";
 
-        public ItemLaborType PayType { get; private set; }
+        public ItemLaborType Type { get; private set; }
         public double Amount { get; private set; } //> 0 if LaborType isn't None, otherwise is a dollar amount or 1/10th of an hour depending on type
 
-        internal LaborAmount(ItemLaborType payType, double amount)
+        internal LaborAmount(ItemLaborType type, double amount)
         {
-            PayType = payType;
+            Type = type;
             Amount = amount;
         }
 
@@ -56,12 +56,12 @@ namespace Menominee.Domain.Entities.Inventory
 
         public Result<LaborAmount> NewAmount(double newAmount)
         {
-            return new LaborAmount(PayType, newAmount);
+            return new LaborAmount(Type, newAmount);
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return PayType;
+            yield return Type;
             yield return Amount;
         }
 

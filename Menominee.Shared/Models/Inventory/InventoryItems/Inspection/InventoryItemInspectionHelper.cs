@@ -53,11 +53,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     LaborAmount = new LaborAmountToRead()
                     {
                         Amount = inspection.LaborAmount.Amount,
-                        PayType = inspection.LaborAmount.PayType,
+                        PayType = inspection.LaborAmount.Type,
                     },
                     TechAmount = new TechAmountToRead()
                     {
-                        PayType = inspection.TechAmount.PayType,
+                        PayType = inspection.TechAmount.Type,
                         Amount = inspection.TechAmount.Amount,
                         SkillLevel = inspection.TechAmount.SkillLevel
                     },
@@ -75,11 +75,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     LaborAmount = new LaborAmountToRead()
                     {
                         Amount = inspection.LaborAmount.Amount,
-                        PayType = inspection.LaborAmount.PayType,
+                        PayType = inspection.LaborAmount.Type,
                     },
                     TechAmount = new TechAmountToRead()
                     {
-                        PayType = inspection.TechAmount.PayType,
+                        PayType = inspection.TechAmount.Type,
                         Amount = inspection.TechAmount.Amount,
                         SkillLevel = inspection.TechAmount.SkillLevel
                     },
@@ -97,11 +97,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     LaborAmount = new LaborAmountToWrite()
                     {
                         Amount = inspection.LaborAmount.Amount,
-                        PayType = inspection.LaborAmount.PayType,
+                        PayType = inspection.LaborAmount.Type,
                     },
                     TechAmount = new TechAmountToWrite()
                     {
-                        PayType = inspection.TechAmount.PayType,
+                        PayType = inspection.TechAmount.Type,
                         Amount = inspection.TechAmount.Amount,
                         SkillLevel = inspection.TechAmount.SkillLevel
                     },

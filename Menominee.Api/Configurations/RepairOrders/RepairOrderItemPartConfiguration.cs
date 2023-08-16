@@ -14,7 +14,7 @@ namespace Menominee.Api.Configurations.RepairOrders
             // Value Object: TechAmount
             builder.OwnsOne(part => part.TechAmount, techAmount =>
             {
-                techAmount.Property(p => p.PayType).HasConversion<string>();
+                techAmount.Property(p => p.Type).HasConversion<string>();
                 techAmount.Property(p => p.Amount);
                 techAmount.Property(p => p.SkillLevel).HasConversion<string>();
             });

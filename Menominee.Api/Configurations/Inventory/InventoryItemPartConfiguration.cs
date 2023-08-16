@@ -23,7 +23,7 @@ namespace Menominee.Api.Configurations.Inventory
 
             // Value Object: InventoryItemPackageDetails
             builder.OwnsOne(part => part.TechAmount)
-               .Property(techAmount => techAmount.PayType)
+               .Property(techAmount => techAmount.Type)
                .HasColumnName("TechPayType")
                .IsRequired();
             builder.OwnsOne(part => part.TechAmount)

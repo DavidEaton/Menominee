@@ -64,7 +64,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     LaborAmount = new LaborAmountToRead()
                     {
                         Amount = lineItem.LaborAmount.Amount,
-                        PayType = lineItem.LaborAmount.PayType
+                        PayType = lineItem.LaborAmount.Type
                     },
                     Item = new RepairOrderItemToRead()
                     {

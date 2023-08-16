@@ -11,12 +11,12 @@ namespace Menominee.Tests.ValueObjects
         [InlineData(ItemLaborType.None, 0.0)]
         [InlineData(ItemLaborType.Flat, 100.0)]
         [InlineData(ItemLaborType.Time, 0.5)]
-        public void Create_LaborAmount_With_ValidInput(ItemLaborType payType, double amount)
+        public void Create_LaborAmount_With_ValidInput(ItemLaborType type, double amount)
         {
-            var result = LaborAmount.Create(payType, amount);
+            var result = LaborAmount.Create(type, amount);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.PayType.Should().Be(payType);
+            result.Value.Type.Should().Be(type);
             result.Value.Amount.Should().Be(amount);
         }
 
@@ -25,9 +25,9 @@ namespace Menominee.Tests.ValueObjects
         [InlineData(ItemLaborType.Flat, -100.0)]
         [InlineData(ItemLaborType.Time, -0.5)]
         [InlineData((ItemLaborType)999, 100.0)]
-        public void Not_Create_LaborAmount_With_Invalid_Input(ItemLaborType payType, double amount)
+        public void Not_Create_LaborAmount_With_Invalid_Input(ItemLaborType type, double amount)
         {
-            var result = LaborAmount.Create(payType, amount);
+            var result = LaborAmount.Create(type, amount);
 
             result.IsSuccess.Should().BeFalse();
         }
@@ -46,11 +46,11 @@ namespace Menominee.Tests.ValueObjects
         {
             var result = LaborAmount.Create(ItemLaborType.Flat,
                 LaborAmount.MinimumAmount);
-            result.Value.PayType.Should().Be(ItemLaborType.Flat);
+            result.Value.Type.Should().Be(ItemLaborType.Flat);
 
             result = result.Value.NewPayType(ItemLaborType.Time);
 
-            result.Value.PayType.Should().Be(ItemLaborType.Time);
+            result.Value.Type.Should().Be(ItemLaborType.Time);
         }
 
         [Fact]

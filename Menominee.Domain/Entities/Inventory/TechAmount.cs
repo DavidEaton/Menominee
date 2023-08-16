@@ -9,13 +9,13 @@ namespace Menominee.Domain.Entities.Inventory
     {
         public SkillLevel SkillLevel { get; private set; }
 
-        private TechAmount(ItemLaborType payType, double amount, SkillLevel skillLevel)
-            : base(payType, amount)
+        private TechAmount(ItemLaborType type, double amount, SkillLevel skillLevel)
+            : base(type, amount)
         {
             SkillLevel = skillLevel;
         }
 
-        public static Result<TechAmount> Create(ItemLaborType payType, double amount, SkillLevel skillLevel)
+        public static Result<TechAmount> Create(ItemLaborType type, double amount, SkillLevel skillLevel)
         {
             if (!Enum.IsDefined(typeof(SkillLevel), skillLevel))
                 return Result.Failure<TechAmount>(RequiredMessage);
@@ -23,12 +23,12 @@ namespace Menominee.Domain.Entities.Inventory
             if (amount < MinimumAmount)
                 return Result.Failure<TechAmount>(InvalidAmountMessage);
 
-            return Result.Success(new TechAmount(payType, amount, skillLevel));
+            return Result.Success(new TechAmount(type, amount, skillLevel));
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return PayType;
+            yield return Type;
             yield return Amount;
             yield return SkillLevel;
         }

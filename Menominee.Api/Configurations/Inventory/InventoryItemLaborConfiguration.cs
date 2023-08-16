@@ -13,7 +13,7 @@ namespace Menominee.Api.Configurations.Inventory
 
             // Value Object: LaborAmount
             builder.OwnsOne(labor => labor.LaborAmount)
-               .Property(amount => amount.PayType)
+               .Property(amount => amount.Type)
                .HasColumnName("LaborPayType")
                .IsRequired();
             builder.OwnsOne(labor => labor.LaborAmount)
@@ -23,11 +23,11 @@ namespace Menominee.Api.Configurations.Inventory
 
             // Value Object: TechAmount
             builder.OwnsOne(labor => labor.TechAmount)
-               .Property(amount => amount.PayType)
+               .Property(amount => amount.Type)
                .HasColumnName("TechPayType")
                .IsRequired();
             builder.OwnsOne(labor => labor.TechAmount)
-               .Property(amount => amount.PayType)
+               .Property(amount => amount.Type)
                .HasColumnName("TechPayType")
                .IsRequired();
             builder.OwnsOne(labor => labor.TechAmount)

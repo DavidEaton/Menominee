@@ -21,7 +21,7 @@ namespace Menominee.Api.Configurations.RepairOrders
                .Property(laborAmount => laborAmount.Amount)
                .HasColumnName("LaborAmount");
             builder.OwnsOne(person => person.LaborAmount)
-               .Property(laborAmount => laborAmount.PayType)
+               .Property(laborAmount => laborAmount.Type)
                .HasColumnName("LaborPayType");
 
             // Value Object: DiscountAmount

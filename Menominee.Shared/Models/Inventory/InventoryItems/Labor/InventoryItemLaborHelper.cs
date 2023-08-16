@@ -46,11 +46,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Labor
                 LaborAmount = new LaborAmountToRead()
                 {
                     Amount = labor.LaborAmount.Amount,
-                    PayType = labor.LaborAmount.PayType,
+                    PayType = labor.LaborAmount.Type,
                 },
                 TechAmount = new TechAmountToRead()
                 {
-                    PayType = labor.TechAmount.PayType,
+                    PayType = labor.TechAmount.Type,
                     Amount = labor.TechAmount.Amount,
                     SkillLevel = labor.TechAmount.SkillLevel
                 }
@@ -67,11 +67,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Labor
                 LaborAmount = new LaborAmountToRead()
                 {
                     Amount = labor.LaborAmount.Amount,
-                    PayType = labor.LaborAmount.PayType,
+                    PayType = labor.LaborAmount.Type,
                 },
                 TechAmount = new TechAmountToRead()
                 {
-                    PayType = labor.TechAmount.PayType,
+                    PayType = labor.TechAmount.Type,
                     Amount = labor.TechAmount.Amount,
                     SkillLevel = labor.TechAmount.SkillLevel
                 }
@@ -86,11 +86,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Labor
                     LaborAmount = new LaborAmountToWrite()
                     {
                         Amount = labor.LaborAmount.Amount,
-                        PayType = labor.LaborAmount.PayType,
+                        PayType = labor.LaborAmount.Type,
                     },
                     TechAmount = new TechAmountToWrite()
                     {
-                        PayType = labor.TechAmount.PayType,
+                        PayType = labor.TechAmount.Type,
                         Amount = labor.TechAmount.Amount,
                         SkillLevel = labor.TechAmount.SkillLevel
                     }

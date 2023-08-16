@@ -90,7 +90,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                                 : new()
                                 {
                                     Amount = item.Part.TechAmount.Amount,
-                                    PayType = item.Part.TechAmount.PayType,
+                                    PayType = item.Part.TechAmount.Type,
                                     SkillLevel = item.Part.TechAmount.SkillLevel
                                 }
                         },
@@ -105,7 +105,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                                 : new()
                                 {
                                     Amount = item.Inspection.TechAmount.Amount,
-                                    PayType = item.Inspection.TechAmount.PayType,
+                                    PayType = item.Inspection.TechAmount.Type,
                                     SkillLevel = item.Inspection.TechAmount.SkillLevel
                                 },
                             LaborAmount = item.Inspection.LaborAmount is null
@@ -113,7 +113,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                                 : new()
                                 {
                                     Amount = item.Inspection.LaborAmount.Amount,
-                                    PayType = item.Inspection.TechAmount.PayType
+                                    PayType = item.Inspection.TechAmount.Type
                                 }
                         },
                     Labor = item.Labor is null
@@ -126,14 +126,14 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                                 : new()
                                 {
                                     Amount = item.Labor.LaborAmount.Amount,
-                                    PayType = item.Labor.LaborAmount.PayType
+                                    PayType = item.Labor.LaborAmount.Type
                                 },
                             TechAmount = item.Labor.TechAmount is null
                                 ? new()
                                 : new()
                                 {
                                     Amount = item.Labor.TechAmount.Amount,
-                                    PayType = item.Labor.TechAmount.PayType,
+                                    PayType = item.Labor.TechAmount.Type,
                                     SkillLevel = item.Labor.TechAmount.SkillLevel
                                 }
                         },
@@ -383,8 +383,8 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                 : new()
                 {
                     Id = inspection.Id,
-                    LaborAmount = new() { Amount = inspection.LaborAmount.Amount, PayType = inspection.LaborAmount.PayType },
-                    TechAmount = new() { Amount = inspection.TechAmount.Amount, PayType = inspection.TechAmount.PayType, SkillLevel = inspection.TechAmount.SkillLevel },
+                    LaborAmount = new() { Amount = inspection.LaborAmount.Amount, PayType = inspection.LaborAmount.Type },
+                    TechAmount = new() { Amount = inspection.TechAmount.Amount, PayType = inspection.TechAmount.Type, SkillLevel = inspection.TechAmount.SkillLevel },
                     Type = inspection.InspectionType
                 };
         }
@@ -396,8 +396,8 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                 : new()
                 {
                     Id = labor.Id,
-                    LaborAmount = new() { Amount = labor.LaborAmount.Amount, PayType = labor.LaborAmount.PayType },
-                    TechAmount = new() { Amount = labor.TechAmount.Amount, PayType = labor.TechAmount.PayType, SkillLevel = labor.TechAmount.SkillLevel }
+                    LaborAmount = new() { Amount = labor.LaborAmount.Amount, PayType = labor.LaborAmount.Type },
+                    TechAmount = new() { Amount = labor.TechAmount.Amount, PayType = labor.TechAmount.Type, SkillLevel = labor.TechAmount.SkillLevel }
                 };
         }
 
