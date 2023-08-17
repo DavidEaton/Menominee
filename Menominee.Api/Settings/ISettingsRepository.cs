@@ -8,13 +8,15 @@ namespace Menominee.Api.Settings
 {
     public interface ISettingsRepository
     {
-        Task<ActionResult<IReadOnlyList<SettingToRead>>> GetSettingsListAsync();
-        Task<ActionResult<SettingToRead>> GetSetting(SettingName settingName);
-        Task<ActionResult<IReadOnlyList<SettingToRead>>> SaveSettingsListAsync(List<SettingToWrite> settings);
-        Task<ActionResult<SettingToRead>> SaveSetting(SettingToWrite settingToWrite);
-        Task<ActionResult<IReadOnlyList<SettingToRead>>> UpdateSettingsListAsync(List<SettingToWrite> settings);
-        Task<ActionResult<SettingToRead>> UpdateSetting(SettingToWrite setting);
-        Task<ActionResult<IReadOnlyList<SettingToRead>>> GetSettingListByGroupAsync(SettingGroup group);
+        Task<IReadOnlyList<SettingToRead>> GetSettingsListAsync();
+        Task<SettingToRead> GetSetting(SettingName settingName);
+        Task<IReadOnlyList<SettingToRead>> SaveSettingsListAsync(List<SettingToWrite> settings);
+        Task<SettingToRead> SaveSetting(SettingToWrite settingToWrite);
+        Task<IReadOnlyList<SettingToRead>> UpdateSettingsListAsync(List<SettingToWrite> settings);
+        Task<SettingToRead> UpdateSetting(SettingToWrite setting);
+        Task<IReadOnlyList<SettingToRead>> GetSettingListByGroupAsync(SettingGroup group);
+        Task<ConfigurationSetting> GetEntity(long id);
+        void AddSetting(ConfigurationSetting entity);
         Task SaveChangesAsync();
     }
 }

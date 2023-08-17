@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using Blazored.Toast;
 using Menominee.Shared;
 using Menominee.Client;
@@ -19,11 +17,10 @@ using Menominee.Client.Services.Taxes;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Blazor;
 using Syncfusion.Licensing;
 using Menominee.Client.Services.Businesses;
+using Menominee.Client.Services.Settings;
 
 // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
@@ -160,6 +157,10 @@ builder.Services.AddHttpClient<IExciseFeeDataService, ExciseFeeDataService>(
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<ISalesTaxDataService, SalesTaxDataService>(
+    client => client.BaseAddress = baseAddress)
+    .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+builder.Services.AddHttpClient<ISettingDataService, SettingDataService>(
     client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

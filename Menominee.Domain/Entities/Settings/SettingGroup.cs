@@ -1,11 +1,11 @@
-﻿namespace Menominee.Domain.Entities.Settings
+﻿namespace Menominee.Domain.Entities.Settings;
+
+public enum SettingGroup
 {
-    public enum SettingGroup
-    {
-        Prompt = 0,
-        Security = 1,
-        Printing = 2,
-        Ordering = 3,
-        Misc = 4
-    }
+    Prompt,
+    Security,
+    Printing,
+    Ordering,
+    ShopSupplies,
+    Misc
 }

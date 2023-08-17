@@ -28,6 +28,19 @@ namespace Menominee.Shared.Models.Settings
             return settingToRead;
         }
 
+        public static SettingToWrite ConvertToWriteDto(ConfigurationSetting setting)
+        {
+            return setting is null
+                ? null
+                : new SettingToWrite
+                {
+                    Id = setting.Id,
+                    SettingName = setting.SettingName,
+                    SettingValue = setting.Value,
+                    SettingGroup = setting.SettingGroup
+                };
+        }
+
         /// <summary>
         /// Converts a WriteDto into a ReadDto
         /// </summary>
@@ -76,7 +89,8 @@ namespace Menominee.Shared.Models.Settings
             {
                 ((string value) => bool.TryParse(value, out _), nameof(Boolean)),
                 ((string value) => decimal.TryParse(value, out _), nameof(Decimal)),
-                ((string value) => int.TryParse(value, out _), nameof(Int32))
+                ((string value) => int.TryParse(value, out _), nameof(Int32)),
+                ((string value) => long.TryParse(value, out _), nameof(Int64))
             };
             foreach (var (parser, typeName) in parsers)
                 if (parser(value))

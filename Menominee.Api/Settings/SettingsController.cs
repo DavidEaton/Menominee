@@ -1,7 +1,6 @@
 ﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,8 +10,6 @@ using System.Threading.Tasks;
 
 namespace Menominee.Api.Settings
 {
-    [Authorize]
-    [ApiController]
     public class SettingsController : BaseApplicationController<SettingsController>
     {
         private readonly ISettingsRepository repository;
@@ -45,10 +42,9 @@ namespace Menominee.Api.Settings
         {
             var settings = await repository.GetSettingsListAsync();
 
-            if (!settings.Value.Any())
-                return NotFound();
-
-            return Ok(settings);
+            return settings.Any()
+                ? Ok(settings)
+                : Ok();
         }
 
         /// <summary>
@@ -56,15 +52,14 @@ namespace Menominee.Api.Settings
         /// </summary>
         /// <param name="groupId">settingGroup</param>
         /// <returns>list of settingToRead with associated groupId</returns>
-        [HttpGet("group/{groupId}")]
+        [HttpGet("group/{group}")]
         public async Task<ActionResult<IReadOnlyList<SettingToRead>>> GetSettingListByGroupAsync(SettingGroup group)
         {
             var settings = await repository.GetSettingListByGroupAsync(group);
 
-            if (!settings.Value.Any())
-                return NotFound();
-
-            return Ok(settings);
+            return settings.Any()
+                ? Ok(settings)
+                : Ok();
         }
 
         /// <summary>
@@ -77,7 +72,7 @@ namespace Menominee.Api.Settings
         {
             var updateSettings = await repository.SaveSettingsListAsync(settings);
 
-            if (!updateSettings.Value.Any())
+            if (!updateSettings.Any())
                 return BadRequest();
 
             return Created("Settings Created",updateSettings);
@@ -93,7 +88,7 @@ namespace Menominee.Api.Settings
         {
             var updatedSettings = await repository.UpdateSettingsListAsync(settings);
 
-            if (!updatedSettings.Value.Any())
+            if (!updatedSettings.Any())
                 return BadRequest();
 
             return Ok(updatedSettings);

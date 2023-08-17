@@ -1,18 +1,21 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Menominee.Domain.Entities.Settings;
 
-namespace Menominee.Domain.Entities.Settings
+public enum SettingName
 {
-    public enum SettingName
-    {
-        [Display(Name = "Decline Parts")]
-        DeclineParts,
+    [Display(Name = "Decline Parts")]
+    DeclineParts,
 
-        [Display(Name = "Months To Retain")]
-        MonthsToRetain,
+    [Display(Name = "Months To Retain")]
+    MonthsToRetain,
 
-        [Display(Name = "Show After Customer Lookup")]
-        ShowAfterCustomerLookup
-    }
+    [Display(Name = "Show After Customer Lookup")]
+    ShowAfterCustomerLookup,
+
+    DisplayName,
+    ReportInSaleCode,
+    MaximumCharge,
+    CostType,
+    CostPerInvoice
 }

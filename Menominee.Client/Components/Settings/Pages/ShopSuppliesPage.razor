@@ -12,7 +12,7 @@
             }
             else
             {
-                <Card Title="">
+                <Card Title="Settings">
                     <Content>
                         <div class="form-row">
                             <div class="form-group col col-12 col-md-6 col-lg-4">
@@ -81,6 +81,14 @@
                                                    Arrows="false">
                                     </TelerikNumericTextBox>
                                 }
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col col-12">
+                                <button class="btn btn-primary m-button" @onclick="SaveSettings">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
                             </div>
                         </div>
                     </Content>
