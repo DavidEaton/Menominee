@@ -65,7 +65,6 @@ namespace Menominee.Api.Manufacturers
         public async Task<Manufacturer> GetManufacturerEntityAsync(long id)
         {
             return await context.Manufacturers
-                .AsNoTracking()
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id);
         }
 
