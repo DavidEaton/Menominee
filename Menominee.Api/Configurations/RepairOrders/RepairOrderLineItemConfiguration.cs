@@ -20,15 +20,15 @@ namespace Menominee.Api.Configurations.RepairOrders
             builder.OwnsOne(lineItem => lineItem.LaborAmount)
                .Property(laborAmount => laborAmount.Amount)
                .HasColumnName("LaborAmount");
-            builder.OwnsOne(person => person.LaborAmount)
+            builder.OwnsOne(lineItem => lineItem.LaborAmount)
                .Property(laborAmount => laborAmount.Type)
-               .HasColumnName("LaborPayType");
+               .HasColumnName("LaborType");
 
             // Value Object: DiscountAmount
             builder.OwnsOne(lineItem => lineItem.DiscountAmount)
                .Property(discountAmount => discountAmount.Type)
                .HasColumnName("DiscountType");
-            builder.OwnsOne(person => person.DiscountAmount)
+            builder.OwnsOne(lineItem => lineItem.DiscountAmount)
                .Property(discountAmount => discountAmount.Amount)
                .HasColumnName("DiscountAmount");
 
