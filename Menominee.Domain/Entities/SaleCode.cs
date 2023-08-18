@@ -5,11 +5,16 @@ namespace Menominee.Domain.Entities
 {
     public class SaleCode : Entity
     {
-        public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
         public static readonly int MinimumLength = 1;
-        public static readonly int MaximumLength = 255;
+        public static readonly int NameMaximumLength = 255;
+        public static readonly int CodeMaximumLength = 4;
         public static readonly double MinimumValue = 0;
+        public static readonly double MaximumDesiredMarginValue = 100;
+
+        public static string InvalidLengthMessage(int minLength, int maxLength) => $"Value must be between {minLength} and {maxLength} characters.";
+        public static string InvalidValueMessage(double minValue, double maxValue) => $"Value must be between {minValue} and {maxValue}.";
+       
+        public static readonly string RequiredMessage = $"Please include all required items."; 
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
 
         public string Name { get; private set; }
@@ -30,17 +35,19 @@ namespace Menominee.Domain.Entities
         public static Result<SaleCode> Create(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
         {
             name = (name ?? string.Empty).Trim();
-            code = (code ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim().ToUpper();
 
-            if (name.Length > MaximumLength || name.Length < MinimumLength ||
-                code.Length > MaximumLength || code.Length < MinimumLength)
-                return Result.Failure<SaleCode>(InvalidLengthMessage);
+            if (name.Length > NameMaximumLength || name.Length < MinimumLength)
+                return Result.Failure<SaleCode>(InvalidLengthMessage(MinimumLength, NameMaximumLength));
+
+            if (code.Length > CodeMaximumLength || code.Length < MinimumLength)
+                return Result.Failure<SaleCode>(InvalidLengthMessage(MinimumLength, CodeMaximumLength));
 
             if (laborRate < MinimumValue)
                 return Result.Failure<SaleCode>(MinimumValueMessage);
 
-            if (desiredMargin < MinimumValue)
-                return Result.Failure<SaleCode>(MinimumValueMessage);
+            if (desiredMargin < MinimumValue || desiredMargin > MaximumDesiredMarginValue)
+                return Result.Failure<SaleCode>(InvalidValueMessage(MinimumValue, MaximumDesiredMarginValue));
 
             if (shopSupplies is null)
                 return Result.Failure<SaleCode>(RequiredMessage);
@@ -55,8 +62,8 @@ namespace Menominee.Domain.Entities
 
             name = (name ?? string.Empty).Trim();
 
-            if (name.Length > MaximumLength || name.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+            if (name.Length > NameMaximumLength || name.Length < MinimumLength)
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, NameMaximumLength));
 
             return Result.Success(Name = name);
         }
@@ -66,10 +73,10 @@ namespace Menominee.Domain.Entities
             if (string.IsNullOrWhiteSpace(code))
                 return Result.Failure<string>(RequiredMessage);
 
-            code = (code ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim().ToUpper();
 
-            if (code.Length > MaximumLength || code.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+            if (code.Length > CodeMaximumLength || code.Length < MinimumLength)
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, CodeMaximumLength));
 
             return Result.Success(Code = code);
         }
@@ -84,8 +91,8 @@ namespace Menominee.Domain.Entities
 
         public Result<double> SetDesiredMargin(double desiredMargin)
         {
-            if (desiredMargin < MinimumValue)
-                return Result.Failure<double>(MinimumValueMessage);
+            if (desiredMargin < MinimumValue || desiredMargin > MaximumDesiredMarginValue)
+                return Result.Failure<double>(InvalidValueMessage(MinimumValue, MaximumDesiredMarginValue));
 
             return Result.Success(DesiredMargin = desiredMargin);
         }

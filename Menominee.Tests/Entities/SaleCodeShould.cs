@@ -254,7 +254,7 @@ namespace Menominee.Tests.Entities
                 get
                 {
                     yield return new object[] { SaleCode.MinimumLength - 1 };
-                    yield return new object[] { SaleCode.MaximumLength + 1 };
+                    yield return new object[] { SaleCode.NameMaximumLength + 1 };
                 }
             }
         }

@@ -15,10 +15,10 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                var name = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
-                var code = faker.Random.String2(SaleCode.MinimumLength, SaleCode.MaximumLength);
+                var name = faker.Random.String2(SaleCode.MinimumLength, SaleCode.NameMaximumLength);
+                var code = faker.Random.String2(SaleCode.MinimumLength, SaleCode.CodeMaximumLength);
                 var laborRate = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-                var desiredMargin = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
+                var desiredMargin = (double)Math.Round(faker.Random.Decimal(1, 100), 2);
                 var shopSupplies = new SaleCodeShopSuppliesFaker(generateId: generateId, id: id).Generate();
 
                 var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
