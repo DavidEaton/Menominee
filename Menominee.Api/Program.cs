@@ -44,7 +44,7 @@ using Telerik.Reporting.Services;
 using Menominee.Api.Vehicles;
 using Menominee.Api.Settings;
 
-var logger = new LoggerConfiguration()
+Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
@@ -69,8 +69,7 @@ try
             new DefaultAzureCredential());
     }
 
-    builder.Logging.ClearProviders();
-    builder.Logging.AddSerilog(logger);
+    builder.Host.UseSerilog();
 
     // Add services to the container.
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -216,6 +215,12 @@ try
 
     app.UseBlazorFrameworkFiles();
     app.UseStaticFiles();
+
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseSerilogIngestion();
+        app.UseSerilogRequestLogging();
+    }
 
     app.UseRouting();
 

@@ -21,6 +21,9 @@ using Syncfusion.Blazor;
 using Syncfusion.Licensing;
 using Menominee.Client.Services.Businesses;
 using Menominee.Client.Services.Settings;
+using Serilog;
+using Serilog.Events;
+using Serilog.Core;
 
 // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
@@ -30,6 +33,34 @@ SyncfusionLicenseProvider.RegisterLicense(
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+
+#region Logging
+
+if (builder.HostEnvironment.IsDevelopment())
+{
+    // Log to the browser console
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+        .Enrich.FromLogContext()
+        .WriteTo.BrowserConsole()
+        .CreateLogger();
+}
+else
+{
+    // Log to the server
+    var levelSwitch = new LoggingLevelSwitch();
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.ControlledBy(levelSwitch)
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+        .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("n"))
+        .WriteTo.BrowserHttp(endpointUrl: $"{builder.HostEnvironment.BaseAddress}ingest", controlLevelSwitch: levelSwitch)
+        .CreateLogger();
+}
+
+builder.Services.AddLogging(builder => builder.AddSerilog(dispose: true));
+
+#endregion
 
 builder.Services.AddHttpClient("Menominee.ServerAPI"
         , client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
