@@ -4,6 +4,7 @@ using Menominee.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Menominee.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230818171712_UpdateVehicleTableColumnsMaxLength")]
+    partial class UpdateVehicleTableColumnsMaxLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1265,8 +1267,7 @@ namespace Menominee.Api.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("DesiredMargin")
                         .ValueGeneratedOnAdd()
@@ -1280,8 +1281,7 @@ namespace Menominee.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("ShopSuppliesId")
                         .HasColumnType("bigint");
@@ -1291,8 +1291,6 @@ namespace Menominee.Api.Migrations
                     b.HasIndex("ShopSuppliesId");
 
                     b.ToTable("SaleCode", "dbo");
-
-                    b.HasCheckConstraint("Check_SaleCode_DesiredMargin", "[DesiredMargin] >= 0 AND [DesiredMargin] <= 100");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.SaleCodeShopSupplies", b =>

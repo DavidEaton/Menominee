@@ -34,7 +34,6 @@ namespace Menominee.Tests.Entities
         [InlineData("1A4GJ45R92J214567", 2010, "Mid Michigan", "Trailer")]
         [InlineData("1A4GJ45R92J214567", null, "Mid Michigan", "")]
         [InlineData("1A4GJ45R92J214567", null, "", "Trailer")]
-        [InlineData("", null, "", "Trailer")]
         [InlineData(null, null, "", "Trailer")]
         [InlineData(null, null, null, "Trailer")]
         public void Create_NonTraditional_Vehicle(string vin, int? year, string make, string model)
@@ -47,7 +46,6 @@ namespace Menominee.Tests.Entities
         }
 
         [Theory]
-        [InlineData("", null, "", "")]
         [InlineData(null, null, null, null)]
         [InlineData("1A4GJ45R92J214567", null, "", "")]
         [InlineData("1A4GJ45R92J214567", 2010, "", "")]
@@ -75,7 +73,6 @@ namespace Menominee.Tests.Entities
         }
 
         [Theory]
-        [InlineData(null)]
         [InlineData("")]
         [InlineData("1A4GJ45R92J21456")]
         [InlineData("5XYKUCA13BG0015")] // Only 16 characters long; too short
@@ -138,7 +135,21 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void Create_NonTraditionalVehicle_With_NonTraditional_Vin()
+        public void Create_NonTraditionalVehicle_With_Null_Vin()
+        {
+            var year = 2010;
+            var make = "Honda";
+            var model = "Pilot";
+            var nonTraditionalVehicle = true;
+
+            var result = Vehicle.Create(null, year, make, model, nonTraditionalVehicle);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Year.Should().Be(year);
+        }
+
+        [Fact]
+        public void Not_Create_NonTraditionalVehicle_With_Invalid_Vin()
         {
             var nonTraditionalVin = "moops";
             var year = 2010;
@@ -148,8 +159,8 @@ namespace Menominee.Tests.Entities
 
             var result = Vehicle.Create(nonTraditionalVin, year, make, model, nonTraditionalVehicle);
 
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Year.Should().Be(year);
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidVinMessage);
         }
 
         [Fact]
@@ -194,6 +205,58 @@ namespace Menominee.Tests.Entities
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidYearMessage);
+        }
+
+        [Fact]
+        public void SetVin()
+        {
+            var vehicle = CreateVehicle();
+            var newVin = "1A4GJ45R92J214568";
+            vehicle.VIN.Should().NotBe(newVin);
+
+            var result = vehicle.SetVin(newVin);
+
+            result.IsSuccess.Should().BeTrue();
+            vehicle.VIN.Should().Be(newVin);
+        }
+
+        [Fact]
+        public void SetVin_With_Null()
+        {
+            var vehicle = CreateVehicle();
+            var newVin = (string)null;
+            vehicle.VIN.Should().NotBe(newVin);
+
+            var result = vehicle.SetVin(newVin);
+
+            result.IsSuccess.Should().BeTrue();
+            vehicle.VIN.Should().Be(newVin);
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_Vin()
+        {
+            var vehicle = CreateVehicle();
+            var newVin = "moops";
+            vehicle.VIN.Should().NotBe(newVin);
+
+            var result = vehicle.SetVin(newVin);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidVinMessage);
+        }
+
+        [Fact]
+        public void Not_Set_Empty_Vin()
+        {
+            var vehicle = CreateVehicle();
+            var newVin = string.Empty;
+            vehicle.VIN.Should().NotBe(newVin);
+
+            var result = vehicle.SetVin(newVin);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidVinMessage);
         }
 
         [Fact]

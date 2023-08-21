@@ -35,11 +35,10 @@ namespace Menominee.Domain.Entities
 
         public static Result<Vehicle> Create(string vin, int? year, string make, string model, bool nonTraditionalVehicle = false)
         {
-            vin = (vin ?? string.Empty).Trim();
             make = (make ?? string.Empty).Trim();
             model = (model ?? string.Empty).Trim();
 
-            var vinResult = ValidateVin(vin, nonTraditionalVehicle);
+            var vinResult = ValidateVin(vin);
             if (vinResult.IsFailure)
                 return Result.Failure<Vehicle>(vinResult.Error);
 
@@ -73,16 +72,13 @@ namespace Menominee.Domain.Entities
             return Result.Success();
         }
 
-        private static Result ValidateVin(string vin, bool nonTraditionalVehicle)
+        private static Result ValidateVin(string vin)
         {
+            if (vin is null) return Result.Success();
 
-            if (!nonTraditionalVehicle && vin.Length != VinLength)
-                return Result.Failure<Vehicle>(InvalidVinMessage);
-
-            if (nonTraditionalVehicle)
-                return Result.Success();
-
-            return Result.Success();
+            return vin.Length.Equals(VinLength)
+                ? Result.Success()
+                : Result.Failure(InvalidVinMessage);
         }
 
         private static Result ValidateYear(int? year)
@@ -93,8 +89,14 @@ namespace Menominee.Domain.Entities
             return Result.Success();
         }
 
-        // NO SetVin method. Like changing Entity.Id is not allowed,
-        // so no SetId method in any domain class that derives from Entity
+        public Result<string> SetVin(string vin)
+        {
+            if (vin is null) return Result.Success(VIN = vin);
+
+            return vin.Length.Equals(VinLength)
+                ? Result.Success(VIN = vin)
+                : Result.Failure<string>(InvalidVinMessage);
+        }
 
         public Result<int?> SetYear(int? year)
         {
