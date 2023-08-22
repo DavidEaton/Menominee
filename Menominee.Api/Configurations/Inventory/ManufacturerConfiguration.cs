@@ -11,15 +11,13 @@ namespace Menominee.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("Manufacturer", "dbo");
 
-            builder.Property(manufacturer => manufacturer.Code)
-                .HasMaxLength(255)
+            builder.Property(manufacturer => manufacturer.Id)
                 .IsRequired();
             builder.Property(manufacturer => manufacturer.Name)
                 .HasMaxLength(255)
                 .IsRequired();
-            builder.Property(manufacturer => manufacturer.Code)
-                .HasMaxLength(255)
-                .IsRequired();
+            builder.Property(manufacturer => manufacturer.Prefix)
+                .HasMaxLength(4);
         }
     }
 }

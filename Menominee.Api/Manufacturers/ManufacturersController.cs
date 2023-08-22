@@ -29,16 +29,6 @@ namespace Menominee.Api.Manufacturers
                 : Ok(result);
         }
 
-        [HttpGet("code/{code}")]
-        public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(string code)
-        {
-            var result = await repository.GetManufacturerAsync(code);
-
-            return result is null
-                ? NotFound()
-                : Ok(result);
-        }
-
         [HttpGet("{id:long}")]
         public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(long id)
         {
@@ -49,33 +39,19 @@ namespace Menominee.Api.Manufacturers
                 : Ok(result);
         }
 
-        [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateManufacturerAsync(long id, ManufacturerToWrite manufacturerFromCaller)
-        {
-            //1) Get domain entity from repository
-            var manufacturerFromRepository = await repository.GetManufacturerEntityAsync(id);
-
-            if (manufacturerFromRepository is null)
-                return NotFound($"Could not find Manufacturer to update: {manufacturerFromCaller.Name}");
-
-            // 2) Update domain entity with data in data transfer object(DTO)
-            manufacturerFromRepository.SetCode(manufacturerFromCaller.Code);
-            manufacturerFromRepository.SetName(manufacturerFromCaller.Name);
-            manufacturerFromRepository.SetPrefix(manufacturerFromCaller.Prefix);
-
-            await repository.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         [HttpPost]
         public async Task<IActionResult> AddManufacturerAsync(ManufacturerToWrite manufacturerToAdd)
         {
+            var existingPrefixes = await repository.GetExistingPrefixList();
+            var existingIds = await repository.GetExistingIdList();
+
             // 1. Convert dto to domain entity
             var resultOrError = Manufacturer.Create(
+                repository.DetermineManufacturerId(existingIds), // we are not auto-incrementing the manufacturer id, user created manufacturers id starts at 50,000
                 manufacturerToAdd.Name,
-                manufacturerToAdd.Prefix,
-                manufacturerToAdd.Code);
+                manufacturerToAdd?.Prefix,
+                existingPrefixes,
+                existingIds);
 
             if (resultOrError.IsFailure)
                 return BadRequest(resultOrError.Error);
@@ -84,7 +60,12 @@ namespace Menominee.Api.Manufacturers
             await repository.AddManufacturerAsync(resultOrError.Value);
 
             // 3. Save changes on repository
-            await repository.SaveChangesAsync();
+            await repository.ExecuteInTransactionAsync(async () =>
+            {
+                await repository.ToggleIdentityInsert(true);
+                await repository.SaveChangesAsync();
+                await repository.ToggleIdentityInsert(false);
+            });
 
             // 4. Return to caller
             return Created(
@@ -94,6 +75,25 @@ namespace Menominee.Api.Manufacturers
                 {
                     resultOrError.Value.Id
                 });
+        }
+
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> UpdateManufacturerAsync(long id, ManufacturerToWrite manufacturerFromCaller)
+        {
+            var existingPrefixes = await repository.GetExistingPrefixList();
+            //1) Get domain entity from repository
+            var manufacturerFromRepository = await repository.GetManufacturerEntityAsync(id);
+
+            if (manufacturerFromRepository is null)
+                return NotFound($"Could not find Manufacturer to update: {manufacturerFromCaller.Name}");
+
+            // 2) Update domain entity with data in data transfer object(DTO)
+            manufacturerFromRepository.SetName(manufacturerFromCaller.Name);
+            manufacturerFromRepository.SetPrefix(manufacturerFromCaller.Prefix, existingPrefixes);
+
+            await repository.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [HttpDelete("{id:long}")]

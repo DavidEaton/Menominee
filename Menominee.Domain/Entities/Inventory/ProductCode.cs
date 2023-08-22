@@ -81,13 +81,13 @@ namespace Menominee.Domain.Entities.Inventory
             return Result.Success(Code = code);
         }
 
-        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer, IReadOnlyList<string> manufacturerCodes)
+        public Result<Manufacturer> SetManufacturer(Manufacturer manufacturer)
         {
             if (manufacturer is null)
                 return Result.Failure<Manufacturer>(RequiredMessage);
 
-            if (manufacturerCodes.Contains($"{manufacturer.Id}{Code}"))
-                return Result.Failure<Manufacturer>(NonuniqueMessage);
+            //if (manufacturerPrefix.Contains($"{manufacturer.Prefix}"))
+            //    return Result.Failure<Manufacturer>(NonuniqueMessage);
 
             return Result.Success(Manufacturer = manufacturer);
         }

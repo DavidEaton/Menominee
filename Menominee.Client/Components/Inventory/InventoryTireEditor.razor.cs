@@ -39,8 +39,8 @@ namespace Menominee.Client.Components.Inventory
         {
             Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
                                                           .Where(mfr => mfr.Prefix?.Length > 0
-                                                                     && mfr.Code != StaticManufacturerCodes.Custom
-                                                                     && mfr.Code != StaticManufacturerCodes.Package)
+                                                                     && mfr.Id != StaticManufacturerCodes.Custom
+                                                                     && mfr.Id != StaticManufacturerCodes.Package)
                                                           .OrderBy(mfr => mfr.Prefix)
                                                           .ToList();
         }

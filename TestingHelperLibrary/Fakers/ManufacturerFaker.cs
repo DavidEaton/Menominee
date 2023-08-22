@@ -11,11 +11,11 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
+                var id = faker.Random.Long(1, 10000);
                 var name = faker.Company.CompanyName();
                 var prefix = faker.Random.AlphaNumeric(3).ToUpper();
-                var code = name[..3].ToUpper();
 
-                var result = Manufacturer.Create(name, prefix, code);
+                var result = Manufacturer.Create(id, name, prefix, new List<string>(), new List<long>());
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

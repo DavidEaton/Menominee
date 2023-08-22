@@ -26,6 +26,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
             RuleFor(itemDto => itemDto)
                 .MustBeEntity(
                     itemDto => InventoryItem.Create(
+                        // TODO: ask dave how to proceed with this
                         ValidatorHelper.CreateManufacturer(itemDto.Manufacturer),
                         itemDto.ItemNumber,
                         itemDto.Description,

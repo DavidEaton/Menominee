@@ -189,7 +189,7 @@ namespace TestingHelperLibrary
 
         public static Manufacturer CreateManufacturer()
         {
-            return Manufacturer.Create("Manufacturer One", "M1", "V1").Value;
+            return Manufacturer.Create(100,"Manufacturer One", "M1", new List<string>(), new List<long>()).Value;
         }
 
         public static List<Manufacturer> CreateManufacturers(int count)
@@ -198,7 +198,7 @@ namespace TestingHelperLibrary
 
             for (int i = 0; i < count; i++)
             {
-                list.Add(Manufacturer.Create($"Manufacturer {i}", "M{i}", "V{i}").Value);
+                list.Add(Manufacturer.Create(i, $"Manufacturer {i}", "M{i}", new List<string>(), new List<long>()).Value);
             }
 
             return list;
@@ -258,8 +258,8 @@ namespace TestingHelperLibrary
             {
                 list.Add(new ManufacturerToWrite()
                 {
+                    Id = i,
                     Name = $"Manufacturer {i}",
-                    Code = $"M{i}",
                     Prefix = $"V{i}"
                 });
             }

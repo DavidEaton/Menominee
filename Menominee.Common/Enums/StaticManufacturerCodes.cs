@@ -4,9 +4,9 @@
     // Enumeration pattern?
     public static class StaticManufacturerCodes
     {
-        public const string Custom = "0";
-        public const string Miscellaneous = "1";
-        public const string CustomStocked = "2";
-        public const string Package = "3";
+        public const long Custom = 0;
+        public const long Miscellaneous = 1;
+        public const long CustomStocked = 2;
+        public const long Package = 3;
     }
 }

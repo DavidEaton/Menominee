@@ -40,10 +40,10 @@ namespace Menominee.Api.ProductCodes
             return Ok(await repository.GetProductCodesInListAsync(manufacturerId, saleCodeId));
         }
 
-        [HttpGet("{manufacturercode}/{code}")]
-        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(string manufacturerCode, string productCode)
+        [HttpGet("{manufacturerid}/{productcode}")]
+        public async Task<ActionResult<ProductCodeToRead>> GetProductCodeAsync(long manufacturerId, string productCode)
         {
-            var result = await repository.GetProductCodeAsync(manufacturerCode, productCode);
+            var result = await repository.GetProductCodeAsync(manufacturerId, productCode);
 
             return result is null
                 ? NotFound()
@@ -86,8 +86,7 @@ namespace Menominee.Api.ProductCodes
                 var manufacturerCodes = repository.GetManufacturerCodes();
 
                 var resultOrError = productCodeFromRepository.SetManufacturer(
-                    await manufacturersRepository.GetManufacturerEntityAsync(productCodeFromCaller.Manufacturer.Id),
-                    manufacturerCodes);
+                    await manufacturersRepository.GetManufacturerEntityAsync(productCodeFromCaller.Manufacturer.Id));
 
                 if (resultOrError.IsFailure)
                     return BadRequest(resultOrError.Error);

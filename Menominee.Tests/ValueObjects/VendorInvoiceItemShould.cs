@@ -24,7 +24,7 @@ namespace Menominee.Tests.ValueObjects
         [Fact]
         public void Create_VendorInvoiceItem_With_Optional_Manufacturer()
         {
-            var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
+            var manufacturer = Manufacturer.Create(1, "Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
 
             var resultOrError = VendorInvoiceItem.Create("a part", "a description", manufacturer: manufacturer);
 
@@ -107,7 +107,7 @@ namespace Menominee.Tests.ValueObjects
             var item = VendorInvoiceItem.Create("a part", "a description").Value;
 
             item.Manufacturer.Should().BeNull();
-            var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
+            var manufacturer = Manufacturer.Create(1, "Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
             var result = item.NewManufacturer(manufacturer);
 
             result.Value.Manufacturer.Should().Be(manufacturer);
@@ -130,7 +130,7 @@ namespace Menominee.Tests.ValueObjects
         [Fact]
         public void ClearManufacturer()
         {
-            var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
+            var manufacturer = Manufacturer.Create(1, "Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer).Value;
 
             item.Manufacturer.Should().Be(manufacturer);
@@ -143,7 +143,7 @@ namespace Menominee.Tests.ValueObjects
         [Fact]
         public void ClearSaleCode()
         {
-            var manufacturer = Manufacturer.Create("Manufacturer One", "Group", "M1").Value;
+            var manufacturer = Manufacturer.Create(1,"Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
             var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies).Value;
             var item = VendorInvoiceItem.Create("a part", "a description", manufacturer, saleCode).Value;

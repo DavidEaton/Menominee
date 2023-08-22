@@ -38,7 +38,7 @@ namespace Menominee.Api.ProductCodes
             return context.ProductCodes.Select(productCode => $"{productCode.Manufacturer.Id}{productCode.Code}").ToList();
         }
 
-        public async Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string code)
+        public async Task<ProductCodeToRead> GetProductCodeAsync(long manufacturerId, string code)
         {
             var pcFromContext = await context.ProductCodes
                                              .Include(productCode => productCode.Manufacturer)
@@ -46,7 +46,7 @@ namespace Menominee.Api.ProductCodes
                                              .AsSplitQuery()
                                              .AsNoTracking()
                                              .FirstOrDefaultAsync(productCode =>
-                                                productCode.Manufacturer.Code == manufacturerCode
+                                                productCode.Manufacturer.Id == manufacturerId
                                                 &&
                                                 productCode.Code == code);
 
@@ -68,14 +68,14 @@ namespace Menominee.Api.ProductCodes
                 : null;
         }
 
-        public async Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string code)
+        public async Task<ProductCode> GetProductCodeEntityAsync(long manufacturerId, string code)
         {
             return await context.ProductCodes
                                 .Include(productCode => productCode.Manufacturer)
                                 .Include(productCode => productCode.SaleCode)
                                 .AsSplitQuery()
                                 .FirstOrDefaultAsync(productCode =>
-                                    productCode.Manufacturer.Code == manufacturerCode
+                                    productCode.Manufacturer.Id == manufacturerId
                                     &&
                                     productCode.Code == code);
         }

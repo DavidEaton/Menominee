@@ -1,4 +1,5 @@
 ﻿using Menominee.Domain.Entities.Inventory;
+using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Manufacturers
 {
@@ -12,21 +13,22 @@ namespace Menominee.Shared.Models.Manufacturers
                 : new ManufacturerToWrite()
                 {
                     Id = manufacturer.Id,
-                    Code = manufacturer.Code,
                     Prefix = manufacturer.Prefix,
                     Name = manufacturer.Name
                 };
         }
 
-        public static Manufacturer ConvertWriteDtoToEntity(ManufacturerToWrite manufacturer)
+        public static Manufacturer ConvertWriteDtoToEntity(ManufacturerToWrite manufacturer, List<string> existingPrefixes, List<long> existingIds)
         {
             return
             manufacturer is null
                 ? null
                 : Manufacturer.Create(
+                    manufacturer.Id,
                     manufacturer.Name,
                     manufacturer.Prefix,
-                    manufacturer.Code)
+                    existingPrefixes,
+                    existingIds)
                 .Value;
         }
 
@@ -38,7 +40,6 @@ namespace Menominee.Shared.Models.Manufacturers
                 : new()
                 {
                     Id = manufacturer.Id,
-                    Code = manufacturer.Code,
                     Prefix = manufacturer.Prefix,
                     Name = manufacturer.Name
                 };
@@ -52,7 +53,6 @@ namespace Menominee.Shared.Models.Manufacturers
                 : new()
                 {
                     Id = manufacturer.Id,
-                    Code = manufacturer.Code,
                     Prefix = manufacturer.Prefix,
                     Name = manufacturer.Name
                 };
@@ -66,7 +66,6 @@ namespace Menominee.Shared.Models.Manufacturers
                 : new()
                 {
                     Id = manufacturer.Id,
-                    Code = manufacturer.Code,
                     Prefix = manufacturer.Prefix,
                     Name = manufacturer.Name
                 };
@@ -80,7 +79,6 @@ namespace Menominee.Shared.Models.Manufacturers
                 : new()
                 {
                     Id = manufacturer.Id,
-                    Code = manufacturer.Code,
                     Prefix = manufacturer.Prefix,
                     Name = manufacturer.Name
                 };

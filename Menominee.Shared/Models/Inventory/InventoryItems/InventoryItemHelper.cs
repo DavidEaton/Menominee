@@ -28,7 +28,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                         ? new()
                         : new()
                         {
-                            Code = item.Manufacturer.Code,
                             Id = item.Manufacturer.Id,
                             Name = item.Manufacturer.Name,
                             Prefix = item.Manufacturer.Prefix
@@ -45,7 +44,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                             Manufacturer = new ManufacturerToRead()
                             {
                                 Id = item.ProductCode.Manufacturer.Id,
-                                Code = item.ProductCode.Manufacturer.Code,
                                 Name = item.ProductCode.Manufacturer.Name,
                                 Prefix = item.ProductCode.Manufacturer.Prefix
                             },
@@ -178,7 +176,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                 Id = item.Id,
                 Manufacturer = new ManufacturerToRead
                 {
-                    Code = item.Manufacturer.Code,
                     Id = item.Manufacturer.Id,
                     Name = item.Manufacturer.Name,
                     Prefix = item.Manufacturer.Prefix
@@ -193,7 +190,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                     Manufacturer = new ManufacturerToRead
                     {
                         Id = item.ProductCode.Manufacturer.Id,
-                        Code = item.ProductCode.Manufacturer.Code,
                         Name = item.ProductCode.Manufacturer.Name,
                         Prefix = item.ProductCode.Manufacturer.Prefix
                     },
@@ -261,7 +257,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                     Manufacturer = new ManufacturerToRead
                     {
                         Id = item.ProductCode.Manufacturer.Id,
-                        Code = item.ProductCode.Manufacturer.Code,
                         Name = item.ProductCode.Manufacturer.Name,
                         Prefix = item.ProductCode.Manufacturer.Prefix
                     },
@@ -414,7 +409,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                     Manufacturer = new ManufacturerToRead
                     {
                         Id = item.ProductCode.Manufacturer.Id,
-                        Code = item.ProductCode.Manufacturer.Code,
                         Name = item.ProductCode.Manufacturer.Name,
                         Prefix = item.ProductCode.Manufacturer.Prefix
                     },
@@ -426,7 +420,6 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                         Manufacturer = new ManufacturerToRead()
                         {
                             Id = item.ProductCode.Manufacturer.Id,
-                            Code = item.ProductCode.Manufacturer.Code,
                             Name = item.ProductCode.Manufacturer.Name,
                             Prefix = item.ProductCode.Manufacturer.Prefix
                         },

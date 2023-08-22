@@ -85,7 +85,6 @@ namespace Menominee.Client.Components.RepairOrders
                     ManufacturerList.Add(new ManufacturerX
                     {
                         Id = mfr.Id,
-                        Code = mfr.Code,
                         Prefix = mfr.Prefix,
                         Name = mfr.Name
                     });

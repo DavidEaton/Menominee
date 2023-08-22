@@ -73,19 +73,17 @@ namespace Menominee.Client.Components.Inventory
             ManufacturerList.Add(new ManufacturerX
             {
                 Id = 0,
-                Code = "",
                 Prefix = "",
                 Name = "<< All >>"
             });
 
             foreach (var mfr in Manufacturers)
             {
-                if (mfr.Code != "0" && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
+                if (mfr.Id != 0 && mfr.Prefix.Length > 0)       // FIX ME - need server to only return list of configured Mfrs
                 {
                     ManufacturerList.Add(new ManufacturerX
                     {
                         Id = mfr.Id,
-                        Code = mfr.Code,
                         Prefix = mfr.Prefix,
                         Name = mfr.Name
                     });

@@ -57,7 +57,7 @@ namespace Menominee.Client.Components.Payables
             Manufacturers = (await manufacturerDataService.GetAllManufacturersAsync())
                                                           .Where(mfr => mfr.Prefix?.Length > 0
                                                           // TODO: Move where clause to api method
-                                                                     && mfr.Code != StaticManufacturerCodes.Package)
+                                                                     && mfr.Id != StaticManufacturerCodes.Package)
                                                           .OrderBy(mfr => mfr.Prefix)
                                                           .ToList();
 

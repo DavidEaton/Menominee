@@ -14,7 +14,7 @@ namespace Menominee.Shared.Models.Payables.Invoices.LineItems
         {
             // TODO: Replace empty shopSupplies with injected repository call to real SaleCodeShopSupplies from database
             var shopSupplies = SaleCodeShopSupplies.Create(0, 0, 0, 0, true, true).Value;
-
+            // TODO: figure out solution for manufacturer create
             RuleFor(lineItems => lineItems)
                 .NotNull()
                 .ForEach(lineItem =>
@@ -29,9 +29,11 @@ namespace Menominee.Shared.Models.Payables.Invoices.LineItems
                                 lineItem?.Item?.Manufacturer is null
                                 ? null
                                 : Manufacturer.Create(
+                                    lineItem.Item.Manufacturer.Id,
                                     lineItem?.Item?.Manufacturer.Name,
                                     lineItem?.Item?.Manufacturer.Prefix,
-                                    lineItem?.Item?.Manufacturer.Code)
+                                    new List<string>(),
+                                    new List<long>())
                                 .Value,
                                 lineItem?.Item?.SaleCode is null
                                 ? null

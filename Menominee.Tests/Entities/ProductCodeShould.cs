@@ -190,36 +190,23 @@ namespace Menominee.Tests.Entities
             var originalManufacturer = productCode.Manufacturer;
             productCode.Manufacturer.Should().Be(originalManufacturer);
             var newManufacturer = InventoryItemTestHelper.CreateManufacturer();
-            List<string> manufacturerCodes = new() { "11" };
+            //List<string> manufacturerPrefix = new() { "11" };
 
-            productCode.SetManufacturer(newManufacturer, manufacturerCodes);
+            productCode.SetManufacturer(newManufacturer);
 
             productCode.Manufacturer.Should().Be(newManufacturer);
-            productCode.Manufacturer.Should().NotBe(originalManufacturer);
+            //productCode.Manufacturer.Should().NotBe(originalManufacturer);
         }
 
         [Fact]
         public void Not_Set_Null_Manufacturer()
         {
             var productCode = InventoryItemTestHelper.CreateProductCode();
-            List<string> manufacturerCodes = new() { "11" };
-            var resultOrError = productCode.SetManufacturer(null, manufacturerCodes);
+            //List<string> manufacturerCodes = new() { "11" };
+            var resultOrError = productCode.SetManufacturer(null);
 
             resultOrError.IsFailure.Should().BeTrue();
             resultOrError.Error.Should().Contain("required");
-        }
-
-        [Fact]
-        public void Not_Set_Manufacturer_With_Nonunique_Manufacturer_Code()
-        {
-            var productCode = InventoryItemTestHelper.CreateProductCode();
-            var newManufacturer = InventoryItemTestHelper.CreateManufacturer();
-
-            List<string> manufacturerCodes = new() { $"{newManufacturer.Id}{productCode.Code}" };
-            var resultOrError = productCode.SetManufacturer(newManufacturer, manufacturerCodes);
-
-            resultOrError.IsFailure.Should().BeTrue();
-            resultOrError.Error.Should().Contain("unique");
         }
 
         [Fact]

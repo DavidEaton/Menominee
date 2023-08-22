@@ -14,9 +14,9 @@ namespace Menominee.Api.Migrations
                 schema: "dbo",
                 columns: new[]
                 {
-                    nameof(Manufacturer.Name),
-                    nameof(Manufacturer.Prefix),
-                    nameof(Manufacturer.Code)
+                    "Name",
+                    "Prefix",
+                    "Code"
                 },
                 values: new object[,]
                 {

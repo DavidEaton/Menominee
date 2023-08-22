@@ -8,9 +8,9 @@ namespace Menominee.Api.ProductCodes
     public interface IProductCodeRepository
     {
         void AddProductCode(ProductCode productCode);
-        Task<ProductCode> GetProductCodeEntityAsync(string manufacturerCode, string productCode);
+        Task<ProductCode> GetProductCodeEntityAsync(long manufacturerId, string productCode);
         Task<ProductCode> GetProductCodeEntityAsync(long id);
-        Task<ProductCodeToRead> GetProductCodeAsync(string manufacturerCode, string productCode);
+        Task<ProductCodeToRead> GetProductCodeAsync(long manufacturerId, string productCode);
         Task<ProductCodeToRead> GetProductCodeAsync(long id);
         Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync();
         Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId);

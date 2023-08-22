@@ -11,30 +11,30 @@ namespace Menominee.Tests.Entities
         public void Create_Manufacturer()
         {
             // Arrange
+            var id = 100;
             var name = "Manufacturer One";
             var prefix = "M1";
-            var code = "V1";
 
             // Act
-            var manufacturerOrError = Manufacturer.Create(name, prefix, code);
+            var manufacturerOrError = Manufacturer.Create(id, name, prefix, new List<string>(), new List<long>());
 
             // Assert
             manufacturerOrError.IsFailure.Should().BeFalse();
             manufacturerOrError.Value.Should().BeOfType<Manufacturer>();
+            manufacturerOrError.Value.Id.Should().Be(id);
             manufacturerOrError.Value.Name.Should().Be(name);
             manufacturerOrError.Value.Prefix.Should().Be(prefix);
-            manufacturerOrError.Value.Code.Should().Be(code);
         }
 
         [Theory]
         [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
         public void Not_Create_Manufacturer_With_Invalid_Name(int length)
         {
+            var id = 100;
             var invalidName = Utilities.RandomCharacters(length);
             var prefix = "M1";
-            var code = "V1";
 
-            var manufacturerOrError = Manufacturer.Create(invalidName, prefix, code);
+            var manufacturerOrError = Manufacturer.Create(id, invalidName, prefix, new List<string>(), new List<long>());
 
             manufacturerOrError.IsFailure.Should().BeTrue();
         }
@@ -42,71 +42,72 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Not_Create_Manufacturer_With_Null_Name()
         {
+            var id = 100;
             string invalidName = null;
             var prefix = "M1";
-            var code = "V1";
 
-            var manufacturerOrError = Manufacturer.Create(invalidName, prefix, code);
-
-            manufacturerOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_Manufacturer_With_Invalid_Prefix(int length)
-        {
-            var name = "Manufacturer One";
-            var invalidPrefix = Utilities.RandomCharacters(length);
-            var code = "V1";
-
-            var manufacturerOrError = Manufacturer.Create(name, invalidPrefix, code);
+            var manufacturerOrError = Manufacturer.Create(id, invalidName, prefix, new List<string>(), new List<long>());
 
             manufacturerOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Not_Create_Manufacturer_With_Null_Prefix()
+        public void Not_Create_Manufacturer_With_Invalid_Prefix()
         {
+            var id = 100;
+            var name = "Manufacturer One";
+            var invalidPrefix = "12345";
+
+            var manufacturerOrError = Manufacturer.Create(id, name, invalidPrefix, new List<string>(), new List<long>());
+
+            manufacturerOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Create_Manufacturer_With_Duplicate_Prefix()
+        {
+            var id = 100;
+            var name = "Manufacturer One";
+            var prefix = "PRE";
+            var existingPrefixs = new List<string>{ "PRE" };
+
+            var manufacturerOrError = Manufacturer.Create(id, name, prefix, existingPrefixs, new List<long>());
+
+            manufacturerOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Not_Create_Manufacturer_With_Duplicate_Id()
+        {
+            var id = 100;
+            var name = "Manufacturer One";
+            var prefix = "PRE";
+            var existingIds = new List<long> { 100 };
+
+            var manufacturerOrError = Manufacturer.Create(id, name, prefix, new List<string>(), existingIds);
+
+            manufacturerOrError.IsFailure.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Create_Manufacturer_With_Null_Prefix()
+        {
+            var id = 100;
             var name = "Manufacturer One";
             string invalidPrefix = null;
-            var code = "V1";
-            var manufacturerOrError = Manufacturer.Create(name, invalidPrefix, code);
+            var manufacturerOrError = Manufacturer.Create(id, name, invalidPrefix, new List<string>(), new List<long>());
 
-            manufacturerOrError.IsFailure.Should().BeTrue();
+            manufacturerOrError.IsFailure.Should().BeFalse();
         }
 
-        [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Create_Manufacturer_With_Invalid_Code(int length)
-        {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var invalidCode = Utilities.RandomCharacters(length);
-
-            var manufacturerOrError = Manufacturer.Create(name, prefix, invalidCode);
-
-            manufacturerOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Not_Create_Manufacturer_With_Null_Code()
-        {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            string invalidCode = null;
-
-            var manufacturerOrError = Manufacturer.Create(name, prefix, invalidCode);
-
-            manufacturerOrError.IsFailure.Should().BeTrue();
-        }
 
         [Fact]
         public void SetName()
         {
+            var id = 100;
             var name = "Manufacturer One";
             var prefix = "M1";
-            var code = "V1";
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturer = Manufacturer.Create(id, name, prefix, new List<string>(), new List<long>()).Value;
 
             manufacturer.Name.Should().Be(name);
             var newName = "V2";
@@ -118,31 +119,16 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetPrefix()
         {
+            var id = 100;
             var name = "Manufacturer One";
             var prefix = "M1";
-            var code = "V1";
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
+            var manufacturer = Manufacturer.Create(id, name, prefix, new List<string>(), new List<long>()).Value;
 
             manufacturer.Prefix.Should().Be(prefix);
             var newPrefix = "M2";
-            manufacturer.SetPrefix(newPrefix);
+            manufacturer.SetPrefix(newPrefix, new List<string>());
 
             manufacturer.Prefix.Should().Be(newPrefix);
-        }
-
-        [Fact]
-        public void SetCode()
-        {
-            var name = "Manufacturer One";
-            var prefix = "M1";
-            var code = "V1";
-            var manufacturer = Manufacturer.Create(name, prefix, code).Value;
-
-            manufacturer.Code.Should().Be(code);
-            var newCode = "V2";
-            manufacturer.SetCode(newCode);
-
-            manufacturer.Code.Should().Be(newCode);
         }
 
         [Theory]
@@ -167,59 +153,35 @@ namespace Menominee.Tests.Entities
             resultOrError.IsFailure.Should().BeTrue();
         }
 
-        [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Prefix_With_Invalid_Prefix(int length)
+        [Fact]
+        public void Not_Set_Prefix_With_Invalid_Prefix()
         {
             var manufacturer = CreateManufacturer();
 
-            var newPrefix = Utilities.RandomCharacters(length);
+            var newPrefix = "12345";
 
-            var resultOrError = manufacturer.SetPrefix(newPrefix);
+            var resultOrError = manufacturer.SetPrefix(newPrefix, new List<string>());
             resultOrError.IsFailure.Should().BeTrue();
         }
 
         [Fact]
-        public void Not_Set_Prefix_With_Null_Prefix()
+        public void Set_Prefix_With_Null_Prefix()
         {
             var manufacturer = CreateManufacturer();
 
             string newPrefix = null;
 
-            var resultOrError = manufacturer.SetPrefix(newPrefix);
-            resultOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Theory]
-        [MemberData(nameof(TestData.Data), MemberType = typeof(TestData))]
-        public void Not_Set_Code_With_Invalid_Code(int length)
-        {
-            var manufacturer = CreateManufacturer();
-
-            var newCode = Utilities.RandomCharacters(length);
-
-            var resultOrError = manufacturer.SetCode(newCode);
-            resultOrError.IsFailure.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Not_Set_Code_With_Null_Code()
-        {
-            var manufacturer = CreateManufacturer();
-
-            string newCode = null;
-
-            var resultOrError = manufacturer.SetCode(newCode);
-            resultOrError.IsFailure.Should().BeTrue();
+            var resultOrError = manufacturer.SetPrefix(newPrefix, new List<string>());
+            resultOrError.IsFailure.Should().BeFalse();
         }
 
         private Manufacturer CreateManufacturer()
         {
+            var id = 100;
             var name = "Manufacturer One";
             var prefix = "M1";
-            var code = "V1";
 
-            return Manufacturer.Create(name, prefix, code).Value;
+            return Manufacturer.Create(id, name, prefix, new List<string>(), new List<long>()).Value;
         }
 
         internal class TestData

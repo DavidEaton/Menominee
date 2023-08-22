@@ -1,4 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
+using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Domain.Entities.Inventory
@@ -6,32 +8,42 @@ namespace Menominee.Domain.Entities.Inventory
     public class Manufacturer : Entity
     {
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly string InvalidLengthMessage = $"Each item must be between {MinimumLength} and {MaximumLength} characters";
+        public static string InvalidLengthMessage(int minLength, int maxLength) => $"Value must be between {minLength} and {maxLength} characters.";
+        public static readonly string UniqueValueMessage = $"Value is already in use and must be unique.";
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumLength = 255;
+        public static readonly int PrefixMaximumLength = 4;
+        public static readonly long MinimumIdValue = 1;
+        public override long Id
+        {
+            get => base.Id;
+            protected set => base.Id = value;
+        }
         public string Name { get; private set; }
         public string Prefix { get; private set; }
-        public string Code { get; private set; }
 
-        private Manufacturer(string name, string prefix, string code)
+        private Manufacturer(long id, string name, string prefix)
         {
+            Id = id;
             Name = name;
             Prefix = prefix;
-            Code = code;
         }
 
-        public static Result<Manufacturer> Create(string name, string prefix, string code)
+        public static Result<Manufacturer> Create(long id, string name, string prefix, List<string> existingPrefixes, List<long> existingIds)
         {
             name = (name ?? string.Empty).Trim();
-            prefix = (prefix ?? string.Empty).Trim();
-            code = (code ?? string.Empty).Trim();
+            prefix = !string.IsNullOrWhiteSpace(prefix) ? prefix.Trim().ToUpper() : null;
 
-            if (name.Length > MaximumLength || name.Length < MinimumLength ||
-                prefix.Length > MaximumLength || prefix.Length < MinimumLength ||
-                code.Length > MaximumLength || code.Length < MinimumLength)
-                return Result.Failure<Manufacturer>(InvalidLengthMessage);
+            if (existingIds.Any(value => value == id))
+                return Result.Failure<Manufacturer>(UniqueValueMessage);
+            if (name.Length > MaximumLength || name.Length < MinimumLength)
+                return Result.Failure<Manufacturer>(InvalidLengthMessage(MinimumLength, MaximumLength));
+            if (prefix != null && (prefix.Length > PrefixMaximumLength || prefix.Length < MinimumLength))
+                return Result.Failure<Manufacturer>(InvalidLengthMessage(MinimumLength, PrefixMaximumLength));
+            if (prefix != null && existingPrefixes.Contains(prefix))
+                return Result.Failure<Manufacturer>(UniqueValueMessage);
 
-            return Result.Success(new Manufacturer(name, prefix, code));
+            return Result.Success(new Manufacturer(id, name, prefix));
         }
 
         public Result<string> SetName(string name)
@@ -42,36 +54,24 @@ namespace Menominee.Domain.Entities.Inventory
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumLength || name.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, MaximumLength));
 
             return Result.Success(Name = name);
         }
 
-        public Result<string> SetPrefix(string prefix)
+        public Result<string> SetPrefix(string prefix, List<string> existingPrefixes)
         {
-            if (string.IsNullOrWhiteSpace(prefix))
-                return Result.Failure<string>(RequiredMessage);
+            prefix = !string.IsNullOrWhiteSpace(prefix) ? prefix.Trim().ToUpper() : null;
 
-            prefix = (prefix ?? string.Empty).Trim();
+            if (prefix != null && (prefix.Length > PrefixMaximumLength || prefix.Length < MinimumLength))
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, PrefixMaximumLength));
 
-            if (prefix.Length > MaximumLength || prefix.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
+            if (prefix != null && existingPrefixes.Contains(prefix))
+                return Result.Failure<string>(UniqueValueMessage);
 
             return Result.Success(Prefix = prefix);
         }
 
-        public Result<string> SetCode(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code))
-                return Result.Failure<string>(RequiredMessage);
-
-            code = (code ?? string.Empty).Trim();
-
-            if (code.Length > MaximumLength || code.Length < MinimumLength)
-                return Result.Failure<string>(InvalidLengthMessage);
-
-            return Result.Success(Code = code);
-        }
 
         #region ORM
 

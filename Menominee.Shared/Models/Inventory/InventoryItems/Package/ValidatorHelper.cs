@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems.Package
 {
+    // TODO: clean this up
     public static class ValidatorHelper
     {
         public static ProductCode CreateProductCode(
@@ -45,9 +46,11 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Package
         public static Manufacturer CreateManufacturer(ManufacturerToRead manufacturer)
         {
             return Manufacturer.Create(
+                manufacturer.Id,
                 manufacturer.Name,
                 manufacturer.Prefix,
-                manufacturer.Code)
+                new List<string>(),
+                new List<long>())
                 .Value;
         }
 
