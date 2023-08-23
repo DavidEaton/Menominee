@@ -16,6 +16,7 @@ namespace TestingHelperLibrary.Fakers
             CustomInstantiator(faker =>
             {
                 var customerType = faker.PickRandom<CustomerType>();
+                var code = faker.Random.Replace("??????????");
                 var includeDriversLicense = faker.Random.Bool();
                 Result<Customer> result = null;
 
@@ -24,10 +25,10 @@ namespace TestingHelperLibrary.Fakers
                     : new BusinessFaker(true, includeAddress, false, emailsCount, phonesCount).Generate();
 
                 if (customer.GetType() == typeof(Person))
-                    result = Customer.Create((Person)customer, customerType);
+                    result = Customer.Create((Person)customer, customerType, code);
 
                 if (customer.GetType() == typeof(Business))
-                    result = Customer.Create((Business)customer, customerType);
+                    result = Customer.Create((Business)customer, customerType, code);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

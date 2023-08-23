@@ -5,6 +5,7 @@ using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 using TestingHelperLibrary;
 using Xunit;
+using Telerik.SvgIcons;
 
 namespace Menominee.Tests.Entities
 {
@@ -21,7 +22,7 @@ namespace Menominee.Tests.Entities
             var person = Person.Create(name, Gender.Female, notes).Value;
 
             // Act
-            var customer = Customer.Create(person, CustomerType.Retail).Value;
+            var customer = Customer.Create(person, CustomerType.Retail, null).Value;
 
             // Assert
             customer.Should().BeOfType<Customer>();
@@ -33,7 +34,7 @@ namespace Menominee.Tests.Entities
         {
             var business = ContactableTestHelper.CreateBusiness();
 
-            var customer = Customer.Create(business, CustomerType.Retail).Value;
+            var customer = Customer.Create(business, CustomerType.Retail, null).Value;
             customer.EntityType.Should().Be(EntityType.Business);
         }
 
@@ -42,7 +43,7 @@ namespace Menominee.Tests.Entities
         {
             Person person = null;
 
-            var result = Customer.Create(person, CustomerType.Retail);
+            var result = Customer.Create(person, CustomerType.Retail, null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
@@ -54,7 +55,7 @@ namespace Menominee.Tests.Entities
             var person = ContactableTestHelper.CreatePerson();
             var invalidCustomerType = (CustomerType)(-1);
 
-            var result = Customer.Create(person, invalidCustomerType);
+            var result = Customer.Create(person, invalidCustomerType, null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
@@ -65,7 +66,7 @@ namespace Menominee.Tests.Entities
         {
             Business business = null;
 
-            var result = Customer.Create(business, CustomerType.Retail);
+            var result = Customer.Create(business, CustomerType.Retail, null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
@@ -77,7 +78,7 @@ namespace Menominee.Tests.Entities
             var business = ContactableTestHelper.CreateBusiness();
             var invalidCustomerType = (CustomerType)(-1);
 
-            var result = Customer.Create(business, invalidCustomerType);
+            var result = Customer.Create(business, invalidCustomerType, null);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Customer.RequiredMessage);
@@ -140,7 +141,7 @@ namespace Menominee.Tests.Entities
             var business = ContactableTestHelper.CreateBusiness();
             business.SetContact(person);
 
-            var customer = Customer.Create(business, CustomerType.Retail).Value;
+            var customer = Customer.Create(business, CustomerType.Retail, null).Value;
             var contact = customer.Contact;
 
             contact.Should().BeOfType<Person>();
@@ -408,9 +409,9 @@ namespace Menominee.Tests.Entities
             {
                 get
                 {
-                    yield return new object[] { Customer.Create(ContactableTestHelper.CreatePerson(), CustomerType.Retail).Value
+                    yield return new object[] { Customer.Create(ContactableTestHelper.CreatePerson(), CustomerType.Retail, null).Value
                 };
-                    yield return new object[] { Customer.Create(ContactableTestHelper.CreateBusiness(), CustomerType.Retail).Value };
+                    yield return new object[] { Customer.Create(ContactableTestHelper.CreateBusiness(), CustomerType.Retail, null).Value };
                 }
             }
         }

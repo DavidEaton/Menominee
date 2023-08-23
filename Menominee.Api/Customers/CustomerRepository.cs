@@ -1,7 +1,9 @@
 ﻿using Menominee.Api.Data;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Pagination;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -59,6 +61,35 @@ namespace Menominee.Api.Customers
                 customers.Add(CustomerHelper.ConvertToReadDto(customer));
 
             return customers;
+        }
+
+        public async Task<PagedList<CustomerToRead>> GetCustomersAsync(string code, Pagination pagination)
+        {
+            var query = await context.Customers
+                .Where(customer => customer.Code.Equals(code))
+                .Include(customer => customer.Person)
+                .Include(customer => customer.Business)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Select(customer => CustomerHelper.ConvertToReadDto(customer))
+                .ToListAsync();
+
+            var orderedQuery = pagination.SortOrder.Equals(SortOrder.Desc)
+                ? query.OrderByDescending(GetSortProperty(pagination.SortColumn)).AsQueryable()
+                : query.OrderBy(GetSortProperty(pagination.SortColumn)).AsQueryable();
+
+            return PagedList<CustomerToRead>.Create(
+                orderedQuery,
+                pagination.PageNumber,
+                pagination.PageSize);
+        }
+
+        private static Func<CustomerToRead, string> GetSortProperty(SortColumn sortColumn)
+        {
+            return sortColumn switch
+            {
+                _ => customer => customer.Name
+            };
         }
 
         public async Task<bool> CustomerExistsAsync(long id)

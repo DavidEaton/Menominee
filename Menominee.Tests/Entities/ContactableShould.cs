@@ -191,7 +191,7 @@ namespace Menominee.Tests.Entities
             var business = ContactableTestHelper.CreateBusiness();
 
             business.SetAddress(addressOrError.Value);
-            var customerOrError = Customer.Create(business, CustomerType.Retail).Value;
+            var customerOrError = Customer.Create(business, CustomerType.Retail, null).Value;
             var janes = customerOrError.Business;
 
             customerOrError.Should().BeOfType<Customer>();
@@ -212,7 +212,7 @@ namespace Menominee.Tests.Entities
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
             var business = ContactableTestHelper.CreateBusiness();
             business.SetAddress(addressOrError.Value);
-            var customerOrError = Customer.Create(business, CustomerType.Retail).Value;
+            var customerOrError = Customer.Create(business, CustomerType.Retail, null).Value;
             var janes = customerOrError.Business;
             customerOrError.Should().BeOfType<Customer>();
             customerOrError.EntityType.Should().Be(EntityType.Business);

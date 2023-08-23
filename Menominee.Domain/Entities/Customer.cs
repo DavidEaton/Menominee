@@ -10,9 +10,11 @@ namespace Menominee.Domain.Entities
 {
     public class Customer : Entity
     {
+        public static readonly int MaximumCodeLength = 20;
         public static readonly string DuplicateItemMessagePrefix = $"Customer already has this ";
         public static readonly string UnknownEntityTypeMessage = $"Customer is unknown entity type.";
         public static readonly string RequiredMessage = "Please include all required items.";
+        public static readonly string InvalidCodeLengthMessage = $"Code must be {MaximumCodeLength} characters or less.";
 
         public Person Person { get; private set; }
         public Business Business { get; private set; }
@@ -20,6 +22,7 @@ namespace Menominee.Domain.Entities
         public CustomerType CustomerType { get; private set; }
         private DateTime Created { get; set; }
         public ContactPreferences ContactPreferences { get; private set; }
+        public string Code { get; private set; }
 
         private readonly List<Vehicle> vehicles = new();
         public IReadOnlyList<Vehicle> Vehicles => vehicles.ToList();
@@ -60,21 +63,23 @@ namespace Menominee.Domain.Entities
 
         public Person Contact => Business?.Contact;
 
-        private Customer(Person person, CustomerType customerType)
+        private Customer(Person person, CustomerType customerType, string code)
         {
             Person = person;
             CustomerType = customerType;
             Created = DateTime.Now;
+            Code = code;
         }
 
-        private Customer(Business business, CustomerType customerType)
+        private Customer(Business business, CustomerType customerType, string code)
         {
             Business = business;
             CustomerType = customerType;
             Created = DateTime.Now;
+            Code = code;
         }
 
-        public static Result<Customer> Create(Person person, CustomerType customerType)
+        public static Result<Customer> Create(Person person, CustomerType customerType, string code)
         {
             if (person is null)
                 return Result.Failure<Customer>(RequiredMessage);
@@ -82,10 +87,15 @@ namespace Menominee.Domain.Entities
             if (!Enum.IsDefined(typeof(CustomerType), customerType))
                 return Result.Failure<Customer>(RequiredMessage);
 
-            return Result.Success(new Customer(person, customerType));
+            code = code?.Trim() ?? string.Empty;
+            var codeResult = ValidateCode(code);
+            if (codeResult.IsFailure)
+                return Result.Failure<Customer>(codeResult.Error);
+
+            return Result.Success(new Customer(person, customerType, code));
         }
 
-        public static Result<Customer> Create(Business business, CustomerType customerType)
+        public static Result<Customer> Create(Business business, CustomerType customerType, string code)
         {
             if (business is null)
                 return Result.Failure<Customer>(RequiredMessage);
@@ -93,7 +103,12 @@ namespace Menominee.Domain.Entities
             if (!Enum.IsDefined(typeof(CustomerType), customerType))
                 return Result.Failure<Customer>(RequiredMessage);
 
-            return Result.Success(new Customer(business, customerType));
+            code = code?.Trim() ?? string.Empty;
+            var codeResult = ValidateCode(code);
+            if (codeResult.IsFailure)
+                return Result.Failure<Customer>(codeResult.Error);
+
+            return Result.Success(new Customer(business, customerType, code));
         }
 
         private EntityType GetEntityType() => Person is not null
@@ -232,6 +247,7 @@ namespace Menominee.Domain.Entities
                 default: return Result.Failure<Email>(UnknownEntityTypeMessage);
             }
         }
+
         public Result<Vehicle> AddVehicle(Vehicle vehicle)
         {
             if (vehicle is null)
@@ -256,6 +272,26 @@ namespace Menominee.Domain.Entities
         private bool CustomerHasVehicle(Vehicle vehicle)
         {
             return Vehicles.Any(v => v == vehicle);
+        }
+
+        public Result<string> SetCode(string code)
+        {
+            code = code?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(code)) return Result.Success(Code = code);
+
+            return code.Length <= MaximumCodeLength
+                ? Result.Success(Code = code)
+                : Result.Failure<string>(InvalidCodeLengthMessage);
+        }
+
+        private static Result ValidateCode(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code)) return Result.Success();
+
+            return code.Length <= MaximumCodeLength
+                ? Result.Success()
+                : Result.Failure(InvalidCodeLengthMessage);
         }
 
         #region ORM

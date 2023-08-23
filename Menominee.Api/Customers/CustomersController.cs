@@ -11,6 +11,7 @@ using Menominee.Shared.Models.Persons;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Menominee.Shared.Models.Pagination;
 
 namespace Menominee.Api.Customers
 {
@@ -72,6 +73,14 @@ namespace Menominee.Api.Customers
             return Ok(customer);
         }
 
+        [HttpGet("{code}")]
+        public async Task<ActionResult<PagedList<CustomerToRead>>> GetCustomersAsync(string code, [FromQuery] Pagination pagination)
+        {
+            var customers = await customerRepository.GetCustomersAsync(code, pagination);
+
+            return Ok(customers);
+        }
+
         // PUT: api/Customer/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
@@ -105,10 +114,10 @@ namespace Menominee.Api.Customers
             Customer customer = null;
 
             if (customerToAdd.EntityType == EntityType.Person)
-                customer = Customer.Create(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType).Value;
+                customer = Customer.Create(PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person), customerToAdd.CustomerType, customerToAdd.Code).Value;
 
             if (customerToAdd.EntityType == EntityType.Business)
-                customer = Customer.Create(BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business), customerToAdd.CustomerType).Value;
+                customer = Customer.Create(BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business), customerToAdd.CustomerType, customerToAdd.Code).Value;
 
             await customerRepository.AddCustomerAsync(customer);
 

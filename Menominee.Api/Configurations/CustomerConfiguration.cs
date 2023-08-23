@@ -25,6 +25,9 @@ namespace Menominee.Api.Configurations
                    .HasColumnName("AllowSms")
                    .IsRequired();
 
+            builder.Property(customer => customer.Code)
+                .HasMaxLength(Customer.MaximumCodeLength);
+
             builder.Ignore(customer => customer.Emails);
             builder.Ignore(customer => customer.Phones);
         }
