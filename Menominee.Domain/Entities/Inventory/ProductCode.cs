@@ -10,11 +10,10 @@ namespace Menominee.Domain.Entities.Inventory
     {
         public static readonly string NonuniqueMessage = $"Manufacturer/Code combination is already in use and must be unique. The same Code may be used by more than one Manufacturer.";
         public static readonly string RequiredMessage = $"Please include all required items.";
-        public static readonly string InvalidNameLengthMessage = $"Name must be between {MinimumLength} and {MaximumNameLength} characters";
-        public static readonly string InvalidCodeLengthMessage = $"Code must be between {MinimumLength} and {MaximumCodeLength} characters";
         public static readonly int MinimumLength = 1;
         public static readonly int MaximumNameLength = 255;
-        public static readonly int MaximumCodeLength = 10;
+        public static readonly int MaximumCodeLength = 8;
+        public static string InvalidLengthMessage(int minLength, int maxLength) => $"Value must be between {minLength} and {maxLength} characters.";
 
         public Manufacturer Manufacturer { get; private set; }
         public string Code { get; private set; }
@@ -40,14 +39,14 @@ namespace Menominee.Domain.Entities.Inventory
             IReadOnlyList<string> manufacturerCodes,
             SaleCode saleCode = null)
         {
-            code = (code ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim().ToUpper();
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumNameLength || name.Length < MinimumLength)
-                return Result.Failure<ProductCode>(InvalidNameLengthMessage);
+                return Result.Failure<ProductCode>(InvalidLengthMessage(MinimumLength, MaximumNameLength));
 
             if (code.Length > MaximumCodeLength || code.Length < MinimumLength)
-                return Result.Failure<ProductCode>(InvalidCodeLengthMessage);
+                return Result.Failure<ProductCode>(InvalidLengthMessage(MinimumLength, MaximumCodeLength));
 
             if (manufacturer is null)
                 return Result.Failure<ProductCode>(RequiredMessage);
@@ -63,17 +62,17 @@ namespace Menominee.Domain.Entities.Inventory
             name = (name ?? string.Empty).Trim();
 
             if (name.Length > MaximumNameLength || name.Length < MinimumLength)
-                return Result.Failure<string>(InvalidNameLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, MaximumNameLength));
 
             return Result.Success(Name = name);
         }
 
         public Result<string> SetCode(string code, IReadOnlyList<string> manufacturerCodes)
         {
-            code = (code ?? string.Empty).Trim();
+            code = (code ?? string.Empty).Trim().ToUpper();
 
             if (code.Length > MaximumCodeLength || code.Length < MinimumLength)
-                return Result.Failure<string>(InvalidCodeLengthMessage);
+                return Result.Failure<string>(InvalidLengthMessage(MinimumLength, MaximumCodeLength));
 
             if (manufacturerCodes.Contains($"{Manufacturer.Id}{code}"))
                 return Result.Failure<string>(NonuniqueMessage);

@@ -83,8 +83,6 @@ namespace Menominee.Api.ProductCodes
 
             if (productCodeFromRepository.Manufacturer.Id != productCodeFromCaller.Manufacturer.Id)
             {
-                var manufacturerCodes = repository.GetManufacturerCodes();
-
                 var resultOrError = productCodeFromRepository.SetManufacturer(
                     await manufacturersRepository.GetManufacturerEntityAsync(productCodeFromCaller.Manufacturer.Id));
 

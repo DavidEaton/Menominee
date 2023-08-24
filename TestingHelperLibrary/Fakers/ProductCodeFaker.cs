@@ -16,7 +16,7 @@ namespace Menominee.Tests.Helpers.Fakers
                 var saleCode = new SaleCodeFaker(generateId).Generate(); //optional
                 var manufacturer = new ManufacturerFaker(generateId).Generate();
                 var manufacturers = new List<string>();
-                var code = faker.Commerce.Ean13().Truncate(10);
+                var code = faker.Commerce.Ean13().Truncate(8);
                 var name = faker.Commerce.ProductName().Truncate(255);
 
                 var result = ProductCode.Create(manufacturer, code, name, manufacturers, saleCode);

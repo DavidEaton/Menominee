@@ -11,24 +11,13 @@ namespace Menominee.Api.Configurations.Inventory
             base.Configure(builder);
             builder.ToTable("ProductCode", "dbo");
 
-            //builder.Property(pc => pc.Manufacturer)
-            //    .IsRequired();
-            builder.Property(pc => pc.Code)
-                .IsRequired();
-            builder.Property(pc => pc.Name)
-                .IsRequired();
-
-            //builder.HasOne(pc => pc.Manufacturer)
-            //       .WithMany()
-            //       .HasForeignKey(pc => pc.ManufacturerId)
-            //       .OnDelete(DeleteBehavior.Restrict)
-            //       .IsRequired();
-
-            //builder.HasOne(pc => pc.SaleCode)
-            //       .WithMany()
-            //       .HasForeignKey(pc => pc.SaleCodeId)
-            //       .OnDelete(DeleteBehavior.Restrict)
-            //       .IsRequired();
+            builder.Property(productCode => productCode.Code)
+                .IsRequired()
+                .HasMaxLength(8);
+            builder.HasCheckConstraint("Check_ProductCode_Code_Length", "[Code] IS NULL OR (LEN([Code]) >= 1 AND LEN([Code]) <= 8)");
+            builder.Property(productCode => productCode.Name)
+                .IsRequired()
+                .HasMaxLength(255);
         }
     }
 }
