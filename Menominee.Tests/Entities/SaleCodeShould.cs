@@ -21,7 +21,7 @@ namespace Menominee.Tests.Entities
             var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
             // Act
-            var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
+            var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>());
 
             // Assert
             result.Value.Should().BeOfType<SaleCode>();
@@ -43,7 +43,7 @@ namespace Menominee.Tests.Entities
             var desiredMargin = SaleCode.MinimumValue;
             var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
-            var saleCode = SaleCode.Create(invalidName, code, laborRate, desiredMargin, shopSupplies);
+            var saleCode = SaleCode.Create(invalidName, code, laborRate, desiredMargin, shopSupplies, new List<string>());
 
             saleCode.IsFailure.Should().BeTrue();
             saleCode.Error.Should().NotBeNullOrEmpty();
@@ -59,7 +59,7 @@ namespace Menominee.Tests.Entities
             var desiredMargin = SaleCode.MinimumValue;
             var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
-            var saleCode = SaleCode.Create(name, invalidCode, laborRate, desiredMargin, shopSupplies);
+            var saleCode = SaleCode.Create(name, invalidCode, laborRate, desiredMargin, shopSupplies, new List<string>());
 
             saleCode.IsFailure.Should().BeTrue();
             saleCode.Error.Should().NotBeNullOrEmpty();
@@ -74,7 +74,7 @@ namespace Menominee.Tests.Entities
             var desiredMargin = SaleCode.MinimumValue;
             var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
-            var saleCode = SaleCode.Create(name, code, invalidLaborRate, desiredMargin, shopSupplies);
+            var saleCode = SaleCode.Create(name, code, invalidLaborRate, desiredMargin, shopSupplies, new List<string>());
 
             saleCode.IsFailure.Should().BeTrue();
             saleCode.Error.Should().NotBeNullOrEmpty();
@@ -89,7 +89,7 @@ namespace Menominee.Tests.Entities
             var invalidDesiredMargin = SaleCode.MinimumValue - .01;
             var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
 
-            var saleCode = SaleCode.Create(name, code, laborRate, invalidDesiredMargin, shopSupplies);
+            var saleCode = SaleCode.Create(name, code, laborRate, invalidDesiredMargin, shopSupplies, new List<string>());
 
             saleCode.IsFailure.Should().BeTrue();
             saleCode.Error.Should().NotBeNullOrEmpty();
@@ -104,7 +104,23 @@ namespace Menominee.Tests.Entities
             var desiredMargin = SaleCode.MinimumValue;
             SaleCodeShopSupplies invalidShopSupplies = null;
 
-            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, invalidShopSupplies);
+            var saleCode = SaleCode.Create(name, code, laborRate, desiredMargin, invalidShopSupplies, new List<string>());
+
+            saleCode.IsFailure.Should().BeTrue();
+            saleCode.Error.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public void Not_Create_SaleCode_With_Duplicate_Code()
+        {
+            var name = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var code = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var laborRate = SaleCode.MinimumValue;
+            var invalidDesiredMargin = SaleCode.MinimumValue;
+            var shopSupplies = new SaleCodeShopSuppliesFaker(true).Generate();
+            var saleCodesWithExistingCode = new List<string>() { code };
+
+            var saleCode = SaleCode.Create(name, code, laborRate, invalidDesiredMargin, shopSupplies, saleCodesWithExistingCode);
 
             saleCode.IsFailure.Should().BeTrue();
             saleCode.Error.Should().NotBeNullOrEmpty();
@@ -128,7 +144,7 @@ namespace Menominee.Tests.Entities
             var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
             var newCode = Utilities.RandomCharacters(SaleCode.MinimumLength + 1);
-            saleCode.SetCode(newCode);
+            saleCode.SetCode(newCode, new List<string>());
 
             saleCode.Code.Should().Be(newCode);
         }
@@ -197,7 +213,7 @@ namespace Menominee.Tests.Entities
         {
             var saleCode = InventoryItemTestHelper.CreateSaleCode();
 
-            var resultOrError = saleCode.SetCode(null);
+            var resultOrError = saleCode.SetCode(null, new List<string>());
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -209,7 +225,7 @@ namespace Menominee.Tests.Entities
             var saleCode = InventoryItemTestHelper.CreateSaleCode();
             var invalidCode = Utilities.RandomCharacters(length);
 
-            var resultOrError = saleCode.SetCode(invalidCode);
+            var resultOrError = saleCode.SetCode(invalidCode, new List<string>());
 
             resultOrError.IsFailure.Should().BeTrue();
         }
@@ -246,6 +262,17 @@ namespace Menominee.Tests.Entities
             resultOrError.IsFailure.Should().BeTrue();
         }
 
+        [Fact]
+        public void Not_SetCode_With_Duplicate_Code()
+        {
+            var saleCode = InventoryItemTestHelper.CreateSaleCode();
+            var newCode = Utilities.RandomCharacters(SaleCode.MinimumLength);
+            var saleCodesWithExistingCode = new List<string>() { newCode };
+
+            var resultOrError = saleCode.SetCode(newCode, saleCodesWithExistingCode);
+
+            resultOrError.IsFailure.Should().BeTrue();
+        }
 
         internal class TestData
         {

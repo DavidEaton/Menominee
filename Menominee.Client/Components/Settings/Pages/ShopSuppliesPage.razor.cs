@@ -6,6 +6,7 @@ using Telerik.Blazor.Components;
 using Menominee.Client.Services.Settings;
 using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
+using Blazored.Toast.Services;
 
 namespace Menominee.Client.Components.Settings.Pages
 {
@@ -13,6 +14,9 @@ namespace Menominee.Client.Components.Settings.Pages
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public ISaleCodeDataService SaleCodeDataService { get; set; }
@@ -164,7 +168,12 @@ namespace Menominee.Client.Components.Settings.Pages
 
             var itemToWrite = SaleCodeHelper.ConvertReadToWriteDto(itemToRead);
 
-            await SaleCodeDataService.UpdateSaleCodeAsync(itemToWrite, itemToRead.Id);
+            var response = await SaleCodeDataService.UpdateSaleCodeAsync(itemToWrite, itemToRead.Id);
+
+            if (response.IsFailure)
+            {
+                ToastService.ShowError(response.Error);
+            }
 
             SaleCodes = (await SaleCodeDataService.GetAllSaleCodeShopSuppliesAsync()).ToList();
         }

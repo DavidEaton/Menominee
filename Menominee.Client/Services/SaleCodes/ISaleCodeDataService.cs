@@ -1,6 +1,5 @@
-﻿using Menominee.Shared.Models.SaleCodes;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Shared.Models.SaleCodes;
 
 namespace Menominee.Client.Services.SaleCodes
 {
@@ -9,7 +8,7 @@ namespace Menominee.Client.Services.SaleCodes
         Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodesAsync();
         Task<IReadOnlyList<SaleCodeShopSuppliesToReadInList>> GetAllSaleCodeShopSuppliesAsync();
         Task<SaleCodeToRead> GetSaleCodeAsync(long id);
-        Task<SaleCodeToRead> AddSaleCodeAsync(SaleCodeToWrite saleCode);
-        Task UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id);
+        Task<Result<SaleCodeToRead>> AddSaleCodeAsync(SaleCodeToWrite saleCode);
+        Task<Result> UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id);
     }
 }

@@ -2,10 +2,8 @@
 using Menominee.Client.Services.SaleCodes;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
+using Blazored.Toast.Services;
 
 namespace Menominee.Client.Components.Settings.Pages
 {
@@ -13,6 +11,9 @@ namespace Menominee.Client.Components.Settings.Pages
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public ISaleCodeDataService SaleCodeDataService { get; set; }
@@ -94,14 +95,30 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected async Task HandleAddSubmitAsync()
         {
-            Id = (await SaleCodeDataService.AddSaleCodeAsync(SaleCode)).Id;
+            var response = await SaleCodeDataService.AddSaleCodeAsync(SaleCode);
+
+            if (response.IsFailure)
+            {
+                ToastService.ShowError(response.Error);
+                return;
+            }
+
+            Id = response.Value.Id;
+
             await EndAddEditAsync();
             Grid.Rebind();
         }
 
         protected async Task HandleEditSubmitAsync()
         {
-            await SaleCodeDataService.UpdateSaleCodeAsync(SaleCode, Id);
+            var response = await SaleCodeDataService.UpdateSaleCodeAsync(SaleCode, Id);
+
+            if (response.IsFailure)
+            {
+                ToastService.ShowError(response.Error);
+                return;
+            }
+
             await EndAddEditAsync();
         }
 

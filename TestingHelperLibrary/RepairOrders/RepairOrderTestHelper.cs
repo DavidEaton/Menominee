@@ -32,7 +32,7 @@ namespace TestingHelperLibrary.RepairOrders
                     editedService.SetSaleCode(new SaleCodeFaker(id: service.SaleCode.Id).Generate());
                     editedService.SaleCode.SetDesiredMargin(service.SaleCode.DesiredMargin);
                     editedService.SaleCode.SetLaborRate(service.SaleCode.LaborRate);
-                    editedService.SaleCode.SetCode(service.SaleCode.Code);
+                    editedService.SaleCode.SetCode(service.SaleCode.Code, new List<string>());
                     editedService.SaleCode.SetName(service.SaleCode.Name);
                     editedService.SaleCode.SetShopSupplies(editedService.SaleCode.ShopSupplies);
                     return editedService;

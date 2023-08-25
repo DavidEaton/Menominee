@@ -21,7 +21,7 @@ namespace TestingHelperLibrary.Fakers
                 var desiredMargin = (double)Math.Round(faker.Random.Decimal(1, 100), 2);
                 var shopSupplies = new SaleCodeShopSuppliesFaker(generateId: generateId, id: id).Generate();
 
-                var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies);
+                var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>());
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

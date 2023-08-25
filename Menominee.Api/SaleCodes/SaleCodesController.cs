@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Menominee.Api.Common;
+using Menominee.Domain.Entities;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +13,7 @@ namespace Menominee.Api.SaleCodes
     public class SaleCodesController : BaseApplicationController<SaleCodesController>
     {
         private readonly ISaleCodeRepository repository;
-        //private readonly string BasePath = "/api/salecodes";
+        private readonly string BasePath = "/api/salecodes";
 
         public SaleCodesController(ISaleCodeRepository repository, ILogger<SaleCodesController> logger) : base(logger)
         {
@@ -59,12 +61,23 @@ namespace Menominee.Api.SaleCodes
 
             //1) Get domain entity from repository
             var saleCodeFromRepository = await repository.GetSaleCodeEntityAsync(id);
+            var saleCodesFromRepository = (await repository.GetSaleCodeListAsync())
+                .Select(saleCode => saleCode.Code)
+                .ToList();
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            saleCodeFromRepository.SetName(saleCode.Name);
-            saleCodeFromRepository.SetCode(saleCode.Code);
-            saleCodeFromRepository.SetLaborRate(saleCode.LaborRate);
-            saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
+            var nameResult = saleCodeFromRepository.SetName(saleCode.Name);
+            if (nameResult.IsFailure) return BadRequest(nameResult.Error);
+
+            var codeResult = saleCodeFromRepository.SetCode(saleCode.Code, saleCodesFromRepository);
+            if (codeResult.IsFailure) return BadRequest(codeResult.Error);
+
+            var laborRateResult = saleCodeFromRepository.SetLaborRate(saleCode.LaborRate);
+            if (laborRateResult.IsFailure) return BadRequest(laborRateResult.Error);
+
+            var desiredMarginResult = saleCodeFromRepository.SetDesiredMargin(saleCode.DesiredMargin);
+            if (desiredMarginResult.IsFailure) return BadRequest(desiredMarginResult.Error);
+
             //saleCodeFromRepository.SetShopSupplies(saleCode.ShopSupplies);
 
             await repository.SaveChangesAsync();
@@ -75,8 +88,24 @@ namespace Menominee.Api.SaleCodes
         [HttpPost]
         public async Task<ActionResult> AddSaleCodeAsync(SaleCodeToWrite saleCodeToAdd)
         {
+            SaleCode saleCode = null;
+            var saleCodesFromRepository = (await repository.GetSaleCodeListAsync())
+                .Select(saleCode => saleCode.Code)
+                .ToList();
+
             // 1. Convert dto to domain entity
-            var saleCode = SaleCodeHelper.ConvertWriteDtoToEntity(saleCodeToAdd);
+            var result = SaleCode.Create(
+                    saleCodeToAdd.Name,
+                    saleCodeToAdd.Code,
+                    saleCodeToAdd.LaborRate,
+                    saleCodeToAdd.DesiredMargin,
+                    SaleCodeShopSuppliesHelper.ConvertWriteDtoToEntity(
+                        saleCodeToAdd.ShopSupplies),
+                    saleCodesFromRepository);
+
+            if (result.IsFailure) return BadRequest(result.Error);
+
+            saleCode = result.Value;
 
             // 2. Add domain entity to repository
             await repository.AddSaleCodeAsync(saleCode);
@@ -85,12 +114,7 @@ namespace Menominee.Api.SaleCodes
             await repository.SaveChangesAsync();
 
             // 4. Return new Code from database to consumer after save
-            return CreatedAtRoute("GetSaleCodeAsync",
-                new
-                {
-                    Id = saleCode.Id
-                },
-                SaleCodeHelper.ConvertToReadDto(saleCode));
+            return Created(new Uri($"{BasePath}/{saleCode.Id}", UriKind.Relative), new { id = saleCode.Id });
         }
 
         [HttpDelete("{id:long}")]

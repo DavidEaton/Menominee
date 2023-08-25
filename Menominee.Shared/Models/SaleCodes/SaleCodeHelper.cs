@@ -4,20 +4,6 @@ namespace Menominee.Shared.Models.SaleCodes
 {
     public class SaleCodeHelper
     {
-        public static SaleCode ConvertWriteDtoToEntity(SaleCodeToWrite saleCode)
-        {
-            return saleCode is null
-                ? null
-                : SaleCode.Create(
-                    saleCode.Name,
-                    saleCode.Code,
-                    saleCode.LaborRate,
-                    saleCode.DesiredMargin,
-                    SaleCodeShopSuppliesHelper.ConvertWriteDtoToEntity(
-                        saleCode.ShopSupplies))
-                .Value;
-        }
-
         public static SaleCodeToWrite ConvertReadToWriteDto(SaleCodeToRead saleCode)
         {
             return saleCode is null

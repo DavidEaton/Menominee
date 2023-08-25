@@ -17,7 +17,7 @@ namespace Menominee.Tests.Entities
             // Arrange
             var manufacturer = Manufacturer.Create(1,"Manufacturer One", "prod", new List<string>(), new List<long>()).Value;
             var supplies = SaleCodeShopSupplies.Create(.25, 10, 5, 99999, true, true).Value;
-            var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies).Value;
+            var saleCode = SaleCode.Create("Sale Code One", "SC1", .25, 100.00, supplies, new List<string>()).Value;
             var item = VendorInvoiceItem.Create("BR549", "a description", manufacturer, saleCode).Value;
 
             // Act

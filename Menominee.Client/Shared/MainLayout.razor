@@ -110,7 +110,14 @@
     </TelerikDrawer>
 </TelerikRootComponent>
 
+<BlazoredToasts />
+
 <style>
+    /* the toast container should be on top of everything else */
+    .blazored-toast-container {
+        z-index: 9999;
+    }
+
     /* the size of the containers will fill up their parents up to the viewport */
     html, body, app, .k-drawer-container, .k-drawer-content, .main, #app {
         width: 100%;

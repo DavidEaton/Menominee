@@ -212,7 +212,7 @@ namespace TestingHelperLibrary
             var desiredMargin = SaleCode.MinimumValue;
             var shopSupplies = new SaleCodeShopSuppliesFaker(true);
 
-            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
+            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>()).Value;
         }
 
         public static List<SaleCode> CreateSaleCodes(int count)
@@ -226,7 +226,7 @@ namespace TestingHelperLibrary
                 var laborRate = SaleCode.MinimumValue + count;
                 var desiredMargin = SaleCode.MinimumValue + count;
                 var shopSupplies = new SaleCodeShopSuppliesFaker(true);
-                list.Add(SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value);
+                list.Add(SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>()).Value);
             }
 
             return list;

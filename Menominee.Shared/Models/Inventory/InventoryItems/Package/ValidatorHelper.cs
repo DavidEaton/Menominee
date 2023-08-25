@@ -40,7 +40,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Package
                 productCode.SaleCode.ShopSupplies.IncludeLabor)
                 .Value;
 
-            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies).Value;
+            return SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>()).Value;
         }
 
         public static Manufacturer CreateManufacturer(ManufacturerToRead manufacturer)

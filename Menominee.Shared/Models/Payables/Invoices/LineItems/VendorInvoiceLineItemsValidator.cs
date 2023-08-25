@@ -42,7 +42,8 @@ namespace Menominee.Shared.Models.Payables.Invoices.LineItems
                                     lineItem?.Item?.SaleCode.Code,
                                     (double)(lineItem?.Item?.SaleCode.LaborRate),
                                     (double)(lineItem?.Item?.SaleCode.DesiredMargin),
-                                    shopSupplies)
+                                    shopSupplies,
+                                    new List<string>())
                                 .Value)
                             .Value,
                             lineItem.Quantity,

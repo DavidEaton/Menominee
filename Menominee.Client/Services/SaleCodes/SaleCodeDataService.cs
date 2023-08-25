@@ -1,8 +1,7 @@
 ﻿using Menominee.Shared.Models.SaleCodes;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
-using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
 
 namespace Menominee.Client.Services.SaleCodes
 {
@@ -10,35 +9,28 @@ namespace Menominee.Client.Services.SaleCodes
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<SaleCodeDataService> logger;
-        private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/salecodes";
 
-        public SaleCodeDataService(HttpClient httpClient, ILogger<SaleCodeDataService> logger, IToastService toastService)
+        public SaleCodeDataService(HttpClient httpClient, ILogger<SaleCodeDataService> logger)
         {
             this.httpClient = httpClient;
             this.logger = logger;
-            this.toastService = toastService;
         }
 
-        public async Task<SaleCodeToRead> AddSaleCodeAsync(SaleCodeToWrite saleCode)
+        public async Task<Result<SaleCodeToRead>> AddSaleCodeAsync(SaleCodeToWrite saleCode)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+            var response = await httpClient.PostAsJsonAsync(UriSegment, saleCode);
 
-            var content = new StringContent(JsonSerializer.Serialize(saleCode), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
-
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync(), options);
+                var errorMessage = response.Content.ReadAsStringAsync().Result;
+                logger.LogError(message: errorMessage);
+                return Result.Failure<SaleCodeToRead>(errorMessage);
             }
 
-            toastService.ShowError($"Failed to add Sale Code. {response.ReasonPhrase}.", "Add Failed");
+            var data = await JsonSerializer.DeserializeAsync<SaleCodeToRead>(await response.Content.ReadAsStreamAsync());
 
-            return null;
+            return Result.Success(data!);
         }
 
         public async Task<IReadOnlyList<SaleCodeToReadInList>> GetAllSaleCodesAsync()
@@ -83,18 +75,18 @@ namespace Menominee.Client.Services.SaleCodes
             return null;
         }
 
-        public async Task UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id)
+        public async Task<Result> UpdateSaleCodeAsync(SaleCodeToWrite saleCode, long id)
         {
-            var content = new StringContent(JsonSerializer.Serialize(saleCode), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync($"{UriSegment}/{id}", content);
+            var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{id}", saleCode);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                //toastService.ShowSuccess("Sale Code saved successfully", "Saved");
-                return;
+                var errorMessage = response.Content.ReadAsStringAsync().Result;
+                logger.LogError(message: errorMessage);
+                return Result.Failure(errorMessage);
             }
 
-            toastService.ShowError($"Sale Code {saleCode.Code} failed to update.", "Save Failed");
+            return Result.Success();
         }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Domain.Entities
@@ -16,6 +19,7 @@ namespace Menominee.Domain.Entities
        
         public static readonly string RequiredMessage = $"Please include all required items."; 
         public static readonly string MinimumValueMessage = $"Value(s) cannot be negative.";
+        public static readonly string NonuniqueMessage = $"Code is already in use and must be unique.";
 
         public string Name { get; private set; }
         public string Code { get; private set; }
@@ -32,7 +36,7 @@ namespace Menominee.Domain.Entities
             DesiredMargin = desiredMargin;
             ShopSupplies = shopSupplies;  // By the time we get here, ShopSupplies validation has already occurred; no need to repeat here.
         }
-        public static Result<SaleCode> Create(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies)
+        public static Result<SaleCode> Create(string name, string code, double laborRate, double desiredMargin, SaleCodeShopSupplies shopSupplies, IReadOnlyList<string> saleCodes)
         {
             name = (name ?? string.Empty).Trim();
             code = (code ?? string.Empty).Trim().ToUpper();
@@ -52,6 +56,9 @@ namespace Menominee.Domain.Entities
             if (shopSupplies is null)
                 return Result.Failure<SaleCode>(RequiredMessage);
 
+            if (saleCodes.Contains(code, StringComparer.OrdinalIgnoreCase))
+                return Result.Failure<SaleCode>(NonuniqueMessage);
+
             return Result.Success(new SaleCode(name, code, laborRate, desiredMargin, shopSupplies));
         }
 
@@ -68,7 +75,7 @@ namespace Menominee.Domain.Entities
             return Result.Success(Name = name);
         }
 
-        public Result<string> SetCode(string code)
+        public Result<string> SetCode(string code, IReadOnlyList<string> saleCodes)
         {
             if (string.IsNullOrWhiteSpace(code))
                 return Result.Failure<string>(RequiredMessage);
@@ -77,6 +84,9 @@ namespace Menominee.Domain.Entities
 
             if (code.Length > CodeMaximumLength || code.Length < MinimumLength)
                 return Result.Failure<string>(InvalidLengthMessage(MinimumLength, CodeMaximumLength));
+
+            if (saleCodes.Contains(code, StringComparer.OrdinalIgnoreCase))
+                return Result.Failure<string>(NonuniqueMessage);
 
             return Result.Success(Code = code);
         }
