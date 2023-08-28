@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 
 namespace TestingHelperLibrary.Fakers
@@ -16,8 +17,13 @@ namespace TestingHelperLibrary.Fakers
                 var makes = faker.PickRandom(VehicleTestHelper.Makers.ToList());
                 var make = makes.Value;
                 var model = faker.PickRandom(VehicleTestHelper.Models[makes.Key]);
+                var plate = faker.Random.Replace("???????");
+                var plateStateProvince = faker.PickRandom<State>();
+                var unitNumber = faker.Random.Replace("???????");
+                var color = faker.Random.Replace("?????");
+                var active = faker.Random.Bool();
 
-                var result = Vehicle.Create(vin, year, make, model);
+                var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

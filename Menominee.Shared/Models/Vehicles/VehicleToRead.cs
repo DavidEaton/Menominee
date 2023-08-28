@@ -1,4 +1,6 @@
-﻿namespace Menominee.Shared.Models.Vehicles
+﻿using Menominee.Common.Enums;
+
+namespace Menominee.Shared.Models.Vehicles
 {
     public class VehicleToRead
     {
@@ -7,6 +9,11 @@
         public int? Year { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
+        public string Plate { get; set; }
+        public State? PlateStateProvince { get; set; }
+        public string UnitNumber { get; set; }
+        public string Color { get; set; }
+        public bool Active { get; set; } = true;
         public override string ToString()
         {
             return $"{Year} {Make} {Model}";

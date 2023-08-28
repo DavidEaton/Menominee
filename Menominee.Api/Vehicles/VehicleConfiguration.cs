@@ -16,9 +16,21 @@ public class VehicleConfiguration : EntityConfiguration<Vehicle>
             .HasMaxLength(Vehicle.VinLength);
 
         builder.Property(vehicle => vehicle.Make)
-            .HasMaxLength(Vehicle.MaximumLength);
+            .HasMaxLength(Vehicle.MaximumMakeModelLength);
 
         builder.Property(vehicle => vehicle.Model)
-            .HasMaxLength(Vehicle.MaximumLength);
+            .HasMaxLength(Vehicle.MaximumMakeModelLength);
+
+        builder.Property(vehicle => vehicle.Plate)
+            .HasMaxLength(Vehicle.MaximumPlateLength);
+
+        builder.Property(vehicle => vehicle.UnitNumber)
+            .HasMaxLength(Vehicle.MaximumUnitNumberLength);
+
+        builder.Property(vehicle => vehicle.Color)
+            .HasMaxLength(Vehicle.MaximumColorLength);
+
+        builder.Property(vehicle => vehicle.Active)
+            .HasDefaultValue(true);
     }
 }

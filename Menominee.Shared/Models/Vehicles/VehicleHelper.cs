@@ -16,7 +16,12 @@ namespace Menominee.Shared.Models.Vehicles
                     Make = vehicle.Make,
                     Model = vehicle.Model,
                     Year = vehicle.Year,
-                    VIN = vehicle.VIN
+                    VIN = vehicle.VIN,
+                    Plate = vehicle.Plate,
+                    PlateStateProvince = vehicle.PlateStateProvince,
+                    UnitNumber = vehicle.UnitNumber,
+                    Color = vehicle.Color,
+                    Active = vehicle.Active
                 };
         }
 
@@ -30,7 +35,12 @@ namespace Menominee.Shared.Models.Vehicles
                         Make = vehicle.Make,
                         Model = vehicle.Model,
                         Year = vehicle.Year,
-                        VIN = vehicle.VIN
+                        VIN = vehicle.VIN,
+                        Plate = vehicle.Plate,
+                        PlateStateProvince = vehicle.PlateStateProvince,
+                        UnitNumber = vehicle.UnitNumber,
+                        Color = vehicle.Color,
+                        Active = vehicle.Active
                     })
                 .ToList()
                 ?? new List<VehicleToRead>();

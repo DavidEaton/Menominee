@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using Menominee.Common.Enums;
 
 namespace Menominee.Tests.Entities
 {
@@ -17,9 +18,14 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var make = "Honda";
             var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
             // Act
-            var result = Vehicle.Create(vin, year, make, model);
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
@@ -31,28 +37,31 @@ namespace Menominee.Tests.Entities
         }
 
         [Theory]
-        [InlineData("1A4GJ45R92J214567", 2010, "Mid Michigan", "Trailer")]
-        [InlineData("1A4GJ45R92J214567", null, "Mid Michigan", "")]
-        [InlineData("1A4GJ45R92J214567", null, "", "Trailer")]
-        [InlineData(null, null, "", "Trailer")]
-        [InlineData(null, null, null, "Trailer")]
-        public void Create_NonTraditional_Vehicle(string vin, int? year, string make, string model)
+        [InlineData("1A4GJ45R92J214567", 2010, "Mid Michigan", "Trailer", "", null, "", "")]
+        [InlineData("1A4GJ45R92J214567", null, "Mid Michigan", "", "", null, "", "")]
+        [InlineData("1A4GJ45R92J214567", null, "", "Trailer", "", null, "", "")]
+        [InlineData(null, null, "", "Trailer", "", null, "", "")]
+        [InlineData(null, null, null, "Trailer", "", null, "", "")]
+        public void Create_NonTraditional_Vehicle(string vin, int? year, string make, string model, string plate, State? plateStateProvince, string unitNumber, string color)
         {
+            var active = true;
             var nonTraditionalVehicle = true;
-            var result = Vehicle.Create(vin, year, make, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeOfType<Vehicle>();
         }
 
         [Theory]
-        [InlineData(null, null, null, null)]
-        [InlineData("1A4GJ45R92J214567", null, "", "")]
-        [InlineData("1A4GJ45R92J214567", 2010, "", "")]
-        public void Not_Create_Invalid_NonTraditional_Vehicle(string vin, int? year, string make, string model)
+        [InlineData(null, null, null, null, null, null, null, null)]
+        [InlineData("1A4GJ45R92J214567", null, "", "", "", null, "", "")]
+        [InlineData("1A4GJ45R92J214567", 2010, "", "", "", null, "", "")]
+        public void Not_Create_Invalid_NonTraditional_Vehicle(string vin, int? year, string make, string model, string plate, State? plateStateProvince, string unitNumber, string color)
         {
+            var active = true;
             var nonTraditionalVehicle = true;
-            var result = Vehicle.Create(vin, year, make, model, nonTraditionalVehicle);
+
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.NonTraditionalVehicleInvalidMakeModelMessage);
@@ -65,8 +74,13 @@ namespace Menominee.Tests.Entities
             var vin = "1A4GJ45R92J214567";
             var make = "Honda";
             var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, validYear, make, model);
+            var result = Vehicle.Create(vin, validYear, make, model, plate, plateStateProvince, unitNumber, color, active);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Year.Should().Be(validYear);
@@ -82,8 +96,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var make = "Honda";
             var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(invalidVin, year, make, model);
+            var result = Vehicle.Create(invalidVin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidVinMessage);
@@ -97,8 +116,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var make = "Honda";
             var nonTraditionalVehicle = false;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, year, make, invalidModel, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, year, make, invalidModel, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidLengthMessage);
@@ -112,8 +136,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var make = "Honda";
             var nonTraditionalVehicle = true;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, year, make, nonTraditionalModel, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, year, make, nonTraditionalModel, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Year.Should().Be(year);
@@ -127,8 +156,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var model = "Pilot";
             var nonTraditionalVehicle = true;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, year, nonTraditionalMake, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, year, nonTraditionalMake, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Year.Should().Be(year);
@@ -141,8 +175,13 @@ namespace Menominee.Tests.Entities
             var make = "Honda";
             var model = "Pilot";
             var nonTraditionalVehicle = true;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(null, year, make, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(null, year, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Year.Should().Be(year);
@@ -156,8 +195,13 @@ namespace Menominee.Tests.Entities
             var make = "Honda";
             var model = "Pilot";
             var nonTraditionalVehicle = true;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(nonTraditionalVin, year, make, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(nonTraditionalVin, year, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidVinMessage);
@@ -171,8 +215,13 @@ namespace Menominee.Tests.Entities
             var make = "Honda";
             var model = "Pilot";
             var nonTraditionalVehicle = true;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, nonTraditionalYear, make, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, nonTraditionalYear, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Year.Should().Be(nonTraditionalYear);
@@ -186,8 +235,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var model = "Pilot";
             var nonTraditionalVehicle = false;
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, year, invalidMake, model, nonTraditionalVehicle);
+            var result = Vehicle.Create(vin, year, invalidMake, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidLengthMessage);
@@ -200,11 +254,92 @@ namespace Menominee.Tests.Entities
             var vin = "1A4GJ45R92J214567";
             var make = "Honda";
             var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            var result = Vehicle.Create(vin, invalidYear, make, model);
+            var result = Vehicle.Create(vin, invalidYear, make, model, plate, plateStateProvince, unitNumber, color, active);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Be(Vehicle.InvalidYearMessage);
+        }
+
+        [Fact]
+        public void Not_Create_Vehicle_With_Invalid_Plate()
+        {
+            var vin = "1A4GJ45R92J214567";
+            var year = 2010;
+            var make = "Honda";
+            var model = "Pilot";
+            var plate = Utilities.RandomCharacters(Vehicle.MaximumPlateLength + 1);
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
+
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumPlateLength));
+        }
+
+        [Fact]
+        public void Not_Create_Vehicle_With_Invalid_PlateStateProvince()
+        {
+            var vin = "1A4GJ45R92J214567";
+            var year = 2010;
+            var make = "Honda";
+            var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = (State)(-1);
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
+
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidPlateStateProvinceMessage);
+        }
+
+        [Fact]
+        public void Not_Create_Vehicle_With_Invalid_UnitNumber()
+        {
+            var vin = "1A4GJ45R92J214567";
+            var year = 2010;
+            var make = "Honda";
+            var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = Utilities.RandomCharacters(Vehicle.MaximumUnitNumberLength + 1);
+            var color = "Blue";
+            var active = true;
+
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumUnitNumberLength));
+        }
+
+        [Fact]
+        public void Not_Create_Vehicle_With_Invalid_Color()
+        {
+            var vin = "1A4GJ45R92J214567";
+            var year = 2010;
+            var make = "Honda";
+            var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = Utilities.RandomCharacters(Vehicle.MaximumUnitNumberLength + 1);
+            var active = true;
+
+            var result = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumColorLength));
         }
 
         [Fact]
@@ -336,16 +471,64 @@ namespace Menominee.Tests.Entities
             result.Error.Should().Be(Vehicle.InvalidLengthMessage);
         }
 
-        [Theory]
-        [InlineData("1HGCM82633A123456", 2003, "Ho", "Ac", false, "2003 Ho Ac")]
-        [InlineData("1HGCM82633A123456", null, "Ho", "Ac", false, "0 Ho Ac")]
-        [InlineData("1HGCM82633A123456", 2003, "Honda", "Accord", false, "2003 Honda Accord")]
-        [InlineData("1HGCM82633A123456", 2003, "Trailer", null, true, "2003 Trailer ")]
-        [InlineData("1HGCM82633A123456", null, null, "Trailer", true, "0  Trailer")]
-        [InlineData("1HGCM82633A123456", 2003, null, "Trailer", true, "2003  Trailer")]
-        public void Format_ToString_Correctly(string vin, int? year, string make, string model, bool nonTraditionalVehicle, string expectedOutput)
+        [Fact]
+        public void Not_Set_Invalid_Plate()
         {
-            var vehicleResult = Vehicle.Create(vin, year, make, model, nonTraditionalVehicle);
+            var vehicle = CreateVehicle();
+            var invalidPlate = Utilities.RandomCharacters(Vehicle.MaximumPlateLength + 1);
+
+            var result = vehicle.SetPlate(invalidPlate);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumPlateLength));
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_PlateStateProvince()
+        {
+            var vehicle = CreateVehicle();
+            var invalidPlateStateProvince = (State)(-1);
+
+            var result = vehicle.SetPlateStateProvince(invalidPlateStateProvince);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidPlateStateProvinceMessage);
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_UnitNumber()
+        {
+            var vehicle = CreateVehicle();
+            var invalidUnitNumber = Utilities.RandomCharacters(Vehicle.MaximumUnitNumberLength + 1);
+
+            var result = vehicle.SetUnitNumber(invalidUnitNumber);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumUnitNumberLength));
+        }
+
+        [Fact]
+        public void Not_Set_Invalid_Color()
+        {
+            var vehicle = CreateVehicle();
+            var invalidColor = Utilities.RandomCharacters(Vehicle.MaximumColorLength + 1);
+
+            var result = vehicle.SetColor(invalidColor);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(Vehicle.InvalidMaximumLengthMessage(Vehicle.MaximumColorLength));
+        }
+
+        [Theory]
+        [InlineData("1HGCM82633A123456", 2003, "Ho", "Ac", "", null, "", "", true, false, "2003 Ho Ac")]
+        [InlineData("1HGCM82633A123456", null, "Ho", "Ac", "", null, "", "", true, false, "0 Ho Ac")]
+        [InlineData("1HGCM82633A123456", 2003, "Honda", "Accord", "", null, "", "", true, false, "2003 Honda Accord")]
+        [InlineData("1HGCM82633A123456", 2003, "Trailer", null, "", null, "", "", true, true, "2003 Trailer ")]
+        [InlineData("1HGCM82633A123456", null, null, "Trailer", "", null, "", "", true, true, "0  Trailer")]
+        [InlineData("1HGCM82633A123456", 2003, null, "Trailer", "", null, "", "", true, true, "2003  Trailer")]
+        public void Format_ToString_Correctly(string vin, int? year, string make, string model, string plate, State? plateStateProvince, string unitNumber, string color, bool active, bool nonTraditionalVehicle, string expectedOutput)
+        {
+            var vehicleResult = Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active, nonTraditionalVehicle);
             vehicleResult.IsSuccess.Should().BeTrue();
             var vehicle = vehicleResult.Value;
 
@@ -360,8 +543,13 @@ namespace Menominee.Tests.Entities
             var year = 2010;
             var make = "Honda";
             var model = "Pilot";
+            var plate = "ABC123";
+            var plateStateProvince = State.CA;
+            var unitNumber = "123456";
+            var color = "Blue";
+            var active = true;
 
-            return Vehicle.Create(vin, year, make, model).Value;
+            return Vehicle.Create(vin, year, make, model, plate, plateStateProvince, unitNumber, color, active).Value;
         }
 
         public static class TestData
@@ -373,13 +561,13 @@ namespace Menominee.Tests.Entities
                     var nullString = new object[] { null };
                     var emptyString = new object[] { string.Empty };
 
-                    var maxLengthResults = Enumerable.Range(Vehicle.MaximumLength + 1, Vehicle.MaximumLength + 10)
+                    var maxLengthResults = Enumerable.Range(Vehicle.MaximumMakeModelLength + 1, Vehicle.MaximumMakeModelLength + 10)
                         .Select(length => new string('A', length))
                         .Select(make => new object[] { make });
 
-                    var minLengthResults = Enumerable.Range(0, Vehicle.MinimumLength - 1)
+                    var minLengthResults = Enumerable.Range(0, Vehicle.MinimumMakeModelLength - 1)
                         .Select(length => new string('A', length))
-                        .Where(make => make.Length < Vehicle.MinimumLength)
+                        .Where(make => make.Length < Vehicle.MinimumMakeModelLength)
                         .Select(make => new object[] { make });
 
                     return new[] { nullString, emptyString }.Concat(minLengthResults).Concat(maxLengthResults);
@@ -393,13 +581,13 @@ namespace Menominee.Tests.Entities
                     var nullString = new object[] { null };
                     var emptyString = new object[] { string.Empty };
 
-                    var maxLengthResults = Enumerable.Range(Vehicle.MaximumLength + 1, Vehicle.MaximumLength + 10)
+                    var maxLengthResults = Enumerable.Range(Vehicle.MaximumMakeModelLength + 1, Vehicle.MaximumMakeModelLength + 10)
                         .Select(length => new string('A', length))
                         .Select(model => new object[] { model });
 
-                    var minLengthResults = Enumerable.Range(0, Vehicle.MinimumLength - 1)
+                    var minLengthResults = Enumerable.Range(0, Vehicle.MinimumMakeModelLength - 1)
                         .Select(length => new string('A', length))
-                        .Where(model => model.Length < Vehicle.MinimumLength)
+                        .Where(model => model.Length < Vehicle.MinimumMakeModelLength)
                         .Select(model => new object[] { model });
 
                     return new[] { nullString, emptyString }.Concat(minLengthResults).Concat(maxLengthResults);

@@ -9,6 +9,6 @@ public class VehicleValidator : AbstractValidator<VehicleToWrite>
     {
         RuleFor(vehicle => vehicle)
             .MustBeEntity(vehicle =>
-                Vehicle.Create(vehicle.VIN, vehicle.Year, vehicle.Make, vehicle.Model));
+                Vehicle.Create(vehicle.VIN, vehicle.Year, vehicle.Make, vehicle.Model, vehicle.Plate, vehicle.PlateStateProvince, vehicle.UnitNumber, vehicle.Color, vehicle.Active));
     }
 }

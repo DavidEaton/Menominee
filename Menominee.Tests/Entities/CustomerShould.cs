@@ -389,7 +389,13 @@ namespace Menominee.Tests.Entities
             var year1 = 2010;
             var make1 = "Pontiac";
             var model1 = "Trans Sport";
-            var vehicle1 = Vehicle.Create(vin1, year1, make1, model1).Value;
+            var plate1 = "ABC123";
+            var plateStateProvince1 = State.CA;
+            var unitNumber1 = "123456";
+            var color1 = "Blue";
+            var active1 = true;
+
+            var vehicle1 = Vehicle.Create(vin1, year1, make1, model1, plate1, plateStateProvince1, unitNumber1, color1, active1).Value;
             return vehicle1;
         }
 
@@ -399,7 +405,13 @@ namespace Menominee.Tests.Entities
             var year0 = 2020;
             var make0 = "Honda";
             var model0 = "Pilot";
-            var vehicle0 = Vehicle.Create(vin0, year0, make0, model0).Value;
+            var plate0 = "ABC123";
+            var plateStateProvince0 = State.CA;
+            var unitNumber0 = "123456";
+            var color0 = "Blue";
+            var active0 = true;
+
+            var vehicle0 = Vehicle.Create(vin0, year0, make0, model0, plate0, plateStateProvince0, unitNumber0, color0, active0).Value;
             return vehicle0;
         }
 
