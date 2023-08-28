@@ -1,9 +1,10 @@
 ﻿using Bogus;
-using Menominee.Domain.Entities.Inventory;
-using Menominee.Domain.Entities.RepairOrders;
 using FluentAssertions;
 using Menominee.Common.Enums;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Entities.RepairOrders;
 using System;
+using System.Linq;
 using TestingHelperLibrary.Fakers;
 using Xunit;
 
@@ -11,8 +12,7 @@ namespace Menominee.Tests.Entities
 {
     public class RepairOrderLineItemShould
     {
-        [Fact]
-        public void Create_RepairOrderLineItem()
+        private static RepairOrderLineItem CreateTestRepairOrderLineItem()
         {
             var faker = new Faker();
             var item = new RepairOrderItemFaker().Generate();
@@ -28,10 +28,18 @@ namespace Menominee.Tests.Entities
             var core = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
             var discountAmount = DiscountAmount.Create(ItemDiscountType.Predefined, amount).Value;
 
-            var result = RepairOrderLineItem.Create(item, saleType, isDeclined, isCounterSale, quantitySold, sellingPrice, laborAmount, cost, core, discountAmount);
+            return RepairOrderLineItem.Create(
+                item, saleType, isDeclined, isCounterSale,
+                quantitySold, sellingPrice, laborAmount, cost, core, discountAmount).Value;
+        }
+
+        [Fact]
+        public void Create_RepairOrderLineItem()
+        {
+            var result = CreateTestRepairOrderLineItem();
 
             result.Should().NotBeNull();
-            result.Value.Should().BeOfType<RepairOrderLineItem>();
+            result.Should().BeOfType<RepairOrderLineItem>();
         }
 
         [Fact]
@@ -83,20 +91,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetItem()
         {
-            var faker = new Faker();
-            var item = new RepairOrderItemFaker().Generate();
-            var saleType = faker.PickRandom<SaleType>();
-            var isDeclined = faker.Random.Bool();
-            var isCounterSale = faker.Random.Bool();
-            var quantitySold = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var sellingPrice = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var type = faker.PickRandom<ItemLaborType>();
-            var amount = (double)Math.Round(faker.Random.Decimal(1, 99), 2);
-            var laborAmount = LaborAmount.Create(type, amount).Value;
-            var cost = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var core = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var discountAmount = DiscountAmount.Create(ItemDiscountType.Predefined, amount).Value;
-            var repairOrderLineItem = RepairOrderLineItem.Create(item, saleType, isDeclined, isCounterSale, quantitySold, sellingPrice, laborAmount, cost, core, discountAmount).Value;
+            var repairOrderLineItem = CreateTestRepairOrderLineItem();
+
             var newItem = new RepairOrderItemFaker().Generate();
             repairOrderLineItem.Item.Should().NotBe(newItem);
             var result = repairOrderLineItem.SetItem(newItem);
@@ -109,20 +105,8 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void Return_Failure_On_SetItem_When_Item_Is_Null()
         {
-            var faker = new Faker();
-            var item = new RepairOrderItemFaker().Generate();
-            var saleType = faker.PickRandom<SaleType>();
-            var isDeclined = faker.Random.Bool();
-            var isCounterSale = faker.Random.Bool();
-            var quantitySold = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var sellingPrice = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var type = faker.PickRandom<ItemLaborType>();
-            var amount = (double)Math.Round(faker.Random.Decimal(1, 99), 2);
-            var laborAmount = LaborAmount.Create(type, amount).Value;
-            var cost = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var core = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
-            var discountAmount = DiscountAmount.Create(ItemDiscountType.Predefined, amount).Value;
-            var repairOrderLineItem = RepairOrderLineItem.Create(item, saleType, isDeclined, isCounterSale, quantitySold, sellingPrice, laborAmount, cost, core, discountAmount).Value;
+            var repairOrderLineItem = CreateTestRepairOrderLineItem();
+
             var newItem = (RepairOrderItem)null;
 
             var result = repairOrderLineItem.SetItem(newItem);
@@ -556,5 +540,35 @@ namespace Menominee.Tests.Entities
             result.Error.Should().Be(RepairOrderLineItem.RequiredMessage);
             lineItem.Purchases.Count.Should().Be(purchasesCount);
         }
+
+        [Fact]
+        public void Return_Correct_ExciseFeesTotal()
+        {
+            var result = CreateTestRepairOrderLineItem();
+
+            Assert.Equal(result.ExciseFeesTotal, result.Item.ExciseFeesTotal);
+        }
+
+        [Fact]
+        public void Return_Correct_AmountTotal()
+        {
+            var result = CreateTestRepairOrderLineItem();
+
+            var correctAmountTotal = (result.LaborAmount.Amount + result.SellingPrice + result.DiscountAmount.Amount) * result.QuantitySold;
+
+            result.TotalAmount.Equals(correctAmountTotal);
+        }
+
+        [Fact]
+        public void Return_Correct_TaxTotal()
+        {
+            var result = CreateTestRepairOrderLineItem();
+
+            var correctTaxTotal = result.Taxes.Select(
+                tax => (tax.PartTax.Amount + tax.PartTax.Amount) * result.QuantitySold).Sum();
+
+            result.TotalTax.Equals(correctTaxTotal);
+        }
     }
 }
+
