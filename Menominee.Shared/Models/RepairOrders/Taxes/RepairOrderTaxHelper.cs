@@ -12,6 +12,7 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
                 tax =>
                 new RepairOrderTaxToWrite()
                 {
+                    Id = tax.Id,
                     LaborTax = new LaborTaxToWrite()
                     {
                         Amount = tax.LaborTax.Amount,
@@ -65,6 +66,29 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
             .Value)
             .ToList()
             ?? new List<RepairOrderTax>();
+        }
+
+        public static List<RepairOrderTaxToWrite> ConvertToWriteDtos(List<RepairOrderTax> taxes)
+        {
+            return taxes?.Select(
+                tax =>
+                new RepairOrderTaxToWrite()
+                {
+                    Id = tax.Id,
+                    LaborTax = new LaborTaxToWrite()
+                    {
+                        Amount = tax.LaborTax.Amount,
+                        Rate = tax.LaborTax.Rate
+                    },
+
+                    PartTax = new PartTaxToWrite()
+                    {
+                        Rate = tax.PartTax.Rate,
+                        Amount = tax.PartTax.Amount
+                    },
+                }
+            ).ToList()
+            ?? new List<RepairOrderTaxToWrite>();
         }
     }
 }

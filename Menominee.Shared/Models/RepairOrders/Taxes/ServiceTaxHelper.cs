@@ -46,5 +46,37 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
                 }).ToList()
             ?? new List<RepairOrderServiceTaxToRead>();
         }
+
+        internal static List<RepairOrderServiceTaxToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderServiceTax> taxes)
+        {
+            return taxes?.Select(
+                tax =>
+                new RepairOrderServiceTaxToWrite()
+                {
+                    PartTax = new PartTaxToWrite()
+                    {
+                        Amount = tax.PartTax.Amount,
+                        Rate = tax.PartTax.Rate
+                    },
+                    LaborTax = new LaborTaxToWrite()
+                    {
+                        Amount = tax.LaborTax.Amount,
+                        Rate = tax.LaborTax.Rate
+                    }
+                }).ToList()
+            ?? new List<RepairOrderServiceTaxToWrite>();
+        }
+
+        internal static List<RepairOrderServiceTax> ConvertWriteDtosToEntities(List<RepairOrderServiceTaxToWrite> taxes)
+        {
+            return taxes?.Select(
+                technician =>
+                RepairOrderServiceTax.Create(
+                    PartTax.Create(technician.PartTax.Rate, technician.PartTax.Amount).Value,
+                    LaborTax.Create(technician.LaborTax.Rate, technician.LaborTax.Amount).Value)
+                .Value
+                ).ToList()
+            ?? new List<RepairOrderServiceTax>();
+        }
     }
 }

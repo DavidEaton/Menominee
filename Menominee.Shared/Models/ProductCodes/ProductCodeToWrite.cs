@@ -10,6 +10,5 @@ namespace Menominee.Shared.Models.ProductCodes
         public string Code { get; set; }
         public SaleCodeToWrite SaleCode { get; set; }
         public string Name { get; set; }
-
     }
 }

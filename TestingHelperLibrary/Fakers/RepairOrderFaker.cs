@@ -48,8 +48,8 @@ namespace TestingHelperLibrary.Fakers
                         : new RepairOrderTaxFaker(generateId: false).Generate(taxesCount);
 
                 var result = RepairOrder.Create(
-                    new CustomerFaker(),
-                    new VehicleFaker(),
+                    new CustomerFaker().Generate(),
+                    new VehicleFaker().Generate(),
                     accountingDate,
                     repairOrderNumbers,
                     lastInvoiceNumber,

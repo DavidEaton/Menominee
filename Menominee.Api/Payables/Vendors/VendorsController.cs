@@ -106,14 +106,13 @@ namespace Menominee.Api.Payables.Vendors
             if (defaultPaymentMethodFromRepository is null && defaultPaymentMethodToUpdate is null)
                 return false;
 
-            if ((defaultPaymentMethodFromRepository is not null && defaultPaymentMethodToUpdate is null)
-                ||
-                (defaultPaymentMethodFromRepository is null && defaultPaymentMethodToUpdate is not null))
+            if (defaultPaymentMethodFromRepository is null || defaultPaymentMethodToUpdate is null)
                 return true;
 
-            return
-                  defaultPaymentMethodFromRepository.PaymentMethod.Id != defaultPaymentMethodToUpdate.PaymentMethod.Id
-                || defaultPaymentMethodFromRepository.AutoCompleteDocuments != defaultPaymentMethodToUpdate.AutoCompleteDocuments;
+            var hasPaymentMethodEdits = defaultPaymentMethodFromRepository.PaymentMethod.Id != defaultPaymentMethodToUpdate.PaymentMethod.Id;
+            var hasAutoCompleteDocumentsEdits = defaultPaymentMethodFromRepository.AutoCompleteDocuments != defaultPaymentMethodToUpdate.AutoCompleteDocuments;
+
+            return hasPaymentMethodEdits || hasAutoCompleteDocumentsEdits;
         }
 
         [HttpPost]

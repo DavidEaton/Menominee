@@ -1,4 +1,6 @@
-﻿using Menominee.Domain.Entities.RepairOrders;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Entities.Inventory;
+using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
@@ -55,7 +57,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     QuantitySold = lineItem.QuantitySold,
                     SaleType = lineItem.SaleType,
                     SellingPrice = lineItem.SellingPrice,
-                    Total = lineItem.TotalAmount,
+                    Total = lineItem.AmountTotal,
                     DiscountAmount = new DiscountAmountToRead()
                     {
                         Amount = lineItem.DiscountAmount.Amount,
@@ -81,6 +83,59 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems
                     Purchases = PurchaseHelper.ConvertToReadDtos(lineItem.Purchases)
                 }).ToList()
                 ?? new List<RepairOrderLineItemToRead>();
+        }
+
+        internal static List<RepairOrderLineItemToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderLineItem> lineItems)
+        {
+            return lineItems?.Select(
+                lineItem =>
+                new RepairOrderLineItemToWrite
+                {
+                    Id = lineItem.Id,
+                    Item = ItemHelper.ConvertToWriteDto(lineItem.Item),
+                    Core = lineItem.Core,
+                    Cost = lineItem.Cost,
+                    DiscountAmount = new DiscountAmountToRead() { DiscountType = lineItem.DiscountAmount.Type },
+                    LaborAmount = new LaborAmountToRead() { Amount = lineItem.LaborAmount.Amount, PayType = lineItem.LaborAmount.Type },
+                    IsCounterSale = lineItem.IsCounterSale,
+                    IsDeclined = lineItem.IsDeclined,
+                    QuantitySold = lineItem.QuantitySold,
+                    SaleType = lineItem.SaleType,
+                    SellingPrice = lineItem.SellingPrice,
+                    Total = lineItem.AmountTotal,
+                    SerialNumbers = SerialNumberHelper.CovertToWriteDtos(lineItem.SerialNumbers),
+                    Warranties = WarrantyHelper.ConvertToWriteDtos(lineItem.Warranties),
+                    Taxes = ItemTaxHelper.ConvertToWriteDtos(lineItem.Taxes),
+                    Purchases = PurchaseHelper.ConvertToWriteDtos(lineItem.Purchases)
+                }).ToList()
+                ?? new List<RepairOrderLineItemToWrite>();
+        }
+
+        internal static List<RepairOrderLineItem> ConvertWriteDtosToEntities(
+            List<RepairOrderLineItemToWrite> lineItems,
+            IReadOnlyList<SaleCode> saleCodes,
+            IReadOnlyList<ProductCode> productCodes,
+            IReadOnlyList<Manufacturer> manufacturers)
+        {
+            return lineItems?.Select(
+                item =>
+                RepairOrderLineItem.Create(
+                    ItemHelper.ConvertWriteDtoToEntity(item.Item, saleCodes, productCodes, manufacturers),
+                    item.SaleType,
+                    item.IsDeclined,
+                    item.IsCounterSale,
+                    item.QuantitySold,
+                    item.SellingPrice,
+                    item.LaborAmount is not null
+                    ? LaborAmount.Create(item.LaborAmount.PayType, item.LaborAmount.Amount).Value
+                    : LaborAmount.Create(Common.Enums.ItemLaborType.None, default(double)).Value,
+                    item.Cost,
+                    item.Core,
+                    item.DiscountAmount is not null
+                        ? DiscountAmount.Create(item.DiscountAmount.DiscountType, item.DiscountAmount.Amount).Value
+                        : DiscountAmount.Create(Common.Enums.ItemDiscountType.None, default(double)).Value
+                ).Value
+            ).ToList() ?? new List<RepairOrderLineItem>();
         }
     }
 }

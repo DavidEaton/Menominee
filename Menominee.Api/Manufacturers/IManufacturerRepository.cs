@@ -14,7 +14,7 @@ namespace Menominee.Api.Manufacturers
         Task<IReadOnlyList<ManufacturerToReadInList>> GetManufacturerListAsync();
         Task DeleteManufacturerAsync(long id);
         Task<bool> ManufacturerExistsAsync(long id);
-        Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> manufacturerIds);
+        Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> manufacturerIds = null);
         Task<List<string>> GetExistingPrefixList();
         Task<List<long>> GetExistingIdList();
         Task ExecuteInTransactionAsync(Func<Task> operations);

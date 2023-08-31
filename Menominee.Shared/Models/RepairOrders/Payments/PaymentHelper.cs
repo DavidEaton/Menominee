@@ -43,5 +43,31 @@ namespace Menominee.Shared.Models.RepairOrders.Payments
                 .ToList()
             ?? new List<RepairOrderPayment>();
         }
+
+        public static List<RepairOrderPaymentToWrite> ConvertToWriteDtos(List<RepairOrderPayment> payments)
+        {
+            return payments?.Select(
+                payment =>
+                new RepairOrderPaymentToWrite()
+                {
+                    Id = payment.Id,
+                    Amount = payment.Amount,
+                    PaymentMethod = payment.PaymentMethod
+                }).ToList()
+            ?? new List<RepairOrderPaymentToWrite>();
+        }
+
+        public static List<RepairOrderPaymentToWrite> ConvertReadToWriteDtos(List<RepairOrderPaymentToRead> payments)
+        {
+            return payments?.Select(
+                payment =>
+                new RepairOrderPaymentToWrite()
+                {
+                    Id = payment.Id,
+                    Amount = payment.Amount,
+                    PaymentMethod = payment.PaymentMethod
+                }).ToList()
+            ?? new List<RepairOrderPaymentToWrite>();
+        }
     }
 }

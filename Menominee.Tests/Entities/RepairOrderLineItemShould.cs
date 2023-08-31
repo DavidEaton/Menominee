@@ -3,6 +3,8 @@ using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Entities.Taxes;
+using Menominee.Tests.Helpers.Fakers;
 using System;
 using System.Linq;
 using TestingHelperLibrary.Fakers;
@@ -542,32 +544,75 @@ namespace Menominee.Tests.Entities
         }
 
         [Fact]
-        public void Return_Correct_ExciseFeesTotal()
-        {
-            var result = CreateTestRepairOrderLineItem();
-
-            Assert.Equal(result.ExciseFeesTotal, result.Item.ExciseFeesTotal);
-        }
-
-        [Fact]
         public void Return_Correct_AmountTotal()
         {
-            var result = CreateTestRepairOrderLineItem();
+            var amount = 11;
+            var quantitySold = 3;
+            var sellingPrice = 10;
+            var item = new RepairOrderItemFaker(
+                generateId: true,
+                saleCodeFromCaller: new SaleCodeFaker(true).Generate(),
+                manufacturerFromCaller: new ManufacturerFaker(true).Generate(),
+                productCodeFromCaller: new ProductCodeFaker(true).Generate());
+            var laborAmount = LaborAmount.Create(ItemLaborType.Flat, amount).Value;
+            var discountAmount = DiscountAmount.Create(ItemDiscountType.None, 0).Value;
 
-            var correctAmountTotal = (result.LaborAmount.Amount + result.SellingPrice + result.DiscountAmount.Amount) * result.QuantitySold;
+            var repairOrderLineItemResult = RepairOrderLineItem.Create(item, SaleType.Counter, false, true, quantitySold, sellingPrice, laborAmount, 0, 0, discountAmount);
 
-            result.TotalAmount.Equals(correctAmountTotal);
+            repairOrderLineItemResult.IsSuccess.Should().BeTrue();
+            var repairOrderLineItem = repairOrderLineItemResult.Value;
+            var expectedAmountTotal = (laborAmount.Amount + sellingPrice + discountAmount.Amount) * quantitySold;
+            var actualAmountTotal = repairOrderLineItem.AmountTotal;
+            actualAmountTotal.Should().Be(expectedAmountTotal);
         }
 
         [Fact]
         public void Return_Correct_TaxTotal()
         {
-            var result = CreateTestRepairOrderLineItem();
+            var amount = 11;
+            var quantitySold = 3;
+            var sellingPrice = 10;
+            var item = new RepairOrderItemFaker(
+                generateId: true,
+                saleCodeFromCaller: new SaleCodeFaker(true).Generate(),
+                manufacturerFromCaller: new ManufacturerFaker(true).Generate(),
+                productCodeFromCaller: new ProductCodeFaker(true).Generate());
+            var laborAmount = LaborAmount.Create(ItemLaborType.Flat, amount).Value;
+            var discountAmount = DiscountAmount.Create(ItemDiscountType.None, 0).Value;
 
-            var correctTaxTotal = result.Taxes.Select(
-                tax => (tax.PartTax.Amount + tax.PartTax.Amount) * result.QuantitySold).Sum();
+            var repairOrderLineItemResult = RepairOrderLineItem.Create(item, SaleType.Counter, false, true, quantitySold, sellingPrice, laborAmount, 0, 0, discountAmount);
+            repairOrderLineItemResult.IsSuccess.Should().BeTrue();
+            var repairOrderLineItem = repairOrderLineItemResult.Value;
+            var expectedTaxTotal = repairOrderLineItem.Taxes.Select(
+                tax => (tax.PartTax.Amount + tax.LaborTax.Amount) * quantitySold).Sum();
+            var actualTaxTotal = repairOrderLineItem.TaxTotal;
 
-            result.TotalTax.Equals(correctTaxTotal);
+            actualTaxTotal.Should().Be(expectedTaxTotal);
+        }
+
+        [Fact]
+        public void Return_Correct_ExciseFeesTotal()
+        {
+            var amount = 10.00;
+            var rowCount = 3;
+            var exciseFees = Enumerable.Range(0, rowCount)
+                .Select(_ => ExciseFee.Create("test description", ExciseFeeType.Flat, amount).Value)
+                .ToList();
+
+            var repairOrderItemPart = RepairOrderItemPart.Create(
+                list: 100,
+                cost: 50,
+                core: 30,
+                retail: 120,
+                techAmount: TechAmount.Create(ItemLaborType.Flat, 100, SkillLevel.A).Value,
+                fractional: false,
+                exciseFees: exciseFees
+            ).Value;
+
+            var expectedExciseFeesTotal = amount * rowCount;
+            var actualExciseFeesTotal = repairOrderItemPart.ExciseFeesTotal;
+
+            expectedExciseFeesTotal.Should().Be(actualExciseFeesTotal);
         }
     }
 }

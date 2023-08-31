@@ -17,6 +17,6 @@ namespace Menominee.Api.SaleCodes
         Task DeleteSaleCodeAsync(long id);
         Task<bool> SaleCodeExistsAsync(long id);
         Task<bool> SaveChangesAsync();
-        Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids);
+        Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids, bool all = false);
     }
 }

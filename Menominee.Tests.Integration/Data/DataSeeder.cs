@@ -1,6 +1,7 @@
 ﻿using Menominee.Api.Data;
-using Menominee.Tests.Helpers;
 using Menominee.Common;
+using Menominee.Tests.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace Menominee.Tests.Integration.Data
@@ -16,20 +17,17 @@ namespace Menominee.Tests.Integration.Data
 
         public void Save<T>(List<T> entities) where T : Entity
         {
-            foreach (var entity in entities)
-            {
-                if (entity.Id > 0)
-                {
-                    dbContext.Attach(entity);
-                }
-                else
-                {
-                    dbContext.Add(entity);
-                }
-            }
-
+            entities.ForEach(entity => AddOrAttach(entity, dbContext));
             DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
         }
 
+        private static void AddOrAttach<T>(T entity, DbContext dbContext) where T : Entity
+        {
+            var dbSet = dbContext.Set<T>();
+            if (entity.Id > 0)
+                dbSet.Attach(entity);
+            else
+                dbSet.Add(entity);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Menominee.Shared.Models;
+using Menominee.Shared.Models.Employees;
 using System.Net.Http.Json;
 
 namespace Menominee.Client.Services

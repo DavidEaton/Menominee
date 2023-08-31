@@ -854,7 +854,9 @@ namespace Menominee.Api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<long?>("LaborId")
                         .HasColumnType("bigint");
@@ -866,7 +868,9 @@ namespace Menominee.Api.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("PartNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("PartType")
                         .HasColumnType("int");
@@ -889,7 +893,7 @@ namespace Menominee.Api.Migrations
 
                     b.HasIndex("SaleCodeId");
 
-                    b.ToTable("RepairOrderItems");
+                    b.ToTable("RepairOrderItem", "dbo");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.RepairOrders.RepairOrderItemLabor", b =>

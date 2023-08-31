@@ -1,5 +1,6 @@
 ﻿using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.Payables.Vendors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,6 +55,22 @@ namespace Menominee.Shared.Models.RepairOrders.Purchases
                     Vendor = VendorHelper.ConvertToReadDto(purchase.Vendor)
                 }).ToList()
             ?? new List<RepairOrderPurchaseToRead>();
+        }
+
+        internal static List<RepairOrderPurchaseToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderPurchase> purchases)
+        {
+            return purchases?.Select(
+                purchase =>
+                new RepairOrderPurchaseToWrite()
+                {
+                    Id = purchase.Id,
+                    PONumber = purchase.PONumber,
+                    PurchaseDate = purchase.PurchaseDate,
+                    Vendor = VendorHelper.ConvertToReadDto(purchase.Vendor),
+                    VendorInvoiceNumber = purchase.VendorInvoiceNumber,
+                    VendorPartNumber = purchase.VendorPartNumber
+                }).ToList()
+            ?? new List<RepairOrderPurchaseToWrite>();
         }
     }
 }

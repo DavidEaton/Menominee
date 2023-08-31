@@ -1,7 +1,7 @@
 ﻿using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
-using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
 
@@ -33,7 +33,7 @@ public class CustomerHelper
     public static CustomerToRead ConvertToReadDto(Customer customer)
     {
         return customer is null
-            ? null
+            ? new CustomerToRead()
             : new CustomerToRead
             {
                 Id = customer.Id,

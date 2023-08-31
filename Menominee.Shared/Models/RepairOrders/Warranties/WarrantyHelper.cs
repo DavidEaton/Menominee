@@ -1,4 +1,5 @@
 ﻿using Menominee.Domain.Entities.RepairOrders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,6 +37,22 @@ namespace Menominee.Shared.Models.RepairOrders.Warranties
                     Type = warranty.Type
                 }).ToList()
             ?? new List<RepairOrderWarrantyToRead>();
+        }
+
+        internal static List<RepairOrderWarrantyToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderWarranty> warranties)
+        {
+            return warranties?.Select(
+                warranty =>
+                new RepairOrderWarrantyToWrite()
+                {
+                    Id = warranty.Id,
+                    NewWarranty = warranty.NewWarranty,
+                    OriginalInvoiceId = warranty.OriginalInvoiceId,
+                    OriginalWarranty = warranty.OriginalWarranty,
+                    Quantity = warranty.Quantity,
+                    Type = warranty.Type
+                }).ToList()
+            ?? new List<RepairOrderWarrantyToWrite>();
         }
     }
 }

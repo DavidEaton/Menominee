@@ -25,6 +25,7 @@ namespace Menominee.Shared.Models.RepairOrders
         public double HazMatTotal { get; set; }
         public double ShopSuppliesTotal { get; set; }
         public double Total { get; set; }
+        public DateTime AccountingDate { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
         public DateTime DateInvoiced =>

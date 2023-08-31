@@ -1,6 +1,4 @@
-﻿using Menominee.Shared.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Menominee.Shared.Models.Employees;
 
 namespace Menominee.Client.Services
 {

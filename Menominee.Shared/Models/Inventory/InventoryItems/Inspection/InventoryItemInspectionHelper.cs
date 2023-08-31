@@ -9,7 +9,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
         {
             return inspection is null
                 ? null
-                : (new()
+                : new()
                 {
                     LaborAmount = new LaborAmountToWrite()
                     {
@@ -24,7 +24,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     },
 
                     Type = inspection.Type
-                });
+                };
         }
 
         public static InventoryItemInspection ConvertWriteDtoToEntity(InventoryItemInspectionToWrite inspection)
@@ -48,7 +48,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
         {
             return inspection is null
                 ? null
-                : (new()
+                : new()
                 {
                     LaborAmount = new LaborAmountToRead()
                     {
@@ -63,14 +63,14 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     },
 
                     Type = inspection.InspectionType,
-                });
+                };
         }
 
         public static InventoryItemInspectionToReadInList ConvertToReadInListDto(InventoryItemInspection inspection)
         {
             return inspection is null
                 ? null
-                : (new()
+                : new()
                 {
                     LaborAmount = new LaborAmountToRead()
                     {
@@ -85,15 +85,16 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     },
 
                     Type = inspection.InspectionType,
-                });
+                };
         }
 
-        internal static InventoryItemInspectionToWrite ConvertToWriteDto(InventoryItemInspection inspection)
+        public static InventoryItemInspectionToWrite ConvertToWriteDto(InventoryItemInspection inspection)
         {
             return inspection is null
                 ? null
-                : (new()
+                : new()
                 {
+                    Id = inspection.Id,
                     LaborAmount = new LaborAmountToWrite()
                     {
                         Amount = inspection.LaborAmount.Amount,
@@ -107,7 +108,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems.Inspection
                     },
 
                     Type = inspection.InspectionType
-                });
+                };
         }
     }
 }

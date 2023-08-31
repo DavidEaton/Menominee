@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Api.Manufacturers;
 using Menominee.Api.SaleCodes;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.ProductCodes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.ProductCodes
 {
@@ -33,7 +33,6 @@ namespace Menominee.Api.ProductCodes
                 throw new ArgumentNullException(nameof(saleCodesRepository));
         }
 
-        [Route("listing")]
         [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<ProductCodeToReadInList>>> GetProductCodeListAsync([FromQuery] long? manufacturerId = null, long? saleCodeId = null)
         {
@@ -158,10 +157,10 @@ namespace Menominee.Api.ProductCodes
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteProductCodeAsync(long id)
         {
-            if (await repository.ProductCodeExistsAsync(id) == false)
+            if (await repository.ProductCodeExists(id) == false)
                 return NotFound($"Could not find Product Code in the database to delete with Id: {id}.");
 
-            await repository.DeleteProductCodeAsync(id);
+            await repository.DeleteProductCode(id);
             await repository.SaveChangesAsync();
 
             return NoContent();

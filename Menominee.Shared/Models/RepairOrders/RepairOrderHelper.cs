@@ -1,4 +1,4 @@
-﻿using Menominee.Domain.Entities;
+﻿using Menominee.Common.Enums;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.RepairOrders.Items;
@@ -11,7 +11,6 @@ using Menominee.Shared.Models.RepairOrders.Statuses;
 using Menominee.Shared.Models.RepairOrders.Taxes;
 using Menominee.Shared.Models.RepairOrders.Warranties;
 using Menominee.Shared.Models.Vehicles;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -310,8 +309,9 @@ namespace Menominee.Shared.Models.RepairOrders
 
         public static RepairOrderToRead ConvertToReadDto(RepairOrder repairOrder)
         {
-            return repairOrder is not null
+            return repairOrder is null
                 ? new RepairOrderToRead()
+                : new RepairOrderToRead()
                 {
                     Id = repairOrder.Id,
                     RepairOrderNumber = repairOrder.RepairOrderNumber,
@@ -331,14 +331,14 @@ namespace Menominee.Shared.Models.RepairOrders
                     Services = ServiceHelper.ConvertToReadDtos(repairOrder.Services),
                     Taxes = RepairOrderTaxHelper.ConvertToReadDtos(repairOrder.Taxes),
                     Payments = PaymentHelper.ConvertToReadDtos(repairOrder.Payments)
-                }
-                : new RepairOrderToRead();
+                };
         }
 
         public static RepairOrderToReadInList ConvertToReadInListDto(RepairOrder repairOrder)
         {
-            return repairOrder is not null
-                ? new RepairOrderToReadInList
+            return repairOrder is null
+                ? new RepairOrderToReadInList()
+                : new RepairOrderToReadInList()
                 {
                     Id = repairOrder.Id,
                     RepairOrderNumber = repairOrder.RepairOrderNumber,
@@ -355,32 +355,7 @@ namespace Menominee.Shared.Models.RepairOrders
                     DateCreated = repairOrder.DateCreated,
                     DateModified = repairOrder.DateModified,
                     DateInvoiced = repairOrder.DateInvoiced
-                }
-                : new RepairOrderToReadInList();
-        }
-
-        public static RepairOrder ConvertWriteDtoToEntity(
-            RepairOrderToWrite repairOrderToAdd,
-            Customer customer,
-            Vehicle vehicle,
-            IReadOnlyList<long> repairOrderNumbers,
-            long lastInvoiceNumber,
-            IReadOnlyList<SaleCode> saleCodes)
-        {
-            return repairOrderToAdd is null
-                ? null
-                : RepairOrder.Create(
-                    customer,
-                    vehicle,
-                    repairOrderToAdd.AccountingDate,
-                    repairOrderNumbers,
-                    lastInvoiceNumber,
-                    StatusHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Statuses),
-                    ServiceHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Services, saleCodes),
-                    RepairOrderTaxHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Taxes),
-                    PaymentHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Payments)
-                    )
-                .Value;
+                };
         }
     }
 }

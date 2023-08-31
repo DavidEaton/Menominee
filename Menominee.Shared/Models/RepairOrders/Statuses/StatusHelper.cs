@@ -45,5 +45,19 @@ namespace Menominee.Shared.Models.RepairOrders.Statuses
             .ToList()
             ?? new List<RepairOrderStatus>();
         }
+
+        public static List<RepairOrderStatusToWrite> ConvertToWriteDtos(List<RepairOrderStatus> statuses)
+        {
+            return statuses?.Select(
+                status =>
+                new RepairOrderStatusToWrite()
+                {
+                    Id = status.Id,
+                    Status = status.Type,
+                    Description = status.Description,
+                    Date = status.Date,
+                }).ToList()
+            ?? new List<RepairOrderStatusToWrite>();
+        }
     }
 }

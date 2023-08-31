@@ -1,11 +1,13 @@
 using Azure.Identity;
+using FluentValidation.AspNetCore;
 using Menominee.Api;
+using Menominee.Api.Businesses;
 using Menominee.Api.CreditCards;
 using Menominee.Api.Customers;
 using Menominee.Api.Data;
+using Menominee.Api.Employees;
 using Menominee.Api.Inventory;
 using Menominee.Api.Manufacturers;
-using Menominee.Api.Businesses;
 using Menominee.Api.Payables.Invoices;
 using Menominee.Api.Payables.PaymentMethods;
 using Menominee.Api.Payables.Vendors;
@@ -13,12 +15,13 @@ using Menominee.Api.Persons;
 using Menominee.Api.ProductCodes;
 using Menominee.Api.RepairOrders;
 using Menominee.Api.SaleCodes;
+using Menominee.Api.Settings;
 using Menominee.Api.Taxes;
 using Menominee.Api.Users;
+using Menominee.Api.Vehicles;
 using Menominee.Shared;
 using Menominee.Shared.Models;
 using Menominee.Shared.Models.Businesses;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -30,7 +33,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
@@ -41,8 +43,6 @@ using System;
 using System.IO;
 using Telerik.Reporting.Cache.File;
 using Telerik.Reporting.Services;
-using Menominee.Api.Vehicles;
-using Menominee.Api.Settings;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -141,6 +141,7 @@ try
     services.TryAddScoped<IMSGraphUserService, MSGraphUserService>();
     services.TryAddScoped<IVehicleRepository, VehicleRepository>();
     services.TryAddScoped<ISettingsRepository, SettingsRepository>();
+    services.TryAddScoped<IEmployeeRepository, EmployeeRepository>();
 
     services.AddHealthChecks();
     services.AddCors(o => o.AddPolicy("AllowAll", policyBuilder =>

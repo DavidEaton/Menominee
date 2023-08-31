@@ -1,10 +1,9 @@
-﻿using Menominee.Domain.Entities;
+﻿using FluentAssertions;
+using Menominee.Common.Enums;
+using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Tests.Helpers.Fakers;
-using FluentAssertions;
-using Menominee.Common.Enums;
-using Telerik.ReportViewer.BlazorNative.Tools;
 using TestingHelperLibrary.Fakers;
 using Xunit;
 

@@ -1,10 +1,6 @@
-﻿using Menominee.Shared.Models;
-using Menominee.Client.Services;
+﻿using Menominee.Client.Services;
+using Menominee.Shared.Models.Employees;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Pages
 {

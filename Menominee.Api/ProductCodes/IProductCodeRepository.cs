@@ -9,14 +9,14 @@ namespace Menominee.Api.ProductCodes
     {
         void AddProductCode(ProductCode productCode);
         Task<ProductCode> GetProductCodeEntityAsync(long manufacturerId, string productCode);
-        Task<ProductCode> GetProductCodeEntityAsync(long id);
         Task<ProductCodeToRead> GetProductCodeAsync(long manufacturerId, string productCode);
-        Task<ProductCodeToRead> GetProductCodeAsync(long id);
-        Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync();
-        Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId);
-        Task DeleteProductCodeAsync(long id);
-        Task<bool> ProductCodeExistsAsync(long id);
+        Task<ProductCodeToRead> GetProductCodeAsync(long Id);
+        Task DeleteProductCode(long id);
         Task SaveChangesAsync();
         IReadOnlyList<string> GetManufacturerCodes();
+        Task<IReadOnlyList<ProductCode>> GetProductCodeEntitiesAsync();
+        Task<ProductCode> GetProductCodeEntityAsync(long id);
+        Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId);
+        Task<bool> ProductCodeExists(long id);
     }
 }

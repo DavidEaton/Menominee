@@ -15,10 +15,10 @@ namespace Menominee.Domain.Entities.RepairOrders
 
         public string ServiceName { get; private set; }
         public SaleCode SaleCode { get; private set; }
-        public bool IsCounterSale => LineItems.All(item => item.IsCounterSale);
-        public bool IsDeclined => LineItems.All(item => item.IsDeclined);
+        public bool IsCounterSale => LineItems.All(lineItem => lineItem.IsCounterSale);
+        public bool IsDeclined => LineItems.All(lineItem => lineItem.IsDeclined);
         public double PartsTotal => LineItems.Select(
-            lineItem => lineItem.SellingPrice * lineItem.QuantitySold)
+            lineItem => lineItem.AmountTotal)
             .Sum();
         public double LaborTotal => LineItems.Select(
             lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold)
@@ -26,9 +26,13 @@ namespace Menominee.Domain.Entities.RepairOrders
         public double DiscountTotal => LineItems.Select(
             lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold)
             .Sum(); // Usually negative -AL
-        public double TaxTotal => Taxes.Select(
-            lineItem => lineItem.LaborTax.Amount + lineItem.PartTax.Amount)
+        public double ServiceTaxTotal => Taxes.Select(
+            tax => tax.LaborTax.Amount + tax.PartTax.Amount)
             .Sum();
+        public double LineItemTaxesTotal =>
+            LineItems.Sum(lineItem =>
+                lineItem.Taxes.Sum(tax =>
+                    (tax.LaborTax.Amount * tax.LaborTax.Rate) + (tax.PartTax.Amount * tax.PartTax.Rate)));
         public double ExciseFeesTotal => LineItems.Select(
             lineItem => lineItem.ExciseFeesTotal)
             .Sum();
@@ -37,7 +41,7 @@ namespace Menominee.Domain.Entities.RepairOrders
         public double Total =>
             PartsTotal + LaborTotal + DiscountTotal + ExciseFeesTotal + ShopSuppliesTotal;
         public double TotalWithTax =>
-            PartsTotal + LaborTotal + DiscountTotal + ExciseFeesTotal + ShopSuppliesTotal + TaxTotal;
+            PartsTotal + LaborTotal + DiscountTotal + ExciseFeesTotal + ShopSuppliesTotal + ServiceTaxTotal;
 
         private readonly List<RepairOrderLineItem> lineItems = new();
         public IReadOnlyList<RepairOrderLineItem> LineItems => lineItems.ToList();
@@ -63,7 +67,7 @@ namespace Menominee.Domain.Entities.RepairOrders
             SaleCode saleCode,
             double shopSuppliesTotal,
             List<RepairOrderLineItem> lineItems = null,
-            List<RepairOrderServiceTechnician> techs = null,
+            List<RepairOrderServiceTechnician> technicians = null,
             List<RepairOrderServiceTax> taxes = null)
         {
             serviceName = (serviceName ?? string.Empty).Trim();
@@ -74,7 +78,7 @@ namespace Menominee.Domain.Entities.RepairOrders
             if (saleCode is null)
                 return Result.Failure<RepairOrderService>(RequiredMessage);
 
-            return Result.Success(new RepairOrderService(serviceName, saleCode, shopSuppliesTotal, lineItems, techs, taxes));
+            return Result.Success(new RepairOrderService(serviceName, saleCode, shopSuppliesTotal, lineItems, technicians, taxes));
         }
 
         public Result<string> SetServiceName(string serviceName)

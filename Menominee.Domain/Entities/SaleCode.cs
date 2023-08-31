@@ -110,7 +110,7 @@ namespace Menominee.Domain.Entities
         public Result<SaleCodeShopSupplies> SetShopSupplies(SaleCodeShopSupplies shopSupplies)
         {
             if (shopSupplies is null)
-                return Result.Failure<SaleCodeShopSupplies>(MinimumValueMessage);
+                return Result.Failure<SaleCodeShopSupplies>(RequiredMessage);
 
             return Result.Success(ShopSupplies = shopSupplies);
         }

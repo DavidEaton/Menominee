@@ -36,7 +36,6 @@ namespace Menominee.Api.Configurations.Inventory
             builder.OwnsOne(inspection => inspection.TechAmount)
                .Property(amount => amount.SkillLevel)
                .HasColumnName("TechSkillLevel");
-
         }
     }
 }

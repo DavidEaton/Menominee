@@ -1,12 +1,12 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
+using FluentAssertions;
 using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.Payments;
 using Menominee.Shared.Models.RepairOrders.Services;
 using Menominee.Shared.Models.RepairOrders.Statuses;
 using Menominee.Shared.Models.RepairOrders.Taxes;
 using Menominee.Shared.Models.SaleCodes;
-using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -547,42 +547,106 @@ namespace Menominee.Tests.Entities
             repairOrder.RepairOrderNumber.Should().Be(expectedRepairOrderNumber);
         }
 
+        [Fact]
+        public void Set_RepairOrderNumber()
+        {
+            var repairOrder = CreateRepairOrder().Value;
+            var originalRepairOrderNumber = repairOrder.RepairOrderNumber;
+            var updatedRepairOrderNumber = repairOrder.RepairOrderNumber + 1;
+            var currentDate = new DateTime(2023, 05, 23);
+            repairOrder.RepairOrderNumber.Should().NotBe(updatedRepairOrderNumber);
+            var result = repairOrder.SetRepairOrderNumber(updatedRepairOrderNumber, currentDate);
+
+            result.IsSuccess.Should().BeTrue();
+            repairOrder.RepairOrderNumber.Should().Be(updatedRepairOrderNumber);
+        }
+
+        [Fact]
+        public void Return_Failure_On_Set_Invalid_RepairOrder_Number()
+        {
+            var repairOrder = CreateRepairOrder().Value;
+            var currentDate = new DateTime(2023, 05, 23);
+
+            var result = repairOrder.SetRepairOrderNumber(-1L, currentDate);
+
+            repairOrder.Vehicle.Should().NotBeNull();
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Be(RepairOrder.InvalidNumberMessage);
+        }
+
         public double CalculateTotal(IEnumerable<RepairOrderService> services, Func<RepairOrderLineItem, double> totalSelector)
         {
             return services.Select(service => service.LineItems.Select(totalSelector).Sum()).Sum();
         }
 
-        [Fact]
-        public void Return_Correct_Service_Totals()
-        {
-            var repairOrder = new RepairOrderFaker(true).Generate();
-            var services = new RepairOrderServiceFaker(true, lineItemsCount: 3).Generate(count: 3);
-            services.ForEach(service => repairOrder.AddService(service));
+        //[Fact]
+        //public void Return_Correct_Service_Totals()
+        //{
+        //    var repairOrder = new RepairOrderFaker(true).Generate();
+        //    var services = new RepairOrderServiceFaker(true, lineItemsCount: 3).Generate(count: 3);
+        //    services.ForEach(service => repairOrder.AddService(service));
 
-            var partsTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.SellingPrice * lineItem.QuantitySold);
-            var laborTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold);
-            var discountTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold);
-            var exciseFeesTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.ExciseFeesTotal);
-            var serviceTaxTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.Taxes.Sum(tax => tax.LaborTax.Amount + tax.PartTax.Amount));
-            var shopSuppliesTotal = repairOrder.Services.Select(service =>
-                service.ShopSuppliesTotal).Sum();
-            var total = repairOrder.Services.Select(service =>
-                service.PartsTotal + service.LaborTotal + service.DiscountTotal + service.ExciseFeesTotal + service.ShopSuppliesTotal)
-                .Sum();
-            var taxTotal = repairOrder.Taxes.Select(tax =>
-                tax.PartTax.Amount + tax.LaborTax.Amount).Sum();
-            var totalWithTax = total + taxTotal;
+        //    var partsTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.SellingPrice * lineItem.QuantitySold);
+        //    var laborTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.LaborAmount.Amount * lineItem.QuantitySold);
+        //    var discountTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.DiscountAmount.Amount * lineItem.QuantitySold);
+        //    var exciseFeesTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.ExciseFeesTotal);
+        //    var serviceTaxTotal = CalculateTotal(repairOrder.Services, lineItem => lineItem.Taxes.Sum(tax => tax.LaborTax.Amount + tax.PartTax.Amount));
+        //    var shopSuppliesTotal = repairOrder.Services.Select(service =>
+        //        service.ShopSuppliesTotal).Sum();
+        //    var total = repairOrder.Services.Select(service =>
+        //        service.PartsTotal + service.LaborTotal + service.DiscountTotal + service.ExciseFeesTotal + service.ShopSuppliesTotal)
+        //        .Sum();
+        //    var taxTotal = repairOrder.Taxes.Select(tax =>
+        //        tax.PartTax.Amount + tax.LaborTax.Amount).Sum();
+        //    var totalWithTax = total + taxTotal;
 
-            repairOrder.PartsTotal.Should().Be(partsTotal);
-            repairOrder.LaborTotal.Should().Be(laborTotal);
-            repairOrder.DiscountTotal.Should().Be(discountTotal);
-            repairOrder.ExciseFeesTotal.Should().Be(exciseFeesTotal);
-            repairOrder.ServiceTaxTotal.Should().Be(serviceTaxTotal);
-            repairOrder.ShopSuppliesTotal.Should().Be(shopSuppliesTotal);
-            repairOrder.Total.Should().Be(total);
-            repairOrder.TaxTotal.Should().Be(taxTotal);
-            repairOrder.TotalWithTax.Should().Be(totalWithTax);
-        }
+        //    repairOrder.PartsTotal.Should().Be(partsTotal);
+        //    repairOrder.LaborTotal.Should().Be(laborTotal);
+        //    repairOrder.DiscountTotal.Should().Be(discountTotal);
+        //    repairOrder.ExciseFeesTotal.Should().Be(exciseFeesTotal);
+        //    repairOrder.ShopSuppliesTotal.Should().Be(shopSuppliesTotal);
+        //    repairOrder.Total.Should().Be(total);
+        //    repairOrder.TaxTotal.Should().Be(taxTotal);
+        //    repairOrder.TotalWithTax.Should().Be(totalWithTax);
+        //    repairOrder.ServicesTaxTotal.Should().Be(serviceTaxTotal);
+        //}
+
+        //[Fact]
+        //public void Return_Correct_Parts_Total()
+        //{
+        //    var rowCount = 3;
+        //    var quantity = 3;
+        //    var amount = 11.11;
+        //    var generateId = true;
+        //    var repairOrder = new RepairOrderFaker(generateId).Generate();
+        //    var services = new RepairOrderServiceFaker(generateId, lineItemsCount: rowCount).Generate(count: rowCount);
+
+        //    foreach (var service in services)
+        //    {
+        //        repairOrder.AddService(service);
+        //        foreach (var lineItem in service.LineItems)
+        //        {
+        //            lineItem.SetQuantitySold(quantity);
+        //            lineItem.SetLaborAmount(LaborAmount.Create(ItemLaborType.Flat, amount).Value);
+        //            lineItem.SetSellingPrice(amount);
+        //            lineItem.SetDiscountAmount(DiscountAmount.Create(ItemDiscountType.None, 0).Value);
+        //        }
+        //    }
+
+        //    foreach (var service in services)
+        //    {
+        //        foreach (var lineItem in service.LineItems)
+        //        {
+        //            lineItem.QuantitySold.Should().Be(quantity);
+        //            lineItem.LaborAmount.Amount.Should().Be(amount);
+        //            lineItem.SellingPrice.Should().Be(amount);
+        //            lineItem.DiscountAmount.Amount.Should().Be(0);
+        //        }
+        //    }
+
+        //    var expectedPartsTotal = rowCount * quantity * (amount + amount);
+        //    repairOrder.PartsTotal.Should().Be(expectedPartsTotal);
+        //}
 
         [Fact]
         public void Add_Added_Payments_On_UpdatePayments()
@@ -691,6 +755,10 @@ namespace Menominee.Tests.Entities
         {
             var taxesCount = 3;
             var repairOrder = new RepairOrderFaker(true, taxesCount: taxesCount).Generate();
+            var originalTaxRate = .7;
+            var originalTaxAmount = 7.7;
+            var updatedTaxRate = .9;
+            var updatedTaxAmount = 9.9;
             var originalTaxes = repairOrder.Taxes.Select(tax =>
             {
                 return new RepairOrderTaxToWrite

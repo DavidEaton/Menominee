@@ -7,6 +7,7 @@ using Menominee.Common.Extensions;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Inventory.InventoryItems;
+using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;
 using Menominee.Shared.Models.Inventory.InventoryItems.Part;
 using Menominee.Shared.Models.Inventory.InventoryItems.Tire;
@@ -32,16 +33,8 @@ using System.Threading.Tasks;
 using TestingHelperLibrary;
 using Xunit;
 
-/*
- * VK: I'll be outlining what I did using "VK" comments. I'll also put importance/priority to my edits, so you know how important that edit is:
- * Importance (Im.) 1: minor issue, borderline matter of taste. You can reverse the edit freely if you prefer the old way
- * Im.2: medium priority, something I'd generally recommend you do
- * Im.3: something very important
- */
-
 namespace Menominee.Tests.Integration.Tests
 {
-    // TODO: Mock httpClient or test the endpoints directly for CI/CD
     [Collection("Integration")]
     public class InventoryItemsControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
     {
@@ -70,7 +63,7 @@ namespace Menominee.Tests.Integration.Tests
         [Fact]
         public async Task Get_Invalid_Route_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync("inventoryitem");
+            var response = await httpClient.GetAsync("invalid-route");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
@@ -163,7 +156,7 @@ namespace Menominee.Tests.Integration.Tests
                 Description = itemToUpdate.Description,
                 ItemNumber = updatedItemNumber,
                 ItemType = itemToUpdate.ItemType,
-                Inspection = InventoryItemHelper.ConvertToWriteDto(itemToUpdate.Inspection),
+                Inspection = InventoryItemInspectionHelper.ConvertToWriteDto(itemToUpdate.Inspection),
                 Labor = InventoryItemHelper.ConvertToWriteDto(itemToUpdate.Labor),
                 Manufacturer = ManufacturerHelper.ConvertToWriteDto(itemToUpdate.Manufacturer),
                 Package = InventoryItemPackageHelper.ConvertToWriteDto(itemToUpdate.Package),
@@ -288,47 +281,6 @@ namespace Menominee.Tests.Integration.Tests
             }).ToList();
         }
 
-
-        //[Fact]
-        //public async Task Get_an_InventoryItem_by_Manufacturer_Id_and_Item_Number()
-        //{
-        //    var itemFromDatabase = dbContext.InventoryItems.First();
-
-        //    var itemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{itemFromDatabase.Id}");
-
-        //    itemFromEndpoint.Should().BeOfType<InventoryItemToRead>();
-        //    true.Should().BeFalse();
-        //}
-
-        // TODO: implement additional integration tests
-        //[Fact]
-        //public async Task Not_add_invalid_inventory_item_but_return_Status404NotFound()
-        //{
-
-        //}
-
-        //[Fact]
-        //public async Task Not_update_invalid_inventory_item_but_return_Status404NotFound()
-        //{
-
-        //}
-
-        //[Fact]
-        //public async Task Not_delete_invalid_inventory_item_but_return_Status404NotFound()
-        //{
-
-        //}
-
-        //[Fact]
-        //public async Task Not_get_invalid_inventory_item_but_return_NotFoundResult()
-        //{
-
-        //}
-
-        //[Fact]
-        //public async Task Not_get_inventory_item_by_invalid_manufacturer_Id_and_part_number_but_return_NotFoundResult()
-        //{
-        //}
         private async Task<string> PostInventoryItem(InventoryItemToWrite inventoryItem)
         {
             var json = JsonSerializer.Serialize(inventoryItem, JsonSerializerHelper.DefaultSerializerOptions);

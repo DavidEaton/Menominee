@@ -1,13 +1,24 @@
 ﻿using Bogus;
+using Menominee.Common.Enums;
+using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.RepairOrders;
-using Menominee.Common.Enums;
 
 namespace TestingHelperLibrary.Fakers
 {
     public class RepairOrderLineItemFaker : Faker<RepairOrderLineItem>
     {
-        public RepairOrderLineItemFaker(bool generateId = false, int serialNumbersCount = 0, int warrantiesCount = 0, int taxesCount = 0, int purchasesCount = 0, long id = 0)
+        public RepairOrderLineItemFaker(
+            bool generateId = false,
+            int serialNumbersCount = 0,
+            int warrantiesCount = 0,
+            int taxesCount = 0,
+            int purchasesCount = 0,
+            long id = 0,
+            SaleCode saleCodeFromCaller = null,
+            Manufacturer manufacturerFromCaller = null,
+            ProductCode productCodeFromCaller = null,
+            RepairOrderItem repairOrderItemFromCaller = null)
         {
             if (generateId)
                 RuleFor(entity => entity.Id, faker => generateId ? faker.Random.Long(1, 10000) : 0);
@@ -17,7 +28,9 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                var item = new RepairOrderItemFaker().Generate();
+                var item = repairOrderItemFromCaller is not null
+                    ? repairOrderItemFromCaller
+                    : new RepairOrderItemFaker(generateId, saleCodeFromCaller: saleCodeFromCaller, manufacturerFromCaller: manufacturerFromCaller, productCodeFromCaller: productCodeFromCaller).Generate();
                 var saleType = faker.PickRandom<SaleType>();
                 var isCounterSale = faker.Random.Bool();
                 var isDeclined = faker.Random.Bool();

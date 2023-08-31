@@ -99,6 +99,7 @@ namespace Menominee.Tests.Integration.Tests
             invoiceFromEndpoint.LineItems.Count.Should().Be(lineItemsCount);
             invoiceFromEndpoint.Payments.Count.Should().Be(paymentsCount);
             invoiceFromEndpoint.Taxes.Count.Should().Be(taxesCount);
+            invoiceFromEndpoint.Id.Should().Be(invoiceFromDatabase.Id);
         }
 
         [Fact]
@@ -362,7 +363,6 @@ namespace Menominee.Tests.Integration.Tests
 
             dataSeeder.Save(invoices);
         }
-
 
         public void Dispose()
         {

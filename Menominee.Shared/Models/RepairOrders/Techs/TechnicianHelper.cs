@@ -1,4 +1,5 @@
-﻿using Menominee.Domain.Entities.RepairOrders;
+﻿using Menominee.Domain.Entities;
+using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Persons.PersonNames;
 using System.Collections.Generic;
@@ -59,5 +60,41 @@ namespace Menominee.Shared.Models.RepairOrders.Techs
             }
         }
 
+        internal static List<RepairOrderServiceTechnician> ConvertWriteDtosToEntities(List<RepairOrderServiceTechnicianToWrite> technicians, List<Employee> employees)
+        {
+            return technicians?.Select(
+                technician =>
+                RepairOrderServiceTechnician.Create(
+                    employees.Find(x => x.Id == technician.Employee.Id))
+                .Value
+                ).ToList()
+            ?? new List<RepairOrderServiceTechnician>();
+        }
+
+        internal static List<RepairOrderServiceTechnicianToWrite> CovertToWriteDtos(IReadOnlyList<RepairOrderServiceTechnician> technicians)
+        {
+            return technicians?.Select(
+                technician =>
+                new RepairOrderServiceTechnicianToWrite()
+                {
+                    Id = technician.Id,
+                    Employee = new EmployeeToRead()
+                    {
+                        PersonalDetails = new PersonToRead()
+                        {
+                            Name = new PersonNameToRead()
+                            {
+                                FirstName = technician.Employee.PersonalDetails.Name.FirstName,
+                                LastName = technician.Employee.PersonalDetails.Name.LastName,
+                                MiddleName = technician.Employee.PersonalDetails.Name?.MiddleName
+                            },
+                            Gender = technician.Employee.PersonalDetails.Gender
+                        },
+                        Hired = technician.Employee.Hired,
+                        Exited = technician.Employee.Exited
+                    }
+                }).ToList()
+            ?? new List<RepairOrderServiceTechnicianToWrite>();
+        }
     }
 }

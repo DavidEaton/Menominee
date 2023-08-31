@@ -1,5 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Common;
 using Menominee.Api.Customers;
+using Menominee.Api.Employees;
+using Menominee.Api.Manufacturers;
 using Menominee.Api.ProductCodes;
 using Menominee.Api.SaleCodes;
 using Menominee.Api.Vehicles;
@@ -8,40 +11,46 @@ using Menominee.Domain.Entities.RepairOrders;
 using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.RepairOrders.LineItems.Item;
+using Menominee.Shared.Models.RepairOrders.Payments;
 using Menominee.Shared.Models.RepairOrders.Services;
-using Microsoft.AspNetCore.Authorization;
+using Menominee.Shared.Models.RepairOrders.Statuses;
+using Menominee.Shared.Models.RepairOrders.Taxes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telerik.DataSource.Extensions;
 
 namespace Menominee.Api.RepairOrders
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RepairOrdersController : ControllerBase
+    public class RepairOrdersController : BaseApplicationController<RepairOrdersController>
     {
         private readonly IRepairOrderRepository repository;
         private readonly IProductCodeRepository productCodeRepository;
         private readonly ICustomerRepository customerRepository;
         private readonly IVehicleRepository vehicleRepository;
         private readonly ISaleCodeRepository saleCodeRepository;
+        private readonly IManufacturerRepository manufacturersRepository;
+        private readonly IEmployeeRepository employeeRepository;
         private readonly string BasePath = "/api/repairorders";
 
         public RepairOrdersController(
             IRepairOrderRepository repository,
-            IProductCodeRepository productCodesRepository,
+            IProductCodeRepository productCodeRepository,
             ICustomerRepository customerRepository,
             IVehicleRepository vehicleRepository,
-            ISaleCodeRepository saleCodeRepository)
+            ISaleCodeRepository saleCodeRepository,
+            IManufacturerRepository manufacturersRepository,
+            IEmployeeRepository employeeRepository,
+            ILogger<RepairOrdersController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
 
-            this.productCodeRepository = productCodesRepository ??
-                throw new ArgumentNullException(nameof(productCodesRepository));
+            this.productCodeRepository = productCodeRepository ??
+                throw new ArgumentNullException(nameof(productCodeRepository));
 
             this.customerRepository = customerRepository ??
                 throw new ArgumentNullException(nameof(customerRepository));
@@ -51,9 +60,14 @@ namespace Menominee.Api.RepairOrders
 
             this.saleCodeRepository = saleCodeRepository ??
                 throw new ArgumentNullException(nameof(saleCodeRepository));
+
+            this.manufacturersRepository = manufacturersRepository ??
+                throw new ArgumentNullException(nameof(manufacturersRepository));
+
+            this.employeeRepository = employeeRepository ??
+                throw new ArgumentNullException(nameof(employeeRepository));
         }
 
-        // api/repairorders/listing
         [Route("listing")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<RepairOrderToReadInList>>> GetRepairOrderListAsync()
@@ -66,7 +80,6 @@ namespace Menominee.Api.RepairOrders
             return Ok(results);
         }
 
-        // api/repairorders/1
         [HttpGet("{id:long}")]
         public async Task<ActionResult<RepairOrderToRead>> GetRepairOrderAsync(long id)
         {
@@ -78,7 +91,6 @@ namespace Menominee.Api.RepairOrders
             return result;
         }
 
-        // api/repairorders/1
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, RepairOrderToWrite repairOrderFromCaller)
         {
@@ -88,52 +100,66 @@ namespace Menominee.Api.RepairOrders
                 return NotFound($"Could not find Repair Order #{id} to update.");
 
             var customer = await customerRepository.GetCustomerEntityAsync(repairOrderFromCaller.Customer.Id);
-            var vehicle = await vehicleRepository.GetEntity(repairOrderFromCaller.Vehicle.Id);
-            var repairOrderNumbers = new List<long>();
+            if (customer is null)
+                return NotFound($"Could not find Customer #{repairOrderFromCaller.Customer.Id} to update.");
 
-            var result = UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository, customer, vehicle, new List<long>());
+            var vehicle = await vehicleRepository.GetEntity(repairOrderFromCaller.Vehicle.Id);
+            if (vehicle is null)
+                return NotFound($"Could not find Vehicle #{repairOrderFromCaller.Vehicle.Id} to update.");
+
+            var result = UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository, customer, vehicle);
 
             if (result.IsFailure)
                 return BadRequest(result.Error);
 
             // await UpdateServicesAsync(repairOrderFromCaller, repairOrderFromRepository, manufacturerCodes);
-            //UpdatePayments(repairOrderFromCaller, repairOrderFromRepository);
-            //UpdateTaxes(repairOrderFromCaller, repairOrderFromRepository);
+            UpdatePayments(repairOrderFromCaller, repairOrderFromRepository);
+            UpdateTaxes(repairOrderFromCaller, repairOrderFromRepository);
+            UpdateStatuses(repairOrderFromCaller, repairOrderFromRepository);
 
             await repository.SaveChanges();
 
             return NoContent();
         }
 
-        private static void UpdateTaxes(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
+        private void UpdateStatuses(RepairOrderToWrite repairOrderFromCaller, RepairOrder repairOrderFromRepository)
         {
-            //foreach (var tax in repairOrder?.Taxes)
-            //{
-            //    var editableTax = repairOrderFromRepository.Taxes.Find(x => x.Id == tax.Id);
-            //    if (editableTax is null)
-            //        continue;
+            foreach (var status in repairOrderFromCaller?.Statuses)
+            {
+                var editableStatus = repairOrderFromRepository.Statuses.FirstOrDefault(oStatus => oStatus.Id == status.Id);
+                if (editableStatus is null)
+                    continue;
+                // TODO: Take advantage of Result returned from Set{PropertyName}() methods;
+                editableStatus.SetStatus(status.Status);
+                editableStatus.SetDescription(status.Description);
+            }
+        }
 
-            //    editableTax.LaborTax = tax.LaborTax;
-            //    editableTax.LaborTaxRate = tax.LaborTaxRate;
-            //    editableTax.PartTax = tax.PartTax;
-            //    editableTax.PartTaxRate = tax.PartTaxRate;
-            //    editableTax.RepairOrderId = tax.RepairOrderId;
-            //    editableTax.TaxId = tax.TaxId;
-            //}
+        private static void UpdateTaxes(RepairOrderToWrite repairOrderFromCaller, RepairOrder repairOrderFromRepository)
+        {
+            foreach (var tax in repairOrderFromCaller?.Taxes)
+            {
+                var editableTax = repairOrderFromRepository.Taxes.FirstOrDefault(oTax => oTax.Id == tax.Id);
+                if (editableTax is null)
+                    continue;
+
+                // TODO: Take advantage of Result returned from Create() factory methods;
+                editableTax.SetLaborTax(LaborTax.Create(tax.LaborTax.Rate, tax.LaborTax.Amount).Value);
+                editableTax.SetPartTax(PartTax.Create(tax.PartTax.Rate, tax.PartTax.Amount).Value);
+            }
         }
 
         private static void UpdatePayments(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository)
         {
-            //foreach (var payment in repairOrder?.Payments)
-            //{
-            //    var editablePayment = repairOrderFromRepository.Payments.Find(x => x.Id == payment.Id);
-            //    if (editablePayment is null)
-            //        continue;
-
-            //    editablePayment.Amount = payment.Amount;
-            //    editablePayment.PaymentMethod = payment.PaymentMethod;
-            //    editablePayment.RepairOrderId = payment.RepairOrderId;
-            //}
+            foreach (var payment in repairOrder?.Payments)
+            {
+                var editablePayment = repairOrderFromRepository.Payments.FirstOrDefault(x => x.Id == payment.Id);
+                if (editablePayment is null)
+                    continue;
+                // TODO: Take advantage of Result returned from Set{PropertyName}() methods;
+                editablePayment.SetAmount(payment.Amount);
+                editablePayment.SetPaymentMethod(payment.PaymentMethod);
+            }
         }
 
         private static async Task UpdateServicesAsync(RepairOrderToWrite repairOrder, RepairOrder repairOrderFromRepository, IReadOnlyList<ProductCodeToRead> productCodes)
@@ -263,8 +289,7 @@ namespace Menominee.Api.RepairOrders
             RepairOrderToWrite repairOrderFromCaller,
             RepairOrder repairOrderFromRepository,
             Customer customer,
-            Vehicle vehicle,
-            List<long> repairOrderNumbers)
+            Vehicle vehicle)
         {
             return Result.Combine(
                 (customer is not null) && (customer != repairOrderFromRepository.Customer)
@@ -279,8 +304,8 @@ namespace Menominee.Api.RepairOrders
                 (repairOrderFromCaller.AccountingDate != repairOrderFromRepository.AccountingDate)
                     ? repairOrderFromRepository.SetAccountingDate(repairOrderFromCaller.AccountingDate)
                     : Result.Success(),
-                (repairOrderNumbers is not null)
-                    ? repairOrderFromRepository.SetRepairOrderNumber(repairOrderNumbers, DateTime.Today)
+                (repairOrderFromRepository.RepairOrderNumber != repairOrderFromCaller.RepairOrderNumber)
+                    ? repairOrderFromRepository.SetRepairOrderNumber(repairOrderFromCaller.RepairOrderNumber, DateTime.Today)
                     : Result.Success()
             );
         }
@@ -292,10 +317,35 @@ namespace Menominee.Api.RepairOrders
             var vehicle = await vehicleRepository.GetEntity(repairOrderToAdd.Vehicle.Id);
             var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbers();
             var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
-            var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds);
-            var lastInvoiceNumberOrSeed = repository.GetLastInvoiceNumberOrSeed();
-            var repairOrder = RepairOrderHelper.ConvertWriteDtoToEntity(repairOrderToAdd, customer, vehicle, repairOrderNumbers, lastInvoiceNumberOrSeed, saleCodes);
+            //var saleCodeIds = repairOrderToAdd.Services
+            //.SelectMany(service => service.LineItems) // Flatten the nested collections
+            //.Select(lineItem => lineItem.Item.SaleCode.Id) // Select the SaleCode.Id from each item
+            //.ToList();
+            var saleCodes = await saleCodeRepository.GetSaleCodeEntitiesAsync(saleCodeIds, all: true);
+            var services = repairOrderToAdd.Services;
+            var lineItems = services.SelectMany(x => x.LineItems).ToList();
 
+            var productCodes = await productCodeRepository.GetProductCodeEntitiesAsync();
+            var manufacturerIds = lineItems.Select(lineItem => lineItem.Item.Id);
+            //var manufacturers = await manufacturersRepository.GetManufacturerEntitiesAsync((List<long>)manufacturerIds); // We haven't saved yet, so LineItem.Item.Id == 0;
+            var manufacturers = await manufacturersRepository.GetManufacturerEntitiesAsync();
+            // TODO: Find the manufacturers, saleCodes and productCodes in repairOrderToAdd.Services => LineItems
+
+
+            var employees = await employeeRepository.GetEmployeeEntities();
+            var itemParts = new List<RepairOrderItemPart>();
+            var lastInvoiceNumberOrSeed = repository.GetLastInvoiceNumberOrSeed();
+            var repairOrder = RepairOrder.Create(
+                customer: customer,
+                vehicle: vehicle,
+                accountingDate: repairOrderToAdd.AccountingDate,
+                repairOrderNumbers: repairOrderNumbers,
+                lastInvoiceNumber: lastInvoiceNumberOrSeed,
+                statuses: StatusHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Statuses),
+                //services: ServiceHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Services, saleCodes, productCodes, manufacturers, itemParts, employees),
+                taxes: RepairOrderTaxHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Taxes),
+                payments: PaymentHelper.ConvertWriteDtosToEntities(repairOrderToAdd.Payments)
+                ).Value;
             await repository.Add(repairOrder);
             await repository.SaveChanges();
 

@@ -24,14 +24,8 @@ namespace TestingHelperLibrary.Fakers
                 var birthday = faker.Person.DateOfBirth;
                 var name = PersonName.Create(lastName, firstName).Value;
 
-                Address? address = null;
-                DriversLicense? driversLicense = null;
-
-                if (includeAddress)
-                    address = new AddressFaker().Generate();
-
-                if (includeDriversLicense)
-                    driversLicense = new DriversLicenseFaker().Generate();
+                var driversLicense = includeDriversLicense ? new DriversLicenseFaker().Generate() : null;
+                var address = includeAddress ? new AddressFaker().Generate() : null;
 
                 var emails = emailsCount <= 0
                     ? null

@@ -1,4 +1,5 @@
-﻿using Menominee.Domain.Entities.Inventory;
+﻿using Menominee.Common.Enums;
+using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.InventoryItems.Inspection;
 using Menominee.Shared.Models.Inventory.InventoryItems.Labor;
 using Menominee.Shared.Models.Inventory.InventoryItems.Package;
@@ -7,11 +8,9 @@ using Menominee.Shared.Models.Inventory.InventoryItems.Tire;
 using Menominee.Shared.Models.Inventory.InventoryItems.Warranty;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
-using Menominee.Common.Enums;
+using Menominee.Shared.Models.SaleCodes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Menominee.Shared.Models.SaleCodes;
 
 namespace Menominee.Shared.Models.Inventory.InventoryItems
 {
@@ -47,7 +46,7 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                                 Name = item.ProductCode.Manufacturer.Name,
                                 Prefix = item.ProductCode.Manufacturer.Prefix
                             },
-                    SaleCode = item.ProductCode.SaleCode is null
+                            SaleCode = item.ProductCode.SaleCode is null
                         ? new()
                         : new()
                         {
@@ -305,42 +304,49 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
             return inventoryItemToWrite;
         }
 
-        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, IReadOnlyList<Manufacturer> manufacturers, IReadOnlyList<ProductCode> productCodes, IReadOnlyList<InventoryItem> inventoryItems)
+        public static InventoryItem ConvertWriteDtoToEntity(
+            InventoryItemToWrite item,
+            Manufacturer manufacturer,
+            ProductCode productCode,
+            InventoryItemPart part,
+            IReadOnlyList<InventoryItem> inventoryItems)
         {
             if (item is null)
                 return null;
 
             var inventoryItem = InventoryItem.Create(
-                manufacturers.FirstOrDefault(manufacturer => manufacturer.Id == item.Manufacturer.Id),
+                manufacturer,
                 item.ItemNumber,
                 item.Description,
-                productCodes.FirstOrDefault(productCode => productCode.Id == item.ProductCode.Id),
+                productCode,
                 item.ItemType,
-
-                item.Part is null
-                    ? null
-                    : InventoryItemPartHelper.ConvertWriteDtoToEntity(item.Part),
-                item.Labor is null
-                    ? null
-                    : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
-                item.Tire is null
-                    ? null
-                    : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
-                item.Package is null
-                    ? null
-                    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
-                item.Inspection is null
-                    ? null
-                    : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
-                item.Warranty is null
-                    ? null
-                    : InventoryItemWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty))
+                part
+                    //item.Labor is null
+                    //    ? null
+                    //    : InventoryItemLaborHelper.ConvertWriteDtoToEntity(item.Labor),
+                    //item.Tire is null
+                    //    ? null
+                    //    : InventoryItemTireHelper.ConvertWriteDtoToEntity(item.Tire),
+                    //item.Package is null
+                    //    ? null
+                    //    : InventoryItemPackageHelper.ConvertWriteDtoToEntity(item.Package, inventoryItems),
+                    //item.Inspection is null
+                    //    ? null
+                    //    : InventoryItemInspectionHelper.ConvertWriteDtoToEntity(item.Inspection),
+                    //item.Warranty is null
+                    //    ? null
+                    //    : InventoryItemWarrantyHelper.ConvertWriteDtoToEntity(item.Warranty)
+                    )
                 .Value;
 
             return inventoryItem;
         }
 
-        public static InventoryItem ConvertWriteDtoToEntity(InventoryItemToWrite item, Manufacturer manufacturer, ProductCode productCode, IReadOnlyList<InventoryItem> inventoryItems)
+        public static InventoryItem ConvertWriteDtoToEntity(
+            InventoryItemToWrite item,
+            Manufacturer manufacturer,
+            ProductCode productCode,
+            IReadOnlyList<InventoryItem> inventoryItems)
         {
             return item is null
                 ? null
@@ -396,51 +402,62 @@ namespace Menominee.Shared.Models.Inventory.InventoryItems
                 };
         }
 
-        internal static InventoryItemToWrite ConvertToWriteDto(InventoryItem item)
+        public static InventoryItemToWrite ConvertToWriteDto(InventoryItem item)
         {
-            return item is null
-                ? null
-                : new()
-                {
-                    Id = item.Id,
-                    ItemNumber = item.ItemNumber,
-                    Description = item.Description,
-                    ItemType = item.ItemType,
-                    Manufacturer = new ManufacturerToRead
-                    {
-                        Id = item.ProductCode.Manufacturer.Id,
-                        Name = item.ProductCode.Manufacturer.Name,
-                        Prefix = item.ProductCode.Manufacturer.Prefix
-                    },
-                    ProductCode = new ProductCodeToRead()
-                    {
-                        Name = item.ProductCode.Name,
-                        Code = item.ProductCode.Code,
-                        Id = item.ProductCode.Id,
-                        Manufacturer = new ManufacturerToRead()
-                        {
-                            Id = item.ProductCode.Manufacturer.Id,
-                            Name = item.ProductCode.Manufacturer.Name,
-                            Prefix = item.ProductCode.Manufacturer.Prefix
-                        },
-                        SaleCode = item.ProductCode.SaleCode is null
-                        ? null
-                        : new SaleCodeToRead()
-                        {
-                            Id = item.ProductCode.SaleCode.Id,
-                            Code = item.ProductCode.SaleCode.Code,
-                            Name = item.ProductCode.SaleCode.Name,
-                            LaborRate = item.ProductCode.SaleCode.LaborRate,
-                            DesiredMargin = item.ProductCode.SaleCode.DesiredMargin
-                        }
-                    },
-                    Part = InventoryItemPartHelper.ConvertToWriteDto(item.Part),
-                    Labor = InventoryItemLaborHelper.ConvertToWriteDto(item.Labor),
-                    Tire = InventoryItemTireHelper.ConvertToWriteDto(item.Tire),
-                    Package = InventoryItemPackageHelper.ConvertToWriteDto(item.Package),
-                    Inspection = InventoryItemInspectionHelper.ConvertToWriteDto(item.Inspection),
-                    Warranty = InventoryItemWarrantyHelper.ConvertToWriteDto(item.Warranty)
-                };
+            if (item == null)
+            {
+                return null;
+            }
+
+            var result = new InventoryItemToWrite
+            {
+                Id = item.Id,
+                ItemNumber = item.ItemNumber,
+                Description = item.Description,
+                ItemType = item.ItemType
+            };
+
+            // Manufacturer
+            var manufacturerToRead = new ManufacturerToRead
+            {
+                // Manufacturer SHOULD NEVER BE NULL HERE
+                Id = item.ProductCode.Manufacturer.Id,
+                Name = item.ProductCode.Manufacturer.Name,
+                Prefix = item.ProductCode.Manufacturer.Prefix
+            };
+            result.Manufacturer = manufacturerToRead;
+
+            // ProductCode
+            var productCodeToRead = new ProductCodeToRead
+            {
+                Id = item.ProductCode.Id,
+                Name = item.ProductCode.Name,
+                Code = item.ProductCode.Code,
+                Manufacturer = manufacturerToRead
+            };
+
+            if (item.ProductCode.SaleCode != null)
+            {
+                var saleCodeToRead = new SaleCodeToRead();
+                saleCodeToRead.Id = item.ProductCode.SaleCode.Id;
+                saleCodeToRead.Code = item.ProductCode.SaleCode.Code;
+                saleCodeToRead.Name = item.ProductCode.SaleCode.Name;
+                saleCodeToRead.LaborRate = item.ProductCode.SaleCode.LaborRate;
+                saleCodeToRead.DesiredMargin = item.ProductCode.SaleCode.DesiredMargin;
+                productCodeToRead.SaleCode = saleCodeToRead;
+            }
+
+            result.ProductCode = productCodeToRead;
+
+            // Remaining fields
+            result.Part = item.Part != null ? InventoryItemPartHelper.ConvertToWriteDto(item.Part) : new();
+            result.Labor = item.Labor != null ? InventoryItemLaborHelper.ConvertToWriteDto(item.Labor) : new();
+            result.Tire = item.Tire != null ? InventoryItemTireHelper.ConvertToWriteDto(item.Tire) : new();
+            result.Package = item.Package != null ? InventoryItemPackageHelper.ConvertToWriteDto(item.Package) : new();
+            result.Inspection = item.Inspection != null ? InventoryItemInspectionHelper.ConvertToWriteDto(item.Inspection) : new();
+            result.Warranty = item.Warranty != null ? InventoryItemWarrantyHelper.ConvertToWriteDto(item.Warranty) : new();
+
+            return result;
         }
     }
 }

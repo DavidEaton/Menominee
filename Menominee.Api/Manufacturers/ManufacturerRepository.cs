@@ -4,7 +4,6 @@ using Menominee.Shared.Models.Manufacturers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,11 +41,16 @@ namespace Menominee.Api.Manufacturers
                 .FirstOrDefaultAsync(manufacturer => manufacturer.Id == id));
         }
 
-        public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids)
+        public async Task<IReadOnlyList<Manufacturer>> GetManufacturerEntitiesAsync(List<long> ids = null)
         {
-            return await context.Manufacturers
-                .Where(manufacturer => ids.Contains(manufacturer.Id))
-                .ToListAsync();
+            IQueryable<Manufacturer> query = context.Manufacturers;
+
+            if (ids is not null)
+            {
+                query = query.Where(manufacturer => ids.Contains(manufacturer.Id));
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Manufacturer> GetManufacturerEntityAsync(long id)

@@ -1,7 +1,7 @@
 ﻿using Menominee.Api.Data;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.InventoryItems;
-using Menominee.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,14 +26,6 @@ namespace Menominee.Api.Inventory
             {
                 if (await Exists(item.Id))
                     throw new Exception("Inventory Item already exists");
-
-                // Detach any existing tracked entity with the same key
-                if (item.Manufacturer is not null)
-                {
-                    var existingManufacturer = context.Manufacturers.Local.FirstOrDefault(e => e.Id == item.Manufacturer.Id);
-                    if (existingManufacturer is not null)
-                        context.Entry(existingManufacturer).State = EntityState.Detached;
-                }
 
                 context.InventoryItems.Attach(item);
             }
@@ -62,7 +54,6 @@ namespace Menominee.Api.Inventory
 
         public async Task<IReadOnlyList<InventoryItem>> GetInventoryItemEntities(List<long> ids) =>
             await Task.WhenAll(ids.Select(id => GetItemEntity(id)));
-
         public async Task<IReadOnlyList<InventoryItemToReadInList>> GetItemsInList() =>
             await GetInventoryItemsToReadInList();
 
@@ -123,15 +114,15 @@ namespace Menominee.Api.Inventory
             await GetInventoryItemsQuery(asNoTracking: false)
                 .FirstOrDefaultAsync(predicate);
 
-        private async Task<IReadOnlyList<InventoryItemToRead>> GetInventoryItemsToRead(string partNumber = null, long? manufacturerId = null, long? productCodeId = null, InventoryItemType? itemType = null)
+        private async Task<List<InventoryItem>> GetInventoryItemsQueryAsync(InventoryItemType? itemType = null, string itemNumber = null, long? manufacturerId = null, long? productCodeId = null)
         {
             IQueryable<InventoryItem> query = GetInventoryItemsQuery();
 
             if (manufacturerId is not null)
                 query = query.Where(item => item.Manufacturer.Id == manufacturerId);
 
-            if (partNumber is not null)
-                query = query.Where(item => item.ItemNumber == partNumber);
+            if (itemNumber is not null)
+                query = query.Where(item => item.ItemNumber == itemNumber);
 
             if (productCodeId is not null)
                 query = query.Where(item => item.ProductCode.Id == productCodeId);
@@ -139,39 +130,23 @@ namespace Menominee.Api.Inventory
             if (itemType is not null)
                 query = query.Where(item => item.ItemType == itemType);
 
-            var itemsFromContext = await query.ToListAsync();
-
-            return itemsFromContext.Select(
-                item => InventoryItemHelper.ConvertToReadDto(item))
-                .ToList();
+            return await query.ToListAsync();
         }
 
-        private async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemsToReadInList(InventoryItemType? itemType = null, string itemNumber = null, long? manufacturerId = null, long? productCodeId = null)
+        public async Task<IReadOnlyList<InventoryItemToRead>> GetInventoryItemsToRead(string partNumber = null, long? manufacturerId = null, long? productCodeId = null, InventoryItemType? itemType = null)
         {
-            IQueryable<InventoryItem> query = GetInventoryItemsQuery();
+            var itemsFromContext = await GetInventoryItemsQueryAsync(itemType, partNumber, manufacturerId, productCodeId);
 
-            if (manufacturerId is not null)
-                query = query.Where(
-                    item => item.Manufacturer.Id == manufacturerId);
-
-            if (itemNumber is not null)
-                query = query.Where(
-                    item => item.ItemNumber == itemNumber);
-
-            if (productCodeId is not null)
-                query = query.Where(
-                    item => item.ProductCode.Id == productCodeId);
-
-            if (itemType is not null)
-                query = query.Where(
-                    item => item.ItemType == itemType);
-
-            var itemsFromContext = await query.ToListAsync();
-
-            return itemsFromContext.Select(
-                item => InventoryItemHelper.ConvertToReadInListDto(item))
-                .ToList();
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertToReadDto(item)).ToList();
         }
+
+        public async Task<IReadOnlyList<InventoryItemToReadInList>> GetInventoryItemsToReadInList(InventoryItemType? itemType = null, string itemNumber = null, long? manufacturerId = null, long? productCodeId = null)
+        {
+            var itemsFromContext = await GetInventoryItemsQueryAsync(itemType, itemNumber, manufacturerId, productCodeId);
+
+            return itemsFromContext.Select(item => InventoryItemHelper.ConvertToReadInListDto(item)).ToList();
+        }
+
 
         public async Task<bool> Exists(long id) =>
             await context.InventoryItems.AnyAsync(item => item.Id == id);

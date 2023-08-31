@@ -1,7 +1,7 @@
-﻿using Menominee.Shared.Models.Manufacturers;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.SaleCodes;
-using Menominee.Common.Enums;
 
 namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
 {
@@ -14,5 +14,7 @@ namespace Menominee.Shared.Models.RepairOrders.LineItems.Item
         public SaleCodeToRead SaleCode { get; set; }
         public ProductCodeToRead ProductCode { get; set; }
         public PartType PartType { get; set; } = PartType.Part;
+        public RepairOrderItemPartToWrite Part { get; set; } //optional
+        public RepairOrderItemLaborToWrite Labor { get; set; } //optional
     }
 }

@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using System;
-using System.Reflection;
 using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Domain.Entities.Taxes

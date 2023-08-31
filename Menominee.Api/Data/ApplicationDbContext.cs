@@ -101,6 +101,7 @@ namespace Menominee.Api.Data
 
             // Repair Orders
             modelBuilder.ApplyConfiguration(new RepairOrderConfiguration());
+            modelBuilder.ApplyConfiguration(new RepairOrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderItemLaborConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderItemPartConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderLineItemConfiguration());
@@ -213,6 +214,7 @@ namespace Menominee.Api.Data
         #region -------------------- DbSets -----------------------------
         public DbSet<Entities.Company> Companies { get; set; }
         public DbSet<Person> Persons { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         public DbSet<Business> Businesses { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }

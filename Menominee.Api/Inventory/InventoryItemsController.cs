@@ -23,8 +23,8 @@ namespace Menominee.Api.Inventory
 
         public InventoryItemsController(IInventoryItemRepository itemRepository,
             IManufacturerRepository manufacturerRepository,
-            IProductCodeRepository productCodeRepository
-            , ILogger<InventoryItemsController> logger) : base(logger)
+            IProductCodeRepository productCodeRepository,
+            ILogger<InventoryItemsController> logger) : base(logger)
         {
             this.itemRepository =
                 itemRepository ?? throw new ArgumentNullException(nameof(itemRepository));
@@ -97,15 +97,18 @@ namespace Menominee.Api.Inventory
             var (manufacturerFromRepository, productCodeFromRepository, inventoryItems) =
                 await GetEntitiesForAdd(itemToAdd);
 
-            if (manufacturerFromRepository == null || productCodeFromRepository == null || inventoryItems == null)
+            InventoryItemPart partFromRepository = await itemRepository.GetInventoryItemPartEntity(itemToAdd.Part.Id);
+
+            if (manufacturerFromRepository == null || productCodeFromRepository == null/* || inventoryItems == null*/)
                 return NotFound(
                     new ApiError
                     {
                         Message = failureMessage
                     });
 
+
             var inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
-                manufacturerFromRepository, productCodeFromRepository, inventoryItems);
+                manufacturerFromRepository, productCodeFromRepository, partFromRepository, null);
 
             await itemRepository.Add(inventoryItemEntity);
             await itemRepository.SaveChanges();
@@ -157,9 +160,7 @@ namespace Menominee.Api.Inventory
                 ? await productCodeRepository.GetProductCodeEntityAsync(itemToAdd.ProductCode.Id)
                 : null;
 
-            var inventoryItems = await itemRepository.GetInventoryItemEntities(GetItemIds(itemToAdd));
-
-            return (manufacturerFromRepository, productCodeFromRepository, inventoryItems);
+            return (manufacturerFromRepository, productCodeFromRepository, null);
         }
 
         private async Task<Result> UpdateInventoryItemProperties(InventoryItem itemFromRepository, InventoryItemToWrite itemFromCaller, Manufacturer manufacturerFromRepository, ProductCode productCodeFromRepository)

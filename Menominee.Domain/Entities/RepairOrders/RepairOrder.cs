@@ -35,8 +35,8 @@ namespace Menominee.Domain.Entities.RepairOrders
             service => service.DiscountTotal).Sum();
         public double TaxTotal => Taxes.Select(
             tax => tax.PartTax.Amount + tax.LaborTax.Amount).Sum();
-        public double ServiceTaxTotal => Services.Select(
-            service => service.TaxTotal).Sum();
+        public double ServicesTaxTotal => Services.Select(
+            service => service.ServiceTaxTotal).Sum();
         public double ExciseFeesTotal => Services.Select(
             service => service.ExciseFeesTotal).Sum();
         public double ShopSuppliesTotal => Services.Select(
@@ -353,12 +353,21 @@ namespace Menominee.Domain.Entities.RepairOrders
             return Result.Success(InvoiceNumber = invoiceNumber);
         }
 
-        public Result<long> SetRepairOrderNumber(List<long> repairOrderNumbers, DateTime currentDate)
+        public Result<long> SetRepairOrderNumber(List<long> repairOrderNumbers, DateTime dateModified)
         {
-            var nextRepairOrderNumber = CalculateNextRepairOrderNumber(repairOrderNumbers, currentDate);
+            var nextRepairOrderNumber = CalculateNextRepairOrderNumber(repairOrderNumbers, dateModified);
 
-            DateModified = currentDate;
+            DateModified = dateModified;
             return Result.Success(RepairOrderNumber = nextRepairOrderNumber);
+        }
+
+        public Result SetRepairOrderNumber(long repairOrderNumber, DateTime dateModified)
+        {
+            if (repairOrderNumber < MinimumNumberValue)
+                return Result.Failure<long>(InvalidNumberMessage);
+
+            DateModified = dateModified;
+            return Result.Success(RepairOrderNumber = repairOrderNumber);
         }
 
         public Result<DateTime> SetDateModified(DateTime dateModified)

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Menominee.Api.ProductCodes
@@ -19,18 +20,39 @@ namespace Menominee.Api.ProductCodes
                 throw new ArgumentNullException(nameof(context));
         }
 
+        private IQueryable<ProductCode> GetProductCodesWithIncludes()
+        {
+            var result = context.ProductCodes
+                .Include(productCode => productCode.Manufacturer)
+                .Include(productCode => productCode.SaleCode)
+                .AsSplitQuery()
+                .AsNoTracking();
+
+            return result;
+        }
+
+        private ProductCodeToRead ConvertToReadDto(ProductCode productCode)
+        {
+            return productCode is not null
+                ? ProductCodeHelper.ConvertToReadDto(productCode)
+                : null;
+        }
+
         public void AddProductCode(ProductCode productCode)
         {
             if (productCode is not null)
                 context.Attach(productCode);
         }
 
-        public async Task DeleteProductCodeAsync(long id)
+        public async Task DeleteProductCode(long id)
         {
-            var pcFromContext = await context.ProductCodes.FindAsync(id);
+            var productCodeFromContext = await context.ProductCodes.FindAsync(id);
 
-            if (pcFromContext is not null)
-                context.Remove(pcFromContext);
+            if (productCodeFromContext is not null)
+            {
+                context.Remove(productCodeFromContext);
+                context.SaveChanges();
+            }
         }
 
         public IReadOnlyList<string> GetManufacturerCodes()
@@ -40,71 +62,57 @@ namespace Menominee.Api.ProductCodes
 
         public async Task<ProductCodeToRead> GetProductCodeAsync(long manufacturerId, string code)
         {
-            var pcFromContext = await context.ProductCodes
-                                             .Include(productCode => productCode.Manufacturer)
-                                             .Include(productCode => productCode.SaleCode)
-                                             .AsSplitQuery()
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(productCode =>
-                                                productCode.Manufacturer.Id == manufacturerId
-                                                &&
-                                                productCode.Code == code);
-
-            return pcFromContext is not null
-                ? ProductCodeHelper.ConvertToReadDto(pcFromContext)
-                : null;
+            return await GetProductCodeAsync(productCode =>
+                productCode.Manufacturer.Id == manufacturerId
+                &&
+                productCode.Code == code);
         }
 
-        public async Task<ProductCodeToRead> GetProductCodeAsync(long id)
+        public async Task<ProductCodeToRead> GetProductCodeAsync(long Id)
         {
-            var pcFromContext = await context.ProductCodes
-                                             .Include(pc => pc.Manufacturer)
-                                             .Include(pc => pc.SaleCode)
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(pc => pc.Id == id);
+            return await GetProductCodeAsync(productCode => productCode.Id == Id);
+        }
 
-            return pcFromContext is not null
-                ? ProductCodeHelper.ConvertToReadDto(pcFromContext)
-                : null;
+        private async Task<ProductCodeToRead> GetProductCodeAsync(Expression<Func<ProductCode, bool>> predicate)
+        {
+            var productCodeFromContext = await GetProductCodesWithIncludes()
+                .FirstOrDefaultAsync(predicate);
+
+            return ConvertToReadDto(productCodeFromContext);
         }
 
         public async Task<ProductCode> GetProductCodeEntityAsync(long manufacturerId, string code)
         {
             return await context.ProductCodes
-                                .Include(productCode => productCode.Manufacturer)
-                                .Include(productCode => productCode.SaleCode)
-                                .AsSplitQuery()
-                                .FirstOrDefaultAsync(productCode =>
-                                    productCode.Manufacturer.Id == manufacturerId
-                                    &&
-                                    productCode.Code == code);
+                .Include(productCode => productCode.Manufacturer)
+                .Include(productCode => productCode.SaleCode)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(productCode =>
+                    productCode.Manufacturer.Id == manufacturerId
+                    &&
+                    productCode.Code == code);
         }
 
         public async Task<ProductCode> GetProductCodeEntityAsync(long id)
         {
-            return await context.ProductCodes
-                                             .Include(productCode => productCode.Manufacturer)
-                                             .Include(productCode => productCode.SaleCode)
-                                             .FirstOrDefaultAsync(productCode => productCode.Id == id);
+            var result = await GetProductCodesWithIncludes()
+                .FirstOrDefaultAsync(productCode => productCode.Id == id);
+
+            return result;
         }
 
-        public async Task<IReadOnlyList<ProductCodeToRead>> GetProductCodesAsync()
+        public async Task<IReadOnlyList<ProductCodeToRead>> GetProductCodes()
         {
-            ProductCode[] productCodes = await context.ProductCodes
-                                   .Include(productCode => productCode.Manufacturer)
-                                   .Include(productCode => productCode.SaleCode)
-                                   .AsSplitQuery()
-                                   .AsNoTracking()
-                                   .ToArrayAsync();
+            var query = await GetProductCodesWithIncludes().ToArrayAsync();
 
-            return productCodes
-                .Select(productCode => ProductCodeHelper.ConvertToReadDto(productCode))
+            return query
+                .Select(productCode => ConvertToReadDto(productCode))
                 .ToList();
         }
 
-        public async Task<bool> ProductCodeExistsAsync(long id)
+        public async Task<bool> ProductCodeExists(long id)
         {
-            return await context.ProductCodes.AnyAsync(productCode => (productCode.Id == id));
+            return await context.ProductCodes.AnyAsync(productCode => productCode.Id == id);
         }
 
         public async Task SaveChangesAsync()
@@ -114,11 +122,7 @@ namespace Menominee.Api.ProductCodes
 
         public async Task<IReadOnlyList<ProductCodeToReadInList>> GetProductCodesInListAsync(long? manufacturerId, long? saleCodeId)
         {
-            var query = context.ProductCodes
-                .Include(productCode => productCode.Manufacturer)
-                .Include(productCode => productCode.SaleCode)
-                .AsSplitQuery()
-                .AsNoTracking();
+            var query = GetProductCodesWithIncludes();
 
             if (manufacturerId is not null)
                 query = query.Where(productCode => productCode.Manufacturer.Id == manufacturerId);
@@ -129,6 +133,11 @@ namespace Menominee.Api.ProductCodes
             return await query
                 .Select(productCode => ProductCodeHelper.ConvertToReadInListDto(productCode))
                 .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<ProductCode>> GetProductCodeEntitiesAsync()
+        {
+            return await GetProductCodesWithIncludes().ToListAsync();
         }
     }
 }

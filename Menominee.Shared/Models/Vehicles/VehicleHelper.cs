@@ -21,7 +21,8 @@ namespace Menominee.Shared.Models.Vehicles
                     PlateStateProvince = vehicle.PlateStateProvince,
                     UnitNumber = vehicle.UnitNumber,
                     Color = vehicle.Color,
-                    Active = vehicle.Active
+                    Active = vehicle.Active,
+                    NonTraditionalVehicle = vehicle.NonTraditionalVehicle
                 };
         }
 

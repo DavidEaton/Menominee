@@ -11,6 +11,7 @@ namespace Menominee.Shared.Models.RepairOrders
 {
     public class RepairOrderToWrite
     {
+        public long Id { get; set; }
         public long RepairOrderNumber { get; set; } = 0;
         public long InvoiceNumber { get; set; } = 0;
         public CustomerToRead Customer { get; set; }

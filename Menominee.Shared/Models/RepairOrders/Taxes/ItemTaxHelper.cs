@@ -1,4 +1,5 @@
 ﻿using Menominee.Domain.Entities.RepairOrders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,5 +70,25 @@ namespace Menominee.Shared.Models.RepairOrders.Taxes
             ?? new List<RepairOrderItemTaxToRead>();
         }
 
+        internal static List<RepairOrderItemTaxToWrite> ConvertToWriteDtos(IReadOnlyList<RepairOrderItemTax> taxes)
+        {
+            return taxes?.Select(
+                tax =>
+                new RepairOrderItemTaxToWrite()
+                {
+                    Id = tax.Id,
+                    LaborTax = new()
+                    {
+                        Rate = tax.LaborTax.Rate,
+                        Amount = tax.LaborTax.Amount
+                    },
+                    PartTax = new()
+                    {
+                        Amount = tax.PartTax.Amount,
+                        Rate = tax.PartTax.Rate
+                    }
+                }).ToList()
+            ?? new List<RepairOrderItemTaxToWrite>();
+        }
     }
 }

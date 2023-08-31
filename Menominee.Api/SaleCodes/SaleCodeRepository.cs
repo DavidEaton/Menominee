@@ -42,12 +42,16 @@ namespace Menominee.Api.SaleCodes
                 .FirstOrDefaultAsync(saleCode => saleCode.Id == id));
         }
 
-        public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids)
+        public async Task<IReadOnlyList<SaleCode>> GetSaleCodeEntitiesAsync(List<long> ids, bool all = false)
         {
-            return await context.SaleCodes
-                .Where(saleCode => ids.Contains(saleCode.Id))
-                .ToListAsync();
+            return all
+                    ? await context.SaleCodes
+                        .ToListAsync()
+                    : await context.SaleCodes
+                        .Where(saleCode =>
+                            ids.Contains(saleCode.Id)).ToListAsync();
         }
+
 
         public async Task<SaleCode> GetSaleCodeEntityAsync(string code)
         {

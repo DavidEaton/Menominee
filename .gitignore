@@ -345,3 +345,4 @@ healthchecksdb
 /.NCrunch_Menominee/StoredText
 /CustomerVehicleManagement.Tests/CustomerVehicleManagement.Tests.v3.ncrunchproject
 /CustomerVehicleManagement.Tests.Integration/CustomerVehicleManagement.Tests.Integration.v3.ncrunchproject
+/Menominee.Tests.Integration/TestLog.txt
