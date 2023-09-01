@@ -11,10 +11,11 @@ namespace Menominee.Shared.Models.Addresses
                 .NotEmpty()
                 .MustBeValueObject(
                     address => Address.Create(
-                        address.AddressLine,
+                        address.AddressLine1,
                         address.City,
                         address.State,
-                        address.PostalCode));
+                        address.PostalCode,
+                        address.AddressLine2));
         }
     }
 }

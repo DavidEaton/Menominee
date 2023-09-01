@@ -1,16 +1,12 @@
-﻿using Menominee.Shared.Models;
-using Menominee.Shared.Models.Addresses;
-using Menominee.Shared.Models.Contactable;
-using Menominee.Shared.Models.Businesses;
-using Menominee.Client.Components.Address;
-using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Telerik.Blazor.Components;
+﻿using Menominee.Client.Components.Address;
 using Menominee.Client.Services.Businesses;
+using Menominee.Common.Enums;
+using Menominee.Shared.Models;
+using Menominee.Shared.Models.Addresses;
+using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Contactable;
+using Microsoft.AspNetCore.Components;
+using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Pages.Businesses
 {
@@ -82,10 +78,11 @@ namespace Menominee.Client.Pages.Businesses
             {
                 Business.Address = new AddressToWrite
                 {
-                    AddressLine = readDto.Address.AddressLine,
+                    AddressLine1 = readDto.Address.AddressLine1,
                     City = readDto.Address.City,
                     State = readDto.Address.State,
-                    PostalCode = readDto.Address.PostalCode
+                    PostalCode = readDto.Address.PostalCode,
+                    AddressLine2 = readDto.Address.AddressLine2
                 };
             }
 

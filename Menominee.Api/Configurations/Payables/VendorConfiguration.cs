@@ -1,5 +1,6 @@
-﻿using Menominee.Domain.Entities.Payables;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities.Payables;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -39,17 +40,21 @@ namespace Menominee.Api.Configurations.Payables
 
             // Value Object: Address
             builder.OwnsOne(vendor => vendor.Address)
-                   .Property(address => address.AddressLine)
-                   .HasColumnName("AddressLine")
-                   .HasMaxLength(255);
+                   .Property(address => address.AddressLine1)
+                   .HasColumnName("AddressLine1")
+                   .HasMaxLength(Address.AddressMaximumLength);
+            builder.OwnsOne(vendor => vendor.Address)
+                   .Property(address => address.AddressLine2)
+                   .HasColumnName("AddressLine2")
+                   .HasMaxLength(Address.AddressMaximumLength);
             builder.OwnsOne(vendor => vendor.Address)
                    .Property(address => address.City)
                    .HasColumnName("AddressCity")
-                   .HasMaxLength(255);
+                   .HasMaxLength(Address.CityMaximumLength);
             builder.OwnsOne(vendor => vendor.Address)
                    .Property(address => address.PostalCode)
                    .HasColumnName("AddressPostalCode")
-                   .HasMaxLength(15);
+                   .HasMaxLength(Address.PostalCodeMaximumLength);
             builder.OwnsOne(vendor => vendor.Address)
                    .Property(address => address.State)
                    .HasColumnName("AddressState")

@@ -1,8 +1,8 @@
-﻿using Menominee.Shared.Models.Payables.Invoices;
-using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Client.Services.Payables.Vendors;
+﻿using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Client.Shared;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Payables.Invoices;
+using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
 
@@ -198,7 +198,7 @@ namespace Menominee.Client.Components.Payables
             ReportParameters.Add("DocumentTypeString", documentTypeString);
             ReportParameters.Add("VendorCode", Invoice.Vendor.VendorCode);
             ReportParameters.Add("VendorName", Invoice.Vendor.Name);
-            ReportParameters.Add("VendorStreet", Invoice.Vendor.Address.AddressLine);
+            ReportParameters.Add("VendorStreet", Invoice.Vendor.Address.AddressLine1);
             ReportParameters.Add("VendorCityStateZip", $"{Invoice.Vendor.Address.City}, {Invoice.Vendor.Address.State} {Invoice.Vendor.Address.PostalCode}");
             ReportParameters.Add("InvoiceNumber", Invoice.InvoiceNumber);
             ReportParameters.Add("DateCreated", Invoice.Date != null ? Invoice.Date : nullDate);

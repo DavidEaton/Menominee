@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Api.Persons;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models;
 using Menominee.Shared.Models.Businesses;
-using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Businesses
 {
@@ -24,7 +24,7 @@ namespace Menominee.Api.Businesses
             IBusinessRepository repository
             , PersonsController personsController
             , IPersonRepository personsRepository
-            , ILogger<BusinessesController> logger) : base (logger)
+            , ILogger<BusinessesController> logger) : base(logger)
         {
             this.repository = repository ??
                 throw new ArgumentNullException(nameof(repository));
@@ -105,10 +105,11 @@ namespace Menominee.Api.Businesses
             if (businessFromCaller?.Address != null)
                 businessFromRepository.SetAddress(
                     Address.Create(
-                        businessFromCaller.Address.AddressLine,
+                        businessFromCaller.Address.AddressLine1,
                         businessFromCaller.Address.City,
                         businessFromCaller.Address.State,
-                        businessFromCaller.Address.PostalCode).Value);
+                        businessFromCaller.Address.PostalCode,
+                        businessFromCaller.Address.AddressLine2).Value);
 
             // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
             if (businessFromCaller?.Address is null)

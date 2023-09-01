@@ -1,7 +1,7 @@
-﻿using Menominee.Domain.Entities;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using System.Linq;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Payables;
@@ -183,11 +183,11 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetAddress()
         {
-            var addressLine = "1234 Five Street";
+            var addressLine1 = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine1, city, state, postalCode);
             var business = ContactableTestHelper.CreateBusiness();
 
             business.SetAddress(addressOrError.Value);
@@ -196,7 +196,7 @@ namespace Menominee.Tests.Entities
 
             customerOrError.Should().BeOfType<Customer>();
             customerOrError.EntityType.Should().Be(EntityType.Business);
-            janes.Address.AddressLine.Should().Be(addressLine);
+            janes.Address.AddressLine1.Should().Be(addressLine1);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);
             janes.Address.PostalCode.Should().Be(postalCode);
@@ -205,18 +205,18 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void ClearAddress()
         {
-            var addressLine = "1234 Five Street";
+            var addressLine1 = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var addressOrError = Address.Create(addressLine, city, state, postalCode);
+            var addressOrError = Address.Create(addressLine1, city, state, postalCode);
             var business = ContactableTestHelper.CreateBusiness();
             business.SetAddress(addressOrError.Value);
             var customerOrError = Customer.Create(business, CustomerType.Retail, null).Value;
             var janes = customerOrError.Business;
             customerOrError.Should().BeOfType<Customer>();
             customerOrError.EntityType.Should().Be(EntityType.Business);
-            janes.Address.AddressLine.Should().Be(addressLine);
+            janes.Address.AddressLine1.Should().Be(addressLine1);
             janes.Address.City.Should().Be(city);
             janes.Address.State.Should().Be(state);
             janes.Address.PostalCode.Should().Be(postalCode);

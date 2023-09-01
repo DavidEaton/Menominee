@@ -1,9 +1,9 @@
-﻿using Menominee.Domain.Entities;
+﻿using FluentValidation;
+using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.DriversLicenses;
-using FluentValidation;
-using Menominee.Common.ValueObjects;
 
 namespace Menominee.Shared.Models.Persons
 {

@@ -18,6 +18,21 @@ namespace Menominee.Tests.ValueObjects
         public void Create_Address()
         {
             var addressLine = "1234 Five Street";
+            var addressLine2 = "Apt B";
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode, addressLine2);
+
+            addressOrError.Should().NotBeNull();
+            addressOrError.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Should_Create_Address_Missing_AddressLine2()
+        {
+            var addressLine = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
@@ -79,6 +94,21 @@ namespace Menominee.Tests.ValueObjects
             var postalCode = "49735";
 
             var addressOrError = Address.Create(addressLine, city, state, postalCode);
+
+            addressOrError.IsFailure.Should().BeTrue();
+            addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
+        }
+
+        [Fact]
+        public void Return_IsFailure_Result_On_Create_When_AddressLine2_is_too_long()
+        {
+            var addressLine = "1234 Five Street";
+            string addressLine2 = Utilities.RandomCharacters(256);
+            var city = "Gaylord";
+            var state = State.MI;
+            var postalCode = "49735";
+
+            var addressOrError = Address.Create(addressLine, city, state, postalCode, addressLine2);
 
             addressOrError.IsFailure.Should().BeTrue();
             addressOrError.Error.Should().Be(Address.AddressMaximumLengthMessage);
@@ -229,7 +259,7 @@ namespace Menominee.Tests.ValueObjects
         {
             var address1 = ContactableTestHelper.CreateAddress();
             var address2 = Address.Create(
-                address1.AddressLine, address1.City, address1.State, address1.PostalCode).Value;
+                address1.AddressLine1, address1.City, address1.State, address1.PostalCode).Value;
 
             address1.Should().BeEquivalentTo(address2);
         }
@@ -241,43 +271,66 @@ namespace Menominee.Tests.ValueObjects
             var address2 = ContactableTestHelper.CreateAddress();
             var newAddressLine = "54321";
 
-            address2 = address2.NewAddressLine(newAddressLine).Value;
+            address2 = address2.NewAddressLine1(newAddressLine).Value;
 
             address1.Should().NotBeSameAs(address2);
         }
 
         [Fact]
-        public void Return_New_Address_On_NewAddressLine()
+        public void Return_New_Address_On_NewAddressLine1()
         {
             var address = ContactableTestHelper.CreateAddress();
             var newAddressLine = "5432 One Street";
 
-            address = address.NewAddressLine("5432 One Street").Value;
+            address = address.NewAddressLine1("5432 One Street").Value;
 
-            address.AddressLine.Should().Be(newAddressLine);
+            address.AddressLine1.Should().Be(newAddressLine);
         }
 
         [Theory]
         [InlineData(AddressUnderMinimumLength)]
         [InlineData(AddressOverMaximumLength)]
-        public void Return_Failure_On_NewAddressLine_With_Invalid_Length(string addressLine)
+        public void Return_Failure_On_NewAddressLine1_With_Invalid_Length(string addressLine)
         {
             var address = ContactableTestHelper.CreateAddress();
 
-            var result = address.NewAddressLine(addressLine);
+            var result = address.NewAddressLine1(addressLine);
 
             result.IsFailure.Should().BeTrue();
             result.Error.Should().Contain("length");
         }
 
         [Fact]
-        public void Throw_Exception_On_NewAddressLine_Passing_Null_Parameter()
+        public void Throw_Exception_On_NewAddressLine1_Passing_Null_Parameter()
         {
             var address = ContactableTestHelper.CreateAddress();
 
-            Action action = () => address = address.NewAddressLine(null).Value;
+            Action action = () => address = address.NewAddressLine1(null).Value;
 
             action.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public void Return_New_Address_On_NewAddressLine2()
+        {
+            var address = ContactableTestHelper.CreateAddress();
+            var newAddressLine2 = "Apt A";
+
+            address = address.NewAddressLine2("Apt A").Value;
+
+            address.AddressLine2.Should().Be(newAddressLine2);
+        }
+
+        [Theory]
+        [InlineData(AddressOverMaximumLength)]
+        public void Return_Failure_On_NewAddressLine2_With_Invalid_Length(string addressLine2)
+        {
+            var address = ContactableTestHelper.CreateAddress();
+
+            var result = address.NewAddressLine2(addressLine2);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Should().Contain("length");
         }
 
         [Fact]
@@ -377,7 +430,7 @@ namespace Menominee.Tests.ValueObjects
 
             string toString = address.ToString();
 
-            toString.Should().Be($"{address.AddressLine} {address.City}, {address.State} {address.PostalCode}");
+            toString.Should().Be($"{address.AddressLine1} {address.City}, {address.State} {address.PostalCode}");
             toString.Should().Be(address.AddressFull);
         }
     }

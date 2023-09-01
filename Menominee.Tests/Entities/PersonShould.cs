@@ -1,11 +1,10 @@
-﻿using Menominee.Domain.BaseClasses;
-using Menominee.Domain.Entities;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
 using Menominee.Common.Enums;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.BaseClasses;
+using Menominee.Domain.Entities;
 using System;
 using TestingHelperLibrary;
 using Xunit;
@@ -404,18 +403,18 @@ namespace Menominee.Tests.Entities
         [Fact]
         public void SetAddress()
         {
-            var addressLine = "1234 Five Street";
+            var addressLine1 = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
             var person = ContactableTestHelper.CreatePerson();
-            var address = Address.Create(addressLine, city, state, postalCode);
+            var address = Address.Create(addressLine1, city, state, postalCode);
 
             person.SetAddress(address.Value);
 
             using (new AssertionScope())
             {
-                person.Address.AddressLine.Should().Be(addressLine);
+                person.Address.AddressLine1.Should().Be(addressLine1);
                 person.Address.City.Should().Be(city);
                 person.Address.State.Should().Be(state);
                 person.Address.PostalCode.Should().Be(postalCode);

@@ -1,8 +1,6 @@
-﻿using Menominee.Shared.Models.Addresses;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Addresses;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
 
 namespace Menominee.Client.Components.Address
 {
@@ -41,20 +39,22 @@ namespace Menominee.Client.Components.Address
             {
                 addressOriginal = new AddressToWrite
                 {
-                    AddressLine = Address.AddressLine,
+                    AddressLine1 = Address.AddressLine1,
                     City = Address.City,
                     State = Address.State,
-                    PostalCode = Address.PostalCode
+                    PostalCode = Address.PostalCode,
+                    AddressLine2 = Address.AddressLine2,
                 };
             }
         }
 
         public void Reset()
         {
-            Address.AddressLine = addressOriginal.AddressLine;
+            Address.AddressLine1 = addressOriginal.AddressLine1;
             Address.City = addressOriginal.City;
             Address.State = addressOriginal.State;
             Address.PostalCode = addressOriginal.PostalCode;
+            Address.AddressLine2 = addressOriginal.AddressLine2;
         }
 
         List<StateEnumModel> StateEnumData { get; set; } = new List<StateEnumModel>();

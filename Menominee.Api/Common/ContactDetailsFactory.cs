@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using Menominee.Common.ValueObjects;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Entity = Menominee.Common.Entity;
 
 namespace Menominee.Api.Common
@@ -37,10 +37,11 @@ namespace Menominee.Api.Common
                 .ToArray();
 
             var address = Address.Create(
-                addressToWrite.AddressLine,
+                addressToWrite.AddressLine1,
                 addressToWrite.City,
                 addressToWrite.State,
-                addressToWrite.PostalCode).Value;
+                addressToWrite.PostalCode,
+                addressToWrite.AddressLine2).Value;
 
             return ContactDetails.Create(phones, emails, address);
         }

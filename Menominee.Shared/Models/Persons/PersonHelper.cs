@@ -1,9 +1,9 @@
-﻿using Menominee.Domain.Entities;
+﻿using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.DriversLicenses;
 using Menominee.Shared.Models.Persons.PersonNames;
-using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Persons
@@ -48,7 +48,7 @@ namespace Menominee.Shared.Models.Persons
             var personName = PersonName.Create(person.Name.LastName, person.Name.FirstName, person.Name.MiddleName).Value;
 
             if (person?.Address is not null)
-                address = Address.Create(person.Address.AddressLine, person.Address.City, person.Address.State, person.Address.PostalCode).Value;
+                address = Address.Create(person.Address.AddressLine1, person.Address.City, person.Address.State, person.Address.PostalCode, person.Address.AddressLine2).Value;
 
             if (person?.Phones.Count > 0)
                 foreach (var phone in person.Phones)
@@ -70,12 +70,12 @@ namespace Menominee.Shared.Models.Persons
             }
 
             return Person.Create(
-                personName, 
+                personName,
                 person.Gender,
                 person.Notes,
                 person.Birthday,
                 emails,
-                phones, 
+                phones,
                 address,
                 driversLicense)
                 .Value;
@@ -94,14 +94,14 @@ namespace Menominee.Shared.Models.Persons
                 Gender = person.Gender,
                 Birthday = person?.Birthday
             };
-
             if (person?.Address is not null)
                 Person.Address = new()
                 {
-                    AddressLine = person.Address.AddressLine,
+                    AddressLine1 = person.Address.AddressLine1,
                     City = person.Address.City,
                     State = person.Address.State,
-                    PostalCode = person.Address.PostalCode
+                    PostalCode = person.Address.PostalCode,
+                    AddressLine2 = person.Address.AddressLine2,
                 };
 
             if (person?.DriversLicense is not null)
@@ -147,7 +147,8 @@ namespace Menominee.Shared.Models.Persons
                 ? null
                 : new()
                 {
-                    AddressLine = person?.Address?.AddressLine,
+                    AddressLine1 = person?.Address?.AddressLine1,
+                    AddressLine2 = person?.Address?.AddressLine2,
                     Birthday = person?.Birthday,
                     City = person?.Address?.City,
                     Id = person.Id,

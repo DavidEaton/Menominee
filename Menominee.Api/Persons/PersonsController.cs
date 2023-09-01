@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Persons;
-using Menominee.Common.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Persons
 {
@@ -78,10 +78,11 @@ namespace Menominee.Api.Persons
 
             if (person?.Address is not null)
                 personFromRepository.SetAddress(Address.Create(
-                    person.Address.AddressLine,
+                    person.Address.AddressLine1,
                     person.Address.City,
                     person.Address.State,
-                    person.Address.PostalCode).Value);
+                    person.Address.PostalCode,
+                    person.Address.AddressLine2).Value);
 
             if (person?.Address is null)
                 personFromRepository.SetAddress(null);

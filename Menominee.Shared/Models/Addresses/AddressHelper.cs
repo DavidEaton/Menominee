@@ -9,7 +9,8 @@ namespace Menominee.Shared.Models.Addresses
             return (address is not null)
                 ? new AddressToRead
                 {
-                    AddressLine = address.AddressLine,
+                    AddressLine1 = address.AddressLine1,
+                    AddressLine2 = address.AddressLine2,
                     City = address.City,
                     State = address.State,
                 }
@@ -21,7 +22,8 @@ namespace Menominee.Shared.Models.Addresses
             return (address is not null)
                 ? new AddressToWrite()
                 {
-                    AddressLine = address.AddressLine,
+                    AddressLine1 = address.AddressLine1,
+                    AddressLine2 = address.AddressLine2,
                     City = address.City,
                     State = address.State,
                     PostalCode = address.PostalCode
@@ -34,7 +36,8 @@ namespace Menominee.Shared.Models.Addresses
             return (address is not null)
                 ? new AddressToWrite()
                 {
-                    AddressLine = address.AddressLine,
+                    AddressLine1 = address.AddressLine1,
+                    AddressLine2 = address.AddressLine2,
                     City = address.City,
                     State = address.State,
                     PostalCode = address.PostalCode

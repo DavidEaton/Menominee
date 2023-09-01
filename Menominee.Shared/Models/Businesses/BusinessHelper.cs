@@ -1,8 +1,8 @@
-﻿using Menominee.Domain.Entities;
+﻿using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
-using Menominee.Common.ValueObjects;
 using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Businesses
@@ -22,9 +22,10 @@ namespace Menominee.Shared.Models.Businesses
             businessName = BusinessName.Create(business.Name).Value;
             if (business?.Address is not null)
                 businessAddress = Address.Create(
-                    business.Address.AddressLine,
+                    business.Address.AddressLine1,
                     business.Address.City,
                     business.Address.State,
+                    business.Address.AddressLine2,
                     business.Address.PostalCode).Value;
 
             if (business?.Phones?.Count > 0)
@@ -84,7 +85,8 @@ namespace Menominee.Shared.Models.Businesses
                     ContactName = business?.Contact?.Name.LastFirstMiddle,
                     ContactPrimaryPhone = PhoneHelper.GetPrimaryPhone(business?.Contact),
 
-                    AddressLine = business?.Address?.AddressLine,
+                    AddressLine1 = business?.Address?.AddressLine1,
+                    AddressLine2 = business?.Address?.AddressLine2,
                     City = business?.Address?.City,
                     State = business?.Address?.State.ToString(),
                     PostalCode = business?.Address?.PostalCode,

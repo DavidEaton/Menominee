@@ -1,13 +1,13 @@
 ﻿using Bogus;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using Menominee.Api.Common;
+using Menominee.Common.Enums;
+using Menominee.Common.ValueObjects;
 using Menominee.Domain.BaseClasses;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
-using FluentAssertions;
-using FluentAssertions.Execution;
-using Menominee.Common.Enums;
-using Menominee.Common.ValueObjects;
 using System.Linq;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Fakers;
@@ -59,15 +59,15 @@ namespace Menominee.Tests.Entities
         public void Create_Business_With_Address()
         {
             var business = ContactableTestHelper.CreateBusiness();
-            var addressLine = "1234 Five Street";
+            var addressLine1 = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var address = Address.Create(addressLine, city, state, postalCode);
+            var address = Address.Create(addressLine1, city, state, postalCode);
 
             business.SetAddress(address.Value);
 
-            business.Address.AddressLine.Should().Be(addressLine);
+            business.Address.AddressLine1.Should().Be(addressLine1);
             business.Address.City.Should().Be(city);
             business.Address.State.Should().Be(state);
             business.Address.PostalCode.Should().Be(postalCode);
@@ -367,17 +367,17 @@ namespace Menominee.Tests.Entities
         public void SetAddress()
         {
             var business = ContactableTestHelper.CreateBusiness();
-            var addressLine = "1234 Five Street";
+            var addressLine1 = "1234 Five Street";
             var city = "Gaylord";
             var state = State.MI;
             var postalCode = "49735";
-            var address = Address.Create(addressLine, city, state, postalCode);
+            var address = Address.Create(addressLine1, city, state, postalCode);
 
             business.SetAddress(address.Value);
 
             using (new AssertionScope())
             {
-                business.Address.AddressLine.Should().Be(addressLine);
+                business.Address.AddressLine1.Should().Be(addressLine1);
                 business.Address.City.Should().Be(city);
                 business.Address.State.Should().Be(state);
                 business.Address.PostalCode.Should().Be(postalCode);
