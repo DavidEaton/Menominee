@@ -16,7 +16,7 @@ namespace TestingHelperLibrary.Fakers
 
             CustomInstantiator(faker =>
             {
-                var employee = Employee.Create(new PersonFaker(generateId).Generate(), new List<RoleAssignment>()).Value;
+                var employee = new EmployeeFaker().Generate();
                 var rate = (double)Math.Round(faker.Random.Decimal(1, 150), 2);
                 var amount = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
                 var result = RepairOrderServiceTax.Create(

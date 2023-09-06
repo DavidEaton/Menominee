@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Menominee.Domain.Enums
-{
-    public enum EmploymentRole
-    {
-        Sales = 0,
-        Technician = 1,
-        Inspector = 2,
-        Counter = 3,
+namespace Menominee.Domain.Enums;
 
-        [Display(Name = "Service Advisor")]
-        ServiceAdvisor = 4
-    }
+public enum EmploymentRole
+{
+    [Display(Name = "Service Advisor")]
+    ServiceAdvisor,
+
+    [Display(Name = "Technician")]
+    Technician,
+
+    [Display(Name = "Inspector")]
+    Inspector
 }

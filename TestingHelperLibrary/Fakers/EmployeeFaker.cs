@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 
 namespace TestingHelperLibrary.Fakers
@@ -14,11 +15,24 @@ namespace TestingHelperLibrary.Fakers
                 var person = new PersonFaker(generateId).Generate();
                 var hired = DateTime.Today;
                 var notes = faker.Random.String2(1, 500);
+                var ssn = faker.Random.String2(1, 12);
+                var certificationNumber = faker.Random.String2(1, 20);
+                var active = faker.Random.Bool();
+                var printedName = faker.Random.String2(1, 50);
+                var expenseCategory = faker.Random.Enum<EmployeeExpenseCategory>();
+                var benefitLoad = faker.Random.Double(0.0, 100.0);
+
                 var result = Employee.Create(
                     person,
                     new List<RoleAssignment>(),
                     hired,
-                    notes);
+                    notes,
+                    ssn,
+                    certificationNumber,
+                    active,
+                    printedName,
+                    expenseCategory,
+                    benefitLoad);
 
                 return result.IsSuccess ? result.Value : throw new InvalidOperationException(result.Error);
             });

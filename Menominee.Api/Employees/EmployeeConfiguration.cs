@@ -1,4 +1,5 @@
 ﻿using Menominee.Api.Configurations;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +19,26 @@ namespace Menominee.Api.Employees
             builder.Property(employee => employee.Notes)
                 .HasMaxLength(10_000);
 
+            builder.Property(employee => employee.SSN)
+                .HasMaxLength(Employee.MaximumSSNLength)
+                .IsRequired(false);
+
+            builder.Property(employee => employee.CertificationNumber)
+                .HasMaxLength(Employee.MaximumCertificationNumberLength)
+                .IsRequired(false);
+
+            builder.Property(employee => employee.Active)
+                .HasDefaultValue(true);
+
+            builder.Property(employee => employee.PrintedName)
+                .HasMaxLength(Employee.MaximumPrintedNameLength)
+                .IsRequired(false);
+
+            builder.Property(employee => employee.ExpenseCategory)
+                .HasDefaultValue(EmployeeExpenseCategory.CostOfDirectLabor);
+
+            builder.Property(employee => employee.BenefitLoad)
+                .HasDefaultValue(0.0);
         }
     }
 }

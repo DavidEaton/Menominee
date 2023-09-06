@@ -4,6 +4,7 @@ using Menominee.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Menominee.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906180336_AddNullableColumnsToEmployeeTable")]
+    partial class AddNullableColumnsToEmployeeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -577,24 +579,6 @@ namespace Menominee.Api.Migrations
                     b.ToTable("ProductCode", "dbo");
 
                     b.HasCheckConstraint("Check_ProductCode_Code_Length", "[Code] IS NULL OR (LEN([Code]) >= 1 AND LEN([Code]) <= 8)");
-                });
-
-            modelBuilder.Entity("Menominee.Domain.Entities.Inventory.SellingPriceName", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SellingPriceName", "dbo");
                 });
 
             modelBuilder.Entity("Menominee.Domain.Entities.Payables.Vendor", b =>

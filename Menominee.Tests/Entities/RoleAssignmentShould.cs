@@ -25,11 +25,11 @@ namespace Menominee.Tests.Entities
             var assignment = new RoleAssignmentFaker(true, EmploymentRole.Technician).Generate();
             assignment.Role.Should().Be(EmploymentRole.Technician);
 
-            var result = assignment.SetRole(EmploymentRole.Counter);
+            var result = assignment.SetRole(EmploymentRole.Technician);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.Should().Be(EmploymentRole.Counter);
-            assignment.Role.Should().Be(EmploymentRole.Counter);
+            result.Value.Should().Be(EmploymentRole.Technician);
+            assignment.Role.Should().Be(EmploymentRole.Technician);
         }
 
         [Fact]

@@ -21,7 +21,7 @@ namespace TestingHelperLibrary.Fakers
                 if (employees is not null && employees.Count > 0)
                     employee = faker.PickRandom(employees);
                 else
-                    employee = Employee.Create(new PersonFaker(generateId).Generate(), new List<RoleAssignment>()).Value;
+                    employee = new EmployeeFaker().Generate();
 
                 var result = RepairOrderServiceTechnician.Create(employee);
 
