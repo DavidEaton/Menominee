@@ -24,6 +24,7 @@ using Menominee.Client.Services.Settings;
 using Serilog;
 using Serilog.Events;
 using Serilog.Core;
+using Menominee.Client.Services.Vehicles;
 
 // Add your Syncfusion license key for Blazor platform with corresponding Syncfusion NuGet version referred in project. For more information about license key see https://help.syncfusion.com/common/essential-studio/licensing/license-key.
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTQ3MzAyQDMxMzkyZTMzMmUzMGF5MU1kSEI2RnZMQWMxR3dqSlM4T2MvVFBWTFdBbEhzckF2TVJwSVlJVTQ9");
@@ -192,6 +193,10 @@ builder.Services.AddHttpClient<ISalesTaxDataService, SalesTaxDataService>(
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<ISettingDataService, SettingDataService>(
+    client => client.BaseAddress = baseAddress)
+    .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
+
+builder.Services.AddHttpClient<IVehicleDataService, VehicleDataService>(
     client => client.BaseAddress = baseAddress)
     .AddHttpMessageHandler<MenonineeApiAuthorizationMessageHandler>();
 

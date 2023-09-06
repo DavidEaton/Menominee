@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.TestingHelperLibrary.Fakers;
 
 namespace TestingHelperLibrary.Fakers
 {
@@ -49,7 +50,7 @@ namespace TestingHelperLibrary.Fakers
 
                 var result = RepairOrder.Create(
                     new CustomerFaker().Generate(),
-                    new VehicleFaker().Generate(),
+                    new VehicleFaker(false).Generate(),
                     accountingDate,
                     repairOrderNumbers,
                     lastInvoiceNumber,

@@ -1,0 +1,106 @@
+﻿@using Blazored.FluentValidation
+@using Telerik.Blazor.Components
+
+<TelerikWindow Visible="true"
+               Modal="true"
+               Width="500px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        <TelerikForm EditContext="@EditContext" OnSubmit="@HandleSubmit" Columns="12" ColumnSpacing="24px">
+            <FormValidation>
+                <FluentValidationValidator Validator="@VehicleValidator"></FluentValidationValidator>
+            </FormValidation>
+
+            <FormItems>
+                <FormItem Field="@nameof(VehicleModel.Year)" ColSpan="4">
+                    <Template>
+                        <label for="year">Year</label>
+                            <TelerikDropDownList 
+                                @bind-Value="@VehicleModel.Year"
+                                Data="@Years"
+                                TextField="Year"
+                                ValueField="Year"
+                                DefaultText="-Select year-"
+                                Id="year" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.Make)"  ColSpan="8">
+                    <Template>
+                        <label for="make">Make</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.Make" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="make" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.Make)" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.Model)" ColSpan="12">
+                    <Template>
+                        <label for="model">Model</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.Model" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="model" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.Model)" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.VIN)" ColSpan="12">
+                    <Template>
+                        <label for="vin">VIN</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.VIN" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="vin" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.VIN)" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.Plate)" ColSpan="8">
+                    <Template>
+                        <label for="plate">Plate</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.Plate" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="plate" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.Plate)" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.PlateStateProvince)" ColSpan="4" LabelText="State/Province"></FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.Color)" ColSpan="4">
+                    <Template>
+                        <label for="color">Color</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.Color" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="color" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.Color)" />
+                    </Template>
+                </FormItem>
+
+                <FormItem Field="@nameof(VehicleModel.UnitNumber)" ColSpan="8">
+                    <Template>
+                        <label for="unitNumber">Unit Number</label>
+                        <TelerikTextBox 
+                            @bind-Value="@VehicleModel.UnitNumber" 
+                            ValidateOn="@ValidationEvent.Change"
+                            Id="unitNumber" />
+                        <TelerikValidationMessage For="@(() => VehicleModel.UnitNumber)" />
+                    </Template>
+                </FormItem>
+            </FormItems>
+
+            <FormButtons>
+                <TelerikButton ButtonType="ButtonType.Submit" ThemeColor="primary">Save</TelerikButton>
+                <TelerikButton ButtonType="ButtonType.Button" ThemeColor="secondary" OnClick="HandleDiscard">Discard</TelerikButton>
+            </FormButtons>
+        </TelerikForm>
+    </WindowContent>
+</TelerikWindow>

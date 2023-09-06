@@ -3,6 +3,7 @@ using Menominee.Common;
 using Menominee.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Menominee.Tests.Integration.Data
 {

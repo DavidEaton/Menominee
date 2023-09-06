@@ -69,59 +69,63 @@
         </TelerikButtonGroup>
     </div>
 
-    <CascadingValue Value="RepairOrderToEdit">
-        <div class="row m-no-row-margin">
-            <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
-                @if (CustomerSelected)
-                {
-                    <RepairOrderCustomerVehicleTab RepairOrder="RepairOrderToEdit" />
-                }
+    <div class="row m-no-row-margin">
+        <div class="col-12 col-md-9 col-lg-10 m-no-pad-left">
+            @if (CustomerSelected)
+            {
+                <RepairOrderCustomerVehicleTab @bind-RepairOrderToEdit="BoundRepairOrderToEdit" />
+            }
 
-                @if (FleetSelected)
-                {
-                }
+            @if (FleetSelected)
+            {
+            }
 
-                @if (ServicesSelected)
-                {
-                    <RepairOrderServicesTab Services="RepairOrderToEdit.Services" />
-                }
+            @if (ServicesSelected)
+            {
+                <RepairOrderServicesTab Services="RepairOrderToEdit.Services" />
+            }
 
-                @if (InspectionsSelected)
-                {
-                    <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
-                                              PreviousInspections="PreviousInspections" />
-                }
+            @if (InspectionsSelected)
+            {
+                <RepairOrderInspectionTab CurrentInspections="CurrentInspections"
+                                            PreviousInspections="PreviousInspections" />
+            }
 
-                @if (PurchasesSelected)
-                {
-                    <RepairOrderPurchasesTab RepairOrder="RepairOrderToEdit"
-                                             Updated="UpdatePurchasesMissingCount"/>
-                }
+            @if (PurchasesSelected)
+            {
+                <RepairOrderPurchasesTab 
+                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                    Updated="UpdatePurchasesMissingCount"/>
+            }
 
-                @if (WarrantiesSelected)
-                {
-                    <RepairOrderWarrantiesTab RepairOrder="RepairOrderToEdit"
-                                              Updated="UpdateWarrantiesMissingCount"/>
-                }
+            @if (WarrantiesSelected)
+            {
+                <RepairOrderWarrantiesTab 
+                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                    Updated="UpdateWarrantiesMissingCount"/>
+            }
 
-                @if (SerialNumbersSelected)
-                {
-                    <RepairOrderSerialNumbersTab RepairOrder="RepairOrderToEdit"
-                                                 Updated="UpdateSerialNumbersMissingCount" />
-                }
-                @if (PaymentSelected)
-                {
-                    <RepairOrderPaymentsTab Payments="RepairOrderToEdit.Payments" />
-                }
+            @if (SerialNumbersSelected)
+            {
+                <RepairOrderSerialNumbersTab 
+                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                    Updated="UpdateSerialNumbersMissingCount" />
+            }
 
-            </div>
-            <div class="col-12 col-md-3 col-lg-2"
-                 id="totalsCol">
-                <RepairOrderTotals OnDiscard="OnDiscard"
-                                   OnSave="Save" />
-            </div>
+            @if (PaymentSelected)
+            {
+                <RepairOrderPaymentsTab Payments="RepairOrderToEdit.Payments" />
+            }
+
         </div>
-    </CascadingValue>
+        <div class="col-12 col-md-3 col-lg-2"
+                id="totalsCol">
+            <RepairOrderTotals
+                RepairOrder="@RepairOrderToEdit"
+                OnDiscard="OnDiscard"
+                OnSave="Save" />
+        </div>
+    </div>
 </div>
 
 <style>

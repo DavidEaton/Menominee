@@ -4,6 +4,7 @@ namespace Menominee.Shared.Models.Vehicles
 {
     public class VehicleToWrite
     {
+        public long Id { get; set; }
         public string VIN { get; set; }
         public int? Year { get; set; }
         public string Make { get; set; }
@@ -13,5 +14,11 @@ namespace Menominee.Shared.Models.Vehicles
         public string UnitNumber { get; set; }
         public string Color { get; set; }
         public bool Active { get; set; } = true;
+        public bool NonTraditionalVehicle { get; set; } = false;
+
+        public override string ToString()
+        {
+            return $"{Year} {Make} {Model}";
+        }
     }
 }

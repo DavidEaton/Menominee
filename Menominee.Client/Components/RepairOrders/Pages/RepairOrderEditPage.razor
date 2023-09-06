@@ -1,12 +1,12 @@
 ﻿@page "/repairorders/ro/{id:long}"
 
 @*<RepairOrderEditMenu />*@
-@if (RepairOrder != null)
+@if (repairOrderToEdit != null)
 {
     <div class="m-main-content">
-        <RepairOrderForm RepairOrder="RepairOrder"
-                         OnSave="Save"
-                         OnDiscard="Discard"
-                         Id="Id"/>
+        <RepairOrderForm
+            @bind-RepairOrderToEdit="repairOrderToEdit"
+            OnSave="Save"
+            OnDiscard="Discard" />
     </div>
 }

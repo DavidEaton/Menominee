@@ -12,7 +12,10 @@ namespace Menominee.Client.Components.RepairOrders
         //public Customer Customer { get; set; }      // customer record as it exists now
 
         [Parameter]
-        public RepairOrderToWrite RepairOrder { get; set; }
+        public RepairOrderToWrite RepairOrderToEdit { get; set; }
+
+        [Parameter]
+        public EventCallback<RepairOrderToWrite> RepairOrderToEditChanged { get; set; }
 
         //private string CustName { get; set; }
 

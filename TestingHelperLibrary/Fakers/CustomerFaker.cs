@@ -2,6 +2,7 @@
 using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.TestingHelperLibrary.Fakers;
 using Entity = Menominee.Common.Entity;
 using Person = Menominee.Domain.Entities.Person;
 

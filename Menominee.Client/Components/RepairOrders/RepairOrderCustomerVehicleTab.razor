@@ -1,23 +1,33 @@
-﻿@using Menominee.Shared.Models.RepairOrders
-
-<div class="cust-veh-cards">
+﻿<div class="cust-veh-cards">
     <div>
         <Card Title="Customer">
             <Content>
                 @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" Customer="@RepairOrder.Customer" />*@
                 @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" />*@
-                <RepairOrderCustomer RepairOrder="@RepairOrder" />
+                <RepairOrderCustomer @bind-RepairOrderToEdit="BoundRepairOrderToEdit" />
             </Content>
         </Card>
     </div>
     <div>
         <Card Title="Vehicle">
             <Content>
-                <RepairOrderVehicle RepairOrder="@RepairOrder"/>
+                <RepairOrderVehicle 
+                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                    OnAdd="AddVehicle"
+                    OnEdit="EditVehicle" />
             </Content>
         </Card>
     </div>
 </div>
+
+@if((EditVehicleFormMode.Equals(FormMode.Add) || EditVehicleFormMode.Equals(FormMode.Edit)) && RepairOrderToEdit is not null)
+{
+    <VehicleEditor 
+        Vehicle="RepairOrderToEdit.Vehicle"
+        FormMode="EditVehicleFormMode" 
+        OnSave="SaveVehicle"
+        OnDiscard="DiscardVehicle" />
+}
 
 <style>
     .cust-veh-cards {

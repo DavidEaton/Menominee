@@ -103,9 +103,11 @@ namespace Menominee.Api.RepairOrders
             if (customer is null)
                 return NotFound($"Could not find Customer #{repairOrderFromCaller.Customer.Id} to update.");
 
-            var vehicle = await vehicleRepository.GetEntity(repairOrderFromCaller.Vehicle.Id);
+            var vehicle = await vehicleRepository.GetEntityAsync(repairOrderFromCaller.Vehicle.Id);
             if (vehicle is null)
                 return NotFound($"Could not find Vehicle #{repairOrderFromCaller.Vehicle.Id} to update.");
+
+            var repairOrderNumbers = new List<long>();
 
             var result = UpdateRepairOrder(repairOrderFromCaller, repairOrderFromRepository, customer, vehicle);
 
@@ -314,7 +316,7 @@ namespace Menominee.Api.RepairOrders
         public async Task<IActionResult> Add(RepairOrderToWrite repairOrderToAdd)
         {
             var customer = await customerRepository.GetCustomerEntityAsync(repairOrderToAdd.Customer.Id);
-            var vehicle = await vehicleRepository.GetEntity(repairOrderToAdd.Vehicle.Id);
+            var vehicle = await vehicleRepository.GetEntityAsync(repairOrderToAdd.Vehicle.Id);
             var repairOrderNumbers = await repository.GetTodaysRepairOrderNumbers();
             var saleCodeIds = repairOrderToAdd.Services.Select(service => service.SaleCode.Id).ToList();
             //var saleCodeIds = repairOrderToAdd.Services

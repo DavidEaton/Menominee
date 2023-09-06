@@ -1,29 +1,35 @@
 ﻿using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 
-namespace Menominee.Client.Components.RepairOrders
+namespace Menominee.Client.Components.RepairOrders;
+
+public partial class RepairOrderVehicle
 {
-    public partial class RepairOrderVehicle
+    [Parameter]
+    public RepairOrderToWrite RepairOrderToEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<RepairOrderToWrite> RepairOrderToEditChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnAdd { get; set; }
+
+    [Parameter]
+    public EventCallback OnEdit { get; set; }
+
+    private bool CanEdit => RepairOrderToEdit.Vehicle is not null && RepairOrderToEdit.Vehicle.Id > 0;
+
+    private async Task AddVehicle()
     {
-        //[Parameter]
-        //public string YearMakeModel { get; set; }    // vehicle when repair order was saved
+        await OnAdd.InvokeAsync();
+    }
 
-        //[Parameter]
-        //public Vehicle Vehicle { get; set; }      // vehicle record as it exists now
+    private async Task EditVehicle()
+    {
+        await OnEdit.InvokeAsync();
+    }
 
-        [Parameter]
-        public RepairOrderToWrite RepairOrder { get; set; }
-
-        private void EditVehicle()
-        {
-        }
-
-        private void AddVehicle()
-        {
-        }
-
-        private void ViewNotes()
-        {
-        }
+    private void ViewNotes()
+    {
     }
 }

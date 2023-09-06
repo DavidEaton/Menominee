@@ -13,6 +13,7 @@ using System.Linq;
 using TestingHelperLibrary.Fakers;
 using TestingHelperLibrary.RepairOrders;
 using Xunit;
+using Menominee.TestingHelperLibrary.Fakers;
 
 namespace Menominee.Tests.Entities
 {

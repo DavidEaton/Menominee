@@ -8,7 +8,10 @@ namespace Menominee.Client.Components.RepairOrders
     public partial class RepairOrderPurchasesTab : ComponentBase
     {
         [Parameter]
-        public RepairOrderToWrite RepairOrder { get; set; }
+        public RepairOrderToWrite RepairOrderToEdit { get; set; }
+
+        [Parameter]
+        public EventCallback<RepairOrderToWrite> RepairOrderToEditChanged { get; set; }
 
         [Parameter]
         public EventCallback<int> Updated { get; set; }
@@ -37,12 +40,12 @@ namespace Menominee.Client.Components.RepairOrders
 
         protected override void OnParametersSet()
         {
-            Purchases = RepairOrderHelper.BuildPurchaseList(RepairOrder.Services);
+            Purchases = RepairOrderHelper.BuildPurchaseList(RepairOrderToEdit.Services);
         }
 
         private void UpdateMissingSerialNumberCount()
         {
-            PurchasesMissingCount = RepairOrderHelper.PurchaseRequiredMissingCount(RepairOrder.Services);
+            PurchasesMissingCount = RepairOrderHelper.PurchaseRequiredMissingCount(RepairOrderToEdit.Services);
         }
     }
 }

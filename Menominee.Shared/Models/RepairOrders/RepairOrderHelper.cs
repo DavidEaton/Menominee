@@ -196,10 +196,11 @@ namespace Menominee.Shared.Models.RepairOrders
             return !(quantitySold % 1 == 0);
         }
 
-        public static RepairOrderToWrite CovertReadToWriteDto(RepairOrderToRead repairOrder)
+        public static RepairOrderToWrite ConvertReadToWriteDto(RepairOrderToRead repairOrder)
         {
             return new RepairOrderToWrite()
             {
+                Id = repairOrder.Id,
                 RepairOrderNumber = repairOrder.RepairOrderNumber,
                 InvoiceNumber = repairOrder.InvoiceNumber,
                 Customer = repairOrder.Customer,
