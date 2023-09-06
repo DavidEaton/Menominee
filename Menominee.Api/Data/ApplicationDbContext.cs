@@ -25,6 +25,7 @@ using Entities = Menominee.Domain.Entities;
 using Menominee.Api.Configurations.Settings;
 using Menominee.Domain.Entities.Settings;
 using Menominee.Api.Businesses;
+using Menominee.Api.SellingPriceNames;
 
 namespace Menominee.Api.Data
 {
@@ -147,6 +148,9 @@ namespace Menominee.Api.Data
 
             // Settings
             modelBuilder.ApplyConfiguration(new SettingConfiguration());
+
+            // Selling Price Names
+            modelBuilder.ApplyConfiguration(new SellingPriceNameConfiguration());
         }
 
         private string GetTenantConnection()
@@ -273,6 +277,9 @@ namespace Menominee.Api.Data
 
         // Settings
         public DbSet<ConfigurationSetting> Settings { get; set; }
+
+        // Selling Price Names
+        public DbSet<SellingPriceName> SellingPriceNames { get; set; }
         #endregion
     }
 

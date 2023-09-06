@@ -15,6 +15,7 @@ using Menominee.Api.Persons;
 using Menominee.Api.ProductCodes;
 using Menominee.Api.RepairOrders;
 using Menominee.Api.SaleCodes;
+using Menominee.Api.SellingPriceNames;
 using Menominee.Api.Settings;
 using Menominee.Api.Taxes;
 using Menominee.Api.Users;
@@ -142,6 +143,7 @@ try
     services.TryAddScoped<IVehicleRepository, VehicleRepository>();
     services.TryAddScoped<ISettingsRepository, SettingsRepository>();
     services.TryAddScoped<IEmployeeRepository, EmployeeRepository>();
+    services.TryAddScoped<ISellingPriceNameRepository, SellingPriceNameRepository>();
 
     services.AddHealthChecks();
     services.AddCors(o => o.AddPolicy("AllowAll", policyBuilder =>
