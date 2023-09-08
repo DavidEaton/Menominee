@@ -1,8 +1,8 @@
-﻿using Menominee.Shared.Models.Addresses;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.DriversLicenses;
 using Menominee.Shared.Models.Persons.PersonNames;
-using Menominee.Common.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -16,8 +16,8 @@ namespace Menominee.Shared.Models.Persons
         public DateTime? Birthday { get; set; }
         public DriversLicenseToRead DriversLicense { get; set; }
         public AddressToRead Address { get; set; }
-        public IList<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
-        public IList<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
+        public List<PhoneToRead> Phones { get; set; } = new List<PhoneToRead>();
+        public List<EmailToRead> Emails { get; set; } = new List<EmailToRead>();
         public string LastFirstMiddle
         {
             get => string.IsNullOrWhiteSpace(Name.MiddleName) ? $"{Name.LastName}, {Name.FirstName}" : $"{Name.LastName}, {Name.FirstName} {Name.MiddleName}";

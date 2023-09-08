@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telerik.DataSource.Extensions;
 
 namespace Menominee.Api.RepairOrders
 {
@@ -68,8 +67,7 @@ namespace Menominee.Api.RepairOrders
                 throw new ArgumentNullException(nameof(employeeRepository));
         }
 
-        [Route("listing")]
-        [HttpGet]
+        [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<RepairOrderToReadInList>>> GetRepairOrderListAsync()
         {
             var results = await repository.Get();

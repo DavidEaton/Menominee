@@ -1,11 +1,11 @@
 ﻿using Bogus;
-using Menominee.Domain.Entities;
 using FluentAssertions;
+using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
+using Menominee.Domain.Entities;
 using System;
 using TestingHelperLibrary.Fakers;
 using Xunit;
-using Menominee.Common.Enums;
 
 namespace Menominee.Tests.Entities
 {
@@ -227,7 +227,7 @@ namespace Menominee.Tests.Entities
         public void SetNotes()
         {
             var employee = new EmployeeFaker(true).Generate();
-        
+
             var notes = faker.Random.String2(1, Employee.MaximumNoteLength); // Valid notes length
 
             var result = employee.SetNotes(notes);

@@ -1,4 +1,5 @@
-﻿using Menominee.Api.Common;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Common;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.Persons;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Api.Persons
@@ -27,10 +29,9 @@ namespace Menominee.Api.Persons
         {
             var persons = await repository.GetPersonsListAsync();
 
-            if (persons == null)
-                return NotFound();
-
-            return Ok(persons);
+            return persons is not null
+                ? Ok(persons)
+                : NotFound();
         }
 
         [HttpGet]
@@ -38,10 +39,9 @@ namespace Menominee.Api.Persons
         {
             var persons = await repository.GetPersonsAsync();
 
-            if (persons == null)
-                return NotFound();
-
-            return Ok(persons);
+            return persons is not null
+                ? Ok(persons)
+                : NotFound();
         }
 
         [HttpGet("{id:long}", Name = "GetPersonAsync")]
@@ -49,62 +49,60 @@ namespace Menominee.Api.Persons
         {
             var person = await repository.GetPersonAsync(id);
 
-            if (person == null)
-                return NotFound();
-
-            return Ok(person);
+            return person is not null
+                ? Ok(person)
+                : NotFound();
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite person)
+        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite personDto)
         {
-            var notFoundMessage = $"Could not find {person.Name.FirstName} {person.Name.LastName} to update";
-
-            if (!await repository.PersonExistsAsync(id))
-                return NotFound(notFoundMessage);
+            var notFoundMessage = $"Could not find {personDto.Name.FirstName} {personDto.Name.LastName} to update";
 
             var personFromRepository = await repository.GetPersonEntityAsync(id);
-
             if (personFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            var personNameOrError = PersonName.Create(
-                person.Name.LastName,
-                person.Name.FirstName,
-                person.Name.MiddleName);
-
-            if (personNameOrError.IsSuccess)
-                personFromRepository.SetName(personNameOrError.Value);
-
-            if (person?.Address is not null)
-                personFromRepository.SetAddress(Address.Create(
-                    person.Address.AddressLine1,
-                    person.Address.City,
-                    person.Address.State,
-                    person.Address.PostalCode,
-                    person.Address.AddressLine2).Value);
-
-            if (person?.Address is null)
-                personFromRepository.SetAddress(null);
-
-            personFromRepository.SetGender(person.Gender);
-            personFromRepository.SetBirthday(person.Birthday);
-
-            if (person?.Phones.Count > 0)
-                foreach (var phone in person?.Phones)
-                    personFromRepository.AddPhone(Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value);
-
-            if (person?.Emails.Count > 0)
-                foreach (var email in person.Emails)
-                    personFromRepository.AddEmail(Email.Create(email.Address, email.IsPrimary).Value);
-
-            if (person?.DriversLicense is not null)
+            if (NamesAreNotEqual(personFromRepository.Name, personDto.Name))
             {
-                personFromRepository.SetDriversLicense(DriversLicense.Create(person.DriversLicense.Number,
-                    person.DriversLicense.State,
+                var result = UpdateName(personDto, personFromRepository);
+                if (result.IsFailure)
+                    return NotFound(result.Error);
+            }
+
+            var contactDetails = ContactDetailsFactory
+                .Create(personDto.Phones.ToList(), personDto.Emails.ToList(), personDto.Address).Value;
+
+            var phonesToDelete = personFromRepository.Phones
+                .Where(phone => !contactDetails.Phones.Any(phoneToKeep => phoneToKeep.Id == phone.Id))
+                .ToList();
+
+            if (phonesToDelete.Any())
+            {
+                phonesToDelete.ForEach(phone => repository.DeletePhone(phone));
+            }
+
+            var emailsToDelete = personFromRepository.Emails
+                .Where(email => !contactDetails.Emails.Any(emailToKeep => emailToKeep.Id == email.Id))
+                .ToList();
+
+            if (emailsToDelete.Any())
+            {
+                emailsToDelete.ForEach(email => repository.DeleteEmail(email));
+            }
+
+            personFromRepository.UpdateContactDetails(contactDetails);
+
+            personFromRepository.SetGender(personDto.Gender);
+            personFromRepository.SetBirthday(personDto.Birthday);
+
+            if (personDto?.DriversLicense is not null)
+            {
+                personFromRepository.SetDriversLicense(DriversLicense.Create(personDto.DriversLicense.Number,
+                    personDto.DriversLicense.State,
                     DateTimeRange.Create(
-                    person.DriversLicense.Issued,
-                    person.DriversLicense.Expiry).Value).Value);
+                    personDto.DriversLicense.Issued,
+                    personDto.DriversLicense.Expiry).Value).Value);
             }
 
             await repository.SaveChangesAsync();
@@ -112,10 +110,35 @@ namespace Menominee.Api.Persons
             return NoContent();
         }
 
+        private Result<PersonName> UpdateName(PersonToWrite personDto, Person personFromRepository)
+        {
+            Result<PersonName> result;
+
+            if (personDto?.Name == null)
+            {
+                result = Result.Failure<PersonName>("Name information is missing.");
+            }
+            else
+            {
+                var lastName = personDto.Name.LastName ?? string.Empty;
+                var firstName = personDto.Name.FirstName ?? string.Empty;
+                var middleName = personDto.Name.MiddleName ?? string.Empty;
+
+                result = PersonName.Create(lastName, firstName, middleName);
+            }
+
+            return personFromRepository.SetName(result.Value);
+        }
+
+        private static bool NamesAreNotEqual(PersonName name, PersonNameToWrite nameDto) =>
+            !string.Equals(name.FirstName, nameDto?.FirstName) ||
+            !string.Equals(name.MiddleName, nameDto?.MiddleName) ||
+            !string.Equals(name.LastName, nameDto?.LastName);
+
         [HttpPost]
         public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
         {
-            Person person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
+            var person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
 
             await repository.AddPersonAsync(person);
             await repository.SaveChangesAsync();
@@ -131,7 +154,9 @@ namespace Menominee.Api.Persons
             var personFromRepository = await repository.GetPersonEntityAsync(id);
 
             if (personFromRepository == null)
+            {
                 return NotFound($"Could not find Person in the database to delete with Id: {id}.");
+            }
 
             repository.DeletePerson(personFromRepository);
             await repository.SaveChangesAsync();

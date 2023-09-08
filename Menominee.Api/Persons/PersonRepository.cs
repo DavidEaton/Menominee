@@ -96,5 +96,15 @@ namespace Menominee.Api.Persons
             return await context.Persons
                 .AnyAsync(person => person.Id == id);
         }
+
+        public void DeletePhone(Phone phone)
+        {
+            context.Entry(phone).State = EntityState.Deleted;
+        }
+
+        public void DeleteEmail(Email email)
+        {
+            context.Entry(email).State = EntityState.Deleted;
+        }
     }
 }

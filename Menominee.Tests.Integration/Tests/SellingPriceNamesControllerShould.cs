@@ -1,43 +1,20 @@
 ﻿using FluentAssertions;
-using Menominee.Api.Data;
 using Menominee.Shared.Models.SellingPriceNames;
 using Menominee.TestingHelperLibrary.Fakers;
 using Menominee.Tests.Helpers;
-using Menominee.Tests.Integration.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Menominee.Tests.Integration.Tests;
 
-public class SellingPriceNamesControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+public class SellingPriceNamesControllerShould : IntegrationTestBase
 {
-    private readonly HttpClient httpClient;
-    private readonly IDataSeeder dataSeeder;
-    private readonly ApplicationDbContext dbContext;
     private const string route = "sellingpricenames";
-
-    public SellingPriceNamesControllerShould(IntegrationTestWebApplicationFactory factory)
+    public SellingPriceNamesControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
     {
-        httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("https://localhost/api/")
-        });
-
-        dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-        dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
-
-        SeedData();
     }
 
     [Fact]
@@ -109,7 +86,7 @@ public class SellingPriceNamesControllerShould : IClassFixture<IntegrationTestWe
         sellingPriceNameFromEndpoint.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    private void SeedData()
+    public override void SeedData()
     {
         var count = 2;
         var sellingPriceNames = new SellingPriceNameFaker(false).Generate(count);
@@ -117,7 +94,7 @@ public class SellingPriceNamesControllerShould : IClassFixture<IntegrationTestWe
         dataSeeder.Save(sellingPriceNames);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         dbContext.RemoveRange(dbContext.SellingPriceNames.ToList());
         DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);

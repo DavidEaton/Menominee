@@ -2,7 +2,6 @@
 using Menominee.Api.Persons;
 using Menominee.Common.ValueObjects;
 using Menominee.Domain.Entities;
-using Menominee.Shared.Models;
 using Menominee.Shared.Models.Businesses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -34,8 +33,7 @@ namespace Menominee.Api.Businesses
         }
 
         // api/businesses/list
-        [Route("list")]
-        [HttpGet]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<BusinessToReadInList>>> GetBusinessesListAsync()
         {
             var businesses = await repository.GetBusinessesListAsync();
@@ -80,10 +78,6 @@ namespace Menominee.Api.Businesses
                 3) Save changes
                 4) return NoContent()
             */
-            // VK: here, the logic should be:
-            // 1. Get the Business entity (not DTO) from the DB
-            // 3. Update the corresponding fields in the Business
-            // 4. Save back to the DB
 
             var notFoundMessage = $"Could not find Business to update: {businessFromCaller.Name}";
 
@@ -91,34 +85,44 @@ namespace Menominee.Api.Businesses
                 return NotFound(notFoundMessage);
 
             //1) Get domain entity from repository
-            Business businessFromRepository = await repository.GetBusinessEntityAsync(id);
+            var businessFromRepository = await repository.GetBusinessEntityAsync(id);
 
             if (businessFromRepository is null)
                 return NotFound(notFoundMessage);
 
             // 2) Update domain entity with data in data transfer object(DTO)
-            var businessNameOrError = BusinessName.Create(businessFromCaller.Name);
+            if (businessFromRepository.Name.Name != businessFromCaller.Name)
+            {
+                var businessNameResult = businessFromRepository.Name.NewBusinessName(businessFromCaller.Name);
 
-            if (businessNameOrError.IsSuccess)
-                businessFromRepository.SetName(businessNameOrError.Value);
+                if (businessNameResult.IsFailure)
+                    return BadRequest(businessNameResult.Error);
 
-            if (businessFromCaller?.Address != null)
-                businessFromRepository.SetAddress(
-                    Address.Create(
+                businessFromRepository.SetName(businessNameResult.Value);
+            }
+
+            if (businessFromCaller?.Address is not null)
+            {
+                var addressResult = Address.Create(
                         businessFromCaller.Address.AddressLine1,
                         businessFromCaller.Address.City,
                         businessFromCaller.Address.State,
                         businessFromCaller.Address.PostalCode,
-                        businessFromCaller.Address.AddressLine2).Value);
+                        businessFromCaller.Address.AddressLine2);
+
+                if (addressResult.IsFailure)
+                    return BadRequest(addressResult.Error);
+
+                businessFromRepository.SetAddress(addressResult.Value);
+            }
 
             // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
             if (businessFromCaller?.Address is null)
-                businessFromRepository.SetAddress(null);
+                businessFromRepository.ClearAddress();
 
             businessFromRepository.SetNotes(businessFromCaller.Notes);
 
-            // Client may send an empty or null phones collection of ENTITIES, signifying
-            // NO CHANGE TO COLLECTION
+            // Client may send an empty or null phones collection of ENTITIES, signifying REMOVAL
             foreach (var phone in businessFromCaller?.Phones)
             {
                 if (phone.Id == 0)
@@ -139,8 +143,7 @@ namespace Menominee.Api.Businesses
                             contextPhone.Id == phone.Id));
             }
 
-            // Client may send an empty or null emails collection, signifying
-            // NO CHANGE TO COLLECTION
+            // Client may send an empty or null emails collection, signifying REMOVAL
             List<Email> emails = new();
             if (businessFromCaller?.Emails.Count > 0)
             {
@@ -150,8 +153,15 @@ namespace Menominee.Api.Businesses
                                          email.IsPrimary).Value));
             }
 
+            var contactDetails = ContactDetailsFactory.Create(
+                businessFromCaller.Phones, businessFromCaller.Emails, businessFromCaller.Address).Value;
+
+            businessFromRepository.UpdateContactDetails(contactDetails);
+
+            businessFromRepository.SetNotes(businessFromCaller.Notes);
+
             // Contact
-            if (businessFromCaller?.Contact != null)
+            if (businessFromCaller?.Contact is not null && businessFromCaller.Contact.IsNotEmpty)
             {
                 var result = await personsController.UpdatePersonAsync(
                                     businessFromRepository.Contact.Id,
@@ -164,7 +174,7 @@ namespace Menominee.Api.Businesses
             }
 
             /* Returning the updated resource is acceptible, for example:
-                 return Ok(personFromRepository);
+                 return Ok(businessFromRepository);
                even preferred over returning NoContent if updated resource
                contains properties that are mutated by the data store
                (which they are not in this case).
@@ -183,6 +193,22 @@ namespace Menominee.Api.Businesses
             await repository.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private static void UpdateAddress(BusinessToWrite businessFromCaller, Business businessFromRepository)
+        {
+            if (businessFromCaller?.Address != null)
+                businessFromRepository.SetAddress(
+                    Address.Create(
+                        businessFromCaller.Address.AddressLine1,
+                        businessFromCaller.Address.City,
+                        businessFromCaller.Address.State,
+                        businessFromCaller.Address.PostalCode,
+                        businessFromCaller.Address.AddressLine2).Value);
+
+            // Client may send an empty or null Address VALUE OBJECT, signifying REMOVAL
+            if (businessFromCaller?.Address is null)
+                businessFromRepository.SetAddress(null);
         }
 
         [HttpPost]

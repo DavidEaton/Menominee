@@ -49,8 +49,8 @@ namespace TestingHelperLibrary.Fakers
                         : new RepairOrderTaxFaker(generateId: false).Generate(taxesCount);
 
                 var result = RepairOrder.Create(
-                    new CustomerFaker().Generate(),
-                    new VehicleFaker(false).Generate(),
+                    new CustomerFaker(generateId).Generate(),
+                    new VehicleFaker(generateId).Generate(),
                     accountingDate,
                     repairOrderNumbers,
                     lastInvoiceNumber,

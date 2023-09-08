@@ -7,6 +7,13 @@ namespace Menominee.Shared.Models.Contactable
 {
     public class EmailHelper
     {
+        public static Email ConvertWriteDtoToEntity(EmailToWrite email)
+        {
+            return email is not null
+                ? Email.Create(email.Address, email.IsPrimary).Value
+                : null;
+        }
+
         public static string GetPrimaryEmail(Base.Contactable entity)
         {
             if (entity == null)
@@ -43,7 +50,7 @@ namespace Menominee.Shared.Models.Contactable
             return null;
         }
 
-        public static List<EmailToWrite> ConvertReadToWriteDto(IReadOnlyList<EmailToRead> emails)
+        public static List<EmailToWrite> ConvertReadToWriteDtos(IReadOnlyList<EmailToRead> emails)
         {
             return emails
                 .Select(email =>
@@ -51,7 +58,7 @@ namespace Menominee.Shared.Models.Contactable
                 .ToList();
         }
 
-        private static EmailToWrite ConvertReadToWriteDto(EmailToRead email)
+        public static EmailToWrite ConvertReadToWriteDto(EmailToRead email)
         {
             if (email is not null)
             {
@@ -74,7 +81,7 @@ namespace Menominee.Shared.Models.Contactable
                 .ToList();
         }
 
-        public static IReadOnlyList<EmailToWrite> ConvertToWriteDtos(IReadOnlyList<Email> emails)
+        public static List<EmailToWrite> ConvertToWriteDtos(IReadOnlyList<Email> emails)
         {
             return emails
                 .Select(email =>

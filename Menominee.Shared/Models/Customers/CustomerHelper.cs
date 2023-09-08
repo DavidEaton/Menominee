@@ -41,15 +41,72 @@ public class CustomerHelper
                 EntityType = customer.EntityType,
                 Business = BusinessHelper.ConvertToReadDto(customer.Business),
                 Person = PersonHelper.ConvertToReadDto(customer.Person),
-                Contact = customer.Contact is not null
-                    ? PersonHelper.ConvertToReadDto(customer.Contact)
-                    : null,
-                Code = customer.Code,
                 Vehicles = VehicleHelper.ConvertToReadDtos(customer.Vehicles),
-                Address = AddressHelper.ConvertToReadDto(customer.Address),
-                Notes = customer.Notes,
-                Phones = PhoneHelper.ConvertToReadDtos(customer.Phones),
-                Emails = EmailHelper.ConvertToReadDtos(customer.Emails),
+                Contact = PersonHelper.ConvertToReadDto(customer?.Contact),
+                Address = AddressHelper.ConvertToReadDto(customer?.Address),
+                Notes = customer?.Notes,
+                Phones = PhoneHelper.ConvertToReadDtos(customer?.Phones),
+                Emails = EmailHelper.ConvertToReadDtos(customer?.Emails)
             };
+    }
+
+    public static CustomerToWrite ConvertToWriteDto(Customer customer)
+    {
+        if (customer is null)
+        {
+            return null;
+        }
+        else
+        {
+            var convertedCustomer = new CustomerToWrite
+            {
+                Id = customer.Id,
+                CustomerType = customer.CustomerType,
+                EntityType = customer.EntityType
+            };
+
+            if (customer.Person is not null)
+                convertedCustomer.Person = PersonHelper.ConvertToWriteDto(customer.Person);
+
+            if (customer.Business is not null)
+                convertedCustomer.Business = BusinessHelper.CovertToWriteDto(customer.Business);
+
+            if (customer.Vehicles.Count > 0)
+                foreach (var vehicle in customer.Vehicles)
+                    convertedCustomer.Vehicles.Add(VehicleHelper.ConvertToWriteDto(vehicle));
+
+            return convertedCustomer;
+        }
+    }
+
+    public static CustomerToWrite ConvertToWriteDto(CustomerToRead customer)
+    {
+        if (customer is null)
+        {
+            return new();
+        }
+        else
+        {
+            var convertedCustomer = new CustomerToWrite
+            {
+                Id = customer.Id,
+                CustomerType = customer.CustomerType,
+                EntityType = customer.EntityType,
+                Code = customer.Code
+            };
+
+            if (customer.Person is not null)
+                convertedCustomer.Person = PersonHelper.ConvertToWriteDto(customer.Person);
+
+            if (customer.Business is not null)
+                convertedCustomer.Business = BusinessHelper.CovertReadToWriteDto(customer.Business);
+
+            if (customer.Vehicles.Count > 0)
+                foreach (var vehicle in customer.Vehicles)
+                    convertedCustomer.Vehicles.Add(VehicleHelper.ConvertReadToWriteDto(vehicle));
+
+            return convertedCustomer;
+
+        }
     }
 }

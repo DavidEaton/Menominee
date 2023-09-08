@@ -22,7 +22,7 @@ namespace Menominee.Tests.Entities
             var result = RepairOrderStatus.Create(status, description);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value.Type.Should().Be(status);
+            result.Value.Status.Should().Be(status);
             result.Value.Description.Should().Be(description);
         }
 

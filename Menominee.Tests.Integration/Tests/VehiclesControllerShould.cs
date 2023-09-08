@@ -1,47 +1,34 @@
-﻿using Azure;
-using FluentAssertions;
-using Menominee.Api.Data;
-using Menominee.Shared.Models;
+﻿using FluentAssertions;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
 using Menominee.Tests.Helpers;
-using Menominee.Tests.Integration.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using TestingHelperLibrary;
 using Xunit;
 
 namespace Menominee.Tests.Integration.Tests;
 
 [Collection("Integration")]
-public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+public class VehiclesControllerShould : IntegrationTestBase
 {
-    private readonly HttpClient httpClient;
-    private readonly IDataSeeder dataSeeder;
-    private readonly ApplicationDbContext dbContext;
     private const string route = "vehicles";
 
-    public VehiclesControllerShould(IntegrationTestWebApplicationFactory factory)
+    public VehiclesControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
     {
-        httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            BaseAddress = new Uri("https://localhost/api/")
-        });
+    }
 
-        dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-        dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
-
-        SeedData();
+    [Fact]
+    public async Task Get_Invalid_Route_Returns_NotFound()
+    {
+        var response = await httpClient.GetAsync("vehicle");
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -56,8 +43,8 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
     public async Task Get_Returns_Expected_Response()
     {
         var vehicleFromDatabase = dbContext.Vehicles.First();
-
-        var response = await httpClient.GetFromJsonAsync<VehicleToRead>($"{route}/{vehicleFromDatabase.Id}");
+        var response = await httpClient
+            .GetFromJsonAsync<VehicleToRead>($"{route}/{vehicleFromDatabase.Id}");
 
         response.Should().BeOfType<VehicleToRead>();
     }
@@ -65,11 +52,10 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
     [Fact]
     public async Task Add_a_Vehicle()
     {
-        var vehicle = new VehicleFaker(false).Generate();
-        var vehicleToAdd = VehicleHelper.ConvertToWriteDto(vehicle);
-        var result = await httpClient.PostAsJsonAsync(route, vehicleToAdd);
+        var vehicle = CreateVehicleToPost();
+        var result = await PostVehicle(vehicle);
+        var id = JsonSerializerHelper.GetIdFromString(result);
 
-        var id = (await result.Content.ReadFromJsonAsync<PostResult>()).Id;
         var vehicleFromEndpoint = await httpClient
             .GetFromJsonAsync<VehicleToRead>($"{route}/{id}");
 
@@ -81,9 +67,13 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
     {
         var vehicleToUpdate = dbContext.Vehicles.First();
         var updatedYear = 2008;
-
-        var updatedVehicle = VehicleHelper.ConvertToWriteDto(vehicleToUpdate);
-        updatedVehicle.Year = updatedYear;
+        var updatedVehicle = new VehicleToWrite()
+        {
+            VIN = vehicleToUpdate.VIN,
+            Year = updatedYear,
+            Make = vehicleToUpdate.Make,
+            Model = vehicleToUpdate.Model
+        };
 
         var response = await httpClient.PutAsJsonAsync($"{route}/{vehicleToUpdate.Id}", updatedVehicle);
         response.EnsureSuccessStatusCode();
@@ -92,7 +82,7 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
             .GetFromJsonAsync<VehicleToRead>($"{route}/{vehicleToUpdate.Id}");
 
         vehicleFromEndpoint.Should().NotBeNull();
-        vehicleFromEndpoint.Year.Should().Be(updatedYear);
+        vehicleFromEndpoint.Year.Should().Be(updatedVehicle.Year);
     }
 
     [Fact]
@@ -106,12 +96,40 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
         response.EnsureSuccessStatusCode();
 
         var deletedVehicleFromDatabase = dbContext.Vehicles
-            .FirstOrDefault(e => e.Id.Equals(vehicleToDelete.Id));
+            .FirstOrDefault(e => e.Id == vehicleToDelete.Id);
 
         deletedVehicleFromDatabase.Should().BeNull();
     }
 
-    private void SeedData()
+    private VehicleToWrite CreateVehicleToPost() => new()
+    {
+        VIN = "1M8GDM9AXKP042788",
+        Year = 1997,
+        Make = "Toyota",
+        Model = "Land Cruiser"
+    };
+
+    private async Task<string> PostVehicle(VehicleToWrite vehicle)
+    {
+        var json = JsonSerializer.Serialize(vehicle, JsonSerializerHelper.DefaultSerializerOptions);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await httpClient.PostAsync(route, content);
+
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadAsStringAsync();
+
+        var errorContent = await response.Content.ReadAsStringAsync();
+
+        var (success, apiError) = JsonSerializerHelper.DeserializeApiError(errorContent);
+
+        return success
+            ? $"Error: {response.StatusCode} - {response.ReasonPhrase}. Message: {apiError.Message}"
+            : throw new JsonException("Failed to deserialize ApiError");
+    }
+
+    public override void SeedData()
     {
         var count = 2;
         var vehicles = new VehicleFaker(false).Generate(count);
@@ -119,7 +137,7 @@ public class VehiclesControllerShould : IClassFixture<IntegrationTestWebApplicat
         dataSeeder.Save(vehicles);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         dbContext.Vehicles.RemoveRange(dbContext.Vehicles.ToList());
         DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);

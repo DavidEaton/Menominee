@@ -40,12 +40,7 @@ namespace Menominee.Api.Customers
 
         public async Task<CustomerToRead> GetCustomerAsync(long id)
         {
-            var customerFromContext = await GetCustomerEntityAsync(id);
-
-            if (customerFromContext is null)
-                throw new ArgumentOutOfRangeException(nameof(customerFromContext), "customerFromContext");
-
-            return CustomerHelper.ConvertToReadDto(customerFromContext);
+            return CustomerHelper.ConvertToReadDto(await GetCustomerEntityAsync(id));
         }
 
         public async Task<IReadOnlyList<CustomerToRead>> GetCustomersAsync()
@@ -53,9 +48,12 @@ namespace Menominee.Api.Customers
             var customers = new List<CustomerToRead>();
 
             var customersFromContext = await context.Customers
-                                                    .AsNoTracking()
-                                                    .AsSplitQuery()
-                                                    .ToArrayAsync();
+                .Include(customer => customer.Person)
+                .Include(customer => customer.Business)
+                    .ThenInclude(business => business.Contact)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .ToArrayAsync();
 
             foreach (var customer in customersFromContext)
                 customers.Add(CustomerHelper.ConvertToReadDto(customer));
@@ -100,7 +98,19 @@ namespace Menominee.Api.Customers
 
         public async Task SaveChangesAsync()
         {
-            await context.SaveChangesAsync();
+            using (var transaction = await context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         public async Task<Customer> UpdateCustomerAsync(Customer customer)
@@ -174,18 +184,17 @@ namespace Menominee.Api.Customers
             var customerFromContext = await context.Customers
                 // Person
                 .Include(customer =>
-                    customer.Person.Phones
-                        .Where(phone => phone.IsPrimary == true))
+                    customer.Person.Phones)
                 .Include(customer =>
-                    customer.Person.Emails
-                        .Where(email => email.IsPrimary == true))
+                    customer.Person.Emails)
                 // Business and Business.Contact
                 .Include(customer =>
-                    customer.Business.Contact.Phones
-                        .Where(phone => phone.IsPrimary == true))
+                    customer.Business.Contact.Phones)
                 .Include(customer =>
-                    customer.Business.Contact.Emails
-                        .Where(email => email.IsPrimary == true))
+                    customer.Business.Contact.Emails)
+                // Vehicles
+                .Include(customer =>
+                    customer.Vehicles)
 
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(customer => customer.Id == id);

@@ -13,7 +13,31 @@ namespace Menominee.Shared.Models.Persons.PersonNames
                     MiddleName = name.MiddleName,
                     LastName = name.LastName
                 }
-                : null;
+                : new();
+        }
+
+        public static PersonNameToWrite ConvertToWriteDto(PersonName name)
+        {
+            return name is null
+                ? new()
+                : new PersonNameToWrite()
+                {
+                    FirstName = name.FirstName,
+                    MiddleName = name.MiddleName,
+                    LastName = name.LastName
+                };
+        }
+
+        internal static PersonNameToWrite ConvertReadToWriteDto(PersonNameToRead name)
+        {
+            return name is null
+                ? new()
+                : new PersonNameToWrite()
+                {
+                    FirstName = name.FirstName,
+                    MiddleName = name.MiddleName,
+                    LastName = name.LastName
+                };
         }
     }
 }

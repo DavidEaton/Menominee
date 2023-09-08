@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Domain.BaseClasses;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.BaseClasses;
 using System.Collections.Generic;
 
 namespace Menominee.Domain.Entities
@@ -53,11 +53,13 @@ namespace Menominee.Domain.Entities
             return Result.Success(new Business(name, notes, contact, address, emails, phones));
         }
 
+        // BusinessName has already been validated; no need to validate
         public void SetName(BusinessName name)
         {
             Name = name;
         }
 
+        // Person has already been validated; no need to validate
         public void SetContact(Person contact)
         {
             Contact = contact;

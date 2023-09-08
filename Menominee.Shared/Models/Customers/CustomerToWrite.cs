@@ -1,5 +1,8 @@
-﻿using Menominee.Shared.Models.Persons;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Businesses;
+using Menominee.Shared.Models.Persons;
+using Menominee.Shared.Models.Vehicles;
+using System.Collections.Generic;
 
 namespace Menominee.Shared.Models.Customers;
 
@@ -12,5 +15,5 @@ public class CustomerToWrite
     public BusinessToWrite Business { get; set; }
     public string Code { get; set; } = null;
 
-    //public ContactPreferences ContactPreferences { get; set; }
+    public IList<VehicleToWrite> Vehicles { get; set; } = new List<VehicleToWrite>();
 }

@@ -1,6 +1,7 @@
-﻿<EditForm Model="@Business">
+﻿@using Menominee.Shared.Models.Businesses;
+<EditForm Model="Business">
 
-    <BusinessEditor Business="@Business"
+    <BusinessEditor Business="Business"
                         Enabled="true"
                         FormMode="FormMode" />
 
@@ -15,13 +16,13 @@
         </GridLayoutRows>
         <GridLayoutItems>
             <GridLayoutItem>
-                <BusinessAddressEditor Business="@Business" />
+                <BusinessAddressEditor Business="Business" />
             </GridLayoutItem>
             <GridLayoutItem>
-                <PhonesEditor Phones="@Business?.Phones"></PhonesEditor>
+                <PhonesEditor Phones="Business?.Phones"></PhonesEditor>
             </GridLayoutItem>
             <GridLayoutItem>
-                <EmailsEditor Emails="@Business?.Emails"></EmailsEditor>
+                <EmailsEditor Emails="Business?.Emails"></EmailsEditor>
             </GridLayoutItem>
         </GridLayoutItems>
     </TelerikGridLayout>

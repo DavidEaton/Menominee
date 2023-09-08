@@ -21,7 +21,7 @@ namespace Menominee.Shared.Models.Payables.Vendors
                     Notes = vendor.Notes,
                     Address = AddressHelper.ConvertReadToWriteDto(vendor.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(vendor.Phones),
-                    Emails = EmailHelper.ConvertReadToWriteDto(vendor.Emails),
+                    Emails = EmailHelper.ConvertReadToWriteDtos(vendor.Emails),
                 }
                 : null;
         }

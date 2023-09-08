@@ -51,12 +51,12 @@ namespace Menominee.Shared.Models.Businesses
                 {
                     Name = business.Name,
                     Notes = business?.Notes,
-                    Address = AddressHelper.ConvertReadToWriteDto(business.Address),
+                    Address = AddressHelper.ConvertReadToWriteDto(business?.Address),
                     Phones = PhoneHelper.ConvertReadToWriteDtos(business.Phones),
-                    Emails = EmailHelper.ConvertReadToWriteDto(business.Emails),
+                    Emails = EmailHelper.ConvertReadToWriteDtos(business.Emails),
                     Contact = PersonHelper.ConvertReadToWriteDto(business?.Contact)
                 }
-                : null;
+                : new();
         }
 
         public static BusinessToRead ConvertToReadDto(Business business)
@@ -72,7 +72,7 @@ namespace Menominee.Shared.Models.Businesses
                     Emails = EmailHelper.ConvertToReadDtos(business.Emails),
                     Contact = PersonHelper.ConvertToReadDto(business.Contact)
                 }
-                : null;
+                : new();
         }
 
         public static BusinessToReadInList ConvertToReadInListDto(Business business)
@@ -96,7 +96,39 @@ namespace Menominee.Shared.Models.Businesses
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(business),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(business)
                 }
-                : null;
+                : new();
+        }
+
+        internal static BusinessToWrite CovertToWriteDto(Business business)
+        {
+            return business is not null
+                ? new()
+                {
+                    Id = business.Id,
+                    Name = business.Name.Name,
+                    Notes = business.Notes,
+                    Contact = PersonHelper.ConvertToWriteDto(business?.Contact),
+                    Address = AddressHelper.ConvertToWriteDto(business?.Address),
+                    Phones = PhoneHelper.ConvertToWriteDtos(business.Phones),
+                    Emails = EmailHelper.ConvertToWriteDtos(business.Emails)
+                }
+                : new();
+        }
+
+        internal static BusinessToWrite ConvertReadToWriteDto(BusinessToRead business)
+        {
+            return business is not null
+                ? new()
+                {
+                    Id = business.Id,
+                    Name = business.Name,
+                    Notes = business.Notes,
+                    Contact = PersonHelper.ConvertReadToWriteDto(business?.Contact),
+                    Address = AddressHelper.ConvertReadToWriteDto(business?.Address),
+                    Phones = PhoneHelper.ConvertReadToWriteDtos(business.Phones),
+                    Emails = EmailHelper.ConvertReadToWriteDtos(business.Emails)
+                }
+                : new();
         }
     }
 }

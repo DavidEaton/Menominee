@@ -13,6 +13,7 @@ namespace Menominee.Shared.Models.Addresses
                     AddressLine2 = address.AddressLine2,
                     City = address.City,
                     State = address.State,
+                    PostalCode = address.PostalCode
                 }
                 : null;
         }

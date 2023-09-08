@@ -55,6 +55,12 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     {
         var vehicle = VehicleHelper.ConvertWriteDtoToEntity(vehicleToAdd);
 
+        var vehicleFromRepository = await repository.GetEntityAsync(vehicleToAdd.VIN);
+        if (vehicleFromRepository is not null)
+        {
+            return Conflict();
+        }
+
         repository.AddVehicle(vehicle);
         await repository.SaveChanges();
 

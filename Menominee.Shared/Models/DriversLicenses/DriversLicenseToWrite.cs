@@ -9,5 +9,10 @@ namespace Menominee.Shared.Models.DriversLicenses
         public DateTime Issued { get; set; }
         public DateTime Expiry { get; set; }
         public State State { get; set; }
+        public bool IsEmpty =>
+            string.IsNullOrWhiteSpace(Number) &&
+            Issued.Equals(DateTime.MinValue) &&
+            Expiry.Equals(DateTime.MinValue);
+        public bool IsNotEmpty => !IsEmpty;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Menominee.Api.Data;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.RepairOrders;
@@ -14,10 +13,7 @@ using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
 using Menominee.Tests.Helpers;
 using Menominee.Tests.Helpers.Fakers;
-using Menominee.Tests.Integration.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,31 +29,13 @@ using Xunit;
 
 namespace Menominee.Tests.Integration.Tests
 {
-    public class RepairOrdersControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+    public class RepairOrdersControllerShould : IntegrationTestBase
     {
-        private readonly HttpClient httpClient;
-        private readonly IDataSeeder dataSeeder;
-        private readonly ApplicationDbContext dbContext;
         private const string route = "repairorders";
-        private readonly Faker Faker = new();
         private readonly long RepairOrderNumber = 36454531;
         private readonly long InvoiceNumber = 346181485;
-
-        public RepairOrdersControllerShould(IntegrationTestWebApplicationFactory factory)
+        public RepairOrdersControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
-            httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri("https://localhost/api/")
-            });
-
-            dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-            dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
-            SeedData();
         }
 
         [Fact]
@@ -310,7 +288,7 @@ namespace Menominee.Tests.Integration.Tests
 
         private RepairOrderToWrite CreateRepairOrderToPost()
         {
-            var accountingDate = Faker.Date.Between(DateTime.Today.AddDays(RepairOrder.AccountingDateGracePeriodInDays), DateTime.Today).AddYears(-1);
+            var accountingDate = faker.Date.Between(DateTime.Today.AddDays(RepairOrder.AccountingDateGracePeriodInDays), DateTime.Today).AddYears(-1);
             var customer = dbContext.Customers.FirstOrDefault();
             var vehicle = customer.Vehicles.Count > 0 ? customer.Vehicles[0] : dbContext.Vehicles.FirstOrDefault();
 
@@ -362,7 +340,7 @@ namespace Menominee.Tests.Integration.Tests
             }
         }
 
-        private void SeedData()
+        public override void SeedData()
         {
             var count = 3;
             var generateId = false;
@@ -451,7 +429,7 @@ namespace Menominee.Tests.Integration.Tests
             //dataSeeder.Save(items);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());
             dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes.ToList());

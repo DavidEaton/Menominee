@@ -1,31 +1,33 @@
-﻿using Menominee.Api.Company;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Api.Businesses;
+using Menominee.Api.Company;
 using Menominee.Api.Configurations;
 using Menominee.Api.Configurations.CreditCards;
 using Menominee.Api.Configurations.Inventory;
 using Menominee.Api.Configurations.Payables;
 using Menominee.Api.Configurations.RepairOrders;
+using Menominee.Api.Configurations.Settings;
 using Menominee.Api.Configurations.Taxes;
+using Menominee.Api.Emails;
 using Menominee.Api.Employees;
+using Menominee.Api.Phones;
+using Menominee.Api.SellingPriceNames;
 using Menominee.Api.Users;
 using Menominee.Api.Vehicles;
 using Menominee.Domain.Entities;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.RepairOrders;
+using Menominee.Domain.Entities.Settings;
 using Menominee.Domain.Entities.Taxes;
-using Menominee.Common;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Data.SqlClient;
 using System.Linq;
 using Entities = Menominee.Domain.Entities;
-using Menominee.Api.Configurations.Settings;
-using Menominee.Domain.Entities.Settings;
-using Menominee.Api.Businesses;
-using Menominee.Api.SellingPriceNames;
 
 namespace Menominee.Api.Data
 {
@@ -115,13 +117,10 @@ namespace Menominee.Api.Data
             modelBuilder.ApplyConfiguration(new RepairOrderTaxConfiguration());
             modelBuilder.ApplyConfiguration(new RepairOrderWarrantyConfiguration());
 
-            // Manufacturers
             modelBuilder.ApplyConfiguration(new ManufacturerConfiguration());
 
-            // Sale Codes
             modelBuilder.ApplyConfiguration(new SaleCodeConfiguration());
 
-            // Product Codes
             modelBuilder.ApplyConfiguration(new ProductCodeConfiguration());
 
             // Inventory
@@ -133,20 +132,12 @@ namespace Menominee.Api.Data
             modelBuilder.ApplyConfiguration(new InventoryItemPackageItemConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemPackagePlaceholderConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemInspectionConfiguration());
-            // Coming soon...
-            //modelBuilder.ApplyConfiguration(new InventoryItemDonationConfiguration());
-            //modelBuilder.ApplyConfiguration(new InventoryItemGiftCertificateConfiguration());
             modelBuilder.ApplyConfiguration(new InventoryItemWarrantyConfiguration());
             modelBuilder.ApplyConfiguration(new MaintenanceItemConfiguration());
 
-            // Taxes/Fees
             modelBuilder.ApplyConfiguration(new ExciseFeeConfiguration());
             modelBuilder.ApplyConfiguration(new SalesTaxConfiguration());
-
-            // Credit Cards
             modelBuilder.ApplyConfiguration(new CreditCardConfiguration());
-
-            // Settings
             modelBuilder.ApplyConfiguration(new SettingConfiguration());
 
             // Selling Price Names
@@ -230,28 +221,14 @@ namespace Menominee.Api.Data
         public DbSet<VendorInvoicePaymentMethod> VendorInvoicePaymentMethods { get; set; }
         public DbSet<SaleCodeShopSupplies> SaleCodeShopSupplies { get; set; }
 
-        // Repair Orders
         public DbSet<RepairOrder> RepairOrders { get; set; }
 
         // ONLY CREATE DbSet<> FOR AGGREGATE ROOT 
         //public DbSet<RepairOrderService> RepairOrderServices { get; set; }
         public DbSet<RepairOrderItem> RepairOrderItems { get; set; }
         public DbSet<RepairOrderLineItem> RepairOrderLineItems { get; set; }
-        //public DbSet<RepairOrderItemTax> RepairOrderItemTaxes { get; set; }
-        //public DbSet<RepairOrderSerialNumber> RepairOrderSerialNumbers { get; set; }
-        //public DbSet<RepairOrderPurchase> RepairOrderPurchases { get; set; }
-        //public DbSet<RepairOrderWarranty> RepairOrderWarranties { get; set; }
-        //public DbSet<RepairOrderServiceTax> RepairOrderServiceTaxes { get; set; }
-        //public DbSet<RepairOrderTax> RepairOrderTaxes { get; set; }
-        //public DbSet<RepairOrderPayment> RepairOrderPayments { get; set; }
-
-        // Manufacturers
         public DbSet<Manufacturer> Manufacturers { get; set; }
-
-        // Sale Codes
         public DbSet<SaleCode> SaleCodes { get; set; }
-
-        // Product Codes
         public DbSet<ProductCode> ProductCodes { get; set; }
 
         // Inventory
@@ -263,19 +240,12 @@ namespace Menominee.Api.Data
         public DbSet<InventoryItemPackageItem> InventoryItemPackageItems { get; set; }
         public DbSet<InventoryItemPackagePlaceholder> InventoryItemPackagePlaceholders { get; set; }
         public DbSet<InventoryItemInspection> InventoryItemInspections { get; set; }
-        //public DbSet<InventoryItemDonation> InventoryItemDonations { get; set; }
-        //public DbSet<InventoryItemGiftCertificate> InventoryItemGiftCertificates { get; set; }
         public DbSet<InventoryItemWarranty> InventoryItemWarranties { get; set; }
         public DbSet<MaintenanceItem> MaintenanceItems { get; set; }
 
-        // Credit Cards
         public DbSet<CreditCard> CreditCards { get; set; }
-
-        // Taxes/Fees
         public DbSet<ExciseFee> ExciseFees { get; set; }
         public DbSet<SalesTax> SalesTaxes { get; set; }
-
-        // Settings
         public DbSet<ConfigurationSetting> Settings { get; set; }
 
         // Selling Price Names

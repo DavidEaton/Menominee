@@ -31,13 +31,10 @@ namespace Menominee.Tests.Helpers
 
         private static void LogException(Exception ex)
         {
-            // Get the absolute path to the solution directory
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\"));
 
-            // Combine the solution directory path with the log file name
             var logFilePath = Path.Combine(solutionDirectory, "TestLog.txt");
 
-            // Write to the log file
             File.AppendAllText(logFilePath, $"{DateTime.Now}: {ex.Message}\n");
         }
 

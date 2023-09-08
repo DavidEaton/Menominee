@@ -1,5 +1,4 @@
-﻿using Menominee.Shared.Models;
-using Menominee.Shared.Models.Businesses;
+﻿using Menominee.Shared.Models.Businesses;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

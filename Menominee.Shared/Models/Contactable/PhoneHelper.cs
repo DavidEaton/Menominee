@@ -8,6 +8,13 @@ namespace Menominee.Shared.Models.Contactable
 {
     public class PhoneHelper
     {
+        public static Phone ConvertWriteDtoToEntity(PhoneToWrite phone)
+        {
+            return phone is not null
+                ? Phone.Create(phone.Number, phone.PhoneType, phone.IsPrimary).Value
+                : null;
+        }
+
         public static List<PhoneToRead> ConvertToReadDtos(IReadOnlyList<Phone> phones)
         {
             return phones
@@ -25,7 +32,7 @@ namespace Menominee.Shared.Models.Contactable
         }
 
 
-        private static PhoneToWrite ConvertReadToWriteDto(PhoneToRead phone)
+        public static PhoneToWrite ConvertReadToWriteDto(PhoneToRead phone)
         {
             return (phone is not null)
                 ? new PhoneToWrite()
@@ -38,7 +45,7 @@ namespace Menominee.Shared.Models.Contactable
                 : null;
         }
 
-        private static PhoneToRead ConvertToReadDto(Phone phone)
+        public static PhoneToRead ConvertToReadDto(Phone phone)
         {
             return (phone is not null)
                 ? new PhoneToRead()
@@ -51,7 +58,7 @@ namespace Menominee.Shared.Models.Contactable
                 : null;
         }
 
-        public static IReadOnlyList<PhoneToWrite> ConvertToWriteDtos(IReadOnlyList<Phone> phones)
+        public static List<PhoneToWrite> ConvertToWriteDtos(IReadOnlyList<Phone> phones)
         {
             return phones
                 .Select(phone =>

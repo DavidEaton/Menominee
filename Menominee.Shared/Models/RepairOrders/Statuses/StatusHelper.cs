@@ -13,7 +13,7 @@ namespace Menominee.Shared.Models.RepairOrders.Statuses
                 new RepairOrderStatusToRead
                 {
                     Id = status.Id,
-                    Status = status.Type,
+                    Status = status.Status,
                     Description = status.Description,
                     Date = status.Date
                 }).ToList()
@@ -53,7 +53,7 @@ namespace Menominee.Shared.Models.RepairOrders.Statuses
                 new RepairOrderStatusToWrite()
                 {
                     Id = status.Id,
-                    Status = status.Type,
+                    Status = status.Status,
                     Description = status.Description,
                     Date = status.Date,
                 }).ToList()

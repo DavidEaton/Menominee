@@ -1,7 +1,6 @@
 ﻿using Menominee.Client.Components.Address;
 using Menominee.Client.Services.Businesses;
 using Menominee.Common.Enums;
-using Menominee.Shared.Models;
 using Menominee.Shared.Models.Addresses;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Contactable;

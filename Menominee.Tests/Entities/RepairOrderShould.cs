@@ -241,7 +241,7 @@ namespace Menominee.Tests.Entities
             createdStatuses.ForEach(status => repairOrder.AddStatus(status, new List<long>()));
 
             var statusInvoiced = createdStatuses
-                .FirstOrDefault(status => status.Type == Status.Invoiced);
+                .FirstOrDefault(status => status.Status == Status.Invoiced);
 
             repairOrder.DateInvoiced.Should().Be(statusInvoiced.Date);
 
@@ -879,7 +879,7 @@ namespace Menominee.Tests.Entities
                 new RepairOrderStatusToWrite
                 {
                     Id = status.Id,
-                    Status = status.Type,
+                    Status = status.Status,
                     Description = status.Description,
                     Date = status.Date
                 }).ToList();
@@ -887,7 +887,7 @@ namespace Menominee.Tests.Entities
                 new RepairOrderStatusToWrite
                 {
                     Id = status.Id,
-                    Status = status.Type,
+                    Status = status.Status,
                     Description = updatedDescription,
                     Date = status.Date
                 }).ToList();
@@ -902,7 +902,7 @@ namespace Menominee.Tests.Entities
             foreach (var status in repairOrder.Statuses)
             {
                 var item = editedStatuses.FirstOrDefault(item => item.Id == status.Id);
-                item.Status.Should().Be(status.Type);
+                item.Status.Should().Be(status.Status);
                 item.Description.Should().Be(status.Description);
                 item.Date.Should().Be(status.Date);
             }
@@ -918,7 +918,7 @@ namespace Menominee.Tests.Entities
                 new RepairOrderStatusToWrite
                 {
                     Id = status.Id,
-                    Status = status.Type,
+                    Status = status.Status,
                     Description = status.Description,
                     Date = status.Date
                 }).ToList();

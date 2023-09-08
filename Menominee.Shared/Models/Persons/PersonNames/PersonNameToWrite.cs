@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Menominee.Shared.Models.Persons
+﻿namespace Menominee.Shared.Models.Persons
 {
     public class PersonNameToWrite
     {

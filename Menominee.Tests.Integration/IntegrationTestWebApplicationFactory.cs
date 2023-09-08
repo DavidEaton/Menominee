@@ -1,5 +1,4 @@
-﻿using Menominee.Api;
-using Menominee.Tests.Integration.Data;
+﻿using Menominee.Tests.Integration.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

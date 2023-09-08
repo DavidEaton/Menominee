@@ -36,12 +36,14 @@ namespace Menominee.Api.Common
                 })
                 .ToArray();
 
-            var address = Address.Create(
-                addressToWrite.AddressLine1,
-                addressToWrite.City,
-                addressToWrite.State,
-                addressToWrite.PostalCode,
-                addressToWrite.AddressLine2).Value;
+            var address = addressToWrite is not null
+                ? Address.Create(
+                    addressToWrite.AddressLine1,
+                    addressToWrite.City,
+                    addressToWrite.State,
+                    addressToWrite.PostalCode,
+                    addressToWrite.AddressLine2).Value
+                : null;
 
             return ContactDetails.Create(phones, emails, address);
         }

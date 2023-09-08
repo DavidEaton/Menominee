@@ -1,12 +1,8 @@
 ﻿using FluentAssertions;
-using Menominee.Api.Data;
 using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
 using Menominee.TestingHelperLibrary.Fakers;
 using Menominee.Tests.Helpers;
-using Menominee.Tests.Integration.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,29 +19,12 @@ using Xunit;
 namespace Menominee.Tests.Integration.Tests;
 
 [Collection("Integration")]
-public class SettingsControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+public class SettingsControllerShould : IntegrationTestBase
 {
-    private readonly HttpClient httpClient;
-    private readonly IDataSeeder dataSeeder;
-    private readonly ApplicationDbContext dbContext;
     private const string route = "settings";
 
-    public SettingsControllerShould(IntegrationTestWebApplicationFactory factory)
+    public SettingsControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
     {
-        httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            // TODO: can't really do this in CI/CD
-            BaseAddress = new Uri("https://localhost/api/")
-        });
-
-        dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-        dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
-
-        SeedData();
     }
 
     [Fact]
@@ -205,7 +184,7 @@ public class SettingsControllerShould : IClassFixture<IntegrationTestWebApplicat
             : default;
     }
 
-    private void SeedData()
+    public override void SeedData()
     {
         var count = 2;
         var settings = new SettingFaker(false).Generate(count);
@@ -219,7 +198,7 @@ public class SettingsControllerShould : IClassFixture<IntegrationTestWebApplicat
         dataSeeder.Save(settings);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         dbContext.Settings.RemoveRange(dbContext.Settings.ToList());
         DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);

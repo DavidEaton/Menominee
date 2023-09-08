@@ -1,14 +1,11 @@
-﻿using Bogus;
+﻿using FluentAssertions;
 using Menominee.Api.Common;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Inventory;
-using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Taxes;
 using Menominee.Tests.Helpers.Fakers;
-using FluentAssertions;
-using Menominee.Common.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using Telerik.DataSource.Extensions;
 using TestingHelperLibrary.Fakers;
 using Xunit;
 
@@ -16,16 +13,6 @@ namespace Menominee.Tests.Entities
 {
     public class InventoryItemPartShould
     {
-        private readonly Faker faker;
-        private readonly InventoryItemPartFaker inventoryItemPartFaker;
-
-
-        public InventoryItemPartShould()
-        {
-            faker = new Faker();
-            inventoryItemPartFaker = new InventoryItemPartFaker(generateId: true);
-
-        }
         [Fact]
         public void Create_InventoryItemPart()
         {

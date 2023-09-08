@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
-using Menominee.Api.Data;
 using Menominee.Common.Enums;
 using Menominee.Common.Extensions;
 using Menominee.Domain.Entities.Inventory;
@@ -17,10 +16,6 @@ using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.Taxes;
 using Menominee.Tests.Helpers;
 using Menominee.Tests.Helpers.Fakers;
-using Menominee.Tests.Integration.Data;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,28 +31,12 @@ using Xunit;
 namespace Menominee.Tests.Integration.Tests
 {
     [Collection("Integration")]
-    public class InventoryItemsControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+    public class InventoryItemsControllerShould : IntegrationTestBase
     {
-        private readonly HttpClient httpClient;
-        private readonly IDataSeeder dataSeeder;
-        private readonly ApplicationDbContext dbContext;
         private const string route = "inventoryitems";
-        private readonly Faker faker;
-        public InventoryItemsControllerShould(IntegrationTestWebApplicationFactory factory)
+
+        public InventoryItemsControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
-            httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri("https://localhost/api/")
-            });
-
-            faker = new Faker();
-            dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-            dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.Migrate();
-
-            SeedData();
         }
 
         [Fact]
@@ -311,7 +290,7 @@ namespace Menominee.Tests.Integration.Tests
             Part = InventoryItemPartHelper.ConvertToWriteDto(dbContext.InventoryItemParts.First())
         };
 
-        private void SeedData()
+        public override void SeedData()
         {
             var count = 2;
             var collectionCount = 3;
@@ -321,7 +300,7 @@ namespace Menominee.Tests.Integration.Tests
             dataSeeder.Save(inventoryItems);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers.ToList());
             dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());

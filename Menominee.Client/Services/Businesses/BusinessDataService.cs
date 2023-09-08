@@ -1,5 +1,4 @@
-﻿using Menominee.Shared.Models;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Blazored.Toast.Services;

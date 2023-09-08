@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
-using Menominee.Domain.Entities;
-using Menominee.Domain.Interfaces;
 using Menominee.Common.Extensions;
 using Menominee.Common.ValueObjects;
+using Menominee.Domain.Entities;
+using Menominee.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -164,17 +164,6 @@ namespace Menominee.Domain.BaseClasses
                 .Where(phone => phones.Any(callerPhone => callerPhone.Id == phone.Id))
                 .ToArray();
 
-            toAdd.ToList()
-                .ForEach(phone =>
-                {
-                    var result = AddPhone(phone);
-                    if (result.IsFailure)
-                        throw new Exception(result.Error);
-                });
-
-            toDelete.ToList()
-                .ForEach(phone => RemovePhone(phone));
-
             toModify.ToList()
                 .ForEach(phone =>
                 {
@@ -188,6 +177,17 @@ namespace Menominee.Domain.BaseClasses
 
                     if (phone.IsPrimary != phoneFromCaller.IsPrimary)
                         phone.SetIsPrimary(phoneFromCaller.IsPrimary);
+                });
+
+            toDelete.ToList()
+                .ForEach(phone => RemovePhone(phone));
+
+            toAdd.ToList()
+                .ForEach(phone =>
+                {
+                    var result = AddPhone(phone);
+                    if (result.IsFailure)
+                        throw new Exception(result.Error);
                 });
         }
 
@@ -205,18 +205,20 @@ namespace Menominee.Domain.BaseClasses
                 .Where(email => emails.Any(callerEmail => callerEmail.Id == email.Id))
                 .ToArray();
 
-            toDelete.ToList().ForEach(email => RemoveEmail(email));
+            toModify.ToList()
+                .ForEach(email =>
+                {
+                    var emailFromCaller = emails.Single(callerEmail => callerEmail.Id == email.Id);
 
-            foreach (var email in toModify)
-            {
-                var emailFromCaller = emails.Single(callerEmail => callerEmail.Id == email.Id);
+                    if (email.Address != emailFromCaller.Address)
+                        email.SetAddress(emailFromCaller.Address);
 
-                if (email.Address != emailFromCaller.Address)
-                    email.SetAddress(emailFromCaller.Address);
+                    if (email.IsPrimary != emailFromCaller.IsPrimary)
+                        email.SetIsPrimary(emailFromCaller.IsPrimary);
+                });
 
-                if (email.IsPrimary != emailFromCaller.IsPrimary)
-                    email.SetIsPrimary(emailFromCaller.IsPrimary);
-            }
+            toDelete.ToList()
+                .ForEach(email => RemoveEmail(email));
 
             toAdd.ToList()
                 .ForEach(email =>

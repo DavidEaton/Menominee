@@ -49,13 +49,13 @@ namespace Menominee.Domain.Entities.RepairOrders
         public DateTime AccountingDate { get; private set; } // Users can select which date a given day's sales are reported under. Must be within user-configurable AccountingDateGracePeriodInDays.
         public DateTime? DateInvoiced =>
             statuses
-                .Where(repairOrderStatus => repairOrderStatus.Type == Status.Invoiced)
+                .Where(repairOrderStatus => repairOrderStatus.Status == Status.Invoiced)
                 .OrderBy(repairOrderStatus => repairOrderStatus.Date)
                 .Select(repairOrderStatus => repairOrderStatus.Date)
                 .FirstOrDefault();
         public Status Status =>
             statuses.OrderByDescending(repairOrderStatus => repairOrderStatus.Date)
-                    .Select(repairOrderStatus => repairOrderStatus.Type)
+                    .Select(repairOrderStatus => repairOrderStatus.Status)
                     .FirstOrDefault();
 
         private readonly List<RepairOrderStatus> statuses = new();
@@ -284,9 +284,9 @@ namespace Menominee.Domain.Entities.RepairOrders
                         return Result.Failure(result.Error);
                 }
 
-                if (status.Type != statusFromCaller.Type)
+                if (status.Status != statusFromCaller.Status)
                 {
-                    var result = status.SetStatus(statusFromCaller.Type);
+                    var result = status.SetStatus(statusFromCaller.Status);
                     if (result.IsFailure)
                         return Result.Failure(result.Error);
                 }
@@ -313,7 +313,7 @@ namespace Menominee.Domain.Entities.RepairOrders
 
         private static long CalculateNextInvoiceNumber(long lastInvoiceNumber, List<RepairOrderStatus> statuses)
         {
-            return statuses?.Count == 0 || statuses?.Max(status => status.Type) <= Status.Invoiced ? lastInvoiceNumber : lastInvoiceNumber++;
+            return statuses?.Count == 0 || statuses?.Max(status => status.Status) <= Status.Invoiced ? lastInvoiceNumber : lastInvoiceNumber++;
         }
 
         private static List<RepairOrderStatus> InitialStatus()
@@ -396,10 +396,10 @@ namespace Menominee.Domain.Entities.RepairOrders
 
             statuses.Add(status);
 
-            if (status.Type <= Status.Invoiced)
+            if (status.Status <= Status.Invoiced)
                 RepairOrderNumber = RepairOrderNumber > 0 ? RepairOrderNumber : CalculateNextRepairOrderNumber(repairOrderNumbers, DateTime.Today);
 
-            if (status.Type > Status.Invoiced)
+            if (status.Status > Status.Invoiced)
                 InvoiceNumber = InvoiceNumber > 0 ? InvoiceNumber : CalculateNextInvoiceNumber(0, statuses);
 
             DateModified = DateTime.Today;

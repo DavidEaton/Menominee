@@ -5,6 +5,7 @@ using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.DriversLicenses;
 using Menominee.Shared.Models.Persons.PersonNames;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Menominee.Shared.Models.Persons
 {
@@ -32,6 +33,26 @@ namespace Menominee.Shared.Models.Persons
                     Birthday = person?.Birthday,
                     Phones = PhoneHelper.ConvertToReadDtos(person.Phones),
                     Emails = EmailHelper.ConvertToReadDtos(person.Emails)
+                };
+        }
+
+        public static PersonToWrite ConvertToWriteDto(Person person)
+        {
+            return person is null
+                ? null
+                : new()
+                {
+                    Id = person.Id,
+                    Name = PersonNameHelper.ConvertToWriteDto(person.Name),
+                    Gender = person.Gender,
+                    DriversLicense = DriversLicenseHelper
+                        .ConvertToWriteDto(person.DriversLicense),
+                    Address = person.Address is not null
+                        ? AddressHelper.ConvertToWriteDto(person.Address)
+                        : null,
+                    Birthday = person.Birthday,
+                    Phones = PhoneHelper.ConvertToWriteDtos(person.Phones),
+                    Emails = EmailHelper.ConvertToWriteDtos(person.Emails)
                 };
         }
 
@@ -80,10 +101,15 @@ namespace Menominee.Shared.Models.Persons
                 driversLicense)
                 .Value;
         }
+
         public static PersonToWrite ConvertReadToWriteDto(PersonToRead person)
         {
+            if (person is null)
+                return new();
+
             PersonToWrite Person = new()
             {
+                Id = person.Id,
                 Name = new()
                 {
                     LastName = person.Name.LastName,
@@ -95,6 +121,7 @@ namespace Menominee.Shared.Models.Persons
                 Birthday = person?.Birthday
             };
             if (person?.Address is not null)
+            {
                 Person.Address = new()
                 {
                     AddressLine1 = person.Address.AddressLine1,
@@ -103,8 +130,10 @@ namespace Menominee.Shared.Models.Persons
                     PostalCode = person.Address.PostalCode,
                     AddressLine2 = person.Address.AddressLine2,
                 };
+            }
 
             if (person?.DriversLicense is not null)
+            {
                 Person.DriversLicense = new()
                 {
                     Number = person.DriversLicense.Number,
@@ -112,6 +141,7 @@ namespace Menominee.Shared.Models.Persons
                     Issued = person.DriversLicense.Issued,
                     Expiry = person.DriversLicense.Expiry
                 };
+            }
 
             if (person?.Phones.Count > 0)
             {
@@ -158,6 +188,32 @@ namespace Menominee.Shared.Models.Persons
                     PrimaryPhone = PhoneHelper.GetPrimaryPhone(person) ?? PhoneHelper.GetOrdinalPhone(person, 0),
                     PrimaryPhoneType = PhoneHelper.GetPrimaryPhoneType(person) ?? PhoneHelper.GetOrdinalPhoneType(person, 0),
                     PrimaryEmail = EmailHelper.GetPrimaryEmail(person) ?? EmailHelper.GetOrdinalEmail(person, 0)
+                };
+        }
+
+        internal static PersonToWrite ConvertToWriteDto(PersonToRead person)
+        {
+            return person is null
+                ? null
+                : new()
+                {
+                    Id = person.Id,
+                    Address = AddressHelper.ConvertReadToWriteDto(person.Address),
+                    DriversLicense = DriversLicenseHelper.ConvertReadToWriteDto(person.DriversLicense),
+                    Birthday = person?.Birthday,
+                    Name = PersonNameHelper.ConvertReadToWriteDto(person.Name),
+
+                    Phones = (List<PhoneToWrite>)person.Phones.Select(phone => new PhoneToWrite()
+                    {
+                        Number = phone.Number,
+                        PhoneType = phone.PhoneType,
+                        IsPrimary = phone.IsPrimary
+                    }),
+                    Emails = (List<EmailToWrite>)person.Emails.Select(email => new EmailToWrite()
+                    {
+                        Address = email.Address,
+                        IsPrimary = email.IsPrimary
+                    }),
                 };
         }
     }

@@ -1,15 +1,11 @@
 ﻿using Bogus;
-using Menominee.Api.Data;
+using FluentAssertions;
+using Menominee.Common.Enums;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Vendors;
 using Menominee.Tests.Helpers;
-using Menominee.Tests.Integration.Data;
-using FluentAssertions;
-using Menominee.Common.Enums;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -21,35 +17,17 @@ using System.Threading.Tasks;
 using TestingHelperLibrary;
 using TestingHelperLibrary.Fakers;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
 
 namespace Menominee.Tests.Integration.Tests
 {
     // TODO: Mock httpClient or test the endpoints directly for CI/CD
     [Collection("Integration")]
-    public class VendorInvoicesControllerShould : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+    public class VendorInvoicesControllerShould : IntegrationTestBase
     {
-        private readonly HttpClient httpClient;
-        private readonly IDataSeeder dataSeeder;
-        private readonly ApplicationDbContext dbContext;
         private const string route = "vendorinvoices";
 
-        public VendorInvoicesControllerShould(IntegrationTestWebApplicationFactory factory)
+        public VendorInvoicesControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
-            httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-                // TODO: can't really do this in CI/CD
-                BaseAddress = new Uri("https://localhost/api/")
-            });
-
-            dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-            dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
-
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.Migrate();
-
-            SeedData();
         }
 
         [Fact]
@@ -317,7 +295,7 @@ namespace Menominee.Tests.Integration.Tests
             }
         }
 
-        private void SeedData()
+        public override void SeedData()
         {
             var count = 2;
             var random = new Random();
@@ -364,7 +342,7 @@ namespace Menominee.Tests.Integration.Tests
             dataSeeder.Save(invoices);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             dbContext.VendorInvoicePaymentMethods
                 .ToList()

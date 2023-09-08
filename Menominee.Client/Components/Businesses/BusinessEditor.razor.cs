@@ -1,6 +1,6 @@
-﻿using Menominee.Shared.Models;
-using Menominee.Common.Enums;
+﻿using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
+using Menominee.Shared.Models.Businesses;
 
 namespace Menominee.Client.Components.Businesses
 {

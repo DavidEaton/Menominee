@@ -1,8 +1,9 @@
-﻿using Menominee.Domain.Entities;
+﻿using Menominee.Api.Configurations;
+using Menominee.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Menominee.Api.Configurations
+namespace Menominee.Api.Phones
 {
     public class PhoneConfiguration : EntityConfiguration<Phone>
     {

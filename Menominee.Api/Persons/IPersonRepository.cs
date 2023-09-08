@@ -15,5 +15,7 @@ namespace Menominee.Api.Persons
         Task<PersonToRead> GetPersonAsync(long id);
         Task<Person> GetPersonEntityAsync(long id);
         Task SaveChangesAsync();
+        void DeletePhone(Phone phone);
+        void DeleteEmail(Email email);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Bogus;
-using Menominee.Domain.Entities;
 using Menominee.Common.Enums;
+using Menominee.Domain.Entities;
 
 namespace TestingHelperLibrary.Fakers
 {

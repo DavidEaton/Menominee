@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.ModelDiagram", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.TestingHelperLibrary", "TestingHelperLibrary\Menominee.TestingHelperLibrary.csproj", "{5C1A8C44-813D-4DC6-ACE6-4F4A7C55B41A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menominee.Client\Menominee.Client.csproj", "{A057D4D5-2FEC-4596-BA7C-320C9442A226}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Api", "Menominee.Api\Menominee.Api.csproj", "{7BCD3C2B-20DB-4796-81C2-176F6436E438}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Data", "Menominee.Data\Menominee.Data.csproj", "{CD5364DE-8E4F-47D0-B913-017FC0073A06}"
@@ -42,6 +40,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Tests", "Menominee.Tests\Menominee.Tests.csproj", "{C549645F-2D53-4301-8835-2CB143E5664F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Tests.Integration", "Menominee.Tests.Integration\Menominee.Tests.Integration.csproj", "{9CC94B3E-4012-456D-85F7-E666C6B0264E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menominee.Client", "Menominee.Client\Menominee.Client.csproj", "{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +61,6 @@ Global
 		{5C1A8C44-813D-4DC6-ACE6-4F4A7C55B41A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C1A8C44-813D-4DC6-ACE6-4F4A7C55B41A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C1A8C44-813D-4DC6-ACE6-4F4A7C55B41A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A057D4D5-2FEC-4596-BA7C-320C9442A226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A057D4D5-2FEC-4596-BA7C-320C9442A226}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A057D4D5-2FEC-4596-BA7C-320C9442A226}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A057D4D5-2FEC-4596-BA7C-320C9442A226}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BCD3C2B-20DB-4796-81C2-176F6436E438}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BCD3C2B-20DB-4796-81C2-176F6436E438}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BCD3C2B-20DB-4796-81C2-176F6436E438}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,6 +85,10 @@ Global
 		{9CC94B3E-4012-456D-85F7-E666C6B0264E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CC94B3E-4012-456D-85F7-E666C6B0264E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CC94B3E-4012-456D-85F7-E666C6B0264E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A6AF8D5-21D4-49A3-B3DB-1B829C2BB133}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

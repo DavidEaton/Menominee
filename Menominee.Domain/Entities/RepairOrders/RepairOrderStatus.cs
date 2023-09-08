@@ -11,12 +11,12 @@ namespace Menominee.Domain.Entities.RepairOrders
         public static readonly int MaximumLength = 999999;
         public static readonly string InvalidLengthMessage = $"Must be under {MaximumLength + 1} characters in length.";
 
-        public Status Type { get; private set; }
+        public Status Status { get; private set; }
         public string Description { get; private set; }
         public DateTime Date { get; private set; }
         private RepairOrderStatus(Status status, string description)
         {
-            Type = status;
+            Status = status;
             Description = (description ?? string.Empty).Trim();
             Date = DateTime.Now;
         }
@@ -50,7 +50,7 @@ namespace Menominee.Domain.Entities.RepairOrders
             if (!Enum.IsDefined(typeof(Status), status))
                 return Result.Failure<Status>(RequiredMessage);
 
-            return Result.Success(Type = status);
+            return Result.Success(Status = status);
         }
 
         public Result<string> SetDescription(string description)

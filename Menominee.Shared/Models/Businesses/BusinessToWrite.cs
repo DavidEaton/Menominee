@@ -3,10 +3,11 @@ using Menominee.Shared.Models.Contactable;
 using Menominee.Shared.Models.Persons;
 using System.Collections.Generic;
 
-namespace Menominee.Shared.Models
+namespace Menominee.Shared.Models.Businesses
 {
     public class BusinessToWrite
     {
+        public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
         /*
@@ -20,7 +21,7 @@ namespace Menominee.Shared.Models
         public PersonToWrite Contact { get; set; }
         public AddressToWrite Address { get; set; }
         public string Notes { get; set; } = string.Empty;
-        public IList<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
-        public IList<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
+        public List<PhoneToWrite> Phones { get; set; } = new List<PhoneToWrite>();
+        public List<EmailToWrite> Emails { get; set; } = new List<EmailToWrite>();
     }
 }
