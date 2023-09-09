@@ -24,6 +24,7 @@ public partial class RepairOrderCustomerVehicleTab
     }
 
     private FormMode EditVehicleFormMode = FormMode.Unknown;
+    private VehicleLookupMode VehicleLookupMode = VehicleLookupMode.Unknown; 
 
     private void AddVehicle()
     {
@@ -75,6 +76,23 @@ public partial class RepairOrderCustomerVehicleTab
 
         await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
         EditVehicleFormMode = FormMode.Unknown;
+    }
+
+    private void LookupVehicle(VehicleLookupMode lookup)
+    {
+        VehicleLookupMode = lookup;
+    }
+
+    private async Task SelectVehicle(VehicleToRead vehicle)
+    {
+        RepairOrderToEdit.Vehicle = vehicle;
+        await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
+        VehicleLookupMode = VehicleLookupMode.Unknown;
+    }
+
+    private void CancelVehicleLookup()
+    {
+        VehicleLookupMode = VehicleLookupMode.Unknown;
     }
 
     private void DiscardVehicle()

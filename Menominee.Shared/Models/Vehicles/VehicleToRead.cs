@@ -15,6 +15,7 @@ namespace Menominee.Shared.Models.Vehicles
         public string Color { get; set; }
         public bool Active { get; set; } = true;
         public bool NonTraditionalVehicle { get; set; } = false;
+        public string Name => $"{Year} {Make} {Model}";
 
         public override string ToString()
         {

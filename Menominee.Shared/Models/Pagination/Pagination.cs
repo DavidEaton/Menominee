@@ -7,7 +7,7 @@ public class Pagination
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
     public SortOrder SortOrder { get; set; } = SortOrder.Asc;
-    public SortColumn SortColumn { get; set; } = SortColumn.Id;
+    public VehicleSortColumn SortColumn { get; set; } = VehicleSortColumn.Id;
 
     public Pagination()
     {

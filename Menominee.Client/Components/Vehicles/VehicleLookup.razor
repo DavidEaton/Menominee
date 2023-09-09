@@ -1,0 +1,79 @@
+﻿@using Blazored.FluentValidation
+@using Telerik.Blazor.Components
+
+<TelerikWindow Visible="true"
+               Modal="true"
+               Width="800px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        <TelerikGridLayout 
+            ColumnSpacing="0.5rem">
+            <GridLayoutColumns>
+                <GridLayoutColumn Width="1fr" />
+                <GridLayoutColumn Width="1fr" />
+                <GridLayoutColumn Width="1fr" />
+            </GridLayoutColumns>
+
+            <GridLayoutItems>
+                <GridLayoutItem Column="1">
+                    <label for="sortColumns">Search By</label>
+                    <TelerikDropDownList Data="@sortColumns"
+                                         Value="@LookupModel.SortColumn"
+                                         ValueChanged="@((VehicleSortColumn newValue) => HandleSortColumnChange(newValue))"
+                                         AdaptiveMode="AdaptiveMode.Auto"
+                                         Id="sortColumns" />
+                </GridLayoutItem>
+
+                <GridLayoutItem Column="2" ColumnSpan="2">
+                    <label for="search">Search For</label>
+                    <TelerikTextBox Value="@LookupModel.SearchTerm"
+                                    ValueChanged="HandleSearchChange"
+                                    Id="search" />
+                </GridLayoutItem>
+            </GridLayoutItems>
+        </TelerikGridLayout>
+
+        <TelerikGrid
+            Pageable="true"
+            Data="@GridData"
+            OnRowDoubleClick="@HandleRowDoubleClick"
+            SelectionMode="@GridSelectionMode.Single"
+            @bind-SelectedItems="@SelectedItems">
+            <GridColumns>
+                <GridColumn Field="Plate" Title="Plate" />
+                <GridColumn Field="Name" Title="Vehicle" />
+                <GridColumn Field="VIN" Title="VIN" />
+                <GridColumn Field="UnitNumber" Title="Unit Number" />
+            </GridColumns>
+        </TelerikGrid>
+
+        <TelerikCheckBox 
+            Value="@LookupModel.IncludeInactive"
+            ValueChanged="@((bool newValue) => HandleIncludeInactiveChange(newValue))"
+            Id="includeInactive" />
+        <label for="includeInactive">Include Inactive</label>
+
+        <hr class="m-buttons-divider">
+
+        <TelerikButton ButtonType="ButtonType.Button" ThemeColor="primary" OnClick="HandleSelect">Ok</TelerikButton>
+        <TelerikButton ButtonType="ButtonType.Button" ThemeColor="secondary" OnClick="HandleCancel">Cancel</TelerikButton>
+    </WindowContent>
+</TelerikWindow>
+
+<style>
+    .m-buttons-divider {
+        border-color: darkgrey;
+    }
+
+    .k-grid-layout {
+        margin-bottom: 1em;
+    }
+
+    label[for="includeInactive"] {
+        margin-block: 1em 0;
+        margin-left: 0.25em;
+    }
+</style>

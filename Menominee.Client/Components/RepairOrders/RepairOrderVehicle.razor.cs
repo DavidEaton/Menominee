@@ -1,4 +1,5 @@
-﻿using Menominee.Shared.Models.RepairOrders;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders;
@@ -17,6 +18,9 @@ public partial class RepairOrderVehicle
     [Parameter]
     public EventCallback OnEdit { get; set; }
 
+    [Parameter]
+    public EventCallback<VehicleLookupMode> OnLookup { get; set; }
+
     private bool CanEdit => RepairOrderToEdit.Vehicle is not null && RepairOrderToEdit.Vehicle.Id > 0;
 
     private async Task AddVehicle()
@@ -27,6 +31,11 @@ public partial class RepairOrderVehicle
     private async Task EditVehicle()
     {
         await OnEdit.InvokeAsync();
+    }
+
+    private async Task LookupVehicle(VehicleLookupMode lookupMode)
+    {
+        await OnLookup.InvokeAsync(lookupMode);
     }
 
     private void ViewNotes()

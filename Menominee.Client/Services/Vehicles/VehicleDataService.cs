@@ -1,8 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using Menominee.Shared.Models;
 using Menominee.Shared.Models.Vehicles;
+using Microsoft.AspNetCore.Http.Extensions;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Web;
 
 namespace Menominee.Client.Services.Vehicles;
 
@@ -87,6 +90,42 @@ public class VehicleDataService : IVehicleDataService
             var errorMessage = "Failed to get vehicle";
             logger.LogError(ex, errorMessage);
             return Result.Failure<VehicleToRead>(errorMessage);
+        }
+    }
+
+    public async Task<Result<IReadOnlyList<VehicleToRead>>> GetVehicles(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm)
+    {
+        try
+        {
+            var uriBuilder = new UriBuilder(
+                "https",
+                httpClient.BaseAddress!.Host,
+                httpClient.BaseAddress.Port,
+                $"{UriSegment}/list/{customerId}");
+
+            var queryBuilder = new QueryBuilder
+            {
+                { "sortOrder", sortOrder.ToString() },
+                { "sortColumn", sortColumn.ToString() },
+                { "includeInactive", includeInactive.ToString() }
+            };
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                queryBuilder.Add("searchTerm", searchTerm);
+            }
+
+            uriBuilder.Query = queryBuilder.ToString();
+
+            var data = await httpClient.GetFromJsonAsync<IReadOnlyList<VehicleToRead>>(uriBuilder.Uri);
+
+            return Result.Success(data!);
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = "Failed to get vehicles";
+            logger.LogError(ex, errorMessage);
+            return Result.Failure<IReadOnlyList<VehicleToRead>>(errorMessage);
         }
     }
 

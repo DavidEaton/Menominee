@@ -1,9 +1,11 @@
 ﻿using Menominee.Api.Common;
+using Menominee.Common.Enums;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Menominee.Api.Vehicles;
@@ -20,24 +22,16 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
         this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    // TODO: Create a VehicleToReadInList class and use it here.
-    //[HttpGet("list")]
-    //public async Task<ActionResult<IReadOnlyList<VehicleToReadInList>>> GetVehiclesListAsync()
-    //{
-    //    var vehicles = await repository.GetVehiclesInList();
-    //    return vehicles is not null
-    //        ? Ok(vehicles.Select(VehicleHelper.ConvertToReadInListDto))
-    //        : Ok();
-    //}
-
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<VehicleToRead>>> GetVehiclesAsync()
+    [HttpGet("list/{customerId:long}")]
+    public async Task<ActionResult<IReadOnlyList<VehicleToRead>>> GetVehiclesAsync(long customerId, [FromQuery] SortOrder sortOrder = SortOrder.Asc, VehicleSortColumn sortColumn = VehicleSortColumn.Plate, bool includeInactive = false, string searchTerm = "")
     {
-        var vehicles = await repository.GetVehiclesAsync();
+        var vehicles = await repository.GetVehiclesAsync(customerId, sortOrder, sortColumn, includeInactive, searchTerm);
 
-        return vehicles is not null
-            ? Ok(vehicles)
-            : Ok();
+        return vehicles is null
+            ? Ok(new List<VehicleToRead>())
+            : Ok(vehicles
+                .Select(vehicle => VehicleHelper.ConvertToReadDto(vehicle))
+                .ToList());
     }
 
     [HttpGet("{id:long}")]

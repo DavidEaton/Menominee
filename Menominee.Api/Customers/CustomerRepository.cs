@@ -82,7 +82,7 @@ namespace Menominee.Api.Customers
                 pagination.PageSize);
         }
 
-        private static Func<CustomerToRead, string> GetSortProperty(SortColumn sortColumn)
+        private static Func<CustomerToRead, string> GetSortProperty(VehicleSortColumn sortColumn)
         {
             return sortColumn switch
             {

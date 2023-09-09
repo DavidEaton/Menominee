@@ -1,5 +1,5 @@
-﻿using Menominee.Domain.Entities;
-using Menominee.Shared.Models.Vehicles;
+﻿using Menominee.Common.Enums;
+using Menominee.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,7 +7,7 @@ namespace Menominee.Api.Vehicles;
 
 public interface IVehicleRepository
 {
-    Task<IReadOnlyList<VehicleToRead>> GetVehiclesAsync();
+    Task<IReadOnlyList<Vehicle>> GetVehiclesAsync(long customerId, SortOrder sortOrder, VehicleSortColumn sortColumn, bool includeInactive, string searchTerm);
     Task<Vehicle> GetEntityAsync(long id);
     Task<Vehicle> GetEntityAsync(string vin);
     void AddVehicle(Vehicle entity);

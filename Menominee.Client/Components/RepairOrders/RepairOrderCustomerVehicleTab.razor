@@ -14,7 +14,8 @@
                 <RepairOrderVehicle 
                     @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
                     OnAdd="AddVehicle"
-                    OnEdit="EditVehicle" />
+                    OnEdit="EditVehicle"
+                    OnLookup="LookupVehicle"/>
             </Content>
         </Card>
     </div>
@@ -27,6 +28,15 @@
         FormMode="EditVehicleFormMode" 
         OnSave="SaveVehicle"
         OnDiscard="DiscardVehicle" />
+}
+
+@if(VehicleLookupMode != VehicleLookupMode.Unknown && RepairOrderToEdit is not null)
+{
+    <VehicleLookup
+        CustomerId="RepairOrderToEdit.Customer?.Id ?? 0"
+        LookupMode="VehicleLookupMode"
+        OnSelect="SelectVehicle"
+        OnCancel="CancelVehicleLookup" />
 }
 
 <style>
