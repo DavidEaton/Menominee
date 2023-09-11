@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Menominee.Api.Common;
 using Menominee.Shared;
 using Menominee.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Users
 {
@@ -34,7 +34,7 @@ namespace Menominee.Api.Users
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(RegisterUser user)
+        public async Task<ActionResult> Post(RegisterUser user)
         {
             if (ModelState.IsValid)
             {

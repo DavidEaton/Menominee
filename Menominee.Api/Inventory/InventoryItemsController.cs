@@ -67,7 +67,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, InventoryItemToWrite itemFromCaller)
+        public async Task<ActionResult> Update(long id, InventoryItemToWrite itemFromCaller)
         {
             var notFoundMessage = $"Could not find Inventory Item # {id} to update.";
 
@@ -90,7 +90,7 @@ namespace Menominee.Api.Inventory
 
 
         [HttpPost]
-        public async Task<IActionResult> Add(InventoryItemToWrite itemToAdd)
+        public async Task<ActionResult> Add(InventoryItemToWrite itemToAdd)
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
@@ -119,7 +119,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
             var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
 

@@ -70,7 +70,7 @@ namespace Menominee.Api.Businesses
 
         // api/businesses/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateBusinessAsync(long id, BusinessToWrite businessFromCaller)
+        public async Task<ActionResult> UpdateBusinessAsync(long id, BusinessToWrite businessFromCaller)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -212,7 +212,7 @@ namespace Menominee.Api.Businesses
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBusinessAsync(BusinessToWrite businessToAdd)
+        public async Task<ActionResult> AddBusinessAsync(BusinessToWrite businessToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -244,7 +244,7 @@ namespace Menominee.Api.Businesses
 
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteBusinessAsync(long id)
+        public async Task<ActionResult> DeleteBusinessAsync(long id)
         {
             /* Delete Pattern in Controllers:
              1) Get domain entity from repository

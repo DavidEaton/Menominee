@@ -55,7 +55,7 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> UpdateSellingPriceName(long id, [FromBody] SellingPriceNameToWrite updatedSellingPriceName)
+    public async Task<ActionResult> UpdateSellingPriceName(long id, [FromBody] SellingPriceNameToWrite updatedSellingPriceName)
     {
         var sellingPriceNameFromRepository = await repository.GetEntity(id);
 
@@ -71,7 +71,7 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpDelete("{id:long}")]
-    public async Task<IActionResult> DeleteSellingPriceName(long id)
+    public async Task<ActionResult> DeleteSellingPriceName(long id)
     {
         var sellingPriceNameFromRepository = await repository.GetEntity(id);
 

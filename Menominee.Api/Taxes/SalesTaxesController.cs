@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Taxes
 {
@@ -40,7 +40,7 @@ namespace Menominee.Api.Taxes
 
         // api/salestaxes/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax)
+        public async Task<ActionResult> UpdateSalesTaxAsync(long id, SalesTaxToWrite salesTax)
         {
             if (!await repository.SalesTaxExistsAsync(id))
                 return NotFound($"Could not find Sales Tax to update: {salesTax.Description}");
@@ -94,7 +94,7 @@ namespace Menominee.Api.Taxes
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteSalesTaxAsync(long id)
+        public async Task<ActionResult> DeleteSalesTaxAsync(long id)
         {
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
 

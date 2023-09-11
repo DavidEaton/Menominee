@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Manufacturers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Manufacturers
 {
@@ -40,7 +40,7 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddManufacturerAsync(ManufacturerToWrite manufacturerToAdd)
+        public async Task<ActionResult> AddManufacturerAsync(ManufacturerToWrite manufacturerToAdd)
         {
             var existingPrefixes = await repository.GetExistingPrefixList();
             var existingIds = await repository.GetExistingIdList();
@@ -78,7 +78,7 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateManufacturerAsync(long id, ManufacturerToWrite manufacturerFromCaller)
+        public async Task<ActionResult> UpdateManufacturerAsync(long id, ManufacturerToWrite manufacturerFromCaller)
         {
             var existingPrefixes = await repository.GetExistingPrefixList();
             //1) Get domain entity from repository
@@ -97,7 +97,7 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteManufacturerAsync(long id)
+        public async Task<ActionResult> DeleteManufacturerAsync(long id)
         {
             var manufacturerFromRepository = await repository.GetManufacturerAsync(id);
 

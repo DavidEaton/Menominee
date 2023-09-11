@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.MaintenanceItems;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Inventory
 {
@@ -52,7 +52,7 @@ namespace Menominee.Api.Inventory
 
         // api/maintenanceitems/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateMaintenanceItemAsync(MaintenanceItemToWrite itemFromCaller, long id)
+        public async Task<ActionResult> UpdateMaintenanceItemAsync(MaintenanceItemToWrite itemFromCaller, long id)
         {
             var notFoundMessage = $"Could not find Maintenance Item # {id} to update.";
 
@@ -91,7 +91,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMaintenanceItemAsync(
+        public async Task<ActionResult> AddMaintenanceItemAsync(
             MaintenanceItemToWrite itemToAdd)
         {
             InventoryItem inventoryItem = await inventoryItemRepository.GetItemEntity(itemToAdd.Item.Id);
@@ -115,7 +115,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteMaintenanceItemAsync(long id)
+        public async Task<ActionResult> DeleteMaintenanceItemAsync(long id)
         {
             var notFoundMessage = $"Could not find Maintenance Item in the database to delete with Id = {id}.";
 

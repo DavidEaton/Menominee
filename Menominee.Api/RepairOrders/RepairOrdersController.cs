@@ -90,7 +90,7 @@ namespace Menominee.Api.RepairOrders
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, RepairOrderToWrite repairOrderFromCaller)
+        public async Task<ActionResult> Update(long id, RepairOrderToWrite repairOrderFromCaller)
         {
             var repairOrderFromRepository = await repository.GetEntity(id);
 
@@ -311,7 +311,7 @@ namespace Menominee.Api.RepairOrders
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(RepairOrderToWrite repairOrderToAdd)
+        public async Task<ActionResult> Add(RepairOrderToWrite repairOrderToAdd)
         {
             var customer = await customerRepository.GetCustomerEntityAsync(repairOrderToAdd.Customer.Id);
             var vehicle = await vehicleRepository.GetEntityAsync(repairOrderToAdd.Vehicle.Id);
@@ -355,7 +355,7 @@ namespace Menominee.Api.RepairOrders
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
             var roFromRepository = await repository.Get(id);
             if (roFromRepository == null)

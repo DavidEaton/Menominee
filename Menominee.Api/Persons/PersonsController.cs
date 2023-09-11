@@ -55,7 +55,7 @@ namespace Menominee.Api.Persons
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePersonAsync(long id, PersonToWrite personDto)
+        public async Task<ActionResult> UpdatePersonAsync(long id, PersonToWrite personDto)
         {
             var notFoundMessage = $"Could not find {personDto.Name.FirstName} {personDto.Name.LastName} to update";
 
@@ -149,7 +149,7 @@ namespace Menominee.Api.Persons
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeletePersonAsync(long id)
+        public async Task<ActionResult> DeletePersonAsync(long id)
         {
             var personFromRepository = await repository.GetPersonEntityAsync(id);
 

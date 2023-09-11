@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.SaleCodes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.SaleCodes
 {
@@ -52,7 +52,7 @@ namespace Menominee.Api.SaleCodes
 
         // api/salecodes/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite saleCode)
+        public async Task<ActionResult> UpdateSaleCodeAsync(long id, SaleCodeToWrite saleCode)
         {
             var notFoundMessage = $"Could not find Sale Code to update: {saleCode.Name}";
 
@@ -118,7 +118,7 @@ namespace Menominee.Api.SaleCodes
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteSaleCodeAsync(long id)
+        public async Task<ActionResult> DeleteSaleCodeAsync(long id)
         {
             var scFromRepository = await repository.GetSaleCodeAsync(id);
             if (scFromRepository == null)

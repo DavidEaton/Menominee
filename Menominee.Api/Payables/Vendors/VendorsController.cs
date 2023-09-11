@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Api.Payables.PaymentMethods;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Shared.Models.Payables.Vendors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Payables.Vendors
 {
@@ -48,7 +48,7 @@ namespace Menominee.Api.Payables.Vendors
 
         // api/vendors/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateVendorAsync(long id, VendorToWrite vendorFromCaller)
+        public async Task<ActionResult> UpdateVendorAsync(long id, VendorToWrite vendorFromCaller)
         {
             var notFoundMessage = $"Could not find Vendor to update: {vendorFromCaller.Name}";
 
@@ -116,7 +116,7 @@ namespace Menominee.Api.Payables.Vendors
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddVendorAsync(VendorToWrite vendorToAdd)
+        public async Task<ActionResult> AddVendorAsync(VendorToWrite vendorToAdd)
         {
             // VK Im.2: no need to validate it here again, just call .Value right away
             var vendor = Vendor.Create(
@@ -151,7 +151,7 @@ namespace Menominee.Api.Payables.Vendors
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteVendorAsync(long id)
+        public async Task<ActionResult> DeleteVendorAsync(long id)
         {
             var vendorFromRepository = await repository.GetVendorEntityAsync(id);
 

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Shared.Models.Taxes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Taxes
 {
@@ -40,7 +40,7 @@ namespace Menominee.Api.Taxes
 
         // api/excisefees/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
+        public async Task<ActionResult> UpdateExciseFeeAsync(long id, ExciseFeeToWrite exciseFee)
         {
             if (!await repository.ExciseFeeExistsAsync(id))
                 return NotFound($"Could not find Excise Fee to update: {exciseFee.Description}");
@@ -78,7 +78,7 @@ namespace Menominee.Api.Taxes
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteExciseFeeAsync(long id)
+        public async Task<ActionResult> DeleteExciseFeeAsync(long id)
         {
             // TODO - Is this where we should this delete the entries in the SalesTaxTaxableExciseFee table too?
             // Yes if cascade deelets ==  true

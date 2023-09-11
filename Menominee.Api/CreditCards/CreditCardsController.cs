@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Domain.Entities;
 using Menominee.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.CreditCards
 {
@@ -42,7 +42,7 @@ namespace Menominee.Api.CreditCards
 
         // api/creditcards/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite creditCard)
+        public async Task<ActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite creditCard)
         {
             if (!await repository.CreditCardExistsAsync(id))
                 return NotFound($"Could not find Credit Card to update: {creditCard.Name}");
@@ -96,7 +96,7 @@ namespace Menominee.Api.CreditCards
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteCreditCardAsync(long id)
+        public async Task<ActionResult> DeleteCreditCardAsync(long id)
         {
             var ccFromRepository = await repository.GetCreditCardAsync(id);
             if (ccFromRepository == null)

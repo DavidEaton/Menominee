@@ -60,7 +60,7 @@ namespace Menominee.Api.ProductCodes
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdateProductCodeAsync(long id, ProductCodeToWrite productCodeFromCaller)
+        public async Task<ActionResult> UpdateProductCodeAsync(long id, ProductCodeToWrite productCodeFromCaller)
         {
             //1) Get domain entity from repository
             var productCodeFromRepository = await repository.GetProductCodeEntityAsync(id);
@@ -115,7 +115,7 @@ namespace Menominee.Api.ProductCodes
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
+        public async Task<ActionResult> AddProductCodeAsync(ProductCodeToWrite productCodeToAdd)
         {
             var failureMessage = $"Could not add new Product Code: {productCodeToAdd?.Code}.";
             var manufacturerCodes = repository.GetManufacturerCodes();
@@ -155,7 +155,7 @@ namespace Menominee.Api.ProductCodes
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteProductCodeAsync(long id)
+        public async Task<ActionResult> DeleteProductCodeAsync(long id)
         {
             if (await repository.ProductCodeExists(id) == false)
                 return NotFound($"Could not find Product Code in the database to delete with Id: {id}.");

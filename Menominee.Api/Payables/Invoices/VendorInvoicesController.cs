@@ -89,7 +89,7 @@ namespace Menominee.Api.Payables.Invoices
         }
 
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, VendorInvoiceToWrite invoiceFromCaller)
+        public async Task<ActionResult> Update(long id, VendorInvoiceToWrite invoiceFromCaller)
         {
             var invoiceFromRepository = await repository.GetEntity(id);
 
@@ -263,7 +263,7 @@ namespace Menominee.Api.Payables.Invoices
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<ActionResult> Delete(long id)
         {
             var invoiceFromRepository = await repository.GetEntity(id);
 

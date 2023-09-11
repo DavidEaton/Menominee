@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Menominee.Api.Common;
+﻿using Menominee.Api.Common;
 using Menominee.Api.Payables.Vendors;
 using Menominee.Domain.Entities.Payables;
 using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Menominee.Api.Payables.PaymentMethods
 {
@@ -52,7 +52,7 @@ namespace Menominee.Api.Payables.PaymentMethods
 
         // PUT: api/vendorinvoicepaymentmethods/1
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
+        public async Task<ActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
         {
             var notFoundMessage = $"Could not find Vendor Invoice Payment Method {paymentMethodToUpdate.Name} to update with Id = {id}.";
 
@@ -129,7 +129,7 @@ namespace Menominee.Api.Payables.PaymentMethods
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeletePaymentMethodAsync(long id)
+        public async Task<ActionResult> DeletePaymentMethodAsync(long id)
         {
             var payMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
 
