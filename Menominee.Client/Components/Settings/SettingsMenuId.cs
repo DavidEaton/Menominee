@@ -2,27 +2,43 @@
 {
     public enum SettingsMenuId
     {
-        General,
-        CompanyInformation,
-        CustomSettings,
+        Inventory,
+        Manufacturers,
+        ProductCodes,
+        SellingPriceNames,
 
         //--------------------
-        Shop,
-        ShopInformation,
-        CreditCards,
+        Integrations,
+        OrderingAndCatalogs,
+
+        //--------------------
+        Sales,
         SaleCodes,
         ShopSupplies,
-        OrderingAndCatalogs,
+        CreditCards,
+        Discounts,
+        DeclinedReasons,
+        FiscalPeriods,
 
         //--------------------
         Taxes,
         SalesTaxes,
         ExciseDisposalHazMat,
         CustomerTaxProfiles,
-        PartTaxProfiles,
+        ItemTaxProfiles,
 
         //--------------------
-        User,
-        UserInformation
+        Customers,
+        PricingProfiles,
+        Rewards,
+
+        //--------------------
+        AccountsReceivable,
+        Terms,
+        Statements,
+
+        //--------------------
+        AccountsPayable,
+        PaymentMethods
     }
 }

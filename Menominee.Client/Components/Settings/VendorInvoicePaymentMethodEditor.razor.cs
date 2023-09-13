@@ -5,23 +5,19 @@ using Menominee.Client.Shared;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Menominee.Client.Components.Payables
+namespace Menominee.Client.Components.Settings
 {
     public partial class VendorInvoicePaymentMethodEditor
     {
         [Inject]
-        public IVendorDataService VendorDataService { get; set; }
+        public IVendorDataService? VendorDataService { get; set; }
 
         [Inject]
-        IJSRuntime JsInterop { get; set; }
+        IJSRuntime? JsInterop { get; set; }
 
         [Parameter]
-        public VendorInvoicePaymentMethodToWrite PaymentMethod { get; set; }
+        public VendorInvoicePaymentMethodToWrite? PaymentMethod { get; set; }
 
         [Parameter]
         public EventCallback OnSave { get; set; }
@@ -40,9 +36,9 @@ namespace Menominee.Client.Components.Payables
             }
         }
 
-        private string Title { get; set; }
+        private string? Title { get; set; }
         private FormMode formMode;
-        private IReadOnlyList<VendorToRead> Vendors = null;
+        private IReadOnlyList<VendorToRead>? Vendors = null;
         private long? vendorId = null;
         private bool parametersSet = false;
         private IList<VendorPaymentType> PaymentTypes { get; set; } = new List<VendorPaymentType>();
@@ -83,7 +79,7 @@ namespace Menominee.Client.Components.Payables
             }
             else if (PaymentMethod?.ReconcilingVendor?.Id != vendorId)
             {
-                PaymentMethod.ReconcilingVendor = await VendorDataService.GetVendorAsync(vendorId ?? 0);
+                PaymentMethod!.ReconcilingVendor = await VendorDataService.GetVendorAsync(vendorId ?? 0);
             }
         }
 

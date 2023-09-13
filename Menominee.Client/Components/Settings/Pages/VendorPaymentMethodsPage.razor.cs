@@ -2,15 +2,12 @@
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
-namespace Menominee.Client.Components.Payables.Pages
+namespace Menominee.Client.Components.Settings.Pages
 {
-    public partial class PaymentMethodListPage : ComponentBase
+    public partial class VendorPaymentMethodsPage : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }

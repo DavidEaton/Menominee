@@ -3,10 +3,6 @@ using Menominee.Shared.Models.Payables.Invoices.Payments;
 using Menominee.Client.Services.Payables.PaymentMethods;
 using Menominee.Common.Enums;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
