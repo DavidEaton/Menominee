@@ -106,11 +106,10 @@ namespace Menominee.Api.Inventory
                         Message = failureMessage
                     });
 
-
             var inventoryItemEntity = InventoryItemHelper.ConvertWriteDtoToEntity(itemToAdd,
                 manufacturerFromRepository, productCodeFromRepository, partFromRepository, null);
 
-            await itemRepository.Add(inventoryItemEntity);
+            itemRepository.Add(inventoryItemEntity);
             await itemRepository.SaveChanges();
 
             return Created(

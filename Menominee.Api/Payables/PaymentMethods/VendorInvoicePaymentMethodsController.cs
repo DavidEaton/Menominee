@@ -26,7 +26,7 @@ namespace Menominee.Api.Payables.PaymentMethods
         }
 
         // GET: api/vendorinvoicepaymentmethods/listing
-        [Route("listing")]
+        [Route("list")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetPaymentMethodListAsync()
         {

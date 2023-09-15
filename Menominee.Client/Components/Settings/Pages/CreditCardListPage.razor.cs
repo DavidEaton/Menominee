@@ -1,10 +1,8 @@
-﻿using Menominee.Shared.Models.CreditCards;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.CreditCards;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.CreditCards;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Settings.Pages
@@ -16,6 +14,9 @@ namespace Menominee.Client.Components.Settings.Pages
 
         [Inject]
         public ICreditCardDataService CreditCardDataService { get; set; }
+
+        [Inject]
+        public ILogger<CreditCardListPage> Logger { get; set; }
 
         [Parameter]
         public long Id { get; set; } = 0;
@@ -34,14 +35,20 @@ namespace Menominee.Client.Components.Settings.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            CreditCards = (await CreditCardDataService.GetAllCreditCardsAsync()).ToList();
-
-            if (CreditCards?.Count > 0)
-            {
-                SelectedCreditCard = CreditCards.FirstOrDefault();
-                Id = SelectedCreditCard.Id;
-                SelectedCreditCards = new List<CreditCardToReadInList> { SelectedCreditCard };
-            }
+            await CreditCardDataService.GetAllCreditCardsAsync()
+                .Match(
+                    success =>
+                    {
+                        CreditCards = success;
+                        if (CreditCards.Count > 0)
+                        {
+                            SelectedCreditCard = CreditCards.FirstOrDefault();
+                            Id = SelectedCreditCard.Id;
+                            SelectedCreditCards = new List<CreditCardToReadInList> { SelectedCreditCard };
+                        }
+                    },
+                    failure => Logger.LogError(failure)
+                );
         }
 
         // TODO - Failed attempt to sort by name initially
@@ -77,11 +84,19 @@ namespace Menominee.Client.Components.Settings.Pages
         {
             if (Id != 0)
             {
-                CreditCardToRead cc = await CreditCardDataService.GetCreditCardAsync(Id);
-                if (cc != null)
-                {
-                    CreditCard = CreditCardHelper.CreateCreditCard(cc);
-                }
+                var creditCardResult = await CreditCardDataService.GetCreditCardAsync(Id)
+                    .OnFailure(error =>
+                    {
+                        Logger.LogError(error);
+                        // TODO: Replace exception with toast message
+                        throw new Exception(error);
+                    });
+
+                CreditCard =
+                    creditCardResult.IsSuccess
+                    ? CreditCardHelper.CreateCreditCard(creditCardResult.Value)
+                    : CreditCard;
+
                 EditFormMode = FormMode.Edit;
             }
         }
@@ -113,7 +128,18 @@ namespace Menominee.Client.Components.Settings.Pages
             if (CreditCard.FeeType == CreditCardFeeType.None)
                 CreditCard.Fee = 0.0;
 
-            Id = (await CreditCardDataService.AddCreditCardAsync(CreditCard)).Id;
+            var addResult = await CreditCardDataService.AddCreditCardAsync(CreditCard)
+                .OnFailure(error =>
+                {
+                    Logger.LogError(error);
+                    // TODO: Replace exception with toast message
+                    throw new Exception(error);
+                });
+
+            Id = addResult.IsSuccess
+                    ? addResult.Value.Id
+                    : 0;
+
             await EndAddEditAsync();
             Grid.Rebind();
         }
@@ -138,9 +164,27 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task EndAddEditAsync()
         {
             EditFormMode = FormMode.Unknown;
-            CreditCards = (await CreditCardDataService.GetAllCreditCardsAsync()).ToList();
+            await GetAllCreditCardsAsync();
             SelectedCreditCard = CreditCards.Where(x => x.Id == Id).FirstOrDefault();
             SelectedCreditCards = new List<CreditCardToReadInList> { SelectedCreditCard };
+        }
+
+        private async Task GetAllCreditCardsAsync()
+        {
+            await CreditCardDataService.GetAllCreditCardsAsync()
+                .Match(
+                    success =>
+                    {
+                        CreditCards = success;
+                        if (CreditCards.Count > 0)
+                        {
+                            SelectedCreditCard = CreditCards.FirstOrDefault();
+                            Id = SelectedCreditCard.Id;
+                            SelectedCreditCards = new List<CreditCardToReadInList> { SelectedCreditCard };
+                        }
+                    },
+                    failure => Logger.LogError(failure)
+                );
         }
     }
 }

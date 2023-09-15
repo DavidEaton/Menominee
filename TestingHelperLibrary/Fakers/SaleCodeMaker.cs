@@ -40,7 +40,7 @@ namespace Menominee.TestingHelperLibrary.Fakers
             {"ZZ", "Non Royalty Parts"}
         };
 
-        public static List<SaleCode> GenerateSaleCodes()
+        public static List<SaleCode> GenerateSaleCodes(SaleCodeShopSupplies saleCodeShopSupplies = null)
         {
             var faker = new Faker<SaleCode>()
                 .CustomInstantiator(faker =>
@@ -55,8 +55,9 @@ namespace Menominee.TestingHelperLibrary.Fakers
                     var maximumCharge = (double)Math.Round(faker.Random.Decimal(1, 1000), 2);
                     var includeParts = faker.Random.Bool();
                     var includeLabor = faker.Random.Bool();
-                    var shopSupplies = SaleCodeShopSupplies.Create(percentage, minimumJobAmount, minimumCharge, maximumCharge, includeParts, includeLabor).Value;
-
+                    var shopSupplies = saleCodeShopSupplies is not null
+                    ? saleCodeShopSupplies
+                    : SaleCodeShopSupplies.Create(percentage, minimumJobAmount, minimumCharge, maximumCharge, includeParts, includeLabor).Value;
 
                     var result = SaleCode.Create(name, code, laborRate, desiredMargin, shopSupplies, new List<string>());
 

@@ -2,7 +2,6 @@
 using Menominee.Domain.Entities.Settings;
 using Menominee.Shared.Models.Settings;
 using Menominee.TestingHelperLibrary.Fakers;
-using Menominee.Tests.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,7 @@ namespace Menominee.Tests.Integration.Tests;
 [Collection("Integration")]
 public class SettingsControllerShould : IntegrationTestBase
 {
-    private const string route = "settings";
+    private const string Route = "settings";
 
     public SettingsControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
     {
@@ -30,7 +29,7 @@ public class SettingsControllerShould : IntegrationTestBase
     [Fact]
     public async Task Get_Invalid_SettingName_Returns_NotFound()
     {
-        var response = await httpClient.GetAsync($"{route}/settingName/0");
+        var response = await HttpClient.GetAsync($"{Route}/settingName/0");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -38,9 +37,9 @@ public class SettingsControllerShould : IntegrationTestBase
     [Fact]
     public async Task Get_Returns_Expected_Response()
     {
-        var settingFromDatabase = dbContext.Settings.First();
+        var settingFromDatabase = DbContext.Settings.First();
 
-        var response = await httpClient.GetFromJsonAsync<SettingToRead>($"{route}/{settingFromDatabase.SettingName}");
+        var response = await HttpClient.GetFromJsonAsync<SettingToRead>($"{Route}/{settingFromDatabase.SettingName}");
 
         response.Should().BeOfType<SettingToRead>();
     }
@@ -54,10 +53,10 @@ public class SettingsControllerShould : IntegrationTestBase
 
         var settingToWrite = SettingHelper.ConvertToWriteDto(settingToPost);
 
-        var result = await httpClient.PostAsJsonAsync(route, settingToWrite);
+        var result = await HttpClient.PostAsJsonAsync(Route, settingToWrite);
 
-        var settingFromEndpoint = await httpClient
-            .GetFromJsonAsync<SettingToRead>($"{route}/{settingNameToPost}");
+        var settingFromEndpoint = await HttpClient
+            .GetFromJsonAsync<SettingToRead>($"{Route}/{settingNameToPost}");
 
         settingFromEndpoint.Should().BeOfType<SettingToRead>();
         settingFromEndpoint.Should()
@@ -69,7 +68,7 @@ public class SettingsControllerShould : IntegrationTestBase
     {
         var count = 2;
         var settingsListToPost = new SettingFaker(false).Generate(count);
-        var existingSettingNames = dbContext.Settings.Select(x => x.SettingName).ToList();
+        var existingSettingNames = DbContext.Settings.Select(x => x.SettingName).ToList();
         var settingNamesToPost = PickRandomUniqueSettingName(count);
 
         settingsListToPost.ForEach(setting =>
@@ -78,11 +77,11 @@ public class SettingsControllerShould : IntegrationTestBase
             setting.SetSettingName(settingNamesToPost[index]);
         });
 
-        var result = await httpClient.PostAsJsonAsync($"{route}/settingList", settingsListToPost.Select(setting => SettingHelper.ConvertToWriteDto(setting)).ToList());
+        var result = await HttpClient.PostAsJsonAsync($"{Route}/settingList", settingsListToPost.Select(setting => SettingHelper.ConvertToWriteDto(setting)).ToList());
         result.EnsureSuccessStatusCode();
 
-        var settingsListFromEndpoint = await httpClient
-            .GetFromJsonAsync<IReadOnlyList<SettingToRead>>(route);
+        var settingsListFromEndpoint = await HttpClient
+            .GetFromJsonAsync<IReadOnlyList<SettingToRead>>(Route);
 
         settingsListFromEndpoint.Should().NotBeEmpty();
         settingsListFromEndpoint.Should().BeOfType<List<SettingToRead>>();
@@ -93,17 +92,17 @@ public class SettingsControllerShould : IntegrationTestBase
     [Fact]
     public async Task Update_a_Setting()
     {
-        var settingToUpdate = dbContext.Settings.First();
+        var settingToUpdate = DbContext.Settings.First();
         var updatedSetting = new SettingFaker(settingToUpdate.Id).Generate();
         updatedSetting.SetSettingName(settingToUpdate.SettingName);
         updatedSetting.SetSettingGroup(settingToUpdate.SettingGroup);
 
         var settingToWrite = SettingHelper.ConvertToWriteDto(updatedSetting);
-        var response = await httpClient.PutAsJsonAsync(route, settingToWrite);
+        var response = await HttpClient.PutAsJsonAsync(Route, settingToWrite);
         response.EnsureSuccessStatusCode();
 
-        var settingFromEndpoint = await httpClient
-            .GetFromJsonAsync<SettingToRead>($"{route}/{settingToUpdate.SettingName}");
+        var settingFromEndpoint = await HttpClient
+            .GetFromJsonAsync<SettingToRead>($"{Route}/{settingToUpdate.SettingName}");
 
         settingFromEndpoint.Should().NotBeNull();
         settingFromEndpoint.Should().BeOfType<SettingToRead>();
@@ -114,7 +113,7 @@ public class SettingsControllerShould : IntegrationTestBase
     [Fact]
     public async Task Update_a_Settings_List()
     {
-        var settingsListToUpdate = dbContext.Settings.ToList();
+        var settingsListToUpdate = DbContext.Settings.ToList();
         var updatedSettingsList = settingsListToUpdate
             .Select(setting => new SettingFaker(setting.Id).Generate())
             .ToList();
@@ -126,11 +125,11 @@ public class SettingsControllerShould : IntegrationTestBase
             setting.SetSettingGroup(settingsListToUpdate[index].SettingGroup);
         });
 
-        var response = await httpClient.PutAsJsonAsync($"{route}/settingList", updatedSettingsList.Select(setting => SettingHelper.ConvertToWriteDto(setting)).ToList());
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/settingList", updatedSettingsList.Select(setting => SettingHelper.ConvertToWriteDto(setting)).ToList());
         response.EnsureSuccessStatusCode();
 
-        var settingsListFromEndpoint = await httpClient
-            .GetFromJsonAsync<IReadOnlyList<SettingToRead>>(route);
+        var settingsListFromEndpoint = await HttpClient
+            .GetFromJsonAsync<IReadOnlyList<SettingToRead>>(Route);
 
         settingsListFromEndpoint.Should().NotBeEmpty();
         settingsListFromEndpoint.Should().BeOfType<List<SettingToRead>>();
@@ -145,9 +144,9 @@ public class SettingsControllerShould : IntegrationTestBase
         {
             var json = JsonSerializer.Serialize(setting, JsonSerializerHelper.DefaultSerializerOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await httpClient.PostAsync(route, content);
+            var response = await HttpClient.PostAsync(Route, content);
 
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadAsStringAsync();
@@ -172,7 +171,7 @@ public class SettingsControllerShould : IntegrationTestBase
 
     public List<SettingName> PickRandomUniqueSettingName(int listLength = 1)
     {
-        var existingSettingNames = dbContext.Settings.Select(x => x.SettingName).ToList();
+        var existingSettingNames = DbContext.Settings.Select(x => x.SettingName).ToList();
         var allSettings = Enum.GetValues(typeof(SettingName)).Cast<SettingName>().ToList();
         var availableSettings = allSettings.Where(s => !existingSettingNames.Contains(s)).ToList();
         var randomizer = new Random();
@@ -195,12 +194,6 @@ public class SettingsControllerShould : IntegrationTestBase
             setting.SetSettingName(settingNames[index]);
         });
 
-        dataSeeder.Save(settings);
-    }
-
-    public override void Dispose()
-    {
-        dbContext.Settings.RemoveRange(dbContext.Settings.ToList());
-        DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+        DataSeeder.Save(settings);
     }
 }

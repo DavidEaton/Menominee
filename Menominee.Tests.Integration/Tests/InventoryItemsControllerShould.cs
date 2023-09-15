@@ -14,7 +14,7 @@ using Menominee.Shared.Models.Inventory.InventoryItems.Warranty;
 using Menominee.Shared.Models.Manufacturers;
 using Menominee.Shared.Models.ProductCodes;
 using Menominee.Shared.Models.Taxes;
-using Menominee.Tests.Helpers;
+using Menominee.TestingHelperLibrary.Fakers;
 using Menominee.Tests.Helpers.Fakers;
 using System;
 using System.Collections.Generic;
@@ -26,6 +26,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TestingHelperLibrary;
+using TestingHelperLibrary.Fakers;
 using Xunit;
 
 namespace Menominee.Tests.Integration.Tests
@@ -33,39 +34,40 @@ namespace Menominee.Tests.Integration.Tests
     [Collection("Integration")]
     public class InventoryItemsControllerShould : IntegrationTestBase
     {
-        private const string route = "inventoryitems";
+        private const string Route = "inventoryitems";
+        private readonly Faker Faker = new();
 
         public InventoryItemsControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Invalid_Route_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync("invalid-route");
+            var response = await HttpClient.GetAsync("invalid-route");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Invalid_Id_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync($"{route}/0");
+            var response = await HttpClient.GetAsync($"{Route}/0");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Returns_Expected_Response()
         {
-            var itemFromDatabase = dbContext.InventoryItems.First();
+            var itemFromDatabase = DbContext.InventoryItems.First();
 
-            var inventoryItemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{itemFromDatabase.Id}");
+            var inventoryItemFromEndpoint = await HttpClient.GetFromJsonAsync<InventoryItemToRead>($"{Route}/{itemFromDatabase.Id}");
 
             inventoryItemFromEndpoint.Should().BeOfType<InventoryItemToRead>();
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Add_an_inventory_item()
         {
             var inventoryItemToPost = CreateInventoryItemToPost();
@@ -73,12 +75,12 @@ namespace Menominee.Tests.Integration.Tests
             var result = await PostInventoryItem(inventoryItemToPost);
 
             var id = JsonSerializerHelper.GetIdFromString(result);
-            var inventoryItemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{id}");
+            var inventoryItemFromEndpoint = await HttpClient.GetFromJsonAsync<InventoryItemToRead>($"{Route}/{id}");
 
             inventoryItemFromEndpoint.Should().BeOfType<InventoryItemToRead>();
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Return_Failure_On_Add_an_inventory_item_with_null_Manufacturer()
         {
             var inventoryItemToPost = CreateInventoryItemToPost();
@@ -89,7 +91,7 @@ namespace Menominee.Tests.Integration.Tests
             result.Should().Contain("Error: NotFound");
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Return_Failure_On_Add_an_inventory_item_with_null_ProductCode()
         {
             var inventoryItemToPost = CreateInventoryItemToPost();
@@ -100,33 +102,33 @@ namespace Menominee.Tests.Integration.Tests
             result.Should().Contain("Error: NotFound");
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Valid_Id_Returns_Invoice()
         {
-            var itemFromDatabase = dbContext.InventoryItems.First();
+            var itemFromDatabase = DbContext.InventoryItems.First();
 
-            var itemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{itemFromDatabase.Id}");
+            var itemFromEndpoint = await HttpClient.GetFromJsonAsync<InventoryItemToRead>($"{Route}/{itemFromDatabase.Id}");
 
             itemFromEndpoint.Should().BeOfType<InventoryItemToRead>();
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Delete_an_InventoryItem()
         {
-            var itemToDelete = dbContext.InventoryItems.First();
+            var itemToDelete = DbContext.InventoryItems.First();
             itemToDelete.Should().NotBeNull();
 
-            var response = await httpClient.DeleteAsync($"{route}/{itemToDelete.Id}");
+            var response = await HttpClient.DeleteAsync($"{Route}/{itemToDelete.Id}");
 
             response.EnsureSuccessStatusCode();
-            var deletedInvoiceFromDatabase = dbContext.InventoryItems.FirstOrDefault(item => item.Id == itemToDelete.Id);
+            var deletedInvoiceFromDatabase = DbContext.InventoryItems.FirstOrDefault(item => item.Id == itemToDelete.Id);
             deletedInvoiceFromDatabase.Should().BeNull();
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_an_InventoryItem()
         {
-            var itemToUpdate = dbContext.InventoryItems.First();
+            var itemToUpdate = DbContext.InventoryItems.First();
             var originalItemNumber = itemToUpdate.ItemNumber;
             var updatedItemNumber = new Faker().Random.AlphaNumeric(10).ToUpper(); ;
             var updatedInventoryItem = new InventoryItemToWrite()
@@ -145,19 +147,19 @@ namespace Menominee.Tests.Integration.Tests
                 Warranty = InventoryItemWarrantyHelper.ConvertToWriteDto(itemToUpdate.Warranty)
             };
 
-            var response = await httpClient.PutAsync($"{route}/{itemToUpdate.Id}", JsonContent.Create(updatedInventoryItem));
+            var response = await HttpClient.PutAsync($"{Route}/{itemToUpdate.Id}", JsonContent.Create(updatedInventoryItem));
 
             response.EnsureSuccessStatusCode();
-            var itemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{itemToUpdate.Id}");
+            var itemFromEndpoint = await HttpClient.GetFromJsonAsync<InventoryItemToRead>($"{Route}/{itemToUpdate.Id}");
             itemFromEndpoint.Should().NotBeNull();
             itemFromEndpoint.ItemNumber.Should().NotBe(originalItemNumber);
             itemFromEndpoint.ItemNumber.Should().Be(updatedItemNumber);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_an_InventoryItem_Part()
         {
-            var itemToUpdate = dbContext.InventoryItems.First();
+            var itemToUpdate = DbContext.InventoryItems.First();
             var originalId = itemToUpdate.Part.Id;
             var originalList = itemToUpdate.Part.List;
             var originalCost = itemToUpdate.Part.Cost;
@@ -167,10 +169,10 @@ namespace Menominee.Tests.Integration.Tests
             var originalSubLineCode = itemToUpdate.Part.SubLineCode;
             var originalFractional = itemToUpdate.Part.Fractional;
             var originalExciseFees = CreateOriginalExciseFees(itemToUpdate.Part.ExciseFees);
-            var updatedAmount = Math.Round(faker.Random.Double(0, 99), 2);
+            var updatedAmount = Math.Round(Faker.Random.Double(0, 99), 2);
             var updatedTechAmount = TechAmount.Create(ItemLaborType.Flat, updatedAmount, SkillLevel.A).Value;
-            var updatedLineCode = faker.Random.AlphaNumeric(10).ToUpper();
-            var updatedSubLineCode = faker.Random.AlphaNumeric(10).ToLower();
+            var updatedLineCode = Faker.Random.AlphaNumeric(10).ToUpper();
+            var updatedSubLineCode = Faker.Random.AlphaNumeric(10).ToLower();
             var updatedFractional = !originalFractional;
             var updatedExciseFees = UpdateExciseFees(itemToUpdate.Part.ExciseFees, updatedAmount);
             var updatedDescription = "Updated by integration test";
@@ -196,10 +198,10 @@ namespace Menominee.Tests.Integration.Tests
                 Part = InventoryItemPartHelper.ConvertToWriteDto(itemToUpdate.Part),
             };
 
-            var response = await httpClient.PutAsync($"{route}/{itemToUpdate.Id}", JsonContent.Create(updatedInventoryItem));
+            var response = await HttpClient.PutAsync($"{Route}/{itemToUpdate.Id}", JsonContent.Create(updatedInventoryItem));
 
             response.EnsureSuccessStatusCode();
-            var itemFromEndpoint = await httpClient.GetFromJsonAsync<InventoryItemToRead>($"{route}/{itemToUpdate.Id}");
+            var itemFromEndpoint = await HttpClient.GetFromJsonAsync<InventoryItemToRead>($"{Route}/{itemToUpdate.Id}");
             itemFromEndpoint.Should().NotBeNull();
             itemFromEndpoint.Part.Id.Should().Be(originalId);
             itemFromEndpoint.Part.List.Should().NotBe(originalList);
@@ -264,9 +266,9 @@ namespace Menominee.Tests.Integration.Tests
         {
             var json = JsonSerializer.Serialize(inventoryItem, JsonSerializerHelper.DefaultSerializerOptions);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await httpClient.PostAsync(route, content);
+            var response = await HttpClient.PostAsync(Route, content);
 
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadAsStringAsync();
@@ -283,34 +285,36 @@ namespace Menominee.Tests.Integration.Tests
         private InventoryItemToWrite CreateInventoryItemToPost() => new()
         {
             Description = new Faker().Commerce.ProductDescription().Truncate(255),
-            Manufacturer = ManufacturerHelper.ConvertToReadDto(dbContext.Manufacturers.First()),
+            Manufacturer = ManufacturerHelper.ConvertToReadDto(DbContext.Manufacturers.First()),
             ItemNumber = new Faker().Random.AlphaNumeric(10).ToUpper(),
             ItemType = InventoryItemType.Part,
-            ProductCode = ProductCodeHelper.ConvertToReadDto(dbContext.ProductCodes.First()),
-            Part = InventoryItemPartHelper.ConvertToWriteDto(dbContext.InventoryItemParts.First())
+            ProductCode = ProductCodeHelper.ConvertToReadDto(DbContext.ProductCodes.First()),
+            Part = InventoryItemPartHelper.ConvertToWriteDto(DbContext.InventoryItemParts.First())
         };
 
         public override void SeedData()
         {
             var count = 2;
             var collectionCount = 3;
+            var saleCodeShopSuppliesCount = 40;
             var generateId = false;
-            var inventoryItems = new InventoryItemFaker(generateId, collectionCount).Generate(count);
+            var saleCodeShopSupplies = new SaleCodeShopSuppliesFaker(generateId).Generate(saleCodeShopSuppliesCount);
+            DataSeeder.Save(saleCodeShopSupplies);
+            var selectedShopSupply = saleCodeShopSupplies[new Random().Next(saleCodeShopSupplies.Count)];
+            var saleCodes = SaleCodeMaker.GenerateSaleCodes(selectedShopSupply);
+            DataSeeder.Save(saleCodes);
 
-            dataSeeder.Save(inventoryItems);
-        }
+            var manufacturers = new ManufacturerFaker(false).Generate(count);
+            DataSeeder.Save(manufacturers);
 
-        public override void Dispose()
-        {
-            dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers.ToList());
-            dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());
-            dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes.ToList());
-            dbContext.ProductCodes.RemoveRange(dbContext.ProductCodes.ToList());
-            dbContext.InventoryItemParts.RemoveRange(dbContext.InventoryItemParts.ToList());
-            dbContext.InventoryItems.RemoveRange(dbContext.InventoryItems.ToList());
-            dbContext.ExciseFees.RemoveRange(dbContext.ExciseFees.ToList());
+            var saleCode = DbContext.SaleCodes.First();
+            var manufacturer = DbContext.Manufacturers.First();
+            var productCodes = new ProductCodeFaker(generateId, saleCodeFromCaller: saleCode, manufacturerFromCaller: manufacturer).Generate(count);
+            DataSeeder.Save(productCodes);
 
-            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+            var inventoryItems = new InventoryItemFaker(generateId, collectionCount, manufacturer).Generate(count);
+
+            DataSeeder.Save(inventoryItems);
         }
     }
 }

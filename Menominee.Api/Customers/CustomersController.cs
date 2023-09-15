@@ -50,7 +50,7 @@ namespace Menominee.Api.Customers
                 throw new ArgumentNullException(nameof(businessesController));
         }
 
-        [HttpGet]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetCustomersListAsync()
         {
             var customers = await customerRepository.GetCustomersInListAsync();

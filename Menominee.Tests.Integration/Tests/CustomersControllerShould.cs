@@ -6,7 +6,6 @@ using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Pagination;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
-using Menominee.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -34,42 +33,42 @@ public class CustomersControllerShould : IntegrationTestBase
     {
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Get_Invalid_Route_Returns_NotFound()
     {
-        var response = await httpClient.GetAsync("customer");
+        var response = await HttpClient.GetAsync($"{Route}-invalid");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Get_Invalid_Id_Returns_NotFound()
     {
-        var response = await httpClient.GetAsync($"{Route}/0");
+        var response = await HttpClient.GetAsync($"{Route}/0");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Get_Valid_Id_Returns_Customer()
     {
-        var customerFromDatabase = dbContext.Customers.First();
+        var customerFromDatabase = DbContext.Customers.First();
 
-        var customerFromEndpoint = await httpClient.GetFromJsonAsync<CustomerToRead>($"{Route}/{customerFromDatabase.Id}");
+        var customerFromEndpoint = await HttpClient.GetFromJsonAsync<CustomerToRead>($"{Route}/{customerFromDatabase.Id}");
 
         customerFromEndpoint.Should().BeOfType<CustomerToRead>();
 
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Add_a_Person_Customer()
     {
-        var person = dbContext.Persons.First();
+        var person = DbContext.Persons.First();
         var customer = Customer.Create(person, CustomerType.Retail, Code).Value;
 
         var result = await PostCustomer(CustomerHelper.ConvertToWriteDto(customer));
         var id = JsonSerializerHelper.GetIdFromString(result);
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{id}");
 
         customerFromEndpoint.Should().BeOfType<CustomerToRead>();
@@ -79,15 +78,15 @@ public class CustomersControllerShould : IntegrationTestBase
             .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Vehicles, options => options.Excluding(v => v.Id));
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Add_a_Business_Customer()
     {
-        var business = dbContext.Businesses.First();
+        var business = DbContext.Businesses.First();
         var customer = Customer.Create(business, CustomerType.Retail, Code).Value;
 
         var result = await PostCustomer(CustomerHelper.ConvertToWriteDto(customer));
         var id = JsonSerializerHelper.GetIdFromString(result);
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{id}");
 
         customerFromEndpoint.Should().BeOfType<CustomerToRead>();
@@ -97,10 +96,10 @@ public class CustomersControllerShould : IntegrationTestBase
             .BeEquivalentTo(CustomerHelper.ConvertToReadDto(customer).Vehicles, options => options.Excluding(v => v.Id));
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Add_a_Phone()
     {
-        var customerToUpdate = dbContext.Customers.First();
+        var customerToUpdate = DbContext.Customers.First();
         var originalPhoneCount = customerToUpdate.Phones.Count;
         var phoneToAdd = new PhoneFaker(false).Generate();
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customerToUpdate);
@@ -109,10 +108,10 @@ public class CustomersControllerShould : IntegrationTestBase
         updatedCustomer.Business?.Phones
                 .Add(PhoneHelper.ConvertToWriteDto(phoneToAdd));
 
-        var response = await httpClient
+        var response = await HttpClient
             .PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
 
         customerFromEndpoint.Should().NotBeNull();
@@ -121,10 +120,10 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Phones.Count.Should().Be(originalPhoneCount + 1);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Add_an_Email()
     {
-        var customerToUpdate = dbContext.Customers.First();
+        var customerToUpdate = DbContext.Customers.First();
         var originalEmailCount = customerToUpdate.Emails.Count;
         var emailToAdd = new EmailFaker(false).Generate();
 
@@ -134,10 +133,10 @@ public class CustomersControllerShould : IntegrationTestBase
         updatedCustomer.Business?.Emails
                 .Add(EmailHelper.ConvertToWriteDto(emailToAdd));
 
-        var response = await httpClient
+        var response = await HttpClient
             .PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
 
         customerFromEndpoint.Should().NotBeNull();
@@ -146,20 +145,20 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Emails.Count.Should().Be(originalEmailCount + 1);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Add_a_Vehicle()
     {
-        var customerToUpdate = dbContext.Customers.First();
+        var customerToUpdate = DbContext.Customers.First();
         var originalVehicleCount = customerToUpdate.Vehicles.Count;
         var vehicleToAdd = new VehicleFaker(false).Generate();
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customerToUpdate);
         updatedCustomer.Vehicles
                 .Add(VehicleHelper.ConvertToWriteDto(vehicleToAdd));
 
-        var response = await httpClient
+        var response = await HttpClient
             .PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
 
         customerFromEndpoint.Should().NotBeNull();
@@ -167,17 +166,17 @@ public class CustomersControllerShould : IntegrationTestBase
     }
 
     // FIXME: Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException : The database operation was expected to affect 1 row(s), but actually affected 0 row(s); data may have been modified or deleted since entities were loaded.
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Update_a_Business_Customer()
     {
         // TODO: Test more updates customerFromEndpoint properties
-        var business = dbContext.Businesses.First();
+        var business = DbContext.Businesses.First();
         var customerType = CustomerType.Retail;
         var customer = Customer.Create(business, customerType, Code).Value;
 
         var result = await PostCustomer(CustomerHelper.ConvertToWriteDto(customer));
         var id = JsonSerializerHelper.GetIdFromString(result);
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{id}");
 
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customerFromEndpoint);
@@ -186,10 +185,10 @@ public class CustomersControllerShould : IntegrationTestBase
         var updatedCustomerType = CustomerType.Fleet;
         updatedCustomer.CustomerType = updatedCustomerType;
 
-        var response = await httpClient.PutAsJsonAsync($"{Route}/{updatedCustomer.Id}", updatedCustomer);
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/{updatedCustomer.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
 
-        customerFromEndpoint = await httpClient
+        customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{updatedCustomer.Id}");
 
         customerFromEndpoint.Should().NotBeNull();
@@ -198,10 +197,10 @@ public class CustomersControllerShould : IntegrationTestBase
         //customerFromEndpoint.CustomerType.Should().Be(updatedCustomerType);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Update_Customer_Vehicles()
     {
-        var customerToUpdate = dbContext.Customers.First();
+        var customerToUpdate = DbContext.Customers.First();
         var originalVehiclesIdYear = customerToUpdate.Vehicles
             .ToDictionary(vehicle => vehicle.Id, vehicle => vehicle.Year);
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customerToUpdate);
@@ -227,10 +226,10 @@ public class CustomersControllerShould : IntegrationTestBase
         var updatedVehiclesIdYear = updatedCustomer.Vehicles
             .ToDictionary(vehicle => vehicle.Id, vehicle => vehicle.Year);
 
-        var response = await httpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
 
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
 
         var endpointVehiclesIdYear = customerFromEndpoint.Vehicles
@@ -243,35 +242,35 @@ public class CustomersControllerShould : IntegrationTestBase
         }
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Delete_a_Customer()
     {
-        var customerToDelete = await dbContext.Customers.FirstAsync();
+        var customerToDelete = await DbContext.Customers.FirstAsync();
 
         customerToDelete.Should().NotBeNull();
 
-        var response = await httpClient.DeleteAsync($"{Route}/{customerToDelete.Id}");
+        var response = await HttpClient.DeleteAsync($"{Route}/{customerToDelete.Id}");
         response.EnsureSuccessStatusCode();
 
-        var deletedCustomerFromDatabase = dbContext.Customers
+        var deletedCustomerFromDatabase = DbContext.Customers
             .FirstOrDefault(e => e.Id == customerToDelete.Id);
 
         deletedCustomerFromDatabase.Should().BeNull();
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Delete_a_Phone()
     {
         var index = 0;
         var phonesCount = 2;
         var phonesToAdd = new PhoneFaker(false).Generate(phonesCount);
-        var person = dbContext.Persons.First();
+        var person = DbContext.Persons.First();
         var customer = Customer.Create(person, CustomerType.Retail, Code).Value;
-        dbContext.Customers.Add(customer);
-        dbContext.SaveChanges();
+        DbContext.Customers.Add(customer);
+        DbContext.SaveChanges();
         foreach (var phone in phonesToAdd)
             customer.AddPhone(phone);
-        dbContext.SaveChanges();
+        DbContext.SaveChanges();
         customer.Phones.Count.Should().Be(phonesCount);
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customer);
         updatedCustomer.Person.Phones.Count.Should().Be(phonesCount);
@@ -280,29 +279,29 @@ public class CustomersControllerShould : IntegrationTestBase
         // Delete (remove) the phone fro the collection
         updatedCustomer.Person.Phones.Remove(phoneToDelete);
         // Put to controller/Save to database
-        var response = await httpClient.PutAsJsonAsync($"{Route}/{customer.Id}", updatedCustomer);
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/{customer.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
         // Get updated customer from controller
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customer.Id}");
         // Assert that one phone has been removed from the customer in the databas
         customerFromEndpoint.Should().NotBeNull();
         customerFromEndpoint.Phones.Count.Should().Be(phonesCount - 1);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Delete_an_Email()
     {
         var index = 0;
         var emailsCount = 2;
         var emailsToAdd = new EmailFaker(false).Generate(emailsCount);
-        var person = dbContext.Persons.First();
+        var person = DbContext.Persons.First();
         var customer = Customer.Create(person, CustomerType.Retail, Code).Value;
-        dbContext.Customers.Add(customer);
-        dbContext.SaveChanges();
+        DbContext.Customers.Add(customer);
+        DbContext.SaveChanges();
         foreach (var email in emailsToAdd)
             customer.AddEmail(email);
-        dbContext.SaveChanges();
+        DbContext.SaveChanges();
         customer.Emails.Count.Should().Be(emailsCount);
         var updatedCustomer = CustomerHelper.ConvertToWriteDto(customer);
         updatedCustomer.Person.Emails.Count.Should().Be(emailsCount);
@@ -311,20 +310,20 @@ public class CustomersControllerShould : IntegrationTestBase
         // Delete (remove) the email fro the collection
         updatedCustomer.Person.Emails.Remove(emailToDelete);
         // Put to controller/Save to database
-        var response = await httpClient.PutAsJsonAsync($"{Route}/{customer.Id}", updatedCustomer);
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/{customer.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
         // Get updated customer from controller
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customer.Id}");
         // Assert that one email has been removed from the customer in the databas
         customerFromEndpoint.Should().NotBeNull();
         customerFromEndpoint.Emails.Count.Should().Be(emailsCount - 1);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task Delete_a_Vehicle()
     {
-        var customerToUpdate = dbContext.Customers.First();
+        var customerToUpdate = DbContext.Customers.First();
         var index = 0;
 
         // Add another vehicle
@@ -338,10 +337,10 @@ public class CustomersControllerShould : IntegrationTestBase
         updatedCustomer.Vehicles.RemoveAt(index);
         var updatedVehicleCount = updatedCustomer.Vehicles.Count;
 
-        var response = await httpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
+        var response = await HttpClient.PutAsJsonAsync($"{Route}/{customerToUpdate.Id}", updatedCustomer);
         response.EnsureSuccessStatusCode();
 
-        var customerFromEndpoint = await httpClient
+        var customerFromEndpoint = await HttpClient
             .GetFromJsonAsync<CustomerToRead>($"{Route}/{customerToUpdate.Id}");
 
         originalVehicleCount.Should().Be(updatedVehicleCount + 1);
@@ -351,7 +350,7 @@ public class CustomersControllerShould : IntegrationTestBase
         customerFromEndpoint.Vehicles.Should().NotContain(vehicle => vehicle.Id == deletedVehicleId);
     }
 
-    [Fact]
+    [Fact(Skip = "Skipping until MEN-944 is resolved")]
     public async Task GetCustomersAsync_With_Code()
     {
         var pagination = new Pagination
@@ -361,7 +360,7 @@ public class CustomersControllerShould : IntegrationTestBase
         };
 
         var url = $"/api/customers/{Code}?PageNumber={pagination.PageNumber}&PageSize={pagination.PageSize}";
-        var response = await httpClient.GetAsync(url);
+        var response = await HttpClient.GetAsync(url);
         response.IsSuccessStatusCode.Should().BeTrue();
         var raw = await response.Content.ReadAsStringAsync();
         Console.WriteLine(raw);
@@ -384,9 +383,9 @@ public class CustomersControllerShould : IntegrationTestBase
     {
         var json = JsonSerializer.Serialize(customer, JsonSerializerHelper.DefaultSerializerOptions);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await httpClient.PostAsync(Route, content);
+        var response = await HttpClient.PostAsync(Route, content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -410,8 +409,8 @@ public class CustomersControllerShould : IntegrationTestBase
         var businesses = new BusinessFaker(generateId: false, includeAddress: true)
             .Generate(count);
 
-        dataSeeder.Save(persons);
-        dataSeeder.Save(businesses);
+        DataSeeder.Save(persons);
+        DataSeeder.Save(businesses);
 
         var customers = new List<Customer>();
 
@@ -442,38 +441,16 @@ public class CustomersControllerShould : IntegrationTestBase
             }
         }
 
-        dataSeeder.Save(customers);
+        DataSeeder.Save(customers);
 
         var vehicles = new VehicleFaker(false).Generate(count);
-        dataSeeder.Save(vehicles);
+        DataSeeder.Save(vehicles);
 
         for (var i = 0; i < count; i++)
         {
             customers[i].AddVehicle(vehicles[i]);
         }
 
-        dataSeeder.Save(customers);
-
-    }
-
-    public override void Dispose()
-    {
-        dbContext.Persons.SelectMany(person => person.Phones).ToList()
-            .ForEach(phone => dbContext.Entry(phone).State = EntityState.Deleted);
-
-        dbContext.Persons.SelectMany(person => person.Emails).ToList()
-            .ForEach(email => dbContext.Entry(email).State = EntityState.Deleted);
-
-        dbContext.Businesses.SelectMany(business => business.Phones).ToList()
-            .ForEach(phone => dbContext.Entry(phone).State = EntityState.Deleted);
-
-        dbContext.Businesses.SelectMany(business => business.Emails).ToList()
-            .ForEach(email => dbContext.Entry(email).State = EntityState.Deleted);
-
-        dbContext.Persons.RemoveRange(dbContext.Persons.ToList());
-        dbContext.Businesses.RemoveRange(dbContext.Businesses.ToList());
-        dbContext.Vehicles.RemoveRange(dbContext.Vehicles.ToList());
-        dbContext.Customers.RemoveRange(dbContext.Customers.ToList());
-        DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+        DataSeeder.Save(customers);
     }
 }

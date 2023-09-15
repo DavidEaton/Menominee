@@ -19,9 +19,8 @@ namespace Menominee.Api.CreditCards
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/creditcards/listing
-        [Route("listing")]
-        [HttpGet]
+        // api/creditcards/list
+        [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<CreditCardToReadInList>>> GetCreditCardListAsync()
         {
             var results = await repository.GetCreditCardListAsync();

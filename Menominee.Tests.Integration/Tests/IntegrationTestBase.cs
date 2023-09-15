@@ -1,70 +1,62 @@
-﻿using Bogus;
-using Menominee.Api.Data;
+﻿using Menominee.Api.Data;
 using Menominee.Tests.Integration.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Respawn;
+using Respawn.Graph;
 using System;
 using System.Net.Http;
-using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Menominee.Tests.Integration.Tests
 {
-    public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebApplicationFactory>, IDisposable
+    public abstract class IntegrationTestBase : IClassFixture<IntegrationTestWebApplicationFactory>, IAsyncLifetime
     {
-        protected readonly HttpClient httpClient;
-        protected readonly IDataSeeder dataSeeder;
-        protected readonly ApplicationDbContext dbContext;
-        protected readonly Faker faker;
+        protected readonly HttpClient HttpClient;
+        protected readonly IDataSeeder DataSeeder;
+        protected readonly ApplicationDbContext DbContext;
+        protected Respawner Respawner;
 
-        protected IntegrationTestBase(IntegrationTestWebApplicationFactory factory)
+        public IntegrationTestBase(IntegrationTestWebApplicationFactory factory)
         {
-            httpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
+            HttpClient = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
                 BaseAddress = new Uri("https://localhost/api/")
             });
 
-            faker = new Faker();
-            dataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
-            dbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
+            DataSeeder = factory.Services.GetRequiredService<IDataSeeder>();
+            DbContext = factory.Services.GetRequiredService<ApplicationDbContext>();
+        }
 
-            EnsureDatabaseMigration();
+        public async Task InitializeAsync()
+        {
+            var databaseExists = (DbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+            if (!databaseExists)
+                DbContext.Database.Migrate();
+
+            var connection = DbContext.Database.GetDbConnection().ConnectionString;
+
+            Respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
+            {
+                TablesToIgnore = new Table[]
+                {
+                "__EFMigrationsHistory",
+                "Manufacturer",
+                }
+            });
+
             SeedData();
         }
 
-        private void EnsureDatabaseMigration()
-        {
-            var migrationSuccess = false;
-            var maxRetries = 1;
-            var retryCount = 0;
-
-            while (!migrationSuccess && retryCount < maxRetries)
-            {
-                try
-                {
-                    dbContext.Database.EnsureDeleted();
-                    dbContext.Database.Migrate();
-                    migrationSuccess = true;
-                }
-                catch (Exception)
-                {
-                    retryCount++;
-                    Thread.Sleep(1000); // Wait for 1 second before retrying
-                }
-            }
-
-            if (!migrationSuccess)
-            {
-                var errorMessage = $"Database migration failed after {maxRetries} retries.";
-                Console.WriteLine(errorMessage);
-                throw new Exception(errorMessage);
-            }
-        }
-
         public abstract void SeedData();
-        public abstract void Dispose();
+        public async Task DisposeAsync()
+        {
+            await Respawner.ResetAsync(DbContext.Database.GetDbConnection().ConnectionString);
+        }
     }
-
 }

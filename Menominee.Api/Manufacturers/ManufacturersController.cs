@@ -19,7 +19,7 @@ namespace Menominee.Api.Manufacturers
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        [HttpGet("listing")]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<ManufacturerToReadInList>>> GetManufacturerListAsync()
         {
             var result = await repository.GetManufacturerListAsync();

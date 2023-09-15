@@ -7,7 +7,7 @@ namespace Menominee.Api.Inventory
 {
     public interface IInventoryItemRepository
     {
-        Task Add(InventoryItem entity);
+        void Add(InventoryItem entity);
         Task<bool> Exists(long id);
         Task<InventoryItemToRead> GetItem(long id);
         Task<InventoryItemToRead> GetItem(long manufacturerId, string itemNumber);

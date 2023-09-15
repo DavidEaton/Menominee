@@ -25,7 +25,7 @@ namespace Menominee.Client.Services.Payables.PaymentMethods
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/listing");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>($"{UriSegment}/list");
             }
             catch (Exception ex)
             {

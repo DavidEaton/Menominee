@@ -1,7 +1,6 @@
 ﻿<ProjectConfiguration>
   <Settings>
     <HiddenComponentWarnings>
-      <Value>AspNetTestHostCompatibility</Value>
       <Value>MissingOrIgnoredProjectReference</Value>
     </HiddenComponentWarnings>
   </Settings>

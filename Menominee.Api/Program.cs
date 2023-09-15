@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Menominee.Api;
 using Menominee.Api.Businesses;
+using Menominee.Api.Common;
 using Menominee.Api.CreditCards;
 using Menominee.Api.Customers;
 using Menominee.Api.Data;
@@ -208,10 +209,13 @@ try
             .LogTo(Console.WriteLine, LogLevel.Information));
 
     var app = builder.Build();
-
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
+    {
         app.UseWebAssemblyDebugging();
+        app.UseMiddleware<DebugMiddleware>();
+        app.UseMiddleware<RequestLoggingMiddleware>();
+    }
     else
     {
         app.UseExceptionHandler("/Error");

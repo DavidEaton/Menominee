@@ -20,16 +20,14 @@ namespace Menominee.Api.Inventory
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task Add(InventoryItem item)
+        public void Add(InventoryItem item)
         {
             if (item is not null)
             {
-                if (await Exists(item.Id))
-                    throw new Exception("Inventory Item already exists");
-
                 context.InventoryItems.Attach(item);
             }
         }
+
 
         public void Delete(InventoryItem item)
         {

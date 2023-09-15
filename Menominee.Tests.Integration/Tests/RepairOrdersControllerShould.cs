@@ -11,9 +11,7 @@ using Menominee.Shared.Models.RepairOrders.Statuses;
 using Menominee.Shared.Models.RepairOrders.Taxes;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
-using Menominee.Tests.Helpers;
 using Menominee.Tests.Helpers.Fakers;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +29,10 @@ namespace Menominee.Tests.Integration.Tests
 {
     public class RepairOrdersControllerShould : IntegrationTestBase
     {
-        private const string route = "repairorders";
+        private const string Route = "repairorders";
         private readonly long RepairOrderNumber = 36454531;
         private readonly long InvoiceNumber = 346181485;
+        private readonly Faker Faker = new();
         public RepairOrdersControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
         }
@@ -41,9 +40,9 @@ namespace Menominee.Tests.Integration.Tests
         [Fact]
         public async Task Get_Returns_Expected_Response()
         {
-            var repairOrderFromDatabase = dbContext.RepairOrders.First();
+            var repairOrderFromDatabase = DbContext.RepairOrders.First();
 
-            var repairOrderFromEndpoint = await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{route}/{repairOrderFromDatabase.Id}");
+            var repairOrderFromEndpoint = await HttpClient.GetFromJsonAsync<RepairOrderToRead>($"{Route}/{repairOrderFromDatabase.Id}");
 
             repairOrderFromEndpoint.Should().BeOfType<RepairOrderToRead>();
         }
@@ -51,7 +50,7 @@ namespace Menominee.Tests.Integration.Tests
         [Fact]
         public async Task Get_Invalid_Route_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync("invalid-route");
+            var response = await HttpClient.GetAsync("invalid-route");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
@@ -59,7 +58,7 @@ namespace Menominee.Tests.Integration.Tests
         [Fact]
         public async Task Get_Invalid_Id_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync($"{route}/0a");
+            var response = await HttpClient.GetAsync($"{Route}/0a");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
@@ -67,9 +66,9 @@ namespace Menominee.Tests.Integration.Tests
         [Fact]
         public async Task Get_Valid_Id_Returns_Invoice()
         {
-            var repairOrderFromDatabase = dbContext.RepairOrders.First();
+            var repairOrderFromDatabase = DbContext.RepairOrders.First();
 
-            var repairOrderFromEndpoint = await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{route}/{repairOrderFromDatabase.Id}");
+            var repairOrderFromEndpoint = await HttpClient.GetFromJsonAsync<RepairOrderToRead>($"{Route}/{repairOrderFromDatabase.Id}");
 
             repairOrderFromEndpoint.Should().BeOfType<RepairOrderToRead>();
             repairOrderFromEndpoint.Id.Should().Be(repairOrderFromDatabase.Id);
@@ -80,10 +79,10 @@ namespace Menominee.Tests.Integration.Tests
         {
             var collectionCount = 2;
             var repairOrderToPost = CreateRepairOrderToPost();
-            var saleCode = dbContext.SaleCodes.First();
-            var productCode = dbContext.ProductCodes.First();
-            var manufacturer = dbContext.Manufacturers.First();
-            var employees = dbContext.Employees.ToList();
+            var saleCode = DbContext.SaleCodes.First();
+            var productCode = DbContext.ProductCodes.First();
+            var manufacturer = DbContext.Manufacturers.First();
+            var employees = DbContext.Employees.ToList();
 
             var services = new RepairOrderServiceFaker(
                 generateId: false,
@@ -111,7 +110,7 @@ namespace Menominee.Tests.Integration.Tests
 
             var repairOrderResult = await PostRepairOrder(repairOrderToPost);
             var id = JsonSerializerHelper.GetIdFromString(repairOrderResult);
-            var repairOrderFromEndpoint = await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{route}/{id}");
+            var repairOrderFromEndpoint = await HttpClient.GetFromJsonAsync<RepairOrderToRead>($"{Route}/{id}");
 
             repairOrderFromEndpoint.Should().BeOfType<RepairOrderToRead>();
             repairOrderFromEndpoint.DateCreated.Value.Date.Should().Be(DateTime.Today);
@@ -177,7 +176,7 @@ namespace Menominee.Tests.Integration.Tests
             var repairOrderPostResult = await PostRepairOrder(repairOrderToPost);
             var id = JsonSerializerHelper.GetIdFromString(repairOrderPostResult);
             // GET the posted RepairOrder from the controller
-            var repairOrderFromEndpoint = await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{route}/{id}");
+            var repairOrderFromEndpoint = await HttpClient.GetFromJsonAsync<RepairOrderToRead>($"{Route}/{id}");
             var originalPaymentsToPost = repairOrderFromEndpoint.Payments;
             var originalTaxesToPost = repairOrderFromEndpoint.Taxes;
             var originalStatusesToPost = repairOrderFromEndpoint.Statuses;
@@ -243,10 +242,10 @@ namespace Menominee.Tests.Integration.Tests
             updatedRepairOrderNumber.Should().NotBe(repairOrderFromEndpoint.RepairOrderNumber);
 
             // Send updates to controller
-            var response = await httpClient.PutAsync($"{route}/{repairOrderToPut.Id}", JsonContent.Create(repairOrderToPut));
+            var response = await HttpClient.PutAsync($"{Route}/{repairOrderToPut.Id}", JsonContent.Create(repairOrderToPut));
             response.EnsureSuccessStatusCode();
             // Get updated RepairOrder from controller
-            repairOrderFromEndpoint = await httpClient.GetFromJsonAsync<RepairOrderToRead>($"{route}/{repairOrderToPut.Id}");
+            repairOrderFromEndpoint = await HttpClient.GetFromJsonAsync<RepairOrderToRead>($"{Route}/{repairOrderToPut.Id}");
 
             // ASSERT :)
             repairOrderFromEndpoint.Should().NotBeNull();
@@ -288,9 +287,9 @@ namespace Menominee.Tests.Integration.Tests
 
         private RepairOrderToWrite CreateRepairOrderToPost()
         {
-            var accountingDate = faker.Date.Between(DateTime.Today.AddDays(RepairOrder.AccountingDateGracePeriodInDays), DateTime.Today).AddYears(-1);
-            var customer = dbContext.Customers.FirstOrDefault();
-            var vehicle = customer.Vehicles.Count > 0 ? customer.Vehicles[0] : dbContext.Vehicles.FirstOrDefault();
+            var accountingDate = Faker.Date.Between(DateTime.Today.AddDays(RepairOrder.AccountingDateGracePeriodInDays), DateTime.Today).AddYears(-1);
+            var customer = DbContext.Customers.FirstOrDefault();
+            var vehicle = customer.Vehicles.Count > 0 ? customer.Vehicles[0] : DbContext.Vehicles.FirstOrDefault();
 
             var customerToReadDto = CustomerHelper.ConvertToReadDto(customer);
             var vehicleToReadDto = VehicleHelper.ConvertToReadDto(vehicle);
@@ -323,9 +322,9 @@ namespace Menominee.Tests.Integration.Tests
             {
                 var json = JsonSerializer.Serialize(repairOrder, JsonSerializerHelper.DefaultSerializerOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var response = await httpClient.PostAsync(route, content);
+                var response = await HttpClient.PostAsync(Route, content);
 
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadAsStringAsync();
@@ -351,8 +350,8 @@ namespace Menominee.Tests.Integration.Tests
             var businesses = new BusinessFaker(generateId: false, includeAddress: true)
                 .Generate(count);
 
-            dataSeeder.Save(persons);
-            dataSeeder.Save(businesses);
+            DataSeeder.Save(persons);
+            DataSeeder.Save(businesses);
 
             var customers = new List<Customer>();
 
@@ -383,17 +382,17 @@ namespace Menominee.Tests.Integration.Tests
                 }
             }
 
-            dataSeeder.Save(customers);
+            DataSeeder.Save(customers);
 
             var vehicles = new VehicleFaker(false).Generate(count);
-            dataSeeder.Save(vehicles);
+            DataSeeder.Save(vehicles);
 
             for (var i = 0; i < count; i++)
             {
                 customers[i].AddVehicle(vehicles[i]);
             }
 
-            dataSeeder.Save(customers);
+            DataSeeder.Save(customers);
 
             var accountingDate = faker.Date.Between(DateTime.Today.AddDays(RepairOrder.AccountingDateGracePeriodInDays), DateTime.Today).AddYears(-1);
             var repairOrderNumbers = new List<long>();
@@ -408,59 +407,25 @@ namespace Menominee.Tests.Integration.Tests
                     lastInvoiceNumber).Value
                 ).ToList();
 
-            dataSeeder.Save(repairOrders);
+            DataSeeder.Save(repairOrders);
 
             var saleCodes = SaleCodeMaker.GenerateSaleCodes();
-            dataSeeder.Save(saleCodes);
+            DataSeeder.Save(saleCodes);
 
             var employees = new EmployeeFaker(false, count).Generate(count);
-            dataSeeder.Save(employees);
+            DataSeeder.Save(employees);
 
             var manufacturers = new ManufacturerFaker(false).Generate(count);
-            dataSeeder.Save(manufacturers);
+            DataSeeder.Save(manufacturers);
 
-            var saleCode = dbContext.SaleCodes.First();
-            var manufacturer = dbContext.Manufacturers.First();
+            var saleCode = DbContext.SaleCodes.First();
+            var manufacturer = DbContext.Manufacturers.First();
             var productCodes = new ProductCodeFaker(generateId, saleCodeFromCaller: saleCode, manufacturerFromCaller: manufacturer).Generate(count);
-            dataSeeder.Save(productCodes);
+            DataSeeder.Save(productCodes);
 
-            //var productCode = dbContext.ProductCodes.First();
+            //var productCode = DbContext.ProductCodes.First();
             //var items = new RepairOrderItemFaker(generateId, saleCodeFromCaller: saleCode, manufacturerFromCaller: manufacturer, productCodeFromCaller: productCode).Generate(count);
-            //dataSeeder.Save(items);
-        }
-
-        public override void Dispose()
-        {
-            dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());
-            dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes.ToList());
-            dbContext.Customers.RemoveRange(dbContext.Customers.ToList());
-            dbContext.Employees.RemoveRange(dbContext.Employees.ToList());
-            dbContext.Vehicles.RemoveRange(dbContext.Vehicles.ToList());
-            dbContext.Persons.RemoveRange(dbContext.Persons.ToList());
-            dbContext.Businesses.RemoveRange(dbContext.Businesses.ToList());
-
-            var repairOrders = dbContext.RepairOrders
-                .Include(repairOrder => repairOrder.Payments)
-                .Include(repairOrder => repairOrder.Services)
-                .Include(repairOrder => repairOrder.Statuses)
-                .Include(repairOrder => repairOrder.Taxes)
-                .AsSplitQuery()
-                .ToList();
-
-            repairOrders.SelectMany(repairOrder => repairOrder.Payments).ToList().ForEach(payment => dbContext.Entry(payment).State = EntityState.Deleted);
-            repairOrders.SelectMany(repairOrder => repairOrder.Services)
-                .ToList()
-                .ForEach(service => dbContext.Entry(service).State = EntityState.Deleted);
-            repairOrders.SelectMany(repairOrder => repairOrder.Statuses).ToList().ForEach(status => dbContext.Entry(status).State = EntityState.Deleted);
-            repairOrders.SelectMany(repairOrder => repairOrder.Taxes).ToList().ForEach(tax => dbContext.Entry(tax).State = EntityState.Deleted);
-
-            dbContext.RepairOrders.RemoveRange(repairOrders);
-
-            dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers.ToList());
-            dbContext.ProductCodes.RemoveRange(dbContext.ProductCodes.ToList());
-            dbContext.RepairOrderItems.RemoveRange(dbContext.RepairOrderItems.ToList());
-
-            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+            //DataSeeder.Save(items);
         }
     }
 }

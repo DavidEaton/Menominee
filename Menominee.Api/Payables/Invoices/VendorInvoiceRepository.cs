@@ -27,7 +27,7 @@ namespace Menominee.Api.Payables.Invoices
                     throw new Exception("Invoice already exists");
 
                 // Detach any existing tracked entity with the same key
-                var existingEntity = context.VendorInvoices.Local.FirstOrDefault(i => i.Id == invoice.Id);
+                var existingEntity = context.VendorInvoices.FirstOrDefault(i => i.Id == invoice.Id);
                 if (existingEntity != null)
                 {
                     context.Entry(existingEntity).State = EntityState.Detached;

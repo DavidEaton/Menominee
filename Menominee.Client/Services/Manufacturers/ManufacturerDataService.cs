@@ -45,7 +45,7 @@ namespace Menominee.Client.Services.Manufacturers
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/listing");
+                return await httpClient.GetFromJsonAsync<IReadOnlyList<ManufacturerToReadInList>>($"{UriSegment}/list");
             }
             catch (Exception ex)
             {

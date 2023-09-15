@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Menominee.Shared.Models.SellingPriceNames;
 using Menominee.TestingHelperLibrary.Fakers;
-using Menominee.Tests.Helpers;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
@@ -12,7 +11,7 @@ namespace Menominee.Tests.Integration.Tests;
 
 public class SellingPriceNamesControllerShould : IntegrationTestBase
 {
-    private const string route = "sellingpricenames";
+    private const string Route = "sellingpricenames";
     public SellingPriceNamesControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
     {
     }
@@ -20,7 +19,7 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
     [Fact]
     public async Task Get_Invalid_Route_Returns_NotFound()
     {
-        var response = await httpClient.GetAsync("invalid-route");
+        var response = await HttpClient.GetAsync("invalid-route");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -28,7 +27,7 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
     [Fact]
     public async Task Get_Invalid_Id_Returns_NotFound()
     {
-        var response = await httpClient.GetAsync($"{route}/0");
+        var response = await HttpClient.GetAsync($"{Route}/0");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -36,8 +35,8 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
     [Fact]
     public async Task Get_Valid_Id_Returns_SellingPriceName()
     {
-        var sellingPriceName = dbContext.SellingPriceNames.First();
-        var response = await httpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{route}/{sellingPriceName.Id}");
+        var sellingPriceName = DbContext.SellingPriceNames.First();
+        var response = await HttpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{Route}/{sellingPriceName.Id}");
 
         response.Should().BeEquivalentTo(SellingPriceNameHelper.ConvertToReadDto(sellingPriceName));
     }
@@ -48,10 +47,10 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
         var sellingPriceName = new SellingPriceNameFaker(false).Generate();
         var sellingPriceNameToAdd = SellingPriceNameHelper.ConvertToWriteDto(sellingPriceName);
 
-        var result = await httpClient.PostAsJsonAsync(route, sellingPriceNameToAdd);
+        var result = await HttpClient.PostAsJsonAsync(Route, sellingPriceNameToAdd);
 
         var id = (await result.Content.ReadFromJsonAsync<SellingPriceNameToRead>()).Id;
-        var sellingPriceNameFromEndpoint = await httpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{route}/{id}");
+        var sellingPriceNameFromEndpoint = await HttpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{Route}/{id}");
 
         sellingPriceNameFromEndpoint.Should().BeEquivalentTo(SellingPriceNameHelper.ConvertToReadDto(sellingPriceName), options => options.Excluding(s => s.Id));
     }
@@ -59,14 +58,14 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
     [Fact]
     public async Task Update_SellingPriceName()
     {
-        var sellingPriceNameFromEndpoint = dbContext.SellingPriceNames.First();
+        var sellingPriceNameFromEndpoint = DbContext.SellingPriceNames.First();
         var sellingPriceName = new SellingPriceNameFaker(sellingPriceNameFromEndpoint.Id).Generate();
         var sellingPriceNameToUpdate = SellingPriceNameHelper.ConvertToWriteDto(sellingPriceName);
 
-        var result = await httpClient.PutAsJsonAsync($"{route}/{sellingPriceNameToUpdate.Id}", sellingPriceNameToUpdate);
+        var result = await HttpClient.PutAsJsonAsync($"{Route}/{sellingPriceNameToUpdate.Id}", sellingPriceNameToUpdate);
         result.EnsureSuccessStatusCode();
 
-        var sellingPriceNameFromEndpointAfterUpdate = await httpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{route}/{sellingPriceNameToUpdate.Id}");
+        var sellingPriceNameFromEndpointAfterUpdate = await HttpClient.GetFromJsonAsync<SellingPriceNameToRead>($"{Route}/{sellingPriceNameToUpdate.Id}");
 
         sellingPriceNameFromEndpointAfterUpdate.Should().BeEquivalentTo(SellingPriceNameHelper.ConvertToReadDto(sellingPriceName));
     }
@@ -74,14 +73,14 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
     [Fact]
     public async Task Delete_SellingPriceName()
     {
-        var sellingPriceNameToDelete = dbContext.SellingPriceNames.First();
+        var sellingPriceNameToDelete = DbContext.SellingPriceNames.First();
 
         sellingPriceNameToDelete.Should().NotBeNull();
 
-        var response = await httpClient.DeleteAsync($"{route}/{sellingPriceNameToDelete.Id}");
+        var response = await HttpClient.DeleteAsync($"{Route}/{sellingPriceNameToDelete.Id}");
         response.EnsureSuccessStatusCode();
 
-        var sellingPriceNameFromEndpoint = await httpClient.GetAsync($"{route}/{sellingPriceNameToDelete.Id}");
+        var sellingPriceNameFromEndpoint = await HttpClient.GetAsync($"{Route}/{sellingPriceNameToDelete.Id}");
 
         sellingPriceNameFromEndpoint.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -91,12 +90,6 @@ public class SellingPriceNamesControllerShould : IntegrationTestBase
         var count = 2;
         var sellingPriceNames = new SellingPriceNameFaker(false).Generate(count);
 
-        dataSeeder.Save(sellingPriceNames);
-    }
-
-    public override void Dispose()
-    {
-        dbContext.RemoveRange(dbContext.SellingPriceNames.ToList());
-        DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+        DataSeeder.Save(sellingPriceNames);
     }
 }

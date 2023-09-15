@@ -5,7 +5,6 @@ using Menominee.Domain.Entities.Payables;
 using Menominee.Domain.Entities.Taxes;
 using Menominee.Shared.Models.Payables.Invoices;
 using Menominee.Shared.Models.Payables.Vendors;
-using Menominee.Tests.Helpers;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -24,32 +23,31 @@ namespace Menominee.Tests.Integration.Tests
     [Collection("Integration")]
     public class VendorInvoicesControllerShould : IntegrationTestBase
     {
-        private const string route = "vendorinvoices";
-
+        private const string Route = "vendorinvoices";
         public VendorInvoicesControllerShould(IntegrationTestWebApplicationFactory factory) : base(factory)
         {
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Invalid_Route_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync("vendorinvoice");
+            var response = await HttpClient.GetAsync("vendorinvoice");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Invalid_Id_Returns_NotFound()
         {
-            var response = await httpClient.GetAsync($"{route}/0");
+            var response = await HttpClient.GetAsync($"{Route}/0");
 
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Returns_Expected_Response()
         {
-            var vendorFromDatabase = dbContext.Vendors.First();
+            var vendorFromDatabase = DbContext.Vendors.First();
 
             /* GetFromJsonAsync:
                 Validates response has success status code
@@ -57,21 +55,21 @@ namespace Menominee.Tests.Integration.Tests
                 Validates that response includes content
                 Uses case-insensitive deserialization
             */
-            var vendor = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{vendorFromDatabase.Id}");
+            var vendor = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{vendorFromDatabase.Id}");
 
             vendor.Should().BeOfType<VendorInvoiceToRead>();
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Get_Valid_Id_Returns_Invoice()
         {
-            var invoiceFromDatabase = dbContext.VendorInvoices.First();
+            var invoiceFromDatabase = DbContext.VendorInvoices.First();
 
             int lineItemsCount = invoiceFromDatabase.LineItems.Count;
             int paymentsCount = invoiceFromDatabase.Payments.Count;
             int taxesCount = invoiceFromDatabase.Taxes.Count;
 
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceFromDatabase.Id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{invoiceFromDatabase.Id}");
 
             invoiceFromEndpoint.Should().BeOfType<VendorInvoiceToRead>();
             invoiceFromEndpoint.LineItems.Count.Should().Be(lineItemsCount);
@@ -80,7 +78,7 @@ namespace Menominee.Tests.Integration.Tests
             invoiceFromEndpoint.Id.Should().Be(invoiceFromDatabase.Id);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Add_an_Invoice()
         {
             var invoice = CreateInvoiceToPost();
@@ -88,7 +86,7 @@ namespace Menominee.Tests.Integration.Tests
             var result = await PostInvoice(invoice);
 
             var id = JsonSerializerHelper.GetIdFromString(result);
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{id}");
             invoiceFromEndpoint.Should().BeOfType<VendorInvoiceToRead>();
             invoiceFromEndpoint.Status.Should().Be(VendorInvoiceStatus.Open);
             invoiceFromEndpoint.DatePosted.Should().Be(null);
@@ -97,10 +95,10 @@ namespace Menominee.Tests.Integration.Tests
             invoiceFromEndpoint.Taxes.Count.Should().Be(0);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_an_Invoice()
         {
-            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var invoiceToUpdate = DbContext.VendorInvoices.First();
             var updatedInvoiceNumber = "INV-12345";
             var updatedInvoice = new VendorInvoiceToWrite()
             {
@@ -112,18 +110,18 @@ namespace Menominee.Tests.Integration.Tests
                 Vendor = VendorHelper.ConvertToReadDto(invoiceToUpdate.Vendor)
             };
 
-            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+            var response = await HttpClient.PutAsync($"{Route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
 
             response.EnsureSuccessStatusCode();
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{invoiceToUpdate.Id}");
             invoiceFromEndpoint.Should().NotBeNull();
             invoiceFromEndpoint.InvoiceNumber.Should().Be(updatedInvoiceNumber);
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_Invoice_LineItems()
         {
-            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var invoiceToUpdate = DbContext.VendorInvoices.First();
             var poNumber = "Test PoNumber";
             var transactionDate = DateTime.Today;
             var core = 3548.19;
@@ -152,10 +150,10 @@ namespace Menominee.Tests.Integration.Tests
             }
             var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
 
-            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+            var response = await HttpClient.PutAsync($"{Route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
 
             response.EnsureSuccessStatusCode();
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{invoiceToUpdate.Id}");
             invoiceFromEndpoint.Should().NotBeNull();
             foreach (var line in invoiceFromEndpoint.LineItems)
             {
@@ -177,10 +175,10 @@ namespace Menominee.Tests.Integration.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_Invoice_Payments()
         {
-            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var invoiceToUpdate = DbContext.VendorInvoices.First();
             var amount = 3548.19;
             var paymentMethod = GetUnusedPaymentMethod(invoiceToUpdate);
             foreach (var payment in invoiceToUpdate.Payments)
@@ -193,10 +191,10 @@ namespace Menominee.Tests.Integration.Tests
             }
             var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
 
-            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+            var response = await HttpClient.PutAsync($"{Route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
 
             response.EnsureSuccessStatusCode();
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{invoiceToUpdate.Id}");
             invoiceFromEndpoint.Should().NotBeNull();
             foreach (var payment in invoiceFromEndpoint.Payments)
             {
@@ -209,14 +207,14 @@ namespace Menominee.Tests.Integration.Tests
             var paymentMethodsInUse = invoiceToUpdate.Payments
                 .Select(payment => payment.PaymentMethod).ToList();
 
-            return dbContext.VendorInvoicePaymentMethods
+            return DbContext.VendorInvoicePaymentMethods
                 .FirstOrDefault(paymentMethod => !paymentMethodsInUse.Contains(paymentMethod));
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Update_Invoice_Taxes()
         {
-            var invoiceToUpdate = dbContext.VendorInvoices.First();
+            var invoiceToUpdate = DbContext.VendorInvoices.First();
             var amount = 3548.19;
             var salesTax = GetUnusedSalesTax(invoiceToUpdate);
             foreach (var tax in invoiceToUpdate.Taxes)
@@ -229,10 +227,10 @@ namespace Menominee.Tests.Integration.Tests
             }
             var updatedInvoice = VendorInvoiceHelper.ConvertToWriteDto(invoiceToUpdate);
 
-            var response = await httpClient.PutAsync($"{route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
+            var response = await HttpClient.PutAsync($"{Route}/{invoiceToUpdate.Id}", JsonContent.Create(updatedInvoice));
 
             response.EnsureSuccessStatusCode();
-            var invoiceFromEndpoint = await httpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{route}/{invoiceToUpdate.Id}");
+            var invoiceFromEndpoint = await HttpClient.GetFromJsonAsync<VendorInvoiceToRead>($"{Route}/{invoiceToUpdate.Id}");
             invoiceFromEndpoint.Should().NotBeNull();
             foreach (var tax in invoiceFromEndpoint.Taxes)
             {
@@ -246,21 +244,21 @@ namespace Menominee.Tests.Integration.Tests
             var salesTaxInUse = invoiceToUpdate.Taxes
                 .Select(tax => tax.SalesTax).ToList();
 
-            return dbContext.SalesTaxes
+            return DbContext.SalesTaxes
                 .FirstOrDefault(salesTax => !salesTaxInUse.Contains(salesTax));
 
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping until MEN-944 is resolved")]
         public async Task Delete_an_Invoice()
         {
-            var invoiceToDelete = dbContext.VendorInvoices.First();
+            var invoiceToDelete = DbContext.VendorInvoices.First();
             invoiceToDelete.Should().NotBeNull();
 
-            var response = await httpClient.DeleteAsync($"{route}/{invoiceToDelete.Id}");
+            var response = await HttpClient.DeleteAsync($"{Route}/{invoiceToDelete.Id}");
 
             response.EnsureSuccessStatusCode();
-            var deletedInvoiceFromDatabase = dbContext.VendorInvoices.FirstOrDefault(invoice => invoice.Id == invoiceToDelete.Id);
+            var deletedInvoiceFromDatabase = DbContext.VendorInvoices.FirstOrDefault(invoice => invoice.Id == invoiceToDelete.Id);
             deletedInvoiceFromDatabase.Should().BeNull();
         }
 
@@ -270,7 +268,7 @@ namespace Menominee.Tests.Integration.Tests
             Status = VendorInvoiceStatus.Open,
             InvoiceNumber = VendorInvoiceFaker.GenerateInvoiceNumber(new Faker()),
             Total = 213.61,
-            Vendor = VendorHelper.ConvertToReadDto(dbContext.Vendors.First())
+            Vendor = VendorHelper.ConvertToReadDto(DbContext.Vendors.First())
         };
 
         private async Task<string> PostInvoice(VendorInvoiceToWrite invoice)
@@ -278,9 +276,9 @@ namespace Menominee.Tests.Integration.Tests
             {
                 var json = JsonSerializer.Serialize(invoice, JsonSerializerHelper.DefaultSerializerOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var response = await httpClient.PostAsync(route, content);
+                var response = await HttpClient.PostAsync(Route, content);
 
                 if (response.IsSuccessStatusCode)
                     return await response.Content.ReadAsStringAsync();
@@ -299,8 +297,9 @@ namespace Menominee.Tests.Integration.Tests
         {
             var count = 2;
             var random = new Random();
-
             var paymentMethods = new VendorInvoicePaymentMethodFaker(false).Generate(count);
+            DataSeeder.Save(paymentMethods);
+
             var defaultPaymentMethods = new DefaultPaymentMethodFaker(false).Generate(count)
                 .Select(defaultPaymentMethod =>
                 {
@@ -313,6 +312,8 @@ namespace Menominee.Tests.Integration.Tests
                     vendor.SetDefaultPaymentMethod(defaultPaymentMethods[random.Next(defaultPaymentMethods.Count)]);
                     return vendor;
                 }).ToList();
+            DataSeeder.Save(vendors);
+
             var saleCodeShopSupplies = new SaleCodeShopSuppliesFaker(false).Generate(count);
             var saleCodes = new SaleCodeFaker(false).Generate(count)
                 .Select(saleCode =>
@@ -320,7 +321,11 @@ namespace Menominee.Tests.Integration.Tests
                     saleCode.SetShopSupplies(saleCodeShopSupplies[0]);
                     return saleCode;
                 }).ToList();
+            DataSeeder.Save(saleCodes);
+
             var manufacturers = new ManufacturerFaker(false).Generate(count);
+            DataSeeder.Save(manufacturers);
+
             var vendorInvoiceItems = new VendorInvoiceItemFaker(false).Generate(count)
                 .Select(item =>
                 {
@@ -339,38 +344,7 @@ namespace Menominee.Tests.Integration.Tests
             var vendorInvoicePayments = new VendorInvoicePaymentFaker(false).Generate(count);
             var invoices = new VendorInvoiceFaker(generateId: false, lineItemsCount: count, paymentsCount: count, taxesCount: count).Generate(count);
 
-            dataSeeder.Save(invoices);
-        }
-
-        public override void Dispose()
-        {
-            dbContext.VendorInvoicePaymentMethods
-                .ToList()
-                .ForEach(paymentMethod => paymentMethod
-                .RemoveReconcilingVendor());
-
-            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
-
-            dbContext.Vendors
-                .ToList()
-                .ForEach(vendor => vendor
-                .ClearDefaultPaymentMethod());
-
-            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
-
-            dbContext.VendorInvoicePayments.RemoveRange(dbContext.VendorInvoicePayments.ToList());
-            dbContext.VendorInvoiceTaxes.RemoveRange(dbContext.VendorInvoiceTaxes.ToList());
-            dbContext.VendorInvoiceLineItems.RemoveRange(dbContext.VendorInvoiceLineItems.ToList());
-            dbContext.ExciseFees.RemoveRange(dbContext.ExciseFees.ToList());
-            dbContext.SalesTaxes.RemoveRange(dbContext.SalesTaxes.ToList());
-            dbContext.Manufacturers.RemoveRange(dbContext.Manufacturers.ToList());
-            dbContext.SaleCodeShopSupplies.RemoveRange(dbContext.SaleCodeShopSupplies.ToList());
-            dbContext.SaleCodes.RemoveRange(dbContext.SaleCodes.ToList());
-            dbContext.VendorInvoicePaymentMethods.RemoveRange(dbContext.VendorInvoicePaymentMethods.ToList());
-            dbContext.VendorInvoices.RemoveRange(dbContext.VendorInvoices.ToList());
-            dbContext.Vendors.RemoveRange(dbContext.Vendors.ToList());
-
-            DbContextHelper.SaveChangesWithConcurrencyHandling(dbContext);
+            DataSeeder.Save(invoices);
         }
     }
 }

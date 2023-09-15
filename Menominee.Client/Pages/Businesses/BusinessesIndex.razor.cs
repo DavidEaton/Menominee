@@ -1,4 +1,5 @@
-﻿using Menominee.Client.Components.Address;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Client.Components.Address;
 using Menominee.Client.Services.Businesses;
 using Menominee.Common.Enums;
 using Menominee.Shared.Models.Addresses;
@@ -30,7 +31,11 @@ namespace Menominee.Client.Pages.Businesses
         private readonly AddressEditor addressEditor;
         protected override async Task OnInitializedAsync()
         {
-            Businesses = (await BusinessDataService.GetAllBusinesses()).ToList();
+            await BusinessDataService.GetAllBusinesses()
+                .Match(
+                    success => Businesses = success,
+                    failure => Logger.LogError(failure)
+            );
         }
 
         private void AddAddress()
@@ -62,49 +67,58 @@ namespace Menominee.Client.Pages.Businesses
 
         private async Task EditAsync(GridRowClickEventArgs args)
         {
-            Id = (args.Item as BusinessToReadInList).Id;
-            BusinessFormMode = FormMode.Edit;
-            Businesses = null; // TODO: Huh?
-
-            var readDto = await BusinessDataService.GetBusiness(Id);
-            Business = new BusinessToWrite
+            var id = (args.Item as BusinessToReadInList)?.Id ?? Id;
+            var formMode = args.Item switch
             {
-                Name = readDto.Name,
-                Notes = readDto.Notes
+                BusinessToReadInList => FormMode.Edit,
+                _ => BusinessFormMode
             };
 
-            if (readDto.Address != null)
-            {
-                Business.Address = new AddressToWrite
+            var businessResult = await BusinessDataService.GetBusiness(id)
+                .OnFailure(error =>
                 {
-                    AddressLine1 = readDto.Address.AddressLine1,
-                    City = readDto.Address.City,
-                    State = readDto.Address.State,
-                    PostalCode = readDto.Address.PostalCode,
-                    AddressLine2 = readDto.Address.AddressLine2
-                };
-            }
+                    Logger.LogError(error);
+                    // TODO: Replace exception with toast message
+                    throw new Exception(error);
+                });
 
-            foreach (var email in readDto?.Emails)
+            var business = businessResult.Value;
+
+            Business = new BusinessToWrite
             {
-                Business.Emails.Add(new EmailToWrite
+                Name = business.Name,
+                Notes = business.Notes,
+                Address = business.Address is not null
+                ? new AddressToWrite
+                {
+                    AddressLine1 = business.Address.AddressLine1,
+                    City = business.Address.City,
+                    State = business.Address.State,
+                    PostalCode = business.Address.PostalCode,
+                    AddressLine2 = business.Address.AddressLine2
+                }
+                : null
+            };
+
+            Business.Emails.AddRange(
+                business?.Emails.Select(email => new EmailToWrite
                 {
                     Address = email.Address,
                     IsPrimary = email.IsPrimary
-                });
-            }
+                })
+                ?? Enumerable.Empty<EmailToWrite>()
+            );
 
-            foreach (var phone in readDto?.Phones)
-            {
-                Business.Phones.Add(new PhoneToWrite
+            Business.Phones.AddRange(
+                business?.Phones?.Select(phone => new PhoneToWrite
                 {
                     Id = phone.Id,
                     Number = phone.Number,
                     PhoneType = phone.PhoneType,
                     IsPrimary = phone.IsPrimary
-                });
-            }
-
+                })
+                ?? Enumerable.Empty<PhoneToWrite>()
+            );
         }
 
         private void Add()
@@ -148,7 +162,10 @@ namespace Menominee.Client.Pages.Businesses
         {
             BusinessFormMode = FormMode.Unknown;
             AddressFormMode = FormMode.Unknown;
-            Businesses = (await BusinessDataService.GetAllBusinesses()).ToList();
+            await BusinessDataService.GetAllBusinesses()
+                .Match(
+                    success => Businesses = success,
+                    failure => Logger.LogError(failure));
         }
     }
 }
