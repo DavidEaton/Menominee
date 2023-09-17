@@ -1,7 +1,5 @@
-﻿using Menominee.Shared.Models;
+﻿using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Vendors;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Menominee.Client.Services.Payables.Vendors
 {
@@ -9,7 +7,7 @@ namespace Menominee.Client.Services.Payables.Vendors
     {
         Task<IReadOnlyList<VendorToRead>> GetAllVendorsAsync();
         Task<VendorToRead> GetVendorAsync(long id);
-        Task<PostResult> AddVendorAsync(VendorToWrite vendor);
+        Task<PostResponse> AddVendorAsync(VendorToWrite vendor);
         Task UpdateVendorAsync(VendorToWrite vendor, long id);
     }
 }

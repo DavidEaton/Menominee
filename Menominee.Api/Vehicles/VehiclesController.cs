@@ -13,7 +13,6 @@ namespace Menominee.Api.Vehicles;
 public class VehiclesController : BaseApplicationController<VehiclesController>
 {
     private readonly IVehicleRepository repository;
-    private readonly string BasePath = "/api/vehicles";
 
     public VehiclesController(
         IVehicleRepository repository,
@@ -23,9 +22,15 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     }
 
     [HttpGet("list/{customerId:long}")]
-    public async Task<ActionResult<IReadOnlyList<VehicleToRead>>> GetVehiclesAsync(long customerId, [FromQuery] SortOrder sortOrder = SortOrder.Asc, VehicleSortColumn sortColumn = VehicleSortColumn.Plate, bool includeInactive = false, string searchTerm = "")
+    public async Task<ActionResult<IReadOnlyList<VehicleToRead>>> GetAsync(
+        long customerId,
+        [FromQuery] SortOrder sortOrder = SortOrder.Asc,
+        VehicleSortColumn sortColumn = VehicleSortColumn.Plate,
+        bool includeInactive = false,
+        string searchTerm = "")
     {
-        var vehicles = await repository.GetVehiclesAsync(customerId, sortOrder, sortColumn, includeInactive, searchTerm);
+        var vehicles = await repository
+            .GetVehiclesAsync(customerId, sortOrder, sortColumn, includeInactive, searchTerm);
 
         return vehicles is null
             ? Ok(new List<VehicleToRead>())
@@ -35,7 +40,7 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     }
 
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<VehicleToRead>> GetVehicleAsync(long id)
+    public async Task<ActionResult<VehicleToRead>> GetAsync(long id)
     {
         var vehicle = await repository.GetEntityAsync(id);
 
@@ -45,26 +50,20 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddVehicleAsync([FromBody] VehicleToWrite vehicleToAdd)
+    public async Task<ActionResult> AddAsync(VehicleToWrite vehicleToAdd)
     {
         var vehicle = VehicleHelper.ConvertWriteDtoToEntity(vehicleToAdd);
-
-        var vehicleFromRepository = await repository.GetEntityAsync(vehicleToAdd.VIN);
-        if (vehicleFromRepository is not null)
-        {
-            return Conflict();
-        }
 
         repository.AddVehicle(vehicle);
         await repository.SaveChanges();
 
         return Created(
-            new Uri($"{BasePath}/{vehicle.Id}", UriKind.Relative),
+            new Uri($"api/vehiclescontroller/{vehicle.Id}", UriKind.Relative),
             new { vehicle.Id });
     }
 
     [HttpPut("{id:long}")]
-    public async Task<ActionResult> UpdateVehicleAsync(long id, [FromBody] VehicleToWrite vehicleToUpdate)
+    public async Task<ActionResult> UpdateAsync(long id, VehicleToWrite vehicleToUpdate)
     {
         var notFoundMessage = $"Vehicle with id {id} not found.";
 
@@ -130,7 +129,7 @@ public class VehiclesController : BaseApplicationController<VehiclesController>
     }
 
     [HttpDelete("{id:long}")]
-    public async Task<ActionResult> DeleteVehicleAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         var notFoundMessage = $"Vehicle with id {id} not found.";
 

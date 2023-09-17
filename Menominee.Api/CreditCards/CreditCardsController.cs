@@ -12,14 +12,12 @@ namespace Menominee.Api.CreditCards
     public class CreditCardsController : BaseApplicationController<CreditCardsController>
     {
         private readonly ICreditCardRepository repository;
-        private readonly string BasePath = "/api/creditcards";
 
         public CreditCardsController(ICreditCardRepository repository, ILogger<CreditCardsController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        // api/creditcards/list
         [HttpGet("listing")]
         public async Task<ActionResult<IReadOnlyList<CreditCardToReadInList>>> GetCreditCardListAsync()
         {
@@ -27,8 +25,7 @@ namespace Menominee.Api.CreditCards
             return Ok(results);
         }
 
-        // api/creditcards/1
-        [HttpGet("{id:long}", Name = "GetCreditCardAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<CreditCardToRead>> GetCreditCardAsync(long id)
         {
             var result = await repository.GetCreditCardAsync(id);
@@ -39,11 +36,10 @@ namespace Menominee.Api.CreditCards
             return result;
         }
 
-        // api/creditcards/1
         [HttpPut("{id:long}")]
         public async Task<ActionResult> UpdateCreditCardAsync(long id, CreditCardToWrite creditCard)
         {
-            if (!await repository.CreditCardExistsAsync(id))
+            if (!await repository.CreditCardExistsAsync(creditCard.Id))
                 return NotFound($"Could not find Credit Card to update: {creditCard.Name}");
 
             //1) Get domain entity from repository
@@ -89,9 +85,9 @@ namespace Menominee.Api.CreditCards
             await repository.SaveChangesAsync();
 
             // 4.Return new Id from database to consumer after save
-            return Created(new Uri($"{BasePath}/{creditCard.Id}",
-                   UriKind.Relative),
-                   new { creditCard.Id });
+            return Created(
+              new Uri($"api/creditCardscontroller/{creditCard.Id}", UriKind.Relative),
+              new { creditCard.Id });
         }
 
         [HttpDelete("{id:long}")]

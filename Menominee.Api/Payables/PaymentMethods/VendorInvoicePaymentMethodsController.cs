@@ -14,21 +14,19 @@ namespace Menominee.Api.Payables.PaymentMethods
     {
         private readonly IVendorInvoicePaymentMethodRepository repository;
         private readonly IVendorRepository vendorRepository;
-        private readonly string BasePath = "/api/vendorinvoicepaymentmethods";
 
         public VendorInvoicePaymentMethodsController(
-            IVendorInvoicePaymentMethodRepository repository
-            , IVendorRepository vendorRepository
-            , ILogger<VendorInvoicePaymentMethodsController> logger) : base(logger)
+            IVendorInvoicePaymentMethodRepository repository,
+            IVendorRepository vendorRepository,
+            ILogger<VendorInvoicePaymentMethodsController> logger) : base(logger)
         {
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this.vendorRepository = vendorRepository ?? throw new ArgumentNullException(nameof(vendorRepository));
         }
 
-        // GET: api/vendorinvoicepaymentmethods/listing
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetPaymentMethodListAsync()
+        public async Task<ActionResult<IReadOnlyList<VendorInvoicePaymentMethodToReadInList>>> GetListAsync()
         {
             var payMethods = await repository.GetPaymentMethodListAsync();
 
@@ -38,9 +36,8 @@ namespace Menominee.Api.Payables.PaymentMethods
             return Ok(payMethods);
         }
 
-        // GET: api/vendorinvoicepaymentmethods/1
-        [HttpGet("{id:long}", Name = "GetPaymentMethodAsync")]
-        public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> GetPaymentMethodAsync(long id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<VendorInvoicePaymentMethodToRead>> GetAsync(long id)
         {
             var payMethod = await repository.GetPaymentMethodAsync(id);
 
@@ -50,9 +47,8 @@ namespace Menominee.Api.Payables.PaymentMethods
             return Ok(payMethod);
         }
 
-        // PUT: api/vendorinvoicepaymentmethods/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdatePaymentMethodAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
+        public async Task<ActionResult> UpdateAsync(VendorInvoicePaymentMethodToWrite paymentMethodToUpdate, long id)
         {
             var notFoundMessage = $"Could not find Vendor Invoice Payment Method {paymentMethodToUpdate.Name} to update with Id = {id}.";
 
@@ -93,12 +89,11 @@ namespace Menominee.Api.Payables.PaymentMethods
             return NoContent();
         }
 
-        // POST: api/vendorinvoicepaymentmethods
         [HttpPost]
-        public async Task<ActionResult> AddPaymentMethodAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
+        public async Task<ActionResult> AddAsync(VendorInvoicePaymentMethodToWrite payMethodToAdd)
         {
             var paymentMethodNames =
-                (IReadOnlyList<string>)await repository.GetPaymentMethodNamesAsync();
+                await repository.GetPaymentMethodNamesAsync();
 
             var reconcilingVendorFromCaller = payMethodToAdd.ReconcilingVendor is not null ? payMethodToAdd.ReconcilingVendor : null;
             Vendor reconcilingVendor = null;
@@ -106,30 +101,28 @@ namespace Menominee.Api.Payables.PaymentMethods
             if (reconcilingVendorFromCaller is not null)
                 reconcilingVendor = await vendorRepository.GetVendorEntityAsync(reconcilingVendorFromCaller.Id);
 
-            var paymentMethodOrError = VendorInvoicePaymentMethod.Create(
+            var result = VendorInvoicePaymentMethod.Create(
                 paymentMethodNames,
                 payMethodToAdd.Name,
                 payMethodToAdd.IsActive,
                 payMethodToAdd.PaymentType,
                 reconcilingVendor);
 
-            if (paymentMethodOrError.IsFailure)
-                return BadRequest($"Could not add new Payment Method '{payMethodToAdd.Name}': {paymentMethodOrError.Error}.");
+            if (result.IsFailure)
+                return BadRequest($"Could not add new Payment Method '{payMethodToAdd.Name}': {result.Error}.");
 
-            await repository.AddPaymentMethodAsync(paymentMethodOrError.Value);
+            await repository.AddPaymentMethodAsync(result.Value);
             await repository.SaveChangesAsync();
 
-            return Created(
-                new Uri($"{BasePath}/{paymentMethodOrError.Value.Id}",
-                UriKind.Relative),
-                new
-                {
-                    paymentMethodOrError.Value.Id
-                });
+            return CreatedAtAction(
+            nameof(GetAsync),
+            new { id = result.Value.Id },
+                new { result.Value.Id });
+
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeletePaymentMethodAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var payMethodFromRepository = await repository.GetPaymentMethodEntityAsync(id);
 

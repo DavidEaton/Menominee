@@ -1,11 +1,11 @@
 ﻿using CSharpFunctionalExtensions;
 using Menominee.Common.Enums;
-using Menominee.Shared.Models;
+using Menominee.Common.Extensions;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Web;
 
 namespace Menominee.Client.Services.Vehicles;
 
@@ -21,28 +21,43 @@ public class VehicleDataService : IVehicleDataService
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Result<PostResult>> AddVehicle(VehicleToWrite vehicle)
+    public async Task<Result<PostResponse>> AddVehicle(VehicleToWrite vehicle)
+    {
+        var result = await PostVehicle(vehicle)
+            .Bind(HttpResponseMessageExtensions.CheckResponse)
+            .Bind(ReadPostResult);
+
+        if (result.IsFailure)
+            logger.LogError(result.Error);
+
+        return result;
+    }
+
+    private async Task<Result<HttpResponseMessage>> PostVehicle(VehicleToWrite vehicle)
     {
         try
         {
-            var response = await httpClient.PostAsJsonAsync(UriSegment, vehicle);
+            return Result.Success(await httpClient.PostAsJsonAsync(UriSegment, vehicle));
+        }
+        catch (Exception)
+        {
+            return Result.Failure<HttpResponseMessage>("Failed to add vehicle");
+        }
+    }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorMessage = response.Content.ReadAsStringAsync().Result;
-                logger.LogError(message: errorMessage);
-                return Result.Failure<PostResult>(errorMessage);
-            }
-
-            var data = await response.Content.ReadFromJsonAsync<PostResult>();
-
-            return Result.Success(data!);
+    private async Task<Result<PostResponse>> ReadPostResult(HttpResponseMessage response)
+    {
+        try
+        {
+            var data = await response.Content.ReadFromJsonAsync<PostResponse>();
+            return data is not null
+                ? Result.Success(data)
+                : Result.Failure<PostResponse>("Empty result");
         }
         catch (Exception ex)
         {
-            var errorMessage = "Failed to add vehicle";
-            logger.LogError(ex, errorMessage);
-            return Result.Failure<PostResult>(errorMessage);
+            logger.LogError(ex, "Failed to read the post result.");
+            return Result.Failure<PostResponse>("Failed to read the post result.");
         }
     }
 

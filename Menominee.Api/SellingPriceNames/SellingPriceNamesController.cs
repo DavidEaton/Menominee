@@ -44,7 +44,7 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpPost]
-    public async Task<ActionResult<SellingPriceNameToRead>> AddSellingPriceName([FromBody] SellingPriceNameToWrite sellingPriceNameToAdd)
+    public async Task<ActionResult<SellingPriceNameToRead>> AddSellingPriceName(SellingPriceNameToWrite sellingPriceNameToAdd)
     {
         var sellingPriceName = SellingPriceName.Create(sellingPriceNameToAdd.Name).Value;
 
@@ -55,7 +55,7 @@ public class SellingPriceNamesController : BaseApplicationController<SellingPric
     }
 
     [HttpPut("{id:long}")]
-    public async Task<ActionResult> UpdateSellingPriceName(long id, [FromBody] SellingPriceNameToWrite updatedSellingPriceName)
+    public async Task<ActionResult> UpdateSellingPriceName(long id, SellingPriceNameToWrite updatedSellingPriceName)
     {
         var sellingPriceNameFromRepository = await repository.GetEntity(id);
 

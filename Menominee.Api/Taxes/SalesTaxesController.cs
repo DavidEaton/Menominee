@@ -27,7 +27,7 @@ namespace Menominee.Api.Taxes
         }
 
         // api/salestaxes/1
-        [HttpGet("{id:long}", Name = "GetSalesTaxAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<SalesTaxToRead>> GetSalesTaxAsync(long id)
         {
             var result = await repository.GetSalesTaxAsync(id);

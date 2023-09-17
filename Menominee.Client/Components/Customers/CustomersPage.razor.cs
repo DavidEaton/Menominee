@@ -1,12 +1,9 @@
-﻿using Menominee.Shared.Models.Customers;
-using Menominee.Shared.Models.Persons;
+﻿using CSharpFunctionalExtensions;
 using Menominee.Client.Services.Customers;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Customers;
+using Menominee.Shared.Models.Persons;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Telerik.Blazor.Components;
 
 namespace Menominee.Client.Components.Customers
@@ -15,6 +12,9 @@ namespace Menominee.Client.Components.Customers
     {
         [Inject]
         public ICustomerDataService CustomerDataService { get; set; }
+
+        [Inject]
+        public ILogger<CustomersPage> Logger { get; set; }
 
         public IReadOnlyList<CustomerToReadInList> Customers;
         public FormMode FormMode { get; set; } = FormMode.View;
@@ -26,7 +26,7 @@ namespace Menominee.Client.Components.Customers
 
         protected override async Task OnInitializedAsync()
         {
-            Customers = (await CustomerDataService.GetAllCustomers()).ToList();
+            await GetCustomers();
 
             foreach (CustomerType item in Enum.GetValues(typeof(CustomerType)))
                 CustomerTypeEnumData.Add(new CustomerTypeEnumModel { DisplayText = item.ToString(), Value = item });
@@ -35,22 +35,36 @@ namespace Menominee.Client.Components.Customers
                 EntityTypeEnumData.Add(new EntityTypeEnumModel { DisplayText = item.ToString(), Value = item });
         }
 
+        private async Task GetCustomers()
+        {
+            await CustomerDataService.GetAllCustomers()
+                .Match(
+                    success => Customers = success,
+                    failure => Logger.LogError(failure)
+                );
+        }
+
         private async Task EditAsync(GridRowClickEventArgs args)
         {
             Id = (args.Item as CustomerToReadInList).Id;
             FormMode = FormMode.Edit;
             Customers = null;
 
-            var customerReadDto = await CustomerDataService.GetCustomer(Id);
+            var customerResult = await CustomerDataService.GetCustomer(Id)
+                .OnFailure(error =>
+                {
+                    Logger.LogError(error);
+                    // TODO: Replace exception with toast message
+                    throw new Exception(error);
+                });
 
-            Customer = CustomerHelper.ConvertReadToWriteDto(customerReadDto);
+            Customer = CustomerHelper.ConvertReadToWriteDto(customerResult.Value);
 
-            if (customerReadDto.EntityType == EntityType.Person)
-                Caption = $"Editing Customer: {customerReadDto.Person.FirstMiddleLast}";
+            if (customerResult.Value.EntityType == EntityType.Person)
+                Caption = $"Editing Customer: {customerResult.Value.Person.FirstMiddleLast}";
 
-            if (customerReadDto.EntityType == EntityType.Business)
-                Caption = $"Editing Customer: {customerReadDto.Business.Name}";
-
+            if (customerResult.Value.EntityType == EntityType.Business)
+                Caption = $"Editing Customer: {customerResult.Value.Business.Name}";
         }
 
         private void Add()
@@ -103,7 +117,7 @@ namespace Menominee.Client.Components.Customers
 
         protected async Task EditSubmit()
         {
-            await CustomerDataService.UpdateCustomer(Customer, Id);
+            await CustomerDataService.UpdateCustomer(Customer);
             await EndEditAsync();
         }
 
@@ -119,16 +133,16 @@ namespace Menominee.Client.Components.Customers
         protected async Task EndEditAsync()
         {
             Caption = string.Empty;
-            Customers = (await CustomerDataService.GetAllCustomers()).ToList();
+            await GetCustomers();
             FormMode = FormMode.View;
         }
 
         protected async Task Close()
         {
-            FormMode = FormMode.View;
-            Customers = (await CustomerDataService.GetAllCustomers()).ToList();
-            Caption = string.Empty;
             Customer = null;
+            FormMode = FormMode.View;
+            Caption = string.Empty;
+            await GetCustomers();
         }
 
         private class CustomerTypeEnumModel

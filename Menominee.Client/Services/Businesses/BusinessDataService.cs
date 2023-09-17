@@ -2,6 +2,7 @@
 using CSharpFunctionalExtensions;
 using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Vehicles;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -44,19 +45,8 @@ namespace Menominee.Client.Services.Businesses
         {
             try
             {
-                var response = await httpClient.GetAsync($"{UriSegment}/list");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<IReadOnlyList<BusinessToReadInList>>(errorMessage);
-                }
-
-                var content = await response.Content.ReadAsStreamAsync();
-                var businesses = await JsonSerializer.DeserializeAsync<IReadOnlyList<BusinessToReadInList>>(content);
-                return Result.Success(businesses!);
-
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<BusinessToReadInList>>($"{UriSegment}/list");
+                return Result.Success(result!);
             }
             catch (Exception ex)
             {
@@ -94,12 +84,12 @@ namespace Menominee.Client.Services.Businesses
             }
         }
 
-        public async Task<Result> UpdateBusiness(BusinessToWrite business, long id)
+        public async Task<Result> UpdateBusiness(BusinessToWrite business)
         {
             try
             {
                 var content = new StringContent(JsonSerializer.Serialize(business), Encoding.UTF8, MediaType);
-                var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+                var response = await httpClient.PutAsync(UriSegment + $"/{business.Id}", content);
 
                 if (!response.IsSuccessStatusCode)
                 {

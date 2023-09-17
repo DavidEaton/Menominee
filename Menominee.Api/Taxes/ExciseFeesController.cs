@@ -27,7 +27,7 @@ namespace Menominee.Api.Taxes
         }
 
         // api/excisefees/1
-        [HttpGet("{id:long}", Name = "GetExciseFeeAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<ExciseFeeToRead>> GetExciseFeeAsync(long id)
         {
             var result = await repository.GetExciseFeeAsync(id);

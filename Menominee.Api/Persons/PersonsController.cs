@@ -15,7 +15,6 @@ namespace Menominee.Api.Persons
     public class PersonsController : BaseApplicationController<PersonsController>
     {
         private readonly IPersonRepository repository;
-        private readonly string BasePath = "/api/persons/";
 
         public PersonsController(IPersonRepository repository, ILogger<PersonsController> logger) : base(logger)
         {
@@ -25,7 +24,7 @@ namespace Menominee.Api.Persons
 
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PersonToReadInList>>> GetPersonsListAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonToReadInList>>> GetListAsync()
         {
             var persons = await repository.GetPersonsListAsync();
 
@@ -35,7 +34,7 @@ namespace Menominee.Api.Persons
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetPersonsAsync()
+        public async Task<ActionResult<IReadOnlyList<PersonToRead>>> GetAsync()
         {
             var persons = await repository.GetPersonsAsync();
 
@@ -44,8 +43,8 @@ namespace Menominee.Api.Persons
                 : NotFound();
         }
 
-        [HttpGet("{id:long}", Name = "GetPersonAsync")]
-        public async Task<ActionResult<PersonToRead>> GetPersonAsync(long id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<PersonToRead>> GetAsync(long id)
         {
             var person = await repository.GetPersonAsync(id);
 
@@ -55,7 +54,7 @@ namespace Menominee.Api.Persons
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdatePersonAsync(long id, PersonToWrite personDto)
+        public async Task<ActionResult> UpdateAsync(long id, PersonToWrite personDto)
         {
             var notFoundMessage = $"Could not find {personDto.Name.FirstName} {personDto.Name.LastName} to update";
 
@@ -63,12 +62,7 @@ namespace Menominee.Api.Persons
             if (personFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            if (NamesAreNotEqual(personFromRepository.Name, personDto.Name))
-            {
-                var result = UpdateName(personDto, personFromRepository);
-                if (result.IsFailure)
-                    return NotFound(result.Error);
-            }
+            UpdateName(personDto, personFromRepository);
 
             var contactDetails = ContactDetailsFactory
                 .Create(personDto.Phones.ToList(), personDto.Emails.ToList(), personDto.Address).Value;
@@ -110,24 +104,17 @@ namespace Menominee.Api.Persons
             return NoContent();
         }
 
-        private Result<PersonName> UpdateName(PersonToWrite personDto, Person personFromRepository)
+        private static void UpdateName(PersonToWrite personDto, Person personFromRepository)
         {
-            Result<PersonName> result;
-
-            if (personDto?.Name == null)
+            // Data Transfer Objects have been validated in ASP.NET request pipeline
+            if (NamesAreNotEqual(personFromRepository.Name, personDto.Name))
             {
-                result = Result.Failure<PersonName>("Name information is missing.");
+                personFromRepository.SetName(PersonName.Create(
+                    personDto.Name.LastName,
+                    personDto.Name.FirstName,
+                    personDto.Name.MiddleName)
+                    .Value);
             }
-            else
-            {
-                var lastName = personDto.Name.LastName ?? string.Empty;
-                var firstName = personDto.Name.FirstName ?? string.Empty;
-                var middleName = personDto.Name.MiddleName ?? string.Empty;
-
-                result = PersonName.Create(lastName, firstName, middleName);
-            }
-
-            return personFromRepository.SetName(result.Value);
         }
 
         private static bool NamesAreNotEqual(PersonName name, PersonNameToWrite nameDto) =>
@@ -136,20 +123,21 @@ namespace Menominee.Api.Persons
             !string.Equals(name.LastName, nameDto?.LastName);
 
         [HttpPost]
-        public async Task<ActionResult> AddPersonAsync(PersonToWrite personToAdd)
+        public async Task<ActionResult> AddAsync(PersonToWrite personToAdd)
         {
             var person = PersonHelper.ConvertWriteDtoToEntity(personToAdd);
 
             await repository.AddPersonAsync(person);
             await repository.SaveChangesAsync();
 
-            return Created(new Uri($"{BasePath}/{person.Id}",
-                               UriKind.Relative),
-                               new { id = person.Id });
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = person.Id },
+                new { person.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeletePersonAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var personFromRepository = await repository.GetPersonEntityAsync(id);
 

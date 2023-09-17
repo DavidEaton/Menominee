@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Menominee.Shared.Models;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Vehicles;
 using Menominee.TestingHelperLibrary.Fakers;
 using System.Linq;
@@ -44,7 +44,7 @@ public class VehiclesControllerShould : IntegrationTestBase
         var vehicleToAdd = VehicleHelper.ConvertToWriteDto(vehicle);
         var result = await HttpClient.PostAsJsonAsync(Route, vehicleToAdd);
 
-        var id = (await result.Content.ReadFromJsonAsync<PostResult>()).Id;
+        var id = (await result.Content.ReadFromJsonAsync<PostResponse>()).Id;
         var vehicleFromEndpoint = await HttpClient
             .GetFromJsonAsync<VehicleToRead>($"{Route}/{id}");
 

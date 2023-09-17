@@ -1,15 +1,14 @@
-﻿using Menominee.Shared.Models.Customers;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Shared.Models.Customers;
 
 namespace Menominee.Client.Services.Customers
 {
     public interface ICustomerDataService
     {
-        Task<IReadOnlyList<CustomerToReadInList>> GetAllCustomers();
-        Task<CustomerToRead> GetCustomer(long id);
+        Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers();
+        Task<Result<CustomerToRead>> GetCustomer(long id);
         Task<CustomerToRead> AddCustomer(CustomerToWrite customer);
-        Task UpdateCustomer(CustomerToWrite customer, long id);
+        Task UpdateCustomer(CustomerToWrite customer);
         Task DeleteCustomer(long id);
     }
 }

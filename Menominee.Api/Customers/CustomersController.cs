@@ -25,7 +25,6 @@ namespace Menominee.Api.Customers
         private readonly IVehicleRepository vehicleRepository;
         private readonly PersonsController personsController;
         private readonly BusinessesController businessesController;
-        private readonly string BasePath = "/api/customers/";
 
         public CustomersController(
             ICustomerRepository customerRepository,
@@ -50,8 +49,8 @@ namespace Menominee.Api.Customers
                 throw new ArgumentNullException(nameof(businessesController));
         }
 
-        [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetCustomersListAsync()
+        [HttpGet("listing")]
+        public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetListAsync()
         {
             var customers = await customerRepository.GetCustomersInListAsync();
 
@@ -60,9 +59,8 @@ namespace Menominee.Api.Customers
                 : Ok();
         }
 
-        // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CustomerToRead>>> GetCustomersAsync()
+        public async Task<ActionResult<IReadOnlyList<CustomerToRead>>> GetAsync()
         {
             var customers = await customerRepository.GetCustomersAsync();
 
@@ -71,9 +69,8 @@ namespace Menominee.Api.Customers
                 : Ok();
         }
 
-        // GET: api/Customer/1
-        [HttpGet("{id:long}", Name = "GetCustomerAsync")]
-        public async Task<ActionResult<CustomerToRead>> GetCustomerAsync(long id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<CustomerToRead>> GetAsync(long id)
         {
             var customer = await GetCustomer(id);
 
@@ -95,7 +92,7 @@ namespace Menominee.Api.Customers
         }
 
         [HttpGet("{code}")]
-        public async Task<ActionResult<PagedList<CustomerToRead>>> GetCustomersAsync(string code, [FromQuery] Pagination pagination)
+        public async Task<ActionResult<PagedList<CustomerToRead>>> GetAsync(string code, [FromQuery] Pagination pagination)
         {
             if (string.IsNullOrEmpty(code))
                 return BadRequest("Code parameter is required.");
@@ -115,9 +112,8 @@ namespace Menominee.Api.Customers
             pagination.PageSize = Math.Min(100, Math.Max(1, pagination.PageSize));
         }
 
-        // PUT: api/Customer/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateCustomerAsync(long id, CustomerToWrite customerToWrite)
+        public async Task<ActionResult> UpdateAsync(long id, CustomerToWrite customerToWrite)
         {
             var customerFromRepository = await customerRepository.GetCustomerEntityAsync(id);
 
@@ -126,10 +122,10 @@ namespace Menominee.Api.Customers
 
 
             if (customerFromRepository.EntityType == EntityType.Business)
-                await businessesController.UpdateBusinessAsync(customerFromRepository.Business.Id, customerToWrite.Business);
+                await businessesController.UpdateAsync(customerFromRepository.Business.Id, customerToWrite.Business);
 
             if (customerFromRepository.EntityType == EntityType.Person)
-                await personsController.UpdatePersonAsync(customerFromRepository.Person.Id, customerToWrite.Person);
+                await personsController.UpdateAsync(customerFromRepository.Person.Id, customerToWrite.Person);
 
             AddNewVehicles(customerFromRepository, customerToWrite);
             UpdateExistingVehicles(customerFromRepository, customerToWrite);
@@ -216,7 +212,7 @@ namespace Menominee.Api.Customers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCustomerAsync(CustomerToWrite customerToAdd)
+        public async Task<ActionResult> AddAsync(CustomerToWrite customerToAdd)
         {
             Customer customer = null;
 
@@ -246,8 +242,14 @@ namespace Menominee.Api.Customers
 
             await customerRepository.AddCustomerAsync(customer);
             await customerRepository.SaveChangesAsync();
+            //        return Created(
+            //          new Uri($"api/customerscontroller/{customer.Id}", UriKind.Relative),
+            //          new { customer.Id });
 
-            return Created(new Uri($"{BasePath}/{customer.Id}", UriKind.Relative), new { id = customer.Id });
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = customer.Id },
+                new { customer.Id });
         }
 
         private static void AddVehiclesToCustomer(Customer customer, List<VehicleToWrite> vehicles)
@@ -276,7 +278,7 @@ namespace Menominee.Api.Customers
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteCustomerAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var notFoundMessage = $"Could not find Customer in the database to delete with Id: {id}.";
 

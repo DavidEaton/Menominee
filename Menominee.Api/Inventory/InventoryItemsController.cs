@@ -19,7 +19,6 @@ namespace Menominee.Api.Inventory
         private readonly IInventoryItemRepository itemRepository;
         private readonly IManufacturerRepository manufacturerRepository;
         private readonly IProductCodeRepository productCodeRepository;
-        private readonly string BasePath = "/api/inventoryitems";
 
         public InventoryItemsController(IInventoryItemRepository itemRepository,
             IManufacturerRepository manufacturerRepository,
@@ -37,7 +36,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpGet("listing")]
-        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetItemsInList([FromQuery] long? manufacturerId)
+        public async Task<ActionResult<IReadOnlyList<InventoryItemToReadInList>>> GetItemsInListAsync([FromQuery] long? manufacturerId)
         {
             var result = manufacturerId.HasValue
                 ? await itemRepository.GetItemsInList(manufacturerId.Value)
@@ -47,7 +46,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpGet("{manufacturerId:long}/itemNumber/{itemNumber}")]
-        public async Task<ActionResult<InventoryItemToRead>> Get(long manufacturerId, string itemNumber)
+        public async Task<ActionResult<InventoryItemToRead>> GetAsync(long manufacturerId, string itemNumber)
         {
             var result = await itemRepository.GetItem(manufacturerId, itemNumber);
 
@@ -57,7 +56,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<InventoryItemToRead>> Get(long id)
+        public async Task<ActionResult<InventoryItemToRead>> GetAsync(long id)
         {
             var result = await itemRepository.GetItem(id);
 
@@ -67,7 +66,7 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> Update(long id, InventoryItemToWrite itemFromCaller)
+        public async Task<ActionResult> UpdateAsync(long id, InventoryItemToWrite itemFromCaller)
         {
             var notFoundMessage = $"Could not find Inventory Item # {id} to update.";
 
@@ -90,7 +89,7 @@ namespace Menominee.Api.Inventory
 
 
         [HttpPost]
-        public async Task<ActionResult> Add(InventoryItemToWrite itemToAdd)
+        public async Task<ActionResult> AddAsync(InventoryItemToWrite itemToAdd)
         {
             var failureMessage = $"Could not add new Inventory Item Number: {itemToAdd?.ItemNumber}.";
 
@@ -112,13 +111,14 @@ namespace Menominee.Api.Inventory
             itemRepository.Add(inventoryItemEntity);
             await itemRepository.SaveChanges();
 
-            return Created(
-                new Uri($"{BasePath}/{inventoryItemEntity.Id}", UriKind.Relative),
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = inventoryItemEntity.Id },
                 new { inventoryItemEntity.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var notFoundMessage = $"Could not find Inventory Item in the database to delete with Id = {id}.";
 

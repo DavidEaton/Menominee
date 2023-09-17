@@ -24,7 +24,7 @@ public partial class RepairOrderCustomerVehicleTab
     }
 
     private FormMode EditVehicleFormMode = FormMode.Unknown;
-    private VehicleLookupMode VehicleLookupMode = VehicleLookupMode.Unknown; 
+    private VehicleLookupMode VehicleLookupMode = VehicleLookupMode.Unknown;
 
     private void AddVehicle()
     {
@@ -56,7 +56,7 @@ public partial class RepairOrderCustomerVehicleTab
                 return;
             }
 
-            vehicle.Id = result.Value.Id;
+            vehicle.Id = result.Value;
         }
 
         RepairOrderToEdit.Vehicle = new()

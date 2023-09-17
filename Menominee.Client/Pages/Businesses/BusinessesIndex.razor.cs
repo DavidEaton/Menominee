@@ -141,7 +141,7 @@ namespace Menominee.Client.Pages.Businesses
         {
             if (!string.IsNullOrWhiteSpace(Business.Name))
             {
-                await BusinessDataService.UpdateBusiness(Business, Id);
+                await BusinessDataService.UpdateBusiness(Business);
                 await EndAddEditAsync();
             }
         }

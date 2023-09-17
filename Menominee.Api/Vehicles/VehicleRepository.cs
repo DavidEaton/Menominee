@@ -21,7 +21,7 @@ public class VehicleRepository : IVehicleRepository
 
     public void AddVehicle(Vehicle entity)
     {
-        var existingEntity = context.Vehicles.Local
+        var existingEntity = context.Vehicles
             .FirstOrDefault(vehicle => vehicle.Id.Equals(entity.Id));
 
         if (existingEntity is not null)

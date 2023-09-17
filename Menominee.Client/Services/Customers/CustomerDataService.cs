@@ -1,9 +1,10 @@
 ﻿using Blazored.Toast.Services;
+using CSharpFunctionalExtensions;
+using Menominee.Common.Enums;
 using Menominee.Shared.Models.Customers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using static Menominee.Common.Enums.EntityType;
 
 namespace Menominee.Client.Services.Customers
 {
@@ -29,7 +30,7 @@ namespace Menominee.Client.Services.Customers
 
             if (response.IsSuccessStatusCode)
             {
-                var customerName = customer.EntityType == Person
+                var customerName = customer.EntityType == EntityType.Person
                                               ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
                                               : customer.Business.Name;
 
@@ -40,40 +41,42 @@ namespace Menominee.Client.Services.Customers
             return null;
         }
 
-        public async Task<IReadOnlyList<CustomerToReadInList>> GetAllCustomers()
+        public async Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers()
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/listing");
+                return Result.Success(result!);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get all customers");
+                var errorMessage = $"Failed to get Customers";
+                logger.LogError(ex, errorMessage);
+                return Result.Failure<IReadOnlyList<CustomerToReadInList>>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task<CustomerToRead> GetCustomer(long id)
+        public async Task<Result<CustomerToRead>> GetCustomer(long id)
         {
             try
             {
-                return await httpClient.GetFromJsonAsync<CustomerToRead>(UriSegment + $"/{id}");
+                var result = await httpClient.GetFromJsonAsync<CustomerToRead>(UriSegment + $"/{id}");
+                return Result.Success(result!);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to get customer with id {id}", id);
+                var errorMessage = $"Failed to get customer with id {id}";
+                logger.LogError(ex, errorMessage);
+                return Result.Failure<CustomerToRead>(errorMessage);
             }
-
-            return null;
         }
 
-        public async Task UpdateCustomer(CustomerToWrite customer, long id)
+        public async Task UpdateCustomer(CustomerToWrite customer)
         {
             var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+            var response = await httpClient.PutAsync(UriSegment + $"/{customer.Id}", content);
             var name =
-                customer.EntityType == Person
+                customer.EntityType == EntityType.Person
                 ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
                 : customer.Business.Name;
 

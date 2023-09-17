@@ -29,7 +29,6 @@ namespace Menominee.Api.Payables.Invoices
         private readonly ISalesTaxRepository salesTaxRepository;
         private readonly IManufacturerRepository manufacturerRepository;
         private readonly ISaleCodeRepository saleCodeRepository;
-        private readonly string BasePath = "/api/vendorinvoices";
 
         public VendorInvoicesController(
             IVendorInvoiceRepository repository,
@@ -50,7 +49,7 @@ namespace Menominee.Api.Payables.Invoices
 
         [Route("listing")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetList([FromQuery] ResourceParameters resourceParameters)
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToReadInList>>> GetListAsync([FromQuery] ResourceParameters resourceParameters)
         {
             var result = await repository.GetList(resourceParameters);
 
@@ -60,7 +59,7 @@ namespace Menominee.Api.Payables.Invoices
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> Get([FromQuery] ResourceParameters resourceParameters)
+        public async Task<ActionResult<IReadOnlyList<VendorInvoiceToRead>>> GetAsync([FromQuery] ResourceParameters resourceParameters)
         {
             var result = await repository.GetInvoices(resourceParameters);
 
@@ -69,8 +68,8 @@ namespace Menominee.Api.Payables.Invoices
                 : Ok(result);
         }
 
-        [HttpGet("{id:long}", Name = "GetInvoiceAsync")]
-        public async Task<ActionResult<VendorInvoiceToRead>> Get(long id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<VendorInvoiceToRead>> GetAsync(long id)
         {
             var result = await repository.Get(id);
 
@@ -256,14 +255,14 @@ namespace Menominee.Api.Payables.Invoices
 
             await repository.Add(invoiceEntity);
             await repository.SaveChanges();
-
-            return Created(
-                new Uri($"{BasePath}/{invoiceEntity.Id}", UriKind.Relative),
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = invoiceEntity.Id },
                 new { invoiceEntity.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var invoiceFromRepository = await repository.GetEntity(id);
 

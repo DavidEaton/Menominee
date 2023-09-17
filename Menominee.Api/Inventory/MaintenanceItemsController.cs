@@ -1,5 +1,4 @@
 ﻿using Menominee.Api.Common;
-using Menominee.Domain.Entities.Inventory;
 using Menominee.Shared.Models.Inventory.MaintenanceItems;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,12 +12,11 @@ namespace Menominee.Api.Inventory
     {
         private readonly IMaintenanceItemRepository maintenanceItemRepository;
         private readonly IInventoryItemRepository inventoryItemRepository;
-        private readonly string BasePath = "/api/maintenanceitems";
 
         public MaintenanceItemsController(
-            IMaintenanceItemRepository maintenanceItemRepository
-            , IInventoryItemRepository inventoryItemRepository
-            , ILogger<MaintenanceItemsController> logger) : base(logger)
+            IMaintenanceItemRepository maintenanceItemRepository,
+            IInventoryItemRepository inventoryItemRepository,
+            ILogger<MaintenanceItemsController> logger) : base(logger)
         {
             this.maintenanceItemRepository =
                 maintenanceItemRepository ?? throw new ArgumentNullException(nameof(maintenanceItemRepository));
@@ -27,10 +25,9 @@ namespace Menominee.Api.Inventory
                 inventoryItemRepository ?? throw new ArgumentNullException(nameof(inventoryItemRepository));
         }
 
-        // api/maintenanceitems/listing
         [Route("listing")]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<MaintenanceItemToReadInList>>> GetMaintenanceItemsListAsync()
+        public async Task<ActionResult<IReadOnlyList<MaintenanceItemToReadInList>>> GetListAsync()
         {
             var result = await maintenanceItemRepository.GetItemsInListAsync();
 
@@ -39,9 +36,8 @@ namespace Menominee.Api.Inventory
                 : Ok(result);
         }
 
-        // api/maintenanceitems/1
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<MaintenanceItemToRead>> GetMaintenanceItemAsync(long id)
+        public async Task<ActionResult<MaintenanceItemToRead>> GetAsync(long id)
         {
             var result = await maintenanceItemRepository.GetItemAsync(id);
 
@@ -50,23 +46,19 @@ namespace Menominee.Api.Inventory
                 : Ok(result);
         }
 
-        // api/maintenanceitems/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateMaintenanceItemAsync(MaintenanceItemToWrite itemFromCaller, long id)
+        public async Task<ActionResult> UpdateAsync(MaintenanceItemToWrite itemFromCaller, long id)
         {
             var notFoundMessage = $"Could not find Maintenance Item # {id} to update.";
 
             if (!await maintenanceItemRepository.ItemExistsAsync(id))
                 return NotFound(notFoundMessage);
 
-            //1) Get domain entities from repositories:
-            MaintenanceItem itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
+            var itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
 
             if (itemFromRepository is null)
                 return NotFound(notFoundMessage);
 
-            // 2) Update domain "aggregate root" entity (MaintenanceItem) with data in
-            // data contract/transfer object(DTO).
             if (itemFromRepository.InventoryItem.Id != itemFromCaller.Item.Id)
             {
                 var resultOrError = itemFromRepository.SetInventoryItem(
@@ -91,35 +83,32 @@ namespace Menominee.Api.Inventory
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddMaintenanceItemAsync(
+        public async Task<ActionResult> AddAsync(
             MaintenanceItemToWrite itemToAdd)
         {
-            InventoryItem inventoryItem = await inventoryItemRepository.GetItemEntity(itemToAdd.Item.Id);
+            var inventoryItem = await inventoryItemRepository.GetItemEntity(itemToAdd.Item.Id);
 
             if (inventoryItem is null)
                 return NotFound($"Could not add new Inventory Item Number: {itemToAdd?.Item.ItemNumber}.");
 
-            MaintenanceItem maintenanceItemEntity = MaintenanceItemHelper.ConvertWriteDtoToEntity(itemToAdd, inventoryItem);
+            var maintenanceItemEntity = MaintenanceItemHelper.ConvertWriteDtoToEntity(itemToAdd, inventoryItem);
 
             await maintenanceItemRepository.AddItemAsync(maintenanceItemEntity);
 
             await maintenanceItemRepository.SaveChangesAsync();
 
-            return Created(
-                new Uri($"{BasePath}/{maintenanceItemEntity.Id}",
-                UriKind.Relative),
-                new
-                {
-                    maintenanceItemEntity.Id
-                });
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = maintenanceItemEntity.Id },
+                    new { maintenanceItemEntity.Id });
         }
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteMaintenanceItemAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             var notFoundMessage = $"Could not find Maintenance Item in the database to delete with Id = {id}.";
 
-            MaintenanceItem itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
+            var itemFromRepository = await maintenanceItemRepository.GetItemEntityAsync(id);
 
             if (itemFromRepository == null)
                 return NotFound(notFoundMessage);

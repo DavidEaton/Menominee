@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
-using Menominee.Client.Services.Payables.Vendors;
-using Menominee.Shared.Models.Payables.Vendors;
+﻿using Menominee.Client.Services.Payables.Vendors;
 using Menominee.Common.Enums;
-using static Menominee.Client.Services.Payables.Vendors.VendorDataService;
-using Menominee.Shared.Models;
+using Menominee.Common.Http;
+using Menominee.Shared.Models.Payables.Vendors;
+using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.Payables.Pages
 {
@@ -54,7 +52,7 @@ namespace Menominee.Client.Components.Payables.Pages
         {
             if (Id == 0)
             {
-                PostResult result = await VendorDataService.AddVendorAsync(Vendor);
+                PostResponse result = await VendorDataService.AddVendorAsync(Vendor);
                 Id = result.Id;
             }
 

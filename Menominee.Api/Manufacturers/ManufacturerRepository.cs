@@ -77,7 +77,7 @@ namespace Menominee.Api.Manufacturers
 
         public async Task<List<string>> GetExistingPrefixList()
         {
-            return await context.Manufacturers.Select(m => m.Prefix).ToListAsync();
+            return await context.Manufacturers.Select(manufacturer => manufacturer.Prefix).ToListAsync();
         }
 
         public async Task<List<long>> GetExistingIdList()

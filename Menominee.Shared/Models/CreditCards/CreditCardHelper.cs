@@ -9,7 +9,7 @@ namespace Menominee.Shared.Models.CreditCards
             if (creditCard is not null)
                 return null;
 
-            return CreditCard.Create(creditCard.Name,creditCard.FeeType,creditCard.Fee,creditCard.IsAddedToDeposit).Value;
+            return CreditCard.Create(creditCard.Name, creditCard.FeeType, creditCard.Fee, creditCard.IsAddedToDeposit).Value;
         }
 
         public static CreditCardToWrite CreateCreditCard(CreditCardToRead creditCard)
@@ -19,6 +19,7 @@ namespace Menominee.Shared.Models.CreditCards
 
             return new CreditCardToWrite
             {
+                Id = creditCard.Id,
                 Name = creditCard.Name,
                 FeeType = creditCard.FeeType,
                 Fee = creditCard.Fee,

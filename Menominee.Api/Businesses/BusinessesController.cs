@@ -17,8 +17,12 @@ namespace Menominee.Api.Businesses
         private readonly IBusinessRepository repository;
         private readonly IPersonRepository personsRepository;
         private readonly PersonsController personsController;
-        private readonly string BasePath = "/api/businesses";
+        // This is the only production code file that I prefer to keep comments in.
 
+        // TODO: Dependency Injection: Avoid injecting one controller into another
+        // (PersonsController into BusinessesController). This tightly couples the
+        // controllers and may lead to issues down the line. Use domain services or
+        // application services for shared functionality instead.
         public BusinessesController(
             IBusinessRepository repository
             , PersonsController personsController
@@ -29,12 +33,12 @@ namespace Menominee.Api.Businesses
                 throw new ArgumentNullException(nameof(repository));
             this.personsController = personsController ??
                 throw new ArgumentNullException(nameof(personsController));
-            this.personsRepository = personsRepository;
+            this.personsRepository = personsRepository ??
+                throw new ArgumentNullException(nameof(personsRepository));
         }
 
-        // api/businesses/list
         [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyList<BusinessToReadInList>>> GetBusinessesListAsync()
+        public async Task<ActionResult<IReadOnlyList<BusinessToReadInList>>> GetListAsync()
         {
             var businesses = await repository.GetBusinessesListAsync();
 
@@ -44,9 +48,8 @@ namespace Menominee.Api.Businesses
             return Ok(businesses);
         }
 
-        // api/businesses
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<BusinessToRead>>> GetBusinessesAsync()
+        public async Task<ActionResult<IReadOnlyList<BusinessToRead>>> GetAsync()
         {
             var businesses = await repository.GetBusinessesAsync();
 
@@ -56,9 +59,8 @@ namespace Menominee.Api.Businesses
             return Ok(businesses);
         }
 
-        // api/businesses/1
-        [HttpGet("{id:long}", Name = "GetBusinessAsync")]
-        public async Task<ActionResult<BusinessToRead>> GetBusinessAsync(long id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<BusinessToRead>> GetAsync(long id)
         {
             var business = await repository.GetBusinessAsync(id);
 
@@ -68,9 +70,8 @@ namespace Menominee.Api.Businesses
             return business;
         }
 
-        // api/businesses/1
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateBusinessAsync(long id, BusinessToWrite businessFromCaller)
+        public async Task<ActionResult> UpdateAsync(long id, BusinessToWrite businessFromCaller)
         {
             /* Update Pattern in Controllers:
                 1) Get domain entity from repository
@@ -163,7 +164,7 @@ namespace Menominee.Api.Businesses
             // Contact
             if (businessFromCaller?.Contact is not null && businessFromCaller.Contact.IsNotEmpty)
             {
-                var result = await personsController.UpdatePersonAsync(
+                var result = await personsController.UpdateAsync(
                                     businessFromRepository.Contact.Id,
                                     businessFromCaller.Contact);
 
@@ -212,7 +213,7 @@ namespace Menominee.Api.Businesses
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddBusinessAsync(BusinessToWrite businessToAdd)
+        public async Task<ActionResult> AddAsync(BusinessToWrite businessToAdd)
         {
             /*
                 Web API controllers don't have to check ModelState.IsValid if they have the
@@ -237,14 +238,16 @@ namespace Menominee.Api.Businesses
             await repository.SaveChangesAsync();
 
             // 4. Return new id and route to new resource after save
-            return Created(new Uri($"{BasePath}/{business.Id}",
-                               UriKind.Relative),
-                               new { business.Id });
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = business.Id },
+                new { business.Id }
+            );
         }
 
 
         [HttpDelete("{id:long}")]
-        public async Task<ActionResult> DeleteBusinessAsync(long id)
+        public async Task<ActionResult> DeleteAsync(long id)
         {
             /* Delete Pattern in Controllers:
              1) Get domain entity from repository

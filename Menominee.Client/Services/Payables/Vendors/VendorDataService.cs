@@ -1,5 +1,5 @@
 ﻿using Blazored.Toast.Services;
-using Menominee.Shared.Models;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Payables.Vendors;
 using System.Net.Http.Json;
 using System.Text;
@@ -22,7 +22,7 @@ namespace Menominee.Client.Services.Payables.Vendors
             this.toastService = toastService;
         }
 
-        public async Task<PostResult> AddVendorAsync(VendorToWrite vendor)
+        public async Task<PostResponse> AddVendorAsync(VendorToWrite vendor)
         {
             var content = new StringContent(JsonSerializer.Serialize(vendor), Encoding.UTF8, MediaType);
             var response = await httpClient.PostAsync(UriSegment, content);
@@ -33,7 +33,7 @@ namespace Menominee.Client.Services.Payables.Vendors
 
                 try
                 {
-                    return await response.Content.ReadFromJsonAsync<PostResult>();
+                    return await response.Content.ReadFromJsonAsync<PostResponse>();
                 }
                 catch (Exception ex)
                 {

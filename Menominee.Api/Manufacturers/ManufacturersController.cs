@@ -12,7 +12,6 @@ namespace Menominee.Api.Manufacturers
     public class ManufacturersController : BaseApplicationController<ManufacturersController>
     {
         private readonly IManufacturerRepository repository;
-        private readonly string BasePath = "/api/manufacturers";
 
         public ManufacturersController(IManufacturerRepository repository, ILogger<ManufacturersController> logger) : base(logger)
         {
@@ -20,7 +19,7 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyList<ManufacturerToReadInList>>> GetManufacturerListAsync()
+        public async Task<ActionResult<IReadOnlyList<ManufacturerToReadInList>>> GetListAsync()
         {
             var result = await repository.GetManufacturerListAsync();
 
@@ -30,7 +29,7 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<ManufacturerToRead>> GetManufacturerAsync(long id)
+        public async Task<ActionResult<ManufacturerToRead>> GetAsync(long id)
         {
             var result = await repository.GetManufacturerAsync(id);
 
@@ -40,26 +39,23 @@ namespace Menominee.Api.Manufacturers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddManufacturerAsync(ManufacturerToWrite manufacturerToAdd)
+        public async Task<ActionResult> AddAsync(ManufacturerToWrite manufacturerToAdd)
         {
             var existingPrefixes = await repository.GetExistingPrefixList();
             var existingIds = await repository.GetExistingIdList();
 
-            // 1. Convert dto to domain entity
-            var resultOrError = Manufacturer.Create(
+            var result = Manufacturer.Create(
                 repository.DetermineManufacturerId(existingIds), // we are not auto-incrementing the manufacturer id, user created manufacturers id starts at 50,000
                 manufacturerToAdd.Name,
                 manufacturerToAdd?.Prefix,
                 existingPrefixes,
                 existingIds);
 
-            if (resultOrError.IsFailure)
-                return BadRequest(resultOrError.Error);
+            if (result.IsFailure)
+                return BadRequest(result.Error);
 
-            // 2. Add domain entity to repository
-            await repository.AddManufacturerAsync(resultOrError.Value);
+            await repository.AddManufacturerAsync(result.Value);
 
-            // 3. Save changes on repository
             await repository.ExecuteInTransactionAsync(async () =>
             {
                 await repository.ToggleIdentityInsert(true);
@@ -67,29 +63,28 @@ namespace Menominee.Api.Manufacturers
                 await repository.ToggleIdentityInsert(false);
             });
 
-            // 4. Return to caller
-            return Created(
-                new Uri($"{BasePath}/{resultOrError.Value.Id}",
-                UriKind.Relative),
-                new
-                {
-                    resultOrError.Value.Id
-                });
+            return CreatedAtAction(
+                nameof(GetAsync),
+                new { id = result.Value.Id },
+                new { result.Value.Id });
         }
 
         [HttpPut("{id:long}")]
-        public async Task<ActionResult> UpdateManufacturerAsync(long id, ManufacturerToWrite manufacturerFromCaller)
+        public async Task<ActionResult> UpdateAsync(long id, ManufacturerToWrite manufacturerFromCaller)
         {
             var existingPrefixes = await repository.GetExistingPrefixList();
-            //1) Get domain entity from repository
-            var manufacturerFromRepository = await repository.GetManufacturerEntityAsync(id);
 
+            var manufacturerFromRepository = await repository.GetManufacturerEntityAsync(id);
             if (manufacturerFromRepository is null)
                 return NotFound($"Could not find Manufacturer to update: {manufacturerFromCaller.Name}");
 
-            // 2) Update domain entity with data in data transfer object(DTO)
-            manufacturerFromRepository.SetName(manufacturerFromCaller.Name);
-            manufacturerFromRepository.SetPrefix(manufacturerFromCaller.Prefix, existingPrefixes);
+            var setNameResult = manufacturerFromRepository.SetName(manufacturerFromCaller.Name);
+            if (setNameResult.IsFailure)
+                return BadRequest(setNameResult.Error);
+
+            var setPrefixResult = manufacturerFromRepository.SetPrefix(manufacturerFromCaller.Prefix, existingPrefixes);
+            if (setPrefixResult.IsFailure)
+                return BadRequest(setPrefixResult.Error);
 
             await repository.SaveChangesAsync();
 

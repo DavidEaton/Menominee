@@ -35,7 +35,7 @@ namespace Menominee.Api.Payables.Vendors
         }
 
         // api/vendors/1
-        [HttpGet("{id:long}", Name = "GetVendorAsync")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<VendorToRead>> GetVendorAsync(long id)
         {
             var result = await repository.GetVendorAsync(id);

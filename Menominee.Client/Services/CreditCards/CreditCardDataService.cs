@@ -1,9 +1,10 @@
 ﻿using Blazored.Toast.Services;
 using CSharpFunctionalExtensions;
+using Menominee.Common.Extensions;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.CreditCards;
 using Menominee.Shared.Models.Vehicles;
-using System.Text;
-using System.Text.Json;
+using System.Net.Http.Json;
 
 namespace Menominee.Client.Services.CreditCards
 {
@@ -22,41 +23,42 @@ namespace Menominee.Client.Services.CreditCards
             this.toastService = toastService;
         }
 
-        public async Task<Result<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite creditCard)
+        public async Task<Result<PostResponse>> AddCreditCardAsync(CreditCardToWrite creditCard)
         {
-            var content = new StringContent(JsonSerializer.Serialize(creditCard), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
+            var result = await PostCreditCard(creditCard)
+                .Bind(HttpResponseMessageExtensions.CheckResponse)
+                .Bind(response => response.ReadPostResult());
 
-            if (response.IsSuccessStatusCode)
+            if (result.IsSuccess)
+                toastService.ShowSuccess($"Card added successfully", "Saved");
+
+            if (result.IsFailure)
             {
-                toastService.ShowSuccess($"{creditCard.Name} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<Result<CreditCardToRead>>(await response.Content.ReadAsStreamAsync());
+                toastService.ShowError($"{creditCard.Name} failed to update", "Save Failed");
+                logger.LogError(result.Error);
             }
 
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            logger.LogError(errorMessage, errorMessage);
-            toastService.ShowError($"{creditCard.Name} failed to add. {response.ReasonPhrase}.", "Add Failed");
+            return result;
+        }
 
-            return Result.Failure<CreditCardToRead>(errorMessage);
+        private async Task<Result<HttpResponseMessage>> PostCreditCard(CreditCardToWrite creditCard)
+        {
+            try
+            {
+                return Result.Success(await httpClient.PostAsJsonAsync(UriSegment, creditCard));
+            }
+            catch (Exception)
+            {
+                return Result.Failure<HttpResponseMessage>("Failed to add credit card");
+            }
         }
 
         public async Task<Result<IReadOnlyList<CreditCardToReadInList>>> GetAllCreditCardsAsync()
         {
             try
             {
-                var response = await httpClient.GetAsync($"{UriSegment}/listing");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<IReadOnlyList<CreditCardToReadInList>>(errorMessage);
-                }
-
-                var content = await response.Content.ReadAsStreamAsync();
-                var creditCards = await JsonSerializer.DeserializeAsync<IReadOnlyList<CreditCardToReadInList>>(content);
-                return Result.Success(creditCards!);
-
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CreditCardToReadInList>>($"{UriSegment}/listing");
+                return Result.Success(result!);
             }
             catch (Exception ex)
             {
@@ -70,39 +72,28 @@ namespace Menominee.Client.Services.CreditCards
         {
             try
             {
-                var response = await httpClient.GetAsync($"{UriSegment}/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorMessage = response.Content.ReadAsStringAsync().Result;
-                    logger.LogError(message: errorMessage);
-                    return Result.Failure<CreditCardToRead>(errorMessage);
-                }
-
-                var content = await response.Content.ReadAsStreamAsync();
-                var creditCard = await JsonSerializer.DeserializeAsync<CreditCardToRead>(content);
-                return Result.Success(creditCard!);
-
+                var result = await httpClient.GetFromJsonAsync<CreditCardToRead>(UriSegment + $"/{id}");
+                return Result.Success(result!);
             }
             catch (Exception ex)
             {
-                var errorMessage = ex.Message;
-                logger.LogError(ex, "Failed to get credit card with id {id}", id);
+                var errorMessage = $"Failed to get credit card with id {id}";
+                logger.LogError(ex, errorMessage);
                 return Result.Failure<CreditCardToRead>(errorMessage);
             }
         }
 
-        public async Task<Result> UpdateCreditCardAsync(CreditCardToWrite creditCard, long id)
+        public async Task<Result> UpdateCreditCardAsync(CreditCardToWrite creditCard)
         {
             try
             {
-                var content = new StringContent(JsonSerializer.Serialize(creditCard), Encoding.UTF8, MediaType);
-                var response = await httpClient.PutAsync(UriSegment + $"/{id}", content);
+                var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{creditCard.Id}", creditCard);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorMessage = response.Content.ReadAsStringAsync().Result;
                     logger.LogError(message: errorMessage);
+                    toastService.ShowError($"{creditCard.Name} failed to update", "Save Failed");
                     return Result.Failure<VehicleToRead>(errorMessage);
                 }
 

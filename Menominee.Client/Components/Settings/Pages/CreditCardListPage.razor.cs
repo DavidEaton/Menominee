@@ -126,22 +126,45 @@ namespace Menominee.Client.Components.Settings.Pages
         protected async Task HandleAddSubmitAsync()
         {
             if (CreditCard.FeeType == CreditCardFeeType.None)
+            {
                 CreditCard.Fee = 0.0;
+            }
 
-            var addResult = await CreditCardDataService.AddCreditCardAsync(CreditCard)
-                .OnFailure(error =>
+            try
+            {
+                var addResult = await CreditCardDataService.AddCreditCardAsync(CreditCard);
+
+                if (addResult.IsFailure)
                 {
-                    Logger.LogError(error);
+                    Logger.LogError(addResult.Error);
                     // TODO: Replace exception with toast message
-                    throw new Exception(error);
-                });
+                    throw new Exception(addResult.Error);
+                }
+                else
+                {
+                    Id = addResult.Value.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions that could occur in AddCreditCardAsync()
+                Logger.LogError(ex, "An exception occurred while adding the credit card.");
+                // TODO: Additional error handling logic
+            }
 
-            Id = addResult.IsSuccess
-                    ? addResult.Value.Id
-                    : 0;
+            try
+            {
+                await EndAddEditAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions that could occur in EndAddEditAsync()
+                Logger.LogError(ex, "An exception occurred while ending add/edit.");
+                // TODO: Additional error handling logic
+            }
 
-            await EndAddEditAsync();
             Grid.Rebind();
+
         }
 
         protected async Task HandleEditSubmitAsync()
@@ -149,7 +172,7 @@ namespace Menominee.Client.Components.Settings.Pages
             if (CreditCard.FeeType == CreditCardFeeType.None)
                 CreditCard.Fee = 0.0;
 
-            await CreditCardDataService.UpdateCreditCardAsync(CreditCard, Id);
+            await CreditCardDataService.UpdateCreditCardAsync(CreditCard);
             await EndAddEditAsync();
         }
 
