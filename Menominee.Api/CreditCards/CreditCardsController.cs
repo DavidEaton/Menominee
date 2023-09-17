@@ -42,10 +42,8 @@ namespace Menominee.Api.CreditCards
             if (!await repository.CreditCardExistsAsync(creditCard.Id))
                 return NotFound($"Could not find Credit Card to update: {creditCard.Name}");
 
-            //1) Get domain entity from repository
             var creditCardFromRepository = await repository.GetCreditCardEntityAsync(id);
 
-            // 2) Update domain entity with data in data transfer object(DTO)
             if (creditCardFromRepository.Name != creditCard.Name)
                 creditCardFromRepository.SetName(creditCard.Name);
 
@@ -58,8 +56,6 @@ namespace Menominee.Api.CreditCards
             if (creditCardFromRepository.IsAddedToDeposit != creditCard.IsAddedToDeposit)
                 creditCardFromRepository.SetIsAddedToDeposit(creditCard.IsAddedToDeposit);
 
-            //cc.Processor = ccDto.Processor;
-
             await repository.UpdateCreditCardAsync(creditCardFromRepository);
 
             await repository.SaveChangesAsync();
@@ -70,24 +66,18 @@ namespace Menominee.Api.CreditCards
         [HttpPost]
         public async Task<ActionResult<CreditCardToRead>> AddCreditCardAsync(CreditCardToWrite creditCardToAdd)
         {
-            // 1. Convert dto to domain entity
-            var creditCardOrError = CreditCard.Create(creditCardToAdd.Name, creditCardToAdd.FeeType, creditCardToAdd.Fee, creditCardToAdd.IsAddedToDeposit);
+            var result = CreditCard.Create(creditCardToAdd.Name, creditCardToAdd.FeeType, creditCardToAdd.Fee, creditCardToAdd.IsAddedToDeposit);
 
-            if (creditCardOrError.IsFailure)
-                return NotFound($"Could not add new Credit Card '{creditCardToAdd.Name}'.");
+            if (result.IsFailure)
+                return BadRequest($"Could not add new Credit Card '{creditCardToAdd.Name}'.");
 
-            CreditCard creditCard = creditCardOrError.Value;
+            await repository.AddCreditCardAsync(result.Value);
 
-            // 2. Add domain entity to repository
-            await repository.AddCreditCardAsync(creditCard);
-
-            // 3. Save changes on repository
             await repository.SaveChangesAsync();
 
-            // 4.Return new Id from database to consumer after save
             return Created(
-              new Uri($"api/creditCardscontroller/{creditCard.Id}", UriKind.Relative),
-              new { creditCard.Id });
+              new Uri($"api/creditCardscontroller/{result.Value.Id}", UriKind.Relative),
+              new { result.Value.Id });
         }
 
         [HttpDelete("{id:long}")]
