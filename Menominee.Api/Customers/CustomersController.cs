@@ -5,8 +5,10 @@ using Menominee.Api.Persons;
 using Menominee.Api.Vehicles;
 using Menominee.Common.Enums;
 using Menominee.Domain.Entities;
+using Menominee.Shared.Models.Businesses;
 using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.Pagination;
+using Menominee.Shared.Models.Persons;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -49,7 +51,7 @@ namespace Menominee.Api.Customers
                 throw new ArgumentNullException(nameof(businessesController));
         }
 
-        [HttpGet("listing")]
+        [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyList<CustomerToReadInList>>> GetListAsync()
         {
             var customers = await customerRepository.GetCustomersInListAsync();
@@ -218,24 +220,22 @@ namespace Menominee.Api.Customers
 
             if (customerToAdd.EntityType == EntityType.Person)
             {
-                var person = await personRepository.GetPersonEntityAsync(customerToAdd.Person.Id);
+                var person = PersonHelper.ConvertWriteDtoToEntity(customerToAdd.Person);
                 var result = Customer.Create(person, customerToAdd.CustomerType, customerToAdd.Code);
 
-                if (person is null || result.IsFailure)
-                    return NotFound($"Could not find Person in the database to create Customer.");
+                if (result.IsFailure)
+                    return NotFound($"Could not create Customer.");
 
                 customer = result.Value;
             }
 
             if (customerToAdd.EntityType == EntityType.Business)
             {
-                var business = await businessRepository.GetBusinessEntityAsync(customerToAdd.Business.Id);
+                var business = BusinessHelper.ConvertWriteDtoToEntity(customerToAdd.Business);
                 var result = Customer.Create(business, customerToAdd.CustomerType, customerToAdd.Code);
 
-                if (business is null || result.IsFailure)
-                    return NotFound($"Could not find Business in the database to create Customer.");
-
-                customer = result.Value;
+                if (result.IsFailure)
+                    return NotFound($"Could not create Customer.");
             }
 
             AddVehiclesToCustomer(customer, customerToAdd.Vehicles.ToList());

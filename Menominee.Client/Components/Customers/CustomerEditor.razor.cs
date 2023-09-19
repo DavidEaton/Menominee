@@ -1,0 +1,124 @@
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.Customers;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components;
+using Menominee.Client.Components.Address;
+using Menominee.Shared.Models.Persons;
+
+namespace Menominee.Client.Components.Customers
+{
+    public partial class CustomerEditor
+    {
+        [Parameter]
+        public CustomerToRead Customer { get; set; }
+
+        [Parameter]
+        public FormMode FormMode { get; set; }
+
+        [Parameter]
+        public EventCallback<CustomerToWrite> OnSave { get; set; }
+
+        [Parameter]
+        public EventCallback OnDiscard { get; set; }
+
+        private string Title => $"{FormMode} Customer";
+        private EditContext EditContext { get; set; } = default!;
+        private CustomerValidator CustomerValidator { get; set; } = new();
+        private CustomerToWrite CustomerModel { get; set; } = new();
+
+        private AddressEditor addressEditor;
+        List<CustomerTypeEnumModel> CustomerTypeEnumData { get; set; } = new List<CustomerTypeEnumModel>();
+        List<EntityTypeEnumModel> EntityTypeEnumData { get; set; } = new List<EntityTypeEnumModel>();
+
+        protected override void OnInitialized()
+        {
+            if (FormMode.Equals(FormMode.Edit))
+            {
+                CustomerModel = CustomerHelper.ConvertReadToWriteDto(Customer);
+            }
+
+            foreach (EntityType item in Enum.GetValues(typeof(EntityType)))
+            {
+                EntityTypeEnumData.Add(new EntityTypeEnumModel { DisplayText = item.ToString(), Value = item });
+            }
+
+            EditContext = new EditContext(CustomerModel);
+            if (FormMode.Equals(FormMode.Add))
+            {
+                CustomerModel.EntityType = EntityType.Person;
+                EntityTypeChanged();
+            }
+
+            base.OnInitialized();
+        }
+
+        private async Task HandleSubmit(EditContext editContext)
+        {
+            var isValid = editContext.Validate();
+
+            if (!isValid)
+            {
+                return;
+            }
+
+            var customer = editContext.Model as CustomerToWrite;
+            customer!.Id = CustomerModel.Id;
+
+            await OnSave.InvokeAsync(customer);
+        }
+
+        private async Task HandleDiscard()
+        {
+            await OnDiscard.InvokeAsync();
+        }
+
+        protected async Task Submit()
+        {
+
+        }
+
+        protected async Task Close()
+        {
+
+        }
+
+
+        private void EntityTypeChanged()
+        {
+            if (CustomerModel.EntityType == EntityType.Business)
+            {
+                if (CustomerModel.Business is null)
+                    CustomerModel.Business = new();
+
+                CustomerModel.Person = null;
+            }
+
+            if (CustomerModel.EntityType == EntityType.Person)
+            {
+                var name = new PersonNameToWrite();
+
+                if (CustomerModel.Person is null)
+                {
+                    CustomerModel.Person = new();
+                }
+
+                CustomerModel.Person.Name = name;
+                CustomerModel.Business = null;
+            }
+        }
+
+
+        private class CustomerTypeEnumModel
+        {
+            public CustomerType Value { get; set; }
+            public string DisplayText { get; set; }
+        }
+
+        private class EntityTypeEnumModel
+        {
+            public EntityType Value { get; set; }
+            public string DisplayText { get; set; }
+        }
+
+    }
+}

@@ -1,10 +1,8 @@
-﻿using Blazored.Toast.Services;
-using CSharpFunctionalExtensions;
-using Menominee.Common.Enums;
+﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Extensions;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Customers;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Menominee.Client.Services.Customers
 {
@@ -12,40 +10,59 @@ namespace Menominee.Client.Services.Customers
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<CustomerDataService> logger;
-        private readonly IToastService toastService;
-        private const string MediaType = "application/json";
         private const string UriSegment = "api/customers";
 
-        public CustomerDataService(HttpClient httpClient, ILogger<CustomerDataService> logger, IToastService toastService)
+        public CustomerDataService(HttpClient httpClient, ILogger<CustomerDataService> logger)
         {
             this.httpClient = httpClient;
             this.logger = logger;
-            this.toastService = toastService;
         }
 
-        public async Task<CustomerToRead> AddCustomer(CustomerToWrite customer)
+        public async Task<Result<PostResponse>> AddCustomer(CustomerToWrite customer)
         {
-            var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
-            var response = await httpClient.PostAsync(UriSegment, content);
+            var result = await PostCustomer(customer)
+                .Bind(HttpResponseMessageExtensions.CheckResponse)
+                .Bind(ReadPostResult);
 
-            if (response.IsSuccessStatusCode)
+            if (result.IsFailure)
+                logger.LogError(result.Error);
+
+            return result;
+        }
+
+        private async Task<Result<HttpResponseMessage>> PostCustomer(CustomerToWrite customer)
+        {
+            try
             {
-                var customerName = customer.EntityType == EntityType.Person
-                                              ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
-                                              : customer.Business.Name;
-
-                toastService.ShowSuccess($"{customerName} added successfully", "Added");
-                return await JsonSerializer.DeserializeAsync<CustomerToRead>(await response.Content.ReadAsStreamAsync());
+                return Result.Success(await httpClient.PostAsJsonAsync(UriSegment, customer));
             }
+            catch (Exception)
+            {
+                return Result.Failure<HttpResponseMessage>("Failed to add customer");
+            }
+        }
 
-            return null;
+        private async Task<Result<PostResponse>> ReadPostResult(HttpResponseMessage response)
+        {
+            try
+            {
+                var data = await response.Content.ReadFromJsonAsync<PostResponse>();
+                return data is not null
+                    ? Result.Success(data)
+                    : Result.Failure<PostResponse>("Empty result");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to read the post result.");
+                return Result.Failure<PostResponse>("Failed to read the post result.");
+            }
         }
 
         public async Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers()
         {
             try
             {
-                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/listing");
+                var result = await httpClient.GetFromJsonAsync<IReadOnlyList<CustomerToReadInList>>($"{UriSegment}/list");
                 return Result.Success(result!);
             }
             catch (Exception ex)
@@ -71,22 +88,27 @@ namespace Menominee.Client.Services.Customers
             }
         }
 
-        public async Task UpdateCustomer(CustomerToWrite customer)
+        public async Task<Result> UpdateCustomer(CustomerToWrite customer)
         {
-            var content = new StringContent(JsonSerializer.Serialize(customer), Encoding.UTF8, MediaType);
-            var response = await httpClient.PutAsync(UriSegment + $"/{customer.Id}", content);
-            var name =
-                customer.EntityType == EntityType.Person
-                ? $"{customer.Person.Name.LastName}, {customer.Person.Name.FirstName}"
-                : customer.Business.Name;
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                toastService.ShowSuccess($"{name} updated successfully", "Saved");
-                return;
-            }
+                var response = await httpClient.PutAsJsonAsync($"{UriSegment}/{customer.Id}", customer);
 
-            toastService.ShowError($"{name} failed to update", "Save Failed");
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = response.Content.ReadAsStringAsync().Result;
+                    logger.LogError(message: errorMessage);
+                    return Result.Failure<CustomerToRead>(errorMessage);
+                }
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Failed to update customer with id {customer.Id}";
+                logger.LogError(ex, errorMessage);
+                return Result.Failure<CustomerToRead>(errorMessage);
+            }
         }
 
         public async Task DeleteCustomer(long id)

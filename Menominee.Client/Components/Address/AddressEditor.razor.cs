@@ -1,4 +1,5 @@
-﻿using Menominee.Common.Enums;
+﻿using Menominee.Client.Shared.Models;
+using Menominee.Common.Enums;
 using Menominee.Shared.Models.Addresses;
 using Microsoft.AspNetCore.Components;
 
@@ -26,11 +27,15 @@ namespace Menominee.Client.Components.Address
         protected override void OnInitialized()
         {
             foreach (State item in Enum.GetValues(typeof(State)))
-                StateEnumData.Add(new StateEnumModel
+            {
+                StateProvinceEnumData.Add(new StateProvinceEnumModel
                 {
                     DisplayText = item.ToString(),
+                    FullDisplayText = item.ToString() + " - " + EnumExtensions.GetDisplayName(item),
                     Value = item
                 });
+            }
+            StateProvinceEnumData = StateProvinceEnumData.OrderBy(state => state.DisplayText).ToList();
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -57,11 +62,6 @@ namespace Menominee.Client.Components.Address
             Address.AddressLine2 = addressOriginal.AddressLine2;
         }
 
-        List<StateEnumModel> StateEnumData { get; set; } = new List<StateEnumModel>();
-    }
-    public class StateEnumModel
-    {
-        public State Value { get; set; }
-        public string DisplayText { get; set; }
+        List<StateProvinceEnumModel> StateProvinceEnumData { get; set; } = new List<StateProvinceEnumModel>();
     }
 }

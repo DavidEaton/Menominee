@@ -2,41 +2,47 @@
     <div>
         <Card Title="Customer">
             <Content>
-                @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" Customer="@RepairOrder.Customer" />*@
-                @*<RepairOrderCustomer CustomerName="@RepairOrder.CustomerName" />*@
-                <RepairOrderCustomer @bind-RepairOrderToEdit="BoundRepairOrderToEdit" />
+                <RepairOrderCustomer @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                                     OnAdd="AddCustomer"
+                                     OnEdit="EditCustomer"
+                                     OnLookup="LookupCustomer" />
             </Content>
         </Card>
     </div>
     <div>
         <Card Title="Vehicle">
             <Content>
-                <RepairOrderVehicle 
-                    @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
-                    OnAdd="AddVehicle"
-                    OnEdit="EditVehicle"
-                    OnLookup="LookupVehicle"/>
+                <RepairOrderVehicle @bind-RepairOrderToEdit="BoundRepairOrderToEdit"
+                                    OnAdd="AddVehicle"
+                                    OnEdit="EditVehicle"
+                                    OnLookup="LookupVehicle" />
             </Content>
         </Card>
     </div>
 </div>
 
-@if((EditVehicleFormMode.Equals(FormMode.Add) || EditVehicleFormMode.Equals(FormMode.Edit)) && RepairOrderToEdit is not null)
+@if ((EditVehicleFormMode.Equals(FormMode.Add) || EditVehicleFormMode.Equals(FormMode.Edit)) && RepairOrderToEdit is not null)
 {
-    <VehicleEditor 
-        Vehicle="RepairOrderToEdit.Vehicle"
-        FormMode="EditVehicleFormMode" 
-        OnSave="SaveVehicle"
-        OnDiscard="DiscardVehicle" />
+    <VehicleEditor Vehicle="RepairOrderToEdit.Vehicle"
+                   FormMode="EditVehicleFormMode"
+                   OnSave="SaveVehicle"
+                   OnDiscard="DiscardVehicle" />
 }
 
-@if(VehicleLookupMode != VehicleLookupMode.Unknown && RepairOrderToEdit is not null)
+@if (VehicleLookupMode != VehicleLookupMode.Unknown && RepairOrderToEdit is not null)
 {
-    <VehicleLookup
-        CustomerId="RepairOrderToEdit.Customer?.Id ?? 0"
-        LookupMode="VehicleLookupMode"
-        OnSelect="SelectVehicle"
-        OnCancel="CancelVehicleLookup" />
+    <VehicleLookup CustomerId="RepairOrderToEdit.Customer?.Id ?? 0"
+                   LookupMode="VehicleLookupMode"
+                   OnSelect="SelectVehicle"
+                   OnCancel="CancelVehicleLookup" />
+}
+
+@if ((EditCustomerFormMode.Equals(FormMode.Add) || EditCustomerFormMode.Equals(FormMode.Edit)) && RepairOrderToEdit is not null)
+{
+    <CustomerEditor Customer="RepairOrderToEdit.Customer"
+                   FormMode="EditCustomerFormMode"
+                   OnSave="SaveCustomer"
+                   OnDiscard="DiscardCustomer" />
 }
 
 <style>

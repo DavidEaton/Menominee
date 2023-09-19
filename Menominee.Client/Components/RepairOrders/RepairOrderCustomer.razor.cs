@@ -1,4 +1,5 @@
-﻿using Menominee.Shared.Models.RepairOrders;
+﻿using Menominee.Common.Enums;
+using Menominee.Shared.Models.RepairOrders;
 using Microsoft.AspNetCore.Components;
 
 namespace Menominee.Client.Components.RepairOrders
@@ -17,19 +18,30 @@ namespace Menominee.Client.Components.RepairOrders
         [Parameter]
         public EventCallback<RepairOrderToWrite> RepairOrderToEditChanged { get; set; }
 
-        //private string CustName { get; set; }
+        [Parameter]
+        public EventCallback OnAdd { get; set; }
 
-        //private bool CanEditCust { get; set; } = true;
-        //private bool CanAddCust { get; set; } = true;
+        [Parameter]
+        public EventCallback OnEdit { get; set; }
 
-        //private void OnAddCust()
-        //{
-        //    CustName = "Add Customer";
-        //}
+        [Parameter]
+        public EventCallback<CustomerLookupMode> OnLookup { get; set; }
 
-        //private void OnEditCust()
-        //{
-        //    CustName = "Edit Customer";
-        //}
+        private bool CanEdit => RepairOrderToEdit.Customer is not null && RepairOrderToEdit.Customer.Id > 0;
+
+        private async Task AddCustomer()
+        {
+            await OnAdd.InvokeAsync();
+        }
+
+        private async Task EditCustomer()
+        {
+            await OnEdit.InvokeAsync();
+        }
+
+        private async Task LookupCustomer(CustomerLookupMode lookupMode)
+        {
+            await OnLookup.InvokeAsync(lookupMode);
+        }
     }
 }

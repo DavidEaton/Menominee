@@ -1,200 +1,200 @@
-﻿using System.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Menominee.Common.Enums
 {
     public enum State
     {
-        [Description("Alabama")]
+        [Display(Name = "Alabama")]
         AL,
 
-        [Description("Alaska")]
+        [Display(Name = "Alaska")]
         AK,
 
-        [Description("Arkansas")]
+        [Display(Name = "Arkansas")]
         AR,
 
-        [Description("Arizona")]
+        [Display(Name = "Arizona")]
         AZ,
 
-        [Description("California")]
+        [Display(Name = "California")]
         CA,
 
-        [Description("Colorado")]
+        [Display(Name = "Colorado")]
         CO,
 
-        [Description("Connecticut")]
+        [Display(Name = "Connecticut")]
         CT,
 
-        [Description("District of Columbia")]
+        [Display(Name = "District of Columbia")]
         DC,
 
-        [Description("Delaware")]
+        [Display(Name = "Delaware")]
         DE,
 
-        [Description("Florida")]
+        [Display(Name = "Florida")]
         FL,
 
-        [Description("Georgia")]
+        [Display(Name = "Georgia")]
         GA,
 
-        [Description("Hawaii")]
+        [Display(Name = "Hawaii")]
         HI,
 
-        [Description("Iowa")]
+        [Display(Name = "Iowa")]
         IA,
 
-        [Description("Idaho")]
+        [Display(Name = "Idaho")]
         ID,
 
-        [Description("Illinois")]
+        [Display(Name = "Illinois")]
         IL,
 
-        [Description("Indiana")]
+        [Display(Name = "Indiana")]
         IN,
 
-        [Description("Kansas")]
+        [Display(Name = "Kansas")]
         KS,
 
-        [Description("Kentucky")]
+        [Display(Name = "Kentucky")]
         KY,
 
-        [Description("Louisiana")]
+        [Display(Name = "Louisiana")]
         LA,
 
-        [Description("Massachusetts")]
+        [Display(Name = "Massachusetts")]
         MA,
 
-        [Description("Maryland")]
+        [Display(Name = "Maryland")]
         MD,
 
-        [Description("Maine")]
+        [Display(Name = "Maine")]
         ME,
 
-        [Description("Michigan")]
+        [Display(Name = "Michigan")]
         MI,
 
-        [Description("Minnesota")]
+        [Display(Name = "Minnesota")]
         MN,
 
-        [Description("Missouri")]
+        [Display(Name = "Missouri")]
         MO,
 
-        [Description("Mississippi")]
+        [Display(Name = "Mississippi")]
         MS,
 
-        [Description("Montana")]
+        [Display(Name = "Montana")]
         MT,
 
-        [Description("North Carolina")]
+        [Display(Name = "North Carolina")]
         NC,
 
-        [Description("North Dakota")]
+        [Display(Name = "North Dakota")]
         ND,
 
-        [Description("Nebraska")]
+        [Display(Name = "Nebraska")]
         NE,
 
-        [Description("New Hampshire")]
+        [Display(Name = "New Hampshire")]
         NH,
 
-        [Description("New Jersey")]
+        [Display(Name = "New Jersey")]
         NJ,
 
-        [Description("New Mexico")]
+        [Display(Name = "New Mexico")]
         NM,
 
-        [Description("Nevada")]
+        [Display(Name = "Nevada")]
         NV,
 
-        [Description("New York")]
+        [Display(Name = "New York")]
         NY,
 
-        [Description("Oklahoma")]
+        [Display(Name = "Oklahoma")]
         OK,
 
-        [Description("Ohio")]
+        [Display(Name = "Ohio")]
         OH,
 
-        [Description("Oregon")]
+        [Display(Name = "Oregon")]
         OR,
 
-        [Description("Pennsylvania")]
+        [Display(Name = "Pennsylvania")]
         PA,
 
-        [Description("Rhode Island")]
+        [Display(Name = "Rhode Island")]
         RI,
 
-        [Description("South Carolina")]
+        [Display(Name = "South Carolina")]
         SC,
 
-        [Description("South Dakota")]
+        [Display(Name = "South Dakota")]
         SD,
 
-        [Description("Tennessee")]
+        [Display(Name = "Tennessee")]
         TN,
 
-        [Description("Texas")]
+        [Display(Name = "Texas")]
         TX,
 
-        [Description("Utah")]
+        [Display(Name = "Utah")]
         UT,
 
-        [Description("Virginia")]
+        [Display(Name = "Virginia")]
         VA,
 
-        [Description("Vermont")]
+        [Display(Name = "Vermont")]
         VT,
 
-        [Description("Washington")]
+        [Display(Name = "Washington")]
         WA,
 
-        [Description("Wisconsin")]
+        [Display(Name = "Wisconsin")]
         WI,
 
-        [Description("West Virginia")]
+        [Display(Name = "West Virginia")]
         WV,
 
-        [Description("Wyoming")]
+        [Display(Name = "Wyoming")]
         WY,
 
         //canada
-        [Description("Alberta")]
+        [Display(Name = "Alberta")]
         AB,
 
-        [Description("British Columbia")]
+        [Display(Name = "British Columbia")]
         BC,
 
-        [Description("Manitoba")]
+        [Display(Name = "Manitoba")]
         MB,
 
-        [Description("New Brunswick")]
+        [Display(Name = "New Brunswick")]
         NB,
 
-        [Description("Newfoundland and Labrador")]
+        [Display(Name = "Newfoundland and Labrador")]
         NL,
 
-        [Description("Nova Scotia")]
+        [Display(Name = "Nova Scotia")]
         NS,
 
-        [Description("Northwest Territories")]
+        [Display(Name = "Northwest Territories")]
         NT,
 
-        [Description("Nunavut")]
+        [Display(Name = "Nunavut")]
         NU,
 
-        [Description("Ontario")]
+        [Display(Name = "Ontario")]
         ON,
 
-        [Description("Prince Edward Island")]
+        [Display(Name = "Prince Edward Island")]
         PE,
 
-        [Description("Quebec")]
+        [Display(Name = "Quebec")]
         QC,
 
-        [Description("Saskatchewan")]
+        [Display(Name = "Saskatchewan")]
         SK,
 
-        [Description("Yukon")]
+        [Display(Name = "Yukon")]
         YT
     }
 }

@@ -75,8 +75,8 @@
 <hr class="m-btn-divider-top">
 
 <div class="row m-btn-row m-btn-gap">
-    <button class="btn m-button m-edit-btn"><i class="fas fa-edit"></i> Edit</button>
-    <button class="btn m-button m-add-btn"><i class="fas fa-plus"></i> Add</button>
+    <button class="btn m-button m-edit-btn" aria-pressed="false" @onclick="EditCustomer" disabled="@(!CanEdit)"><i class="fas fa-edit"></i> Edit</button>
+    <button class="btn m-button m-add-btn" @onclick="AddCustomer"><i class="fas fa-plus"></i> Add</button>
     <button class="btn m-button m-generic-btn">Family</button>
     <button class="btn m-button m-generic-btn">Notes</button>
     <button class="btn m-button m-generic-btn">History</button>

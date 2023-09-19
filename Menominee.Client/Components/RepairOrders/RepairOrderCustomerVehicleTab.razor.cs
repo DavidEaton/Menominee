@@ -1,5 +1,7 @@
-﻿using Menominee.Client.Services.Vehicles;
+﻿using Menominee.Client.Services.Customers;
+using Menominee.Client.Services.Vehicles;
 using Menominee.Common.Enums;
+using Menominee.Shared.Models.Customers;
 using Menominee.Shared.Models.RepairOrders;
 using Menominee.Shared.Models.Vehicles;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +12,8 @@ public partial class RepairOrderCustomerVehicleTab
 {
     [Inject]
     private IVehicleDataService VehicleDataService { get; set; }
+    [Inject]
+    private ICustomerDataService CustomerDataService { get; set; }
 
     [Parameter]
     public RepairOrderToWrite RepairOrderToEdit { get; set; }
@@ -25,6 +29,63 @@ public partial class RepairOrderCustomerVehicleTab
 
     private FormMode EditVehicleFormMode = FormMode.Unknown;
     private VehicleLookupMode VehicleLookupMode = VehicleLookupMode.Unknown;
+    private FormMode EditCustomerFormMode = FormMode.Unknown;
+    private CustomerLookupMode CustomerLookupMode = CustomerLookupMode.Unknown;
+
+
+    private void AddCustomer()
+    {
+        EditCustomerFormMode = FormMode.Add;
+    }
+
+    private void EditCustomer()
+    {
+        EditCustomerFormMode = FormMode.Edit;
+    }
+
+    private async Task SaveCustomer(CustomerToWrite customer)
+    {
+        if (customer.Id > 0)
+        {
+            var result = await CustomerDataService.UpdateCustomer(customer);
+
+            if (result.IsFailure)
+            {
+                return;
+            }
+        }
+        else
+        {
+            var result = await CustomerDataService.AddCustomer(customer);
+
+            if (result.IsFailure)
+            {
+                return;
+            }
+
+            customer.Id = result.Value.Id;
+        }
+
+        /*RepairOrderToEdit.Customer = CustomerHelper. customer
+
+        new()
+        {
+            Id = customer.Id,
+            Code = customer.Code,
+            CustomerType = customer.CustomerType,
+            Address = customer.Person.Address,
+        };*/
+
+        await RepairOrderToEditChanged.InvokeAsync(RepairOrderToEdit);
+        EditCustomerFormMode = FormMode.Unknown;
+    }
+
+    private void LookupCustomer(CustomerLookupMode lookup) => CustomerLookupMode = lookup;
+
+    private void DiscardCustomer()
+    {
+        EditCustomerFormMode = FormMode.Unknown;
+    }
 
     private void AddVehicle()
     {
@@ -78,10 +139,7 @@ public partial class RepairOrderCustomerVehicleTab
         EditVehicleFormMode = FormMode.Unknown;
     }
 
-    private void LookupVehicle(VehicleLookupMode lookup)
-    {
-        VehicleLookupMode = lookup;
-    }
+    private void LookupVehicle(VehicleLookupMode lookup) => VehicleLookupMode = lookup;
 
     private async Task SelectVehicle(VehicleToRead vehicle)
     {

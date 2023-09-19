@@ -1,0 +1,86 @@
+﻿@using Blazored.FluentValidation
+@using Telerik.Blazor.Components
+
+<TelerikWindow Visible="true"
+               Modal="true"
+               Width="500px"
+               Class="popupWindowClass">
+    <WindowTitle>
+        @Title
+    </WindowTitle>
+    <WindowContent>
+        <TelerikForm EditContext="@EditContext" OnSubmit="@HandleSubmit" Columns="12" ColumnSpacing="24px">
+            <FormValidation>
+                <FluentValidationValidator Validator="@CustomerValidator"></FluentValidationValidator>
+            </FormValidation>
+
+            <FormItems>
+@*                 <FormItem Field="@nameof(CustomerModel.CustomerType)" ColSpan="4">
+                    <Template>
+                        <label class="k-label" for="customerType">Customer Type</label>
+                        <div class="m-form-control-group" for="customerType">
+                            <TelerikDropDownList @bind-Value="CustomerModel.CustomerType"
+                                                 Data="CustomerTypeEnumData"
+                                                 Width="100%"
+                                                 TextField="DisplayText"
+                                                 ValueField="Value"
+                                                 Id="customerType">
+                            </TelerikDropDownList>
+                        </div>
+                    </Template>
+                </FormItem> *@
+                <FormItem Field="@nameof(CustomerModel.EntityType)" ColSpan="4">
+                    <Template>
+                        <div>
+                            <label class="k-label mt-2" for="entityType">Customer Type</label>
+                            <div class="m-form-control-group" for="entityType">
+
+                                <TelerikDropDownList @bind-Value="CustomerModel.EntityType"
+                                                     Data="EntityTypeEnumData"
+                                                     OnChange="EntityTypeChanged"
+                                                     Width="100%"
+                                                     TextField="DisplayText"
+                                                     ValueField="Value"
+                                                     Id="entityType">
+                                    <DropDownListSettings>
+                                        <DropDownListPopupSettings Height="66px" />
+                                    </DropDownListSettings>
+                                </TelerikDropDownList>
+                            </div>
+                        </div>
+                    </Template>
+                </FormItem>
+                @if (CustomerModel.EntityType == Common.Enums.EntityType.Person)
+                {
+                    <FormItem Field="@nameof(CustomerModel.Person)" ColSpan="12">
+                        <Template>
+                                <PersonContactableEditor Person="CustomerModel.Person"
+                                                         FormMode="FormMode"
+                                                         Save="Submit"
+                                                         Close="Close" />
+                        </Template>
+                    </FormItem>
+                }
+
+                @if (CustomerModel.EntityType == Common.Enums.EntityType.Business)
+                {
+                    <FormItem Field="@nameof(CustomerModel.Business)" ColSpan="12">
+                        <Template>
+                            <div class="editor mt-2">
+                                <BusinessContactableEditor Business="CustomerModel.Business"
+                                                           FormMode="FormMode"
+                                                           Save="Submit"
+                                                           Close="Close" />
+                            </div>
+                        </Template>
+                    </FormItem>
+                }
+            </FormItems>
+
+            <FormButtons>
+                <TelerikButton ButtonType="ButtonType.Submit" ThemeColor="primary">Save</TelerikButton>
+                <TelerikButton ButtonType="ButtonType.Button" ThemeColor="secondary" OnClick="HandleDiscard">Discard</TelerikButton>
+            </FormButtons>
+        </TelerikForm>
+    </WindowContent>
+</TelerikWindow>

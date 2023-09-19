@@ -31,7 +31,7 @@ namespace Menominee.Client.Components.Customers
                 Id = "-1",
                 Items = new List<MenuItem>
                 {
-                    new MenuItem { Text="Customer List", Url=$"{ModuleUrl}/listing", Id=((int)CustomersMenuId.CustomerList).ToString() },
+                    new MenuItem { Text="Customer List", Url=$"{ModuleUrl}/list", Id=((int)CustomersMenuId.CustomerList).ToString() },
                     new MenuItem { Text="Advanced Search", Url=$"{ModuleUrl}", Id=((int)CustomersMenuId.AdvancedSearch).ToString() }
                 },
                 Url = ""

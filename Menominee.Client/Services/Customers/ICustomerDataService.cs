@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using Menominee.Common.Http;
 using Menominee.Shared.Models.Customers;
 
 namespace Menominee.Client.Services.Customers
@@ -7,8 +8,8 @@ namespace Menominee.Client.Services.Customers
     {
         Task<Result<IReadOnlyList<CustomerToReadInList>>> GetAllCustomers();
         Task<Result<CustomerToRead>> GetCustomer(long id);
-        Task<CustomerToRead> AddCustomer(CustomerToWrite customer);
-        Task UpdateCustomer(CustomerToWrite customer);
+        Task<Result<PostResponse>> AddCustomer(CustomerToWrite customer);
+        Task<Result> UpdateCustomer(CustomerToWrite customer);
         Task DeleteCustomer(long id);
     }
 }
